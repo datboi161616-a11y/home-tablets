@@ -91,9 +91,28 @@ jobs:
           adb install -r home-tablets.apk
           adb shell dpm set-device-owner com.hometablets.launcher/.AdminReceiver
           adb logcat -c
-          adb shell am start -n com.hometablets.launcher/.MainActivity --es profile family
+          adb shell am start -n com.hometablets.launcher/.MainActivity --es profile family --es uploadKey ci-test-key
           sleep 45
           adb exec-out screencap -p > shot-family.png
+
+          # --- Photo upload, the way a phone does it (raw image body + key) ---
+          adb forward tcp:8080 tcp:8080
+          code=$(curl -s -o /dev/null -w "%{http_code}" "http://127.0.0.1:8080/?k=wrong-key")
+          echo "wrong key -> $code"; [ "$code" = "403" ]
+          curl -sf "http://127.0.0.1:8080/?k=ci-test-key" | grep -q "Add photos to the tablet"
+          curl -sf -X POST --data-binary @shot-family.png -H "Content-Type: image/png" \
+            "http://127.0.0.1:8080/api/upload?k=ci-test-key&name=CI%20robot&caption=Emulator%20test" | tee upload.json
+          grep -q '"ok":true' upload.json
+          code=$(curl -s -o /dev/null -w "%{http_code}" -X POST --data-binary "not a photo" "http://127.0.0.1:8080/api/upload?k=ci-test-key")
+          echo "non-photo -> $code"; [ "$code" = "400" ]
+          curl -sf "http://127.0.0.1:8080/api/photos?k=ci-test-key" | tee photos.json
+          grep -q '"name":"CI robot"' photos.json
+          adb shell am start -n com.hometablets.launcher/.MainActivity --es screen photos
+          sleep 15
+          adb exec-out screencap -p > shot-photos.png
+          adb shell am start -n com.hometablets.launcher/.MainActivity --es screen addphotos
+          sleep 10
+          adb exec-out screencap -p > shot-addphotos.png
           adb shell am start -n com.hometablets.launcher/.MainActivity --es profile tom
           sleep 35
           adb exec-out screencap -p > shot-tom.png
@@ -136,6 +155,8 @@ jobs:
             shot-*.png
             logcat.txt
             webview-version.txt
+            upload.json
+            photos.json
 
   release:
     needs: [build, emulator-test]

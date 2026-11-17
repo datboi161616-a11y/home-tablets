@@ -10,6 +10,8 @@ self.addEventListener('fetch', (e) => {
   const req = e.request;
   if (req.method !== 'GET') return;
   const url = new URL(req.url);
+  // This tablet's own photos are served by the Android app, never cached here.
+  if (url.pathname.includes('/__tablet/')) return;
   // Only cache our own files and fonts; live data APIs handle their own caching.
   const cacheable = url.origin === location.origin || url.host.includes('fonts.g');
   if (!cacheable) return;

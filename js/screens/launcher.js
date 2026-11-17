@@ -3,6 +3,7 @@ import { settings } from '../config.js';
 import { getLocation } from '../services/location.js';
 import { getWeather, describe } from '../services/weather.js';
 import { newPhotoCount, thisWeekCount, unreadNotes } from '../services/family-sample.js';
+import { isTablet, getPhotos } from '../services/tablet-photos.js';
 
 let timer;
 
@@ -30,6 +31,12 @@ const ICONS = {
 
 const plural = (n, one, many) => `${n} ${n === 1 ? one : many}`;
 
+function photosSub() {
+  if (!isTablet()) return `${newPhotoCount} new from the family`;
+  const n = getPhotos().length;
+  return n ? `${n} photo${n === 1 ? '' : 's'}` : 'Add from your phone';
+}
+
 export function mount(el) {
   const a = settings.accent;
   const c = clockParts();
@@ -38,7 +45,7 @@ export function mount(el) {
   // style: 'dark' | 'accent' | 'light'
   const tiles = [
     { href: '#/home', icon: 'home', title: 'Home', sub: 'Today at a glance', style: 'dark' },
-    { href: '#/photos', icon: 'photos', title: 'Photos', sub: `${newPhotoCount} new from the family` },
+    { href: '#/photos', icon: 'photos', title: 'Photos', sub: photosSub() },
     { href: '#/calendar', icon: 'calendar', title: 'Calendar', sub: week ? `${plural(week, 'thing', 'things')} this week` : 'Nothing this week' },
     { href: '#/forecast', icon: 'weather', title: 'Weather', sub: 'Loading…', data: 'data-weather' },
     { href: '#/recipe', icon: 'recipe', title: 'Recipes', sub: 'Family favorites', style: 'accent' },

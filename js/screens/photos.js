@@ -3,11 +3,13 @@
 // Tap anywhere to go back home.
 import { getLocation } from '../services/location.js';
 import { getWeather, describe } from '../services/weather.js';
-// TODO(backend): swap the sample album for the shared family photo feed.
-import { photos } from '../services/family-sample.js';
+// On the tablet: its own album (sent from phones, see addphotos.js).
+// In a normal browser: sample pictures, so the screen can still be previewed.
+import { photos as samplePhotos } from '../services/family-sample.js';
+import { isTablet, getPhotos, onPhotosChanged } from '../services/tablet-photos.js';
 
 const SLIDE_MS = 60 * 1000;
-let clockTimer, slideTimer, fadeTimer;
+let clockTimer, slideTimer, fadeTimer, offPhotos;
 
 function clockParts() {
   const now = new Date();
@@ -24,8 +26,16 @@ const slideBg = (p) => (p.src
   ? `background:#2A3038 url('${encodeURI(p.src)}') center/cover no-repeat`
   : `background:${p.art}`);
 
+function loadAlbum() {
+  if (isTablet()) return getPhotos();
+  return samplePhotos.map((p) => ({ ...p, line: `${p.caption} · Added by ${p.addedBy}` }));
+}
+
+const MAX_DOTS = 12;
+
 export function mount(el) {
   const c = clockParts();
+  let photos = loadAlbum();
   let index = 0;
   let weatherText = '';
 
@@ -51,11 +61,17 @@ export function mount(el) {
     <div style="position:absolute;right:48px;bottom:44px;display:flex;flex-direction:column;align-items:flex-end;gap:14px;max-width:620px;text-align:right">
       <div data-title class="display" style="font-size:28px;font-weight:500"></div>
       <div data-caption style="font-size:18px;color:#E6E9ED"></div>
-      <div data-dots style="display:flex;gap:8px">
-        ${photos.map(() => '<div class="ph-dot"></div>').join('')}
-      </div>
+      <div data-dots style="display:flex;gap:8px;font-size:16px;font-weight:600"></div>
     </div>
-    <a href="#/home" class="pill" style="position:absolute;top:32px;right:32px;min-width:44px;background:rgba(10,12,16,.55);color:#fff">Home</a>
+    <div data-empty style="display:none;position:absolute;top:0;left:0;right:0;bottom:220px;align-items:center;justify-content:center;flex-direction:column;gap:20px;text-align:center">
+      <div class="display" style="font-size:44px;font-weight:500">No photos yet</div>
+      <div style="font-size:20px;color:#E6E9ED">Send some from a phone on the same Wi-Fi.</div>
+      <a href="#/addphotos" class="pill" style="background:#fff;color:#1D2430;font-size:18px;padding:14px 26px">Add photos</a>
+    </div>
+    <div style="position:absolute;top:32px;right:32px;display:flex;gap:12px">
+      <a href="#/addphotos" class="pill" style="min-width:44px;background:rgba(10,12,16,.55);color:#fff">+ Add photos</a>
+      <a href="#/home" class="pill" style="min-width:44px;background:rgba(10,12,16,.55);color:#fff">Home</a>
+    </div>
   </div>`;
 
   const $ = (s) => el.querySelector(s);
@@ -72,7 +88,16 @@ export function mount(el) {
     const p = photos[i];
     const slide = document.createElement('div');
     slide.className = `ph-slide ${i % 2 ? 'pan-b' : 'pan-a'}`;
-    slide.style.cssText = slideBg(p);
+    if (p.src) {
+      // Whole photo (portrait ones too) over a blurred, darkened copy of itself.
+      const u = `url('${encodeURI(p.src)}')`;
+      slide.style.background = '#2A3038';
+      slide.innerHTML = `
+        <div style="position:absolute;top:0;right:0;bottom:0;left:0;background:${u} center/cover no-repeat;filter:blur(28px) brightness(.55);transform:scale(1.1)"></div>
+        <div style="position:absolute;top:6%;right:6%;bottom:6%;left:6%;background:${u} center/contain no-repeat"></div>`;
+    } else {
+      slide.style.cssText = slideBg(p);
+    }
     slidesEl.appendChild(slide);
     // Fade in on the next frame, then drop older slides once the fade is done.
     requestAnimationFrame(() => requestAnimationFrame(() => slide.classList.add('on')));
@@ -82,16 +107,38 @@ export function mount(el) {
     }, 3000);
 
     $('[data-title]').textContent = p.title;
-    $('[data-caption]').innerHTML = `${esc(p.caption)} · Added by ${esc(p.addedBy)}`;
-    [...$('[data-dots]').children].forEach((d, j) => d.classList.toggle('on', j === i));
+    $('[data-caption]').innerHTML = esc(p.line || '');
+    const dots = $('[data-dots]');
+    if (photos.length <= MAX_DOTS) {
+      if (dots.children.length !== photos.length) dots.innerHTML = photos.map(() => '<div class="ph-dot"></div>').join('');
+      [...dots.children].forEach((d, j) => d.classList.toggle('on', j === i));
+    } else {
+      dots.textContent = `${i + 1} / ${photos.length}`;
+    }
   }
 
-  if (photos.length) show(0);
-  if (photos.length > 1) slideTimer = setInterval(() => show((index + 1) % photos.length), SLIDE_MS);
+  function start() {
+    clearInterval(slideTimer);
+    $('[data-empty]').style.display = photos.length ? 'none' : 'flex';
+    if (!photos.length) {
+      slidesEl.innerHTML = '';
+      $('[data-title]').textContent = '';
+      $('[data-caption]').textContent = '';
+      $('[data-dots]').innerHTML = '';
+      return;
+    }
+    show(0); // newest first
+    if (photos.length > 1) slideTimer = setInterval(() => show((index + 1) % photos.length), SLIDE_MS);
+  }
+
+  start();
   clockTimer = setInterval(renderDate, 10000);
 
-  // Tap anywhere goes back home.
-  const onTap = () => { location.hash = "#/home"; };
+  // A phone just sent photos (or one was removed): reload, newest first.
+  offPhotos = onPhotosChanged(() => { photos = loadAlbum(); start(); });
+
+  // Tap anywhere (except a button) goes back home.
+  const onTap = (e) => { if (!e.target.closest('a')) location.hash = '#/home'; };
   $('[data-root]').addEventListener('click', onTap);
 
   (async () => {
@@ -110,4 +157,5 @@ export function unmount() {
   clearInterval(clockTimer);
   clearInterval(slideTimer);
   clearTimeout(fadeTimer);
+  offPhotos?.();
 }

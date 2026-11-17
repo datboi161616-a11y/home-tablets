@@ -25,6 +25,7 @@ import android.webkit.PermissionRequest;
 import android.webkit.WebChromeClient;
 import android.webkit.WebResourceError;
 import android.webkit.WebResourceRequest;
+import android.webkit.WebResourceResponse;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
@@ -58,8 +59,14 @@ public class MainActivity extends Activity {
     private static final Set<String> NATIVE_FETCH_HOSTS = new HashSet<>(Arrays.asList(
             "api.adsb.lol", "opendata.adsb.fi"));
 
+    /** Virtual path the web app uses to show this tablet's photos: <site>/__tablet/photos/<id> */
+    private static final String PHOTO_PATH = "/__tablet/photos/";
+
     private WebView web;
     private SharedPreferences prefs;
+    private PhotoStore photos;
+    private PhotoServer photoServer;
+    private String pendingScreen;
     private final Handler handler = new Handler(Looper.getMainLooper());
     private final Runnable cornerHold = this::askPin;
     private final Runnable updateCheck = new Runnable() {
@@ -77,6 +84,12 @@ public class MainActivity extends Activity {
         super.onCreate(savedInstanceState);
         prefs = getSharedPreferences(PREFS, MODE_PRIVATE);
         applyExtras(getIntent());
+
+        // Phones on the same Wi-Fi add photos through this (QR code on the tablet).
+        photos = new PhotoStore(this);
+        photoServer = new PhotoServer(this, photos, () -> runOnUiThread(() ->
+                web.evaluateJavascript("window.dispatchEvent(new Event('tablet-photos'))", null)));
+        photoServer.start();
 
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 
@@ -112,6 +125,19 @@ public class MainActivity extends Activity {
                 // Stay inside our site; never wander off to other websites.
                 Uri site = Uri.parse(BuildConfig.SITE_URL);
                 return !site.getHost().equals(req.getUrl().getHost());
+            }
+            @Override
+            public WebResourceResponse shouldInterceptRequest(WebView view, WebResourceRequest req) {
+                // Serve this tablet's photos to the web app from local storage.
+                String path = req.getUrl().getPath();
+                int at = path == null ? -1 : path.indexOf(PHOTO_PATH);
+                if (at < 0) return null;
+                java.io.File f = photos.file(path.substring(at + PHOTO_PATH.length()));
+                try {
+                    if (f != null) return new WebResourceResponse("image/jpeg", null, new java.io.FileInputStream(f));
+                } catch (java.io.IOException ignored) { }
+                return new WebResourceResponse("text/plain", null, 404, "Not Found",
+                        java.util.Collections.emptyMap(), new java.io.ByteArrayInputStream(new byte[0]));
             }
             @Override
             public void onReceivedError(WebView view, WebResourceRequest req, WebResourceError err) {
@@ -161,13 +187,19 @@ public class MainActivity extends Activity {
     @Override
     protected void onDestroy() {
         handler.removeCallbacksAndMessages(null);
+        photoServer.stop();
         super.onDestroy();
     }
 
     // ---------------------------------------------------------------- helpers
 
     String siteUrl() {
-        return BuildConfig.SITE_URL + "?profile=" + Uri.encode(prefs.getString("profile", "family"));
+        String url = BuildConfig.SITE_URL + "?profile=" + Uri.encode(prefs.getString("profile", "family"));
+        if (pendingScreen != null) {
+            url += "#/" + pendingScreen;
+            pendingScreen = null;
+        }
+        return url;
     }
 
     /**
@@ -185,6 +217,15 @@ public class MainActivity extends Activity {
         }
         String pin = intent.getStringExtra("pin");
         if (pin != null && pin.matches("\\d{4,8}")) prefs.edit().putString("pin", pin).apply();
+        // Fixed photo-upload key (used by the automated emulator test).
+        String uploadKey = intent.getStringExtra("uploadKey");
+        if (uploadKey != null && uploadKey.matches("[a-z0-9-]{6,32}")) prefs.edit().putString("uploadKey", uploadKey).apply();
+        // Open a particular screen, e.g. --es screen photos
+        String screen = intent.getStringExtra("screen");
+        if (screen != null && screen.matches("[a-z]{1,20}")) {
+            pendingScreen = screen;
+            changed = true;
+        }
         return changed;
     }
 
@@ -263,6 +304,7 @@ public class MainActivity extends Activity {
                 "Check for app update",
                 "Unlock tablet for 10 minutes",
                 "Turn off kiosk mode permanently",
+                "New photo upload code (old QR codes stop working)",
                 "About: app " + BuildConfig.VERSION_NAME + (Kiosk.isOwner(this) ? ", kiosk on" : ", kiosk off")
                         + ", WebView " + webViewVersion(),
         };
@@ -300,6 +342,11 @@ public class MainActivity extends Activity {
                                     .setNegativeButton("Cancel", null)
                                     .show();
                             break;
+                        case 6:
+                            PhotoServer.resetKey(this);
+                            web.evaluateJavascript("window.dispatchEvent(new Event('tablet-photos'))", null);
+                            Toast.makeText(this, "New QR code ready on the Add photos screen", Toast.LENGTH_LONG).show();
+                            break;
                         default:
                             break;
                     }
@@ -319,6 +366,21 @@ public class MainActivity extends Activity {
     class NativeBridge {
         @JavascriptInterface
         public String appVersion() { return BuildConfig.VERSION_NAME; }
+
+        /** JSON array of this tablet's photos, newest first: [{id, name, caption, added}] */
+        @JavascriptInterface
+        public String photoList() { return photos.list().toString(); }
+
+        /** Base URL for <img src>: append a photo id. */
+        @JavascriptInterface
+        public String photoBase() { return PHOTO_PATH; }
+
+        /** Address phones open (shown as a QR code), or "" when not on Wi-Fi. */
+        @JavascriptInterface
+        public String uploadUrl() { return PhotoServer.uploadUrl(MainActivity.this); }
+
+        @JavascriptInterface
+        public boolean deletePhoto(String id) { return photos.delete(id); }
 
         /** Fetch an allow-listed URL and call window[callback](ok, text). */
         @JavascriptInterface

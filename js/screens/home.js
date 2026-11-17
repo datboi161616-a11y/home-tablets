@@ -3,8 +3,9 @@ import { settings, events } from '../config.js';
 import { getLocation } from '../services/location.js';
 import { getWeather, describe } from '../services/weather.js';
 import { icon } from '../icons.js';
+import { isTablet, getPhotos, onPhotosChanged } from '../services/tablet-photos.js';
 
-let timer;
+let timer, photoTimer, offPhotos;
 
 const fmtHour = (d) => d.toLocaleTimeString('en-US', { hour: 'numeric' });
 
@@ -65,10 +66,12 @@ export function mount(el) {
 
     <div style="display:flex;flex-direction:column;gap:24px;min-width:0">
       <div style="flex-grow:1;border-radius:var(--radius);background:#C9CFD6;display:flex;align-items:flex-end;justify-content:space-between;padding:24px;position:relative;overflow:hidden">
-        <div style="position:absolute;top:0;right:0;bottom:0;left:0;display:flex;align-items:center;justify-content:center;font-size:18px;color:#3A4352;text-align:center;padding:40px">
-          Family photos will show here<br>(photo sharing is set up in a later step)
+        <div data-photo-bg style="position:absolute;top:0;right:0;bottom:0;left:0;background-position:center;background-size:cover;transition:opacity .8s"></div>
+        <div data-photo-empty style="position:absolute;top:0;right:0;bottom:0;left:0;display:flex;flex-direction:column;gap:16px;align-items:center;justify-content:center;font-size:20px;color:#3A4352;text-align:center;padding:40px">
+          <div>Family photos will show here</div>
+          <a href="#/addphotos" class="pill" style="background:var(--ink);color:#fff">Add photos from a phone</a>
         </div>
-        <div style="position:relative;background:rgba(255,255,255,.92);border-radius:999px;padding:10px 18px;font-size:16px;font-weight:500">Photo frame</div>
+        <div data-photo-label style="position:relative;background:rgba(255,255,255,.92);border-radius:999px;padding:10px 18px;font-size:16px;font-weight:500;max-width:60%;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">Photo frame</div>
         <a href="#/photos" class="pill" style="position:relative;background:var(--ink);color:#fff">Full screen</a>
       </div>
 
@@ -91,6 +94,27 @@ export function mount(el) {
   </div>`;
 
   const $ = (s) => el.querySelector(s);
+
+  // Photo card: this tablet's newest photos, changing every 30 seconds.
+  let photoIndex = 0;
+  function renderPhoto() {
+    const list = getPhotos().slice(0, 20);
+    const bg = $('[data-photo-bg]');
+    $('[data-photo-empty]').style.display = list.length ? 'none' : 'flex';
+    $('[data-photo-label]').style.display = list.length ? '' : 'none';
+    if (!list.length) { bg.style.backgroundImage = ''; return; }
+    const p = list[photoIndex % list.length];
+    bg.style.backgroundImage = `url('${encodeURI(p.src)}')`;
+    $('[data-photo-label]').textContent = p.line ? `${p.title} · ${p.line}` : p.title;
+  }
+  if (isTablet()) {
+    renderPhoto();
+    photoTimer = setInterval(() => { photoIndex++; renderPhoto(); }, 30000);
+    offPhotos = onPhotosChanged(() => { photoIndex = 0; renderPhoto(); });
+  } else {
+    // Previewing in a normal browser: no tablet album here.
+    $('[data-photo-empty]').firstElementChild.textContent = 'Family photos will show here';
+  }
 
   // Clock: tick every 10s
   timer = setInterval(() => {
@@ -128,4 +152,6 @@ export function mount(el) {
 
 export function unmount() {
   clearInterval(timer);
+  clearInterval(photoTimer);
+  offPhotos?.();
 }
