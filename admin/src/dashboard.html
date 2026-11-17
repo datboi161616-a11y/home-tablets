@@ -45,8 +45,7 @@
   .tabs button.sel { background:var(--ink); color:#111; border-color:var(--ink); font-weight:600; }
   .screen { position:relative; background:#000; border-radius:14px; overflow:hidden; aspect-ratio:16/10; border:1px solid var(--line); }
   .screen img { width:100%; height:100%; object-fit:contain; display:block; user-select:none; -webkit-user-drag:none; }
-  .screen.control img, .screen.takeover img { cursor:crosshair; }
-  .tabs button.sel.warn { background:var(--warn); border-color:var(--warn); }
+  .screen.control img { cursor:crosshair; }
   .apps { display:flex; flex-direction:column; gap:6px; max-height:320px; overflow:auto; }
   .app { display:flex; align-items:center; gap:10px; font-size:14px; }
   .app .lbl { flex:1; min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
@@ -85,7 +84,8 @@
   let token = localStorage.getItem('adminToken');
   let ws, devices = [], connected = false, retry = 0;
   let current = null;          // id of the tablet being viewed
-  let mode = 'mirror';         // 'mirror' (their screen), 'control' (hidden copy), 'takeover' (their real screen)
+  // One view: you drive a hidden copy (big picture); a small live picture shows their real screen.
+  const WATCH = 'both';
   let frameSize = { w: 0, h: 0 };
 
   // ----------------------------------------------------------- helpers
@@ -138,7 +138,7 @@
     let opened = false;
     ws.onopen = () => {
       opened = true; connected = true; retry = 0;
-      if (current) send({ type: 'watch', id: current, mode });
+      if (current) send({ type: 'watch', id: current, mode: WATCH });
       render();
     };
     ws.onmessage = (e) => { if (e.data !== 'pong') onMessage(JSON.parse(e.data)); };
@@ -160,18 +160,23 @@
       if (i >= 0) devices[i] = m.device; else devices.push(m.device);
       render();
     }
-    else if (m.type === 'frame' && m.id === current && (m.mode || 'mirror') === (mode === 'takeover' ? 'mirror' : mode)) {
-      const img = document.getElementById('screenImg');
-      if (!img) return;
-      img.src = `data:${m.mime};base64,${m.data}`;
-      if (m.w) frameSize = { w: m.w, h: m.h };
-      const ov = document.getElementById('overlay');
-      if (ov) ov.style.display = 'none';
-      const b = document.getElementById('badge');
-      if (b) b.textContent = m.stale ? 'Last picture (waiting for live view…)' : ({ control: 'Hidden session · live', takeover: 'TAKE OVER · their real screen · live' })[mode] || 'Their screen · live';
+    else if (m.type === 'frame' && m.id === current) {
+      const src = `data:${m.mime};base64,${m.data}`;
+      if (m.mode === 'control') {
+        const img = document.getElementById('screenImg');
+        if (!img) return;
+        img.src = src;
+        if (m.w) frameSize = { w: m.w, h: m.h };
+        const ov = document.getElementById('overlay');
+        if (ov) ov.style.display = 'none';
+      } else {
+        const prev = document.getElementById('previewImg');
+        if (prev) { prev.src = src; prev.style.opacity = m.stale ? '.5' : '1'; }
+        if (m.hd) { const a = document.createElement('a'); a.href = src; a.download = 'tablet-screenshot.jpg'; a.click(); }
+      }
     }
     else if (m.type === 'result') {
-      const quiet = ['tap', 'swipe', 'realTap', 'realSwipe', 'realKey'].includes(m.cmd) && m.ok;
+      const quiet = ['tap', 'swipe', 'nav', 'back'].includes(m.cmd) && m.ok;
       if (!quiet && (m.id === current || !current)) toast(`${m.ok ? '✓' : '✗'} ${m.message || m.cmd}`, !m.ok);
     }
   }
@@ -254,8 +259,7 @@
       ['App / WebView', [s.app, s.webview].filter(Boolean).join(' / ') || '—'],
       ['Kiosk mode', s.kiosk == null ? '—' : s.kiosk ? 'On' : 'Off'],
       ['Remote viewing', s.mirrorAllowed === false ? 'Turned off on the tablet' : 'Allowed'],
-      ['Whole-tablet view', s.fullView ? 'On (any app)' : 'Not set up: our screens only (USB setup step 4)'],
-      ['Take over', s.fullControl ? 'On' : 'Not set up (USB setup step 4)'],
+      ['Their-screen picture', s.fullView ? 'Any app' : 'Our screens only (USB setup step 3)'],
       ['Device', [s.model, s.android && `Android ${s.android}`].filter(Boolean).join(' · ') || '—'],
       ['Up for', s.uptimeMin != null ? `${Math.round(s.uptimeMin / 60)} h` : '—'],
     ];
@@ -264,30 +268,13 @@
         <div>
           <div class="row" style="justify-content:space-between;margin-bottom:12px">
             <div class="name" style="font-size:22px"><span class="dot ${d.online ? 'on' : 'off'}"></span>${esc(d.name)}</div>
-            <div class="tabs">
-              <button data-mode="mirror" class="${mode === 'mirror' ? 'sel' : ''}">👁 Their screen</button>
-              <button data-mode="control" class="${mode === 'control' ? 'sel' : ''}">🖱 Control (hidden)</button>
-              <button data-mode="takeover" class="${mode === 'takeover' ? 'sel warn' : ''}">🛠 Take over</button>
-            </div>
           </div>
-          <div class="screen ${mode}" id="screen">
+          <div class="screen control" id="screen">
             <img id="screenImg" alt="">
-            <div class="overlay" id="overlay">${!d.online ? 'This tablet is offline.'
-              : (mode !== 'control' && s.inApp && !s.fullView) ? `They’re using ${esc(s.inApp)}. Whole-tablet view isn’t set up, so only our own screens can be shown.`
-              : 'Connecting to the tablet…'}</div>
-            <div class="badge" id="badge">${mode === 'control' ? 'Hidden session' : 'Their screen'}</div>
+            <div class="overlay" id="overlay">${d.online ? 'Starting your hidden session…' : 'This tablet is offline.'}</div>
+            <div class="badge" id="badge">Your hidden session · they can’t see this</div>
           </div>
-          <p class="hint">${({
-            control: 'You’re driving a hidden copy on the tablet: click to tap, drag to scroll. Their screen is not touched. Settings and data you change here are saved on the tablet.',
-            takeover: '⚠ You’re controlling their REAL screen, including other apps: click to tap, drag to swipe. They will see everything you do.',
-          })[mode] || 'View only: this is exactly what’s on their screen right now. Nothing you do here touches it.'}</p>
-          ${mode === 'takeover' ? `
-          <div class="row" style="margin-top:8px">
-            <button data-c="realKey" data-k="back">◀ Back</button>
-            <button data-c="realKey" data-k="home">⌂ Home</button>
-            <button data-c="realKey" data-k="recents">▢ Recent apps</button>
-          </div>` : ''}
-          ${mode === 'control' ? `
+          <p class="hint">Click to tap, drag to scroll. This runs out of sight on the tablet, so whatever they’re doing isn’t disturbed. Settings and data you change here are saved on the tablet.</p>
           <div class="row" style="margin-top:8px">
             <button data-c="back">◀ Back</button>
             <button data-c="nav" data-a="${prof === 'tom' ? 'bridge' : 'home'}">⌂ Home</button>
@@ -295,13 +282,18 @@
             <button id="navGo">Open</button>
             <input id="typeText" placeholder="Type text into the hidden session" style="flex:1;min-width:180px">
             <button id="typeGo">Type</button>
-          </div>` : ''}
+          </div>
         </div>
 
         <div class="side">
           <div class="box">
-            <h3>Their tablet</h3>
-            <div class="hint" style="margin:0">These change what they see.</div>
+            <h3>Their screen right now</h3>
+            <div class="screen" style="aspect-ratio:16/10"><img id="previewImg" alt="" style="transition:opacity .3s"></div>
+            <div class="hint" style="margin:0">${s.inApp ? `Using ${esc(s.inApp)}` : `Showing: ${esc(s.screen || '—')}`} · view only</div>
+          </div>
+          <div class="box">
+            <h3>On their screen</h3>
+            <div class="hint" style="margin:0">Only when you need to: these change what they see.</div>
             <div class="row">
               <button data-c="reload">Reload their screen</button>
               <button data-c="restart">Restart app</button>
@@ -355,24 +347,25 @@
     if (!token) return showLogin();
     const d = current && devices.find((x) => x.id === current);
     if (current && !d) { current = null; }
-    const key = current ? `detail:${current}:${mode}:${JSON.stringify({ ...d, shot: null, lastSeen: null })}` : `list:${JSON.stringify(devices.map((x) => ({ ...x, lastSeen: null })))}`;
+    const key = current ? `detail:${current}:${JSON.stringify({ ...d, shot: null, lastSeen: null })}` : `list:${JSON.stringify(devices.map((x) => ({ ...x, lastSeen: null })))}`;
     if (key === lastKey) return setConnLabel();
-    const keepImg = current && lastKey.startsWith(`detail:${current}:${mode}:`) && document.getElementById('screenImg')?.src;
+    const keepImg = current && lastKey.startsWith(`detail:${current}:`) && document.getElementById('screenImg')?.src;
+    const keepPrev = current && lastKey.startsWith(`detail:${current}:`) && document.getElementById('previewImg')?.src;
     lastKey = key;
     app.innerHTML = current ? detailView(d) : listView();
     if (keepImg) {
       document.getElementById('screenImg').src = keepImg;
       document.getElementById('overlay').style.display = 'none';
     }
+    if (keepPrev) document.getElementById('previewImg').src = keepPrev;
     setConnLabel();
     wire(d);
   }
 
   function open(id) {
     current = id;
-    mode = 'mirror';
     lastKey = '';
-    send({ type: 'watch', id, mode });
+    send({ type: 'watch', id, mode: WATCH });
     render();
   }
 
@@ -397,19 +390,8 @@
     });
     if (!d) return;
 
-    document.querySelectorAll('[data-mode]').forEach((el) => el.onclick = () => {
-      if (el.dataset.mode === 'takeover' && mode !== 'takeover') {
-        if (!(d.status || {}).fullControl) { toast('Take over isn’t set up on this tablet yet (USB setup step 4)', true); return; }
-        if (!confirm('Take over controls their REAL screen. They will see everything you do. Continue?')) return;
-      }
-      mode = el.dataset.mode;
-      lastKey = '';
-      send({ type: 'watch', id: d.id, mode });
-      render();
-    });
     document.querySelectorAll('[data-c]').forEach((el) => el.onclick = () => {
       const c = el.dataset.c, a = el.dataset.a;
-      if (c === 'realKey') return cmd(d.id, 'realKey', { key: el.dataset.k });
       if (c === 'restart' && !confirm('Restart the app on their tablet? Their screen will reload.')) return;
       if (c === 'profile' && !confirm(`Switch their tablet to ${a === 'tom' ? 'Tom’s' : 'Family'} screens?`)) return;
       cmd(d.id, c, a ? { screen: a, name: a } : {});
@@ -437,9 +419,7 @@
 
     // Control mode: click = tap, drag = swipe. Coordinates are sent as 0..1.
     const img = $('screenImg');
-    if (mode !== 'control' && mode !== 'takeover') return;
-    const tapCmd = mode === 'takeover' ? 'realTap' : 'tap';
-    const swipeCmd = mode === 'takeover' ? 'realSwipe' : 'swipe';
+    const tapCmd = 'tap', swipeCmd = 'swipe';
     let down = null;
     const point = (e) => {
       const r = img.getBoundingClientRect();

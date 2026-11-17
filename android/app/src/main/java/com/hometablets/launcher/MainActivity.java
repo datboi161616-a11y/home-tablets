@@ -79,7 +79,12 @@ public class MainActivity extends Activity {
     private WebView ghost;        // hidden copy you drive remotely (only while controlling)
     private FrameLayout root;
     private View viewingDot;      // small dot in the corner while their screen is mirrored
-    private RemoteLink remote;
+    // Shared by the whole app (not per screen instance): Android can occasionally create
+    // a second copy of this screen (e.g. when Home is pressed), and two photo servers or
+    // two hub connections would fight each other.
+    private static RemoteLink remote;
+    private static MainActivity current;          // the copy that's alive and showing
+    final RemoteHost hostImpl = new RemoteHost();
     private String currentScreen = "";
     private Apps apps;
     private String foregroundApp;   // label of an app (YouTube...) they opened from our Apps screen
@@ -92,7 +97,7 @@ public class MainActivity extends Activity {
     private final Runnable ghostCleanup = this::destroyGhost;
     private SharedPreferences prefs;
     private PhotoStore photos;
-    private PhotoServer photoServer;
+    private static PhotoServer photoServer;
     private String pendingScreen;
     private final Handler handler = new Handler(Looper.getMainLooper());
     private final Runnable cornerHold = this::askPin;
@@ -113,10 +118,16 @@ public class MainActivity extends Activity {
         applyExtras(getIntent());
 
         // Phones on the same Wi-Fi add photos through this (QR code on the tablet).
+        current = this;
         photos = new PhotoStore(this);
-        photoServer = new PhotoServer(this, photos, () -> runOnUiThread(() ->
-                web.evaluateJavascript("window.dispatchEvent(new Event('tablet-photos'))", null)));
-        photoServer.start();
+        if (photoServer == null) {
+            photoServer = new PhotoServer(this, photos, () -> {
+                MainActivity a = current;
+                if (a != null) a.runOnUiThread(() ->
+                        a.web.evaluateJavascript("window.dispatchEvent(new Event('tablet-photos'))", null));
+            });
+            photoServer.start();
+        }
 
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 
@@ -147,8 +158,37 @@ public class MainActivity extends Activity {
         else registerReceiver(packageWatcher, pf);
 
         // Remote admin (your dashboard). Does nothing until you approve this tablet.
-        remote = new RemoteLink(this, new RemoteHost());
-        remote.start();
+        if (remote == null) {
+            remote = new RemoteLink(this, new HostProxy());
+            remote.start();
+        } else {
+            remote.sendStatus();
+        }
+    }
+
+    /** Sends the hub's requests to whichever copy of this screen is current. */
+    static final class HostProxy implements RemoteLink.Host {
+        private static RemoteHost h() {
+            MainActivity a = current;
+            return a == null || a.isDestroyed() ? null : a.hostImpl;
+        }
+        @Override public void status(RemoteLink.Callback<JSONObject> cb) {
+            RemoteHost x = h();
+            if (x == null) cb.got(new JSONObject()); else x.status(cb);
+        }
+        @Override public void capture(String mode, boolean hd, RemoteLink.Callback<String> cb) {
+            RemoteHost x = h();
+            if (x == null) cb.got(null); else x.capture(mode, hd, cb);
+        }
+        @Override public void streamChanged(boolean mirror, boolean control) {
+            RemoteHost x = h();
+            if (x != null) x.streamChanged(mirror, control);
+        }
+        @Override public void command(String cmd, JSONObject args, RemoteLink.Callback2 done) {
+            RemoteHost x = h();
+            if (x == null) done.done(false, "The tablet app is restarting; try again in a moment");
+            else x.command(cmd, args, done);
+        }
     }
 
     @SuppressLint("SetJavaScriptEnabled")
@@ -214,6 +254,7 @@ public class MainActivity extends Activity {
     @Override
     protected void onResume() {
         super.onResume();
+        current = this;
         resumed = true;
         if (foregroundApp != null) {
             foregroundApp = null;               // back from YouTube etc.
@@ -245,11 +286,10 @@ public class MainActivity extends Activity {
     @Override
     protected void onDestroy() {
         handler.removeCallbacksAndMessages(null);
-        photoServer.stop();
-        if (remote != null) remote.stop();
+        // The photo server and hub connection are shared and keep running for the next copy.
+        if (current == this) current = null;
         destroyGhost();
         if (packageWatcher != null) unregisterReceiver(packageWatcher);
-        stopService(new Intent(this, ScreenCapture.class));
         super.onDestroy();
     }
 
@@ -505,10 +545,7 @@ public class MainActivity extends Activity {
     /** Label of whatever other app is on screen, or null when our system is showing. */
     private String otherAppOnScreen() {
         if (resumed) return null;
-        if (foregroundApp != null) return foregroundApp;
-        String pkg = RemoteTouch.foregroundPackage;
-        if (pkg == null || pkg.isEmpty() || pkg.equals(getPackageName())) return null;
-        return apps.label(pkg);
+        return foregroundApp;
     }
 
     private boolean remoteViewAllowed() {
@@ -637,7 +674,6 @@ public class MainActivity extends Activity {
                   .put("screen", otherAppOnScreen() != null ? "app: " + otherAppOnScreen() : currentScreen)
                   .put("inApp", otherAppOnScreen() == null ? JSONObject.NULL : otherAppOnScreen())
                   .put("fullView", ScreenCapture.allowedSilently(MainActivity.this))
-                  .put("fullControl", RemoteTouch.get() != null)
                   .put("apps", apps.inventory())
                   .put("ip", PhotoServer.wifiIp())
                   .put("photos", photos.count())
@@ -772,18 +808,6 @@ public class MainActivity extends Activity {
                     web.evaluateJavascript("window.dispatchEvent(new Event('tablet-photos'))", null);
                     done.done(true, "New photo QR code made; old ones stop working");
                     return;
-                // --- take over: their real screen, any app ---
-                case "realTap": case "realSwipe": case "realKey": {
-                    RemoteTouch t = RemoteTouch.get();
-                    if (t == null) { done.done(false, "Take-over isn't switched on for this tablet (USB setup step 4)"); return; }
-                    if (!remoteViewAllowed()) { done.done(false, "Remote viewing is turned off on this tablet"); return; }
-                    boolean ok;
-                    if (cmd.equals("realTap")) ok = t.tap(a.optDouble("x"), a.optDouble("y"));
-                    else if (cmd.equals("realSwipe")) ok = t.swipe(a.optDouble("x1"), a.optDouble("y1"), a.optDouble("x2"), a.optDouble("y2"), a.optInt("ms", 300));
-                    else ok = t.key(a.optString("key"));
-                    done.done(ok, ok ? "Done on their screen" : "Couldn't do that");
-                    return;
-                }
                 case "apps": {
                     String pkg = a.optString("pkg");
                     if (!validPackage(pkg)) { done.done(false, "Unknown app"); return; }

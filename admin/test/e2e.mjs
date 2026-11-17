@@ -101,11 +101,10 @@ await result('pin', { pin: '4321' });
 await result('shot');
 saveFrame(await waitFor((m) => m.type === 'frame' && m.hd, 30000, 'HD shot'), 'remote-6-hd');
 
-// 7. Whole tablet: open a regular app on their screen and see it; take over to go home.
+// 7. Apps: open a regular app on their screen and see it in the picture; bring them home.
 const s7 = st.device.status;
-log('fullView:', s7.fullView, 'fullControl:', s7.fullControl, 'apps:', (s7.apps || []).length);
-if (!s7.fullView) fail('whole-tablet view not available (appops step)');
-if (!s7.fullControl) fail('take over not available (accessibility step)');
+log('fullView:', s7.fullView, 'apps:', (s7.apps || []).length);
+if (!s7.fullView) fail('their-screen picture of any app not available (appops step)');
 const app = (s7.apps || []).find((a) => a.installed && /calculator|clock|contacts|gallery|camera|calendar|settings/i.test(a.pkg + a.label))
   || (s7.apps || []).find((a) => a.installed);
 if (!app) fail('no installed apps reported');
@@ -116,15 +115,20 @@ await waitFor((m) => m.type === 'device' && m.device.id === dev.id && /^app:/.te
 await sleep(6000);
 clear();
 saveFrame(await waitFor((m) => m.type === 'frame' && m.mode === 'mirror' && !m.stale, 30000, 'whole-screen frame in app'), 'remote-7-whole-screen-in-app');
-send({ type: 'watch', id: dev.id, mode: 'takeover' });
-await result('realTap', { x: 0.5, y: 0.5 });
-await result('realKey', { key: 'home' });
+await result('home');
 await sleep(4000);
 await result('status');
 const back = await waitFor((m) => m.type === 'device' && m.device.id === dev.id && !/^app:/.test(m.device.status.screen || ''), 20000, 'back on our home screen');
-log('after take-over Home, their screen shows:', back.device.status.screen);
+log('after "bring them home", their screen shows:', back.device.status.screen);
 clear();
-saveFrame(await waitFor((m) => m.type === 'frame' && m.mode === 'mirror' && !m.stale, 30000, 'mirror after home'), 'remote-8-after-takeover-home');
+saveFrame(await waitFor((m) => m.type === 'frame' && m.mode === 'mirror' && !m.stale, 30000, 'mirror after home'), 'remote-8-after-home');
+
+// 8. The dashboard's single view: hidden session + their-screen picture at the same time.
+clear();
+send({ type: 'watch', id: dev.id, mode: 'both' });
+await waitFor((m) => m.type === 'frame' && m.mode === 'control', 30000, 'hidden-session frame (both)');
+await waitFor((m) => m.type === 'frame' && m.mode === 'mirror' && !m.stale, 30000, 'their-screen frame (both)');
+log('dashboard view: hidden session and their-screen picture both live');
 
 writeFileSync(`${outDir}/remote-status.json`, JSON.stringify(st.device, null, 2));
 log('E2E PASSED');
