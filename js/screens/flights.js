@@ -20,7 +20,7 @@ export function mount(el) {
   <style>
     .tbf a{color:#5CE1E6}.tbf a:hover{color:#A8F2F4}
     @keyframes tbf-sweep{to{transform:rotate(360deg)}}
-    .tbf .sweep{position:absolute;inset:0;border-radius:50%;background:conic-gradient(from 0deg,rgba(92,225,230,0) 0deg,rgba(92,225,230,0) 310deg,rgba(92,225,230,.35) 360deg);animation:tbf-sweep 5s linear infinite}
+    .tbf .sweep{position:absolute;top:0;right:0;bottom:0;left:0;border-radius:50%;background:conic-gradient(from 0deg,rgba(92,225,230,0) 0deg,rgba(92,225,230,0) 310deg,rgba(92,225,230,.35) 360deg);animation:tbf-sweep 5s linear infinite}
     .tbf-blip{position:absolute;display:flex;flex-direction:column;align-items:center;gap:2px;padding:10px;margin:-10px;background:none;border:0;font-family:inherit;cursor:pointer;transition:left 1s linear,top 1s linear}
     .tbf-row{width:100%;min-height:44px;display:grid;grid-template-columns:120px 1fr 110px;gap:10px;align-items:center;padding:6px 14px;text-align:left;font-family:inherit;color:#D7E6F0;cursor:pointer;background:#0A1220;border:1px solid #1E3A4A}
     .tbf-row.on{background:#10233A;border-color:#FFB547}
@@ -38,8 +38,8 @@ export function mount(el) {
       <div style="border: 1px solid #1E3A4A; background: #0A1220; display: flex; align-items: center; justify-content: center">
         <div data-radar style="position: relative; width: 560px; height: 560px; border-radius: 50%; border: 2px solid #5CE1E6; box-sizing: border-box; overflow: hidden; background: #070C18">
           <div class="sweep"></div>
-          <div style="position: absolute; inset: 93px; border-radius: 50%; border: 1px solid #1E3A4A"></div>
-          <div style="position: absolute; inset: 186px; border-radius: 50%; border: 1px solid #1E3A4A"></div>
+          <div style="position: absolute; top:93px;right:93px;bottom:93px;left:93px; border-radius: 50%; border: 1px solid #1E3A4A"></div>
+          <div style="position: absolute; top:186px;right:186px;bottom:186px;left:186px; border-radius: 50%; border: 1px solid #1E3A4A"></div>
           <div style="position: absolute; left: 50%; top: 0; bottom: 0; width: 1px; background: #1E3A4A"></div>
           <div style="position: absolute; top: 50%; left: 0; right: 0; height: 1px; background: #1E3A4A"></div>
           <div style="position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); display: flex; flex-direction: column; align-items: center; gap: 4px"><div style="width: 12px; height: 12px; border-radius: 50%; background: #FFFFFF"></div><span style="font-size: 12px; color: #FFFFFF">HOME</span></div>

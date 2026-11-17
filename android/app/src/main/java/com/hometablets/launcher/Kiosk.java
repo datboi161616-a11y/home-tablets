@@ -13,7 +13,7 @@ import android.provider.Settings;
 /**
  * Kiosk mode. Only active once the app is "device owner", which is set once per
  * tablet over USB:  adb shell dpm set-device-owner com.hometablets.launcher/.AdminReceiver
- * Undo with a factory reset (or "Remove device owner" via adb, see SETUP.md).
+ * Undo from the grown-up menu ("Turn off kiosk mode") or with a factory reset.
  */
 final class Kiosk {
     private Kiosk() {}
@@ -74,6 +74,20 @@ final class Kiosk {
             dpm.setStatusBarDisabled(admin(a), false);
         }
         try { a.stopLockTask(); } catch (Exception ignored) { }
+    }
+
+    /** Gives the tablet back to normal Android (grown-up menu → Turn off kiosk mode). */
+    @SuppressWarnings("deprecation")
+    static void removeOwner(Activity a) {
+        if (!isOwner(a)) return;
+        DevicePolicyManager dpm = a.getSystemService(DevicePolicyManager.class);
+        ComponentName admin = admin(a);
+        try { a.stopLockTask(); } catch (Exception ignored) { }
+        dpm.setStatusBarDisabled(admin, false);
+        dpm.setKeyguardDisabled(admin, false);
+        dpm.clearPackagePersistentPreferredActivities(admin, a.getPackageName());
+        dpm.setGlobalSetting(admin, Settings.Global.STAY_ON_WHILE_PLUGGED_IN, "0");
+        dpm.clearDeviceOwnerApp(a.getPackageName());
     }
 
     static void enterLockTask(Activity a) {

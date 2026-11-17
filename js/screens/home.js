@@ -65,7 +65,7 @@ export function mount(el) {
 
     <div style="display:flex;flex-direction:column;gap:24px;min-width:0">
       <div style="flex-grow:1;border-radius:var(--radius);background:#C9CFD6;display:flex;align-items:flex-end;justify-content:space-between;padding:24px;position:relative;overflow:hidden">
-        <div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:18px;color:#3A4352;text-align:center;padding:40px">
+        <div style="position:absolute;top:0;right:0;bottom:0;left:0;display:flex;align-items:center;justify-content:center;font-size:18px;color:#3A4352;text-align:center;padding:40px">
           Family photos will show here<br>(photo sharing is set up in a later step)
         </div>
         <div style="position:relative;background:rgba(255,255,255,.92);border-radius:999px;padding:10px 18px;font-size:16px;font-weight:500">Photo frame</div>

@@ -1,7 +1,9 @@
+import { installCompat } from './compat.js';
 import { profile } from './config.js';
 import * as placeholder from './screens/placeholder.js';
 
 const screenEl = document.getElementById('screen');
+installCompat(screenEl);
 
 // ---- Scale the 1280x800 canvas to fill the display (1.5x on the TB-X606F) ----
 function fit() {

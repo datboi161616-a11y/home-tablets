@@ -262,7 +262,9 @@ public class MainActivity extends Activity {
                 "Reload",
                 "Check for app update",
                 "Unlock tablet for 10 minutes",
-                "About (version " + BuildConfig.VERSION_NAME + (Kiosk.isOwner(this) ? ", kiosk on" : ", kiosk off") + ")",
+                "Turn off kiosk mode permanently",
+                "About: app " + BuildConfig.VERSION_NAME + (Kiosk.isOwner(this) ? ", kiosk on" : ", kiosk off")
+                        + ", WebView " + webViewVersion(),
         };
         new AlertDialog.Builder(this)
                 .setTitle("Grown-up menu")
@@ -287,11 +289,28 @@ public class MainActivity extends Activity {
                             Kiosk.pause(this, 10);
                             Toast.makeText(this, "Unlocked for 10 minutes", Toast.LENGTH_LONG).show();
                             break;
+                        case 5:
+                            new AlertDialog.Builder(this)
+                                    .setTitle("Turn off kiosk mode?")
+                                    .setMessage("The tablet becomes a normal Android tablet again. To turn kiosk mode back on you need a factory reset and the USB setup.")
+                                    .setPositiveButton("Turn off", (d2, w2) -> {
+                                        Kiosk.removeOwner(this);
+                                        Toast.makeText(this, "Kiosk mode is off", Toast.LENGTH_LONG).show();
+                                    })
+                                    .setNegativeButton("Cancel", null)
+                                    .show();
+                            break;
                         default:
                             break;
                     }
                 })
                 .show();
+    }
+
+    /** e.g. "131.0.6778.39". Should be 100+ for everything to look exactly right. */
+    static String webViewVersion() {
+        android.content.pm.PackageInfo p = WebView.getCurrentWebViewPackage();
+        return p != null ? p.versionName : "unknown";
     }
 
     // ---------------------------------------------------------------- JS bridge

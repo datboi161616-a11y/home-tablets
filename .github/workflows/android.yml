@@ -63,10 +63,53 @@ jobs:
   emulator-test:
     needs: build
     runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        # 29 = Android 10 with its original old WebView (worst case for the tablets)
+        # 34 = modern WebView (what an updated tablet has)
+        api: [29, 34]
     steps:
       - uses: actions/download-artifact@v4
         with:
           name: apk
+
+      - name: Wait for this commit's web app to be live
+        run: |
+          for i in $(seq 1 24); do
+            v=$(curl -s "https://${{ github.repository_owner }}.github.io/home-tablets/version.json?$i" || true)
+            echo "$v"
+            echo "$v" | grep -q "${GITHUB_SHA::7}" && exit 0
+            sleep 10
+          done
+          echo "::notice::Site not redeployed for this commit (Android-only change?); testing the current site."
+
+      - name: Write test script
+        run: |
+          cat > test.sh <<'EOF'
+          set -e
+          adb install -r home-tablets.apk
+          adb shell dpm set-device-owner com.hometablets.launcher/.AdminReceiver
+          adb logcat -c
+          adb shell am start -n com.hometablets.launcher/.MainActivity --es profile family
+          sleep 45
+          adb exec-out screencap -p > shot-family.png
+          adb shell am start -n com.hometablets.launcher/.MainActivity --es profile tom
+          sleep 35
+          adb exec-out screencap -p > shot-tom.png
+          adb shell input keyevent KEYCODE_HOME
+          sleep 3
+          adb exec-out screencap -p > shot-after-home.png
+          adb logcat -d > logcat-full.txt
+          grep -E "chromium|HomeTablet|AndroidRuntime" logcat-full.txt | tail -80 > logcat.txt || true
+          adb shell dumpsys package com.google.android.webview | grep -m1 versionName > webview-version.txt || true
+          cat webview-version.txt
+          # The app must still be in front after pressing Home (kiosk / launcher).
+          adb shell dumpsys activity activities | grep -E "ResumedActivity" | grep -q "com.hometablets.launcher"
+          # No JavaScript errors and no app crash.
+          if grep -E "Uncaught|FATAL EXCEPTION" logcat-full.txt; then echo "JavaScript error or crash"; exit 1; fi
+          EOF
+          chmod +x test.sh
 
       - name: Enable KVM
         run: |
@@ -77,35 +120,22 @@ jobs:
       # Android 10, tablet-sized screen: closest stock match to the TB-X606F.
       - uses: reactivecircus/android-emulator-runner@v2
         with:
-          api-level: 29
+          api-level: ${{ matrix.api }}
           arch: x86_64
           target: default
           profile: pixel_c
           disable-animations: true
           emulator-options: -no-window -gpu swiftshader_indirect -no-snapshot -noaudio -no-boot-anim
-          script: |
-            adb install -r home-tablets.apk
-            adb shell dpm set-device-owner com.hometablets.launcher/.AdminReceiver
-            adb shell am start -n com.hometablets.launcher/.MainActivity --es profile family
-            sleep 40
-            adb exec-out screencap -p > shot-family.png
-            adb shell am start -n com.hometablets.launcher/.MainActivity --es profile tom
-            sleep 30
-            adb exec-out screencap -p > shot-tom.png
-            adb shell input keyevent KEYCODE_HOME
-            sleep 3
-            adb shell dumpsys activity activities | grep -E "mResumedActivity|ResumedActivity" | head -3
-            adb shell dumpsys activity activities | grep -q "com.hometablets.launcher/.MainActivity"
-            adb shell pidof com.hometablets.launcher
-            adb logcat -d -s HomeTablet:* AndroidRuntime:E chromium:* | tail -60 > logcat.txt || true
+          script: ./test.sh
 
       - uses: actions/upload-artifact@v4
         if: always()
         with:
-          name: emulator-screenshots
+          name: emulator-api${{ matrix.api }}
           path: |
             shot-*.png
             logcat.txt
+            webview-version.txt
 
   release:
     needs: [build, emulator-test]

@@ -42,12 +42,12 @@ export function mount(el) {
   <style>
     .vs-root{width:1280px;height:800px;box-sizing:border-box;background:#020308;color:#D7E6F0;font-family:'JetBrains Mono',monospace;position:relative;overflow:hidden}
     .vs-root a{color:#5CE1E6}
-    .vs-dim{position:absolute;inset:0;background:#000;opacity:0;pointer-events:none;transition:opacity 2s}
+    .vs-dim{position:absolute;top:0;right:0;bottom:0;left:0;background:#000;opacity:0;pointer-events:none;transition:opacity 2s}
     .vs-root.vs-night .vs-dim{opacity:.45}
   </style>
   <div class="vs-root${c.night ? ' vs-night' : ''}">
     <canvas data-stars aria-hidden="true" style="position:absolute;left:0;top:0;width:1280px;height:800px"></canvas>
-    <div style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px">
+    <div style="position:absolute;top:0;right:0;bottom:0;left:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px">
       <div data-time style="font-family:Oxanium,sans-serif;font-size:200px;font-weight:300;line-height:1;color:#C9D6E0;letter-spacing:4px">${c.time}</div>
       <div style="font-size:18px;letter-spacing:6px;color:#7FA6B8">STARDATE <span data-stardate>${c.stardate}</span> · ALL DECKS QUIET</div>
     </div>

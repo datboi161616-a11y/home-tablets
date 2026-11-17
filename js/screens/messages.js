@@ -110,7 +110,7 @@ function openComposer(replyTo) {
       <div style="display:flex;align-items:center;gap:12px">
         ${Speech ? `<button data-c="speak" class="msg-btn msg-btn-outline">${MIC}<span>Speak</span></button>` : ''}
         <label class="msg-btn msg-btn-outline" style="position:relative">${CAMERA}<span data-c="photo-label">Add photo</span>
-          <input data-c="file" type="file" accept="image/*" style="position:absolute;inset:0;opacity:0;cursor:pointer">
+          <input data-c="file" type="file" accept="image/*" style="position:absolute;top:0;right:0;bottom:0;left:0;opacity:0;cursor:pointer">
         </label>
         <div data-c="thumb" style="width:60px;height:60px;border-radius:12px;background:center/cover #C9CFD6;display:none"></div>
         <button data-c="post" class="msg-btn msg-btn-primary" style="margin-left:auto" disabled>Post</button>
@@ -216,7 +216,7 @@ export function mount(el) {
     </div>
     <div data-board style="flex-grow:1;display:grid;grid-template-columns:1.4fr 1fr;gap:24px;min-height:0"></div>
   </div>
-  <div data-composer style="position:absolute;inset:0;background:rgba(29,36,48,.45);display:none;align-items:center;justify-content:center;z-index:10"></div>`;
+  <div data-composer style="position:absolute;top:0;right:0;bottom:0;left:0;background:rgba(29,36,48,.45);display:none;align-items:center;justify-content:center;z-index:10"></div>`;
 
   renderBoard();
 

@@ -31,8 +31,8 @@ export function mount(el) {
 
   el.innerHTML = `
   <style>
-    .ph-root{position:absolute;inset:0;background:#2A3038;color:#fff;overflow:hidden;cursor:pointer}
-    .ph-slide{position:absolute;inset:-6%;opacity:0;transition:opacity 2.5s ease}
+    .ph-root{position:absolute;top:0;right:0;bottom:0;left:0;background:#2A3038;color:#fff;overflow:hidden;cursor:pointer}
+    .ph-slide{position:absolute;top:-6%;right:-6%;bottom:-6%;left:-6%;opacity:0;transition:opacity 2.5s ease}
     .ph-slide.on{opacity:1}
     .ph-slide.pan-a{animation:ph-pan-a ${SLIDE_MS + 3000}ms linear forwards}
     .ph-slide.pan-b{animation:ph-pan-b ${SLIDE_MS + 3000}ms linear forwards}

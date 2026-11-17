@@ -32,11 +32,24 @@ jobs:
           echo "{ \"version\": \"${GITHUB_SHA::7}\", \"deployed\": \"$(date -u +%Y-%m-%dT%H:%M:%SZ)\" }" > version.json
           cat version.json
 
+      # The tablets' built-in WebView can be old (Chrome 7x). Translate the
+      # JavaScript to syntax it understands; the source stays modern.
+      - name: Build site for older tablets
+        run: |
+          mkdir _site
+          cp -r index.html css version.json .nojekyll _site/
+          npx -y esbuild@0.24.2 $(find js -name '*.js') sw.js \
+            --outdir=_site --outbase=. --target=chrome64 --log-level=warning
+          if grep -rlE '\?\.[a-zA-Z_$(\[]|\?\?' _site/js _site/sw.js; then
+            echo "::error::Modern syntax left after translation"; exit 1
+          fi
+          find _site -type f | sort
+
       - uses: actions/configure-pages@v5
 
       - uses: actions/upload-pages-artifact@v3
         with:
-          path: .
+          path: _site
 
       - id: deployment
         uses: actions/deploy-pages@v4

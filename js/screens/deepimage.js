@@ -46,7 +46,7 @@ export function mount(el) {
     .di-root a{color:#5CE1E6}
     .di-ox{font-family:Oxanium,sans-serif}
     .di-c{position:absolute;width:60px;height:60px;pointer-events:none}
-    .di-img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:0;transition:opacity .6s}
+    .di-img{position:absolute;top:0;right:0;bottom:0;left:0;width:100%;height:100%;object-fit:cover;opacity:0;transition:opacity .6s}
     .di-cap{position:absolute;left:110px;right:110px;bottom:50px;background:rgba(5,7,13,0.78);border-left:4px solid #FFB547;padding:20px 24px;display:grid;grid-template-columns:minmax(0,1fr) auto;gap:24px;align-items:end;transition:opacity .3s}
     .di-root.di-hide .di-cap{opacity:0;pointer-events:none}
   </style>

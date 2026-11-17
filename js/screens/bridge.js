@@ -58,7 +58,7 @@ export function mount(el) {
     @keyframes tbb-blink{50%{opacity:.25}}
     @keyframes tbb-sweep{to{transform:rotate(360deg)}}
     .tbb .blink{animation:tbb-blink 2.4s ease-in-out infinite}
-    .tbb .sweep{position:absolute;inset:0;border-radius:50%;background:conic-gradient(from 0deg,rgba(92,225,230,0) 0deg,rgba(92,225,230,0) 300deg,rgba(92,225,230,.4) 360deg);animation:tbb-sweep 5s linear infinite}
+    .tbb .sweep{position:absolute;top:0;right:0;bottom:0;left:0;border-radius:50%;background:conic-gradient(from 0deg,rgba(92,225,230,0) 0deg,rgba(92,225,230,0) 300deg,rgba(92,225,230,.4) 360deg);animation:tbb-sweep 5s linear infinite}
     .tbb .glow-c{color:var(--glow)}
     .tbb-dim{opacity:.55}
   </style>
@@ -85,7 +85,7 @@ export function mount(el) {
         <div style="font-size: 13px; letter-spacing: 4px; color: #7FA6B8; display:flex; justify-content:space-between">OVER YOUR HOUSE RIGHT NOW<span data-sample style="color:#FFB547"></span></div>
         <div style="align-self: center; position: relative; width: 210px; height: 210px; border-radius: 50%; border: 2px solid var(--glow); box-sizing: border-box; overflow: hidden; flex-shrink: 0">
           <div class="sweep"></div>
-          <div style="position: absolute; inset: 52px; border-radius: 50%; border: 1px solid #1E3A4A"></div>
+          <div style="position: absolute; top:52px;right:52px;bottom:52px;left:52px; border-radius: 50%; border: 1px solid #1E3A4A"></div>
           <div style="position: absolute; left: 50%; top: 50%; width: 8px; height: 8px; border-radius: 50%; background: #FFFFFF; transform: translate(-50%, -50%)"></div>
           <div data-blips></div>
         </div>

@@ -255,13 +255,13 @@ export function mount(el) {
     <div style="flex-grow:1;display:grid;grid-template-columns:560px minmax(0,1fr);gap:28px;min-height:0">
       <div style="border:1px solid #1E3A4A;background:#0A1220;display:flex;align-items:center;justify-content:center;position:relative">
         <div style="position:relative;width:460px;height:460px;border-radius:50%;border:2px solid #5CE1E6;box-sizing:border-box;background:#070C18">
-          <div style="position:absolute;inset:76px;border-radius:50%;border:1px solid #1E3A4A"></div>
-          <div style="position:absolute;inset:152px;border-radius:50%;border:1px solid #1E3A4A"></div>
+          <div style="position:absolute;top:76px;right:76px;bottom:76px;left:76px;border-radius:50%;border:1px solid #1E3A4A"></div>
+          <div style="position:absolute;top:152px;right:152px;bottom:152px;left:152px;border-radius:50%;border:1px solid #1E3A4A"></div>
           <div class="sk-nsew" style="left:50%;top:-30px;transform:translateX(-50%)">N</div>
           <div class="sk-nsew" style="left:50%;bottom:-30px;transform:translateX(-50%)">S</div>
           <div class="sk-nsew" style="top:50%;right:-28px;transform:translateY(-50%)">E</div>
           <div class="sk-nsew" style="top:50%;left:-30px;transform:translateY(-50%)">W</div>
-          <div data-marks style="position:absolute;inset:-2px"></div>
+          <div data-marks style="position:absolute;top:-2px;right:-2px;bottom:-2px;left:-2px"></div>
         </div>
         <div data-ref style="position:absolute;left:16px;bottom:12px;font-size:13px;letter-spacing:2px;color:#7FA6B8"></div>
         <div data-phase style="position:absolute;right:16px;bottom:12px;font-size:13px;letter-spacing:2px;color:#7FA6B8"></div>

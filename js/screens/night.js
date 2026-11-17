@@ -22,7 +22,7 @@ export function mount(el) {
   const ev = firstTomorrow();
 
   el.innerHTML = `
-  <a href="#/home" aria-label="Back home" style="position:absolute;inset:0;padding:48px;background:#0B0907;color:#C98A6B;
+  <a href="#/home" aria-label="Back home" style="position:absolute;top:0;right:0;bottom:0;left:0;padding:48px;background:#0B0907;color:#C98A6B;
      display:flex;flex-direction:column;justify-content:space-between;cursor:pointer">
     <div style="font-size:18px;letter-spacing:2px;text-transform:uppercase;color:#8C6450">Night mode · dimmed until 6 AM</div>
     <div style="display:flex;flex-direction:column;align-items:center;gap:12px">
