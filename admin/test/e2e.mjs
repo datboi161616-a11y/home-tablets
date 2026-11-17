@@ -5,7 +5,8 @@
 // usage: node e2e.mjs <hub http base> <admin password> <output dir>
 import { writeFileSync, mkdirSync } from 'node:fs';
 
-const [base, password, outDir = '.'] = process.argv.slice(2);
+const [base, password, outDir = '.', ...flags] = process.argv.slice(2);
+const noCamera = flags.includes('--no-camera'); // emulators whose fake camera gives no frames
 mkdirSync(outDir, { recursive: true });
 const log = (...a) => console.log(new Date().toISOString().slice(11, 19), ...a);
 const fail = (msg) => { console.error('E2E FAILED:', msg); process.exit(1); };
@@ -129,6 +130,8 @@ send({ type: 'watch', id: dev.id, mode: 'both' });
 await waitFor((m) => m.type === 'frame' && m.mode === 'control', 30000, 'hidden-session frame (both)');
 await waitFor((m) => m.type === 'frame' && m.mode === 'mirror' && !m.stale, 30000, 'their-screen frame (both)');
 log('dashboard view: hidden session and their-screen picture both live');
+
+if (noCamera) { log('camera steps skipped on this emulator'); writeFileSync(`${outDir}/remote-status.json`, JSON.stringify(st.device, null, 2)); log('E2E PASSED'); ws.close(); process.exit(0); }
 
 // 9. Camera: open it on their screen and take a photo remotely; the album should grow.
 await result('status');

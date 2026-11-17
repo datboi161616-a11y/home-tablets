@@ -68,6 +68,10 @@ jobs:
     # Android 10's original web engine (Chrome 74) crashes in the emulator's software
     # graphics now and then; real tablets have real GPUs. Report it, don't block releases.
     continue-on-error: ${{ matrix.api == 29 }}
+    env:
+      # Android 10 = the tablets' version; its fake camera works, so it tests the camera.
+      # The newer emulator's fake camera never delivers frames, so it skips those steps.
+      E2E_FLAGS: ${{ matrix.api == 34 && '--no-camera' || '' }}
     strategy:
       fail-fast: false
       matrix:
@@ -159,7 +163,7 @@ jobs:
 
           # --- Remote admin, end to end: approve, watch, control the hidden copy, commands ---
           adb shell am start -n com.hometablets.launcher/.MainActivity --es profile family
-          node admin/test/e2e.mjs http://127.0.0.1:8787 ci-test-password .
+          node admin/test/e2e.mjs http://127.0.0.1:8787 ci-test-password . $E2E_FLAGS
           adb exec-out screencap -p > shot-after-remote.png
           adb logcat -d > logcat-full.txt
           grep -E "chromium|HomeTablet|AndroidRuntime" logcat-full.txt | tail -80 > logcat.txt || true
@@ -186,7 +190,7 @@ jobs:
           target: default
           profile: pixel_c
           disable-animations: true
-          emulator-options: -no-window -gpu swiftshader_indirect -no-snapshot -noaudio -no-boot-anim -camera-front emulated -camera-back emulated
+          emulator-options: -no-window -gpu ${{ matrix.api == 29 && 'swangle_indirect' || 'swiftshader_indirect' }} -no-snapshot -noaudio -no-boot-anim -camera-front emulated -camera-back emulated
           script: ./test.sh
 
       - uses: actions/upload-artifact@v4

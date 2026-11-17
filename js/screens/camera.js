@@ -70,7 +70,7 @@ export function mount(el) {
     .cam-msg{position:absolute;top:0;right:0;bottom:0;left:0;display:none;flex-direction:column;align-items:center;justify-content:center;gap:16px;text-align:center;padding:40px;background:#000}
   </style>
   <div class="cam-root">
-    <video class="cam-video" data-video autoplay playsinline muted></video>
+    <video class="cam-video" data-video autoplay playsinline muted poster="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7"></video>
     <div class="cam-badge"><span class="cam-rec"></span>Camera on</div>
     <a class="cam-done" href="${back()}">Done</a>
     <div class="cam-time" data-time>0:00</div>
