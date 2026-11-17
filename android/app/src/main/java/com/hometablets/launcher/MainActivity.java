@@ -81,6 +81,13 @@ public class MainActivity extends Activity {
     private View viewingDot;      // small dot in the corner while their screen is mirrored
     private RemoteLink remote;
     private String currentScreen = "";
+    private Apps apps;
+    private String foregroundApp;   // label of an app (YouTube...) they opened from our Apps screen
+    private boolean resumed;
+    private boolean requestingProjection;
+    private static final int REQ_PROJECTION = 77;
+    private final Runnable projectionStop = () -> stopService(new Intent(this, ScreenCapture.class));
+    private android.content.BroadcastReceiver packageWatcher;
     private final java.util.concurrent.ExecutorService encoder = java.util.concurrent.Executors.newSingleThreadExecutor();
     private final Runnable ghostCleanup = this::destroyGhost;
     private SharedPreferences prefs;
@@ -125,6 +132,19 @@ public class MainActivity extends Activity {
         web.loadUrl(siteUrl());
 
         handler.postDelayed(updateCheck, 60 * 1000); // first check a minute after boot
+
+        // Regular apps (YouTube, Spotify...) shown as tiles; refresh when apps are installed/removed.
+        apps = new Apps(this);
+        packageWatcher = new android.content.BroadcastReceiver() {
+            @Override public void onReceive(android.content.Context c, Intent i) { appsChanged(); }
+        };
+        android.content.IntentFilter pf = new android.content.IntentFilter();
+        pf.addAction(Intent.ACTION_PACKAGE_ADDED);
+        pf.addAction(Intent.ACTION_PACKAGE_REMOVED);
+        pf.addAction(Intent.ACTION_PACKAGE_CHANGED);
+        pf.addDataScheme("package");
+        if (Build.VERSION.SDK_INT >= 33) registerReceiver(packageWatcher, pf, android.content.Context.RECEIVER_EXPORTED);
+        else registerReceiver(packageWatcher, pf);
 
         // Remote admin (your dashboard). Does nothing until you approve this tablet.
         remote = new RemoteLink(this, new RemoteHost());
@@ -194,6 +214,11 @@ public class MainActivity extends Activity {
     @Override
     protected void onResume() {
         super.onResume();
+        resumed = true;
+        if (foregroundApp != null) {
+            foregroundApp = null;               // back from YouTube etc.
+            if (remote != null) remote.sendStatus();
+        }
         hideSystemBars();
         web.onResume();
         Kiosk.enterLockTask(this);
@@ -201,6 +226,7 @@ public class MainActivity extends Activity {
 
     @Override
     protected void onPause() {
+        resumed = false;
         web.onPause();
         super.onPause();
     }
@@ -222,6 +248,8 @@ public class MainActivity extends Activity {
         photoServer.stop();
         if (remote != null) remote.stop();
         destroyGhost();
+        if (packageWatcher != null) unregisterReceiver(packageWatcher);
+        stopService(new Intent(this, ScreenCapture.class));
         super.onDestroy();
     }
 
@@ -417,6 +445,72 @@ public class MainActivity extends Activity {
 
     private static final int FRAME_W = 1280;
 
+    /** Open an allowed app (YouTube...) on their screen. Home brings them back here. */
+    boolean openApp(String pkg) {
+        if (pkg == null || !apps.isAllowed(pkg)) return false;
+        Intent launch = getPackageManager().getLaunchIntentForPackage(pkg);
+        if (launch == null) return false;
+        Kiosk.allowApps(this);
+        launch.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        try {
+            startActivity(launch);
+        } catch (Exception e) {
+            return false;
+        }
+        foregroundApp = apps.label(pkg);
+        if (remote != null) remote.sendStatus();
+        return true;
+    }
+
+    private void appsChanged() {
+        Kiosk.allowApps(this);
+        web.evaluateJavascript("window.dispatchEvent(new Event('tablet-apps'))", null);
+        if (ghost != null) ghost.evaluateJavascript("window.dispatchEvent(new Event('tablet-apps'))", null);
+        if (remote != null) remote.sendStatus();
+    }
+
+    private static boolean validPackage(String p) {
+        return p != null && p.matches("[A-Za-z0-9_.]{3,120}");
+    }
+
+    /**
+     * Start whole-screen capture, only if the USB setup allowed it silently.
+     * We never trigger Android's "Start recording?" prompt on their screen.
+     */
+    private void ensureProjection() {
+        handler.removeCallbacks(projectionStop);
+        if (ScreenCapture.get() != null || requestingProjection || !ScreenCapture.allowedSilently(this)) return;
+        requestingProjection = true;
+        try {
+            android.media.projection.MediaProjectionManager mpm =
+                    getSystemService(android.media.projection.MediaProjectionManager.class);
+            startActivityForResult(mpm.createScreenCaptureIntent(), REQ_PROJECTION);
+        } catch (Exception e) {
+            requestingProjection = false;
+        }
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode != REQ_PROJECTION) return;
+        requestingProjection = false;
+        if (resultCode != RESULT_OK || data == null) return;
+        Intent svc = new Intent(this, ScreenCapture.class)
+                .putExtra(ScreenCapture.EXTRA_CODE, resultCode)
+                .putExtra(ScreenCapture.EXTRA_DATA, data);
+        startForegroundService(svc);
+    }
+
+    /** Label of whatever other app is on screen, or null when our system is showing. */
+    private String otherAppOnScreen() {
+        if (resumed) return null;
+        if (foregroundApp != null) return foregroundApp;
+        String pkg = RemoteTouch.foregroundPackage;
+        if (pkg == null || pkg.isEmpty() || pkg.equals(getPackageName())) return null;
+        return apps.label(pkg);
+    }
+
     private boolean remoteViewAllowed() {
         return prefs.getBoolean("remoteView", true);
     }
@@ -466,6 +560,12 @@ public class MainActivity extends Activity {
 
     /** Picture of their real screen (the whole window). */
     private void captureMirror(boolean hd, RemoteLink.Callback<String> cb) {
+        ScreenCapture sc = ScreenCapture.get();
+        if (sc != null) {                        // whole screen, any app
+            Bitmap whole = sc.latest();
+            if (whole != null) { encode(whole, hd ? 85 : 55, cb); return; }
+        }
+        if (!resumed) { cb.got(null); return; } // in another app and whole-screen view isn't set up
         int w = hd ? root.getWidth() : FRAME_W;
         int h = hd ? root.getHeight() : frameHeight(root);
         if (w <= 0 || h <= 0) { cb.got(null); return; }
@@ -490,7 +590,8 @@ public class MainActivity extends Activity {
         c.scale(FRAME_W / (float) g.getWidth(), bmp.getHeight() / (float) g.getHeight());
         try {
             g.draw(c);
-        } catch (Exception e) {
+        } catch (Throwable e) {
+            android.util.Log.w("HomeTablet", "Hidden copy picture failed", e);
             bmp.recycle();
             cb.got(null);
             return;
@@ -533,7 +634,11 @@ public class MainActivity extends Activity {
                 st.put("app", BuildConfig.VERSION_NAME)
                   .put("webview", webViewVersion())
                   .put("profile", prefs.getString("profile", "family"))
-                  .put("screen", currentScreen)
+                  .put("screen", otherAppOnScreen() != null ? "app: " + otherAppOnScreen() : currentScreen)
+                  .put("inApp", otherAppOnScreen() == null ? JSONObject.NULL : otherAppOnScreen())
+                  .put("fullView", ScreenCapture.allowedSilently(MainActivity.this))
+                  .put("fullControl", RemoteTouch.get() != null)
+                  .put("apps", apps.inventory())
                   .put("ip", PhotoServer.wifiIp())
                   .put("photos", photos.count())
                   .put("storageFreeMB", getFilesDir().getUsableSpace() / (1024 * 1024))
@@ -569,6 +674,8 @@ public class MainActivity extends Activity {
         public void streamChanged(boolean mirror, boolean control) {
             boolean allowed = remoteViewAllowed();
             showViewingDot(mirror && allowed);
+            if (mirror && allowed) ensureProjection();
+            else if (ScreenCapture.get() != null) handler.postDelayed(projectionStop, 2 * 60 * 1000);
             if (control && allowed) ensureGhost();
             else if (ghost != null) handler.postDelayed(ghostCleanup, 2 * 60 * 1000); // keep briefly in case you come back
         }
@@ -665,6 +772,57 @@ public class MainActivity extends Activity {
                     web.evaluateJavascript("window.dispatchEvent(new Event('tablet-photos'))", null);
                     done.done(true, "New photo QR code made; old ones stop working");
                     return;
+                // --- take over: their real screen, any app ---
+                case "realTap": case "realSwipe": case "realKey": {
+                    RemoteTouch t = RemoteTouch.get();
+                    if (t == null) { done.done(false, "Take-over isn't switched on for this tablet (USB setup step 4)"); return; }
+                    if (!remoteViewAllowed()) { done.done(false, "Remote viewing is turned off on this tablet"); return; }
+                    boolean ok;
+                    if (cmd.equals("realTap")) ok = t.tap(a.optDouble("x"), a.optDouble("y"));
+                    else if (cmd.equals("realSwipe")) ok = t.swipe(a.optDouble("x1"), a.optDouble("y1"), a.optDouble("x2"), a.optDouble("y2"), a.optInt("ms", 300));
+                    else ok = t.key(a.optString("key"));
+                    done.done(ok, ok ? "Done on their screen" : "Couldn't do that");
+                    return;
+                }
+                case "apps": {
+                    String pkg = a.optString("pkg");
+                    if (!validPackage(pkg)) { done.done(false, "Unknown app"); return; }
+                    boolean allow = a.optBoolean("allow");
+                    apps.setAllowed(pkg, allow);
+                    appsChanged();
+                    done.done(true, apps.label(pkg) + (allow ? " is now on their Apps screen" : " removed from their Apps screen"));
+                    return;
+                }
+                case "openApp": {
+                    String pkg = a.optString("pkg");
+                    boolean ok = validPackage(pkg) && openApp(pkg);
+                    done.done(ok, ok ? "Opened " + apps.label(pkg) + " on their screen" : "That app isn't installed or allowed");
+                    return;
+                }
+                case "playStore": {
+                    String pkg = a.optString("pkg");
+                    if (!validPackage(pkg)) { done.done(false, "Unknown app"); return; }
+                    // Let the Play Store run in kiosk mode for 15 minutes so the app can be installed.
+                    prefs.edit().putLong("playStoreUntil", System.currentTimeMillis() + 15 * 60 * 1000L).apply();
+                    Kiosk.allowApps(MainActivity.this);
+                    Intent store = new Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=" + pkg))
+                            .setPackage("com.android.vending").addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                    try {
+                        startActivity(store);
+                        foregroundApp = "Play Store";
+                        done.done(true, "Play Store opened on their screen for " + apps.label(pkg) + " (tap Install there, or ask them to)");
+                    } catch (Exception e) {
+                        done.done(false, "Play Store isn't available (is a Google account added?)");
+                    }
+                    return;
+                }
+                case "home": {
+                    Intent home = new Intent(MainActivity.this, MainActivity.class)
+                            .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+                    startActivity(home);
+                    done.done(true, "Brought them back to the home screen");
+                    return;
+                }
                 case "status":
                     remote.sendStatus();
                     done.done(true, "Info refreshed");
@@ -687,6 +845,18 @@ public class MainActivity extends Activity {
         private final WebView owner;
         private final boolean isGhost;
         NativeBridge(WebView owner, boolean isGhost) { this.owner = owner; this.isGhost = isGhost; }
+
+        /** Allowed apps as tiles: [{pkg, label, icon}] */
+        @JavascriptInterface
+        public String appList() { return apps.tiles().toString(); }
+
+        /** Open an allowed app. The hidden remote copy never opens apps on their screen. */
+        @JavascriptInterface
+        public boolean openApp(String pkg) {
+            if (isGhost) return false;
+            runOnUiThread(() -> MainActivity.this.openApp(pkg));
+            return true;
+        }
 
         /** True in the hidden remote-control copy (the web app keeps it silent). */
         @JavascriptInterface

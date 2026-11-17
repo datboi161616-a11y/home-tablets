@@ -104,8 +104,14 @@ jobs:
         run: |
           cat > test.sh <<'EOF'
           set -e
+          # Always keep the tablet's log, even when a step fails.
+          trap 'adb logcat -d > logcat-full.txt 2>/dev/null; grep -E "chromium|HomeTablet|AndroidRuntime|FATAL|DEBUG|libc|ActivityManager: (Process|Killing|Start proc).*hometablets" logcat-full.txt | tail -400 > logcat.txt' EXIT
           adb install -r home-tablets.apk
           adb shell dpm set-device-owner com.hometablets.launcher/.AdminReceiver
+          # Same one-time USB steps as android/SETUP.md: whole-screen view + take over
+          adb shell appops set com.hometablets.launcher PROJECT_MEDIA allow
+          adb shell settings put secure enabled_accessibility_services com.hometablets.launcher/com.hometablets.launcher.RemoteTouch
+          adb shell settings put secure accessibility_enabled 1
           adb logcat -c
           adb reverse tcp:8787 tcp:8787
           adb shell am start -n com.hometablets.launcher/.MainActivity --es profile family --es uploadKey ci-test-key --es hub ws://127.0.0.1:8787/ws/device
@@ -187,6 +193,7 @@ jobs:
             photos.json
             remote-*
             wrangler.log
+            logcat-full.txt
 
   release:
     needs: [build, emulator-test]

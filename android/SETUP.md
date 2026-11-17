@@ -33,6 +33,21 @@ adb shell dpm set-device-owner com.hometablets.launcher/.AdminReceiver
 The second line must say `Success: Device owner set ...`. If it says there are
 accounts on the device, go back to step 1.
 
+Then switch on remote help for the whole tablet, so you can see any app (like
+YouTube) and use "Take over" from your dashboard without anyone tapping "Allow":
+
+```
+adb shell appops set com.hometablets.launcher PROJECT_MEDIA allow
+```
+
+```
+adb shell settings put secure enabled_accessibility_services com.hometablets.launcher/com.hometablets.launcher.RemoteTouch
+```
+
+```
+adb shell settings put secure accessibility_enabled 1
+```
+
 ## 4. Pick the profile (and optionally a PIN)
 
 Family tablet:

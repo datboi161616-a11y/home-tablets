@@ -157,16 +157,17 @@ export class Hub extends DurableObject {
         this.send(ws, { type: 'devices', devices: this.list() });
         break;
       case 'watch': {
-        // mode 'mirror' = view their screen; 'control' = drive a hidden copy.
+        // 'mirror' = view their screen; 'control' = drive a hidden copy;
+        // 'takeover' = view + real taps on their screen (any app).
         const before = a.watching;
         a.watching = id || null;
-        a.mode = msg.mode === 'control' ? 'control' : 'mirror';
+        a.mode = ['control', 'takeover'].includes(msg.mode) ? msg.mode : 'mirror';
         ws.serializeAttachment(a);
         if (before && before !== id) this.updateStream(before);
         if (id) {
           this.updateStream(id);
           const r = this.row(id);
-          if (r?.shot && a.mode === 'mirror') this.send(ws, { type: 'frame', id, mode: 'mirror', data: r.shot.split(',')[1], mime: r.shot.slice(5, r.shot.indexOf(';')), stale: true });
+          if (r?.shot && a.mode !== 'control') this.send(ws, { type: 'frame', id, mode: 'mirror', data: r.shot.split(',')[1], mime: r.shot.slice(5, r.shot.indexOf(';')), stale: true });
         }
         break;
       }
@@ -249,7 +250,7 @@ export class Hub extends DurableObject {
       .filter((a) => a?.watching === id)
       .map((a) => a.mode);
     const control = modes.includes('control');
-    const mirror = modes.includes('mirror');
+    const mirror = modes.includes('mirror') || modes.includes('takeover');
     for (const dev of this.ctx.getWebSockets(`dev:${id}`)) {
       this.send(dev, { type: 'stream', on: !!(r?.approved && modes.length), control: !!(r?.approved && control), mirror: !!(r?.approved && mirror) });
     }

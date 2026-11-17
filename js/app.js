@@ -17,7 +17,7 @@ fit();
 const SCREENS = {
   // Family
   home: 'Home dashboard', launcher: 'Apps', photos: 'Photo frame', recipe: 'Cooking mode',
-  addphotos: 'Add photos', calendar: 'Calendar', forecast: 'Weather', messages: 'Messages', night: 'Night clock',
+  addphotos: 'Add photos', apps: 'Apps', calendar: 'Calendar', forecast: 'Weather', messages: 'Messages', night: 'Night clock',
   // Tom · Space & Flight
   bridge: 'Flight deck', flights: 'Planes overhead', departures: 'Departures', trivia: 'Trivia',
   alert: 'Sky alert', missions: 'Space missions', sky: "Tonight's sky",

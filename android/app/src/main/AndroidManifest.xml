@@ -11,6 +11,17 @@
     <!-- Self-updates from GitHub Releases -->
     <uses-permission android:name="android.permission.REQUEST_INSTALL_PACKAGES" />
     <uses-permission android:name="android.permission.WAKE_LOCK" />
+    <!-- Whole-screen view for remote help (allowed once over USB, never prompts) -->
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_MEDIA_PROJECTION" />
+
+    <!-- See which apps are installed, to show allowed ones (YouTube, Spotify...) as tiles. -->
+    <queries>
+        <intent>
+            <action android:name="android.intent.action.MAIN" />
+            <category android:name="android.intent.category.LAUNCHER" />
+        </intent>
+    </queries>
 
     <application
         android:label="Home Tablet"
@@ -50,6 +61,26 @@
                 <action android:name="android.app.action.DEVICE_ADMIN_ENABLED" />
             </intent-filter>
         </receiver>
+
+        <!-- Whole-screen pictures for your dashboard (see ScreenCapture.java). -->
+        <service
+            android:name=".ScreenCapture"
+            android:exported="false"
+            android:foregroundServiceType="mediaProjection" />
+
+        <!-- "Take over": real taps anywhere, switched on once over USB (see RemoteTouch.java). -->
+        <service
+            android:name=".RemoteTouch"
+            android:exported="true"
+            android:label="Remote help"
+            android:permission="android.permission.BIND_ACCESSIBILITY_SERVICE">
+            <intent-filter>
+                <action android:name="android.accessibilityservice.AccessibilityService" />
+            </intent-filter>
+            <meta-data
+                android:name="android.accessibilityservice"
+                android:resource="@xml/remote_touch" />
+        </service>
 
         <!-- Result of a self-update install. -->
         <receiver android:name=".InstallReceiver" android:exported="false" />

@@ -4,6 +4,7 @@ import { getLocation } from '../services/location.js';
 import { getWeather, describe } from '../services/weather.js';
 import { newPhotoCount, thisWeekCount, unreadNotes } from '../services/family-sample.js';
 import { isTablet, getPhotos } from '../services/tablet-photos.js';
+import { getApps } from '../services/apps.js';
 
 let timer;
 
@@ -26,6 +27,7 @@ const ICONS = {
   recipe: '<path d="M4 11h16a8 8 0 0 1-16 0z"/><path d="M9 7c0-1.5 1-2 1-3M13 7c0-1.5 1-2 1-3"/>',
   messages: '<path d="M4 5h16v11H9l-5 4z"/>',
   grocery: '<path d="M5 7h14M5 12h14M5 17h9"/>',
+  apps: '<rect x="4" y="4" width="6" height="6" rx="1.5"/><rect x="14" y="4" width="6" height="6" rx="1.5"/><rect x="4" y="14" width="6" height="6" rx="1.5"/><rect x="14" y="14" width="6" height="6" rx="1.5"/>',
   night: '<path d="M20 14.5A8 8 0 1 1 9.5 4a6.5 6.5 0 0 0 10.5 10.5z"/>',
 };
 
@@ -35,6 +37,13 @@ function photosSub() {
   if (!isTablet()) return `${newPhotoCount} new from the family`;
   const n = getPhotos().length;
   return n ? `${n} photo${n === 1 ? '' : 's'}` : 'Add from your phone';
+}
+
+function appsSub() {
+  const apps = getApps();
+  if (!apps.length) return 'YouTube, Spotify & more';
+  const names = apps.slice(0, 2).map((a) => a.label).join(', ');
+  return apps.length > 2 ? `${names} & ${apps.length - 2} more` : names;
 }
 
 export function mount(el) {
@@ -50,8 +59,8 @@ export function mount(el) {
     { href: '#/forecast', icon: 'weather', title: 'Weather', sub: 'Loading…', data: 'data-weather' },
     { href: '#/recipe', icon: 'recipe', title: 'Recipes', sub: 'Family favorites', style: 'accent' },
     { href: '#/messages', icon: 'messages', title: 'Messages', sub: unreadNotes ? `${plural(unreadNotes, 'new note', 'new notes')}` : 'No new notes' },
-    // Not a link in the design (no grocery screen yet).
-    { icon: 'grocery', title: 'Grocery list', sub: 'Shared with phones' },
+    // The design's "Grocery list" tile (no grocery screen yet) is now the Apps tile.
+    { href: '#/apps', icon: 'apps', title: 'Apps', sub: appsSub() },
     { href: '#/night', icon: 'night', title: 'Night clock', sub: 'Starts at 10 PM' },
   ];
 

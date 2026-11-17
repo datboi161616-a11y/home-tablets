@@ -34,9 +34,10 @@ final class Kiosk {
         ComponentName admin = admin(a);
         String pkg = a.getPackageName();
         try {
-            dpm.setLockTaskPackages(admin, new String[] { pkg, "com.android.settings" });
-            // Keep the power menu so the tablet can still be turned off.
-            dpm.setLockTaskFeatures(admin, DevicePolicyManager.LOCK_TASK_FEATURE_GLOBAL_ACTIONS);
+            allowApps(a);
+            // Keep the power menu, and the Home button so other apps (YouTube...) lead back here.
+            dpm.setLockTaskFeatures(admin, DevicePolicyManager.LOCK_TASK_FEATURE_GLOBAL_ACTIONS
+                    | DevicePolicyManager.LOCK_TASK_FEATURE_HOME);
 
             // Always our app as the home screen.
             IntentFilter home = new IntentFilter(Intent.ACTION_MAIN);
@@ -55,6 +56,21 @@ final class Kiosk {
                     Manifest.permission.RECORD_AUDIO }) {
                 dpm.setPermissionGrantState(admin, pkg, p, DevicePolicyManager.PERMISSION_GRANT_STATE_GRANTED);
             }
+        } catch (SecurityException e) {
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * Which apps may run in kiosk mode: ours, Settings, the apps you allowed,
+     * and the Play Store for a few minutes after you open it from the dashboard.
+     */
+    static void allowApps(Context c) {
+        if (!isOwner(c)) return;
+        DevicePolicyManager dpm = c.getSystemService(DevicePolicyManager.class);
+        long playUntil = c.getSharedPreferences(MainActivity.PREFS, Context.MODE_PRIVATE).getLong("playStoreUntil", 0);
+        try {
+            dpm.setLockTaskPackages(admin(c), new Apps(c).lockTaskPackages(System.currentTimeMillis() < playUntil));
         } catch (SecurityException e) {
             e.printStackTrace();
         }

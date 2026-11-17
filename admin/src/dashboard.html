@@ -45,7 +45,16 @@
   .tabs button.sel { background:var(--ink); color:#111; border-color:var(--ink); font-weight:600; }
   .screen { position:relative; background:#000; border-radius:14px; overflow:hidden; aspect-ratio:16/10; border:1px solid var(--line); }
   .screen img { width:100%; height:100%; object-fit:contain; display:block; user-select:none; -webkit-user-drag:none; }
-  .screen.control img { cursor:crosshair; }
+  .screen.control img, .screen.takeover img { cursor:crosshair; }
+  .tabs button.sel.warn { background:var(--warn); border-color:var(--warn); }
+  .apps { display:flex; flex-direction:column; gap:6px; max-height:320px; overflow:auto; }
+  .app { display:flex; align-items:center; gap:10px; font-size:14px; }
+  .app .lbl { flex:1; min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+  .app button { padding:5px 10px; font-size:13px; }
+  .switch { width:38px; height:22px; border-radius:11px; background:#3A4555; position:relative; cursor:pointer; flex:none; border:0; padding:0; }
+  .switch.on { background:var(--ok); }
+  .switch::after { content:''; position:absolute; top:3px; left:3px; width:16px; height:16px; border-radius:50%; background:#fff; transition:left .15s; }
+  .switch.on::after { left:19px; }
   .screen .overlay { position:absolute; inset:0; display:flex; align-items:center; justify-content:center; color:var(--ink2); text-align:center; padding:30px; pointer-events:none; }
   .badge { position:absolute; top:10px; left:10px; background:rgba(0,0,0,.65); padding:5px 10px; border-radius:8px; font-size:12px; }
   .tapmark { position:absolute; width:26px; height:26px; margin:-13px 0 0 -13px; border:2px solid var(--accent); border-radius:50%; pointer-events:none; animation:tap .5s ease-out forwards; }
@@ -68,15 +77,15 @@
 <script>
 (() => {
   const SCREENS = {
-    family: ['home', 'launcher', 'photos', 'addphotos', 'recipe', 'calendar', 'forecast', 'messages', 'night'],
-    tom: ['bridge', 'flights', 'departures', 'trivia', 'alert', 'missions', 'sky', 'deepimage', 'viewscreen'],
+    family: ['home', 'launcher', 'apps', 'photos', 'addphotos', 'recipe', 'calendar', 'forecast', 'messages', 'night'],
+    tom: ['bridge', 'apps', 'flights', 'departures', 'trivia', 'alert', 'missions', 'sky', 'deepimage', 'viewscreen'],
   };
   const app = document.getElementById('app');
   const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c]);
   let token = localStorage.getItem('adminToken');
   let ws, devices = [], connected = false, retry = 0;
   let current = null;          // id of the tablet being viewed
-  let mode = 'mirror';         // 'mirror' (their screen) or 'control' (hidden copy)
+  let mode = 'mirror';         // 'mirror' (their screen), 'control' (hidden copy), 'takeover' (their real screen)
   let frameSize = { w: 0, h: 0 };
 
   // ----------------------------------------------------------- helpers
@@ -151,7 +160,7 @@
       if (i >= 0) devices[i] = m.device; else devices.push(m.device);
       render();
     }
-    else if (m.type === 'frame' && m.id === current && (m.mode || 'mirror') === mode) {
+    else if (m.type === 'frame' && m.id === current && (m.mode || 'mirror') === (mode === 'takeover' ? 'mirror' : mode)) {
       const img = document.getElementById('screenImg');
       if (!img) return;
       img.src = `data:${m.mime};base64,${m.data}`;
@@ -159,10 +168,11 @@
       const ov = document.getElementById('overlay');
       if (ov) ov.style.display = 'none';
       const b = document.getElementById('badge');
-      if (b) b.textContent = m.stale ? 'Last picture (waiting for live view…)' : (mode === 'control' ? 'Hidden session · live' : 'Their screen · live');
+      if (b) b.textContent = m.stale ? 'Last picture (waiting for live view…)' : ({ control: 'Hidden session · live', takeover: 'TAKE OVER · their real screen · live' })[mode] || 'Their screen · live';
     }
     else if (m.type === 'result') {
-      if (m.id === current || !current) toast(`${m.ok ? '✓' : '✗'} ${m.message || m.cmd}`, !m.ok);
+      const quiet = ['tap', 'swipe', 'realTap', 'realSwipe', 'realKey'].includes(m.cmd) && m.ok;
+      if (!quiet && (m.id === current || !current)) toast(`${m.ok ? '✓' : '✗'} ${m.message || m.cmd}`, !m.ok);
     }
   }
 
@@ -243,7 +253,9 @@
       ['Storage free', s.storageFreeMB != null ? `${(s.storageFreeMB / 1024).toFixed(1)} GB` : '—'],
       ['App / WebView', [s.app, s.webview].filter(Boolean).join(' / ') || '—'],
       ['Kiosk mode', s.kiosk == null ? '—' : s.kiosk ? 'On' : 'Off'],
-      ['Screen mirroring', s.mirrorAllowed === false ? 'Turned off on the tablet' : 'Allowed'],
+      ['Remote viewing', s.mirrorAllowed === false ? 'Turned off on the tablet' : 'Allowed'],
+      ['Whole-tablet view', s.fullView ? 'On (any app)' : 'Not set up: our screens only (USB setup step 4)'],
+      ['Take over', s.fullControl ? 'On' : 'Not set up (USB setup step 4)'],
       ['Device', [s.model, s.android && `Android ${s.android}`].filter(Boolean).join(' · ') || '—'],
       ['Up for', s.uptimeMin != null ? `${Math.round(s.uptimeMin / 60)} h` : '—'],
     ];
@@ -255,16 +267,26 @@
             <div class="tabs">
               <button data-mode="mirror" class="${mode === 'mirror' ? 'sel' : ''}">👁 Their screen</button>
               <button data-mode="control" class="${mode === 'control' ? 'sel' : ''}">🖱 Control (hidden)</button>
+              <button data-mode="takeover" class="${mode === 'takeover' ? 'sel warn' : ''}">🛠 Take over</button>
             </div>
           </div>
           <div class="screen ${mode}" id="screen">
             <img id="screenImg" alt="">
-            <div class="overlay" id="overlay">${d.online ? 'Connecting to the tablet…' : 'This tablet is offline.'}</div>
+            <div class="overlay" id="overlay">${!d.online ? 'This tablet is offline.'
+              : (mode !== 'control' && s.inApp && !s.fullView) ? `They’re using ${esc(s.inApp)}. Whole-tablet view isn’t set up, so only our own screens can be shown.`
+              : 'Connecting to the tablet…'}</div>
             <div class="badge" id="badge">${mode === 'control' ? 'Hidden session' : 'Their screen'}</div>
           </div>
-          <p class="hint">${mode === 'control'
-            ? 'You’re driving a hidden copy on the tablet: click to tap, drag to scroll. Their screen is not touched. Settings and data you change here are saved on the tablet.'
-            : 'View only: this is exactly what’s on their screen right now. Nothing you do here touches it.'}</p>
+          <p class="hint">${({
+            control: 'You’re driving a hidden copy on the tablet: click to tap, drag to scroll. Their screen is not touched. Settings and data you change here are saved on the tablet.',
+            takeover: '⚠ You’re controlling their REAL screen, including other apps: click to tap, drag to swipe. They will see everything you do.',
+          })[mode] || 'View only: this is exactly what’s on their screen right now. Nothing you do here touches it.'}</p>
+          ${mode === 'takeover' ? `
+          <div class="row" style="margin-top:8px">
+            <button data-c="realKey" data-k="back">◀ Back</button>
+            <button data-c="realKey" data-k="home">⌂ Home</button>
+            <button data-c="realKey" data-k="recents">▢ Recent apps</button>
+          </div>` : ''}
           ${mode === 'control' ? `
           <div class="row" style="margin-top:8px">
             <button data-c="back">◀ Back</button>
@@ -284,6 +306,7 @@
               <button data-c="reload">Reload their screen</button>
               <button data-c="restart">Restart app</button>
             </div>
+            ${s.inApp ? `<div class="row"><button data-c="home">⌂ Bring them back home (they’re in ${esc(s.inApp)})</button></div>` : ''}
             <div class="row">
               <select id="theirSel">${screens.map((n) => `<option>${n}</option>`).join('')}</select>
               <button id="theirGo">Show on their screen</button>
@@ -291,6 +314,21 @@
             <div class="row">
               <button data-c="profile" data-a="${prof === 'tom' ? 'family' : 'tom'}">Switch to ${prof === 'tom' ? 'Family' : 'Tom’s'} screens</button>
             </div>
+          </div>
+          <div class="box">
+            <h3>Apps on their Apps screen</h3>
+            <div class="apps">${(s.apps || []).length ? s.apps.map((a) => `
+              <div class="app">
+                ${a.installed
+                  ? `<button class="switch ${a.allowed ? 'on' : ''}" data-app="${esc(a.pkg)}" data-allow="${a.allowed ? '0' : '1'}" title="${a.allowed ? 'Shown' : 'Hidden'}"></button>`
+                  : '<span style="width:38px;flex:none"></span>'}
+                <span class="lbl">${esc(a.label)}</span>
+                ${a.installed
+                  ? (a.allowed ? `<button data-open-app="${esc(a.pkg)}">Open on their screen</button>` : '')
+                  : `<button data-install="${esc(a.pkg)}">Install…</button>`}
+              </div>`).join('') : '<div class="hint" style="margin:0">Waiting for the tablet’s app list…</div>'}
+            </div>
+            <div class="hint" style="margin:0">“Install…” opens the Play Store on their screen for 15 minutes (needs the Google account from setup).</div>
           </div>
           <div class="box">
             <h3>Settings & updates</h3>
@@ -360,6 +398,10 @@
     if (!d) return;
 
     document.querySelectorAll('[data-mode]').forEach((el) => el.onclick = () => {
+      if (el.dataset.mode === 'takeover' && mode !== 'takeover') {
+        if (!(d.status || {}).fullControl) { toast('Take over isn’t set up on this tablet yet (USB setup step 4)', true); return; }
+        if (!confirm('Take over controls their REAL screen. They will see everything you do. Continue?')) return;
+      }
       mode = el.dataset.mode;
       lastKey = '';
       send({ type: 'watch', id: d.id, mode });
@@ -367,6 +409,7 @@
     });
     document.querySelectorAll('[data-c]').forEach((el) => el.onclick = () => {
       const c = el.dataset.c, a = el.dataset.a;
+      if (c === 'realKey') return cmd(d.id, 'realKey', { key: el.dataset.k });
       if (c === 'restart' && !confirm('Restart the app on their tablet? Their screen will reload.')) return;
       if (c === 'profile' && !confirm(`Switch their tablet to ${a === 'tom' ? 'Tom’s' : 'Family'} screens?`)) return;
       cmd(d.id, c, a ? { screen: a, name: a } : {});
@@ -374,6 +417,14 @@
     if ($('navGo')) $('navGo').onclick = () => cmd(d.id, 'nav', { screen: $('navSel').value });
     if ($('typeGo')) $('typeGo').onclick = () => { cmd(d.id, 'type', { text: $('typeText').value }); $('typeText').value = ''; };
     $('theirGo').onclick = () => cmd(d.id, 'show', { screen: $('theirSel').value });
+    document.querySelectorAll('[data-app]').forEach((el) => el.onclick = () =>
+      cmd(d.id, 'apps', { pkg: el.dataset.app, allow: el.dataset.allow === '1' }));
+    document.querySelectorAll('[data-open-app]').forEach((el) => el.onclick = () => {
+      if (confirm('Open this app on their screen? It will interrupt whatever they are doing.')) cmd(d.id, 'openApp', { pkg: el.dataset.openApp });
+    });
+    document.querySelectorAll('[data-install]').forEach((el) => el.onclick = () => {
+      if (confirm('Open the Play Store on their screen so this app can be installed?')) cmd(d.id, 'playStore', { pkg: el.dataset.install });
+    });
     $('pinGo').onclick = () => {
       const pin = $('pin').value.trim();
       if (!/^\d{4,8}$/.test(pin)) return toast('PIN must be 4–8 digits', true);
@@ -386,7 +437,9 @@
 
     // Control mode: click = tap, drag = swipe. Coordinates are sent as 0..1.
     const img = $('screenImg');
-    if (mode !== 'control') return;
+    if (mode !== 'control' && mode !== 'takeover') return;
+    const tapCmd = mode === 'takeover' ? 'realTap' : 'tap';
+    const swipeCmd = mode === 'takeover' ? 'realSwipe' : 'swipe';
     let down = null;
     const point = (e) => {
       const r = img.getBoundingClientRect();
@@ -402,8 +455,8 @@
       if (!down) return;
       const up = point(e);
       const moved = Math.hypot(up.x - down.x, up.y - down.y);
-      if (moved < 0.015) cmd(d.id, 'tap', { x: up.x, y: up.y });
-      else cmd(d.id, 'swipe', { x1: down.x, y1: down.y, x2: up.x, y2: up.y, ms: Math.min(800, Math.max(150, Date.now() - down.t)) });
+      if (moved < 0.015) cmd(d.id, tapCmd, { x: up.x, y: up.y });
+      else cmd(d.id, swipeCmd, { x1: down.x, y1: down.y, x2: up.x, y2: up.y, ms: Math.min(800, Math.max(150, Date.now() - down.t)) });
       const mark = document.createElement('div');
       mark.className = 'tapmark';
       mark.style.left = up.px + 'px'; mark.style.top = up.py + 'px';

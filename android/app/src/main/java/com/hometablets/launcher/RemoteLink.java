@@ -60,6 +60,7 @@ final class RemoteLink {
     private boolean mirror, control;
     private int retry;
     private boolean framePending;
+    private long pendingSince;
 
     RemoteLink(Context ctx, Host host) {
         this.ctx = ctx.getApplicationContext();
@@ -128,13 +129,17 @@ final class RemoteLink {
         String url = hub + "?id=" + id() + "&secret=" + secret() + "&name=" + Uri.encode(name);
         socket = http.newWebSocket(new Request.Builder().url(url).build(), new WebSocketListener() {
             @Override public void onOpen(WebSocket ws, Response response) {
+                Log.i(TAG, "Remote link connected");
                 main.post(() -> { connected = true; retry = 0; sendStatus(); });
             }
             @Override public void onMessage(WebSocket ws, String text) {
                 if ("pong".equals(text)) return;
                 main.post(() -> onHubMessage(text));
             }
-            @Override public void onClosed(WebSocket ws, int code, String reason) { lost(code); }
+            @Override public void onClosed(WebSocket ws, int code, String reason) {
+                Log.i(TAG, "Remote link closed " + code + " " + reason);
+                lost(code);
+            }
             @Override public void onFailure(WebSocket ws, Throwable t, Response response) {
                 Log.w(TAG, "Remote link failed: " + t.getMessage());
                 lost(response != null ? response.code() : 0);
@@ -162,6 +167,7 @@ final class RemoteLink {
     private void onHubMessage(String text) {
         try {
             JSONObject m = new JSONObject(text);
+            Log.i(TAG, "Hub -> " + m.optString("type") + " " + m.optString("cmd") + " " + (m.has("on") ? "mirror=" + m.optBoolean("mirror") + " control=" + m.optBoolean("control") : ""));
             switch (m.optString("type")) {
                 case "welcome":
                     approved = m.optBoolean("approved");
@@ -174,6 +180,7 @@ final class RemoteLink {
                     String cmd = m.optString("cmd");
                     JSONObject args = m.optJSONObject("args");
                     host.command(cmd, args == null ? new JSONObject() : args, (ok, message) -> {
+                        Log.i(TAG, "Result " + cmd + " ok=" + ok + " " + message);
                         try {
                             send(new JSONObject().put("type", "result").put("cmd", cmd).put("ok", ok).put("message", message));
                         } catch (Exception ignored) { }
@@ -208,8 +215,10 @@ final class RemoteLink {
         host.capture("mirror", true, data -> sendFrame("shot", "mirror", data));
     }
 
+    private int framesSent;
     private void sendFrame(String type, String mode, String data) {
-        if (data == null) return;
+        if (data == null) { Log.i(TAG, "No " + mode + " picture this time"); return; }
+        if (++framesSent % 20 == 1) Log.i(TAG, "Frames sent: " + framesSent + " (" + mode + ", " + data.length() / 1024 + " KB)");
         try {
             send(new JSONObject().put("type", type).put("mode", mode).put("mime", "image/jpeg")
                     .put("w", 1280).put("h", 800).put("data", data));
@@ -226,8 +235,14 @@ final class RemoteLink {
         @Override public void run() {
             if (!(mirror || control) || !connected || !approved) return;
             WebSocket s = socket;
+            // Safety: if a picture never came back, don't let that stop all future pictures.
+            if (framePending && System.currentTimeMillis() - pendingSince > 5000) {
+                Log.w(TAG, "Screen picture timed out; carrying on");
+                framePending = false;
+            }
             if (!framePending && s != null && s.queueSize() < MAX_QUEUED_BYTES) {
                 framePending = true;
+                pendingSince = System.currentTimeMillis();
                 final boolean doMirror = mirror, doControl = control;
                 if (doControl) {
                     host.capture("control", false, data -> { sendFrame("frame", "control", data); framePending = false; });
