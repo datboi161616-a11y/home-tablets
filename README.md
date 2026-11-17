@@ -43,7 +43,8 @@ adsbdb (flight routes), NOAA SWPC (northern lights).
 
 ## Still to do
 
-- Free shared backend (Supabase) for photos, messages and calendar across tablets.
-- Phone photo upload via QR code; optional Google Photos picker.
+- Free backend (Supabase). The tablets are individual gifts, so **photos are private to
+  each tablet**: every tablet has its own album and its own upload QR code.
+- Phone photo upload via QR code (to that tablet only); optional Google Photos picker.
 - Relay for live aircraft data.
 - Android launcher app (WebView + kiosk/device-owner mode).

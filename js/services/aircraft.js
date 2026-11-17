@@ -151,7 +151,26 @@ function normalize(a, home) {
   return { ...ac, ...distBearing(home, ac.lat, ac.lon) };
 }
 
+// On the tablets, the Android launcher app exposes window.TabletNative, which can
+// fetch the aircraft feeds directly (apps aren't subject to browser CORS rules).
+function nativeFetch(url) {
+  return new Promise((resolve, reject) => {
+    const id = `nf${Date.now()}${Math.random().toString(36).slice(2)}`;
+    const timer = setTimeout(() => { delete window[id]; reject(new Error('native timeout')); }, 12000);
+    window[id] = (ok, body) => {
+      clearTimeout(timer);
+      delete window[id];
+      if (!ok) return reject(new Error(body));
+      try { resolve(JSON.parse(body)); } catch (e) { reject(e); }
+    };
+    window.TabletNative.fetchText(url, id);
+  });
+}
+
 async function getJSON(url) {
+  if (window.TabletNative?.fetchText) {
+    try { return await nativeFetch(url); } catch (e) { console.warn('native fetch failed', e); }
+  }
   const proxy = localStorage.getItem('aircraft.proxy');
   const tries = [url];
   if (proxy) tries.push(proxy + encodeURIComponent(url));

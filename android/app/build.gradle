@@ -1,0 +1,53 @@
+plugins {
+    id 'com.android.application'
+}
+
+// Set by the GitHub Actions build. Every build gets a higher number so the
+// tablets know an update is newer than what they have.
+def versionCodeEnv = (System.getenv('VERSION_CODE') ?: '1') as int
+
+android {
+    namespace 'com.hometablets.launcher'
+    compileSdk 34
+
+    defaultConfig {
+        applicationId 'com.hometablets.launcher'
+        minSdk 28          // Android 9: what the TB-X606F shipped with
+        targetSdk 34
+        versionCode versionCodeEnv
+        versionName "1.${versionCodeEnv}"
+
+        // The web app every tablet loads, and where app updates are published.
+        buildConfigField 'String', 'SITE_URL', '"https://datboi161616-a11y.github.io/home-tablets/"'
+        buildConfigField 'String', 'UPDATE_REPO', '"datboi161616-a11y/home-tablets"'
+    }
+
+    buildFeatures {
+        buildConfig true
+    }
+
+    signingConfigs {
+        release {
+            // Same key every build, so updates install over the old version.
+            def ks = System.getenv('KEYSTORE_FILE')
+            if (ks) {
+                storeFile file(ks)
+                storePassword System.getenv('KEYSTORE_PASSWORD')
+                keyAlias System.getenv('KEY_ALIAS')
+                keyPassword System.getenv('KEY_PASSWORD')
+            }
+        }
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            signingConfig System.getenv('KEYSTORE_FILE') ? signingConfigs.release : signingConfigs.debug
+        }
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
+    }
+}
