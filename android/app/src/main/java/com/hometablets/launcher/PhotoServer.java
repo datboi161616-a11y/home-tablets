@@ -146,11 +146,11 @@ final class PhotoServer {
             if (method.equals("GET") && path.equals("/")) {
                 send(out, 200, "text/html; charset=utf-8", readAsset("upload.html"));
             } else if (method.equals("GET") && path.equals("/api/photos")) {
-                sendJson(out, 200, new JSONObject().put("photos", store.list()).put("max", PhotoStore.MAX_PHOTOS));
+                sendJson(out, 200, new JSONObject().put("photos", store.list()).put("max", PhotoStore.MAX_ITEMS));
             } else if (method.equals("GET") && path.startsWith("/api/photo/")) {
                 File f = store.file(path.substring("/api/photo/".length()));
                 if (f == null) send(out, 404, "text/plain", "Not found".getBytes());
-                else sendFile(out, f);
+                else sendFile(out, f, store.contentType(path.substring("/api/photo/".length())));
             } else if (method.equals("POST") && path.equals("/api/upload")) {
                 long len = Long.parseLong(headers.getOrDefault("content-length", "0"));
                 try {
@@ -200,8 +200,8 @@ final class PhotoServer {
         out.flush();
     }
 
-    private static void sendFile(OutputStream out, File f) throws java.io.IOException {
-        out.write(head(200, "image/jpeg", f.length()).getBytes("UTF-8"));
+    private static void sendFile(OutputStream out, File f, String type) throws java.io.IOException {
+        out.write(head(200, type, f.length()).getBytes("UTF-8"));
         try (InputStream in = new FileInputStream(f)) {
             byte[] buf = new byte[65536];
             int n;

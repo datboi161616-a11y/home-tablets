@@ -12,7 +12,7 @@ export const isTablet = () => !!(N() && N().photoList);
 
 const fmtDay = (ms) => new Date(ms).toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
 
-/** Newest first: [{ id, src, title, line, name, added }] — or [] when not on a tablet. */
+/** Newest first: [{ id, src, video, title, line, name, added }] — or [] when not on a tablet. */
 export function getPhotos() {
   if (!isTablet()) return [];
   try {
@@ -20,6 +20,7 @@ export function getPhotos() {
     return JSON.parse(N().photoList()).map((p) => ({
       id: p.id,
       src: base + p.id,
+      video: !!p.video,
       name: p.name,
       added: p.added,
       title: p.caption || `Added ${fmtDay(p.added)}`,
@@ -34,6 +35,19 @@ export function getPhotos() {
 /** Address phones open, '' if the tablet isn't on Wi-Fi, null if not a tablet. */
 export function uploadUrl() {
   return isTablet() ? N().uploadUrl() : null;
+}
+
+/** Save a JPEG (data URL or bare base64) into this tablet's album. Returns true on a tablet. */
+export function savePhoto(jpeg, caption = 'Camera') {
+  if (!isTablet() || !N().savePhoto) return false;
+  const base64 = String(jpeg).replace(/^data:[^,]+,/, '');
+  try { return N().savePhoto(base64, caption); } catch { return false; }
+}
+
+/** Save a video clip (bare base64) into this tablet's album. Returns true on a tablet. */
+export function saveVideo(base64, caption = 'Video') {
+  if (!isTablet() || !N().saveVideo) return false;
+  try { return N().saveVideo(String(base64).replace(/^data:[^,]+,/, ''), caption); } catch { return false; }
 }
 
 /** Calls cb() whenever photos are added or removed. Returns an unsubscribe function. */

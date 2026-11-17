@@ -28,6 +28,7 @@ const ICONS = {
   messages: '<path d="M4 5h16v11H9l-5 4z"/>',
   grocery: '<path d="M5 7h14M5 12h14M5 17h9"/>',
   apps: '<rect x="4" y="4" width="6" height="6" rx="1.5"/><rect x="14" y="4" width="6" height="6" rx="1.5"/><rect x="4" y="14" width="6" height="6" rx="1.5"/><rect x="14" y="14" width="6" height="6" rx="1.5"/>',
+  camera: '<rect x="3" y="7" width="18" height="13" rx="2"/><circle cx="12" cy="13.5" r="3.5"/><path d="M8 7l1.5-2.5h5L16 7"/>',
   night: '<path d="M20 14.5A8 8 0 1 1 9.5 4a6.5 6.5 0 0 0 10.5 10.5z"/>',
 };
 
@@ -61,6 +62,7 @@ export function mount(el) {
     { href: '#/messages', icon: 'messages', title: 'Messages', sub: unreadNotes ? `${plural(unreadNotes, 'new note', 'new notes')}` : 'No new notes' },
     // The design's "Grocery list" tile (no grocery screen yet) is now the Apps tile.
     { href: '#/apps', icon: 'apps', title: 'Apps', sub: appsSub() },
+    { href: '#/camera', icon: 'camera', title: 'Camera', sub: 'Take a photo or video' },
     { href: '#/night', icon: 'night', title: 'Night clock', sub: 'Starts at 10 PM' },
   ];
 

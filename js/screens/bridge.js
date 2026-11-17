@@ -73,6 +73,7 @@ export function mount(el) {
       <div style="display: flex; gap: 28px; align-items: center">
         <div style="display: flex; gap: 10px; margin: -8px 0">
           <a href="#/apps" style="${chip}">APPS</a>
+          <a href="#/camera" style="${chip}">CAMERA</a>
           <a href="#/deepimage" style="${chip}">DEEP IMAGE</a>
           <a href="#/viewscreen" style="${chip}">VIEWSCREEN</a>
         </div>

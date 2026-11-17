@@ -130,6 +130,20 @@ await waitFor((m) => m.type === 'frame' && m.mode === 'control', 30000, 'hidden-
 await waitFor((m) => m.type === 'frame' && m.mode === 'mirror' && !m.stale, 30000, 'their-screen frame (both)');
 log('dashboard view: hidden session and their-screen picture both live');
 
+// 9. Camera: open it on their screen and take a photo remotely; the album should grow.
+await result('status');
+const before = (await waitFor((m) => m.type === 'device' && m.device.id === dev.id, 15000, 'status')).device.status.photos || 0;
+await result('camera');
+await sleep(5000);
+clear();
+saveFrame(await waitFor((m) => m.type === 'frame' && m.mode === 'mirror' && !m.stale, 30000, 'camera viewfinder'), 'remote-9-camera');
+await result('cameraShoot', { countdown: 1 });
+await sleep(5000);
+await result('status');
+const after = (await waitFor((m) => m.type === 'device' && m.device.id === dev.id, 15000, 'status after shot')).device.status.photos || 0;
+log('album photos before/after remote shot:', before, after);
+if (after <= before) fail('remote photo was not saved to the album');
+
 writeFileSync(`${outDir}/remote-status.json`, JSON.stringify(st.device, null, 2));
 log('E2E PASSED');
 ws.close();

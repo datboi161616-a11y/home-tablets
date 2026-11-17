@@ -87,8 +87,19 @@ export function mount(el) {
     index = i;
     const p = photos[i];
     const slide = document.createElement('div');
-    slide.className = `ph-slide ${i % 2 ? 'pan-b' : 'pan-a'}`;
-    if (p.src) {
+    slide.className = `ph-slide ${p.video ? '' : i % 2 ? 'pan-b' : 'pan-a'}`;
+    if (p.video) {
+      // Play the clip (muted), full-frame over black. Advance when it ends.
+      slide.style.background = '#000';
+      const v = document.createElement('video');
+      v.src = encodeURI(p.src);
+      v.muted = true; v.autoplay = true; v.playsInline = true;
+      v.style.cssText = 'position:absolute;top:0;right:0;bottom:0;left:0;width:100%;height:100%;object-fit:contain';
+      v.addEventListener('ended', () => { if (el.isConnected && photos.length > 1) next(); });
+      slide.appendChild(v);
+      slide.appendChild(badge('▶ Video'));
+      v.play?.().catch(() => {});
+    } else if (p.src) {
       // Whole photo (portrait ones too) over a blurred, darkened copy of itself.
       const u = `url('${encodeURI(p.src)}')`;
       slide.style.background = '#2A3038';
@@ -115,10 +126,23 @@ export function mount(el) {
     } else {
       dots.textContent = `${i + 1} / ${photos.length}`;
     }
+
+    // Auto-advance: photos after SLIDE_MS; videos when they end (handled above).
+    clearTimeout(slideTimer);
+    if (photos.length > 1 && !p.video) slideTimer = setTimeout(next, SLIDE_MS);
+  }
+
+  function next() { show((index + 1) % photos.length); }
+
+  function badge(text) {
+    const b = document.createElement('div');
+    b.textContent = text;
+    b.style.cssText = 'position:absolute;top:40px;left:48px;background:rgba(10,12,16,.6);padding:8px 16px;border-radius:999px;font-size:16px;font-weight:600;color:#fff';
+    return b;
   }
 
   function start() {
-    clearInterval(slideTimer);
+    clearTimeout(slideTimer);
     $('[data-empty]').style.display = photos.length ? 'none' : 'flex';
     if (!photos.length) {
       slidesEl.innerHTML = '';
@@ -128,7 +152,6 @@ export function mount(el) {
       return;
     }
     show(0); // newest first
-    if (photos.length > 1) slideTimer = setInterval(() => show((index + 1) % photos.length), SLIDE_MS);
   }
 
   start();
@@ -155,7 +178,7 @@ export function mount(el) {
 
 export function unmount() {
   clearInterval(clockTimer);
-  clearInterval(slideTimer);
+  clearTimeout(slideTimer);
   clearTimeout(fadeTimer);
   offPhotos?.();
 }

@@ -53,7 +53,8 @@ final class Kiosk {
             for (String p : new String[] {
                     Manifest.permission.ACCESS_FINE_LOCATION,
                     Manifest.permission.ACCESS_COARSE_LOCATION,
-                    Manifest.permission.RECORD_AUDIO }) {
+                    Manifest.permission.RECORD_AUDIO,
+                    Manifest.permission.CAMERA }) {
                 dpm.setPermissionGrantState(admin, pkg, p, DevicePolicyManager.PERMISSION_GRANT_STATE_GRANTED);
             }
         } catch (SecurityException e) {

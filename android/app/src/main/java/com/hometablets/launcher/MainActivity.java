@@ -230,9 +230,10 @@ public class MainActivity extends Activity {
                 String path = req.getUrl().getPath();
                 int at = path == null ? -1 : path.indexOf(PHOTO_PATH);
                 if (at < 0) return null;
-                java.io.File f = photos.file(path.substring(at + PHOTO_PATH.length()));
+                String mediaId = path.substring(at + PHOTO_PATH.length());
+                java.io.File f = photos.file(mediaId);
                 try {
-                    if (f != null) return new WebResourceResponse("image/jpeg", null, new java.io.FileInputStream(f));
+                    if (f != null) return new WebResourceResponse(photos.contentType(mediaId), null, new java.io.FileInputStream(f));
                 } catch (java.io.IOException ignored) { }
                 return new WebResourceResponse("text/plain", null, 404, "Not Found",
                         java.util.Collections.emptyMap(), new java.io.ByteArrayInputStream(new byte[0]));
@@ -269,6 +270,8 @@ public class MainActivity extends Activity {
     protected void onPause() {
         resumed = false;
         web.onPause();
+        // We just left for another app (or the Play Store): tell the dashboard promptly.
+        if (foregroundApp != null && remote != null) remote.sendStatus();
         super.onPause();
     }
 
@@ -340,7 +343,8 @@ public class MainActivity extends Activity {
         String[] perms = {
                 Manifest.permission.ACCESS_FINE_LOCATION,
                 Manifest.permission.ACCESS_COARSE_LOCATION,
-                Manifest.permission.RECORD_AUDIO };
+                Manifest.permission.RECORD_AUDIO,
+                Manifest.permission.CAMERA };
         for (String p : perms) {
             if (checkSelfPermission(p) != PackageManager.PERMISSION_GRANTED) {
                 requestPermissions(perms, 1); // device owner tablets are auto-granted instead
@@ -498,8 +502,25 @@ public class MainActivity extends Activity {
             return false;
         }
         foregroundApp = apps.label(pkg);
-        if (remote != null) remote.sendStatus();
+        if (remote != null) {
+            remote.sendStatus();
+            // Also report once the other app is actually in front (onPause fires then).
+            handler.postDelayed(() -> { if (foregroundApp != null) remote.sendStatus(); }, 1200);
+        }
         return true;
+    }
+
+    private void notifyPhotos() {
+        web.evaluateJavascript("window.dispatchEvent(new Event('tablet-photos'))", null);
+    }
+
+    /** Bring our own screen forward (back from any app) and open the camera on it. */
+    private void openCamera() {
+        if (foregroundApp != null) {
+            startActivity(new Intent(this, MainActivity.class)
+                    .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_REORDER_TO_FRONT));
+        }
+        if (!"camera".equals(currentScreen)) web.evaluateJavascript("location.hash='#/camera'", null);
     }
 
     private void appsChanged() {
@@ -791,6 +812,33 @@ public class MainActivity extends Activity {
                     handler.postDelayed(MainActivity.this::recreate, 500);
                     return;
 
+                // --- camera (on their real screen; never the hidden session) ---
+                case "camera":
+                    openCamera();
+                    done.done(true, "Camera opened on their screen");
+                    return;
+                case "cameraShoot": {
+                    int countdown = Math.max(0, Math.min(10, a.optInt("countdown", 3)));
+                    boolean wasOpen = "camera".equals(currentScreen);
+                    openCamera();
+                    // If the camera wasn't up yet, give it a moment to start before the countdown.
+                    handler.postDelayed(() -> web.evaluateJavascript(
+                            "window.dispatchEvent(new CustomEvent('tablet-camera-shoot',{detail:{countdown:" + countdown + "}}))", null),
+                            wasOpen ? 100 : 2000);
+                    done.done(true, "Taking a photo on their screen (" + countdown + "s countdown)");
+                    return;
+                }
+                case "cameraRecord": {
+                    boolean on = a.optBoolean("on");
+                    boolean wasOpen = "camera".equals(currentScreen);
+                    if (on) openCamera();
+                    handler.postDelayed(() -> web.evaluateJavascript(
+                            "window.dispatchEvent(new CustomEvent('tablet-camera-record',{detail:{on:" + on + "}}))", null),
+                            on && !wasOpen ? 2000 : 100);
+                    done.done(true, on ? "Recording started on their screen" : "Recording stopped");
+                    return;
+                }
+
                 // --- settings & updates ---
                 case "update":
                     Updater.check(MainActivity.this, false);
@@ -914,6 +962,20 @@ public class MainActivity extends Activity {
 
         @JavascriptInterface
         public boolean deletePhoto(String id) { return photos.delete(id); }
+
+        /** Save a JPEG from the tablet's camera into its album. */
+        @JavascriptInterface
+        public boolean savePhoto(String base64, String caption) {
+            try { photos.saveMedia(base64, false, caption); notifyPhotos(); return true; }
+            catch (Exception e) { android.util.Log.w("HomeTablet", "savePhoto", e); return false; }
+        }
+
+        /** Save a video clip from the tablet's camera into its album. */
+        @JavascriptInterface
+        public boolean saveVideo(String base64, String caption) {
+            try { photos.saveMedia(base64, true, caption); notifyPhotos(); return true; }
+            catch (Exception e) { android.util.Log.w("HomeTablet", "saveVideo", e); return false; }
+        }
 
         /** Fetch an allow-listed URL and call window[callback](ok, text). */
         @JavascriptInterface

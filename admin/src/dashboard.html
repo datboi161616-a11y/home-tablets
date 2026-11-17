@@ -308,6 +308,22 @@
             </div>
           </div>
           <div class="box">
+            <h3>Camera (group photo)</h3>
+            <div class="hint" style="margin:0">Opens the camera on their tablet — the picture above shows the live view. ${s.fullView ? '' : '<b>Note:</b> set up the one-time USB step so the live camera shows here.'}</div>
+            <div class="row">
+              <button data-c="camera">📷 Open camera on their screen</button>
+            </div>
+            <div class="row">
+              <button class="primary" data-c="cameraShoot" data-cd="3">Take photo (3s countdown)</button>
+              <button data-c="cameraShoot" data-cd="5">5s</button>
+            </div>
+            <div class="row">
+              <button id="recStart" data-c="cameraRecord" data-on="1">● Start video</button>
+              <button id="recStop" data-c="cameraRecord" data-on="0">■ Stop video</button>
+            </div>
+            <div class="hint" style="margin:0">Photos and videos save to this tablet’s own album.</div>
+          </div>
+          <div class="box">
             <h3>Apps on their Apps screen</h3>
             <div class="apps">${(s.apps || []).length ? s.apps.map((a) => `
               <div class="app">
@@ -394,6 +410,8 @@
       const c = el.dataset.c, a = el.dataset.a;
       if (c === 'restart' && !confirm('Restart the app on their tablet? Their screen will reload.')) return;
       if (c === 'profile' && !confirm(`Switch their tablet to ${a === 'tom' ? 'Tom’s' : 'Family'} screens?`)) return;
+      if (c === 'cameraShoot') return cmd(d.id, c, { countdown: Number(el.dataset.cd) || 3 });
+      if (c === 'cameraRecord') return cmd(d.id, c, { on: el.dataset.on === '1' });
       cmd(d.id, c, a ? { screen: a, name: a } : {});
     });
     if ($('navGo')) $('navGo').onclick = () => cmd(d.id, 'nav', { screen: $('navSel').value });

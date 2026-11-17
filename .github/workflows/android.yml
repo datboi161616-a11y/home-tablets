@@ -143,6 +143,11 @@ jobs:
           adb shell am start -n com.hometablets.launcher/.MainActivity --es screen addphotos
           sleep 10
           adb exec-out screencap -p > shot-addphotos.png
+
+          # --- Camera: open it on their screen and take a photo remotely (via the hub) ---
+          adb shell am start -n com.hometablets.launcher/.MainActivity --es screen camera
+          sleep 6
+          adb exec-out screencap -p > shot-camera.png
           adb shell am start -n com.hometablets.launcher/.MainActivity --es profile tom
           sleep 35
           adb exec-out screencap -p > shot-tom.png
@@ -179,7 +184,7 @@ jobs:
           target: default
           profile: pixel_c
           disable-animations: true
-          emulator-options: -no-window -gpu swiftshader_indirect -no-snapshot -noaudio -no-boot-anim
+          emulator-options: -no-window -gpu swiftshader_indirect -no-snapshot -noaudio -no-boot-anim -camera-front emulated -camera-back emulated
           script: ./test.sh
 
       - uses: actions/upload-artifact@v4
