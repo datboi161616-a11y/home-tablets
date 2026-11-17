@@ -20,8 +20,8 @@ Kiosk mode (device owner) only works on a tablet with **no Google account**.
 
 ## 3. Install the app and make it the device owner
 
-Download `home-tablets.apk` from the latest release:
-https://github.com/datboi161616-a11y/home-tablets/releases/latest
+Download `home-tablets.apk` (this link always gets the newest version):
+https://github.com/datboi161616-a11y/home-tablets/releases/latest/download/home-tablets.apk
 
 Then, in a terminal in the folder where you saved it:
 
@@ -69,12 +69,25 @@ Turn USB debugging off again (Developer options) and unplug. The tablet now boot
 straight into the home screen, has no lock screen or status bar, stays on while
 charging, and updates itself.
 
+## Adding photos
+
+Each tablet has its own private album: photos are stored on the tablet only.
+
+1. On the tablet: Photos → **+ Add photos** (or the button on the Home screen).
+2. On a phone **connected to the same Wi-Fi**: point the camera at the QR code and tap the link.
+3. Enter your name, optionally a caption, and **Choose photos**. They appear on the tablet in seconds.
+   The same page shows what's on the tablet and lets you remove photos.
+
+If the phone says it can't reach the tablet, the phone is probably on mobile data
+or a guest Wi-Fi network. Switch it to the same Wi-Fi as the tablet.
+
 ## Grown-up menu
 
 Press and hold the **top-left corner** of the screen for 5 seconds, then enter the PIN:
 
 - **Wi-Fi settings**: join the recipient's Wi-Fi (unlocks for 10 minutes).
 - **Switch profile**, **Reload**, **Check for app update**.
+- **New photo upload code**: old QR codes stop working (if a photo of the code got shared).
 - **Unlock tablet for 10 minutes**: use other Android settings. It locks again after that.
 
 ## Updates

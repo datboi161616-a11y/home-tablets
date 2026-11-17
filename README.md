@@ -43,8 +43,12 @@ adsbdb (flight routes), NOAA SWPC (northern lights).
 
 ## Still to do
 
-- Free backend (Supabase). The tablets are individual gifts, so **photos are private to
-  each tablet**: every tablet has its own album and its own upload QR code.
-- Phone photo upload via QR code (to that tablet only); optional Google Photos picker.
-- Relay for live aircraft data.
-- Android launcher app (WebView + kiosk/device-owner mode).
+- Message board and calendar still use sample data (decide: per tablet, or shared?).
+- Optional: Google Photos picker (would need a small cloud service).
+
+## Done
+
+- Android launcher app (`android/`, see `android/SETUP.md`): kiosk mode, self-updates
+  from GitHub Releases, live aircraft via the app.
+- Photos: phones on the same Wi-Fi scan a QR code and send photos straight to the
+  tablet. **Private to each tablet** (they're individual gifts); nothing goes to the cloud.

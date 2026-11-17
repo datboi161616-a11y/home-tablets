@@ -1,0 +1,19 @@
+# Admin hub for the home tablets: a free Cloudflare Worker + one Durable Object.
+# Deploy:   npx wrangler deploy        (from this folder)
+# Password: npx wrangler secret put ADMIN_PASSWORD
+name = "home-tablets-admin"
+main = "src/index.js"
+compatibility_date = "2026-11-01"
+
+[[durable_objects.bindings]]
+name = "HUB"
+class_name = "Hub"
+
+[[migrations]]
+tag = "v1"
+new_sqlite_classes = ["Hub"]
+
+[[rules]]
+type = "Text"
+globs = ["**/*.html"]
+fallthrough = true

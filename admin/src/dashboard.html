@@ -1,0 +1,421 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Tablet admin</title>
+<style>
+  :root { --bg:#0F141C; --panel:#171E29; --panel2:#1E2734; --line:#2A3544; --ink:#E7ECF2; --ink2:#93A0B2; --accent:#E0703F; --ok:#3FBF7F; --warn:#E3B341; --bad:#E5534B; }
+  * { box-sizing:border-box; }
+  body { margin:0; background:var(--bg); color:var(--ink); font:15px/1.45 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; }
+  button, input, select { font:inherit; color:inherit; }
+  button { background:var(--panel2); border:1px solid var(--line); border-radius:10px; padding:9px 14px; cursor:pointer; }
+  button:hover { border-color:#3B4A5E; }
+  button.primary { background:var(--accent); border-color:var(--accent); color:#fff; font-weight:600; }
+  button.danger { color:var(--bad); }
+  button:disabled { opacity:.45; cursor:default; }
+  input, select { background:var(--panel2); border:1px solid var(--line); border-radius:10px; padding:9px 12px; }
+  header { display:flex; align-items:center; gap:14px; padding:16px 24px; border-bottom:1px solid var(--line); position:sticky; top:0; background:var(--bg); z-index:5; }
+  header h1 { font-size:18px; margin:0; font-weight:650; }
+  .spacer { flex:1; }
+  .conn { font-size:13px; color:var(--ink2); display:flex; align-items:center; gap:8px; }
+  .dot { width:9px; height:9px; border-radius:50%; background:var(--ink2); display:inline-block; flex:none; }
+  .dot.on { background:var(--ok); } .dot.off { background:#5B6575; } .dot.pending { background:var(--warn); }
+  main { padding:24px; max-width:1500px; margin:0 auto; }
+  h2 { font-size:14px; text-transform:uppercase; letter-spacing:.08em; color:var(--ink2); margin:8px 0 14px; font-weight:600; }
+  .grid { display:grid; grid-template-columns:repeat(auto-fill, minmax(300px, 1fr)); gap:16px; margin-bottom:28px; }
+  .card { background:var(--panel); border:1px solid var(--line); border-radius:16px; overflow:hidden; }
+  .card.click { cursor:pointer; } .card.click:hover { border-color:#3B4A5E; }
+  .thumb { aspect-ratio:16/10; background:#0A0E14 center/cover no-repeat; display:flex; align-items:center; justify-content:center; color:var(--ink2); font-size:13px; }
+  .card .body { padding:14px 16px; display:flex; flex-direction:column; gap:6px; }
+  .name { font-weight:650; font-size:16px; display:flex; align-items:center; gap:8px; }
+  .meta { color:var(--ink2); font-size:13px; display:flex; flex-wrap:wrap; gap:4px 14px; }
+  .pending .body { gap:10px; }
+  .row { display:flex; gap:8px; flex-wrap:wrap; align-items:center; }
+  .empty { color:var(--ink2); padding:30px; text-align:center; border:1px dashed var(--line); border-radius:16px; }
+  /* login */
+  .login { max-width:360px; margin:12vh auto; background:var(--panel); border:1px solid var(--line); border-radius:18px; padding:28px; display:flex; flex-direction:column; gap:14px; }
+  .login h1 { margin:0; font-size:22px; }
+  .err { color:var(--bad); min-height:20px; font-size:14px; }
+  /* detail */
+  .detail { display:grid; grid-template-columns:minmax(0, 1fr) 340px; gap:20px; align-items:start; }
+  @media (max-width: 1000px) { .detail { grid-template-columns:1fr; } }
+  .tabs { display:flex; gap:6px; margin-bottom:12px; }
+  .tabs button.sel { background:var(--ink); color:#111; border-color:var(--ink); font-weight:600; }
+  .screen { position:relative; background:#000; border-radius:14px; overflow:hidden; aspect-ratio:16/10; border:1px solid var(--line); }
+  .screen img { width:100%; height:100%; object-fit:contain; display:block; user-select:none; -webkit-user-drag:none; }
+  .screen.control img { cursor:crosshair; }
+  .screen .overlay { position:absolute; inset:0; display:flex; align-items:center; justify-content:center; color:var(--ink2); text-align:center; padding:30px; pointer-events:none; }
+  .badge { position:absolute; top:10px; left:10px; background:rgba(0,0,0,.65); padding:5px 10px; border-radius:8px; font-size:12px; }
+  .tapmark { position:absolute; width:26px; height:26px; margin:-13px 0 0 -13px; border:2px solid var(--accent); border-radius:50%; pointer-events:none; animation:tap .5s ease-out forwards; }
+  @keyframes tap { from { transform:scale(.4); opacity:1 } to { transform:scale(1.4); opacity:0 } }
+  .hint { color:var(--ink2); font-size:13px; margin:10px 2px 0; }
+  .side { display:flex; flex-direction:column; gap:14px; }
+  .box { background:var(--panel); border:1px solid var(--line); border-radius:16px; padding:16px; display:flex; flex-direction:column; gap:10px; }
+  .box h3 { margin:0 0 2px; font-size:13px; text-transform:uppercase; letter-spacing:.08em; color:var(--ink2); }
+  table { width:100%; border-collapse:collapse; font-size:14px; }
+  td { padding:5px 0; border-bottom:1px solid var(--line); vertical-align:top; }
+  td:first-child { color:var(--ink2); width:42%; }
+  tr:last-child td { border-bottom:0; }
+  .toast { position:fixed; bottom:20px; left:50%; transform:translateX(-50%); background:var(--panel2); border:1px solid var(--line); padding:12px 18px; border-radius:12px; z-index:20; box-shadow:0 10px 30px rgba(0,0,0,.4); }
+  .toast.bad { border-color:var(--bad); }
+  a { color:var(--accent); }
+</style>
+</head>
+<body>
+<div id="app"></div>
+<script>
+(() => {
+  const SCREENS = {
+    family: ['home', 'launcher', 'photos', 'addphotos', 'recipe', 'calendar', 'forecast', 'messages', 'night'],
+    tom: ['bridge', 'flights', 'departures', 'trivia', 'alert', 'missions', 'sky', 'deepimage', 'viewscreen'],
+  };
+  const app = document.getElementById('app');
+  const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c]);
+  let token = localStorage.getItem('adminToken');
+  let ws, devices = [], connected = false, retry = 0;
+  let current = null;          // id of the tablet being viewed
+  let mode = 'mirror';         // 'mirror' (their screen) or 'control' (hidden copy)
+  let frameSize = { w: 0, h: 0 };
+
+  // ----------------------------------------------------------- helpers
+  const ago = (ms) => {
+    if (!ms) return 'never';
+    const s = Math.round((Date.now() - ms) / 1000);
+    if (s < 60) return 'just now';
+    if (s < 3600) return `${Math.round(s / 60)} min ago`;
+    if (s < 86400) return `${Math.round(s / 3600)} h ago`;
+    return `${Math.round(s / 86400)} days ago`;
+  };
+  function toast(text, bad) {
+    const t = document.createElement('div');
+    t.className = 'toast' + (bad ? ' bad' : '');
+    t.textContent = text;
+    document.body.appendChild(t);
+    setTimeout(() => t.remove(), 3500);
+  }
+  const send = (obj) => { if (ws && ws.readyState === 1) ws.send(JSON.stringify(obj)); };
+  const cmd = (id, name, args = {}) => send({ type: 'cmd', id, cmd: name, args });
+
+  // ----------------------------------------------------------- login
+  function showLogin(error) {
+    app.innerHTML = `
+      <form class="login" id="login">
+        <h1>Tablet admin</h1>
+        <div style="color:var(--ink2)">Sign in to see and manage your tablets.</div>
+        <input type="password" id="pw" placeholder="Admin password" autocomplete="current-password" autofocus>
+        <button class="primary" type="submit">Sign in</button>
+        <div class="err" id="err">${esc(error || '')}</div>
+      </form>`;
+    document.getElementById('login').onsubmit = async (e) => {
+      e.preventDefault();
+      const btn = e.target.querySelector('button');
+      btn.disabled = true;
+      const res = await fetch('/api/login', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ password: document.getElementById('pw').value }) });
+      const data = await res.json().catch(() => ({}));
+      btn.disabled = false;
+      if (!data.token) { document.getElementById('err').textContent = data.error || 'Sign-in failed'; return; }
+      token = data.token;
+      localStorage.setItem('adminToken', token);
+      connect();
+    };
+  }
+
+  // ----------------------------------------------------------- connection
+  function connect() {
+    const proto = location.protocol === 'https:' ? 'wss' : 'ws';
+    ws = new WebSocket(`${proto}://${location.host}/ws/admin?token=${encodeURIComponent(token)}`);
+    let opened = false;
+    ws.onopen = () => {
+      opened = true; connected = true; retry = 0;
+      if (current) send({ type: 'watch', id: current, mode });
+      render();
+    };
+    ws.onmessage = (e) => { if (e.data !== 'pong') onMessage(JSON.parse(e.data)); };
+    ws.onclose = () => {
+      connected = false;
+      if (!opened && retry === 0) { localStorage.removeItem('adminToken'); token = null; return showLogin('Please sign in again.'); }
+      retry++;
+      setConnLabel();
+      setTimeout(connect, Math.min(15000, 1000 * retry));
+    };
+  }
+  // Keep-alive: the hub answers a plain "ping" without waking up (free tier friendly).
+  setInterval(() => { if (ws && ws.readyState === 1) ws.send('ping'); }, 25000);
+
+  function onMessage(m) {
+    if (m.type === 'devices') { devices = m.devices; render(); }
+    else if (m.type === 'device') {
+      const i = devices.findIndex((d) => d.id === m.device.id);
+      if (i >= 0) devices[i] = m.device; else devices.push(m.device);
+      render();
+    }
+    else if (m.type === 'frame' && m.id === current && (m.mode || 'mirror') === mode) {
+      const img = document.getElementById('screenImg');
+      if (!img) return;
+      img.src = `data:${m.mime};base64,${m.data}`;
+      if (m.w) frameSize = { w: m.w, h: m.h };
+      const ov = document.getElementById('overlay');
+      if (ov) ov.style.display = 'none';
+      const b = document.getElementById('badge');
+      if (b) b.textContent = m.stale ? 'Last picture (waiting for live view…)' : (mode === 'control' ? 'Hidden session · live' : 'Their screen · live');
+    }
+    else if (m.type === 'result') {
+      if (m.id === current || !current) toast(`${m.ok ? '✓' : '✗'} ${m.message || m.cmd}`, !m.ok);
+    }
+  }
+
+  function setConnLabel() {
+    const el = document.getElementById('conn');
+    if (el) el.innerHTML = `<span class="dot ${connected ? 'on' : 'off'}"></span>${connected ? 'Connected' : 'Reconnecting…'}`;
+  }
+
+  // ----------------------------------------------------------- views
+  function shell(inner) {
+    return `
+      <header>
+        <h1>${current ? '<a href="#" id="back" style="color:var(--ink);text-decoration:none">← Tablets</a>' : 'Tablets'}</h1>
+        <div class="spacer"></div>
+        <div class="conn" id="conn"></div>
+        <button id="logout">Sign out</button>
+      </header>
+      <main>${inner}</main>`;
+  }
+
+  function deviceCard(d) {
+    const s = d.status || {};
+    const state = d.online ? 'on' : 'off';
+    return `
+      <div class="card click" data-open="${esc(d.id)}">
+        <div class="thumb" style="${d.shot ? `background-image:url('${d.shot}')` : ''}">${d.shot ? '' : 'No picture yet'}</div>
+        <div class="body">
+          <div class="name"><span class="dot ${state}"></span>${esc(d.name)}</div>
+          <div class="meta">
+            <span>${d.online ? 'Online' : `Offline · seen ${ago(d.lastSeen)}`}</span>
+            ${s.profile ? `<span>${s.profile === 'tom' ? 'Tom’s screens' : 'Family screens'}</span>` : ''}
+            ${s.screen ? `<span>On: ${esc(s.screen)}</span>` : ''}
+            ${s.battery != null ? `<span>🔋 ${s.battery}%${s.charging ? ' ⚡' : ''}</span>` : ''}
+            ${s.app ? `<span>App ${esc(s.app)}</span>` : ''}
+          </div>
+        </div>
+      </div>`;
+  }
+
+  function pendingCard(d) {
+    const s = d.status || {};
+    return `
+      <div class="card pending">
+        <div class="body">
+          <div class="name"><span class="dot pending"></span>New tablet wants to join</div>
+          <div class="meta"><span>${esc(s.model || d.name)}</span><span>Asked ${ago(d.created)}</span>${s.ip ? `<span>${esc(s.ip)}</span>` : ''}</div>
+          <input data-name="${esc(d.id)}" value="${esc(d.name)}" placeholder="Name, e.g. Grandma’s tablet">
+          <div class="row">
+            <button class="primary" data-approve="${esc(d.id)}">Approve</button>
+            <button class="danger" data-remove="${esc(d.id)}">Reject</button>
+          </div>
+        </div>
+      </div>`;
+  }
+
+  function listView() {
+    const approved = devices.filter((d) => d.approved);
+    const pending = devices.filter((d) => !d.approved);
+    return shell(`
+      ${pending.length ? `<h2>Waiting for approval</h2><div class="grid">${pending.map(pendingCard).join('')}</div>` : ''}
+      <h2>Your tablets (${approved.length})</h2>
+      ${approved.length ? `<div class="grid">${approved.map(deviceCard).join('')}</div>`
+        : `<div class="empty">No tablets yet. Set one up (android/SETUP.md) and it will appear here for you to approve.</div>`}
+    `);
+  }
+
+  function detailView(d) {
+    const s = d.status || {};
+    const prof = s.profile || 'family';
+    const screens = SCREENS[prof] || SCREENS.family;
+    const rows = [
+      ['Status', d.online ? 'Online' : `Offline · seen ${ago(d.lastSeen)}`],
+      ['Showing now', s.screen || '—'],
+      ['Screens', prof === 'tom' ? 'Tom (space & flight)' : 'Family'],
+      ['Battery', s.battery != null ? `${s.battery}%${s.charging ? ' (charging)' : ''}` : '—'],
+      ['Wi-Fi', [s.wifi, s.ip].filter(Boolean).join(' · ') || '—'],
+      ['Photos', s.photos != null ? s.photos : '—'],
+      ['Storage free', s.storageFreeMB != null ? `${(s.storageFreeMB / 1024).toFixed(1)} GB` : '—'],
+      ['App / WebView', [s.app, s.webview].filter(Boolean).join(' / ') || '—'],
+      ['Kiosk mode', s.kiosk == null ? '—' : s.kiosk ? 'On' : 'Off'],
+      ['Screen mirroring', s.mirrorAllowed === false ? 'Turned off on the tablet' : 'Allowed'],
+      ['Device', [s.model, s.android && `Android ${s.android}`].filter(Boolean).join(' · ') || '—'],
+      ['Up for', s.uptimeMin != null ? `${Math.round(s.uptimeMin / 60)} h` : '—'],
+    ];
+    return shell(`
+      <div class="detail">
+        <div>
+          <div class="row" style="justify-content:space-between;margin-bottom:12px">
+            <div class="name" style="font-size:22px"><span class="dot ${d.online ? 'on' : 'off'}"></span>${esc(d.name)}</div>
+            <div class="tabs">
+              <button data-mode="mirror" class="${mode === 'mirror' ? 'sel' : ''}">👁 Their screen</button>
+              <button data-mode="control" class="${mode === 'control' ? 'sel' : ''}">🖱 Control (hidden)</button>
+            </div>
+          </div>
+          <div class="screen ${mode}" id="screen">
+            <img id="screenImg" alt="">
+            <div class="overlay" id="overlay">${d.online ? 'Connecting to the tablet…' : 'This tablet is offline.'}</div>
+            <div class="badge" id="badge">${mode === 'control' ? 'Hidden session' : 'Their screen'}</div>
+          </div>
+          <p class="hint">${mode === 'control'
+            ? 'You’re driving a hidden copy on the tablet: click to tap, drag to scroll. Their screen is not touched. Settings and data you change here are saved on the tablet.'
+            : 'View only: this is exactly what’s on their screen right now. Nothing you do here touches it.'}</p>
+          ${mode === 'control' ? `
+          <div class="row" style="margin-top:8px">
+            <button data-c="back">◀ Back</button>
+            <button data-c="nav" data-a="${prof === 'tom' ? 'bridge' : 'home'}">⌂ Home</button>
+            <select id="navSel">${screens.map((n) => `<option>${n}</option>`).join('')}</select>
+            <button id="navGo">Open</button>
+            <input id="typeText" placeholder="Type text into the hidden session" style="flex:1;min-width:180px">
+            <button id="typeGo">Type</button>
+          </div>` : ''}
+        </div>
+
+        <div class="side">
+          <div class="box">
+            <h3>Their tablet</h3>
+            <div class="hint" style="margin:0">These change what they see.</div>
+            <div class="row">
+              <button data-c="reload">Reload their screen</button>
+              <button data-c="restart">Restart app</button>
+            </div>
+            <div class="row">
+              <select id="theirSel">${screens.map((n) => `<option>${n}</option>`).join('')}</select>
+              <button id="theirGo">Show on their screen</button>
+            </div>
+            <div class="row">
+              <button data-c="profile" data-a="${prof === 'tom' ? 'family' : 'tom'}">Switch to ${prof === 'tom' ? 'Family' : 'Tom’s'} screens</button>
+            </div>
+          </div>
+          <div class="box">
+            <h3>Settings & updates</h3>
+            <div class="row"><button data-c="update">Install app update</button><button data-c="status">Refresh info</button></div>
+            <div class="row"><input id="pin" placeholder="New grown-up PIN" inputmode="numeric" style="width:160px"><button id="pinGo">Set PIN</button></div>
+            <div class="row"><button data-c="newPhotoCode">New photo QR code</button><button data-c="shot">HD screenshot</button></div>
+          </div>
+          <div class="box">
+            <h3>Info</h3>
+            <table>${rows.map(([k, v]) => `<tr><td>${k}</td><td>${esc(v)}</td></tr>`).join('')}</table>
+          </div>
+          <div class="box">
+            <h3>Manage</h3>
+            <div class="row"><input id="rename" value="${esc(d.name)}" style="flex:1"><button id="renameGo">Rename</button></div>
+            <div class="row"><button class="danger" id="remove">Remove tablet</button></div>
+          </div>
+        </div>
+      </div>`);
+  }
+
+  // Only re-render the parts that change, so the live picture isn't reset.
+  let lastKey = '';
+  function render() {
+    if (!token) return showLogin();
+    const d = current && devices.find((x) => x.id === current);
+    if (current && !d) { current = null; }
+    const key = current ? `detail:${current}:${mode}:${JSON.stringify({ ...d, shot: null, lastSeen: null })}` : `list:${JSON.stringify(devices.map((x) => ({ ...x, lastSeen: null })))}`;
+    if (key === lastKey) return setConnLabel();
+    const keepImg = current && lastKey.startsWith(`detail:${current}:${mode}:`) && document.getElementById('screenImg')?.src;
+    lastKey = key;
+    app.innerHTML = current ? detailView(d) : listView();
+    if (keepImg) {
+      document.getElementById('screenImg').src = keepImg;
+      document.getElementById('overlay').style.display = 'none';
+    }
+    setConnLabel();
+    wire(d);
+  }
+
+  function open(id) {
+    current = id;
+    mode = 'mirror';
+    lastKey = '';
+    send({ type: 'watch', id, mode });
+    render();
+  }
+
+  function close() {
+    send({ type: 'watch', id: null });
+    current = null;
+    lastKey = '';
+    render();
+  }
+
+  function wire(d) {
+    const $ = (s) => document.getElementById(s);
+    $('logout').onclick = () => { localStorage.removeItem('adminToken'); token = null; ws && ws.close(); location.reload(); };
+    if ($('back')) $('back').onclick = (e) => { e.preventDefault(); close(); };
+    document.querySelectorAll('[data-open]').forEach((el) => el.onclick = () => open(el.dataset.open));
+    document.querySelectorAll('[data-approve]').forEach((el) => el.onclick = () => {
+      const name = document.querySelector(`[data-name="${el.dataset.approve}"]`).value.trim();
+      send({ type: 'approve', id: el.dataset.approve, name });
+    });
+    document.querySelectorAll('[data-remove]').forEach((el) => el.onclick = () => {
+      if (confirm('Reject this tablet?')) send({ type: 'remove', id: el.dataset.remove });
+    });
+    if (!d) return;
+
+    document.querySelectorAll('[data-mode]').forEach((el) => el.onclick = () => {
+      mode = el.dataset.mode;
+      lastKey = '';
+      send({ type: 'watch', id: d.id, mode });
+      render();
+    });
+    document.querySelectorAll('[data-c]').forEach((el) => el.onclick = () => {
+      const c = el.dataset.c, a = el.dataset.a;
+      if (c === 'restart' && !confirm('Restart the app on their tablet? Their screen will reload.')) return;
+      if (c === 'profile' && !confirm(`Switch their tablet to ${a === 'tom' ? 'Tom’s' : 'Family'} screens?`)) return;
+      cmd(d.id, c, a ? { screen: a, name: a } : {});
+    });
+    if ($('navGo')) $('navGo').onclick = () => cmd(d.id, 'nav', { screen: $('navSel').value });
+    if ($('typeGo')) $('typeGo').onclick = () => { cmd(d.id, 'type', { text: $('typeText').value }); $('typeText').value = ''; };
+    $('theirGo').onclick = () => cmd(d.id, 'show', { screen: $('theirSel').value });
+    $('pinGo').onclick = () => {
+      const pin = $('pin').value.trim();
+      if (!/^\d{4,8}$/.test(pin)) return toast('PIN must be 4–8 digits', true);
+      cmd(d.id, 'pin', { pin }); $('pin').value = '';
+    };
+    $('renameGo').onclick = () => send({ type: 'rename', id: d.id, name: $('rename').value.trim() });
+    $('remove').onclick = () => {
+      if (confirm(`Remove ${d.name}? It will need approving again to come back.`)) { send({ type: 'remove', id: d.id }); close(); }
+    };
+
+    // Control mode: click = tap, drag = swipe. Coordinates are sent as 0..1.
+    const img = $('screenImg');
+    if (mode !== 'control') return;
+    let down = null;
+    const point = (e) => {
+      const r = img.getBoundingClientRect();
+      // The picture is letterboxed inside the box (object-fit: contain).
+      const iw = img.naturalWidth || 16, ih = img.naturalHeight || 10;
+      const s = Math.min(r.width / iw, r.height / ih);
+      const w = iw * s, h = ih * s, ox = (r.width - w) / 2, oy = (r.height - h) / 2;
+      const x = (e.clientX - r.left - ox) / w, y = (e.clientY - r.top - oy) / h;
+      return { x: Math.max(0, Math.min(1, x)), y: Math.max(0, Math.min(1, y)), px: e.clientX - r.left, py: e.clientY - r.top };
+    };
+    img.onpointerdown = (e) => { e.preventDefault(); down = { ...point(e), t: Date.now() }; };
+    img.onpointerup = (e) => {
+      if (!down) return;
+      const up = point(e);
+      const moved = Math.hypot(up.x - down.x, up.y - down.y);
+      if (moved < 0.015) cmd(d.id, 'tap', { x: up.x, y: up.y });
+      else cmd(d.id, 'swipe', { x1: down.x, y1: down.y, x2: up.x, y2: up.y, ms: Math.min(800, Math.max(150, Date.now() - down.t)) });
+      const mark = document.createElement('div');
+      mark.className = 'tapmark';
+      mark.style.left = up.px + 'px'; mark.style.top = up.py + 'px';
+      $('screen').appendChild(mark);
+      setTimeout(() => mark.remove(), 600);
+      down = null;
+    };
+  }
+
+  setInterval(() => { if (!current) { lastKey = ''; render(); } }, 60000); // refresh "x min ago"
+  if (token) connect(); else showLogin();
+})();
+</script>
+</body>
+</html>

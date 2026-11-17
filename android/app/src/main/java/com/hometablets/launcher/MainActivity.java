@@ -7,7 +7,20 @@ import android.app.AlertDialog;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
+import android.graphics.Canvas;
 import android.graphics.Color;
+import android.graphics.drawable.GradientDrawable;
+import android.net.wifi.WifiManager;
+import android.os.BatteryManager;
+import android.os.Build;
+import android.os.SystemClock;
+import android.util.Base64;
+import android.view.Gravity;
+import android.view.InputDevice;
+import android.view.PixelCopy;
+import android.view.ViewGroup;
+import android.widget.FrameLayout;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
@@ -62,7 +75,14 @@ public class MainActivity extends Activity {
     /** Virtual path the web app uses to show this tablet's photos: <site>/__tablet/photos/<id> */
     private static final String PHOTO_PATH = "/__tablet/photos/";
 
-    private WebView web;
+    private WebView web;          // their screen
+    private WebView ghost;        // hidden copy you drive remotely (only while controlling)
+    private FrameLayout root;
+    private View viewingDot;      // small dot in the corner while their screen is mirrored
+    private RemoteLink remote;
+    private String currentScreen = "";
+    private final java.util.concurrent.ExecutorService encoder = java.util.concurrent.Executors.newSingleThreadExecutor();
+    private final Runnable ghostCleanup = this::destroyGhost;
     private SharedPreferences prefs;
     private PhotoStore photos;
     private PhotoServer photoServer;
@@ -93,33 +113,51 @@ public class MainActivity extends Activity {
 
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 
+        root = new FrameLayout(this);
+        root.setBackgroundColor(Color.BLACK);
         web = new WebView(this);
-        web.setBackgroundColor(Color.BLACK);
-        setContentView(web);
+        configureWebView(web, false);
+        root.addView(web, new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
+        setContentView(root);
 
-        WebSettings s = web.getSettings();
+        requestRuntimePermissions();
+        Kiosk.applyPolicies(this);
+        web.loadUrl(siteUrl());
+
+        handler.postDelayed(updateCheck, 60 * 1000); // first check a minute after boot
+
+        // Remote admin (your dashboard). Does nothing until you approve this tablet.
+        remote = new RemoteLink(this, new RemoteHost());
+        remote.start();
+    }
+
+    @SuppressLint("SetJavaScriptEnabled")
+    private void configureWebView(WebView w, boolean isGhost) {
+        w.setBackgroundColor(Color.BLACK);
+        WebSettings s = w.getSettings();
         s.setJavaScriptEnabled(true);
         s.setDomStorageEnabled(true);
         s.setDatabaseEnabled(true);
         s.setGeolocationEnabled(true);
-        s.setMediaPlaybackRequiresUserGesture(false);
+        s.setMediaPlaybackRequiresUserGesture(isGhost); // the hidden copy never plays sound
         s.setCacheMode(WebSettings.LOAD_DEFAULT);
         s.setUserAgentString(s.getUserAgentString() + " HomeTablet/" + BuildConfig.VERSION_NAME);
 
-        web.addJavascriptInterface(new NativeBridge(), "TabletNative");
+        w.addJavascriptInterface(new NativeBridge(w, isGhost), "TabletNative");
 
-        web.setWebChromeClient(new WebChromeClient() {
+        w.setWebChromeClient(new WebChromeClient() {
             @Override
             public void onGeolocationPermissionsShowPrompt(String origin, GeolocationPermissions.Callback cb) {
                 cb.invoke(origin, true, true); // only our own site is ever loaded
             }
             @Override
             public void onPermissionRequest(PermissionRequest request) {
+                if (isGhost) { runOnUiThread(request::deny); return; } // no microphone for the hidden copy
                 runOnUiThread(() -> request.grant(request.getResources())); // microphone for dictation
             }
         });
 
-        web.setWebViewClient(new WebViewClient() {
+        w.setWebViewClient(new WebViewClient() {
             @Override
             public boolean shouldOverrideUrlLoading(WebView view, WebResourceRequest req) {
                 // Stay inside our site; never wander off to other websites.
@@ -142,15 +180,9 @@ public class MainActivity extends Activity {
             @Override
             public void onReceivedError(WebView view, WebResourceRequest req, WebResourceError err) {
                 // No Wi-Fi on the very first start (before anything is cached): retry.
-                if (req.isForMainFrame()) handler.postDelayed(() -> web.loadUrl(siteUrl()), 15000);
+                if (req.isForMainFrame() && !isGhost) handler.postDelayed(() -> web.loadUrl(siteUrl()), 15000);
             }
         });
-
-        requestRuntimePermissions();
-        Kiosk.applyPolicies(this);
-        web.loadUrl(siteUrl());
-
-        handler.postDelayed(updateCheck, 60 * 1000); // first check a minute after boot
     }
 
     @Override
@@ -188,6 +220,8 @@ public class MainActivity extends Activity {
     protected void onDestroy() {
         handler.removeCallbacksAndMessages(null);
         photoServer.stop();
+        if (remote != null) remote.stop();
+        destroyGhost();
         super.onDestroy();
     }
 
@@ -220,6 +254,11 @@ public class MainActivity extends Activity {
         // Fixed photo-upload key (used by the automated emulator test).
         String uploadKey = intent.getStringExtra("uploadKey");
         if (uploadKey != null && uploadKey.matches("[a-z0-9-]{6,32}")) prefs.edit().putString("uploadKey", uploadKey).apply();
+        // Local test hub for the automated emulator test, e.g. --es hub ws://127.0.0.1:8787/ws/device
+        String hub = intent.getStringExtra("hub");
+        if (hub != null && hub.matches("ws://(127\\.0\\.0\\.1|localhost):\\d{2,5}/ws/device")) {
+            prefs.edit().putString("remoteHubOverride", hub).apply();
+        }
         // Open a particular screen, e.g. --es screen photos
         String screen = intent.getStringExtra("screen");
         if (screen != null && screen.matches("[a-z]{1,20}")) {
@@ -305,6 +344,7 @@ public class MainActivity extends Activity {
                 "Unlock tablet for 10 minutes",
                 "Turn off kiosk mode permanently",
                 "New photo upload code (old QR codes stop working)",
+                "Remote viewing: " + (prefs.getBoolean("remoteView", true) ? "ON (tap to turn off)" : "OFF (tap to turn on)"),
                 "About: app " + BuildConfig.VERSION_NAME + (Kiosk.isOwner(this) ? ", kiosk on" : ", kiosk off")
                         + ", WebView " + webViewVersion(),
         };
@@ -347,6 +387,14 @@ public class MainActivity extends Activity {
                             web.evaluateJavascript("window.dispatchEvent(new Event('tablet-photos'))", null);
                             Toast.makeText(this, "New QR code ready on the Add photos screen", Toast.LENGTH_LONG).show();
                             break;
+                        case 7: {
+                            boolean on = !prefs.getBoolean("remoteView", true);
+                            prefs.edit().putBoolean("remoteView", on).apply();
+                            if (!on) { showViewingDot(false); destroyGhost(); }
+                            if (remote != null) remote.sendStatus();
+                            Toast.makeText(this, on ? "Remote viewing is on" : "Remote viewing is off", Toast.LENGTH_LONG).show();
+                            break;
+                        }
                         default:
                             break;
                     }
@@ -360,10 +408,301 @@ public class MainActivity extends Activity {
         return p != null ? p.versionName : "unknown";
     }
 
+    // ---------------------------------------------------------------- remote admin
+    //
+    // "Their screen": pictures of exactly what's on the display (view only).
+    // "Control": a hidden second copy of the app sits underneath their screen.
+    // Your taps go to that copy, so whatever they're doing is never disturbed.
+    // Settings and data are shared, so changes you make there stick.
+
+    private static final int FRAME_W = 1280;
+
+    private boolean remoteViewAllowed() {
+        return prefs.getBoolean("remoteView", true);
+    }
+
+    /** Small faint dot in the top-right corner while their screen is being mirrored. */
+    private void showViewingDot(boolean on) {
+        if (on && viewingDot == null) {
+            float dp = getResources().getDisplayMetrics().density;
+            GradientDrawable dot = new GradientDrawable();
+            dot.setShape(GradientDrawable.OVAL);
+            dot.setColor(0x88C2491F);
+            viewingDot = new View(this);
+            viewingDot.setBackground(dot);
+            FrameLayout.LayoutParams lp = new FrameLayout.LayoutParams((int) (9 * dp), (int) (9 * dp), Gravity.TOP | Gravity.END);
+            lp.setMargins(0, (int) (8 * dp), (int) (8 * dp), 0);
+            root.addView(viewingDot, lp);
+        } else if (!on && viewingDot != null) {
+            root.removeView(viewingDot);
+            viewingDot = null;
+        }
+    }
+
+    private WebView ensureGhost() {
+        handler.removeCallbacks(ghostCleanup);
+        if (ghost == null) {
+            ghost = new WebView(this);
+            configureWebView(ghost, true);
+            // Index 0 = underneath their screen, same size, never visible or touchable by them.
+            root.addView(ghost, 0, new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
+            String start = currentScreen.isEmpty() ? "" : "#/" + currentScreen;
+            ghost.loadUrl(BuildConfig.SITE_URL + "?profile=" + Uri.encode(prefs.getString("profile", "family")) + start);
+        }
+        return ghost;
+    }
+
+    private void destroyGhost() {
+        handler.removeCallbacks(ghostCleanup);
+        if (ghost == null) return;
+        root.removeView(ghost);
+        ghost.destroy();
+        ghost = null;
+    }
+
+    private int frameHeight(View v) {
+        return v.getWidth() > 0 ? Math.round(FRAME_W * v.getHeight() / (float) v.getWidth()) : 800;
+    }
+
+    /** Picture of their real screen (the whole window). */
+    private void captureMirror(boolean hd, RemoteLink.Callback<String> cb) {
+        int w = hd ? root.getWidth() : FRAME_W;
+        int h = hd ? root.getHeight() : frameHeight(root);
+        if (w <= 0 || h <= 0) { cb.got(null); return; }
+        Bitmap bmp = Bitmap.createBitmap(w, h, Bitmap.Config.ARGB_8888);
+        try {
+            PixelCopy.request(getWindow(), bmp, result -> {
+                if (result == PixelCopy.SUCCESS) encode(bmp, hd ? 82 : 55, cb);
+                else { bmp.recycle(); cb.got(null); }
+            }, handler);
+        } catch (Exception e) {
+            bmp.recycle();
+            cb.got(null);
+        }
+    }
+
+    /** Picture of the hidden copy. */
+    private void captureGhost(RemoteLink.Callback<String> cb) {
+        WebView g = ensureGhost();
+        if (g.getWidth() <= 0 || g.getHeight() <= 0) { cb.got(null); return; }
+        Bitmap bmp = Bitmap.createBitmap(FRAME_W, frameHeight(g), Bitmap.Config.ARGB_8888);
+        Canvas c = new Canvas(bmp);
+        c.scale(FRAME_W / (float) g.getWidth(), bmp.getHeight() / (float) g.getHeight());
+        try {
+            g.draw(c);
+        } catch (Exception e) {
+            bmp.recycle();
+            cb.got(null);
+            return;
+        }
+        encode(bmp, 60, cb);
+    }
+
+    private void encode(Bitmap bmp, int quality, RemoteLink.Callback<String> cb) {
+        encoder.execute(() -> {
+            ByteArrayOutputStream out = new ByteArrayOutputStream();
+            bmp.compress(Bitmap.CompressFormat.JPEG, quality, out);
+            bmp.recycle();
+            String b64 = Base64.encodeToString(out.toByteArray(), Base64.NO_WRAP);
+            handler.post(() -> cb.got(b64));
+        });
+    }
+
+    private void ghostTouch(int action, double x, double y, long downTime) {
+        WebView g = ensureGhost();
+        MotionEvent ev = MotionEvent.obtain(downTime, SystemClock.uptimeMillis(), action,
+                (float) (clamp01(x) * g.getWidth()), (float) (clamp01(y) * g.getHeight()), 0);
+        ev.setSource(InputDevice.SOURCE_TOUCHSCREEN);
+        g.dispatchTouchEvent(ev);
+        ev.recycle();
+    }
+
+    private static double clamp01(double v) {
+        return Double.isNaN(v) ? 0 : Math.max(0, Math.min(1, v));
+    }
+
+    private static boolean validScreen(String s) {
+        return s != null && s.matches("[a-z]{1,20}");
+    }
+
+    class RemoteHost implements RemoteLink.Host {
+        @Override
+        public void status(RemoteLink.Callback<JSONObject> cb) {
+            JSONObject st = new JSONObject();
+            try {
+                st.put("app", BuildConfig.VERSION_NAME)
+                  .put("webview", webViewVersion())
+                  .put("profile", prefs.getString("profile", "family"))
+                  .put("screen", currentScreen)
+                  .put("ip", PhotoServer.wifiIp())
+                  .put("photos", photos.count())
+                  .put("storageFreeMB", getFilesDir().getUsableSpace() / (1024 * 1024))
+                  .put("kiosk", Kiosk.isOwner(MainActivity.this))
+                  .put("mirrorAllowed", remoteViewAllowed())
+                  .put("model", Build.MANUFACTURER + " " + Build.MODEL)
+                  .put("android", Build.VERSION.RELEASE)
+                  .put("uptimeMin", SystemClock.elapsedRealtime() / 60000);
+                Intent b = registerReceiver(null, new android.content.IntentFilter(Intent.ACTION_BATTERY_CHANGED));
+                if (b != null) {
+                    int level = b.getIntExtra(BatteryManager.EXTRA_LEVEL, -1);
+                    int scale = b.getIntExtra(BatteryManager.EXTRA_SCALE, 100);
+                    if (level >= 0) st.put("battery", Math.round(level * 100f / scale));
+                    st.put("charging", b.getIntExtra(BatteryManager.EXTRA_PLUGGED, 0) != 0);
+                }
+                WifiManager wm = getApplicationContext().getSystemService(WifiManager.class);
+                if (wm != null && wm.getConnectionInfo() != null) {
+                    String ssid = wm.getConnectionInfo().getSSID();
+                    if (ssid != null && !ssid.contains("unknown")) st.put("wifi", ssid.replace("\"", ""));
+                }
+            } catch (Exception ignored) { }
+            cb.got(st);
+        }
+
+        @Override
+        public void capture(String mode, boolean hd, RemoteLink.Callback<String> cb) {
+            if (!remoteViewAllowed()) { cb.got(null); return; }
+            if ("control".equals(mode)) captureGhost(cb);
+            else captureMirror(hd, cb);
+        }
+
+        @Override
+        public void streamChanged(boolean mirror, boolean control) {
+            boolean allowed = remoteViewAllowed();
+            showViewingDot(mirror && allowed);
+            if (control && allowed) ensureGhost();
+            else if (ghost != null) handler.postDelayed(ghostCleanup, 2 * 60 * 1000); // keep briefly in case you come back
+        }
+
+        @Override
+        public void command(String cmd, JSONObject a, RemoteLink.Callback2 done) {
+            switch (cmd) {
+                // --- hidden copy (doesn't touch their screen) ---
+                case "tap": {
+                    if (!remoteViewAllowed()) { done.done(false, "Remote viewing is turned off on this tablet"); return; }
+                    long down = SystemClock.uptimeMillis();
+                    double x = a.optDouble("x"), y = a.optDouble("y");
+                    ghostTouch(MotionEvent.ACTION_DOWN, x, y, down);
+                    handler.postDelayed(() -> ghostTouch(MotionEvent.ACTION_UP, x, y, down), 60);
+                    done.done(true, "Tapped");
+                    return;
+                }
+                case "swipe": {
+                    if (!remoteViewAllowed()) { done.done(false, "Remote viewing is turned off on this tablet"); return; }
+                    long down = SystemClock.uptimeMillis();
+                    double x1 = a.optDouble("x1"), y1 = a.optDouble("y1"), x2 = a.optDouble("x2"), y2 = a.optDouble("y2");
+                    int ms = Math.max(100, Math.min(1000, a.optInt("ms", 300)));
+                    int steps = 12;
+                    ghostTouch(MotionEvent.ACTION_DOWN, x1, y1, down);
+                    for (int i = 1; i <= steps; i++) {
+                        final double f = i / (double) steps;
+                        handler.postDelayed(() -> ghostTouch(MotionEvent.ACTION_MOVE, x1 + (x2 - x1) * f, y1 + (y2 - y1) * f, down), (long) (ms * f));
+                    }
+                    handler.postDelayed(() -> ghostTouch(MotionEvent.ACTION_UP, x2, y2, down), ms + 20);
+                    done.done(true, "Swiped");
+                    return;
+                }
+                case "nav": {
+                    String screen = a.optString("screen");
+                    if (!validScreen(screen)) { done.done(false, "Unknown screen"); return; }
+                    ensureGhost().evaluateJavascript("location.hash='#/" + screen + "'", null);
+                    done.done(true, "Hidden session opened " + screen);
+                    return;
+                }
+                case "back":
+                    ensureGhost().evaluateJavascript("history.back()", null);
+                    done.done(true, "Back");
+                    return;
+                case "type": {
+                    String js = "(function(t){var e=document.activeElement;"
+                            + "if(!e||!('value' in e))return 'Tap a text box first';"
+                            + "e.value+=t;e.dispatchEvent(new Event('input',{bubbles:true}));return 'Typed';})("
+                            + JSONObject.quote(a.optString("text")) + ")";
+                    ensureGhost().evaluateJavascript(js, r -> done.done(r != null && r.contains("Typed"), r == null ? "" : r.replace("\"", "")));
+                    return;
+                }
+
+                // --- their screen ---
+                case "show": {
+                    String screen = a.optString("screen");
+                    if (!validScreen(screen)) { done.done(false, "Unknown screen"); return; }
+                    web.evaluateJavascript("location.hash='#/" + screen + "'", null);
+                    done.done(true, "Their screen now shows " + screen);
+                    return;
+                }
+                case "reload":
+                    web.loadUrl(siteUrl());
+                    done.done(true, "Their screen reloaded");
+                    return;
+                case "profile": {
+                    String p = a.optString("name");
+                    if (!p.equals("family") && !p.equals("tom")) { done.done(false, "Unknown profile"); return; }
+                    prefs.edit().putString("profile", p).apply();
+                    destroyGhost();
+                    web.loadUrl(siteUrl());
+                    remote.sendStatus();
+                    done.done(true, "Switched to " + (p.equals("tom") ? "Tom's" : "Family") + " screens");
+                    return;
+                }
+                case "restart":
+                    done.done(true, "Restarting the app");
+                    handler.postDelayed(MainActivity.this::recreate, 500);
+                    return;
+
+                // --- settings & updates ---
+                case "update":
+                    Updater.check(MainActivity.this, false);
+                    done.done(true, "Checking for an app update; it installs by itself if there's a newer one");
+                    return;
+                case "pin": {
+                    String pin = a.optString("pin");
+                    if (!pin.matches("\\d{4,8}")) { done.done(false, "PIN must be 4-8 digits"); return; }
+                    prefs.edit().putString("pin", pin).apply();
+                    done.done(true, "Grown-up PIN changed");
+                    return;
+                }
+                case "newPhotoCode":
+                    PhotoServer.resetKey(MainActivity.this);
+                    web.evaluateJavascript("window.dispatchEvent(new Event('tablet-photos'))", null);
+                    done.done(true, "New photo QR code made; old ones stop working");
+                    return;
+                case "status":
+                    remote.sendStatus();
+                    done.done(true, "Info refreshed");
+                    return;
+                case "shot":
+                    if (!remoteViewAllowed()) { done.done(false, "Remote viewing is turned off on this tablet"); return; }
+                    remote.sendShot();
+                    done.done(true, "HD screenshot sent");
+                    return;
+                default:
+                    done.done(false, "Unknown command: " + cmd);
+            }
+        }
+    }
+
     // ---------------------------------------------------------------- JS bridge
 
     /** window.TabletNative in the web app. */
     class NativeBridge {
+        private final WebView owner;
+        private final boolean isGhost;
+        NativeBridge(WebView owner, boolean isGhost) { this.owner = owner; this.isGhost = isGhost; }
+
+        /** True in the hidden remote-control copy (the web app keeps it silent). */
+        @JavascriptInterface
+        public boolean isGhost() { return isGhost; }
+
+        /** The web app reports which screen it's on (shown in your dashboard). */
+        @JavascriptInterface
+        public void screenChanged(String name) {
+            if (isGhost || name == null) return;
+            runOnUiThread(() -> {
+                if (name.equals(currentScreen)) return;
+                currentScreen = name;
+                if (remote != null) remote.sendStatus();
+            });
+        }
+
         @JavascriptInterface
         public String appVersion() { return BuildConfig.VERSION_NAME; }
 
@@ -410,7 +749,7 @@ public class MainActivity extends Activity {
                     body = String.valueOf(ex.getMessage());
                 }
                 String js = "window['" + callback + "']&&window['" + callback + "'](" + ok + "," + JSONObject.quote(body) + ")";
-                runOnUiThread(() -> web.evaluateJavascript(js, null));
+                runOnUiThread(() -> owner.evaluateJavascript(js, null));
             }).start();
         }
     }

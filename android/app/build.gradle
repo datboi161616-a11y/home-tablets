@@ -51,3 +51,8 @@ android {
         targetCompatibility JavaVersion.VERSION_17
     }
 }
+
+dependencies {
+    // WebSocket client for the remote admin link.
+    implementation "com.squareup.okhttp3:okhttp:4.12.0"
+}

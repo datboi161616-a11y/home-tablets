@@ -38,6 +38,8 @@ async function navigate() {
     catch (err) { console.error(`Screen "${name}" failed to load`, err); }
   }
   if (id !== navId) return; // user navigated again while loading
+  // Let the Android app know (shown as "Showing now" in the admin dashboard).
+  try { window.TabletNative?.screenChanged?.(name); } catch { /* not on a tablet */ }
 
   try { current?.unmount?.(); } catch (err) { console.error(err); }
   screenEl.innerHTML = '';

@@ -17,7 +17,7 @@
         android:icon="@drawable/ic_launcher"
         android:allowBackup="false"
         android:hardwareAccelerated="true"
-        android:usesCleartextTraffic="false"
+        android:networkSecurityConfig="@xml/network_security_config"
         android:theme="@style/AppTheme">
 
         <!-- The home screen. HOME + DEFAULT makes Android offer it as the launcher. -->

@@ -2,6 +2,22 @@
 // Modern engines skip all of this. JavaScript syntax is handled separately:
 // the deploy step translates the code for older engines with esbuild.
 
+// --- Hidden admin session: never make a sound in their home ---
+// The Android app runs a second, invisible copy of the screens when you control
+// a tablet remotely. That copy must stay silent (timer beeps, dictation).
+if (window.TabletNative && window.TabletNative.isGhost && window.TabletNative.isGhost()) {
+  const Silent = function () {
+    const node = () => ({ connect() {}, disconnect() {}, start() {}, stop() {},
+      frequency: { value: 0, setValueAtTime() {} },
+      gain: { value: 0, setValueAtTime() {}, exponentialRampToValueAtTime() {}, linearRampToValueAtTime() {} } });
+    return { currentTime: 0, state: 'running', destination: {}, resume: () => Promise.resolve(),
+      close: () => Promise.resolve(), createOscillator: node, createGain: node };
+  };
+  window.AudioContext = window.webkitAudioContext = Silent;
+  window.SpeechRecognition = window.webkitSpeechRecognition = undefined;
+  HTMLMediaElement.prototype.play = () => Promise.resolve();
+}
+
 // --- AbortSignal.timeout (Chrome 103+) ---
 if (typeof AbortSignal !== 'undefined' && !AbortSignal.timeout) {
   AbortSignal.timeout = (ms) => {

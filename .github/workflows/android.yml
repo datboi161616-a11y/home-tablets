@@ -6,7 +6,7 @@ name: Android app
 on:
   push:
     branches: [main]
-    paths: ['android/**', '!android/**/*.md', '.github/workflows/android.yml']
+    paths: ['android/**', '!android/**/*.md', 'admin/**', '.github/workflows/android.yml']
   workflow_dispatch:
 
 permissions:
@@ -70,9 +70,26 @@ jobs:
         # 34 = modern WebView (what an updated tablet has)
         api: [29, 34]
     steps:
+      - uses: actions/checkout@v4
+
       - uses: actions/download-artifact@v4
         with:
           name: apk
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      # A local copy of the admin hub, so the test can drive remote admin end to end.
+      - name: Start local admin hub
+        run: |
+          cd admin
+          npm ci --no-audit --no-fund
+          printf 'ADMIN_PASSWORD=ci-test-password
+' > .dev.vars
+          nohup npx wrangler dev --port 8787 --ip 127.0.0.1 > ../wrangler.log 2>&1 &
+          for i in $(seq 1 60); do curl -sf http://127.0.0.1:8787/ >/dev/null && echo "hub up" && exit 0; sleep 2; done
+          cat ../wrangler.log; exit 1
 
       - name: Wait for this commit's web app to be live
         run: |
@@ -91,12 +108,19 @@ jobs:
           adb install -r home-tablets.apk
           adb shell dpm set-device-owner com.hometablets.launcher/.AdminReceiver
           adb logcat -c
-          adb shell am start -n com.hometablets.launcher/.MainActivity --es profile family --es uploadKey ci-test-key
+          adb reverse tcp:8787 tcp:8787
+          adb shell am start -n com.hometablets.launcher/.MainActivity --es profile family --es uploadKey ci-test-key --es hub ws://127.0.0.1:8787/ws/device
           sleep 45
           adb exec-out screencap -p > shot-family.png
 
           # --- Photo upload, the way a phone does it (raw image body + key) ---
+          # Home brings our app to the front (it's the home screen), then wait for its server.
+          adb shell input keyevent KEYCODE_HOME
           adb forward tcp:8080 tcp:8080
+          for i in $(seq 1 30); do
+            curl -s -o /dev/null "http://127.0.0.1:8080/?k=x" && break
+            sleep 2
+          done
           code=$(curl -s -o /dev/null -w "%{http_code}" "http://127.0.0.1:8080/?k=wrong-key")
           echo "wrong key -> $code"; [ "$code" = "403" ]
           curl -sf "http://127.0.0.1:8080/?k=ci-test-key" | grep -q "Add photos to the tablet"
@@ -119,6 +143,11 @@ jobs:
           adb shell input keyevent KEYCODE_HOME
           sleep 3
           adb exec-out screencap -p > shot-after-home.png
+
+          # --- Remote admin, end to end: approve, watch, control the hidden copy, commands ---
+          adb shell am start -n com.hometablets.launcher/.MainActivity --es profile family
+          node admin/test/e2e.mjs http://127.0.0.1:8787 ci-test-password .
+          adb exec-out screencap -p > shot-after-remote.png
           adb logcat -d > logcat-full.txt
           grep -E "chromium|HomeTablet|AndroidRuntime" logcat-full.txt | tail -80 > logcat.txt || true
           adb shell dumpsys package com.google.android.webview | grep -m1 versionName > webview-version.txt || true
@@ -157,6 +186,8 @@ jobs:
             webview-version.txt
             upload.json
             photos.json
+            remote-*
+            wrangler.log
 
   release:
     needs: [build, emulator-test]
