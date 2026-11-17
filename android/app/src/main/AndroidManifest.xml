@@ -8,6 +8,8 @@
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <!-- Voice dictation on the message board -->
     <uses-permission android:name="android.permission.RECORD_AUDIO" />
+    <!-- Android's web engine also needs this to open the microphone (video sound) -->
+    <uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS" />
     <!-- Camera screen (viewfinder + group photo/video) -->
     <uses-permission android:name="android.permission.CAMERA" />
     <uses-feature android:name="android.hardware.camera" android:required="false" />

@@ -15,7 +15,10 @@ let visit = null;
 let beepCtx;
 
 const back = () => `#/${profile === 'tom' ? 'bridge' : 'home'}`;
-const log = (m) => { try { window.TabletNative && window.TabletNative.log && window.TabletNative.log(m); } catch { /* not on tablet */ } };
+const log = (m) => {
+  console.log('[camera] ' + m);
+  try { window.TabletNative && window.TabletNative.log && window.TabletNative.log(m); } catch { /* not on tablet */ }
+};
 const stamp = () => new Date().toLocaleString('en-US', { month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit' });
 
 function shutterSound() {
@@ -98,23 +101,40 @@ export function mount(el) {
   }
 
   // ---- start the camera (only once per visit; stop it if we've already left) ----
+  const VIDEO = { facingMode: 'user', width: { ideal: 1920 }, height: { ideal: 1080 } };
+  const withTimeout = (p, ms) => Promise.race([p, new Promise((_, no) => setTimeout(() => no(new Error('timeout')), ms))]);
   (async () => {
+    log('opening camera');
     try {
-      const stream = await navigator.mediaDevices.getUserMedia({
-        video: { facingMode: 'user', width: { ideal: 1920 }, height: { ideal: 1080 } },
-        audio: true, // so videos have sound; the viewfinder itself is muted
-      });
+      let stream;
+      try {
+        // With sound for videos (the viewfinder itself is muted)...
+        stream = await withTimeout(navigator.mediaDevices.getUserMedia({ video: VIDEO, audio: true }), 8000);
+      } catch (err) {
+        // ...but if the microphone can't be opened, photos and silent videos still work.
+        log('no microphone (' + (err && (err.name || err.message)) + '), camera only');
+        stream = await navigator.mediaDevices.getUserMedia({ video: VIDEO, audio: false });
+      }
       if (!live()) { stream.getTracks().forEach((t) => t.stop()); return; } // left already
       v.stream = stream;
       video.srcObject = stream;
-      const onReady = () => {
-        if (!live() || v.ready) return;
-        v.ready = true;
-        log('camera ready ' + video.videoWidth + 'x' + video.videoHeight);
-        if (v.queued) { const q = v.queued; v.queued = null; q(); } // a remote request was waiting
-      };
-      video.addEventListener('loadeddata', onReady);
-      if (video.readyState >= 2) onReady();
+      if (video.play) video.play().catch(() => {});
+      log('camera stream started');
+      // "Ready" = the live picture has a size. Check directly instead of relying on events.
+      const started = Date.now();
+      const poll = setInterval(() => {
+        if (!live()) { clearInterval(poll); return; }
+        if (video.videoWidth > 0) {
+          clearInterval(poll);
+          v.ready = true;
+          log('camera ready ' + video.videoWidth + 'x' + video.videoHeight);
+          if (v.queued) { const q = v.queued; v.queued = null; q(); } // a remote request was waiting
+        } else if (Date.now() - started > 15000) {
+          clearInterval(poll);
+          log('camera picture never arrived');
+        }
+      }, 200);
+      v.timers.push(poll);
     } catch (err) {
       if (!live()) return;
       log('camera unavailable: ' + (err && err.name));
@@ -126,7 +146,10 @@ export function mount(el) {
   })();
 
   // Run now if the camera is streaming, otherwise as soon as it is.
-  const whenReady = (fn) => { if (v.ready) fn(); else v.queued = fn; };
+  const whenReady = (fn) => {
+    log('remote request, camera ready=' + v.ready);
+    if (v.ready) fn(); else v.queued = fn;
+  };
 
   function capture() {
     if (!v.ready || !video.videoWidth) { log('capture skipped: camera not ready'); return; }
@@ -227,7 +250,7 @@ export function unmount() {
   const v = visit;
   visit = null; // marks every pending callback of this visit as stale
   if (!v) return;
-  v.timers.forEach(clearTimeout);
+  v.timers.forEach((t) => { clearTimeout(t); clearInterval(t); });
   clearInterval(v.recTimer);
   if (v.recorder) { try { v.recorder.stop(); } catch { /* ignore */ } } // still saves the clip
   if (v.stream) v.stream.getTracks().forEach((t) => t.stop());
