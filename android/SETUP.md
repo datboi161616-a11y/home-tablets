@@ -49,7 +49,21 @@ adb shell am start -n com.hometablets.launcher/.MainActivity --es profile tom --
 
 Change `2512` to any 4–8 digit PIN for the grown-up menu.
 
-## 5. Done
+## 5. Update the web engine (recommended)
+
+The screens are drawn by Android's built-in web engine ("Android System WebView").
+Out of the box it can be years old. Everything still works on an old one, but
+spacing and animations look best on a current version.
+
+1. Grown-up menu (below) → **Wi-Fi settings**, then tap back to reach the main Settings page.
+2. Accounts → add a Google account. Use a spare account just for the
+   tablets, not your personal one. (This works now because kiosk mode is already on.)
+3. Open the Play Store → search **Android System WebView** → **Update**. Do the
+   same for **Google Chrome** if it's listed.
+4. Keep the account on the tablet so the web engine keeps updating itself.
+5. Grown-up menu → **About** should now show WebView 100 or higher.
+
+## 6. Done
 
 Turn USB debugging off again (Developer options) and unplug. The tablet now boots
 straight into the home screen, has no lock screen or status bar, stays on while
