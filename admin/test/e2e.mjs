@@ -144,6 +144,16 @@ const after = (await waitFor((m) => m.type === 'device' && m.device.id === dev.i
 log('album photos before/after remote shot:', before, after);
 if (after <= before) fail('remote photo was not saved to the album');
 
+// 10. Video: record a few seconds remotely; the clip should land in the album too.
+await result('cameraRecord', { on: true });
+await sleep(9000); // includes up to 4s waiting for a microphone (the emulator has none)
+await result('cameraRecord', { on: false });
+await sleep(6000);
+await result('status');
+const afterVideo = (await waitFor((m) => m.type === 'device' && m.device.id === dev.id, 15000, 'status after video')).device.status.photos || 0;
+log('album items before/after remote video:', after, afterVideo);
+if (afterVideo <= after) fail('remote video was not saved to the album');
+
 writeFileSync(`${outDir}/remote-status.json`, JSON.stringify(st.device, null, 2));
 log('E2E PASSED');
 ws.close();

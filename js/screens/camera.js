@@ -106,15 +106,8 @@ export function mount(el) {
   (async () => {
     log('opening camera');
     try {
-      let stream;
-      try {
-        // With sound for videos (the viewfinder itself is muted)...
-        stream = await withTimeout(navigator.mediaDevices.getUserMedia({ video: VIDEO, audio: true }), 8000);
-      } catch (err) {
-        // ...but if the microphone can't be opened, photos and silent videos still work.
-        log('no microphone (' + (err && (err.name || err.message)) + '), camera only');
-        stream = await navigator.mediaDevices.getUserMedia({ video: VIDEO, audio: false });
-      }
+      // Camera only. The microphone is switched on just while a video is recording.
+      const stream = await navigator.mediaDevices.getUserMedia({ video: VIDEO, audio: false });
       if (!live()) { stream.getTracks().forEach((t) => t.stop()); return; } // left already
       v.stream = stream;
       video.srcObject = stream;
@@ -184,13 +177,26 @@ export function mount(el) {
 
   const fmt = (ms) => { const s = Math.round(ms / 1000); return `${Math.floor(s / 60)}:${String(s % 60).padStart(2, '0')}`; };
 
-  function startRec() {
-    if (!v.ready || v.recorder) return;
+  async function startRec() {
+    if (!v.ready || v.recorder || v.starting) return;
     const type = ['video/webm;codecs=vp8,opus', 'video/webm', 'video/mp4']
       .find((t) => window.MediaRecorder && MediaRecorder.isTypeSupported(t));
     if (!type) { showSaved('Video isn’t supported on this tablet'); return; }
+    v.starting = true;
+    // Switch the microphone on just for this clip. If it can't open, record without sound.
+    const mic = navigator.mediaDevices.getUserMedia({ audio: true, video: false });
+    let audio = null;
+    try { audio = await withTimeout(mic, 4000); }
+    catch (err) {
+      log('recording without sound (' + (err && (err.name || err.message)) + ')');
+      mic.then((late) => late.getTracks().forEach((t) => t.stop())).catch(() => {}); // if it opens later, close it
+    }
+    v.starting = false;
+    if (!live() || !v.ready) { if (audio) audio.getTracks().forEach((t) => t.stop()); return; }
+    v.mic = audio;
+    const source = new MediaStream([...v.stream.getVideoTracks(), ...(audio ? audio.getAudioTracks() : [])]);
     const chunks = [];
-    const rec = new MediaRecorder(v.stream, { mimeType: type, videoBitsPerSecond: 2500000 });
+    const rec = new MediaRecorder(source, { mimeType: type, videoBitsPerSecond: 2500000 });
     rec.ondataavailable = (e) => { if (e.data && e.data.size) chunks.push(e.data); };
     rec.onstop = async () => {
       // Save even if they already left the screen; only touch the UI if they're still here.
@@ -219,6 +225,7 @@ export function mount(el) {
     clearInterval(v.recTimer);
     try { v.recorder.stop(); } catch { /* already stopped */ }
     v.recorder = null;
+    if (v.mic) { v.mic.getTracks().forEach((t) => t.stop()); v.mic = null; } // microphone off again
     $('[data-shutter]').classList.remove('rec');
     $('[data-time]').style.display = 'none';
   }
@@ -253,6 +260,7 @@ export function unmount() {
   v.timers.forEach((t) => { clearTimeout(t); clearInterval(t); });
   clearInterval(v.recTimer);
   if (v.recorder) { try { v.recorder.stop(); } catch { /* ignore */ } } // still saves the clip
+  if (v.mic) v.mic.getTracks().forEach((t) => t.stop());
   if (v.stream) v.stream.getTracks().forEach((t) => t.stop());
   window.removeEventListener('tablet-camera-shoot', v.onShoot);
   window.removeEventListener('tablet-camera-record', v.onRec);
