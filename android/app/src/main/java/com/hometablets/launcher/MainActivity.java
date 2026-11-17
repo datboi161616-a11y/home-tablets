@@ -966,16 +966,28 @@ public class MainActivity extends Activity {
         /** Save a JPEG from the tablet's camera into its album. */
         @JavascriptInterface
         public boolean savePhoto(String base64, String caption) {
-            try { photos.saveMedia(base64, false, caption); notifyPhotos(); return true; }
-            catch (Exception e) { android.util.Log.w("HomeTablet", "savePhoto", e); return false; }
+            try {
+                String id = photos.saveMedia(base64, false, caption);
+                android.util.Log.i("HomeTablet", "savePhoto saved " + id + " (" + base64.length() + " b64 chars)");
+                runOnUiThread(MainActivity.this::notifyPhotos); // WebView calls must be on the UI thread
+                return true;
+            } catch (Exception e) { android.util.Log.w("HomeTablet", "savePhoto failed", e); return false; }
         }
 
         /** Save a video clip from the tablet's camera into its album. */
         @JavascriptInterface
         public boolean saveVideo(String base64, String caption) {
-            try { photos.saveMedia(base64, true, caption); notifyPhotos(); return true; }
-            catch (Exception e) { android.util.Log.w("HomeTablet", "saveVideo", e); return false; }
+            try {
+                String id = photos.saveMedia(base64, true, caption);
+                android.util.Log.i("HomeTablet", "saveVideo saved " + id + " (" + base64.length() + " b64 chars)");
+                runOnUiThread(MainActivity.this::notifyPhotos);
+                return true;
+            } catch (Exception e) { android.util.Log.w("HomeTablet", "saveVideo failed", e); return false; }
         }
+
+        /** Camera screen diagnostics (shows in logcat). */
+        @JavascriptInterface
+        public void log(String msg) { android.util.Log.i("HomeTablet", "camera: " + msg); }
 
         /** Fetch an allow-listed URL and call window[callback](ok, text). */
         @JavascriptInterface

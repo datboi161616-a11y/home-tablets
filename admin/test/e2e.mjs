@@ -138,7 +138,7 @@ await sleep(5000);
 clear();
 saveFrame(await waitFor((m) => m.type === 'frame' && m.mode === 'mirror' && !m.stale, 30000, 'camera viewfinder'), 'remote-9-camera');
 await result('cameraShoot', { countdown: 1 });
-await sleep(5000);
+await sleep(8000);
 await result('status');
 const after = (await waitFor((m) => m.type === 'device' && m.device.id === dev.id, 15000, 'status after shot')).device.status.photos || 0;
 log('album photos before/after remote shot:', before, after);

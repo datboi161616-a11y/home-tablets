@@ -86,22 +86,31 @@ export function mount(el) {
     }
   })();
 
-  function capture() {
-    if (!stream || !video.videoWidth) return;
+  const log = (m) => { try { window.TabletNative && window.TabletNative.log && window.TabletNative.log(m); } catch { /* not on tablet */ } };
+
+  function capture(tries = 0) {
+    if (!stream) { log('capture: no stream'); return; }
+    if (!video.videoWidth) {
+      if (tries < 20) return void setTimeout(() => capture(tries + 1), 150); // wait for the first frame
+      log('capture: video never got dimensions'); return;
+    }
+    log('capture: ' + video.videoWidth + 'x' + video.videoHeight);
     const c = document.createElement('canvas');
     c.width = video.videoWidth; c.height = video.videoHeight;
     c.getContext('2d').drawImage(video, 0, 0, c.width, c.height);
     const jpeg = c.toDataURL('image/jpeg', 0.9);
+    const ok = savePhoto(jpeg, `Photo · ${new Date().toLocaleString('en-US', { month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit' })}`);
+    log('capture: jpeg ' + jpeg.length + ' chars, saved=' + ok);
     shutterSound();
     const flash = $('[data-flash]');
     flash.classList.remove('go'); void flash.offsetWidth; flash.classList.add('go');
-    savePhoto(jpeg, `Photo · ${new Date().toLocaleString('en-US', { month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit' })}`);
     $('[data-thumb]').src = jpeg;
     $('[data-saved]').style.display = 'flex';
     setTimeout(() => { $('[data-saved]').style.display = 'none'; }, 3500);
   }
 
   async function shoot(countdown = 0) {
+    log('shoot countdown=' + countdown + ' shooting=' + shooting);
     if (shooting) return;
     shooting = true;
     const countEl = $('[data-count]');
