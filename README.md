@@ -6,6 +6,11 @@ Plain HTML/CSS/JavaScript: no build step, no frameworks, free to host.
 - **Family tablets (×5):** home dashboard, photos, cooking mode, calendar, weather, message board, night clock.
 - **Tom's tablet:** flight deck, planes overhead, departures, trivia, sky alert, space missions, tonight's sky, space image, starfield.
 
+## Setting up a tablet
+
+Plug it in and double-click **`setup/Setup tablet.bat`**. Full steps (about 10 minutes
+per tablet): [android/SETUP.md](android/SETUP.md).
+
 ## Pushing an update to every tablet
 
 1. Edit the files.

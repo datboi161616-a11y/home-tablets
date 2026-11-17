@@ -128,7 +128,9 @@ final class PhotoServer {
 
             Map<String, String> headers = new HashMap<>();
             String line;
+            int headerLines = 0;
             while ((line = readLine(in)) != null && !line.isEmpty()) {
+                if (++headerLines > 100) return; // a real phone sends ~15; refuse anything silly
                 int c = line.indexOf(':');
                 if (c > 0) headers.put(line.substring(0, c).trim().toLowerCase(Locale.US), line.substring(c + 1).trim());
             }

@@ -7,6 +7,7 @@ import { getWeather, describe } from '../services/weather.js';
 // In a normal browser: sample pictures, so the screen can still be previewed.
 import { photos as samplePhotos } from '../services/family-sample.js';
 import { isTablet, getPhotos, onPhotosChanged } from '../services/tablet-photos.js';
+import { feature } from '../services/features.js';
 
 const SLIDE_MS = 60 * 1000;
 let clockTimer, slideTimer, fadeTimer, offPhotos;
@@ -69,6 +70,7 @@ export function mount(el) {
       <a href="#/addphotos" class="pill" style="background:#fff;color:#1D2430;font-size:18px;padding:14px 26px">Add photos</a>
     </div>
     <div style="position:absolute;top:32px;right:32px;display:flex;gap:12px">
+      ${feature('camera') ? '<a href="#/camera" class="pill" style="min-width:44px;background:rgba(10,12,16,.55);color:#fff">📷 Camera</a>' : ''}
       <a href="#/addphotos" class="pill" style="min-width:44px;background:rgba(10,12,16,.55);color:#fff">+ Add photos</a>
       <a href="#/home" class="pill" style="min-width:44px;background:rgba(10,12,16,.55);color:#fff">Home</a>
     </div>
@@ -95,7 +97,13 @@ export function mount(el) {
       v.src = encodeURI(p.src);
       v.muted = true; v.autoplay = true; v.playsInline = true;
       v.style.cssText = 'position:absolute;top:0;right:0;bottom:0;left:0;width:100%;height:100%;object-fit:contain';
-      v.addEventListener('ended', () => { if (el.isConnected && photos.length > 1) next(); });
+      // Move on when it ends, if it can't play, or after 70s at most (clips are ≤60s).
+      let moved = false;
+      const go = () => { if (!moved && el.isConnected && slidesEl.lastChild === slide && photos.length > 1) { moved = true; next(); } };
+      v.addEventListener('ended', go);
+      v.addEventListener('error', go);
+      clearTimeout(slideTimer);
+      slideTimer = setTimeout(go, 70 * 1000);
       slide.appendChild(v);
       slide.appendChild(badge('▶ Video'));
       v.play?.().catch(() => {});
@@ -127,9 +135,11 @@ export function mount(el) {
       dots.textContent = `${i + 1} / ${photos.length}`;
     }
 
-    // Auto-advance: photos after SLIDE_MS; videos when they end (handled above).
-    clearTimeout(slideTimer);
-    if (photos.length > 1 && !p.video) slideTimer = setTimeout(next, SLIDE_MS);
+    // Auto-advance: photos after SLIDE_MS; videos set their own timing above.
+    if (!p.video) {
+      clearTimeout(slideTimer);
+      if (photos.length > 1) slideTimer = setTimeout(next, SLIDE_MS);
+    }
   }
 
   function next() { show((index + 1) % photos.length); }

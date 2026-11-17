@@ -10,8 +10,9 @@
 import { DurableObject } from 'cloudflare:workers';
 
 const MAX_PENDING = 20;
-const MAX_STATUS = 8 * 1024;
-const MAX_FRAME = 600 * 1024;
+const MAX_STATUS = 48 * 1024;       // status includes the tablet's app list
+const MAX_FRAME = 900 * 1024;       // Cloudflare's WebSocket limit is 1 MiB per message
+const PENDING_STATUS_EVERY_MS = 30 * 1000; // pending tablets: at most one status write per 30s
 const SHOT_EVERY_MS = 20 * 1000;
 
 const enc = new TextEncoder();
@@ -20,6 +21,7 @@ async function sha256hex(s) {
   return [...new Uint8Array(d)].map((b) => b.toString(16).padStart(2, '0')).join('');
 }
 const clip = (s, n) => String(s ?? '').slice(0, n);
+const isBase64 = (s) => /^[A-Za-z0-9+/]*={0,2}$/.test(s);
 
 export class Hub extends DurableObject {
   constructor(ctx, env) {
@@ -38,6 +40,7 @@ export class Hub extends DurableObject {
     )`);
     ctx.setWebSocketAutoResponse(new WebSocketRequestResponsePair('ping', 'pong'));
     this.lastShot = new Map(); // id -> ms (in memory only; fine if lost)
+    this.pendingStatusAt = new Map(); // id -> ms of last status from a not-yet-approved tablet
   }
 
   // ------------------------------------------------------------ connections
@@ -61,8 +64,15 @@ export class Hub extends DurableObject {
       const hash = await sha256hex(secret);
       const row = this.row(id);
       if (!row) {
+        // The hub address is public, so strangers could fill the waiting list. Instead of
+        // locking out your real tablets, drop the oldest offline request to make room.
         const pending = this.sql.exec('SELECT COUNT(*) AS n FROM devices WHERE approved = 0').one().n;
-        if (pending >= MAX_PENDING) return new Response('Too many pending devices', { status: 429 });
+        if (pending >= MAX_PENDING) {
+          const victim = this.sql.exec('SELECT id FROM devices WHERE approved = 0 ORDER BY last_seen ASC').toArray()
+            .find((d) => !this.ctx.getWebSockets(`dev:${d.id}`).length);
+          if (!victim) return new Response('Too many pending devices', { status: 429 });
+          this.sql.exec('DELETE FROM devices WHERE id = ?', victim.id);
+        }
         this.sql.exec('INSERT INTO devices (id, secret_hash, name, approved, created, last_seen) VALUES (?, ?, ?, 0, ?, ?)',
           id, hash, clip(url.searchParams.get('name') || 'New tablet', 60), Date.now(), Date.now());
       } else if (row.secret_hash !== hash) {
@@ -119,7 +129,12 @@ export class Hub extends DurableObject {
 
     if (msg.type === 'status') {
       const status = JSON.stringify(msg.status || {});
-      if (status.length > MAX_STATUS) return;
+      if (status.length > MAX_STATUS) { this.dropped(id, 'status', status.length); return; }
+      if (!row.approved) {
+        const last = this.pendingStatusAt.get(id) || 0;
+        if (Date.now() - last < PENDING_STATUS_EVERY_MS) return;
+        this.pendingStatusAt.set(id, Date.now());
+      }
       this.sql.exec('UPDATE devices SET status = ?, last_seen = ? WHERE id = ?', status, Date.now(), id);
       this.broadcast({ type: 'device', device: this.view(this.row(id)) });
       return;
@@ -128,9 +143,10 @@ export class Hub extends DurableObject {
 
     if (msg.type === 'frame' || msg.type === 'shot') {
       const data = String(msg.data || '');
-      if (data.length > MAX_FRAME) return;
+      if (data.length > MAX_FRAME) { this.dropped(id, msg.type === 'shot' ? 'HD screenshot' : 'picture', data.length); return; }
+      if (!isBase64(data)) return; // only real image data reaches your dashboard
       const mode = msg.mode === 'control' ? 'control' : 'mirror';
-      const frame = { type: 'frame', id, mode, data, mime: clip(msg.mime || 'image/jpeg', 20), w: msg.w | 0, h: msg.h | 0, hd: msg.type === 'shot' };
+      const frame = { type: 'frame', id, mode, data, mime: 'image/jpeg', w: msg.w | 0, h: msg.h | 0, hd: msg.type === 'shot' };
       for (const admin of this.admins()) {
         if (admin.deserializeAttachment()?.watching === id) this.send(admin, frame);
       }
@@ -173,7 +189,8 @@ export class Hub extends DurableObject {
       }
       case 'cmd': {
         const r = this.row(id);
-        const dev = this.ctx.getWebSockets(`dev:${id}`)[0];
+        const devs = this.ctx.getWebSockets(`dev:${id}`);
+        const dev = devs[devs.length - 1]; // the newest connection (older ones are closing)
         if (!r || !r.approved) return this.send(ws, { type: 'result', id, cmd: msg.cmd, ok: false, message: 'Tablet not approved' });
         if (!dev) return this.send(ws, { type: 'result', id, cmd: msg.cmd, ok: false, message: 'Tablet is offline' });
         this.send(dev, { type: 'cmd', cmd: clip(msg.cmd, 40), args: msg.args || {} });
@@ -197,6 +214,11 @@ export class Hub extends DurableObject {
   }
 
   // ------------------------------------------------------------ helpers
+
+  dropped(id, what, size) {
+    this.broadcast({ type: 'result', id, cmd: 'hub', ok: false,
+      message: `The tablet's ${what} was too big to pass on (${Math.round(size / 1024)} KB)` });
+  }
 
   row(id) {
     return this.sql.exec('SELECT * FROM devices WHERE id = ?', id).toArray()[0];

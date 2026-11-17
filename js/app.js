@@ -40,15 +40,24 @@ async function navigate() {
   if (id !== navId) return; // user navigated again while loading
   // Let the Android app know (shown as "Showing now" in the admin dashboard).
   try { window.TabletNative?.screenChanged?.(name); } catch { /* not on a tablet */ }
+  // Night screens turn the real backlight down; everything else uses normal brightness.
+  const nightScreen = name === (profile === 'tom' ? 'viewscreen' : 'night');
+  try { window.TabletNative?.setBrightness?.(nightScreen ? 0.05 : -1); } catch { /* not on a tablet */ }
 
   try { current?.unmount?.(); } catch (err) { console.error(err); }
+  // Each visit gets its own container. When you leave, it's removed, so a screen's
+  // late callbacks can check `el.isConnected` and stop touching a screen that's gone.
   screenEl.innerHTML = '';
+  const host = document.createElement('div');
+  host.style.cssText = 'position:absolute;top:0;right:0;bottom:0;left:0';
+  screenEl.appendChild(host);
   current = mod;
-  try { mod.mount(screenEl, { name, title: SCREENS[name], homeRoute }); }
+  try { mod.mount(host, { name, title: SCREENS[name], homeRoute }); }
   catch (err) {
     console.error(err);
     current = placeholder;
-    placeholder.mount(screenEl, { name });
+    host.innerHTML = '';
+    placeholder.mount(host, { name });
   }
 }
 addEventListener('hashchange', navigate);
@@ -57,15 +66,42 @@ navigate();
 // ---- Offline support + pick up pushed updates ----
 if ('serviceWorker' in navigator) navigator.serviceWorker.register('./sw.js');
 
-// Check for a new version every 30 minutes; reload when idle on a fresh deploy.
-// version.json is rewritten on each deploy (any change to it triggers a reload).
+// ---- Idle tracking (nobody touching the screen) ----
+let lastTouch = Date.now();
+['pointerdown', 'touchstart', 'keydown'].forEach((t) => addEventListener(t, () => { lastTouch = Date.now(); }, true));
+const idleFor = (ms) => Date.now() - lastTouch > ms;
+const screenName = () => location.hash.replace(/^#\/?/, '') || homeRoute;
+const isGhost = (() => { try { return !!(window.TabletNative && window.TabletNative.isGhost && window.TabletNative.isGhost()); } catch { return false; } })();
+// Never yank someone out of these.
+const BUSY = ['camera', 'recipe'];
+
+// Check for a new version every 30 minutes. A new deploy is applied the next time
+// the tablet is idle (2 minutes untouched), never in the middle of the camera or a recipe.
 let knownVersion = null;
+let updateWaiting = false;
 async function checkForUpdate() {
   try {
     const v = await (await fetch('./version.json', { cache: 'no-store' })).text();
-    if (knownVersion && v !== knownVersion) location.reload();
-    knownVersion = v;
+    if (knownVersion && v !== knownVersion) updateWaiting = true;
+    knownVersion = knownVersion || v;
   } catch { /* offline: try again later */ }
 }
 checkForUpdate();
 setInterval(checkForUpdate, 30 * 60 * 1000);
+
+// ---- Night mode: 10 PM to 6 AM ----
+// Family tablets move to the night clock, Tom's to the starfield, once nobody has
+// touched the screen for 5 minutes. At 6 AM they go back home.
+const nightRoute = profile === 'tom' ? 'viewscreen' : 'night';
+const isNight = () => { const h = new Date().getHours(); return h >= 22 || h < 6; };
+
+setInterval(() => {
+  const here = screenName();
+  if (updateWaiting && idleFor(2 * 60 * 1000) && !BUSY.includes(here)) { location.reload(); return; }
+  if (isGhost) return; // the hidden admin copy doesn't follow the clock
+  if (isNight() && here !== nightRoute && idleFor(5 * 60 * 1000) && !BUSY.includes(here)) {
+    location.hash = `#/${nightRoute}`;
+  } else if (!isNight() && here === nightRoute && idleFor(5 * 60 * 1000)) {
+    location.hash = `#/${homeRoute}`;
+  }
+}, 30 * 1000);

@@ -15,6 +15,7 @@ permissions:
 jobs:
   build:
     runs-on: ubuntu-latest
+    timeout-minutes: 20
     outputs:
       signed: ${{ steps.key.outputs.signed }}
     env:
@@ -63,6 +64,7 @@ jobs:
   emulator-test:
     needs: build
     runs-on: ubuntu-latest
+    timeout-minutes: 30   # an emulator that never boots shouldn't run for hours
     # Android 10's original web engine (Chrome 74) crashes in the emulator's software
     # graphics now and then; real tablets have real GPUs. Report it, don't block releases.
     continue-on-error: ${{ matrix.api == 29 }}

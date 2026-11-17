@@ -1,114 +1,105 @@
-# Setting up each tablet (about 10 minutes each)
+# Setting up a tablet (about 10 minutes each)
 
-Do this once per tablet, before wrapping it. You need a Windows PC with `adb`
-(Android platform-tools, already on your PC) and a USB-C cable.
+Do this once per tablet, before you wrap it. You need this Windows PC (it already
+has `adb`) and a USB-C cable that carries data.
 
-## 1. Factory reset and skip accounts
+## 1. On the tablet: fresh start, no Google account yet
 
-Kiosk mode (device owner) only works on a tablet with **no Google account**.
+1. New tablet: just turn it on. Used one: Settings → System → Reset → **Erase all data**.
+2. In the setup screens, pick the language and **connect to Wi-Fi**, but **skip
+   signing in to Google**. (Kiosk mode can only be switched on before any account
+   is added; you add the Google account in step 4.)
+3. Turn on USB debugging: Settings → About tablet → tap **Build number** 7 times,
+   then Settings → System → Developer options → **USB debugging** on.
 
-1. On a new tablet: just turn it on. On a used one: Settings → System → Reset → Erase all data.
-2. In the setup wizard: pick language, **connect to Wi-Fi**, and **skip** signing in to Google.
-   (You can add the recipient's own Wi-Fi later from the grown-up menu.)
-3. Finish setup to the normal home screen.
+## 2. On the PC: run the setup
 
-## 2. Turn on USB debugging
+1. Plug the tablet in. Tap **Allow** (tick "Always allow") when the tablet asks.
+2. Double-click **`setup\Setup tablet.bat`** in this project.
+3. Pick **1** (Family) or **2** (Tom), and a grown-up PIN (Enter = `2512`).
 
-1. Settings → About tablet → tap **Build number** 7 times.
-2. Settings → System → Developer options → turn on **USB debugging**.
-3. Plug into the PC and tap **Allow** on the tablet.
+The script downloads the newest app, installs it, turns on kiosk mode, lets your
+dashboard see their screen without them ever being asked, starts the right screens,
+then switches USB debugging off again. If anything is wrong it tells you exactly
+what to do (most often: the tablet already has a Google account → go back to step 1).
 
-## 3. Install the app and make it the device owner
+## 3. Optional: Apps and Camera
 
-Download `home-tablets.apk` (this link always gets the newest version):
-https://github.com/datboi161616-a11y/home-tablets/releases/latest/download/home-tablets.apk
+Family tablets show the **Apps** and **Camera** buttons; Tom's tablet hides them to
+stay focused on space and flight. Switch either one on or off per tablet from your
+dashboard (**Features on this tablet**).
 
-Then, in a terminal in the folder where you saved it:
+## 4. On the tablet: one Google sign-in (about 2 minutes)
+
+One Google account signs the tablet into **YouTube, Gmail, Google Photos, YouTube
+Music, Calendar and the Play Store** at once. No separate login per app.
+
+1. Hold the **top-left corner** for 5 seconds, enter the PIN → **Wi-Fi settings**,
+   then tap back to the main Settings page.
+2. **Accounts → Add account → Google** and sign in. Most recipients use iPhones,
+   which can't be linked to Android, so make a Google account for the tablet.
+3. Open the **Play Store** and update **Android System WebView**. The screens look
+   best on a current web engine.
+4. Optional one-time logins: WhatsApp (messaging for iPhone users), Spotify, Netflix…
+
+Unplug. From now on it updates itself and you manage it from your dashboard.
+
+---
+
+## Their photos
+
+Each tablet has its own private album (photos stay on that tablet).
+
+- **Send from a phone (no account):** on the tablet, Photos → **+ Add photos** shows
+  a QR code. On a phone **on the same Wi-Fi**, point the camera at it, tap the link,
+  **Choose photos** (Select All works). They appear in seconds.
+- **Their iPhone photos, automatically:** install **Google Photos** on their iPhone,
+  sign in with the tablet's Google account, turn on backup.
+- **Camera:** Photos → **📷 Camera**, or from your dashboard (group photo with a
+  3-2-1 countdown, or video).
+
+If a phone can't reach the tablet, it's on mobile data or a guest Wi-Fi network.
+
+## Grown-up menu
+
+Hold the **top-left corner** for 5 seconds, enter the PIN:
+
+- **Wi-Fi settings** (unlocks for 10 minutes), **Switch profile**, **Reload**,
+  **Check for app update**, **New photo upload code**, **Remote viewing on/off**,
+  **Unlock tablet for 10 minutes**, **Turn off kiosk mode permanently**.
+
+## Automatic behaviour
+
+- **Night:** from 10 PM, once nobody has touched it for 5 minutes, it switches to the
+  night clock (Tom: starfield) and dims the screen. At 6 AM it goes back home.
+- **Updates:** screen changes you push reach the tablet the next time it's idle;
+  app updates install themselves within 6 hours.
+
+## Running setup again later
+
+Turn USB debugging back on (grown-up menu → **Unlock tablet** → Settings → System →
+Developer options), plug in, run the script. It updates the app and keeps everything.
+
+## Doing it by hand (if the script can't run)
 
 ```
-adb install home-tablets.apk
+adb install -r home-tablets.apk
+```
+
+```
 adb shell dpm set-device-owner com.hometablets.launcher/.AdminReceiver
 ```
-
-The second line must say `Success: Device owner set ...`. If it says there are
-accounts on the device, go back to step 1.
-
-Then let your dashboard's "their screen right now" picture show any app (like
-YouTube), without anyone at the tablet ever being asked to "Allow":
 
 ```
 adb shell appops set com.hometablets.launcher PROJECT_MEDIA allow
 ```
 
-## 4. Pick the profile (and optionally a PIN)
-
-Family tablet:
-
 ```
 adb shell am start -n com.hometablets.launcher/.MainActivity --es profile family --es pin 2512
 ```
 
-Tom's tablet:
-
-```
-adb shell am start -n com.hometablets.launcher/.MainActivity --es profile tom --es pin 2512
-```
-
-Change `2512` to any 4–8 digit PIN for the grown-up menu.
-
-## 5. Sign in once with a Google account (covers most apps)
-
-You do **not** need a separate login for every app. One Google sign-in gives the
-tablet, in a single step: **Gmail (email), Google Photos, YouTube + its
-subscriptions, YouTube Music, Google Calendar, and the Play Store** — all signed
-in at once. If the recipient already uses that Google account on their own phone,
-signing the same account into the tablet brings their email, their photos and
-their YouTube across (this is the closest thing to "linking their phone").
-
-1. Grown-up menu (below) → **Wi-Fi settings**, then tap back to reach the main Settings page.
-2. Accounts → **Add account → Google**, and sign in.
-   - **Android-phone recipients:** use their own Google account so their stuff comes across.
-   - **iPhone recipients:** Apple (iMessage, iCloud photos) can't be linked to a non-Apple
-     device, so make a Google account for the tablet. WhatsApp (an app tile) covers messaging.
-3. While you're here, also open the **Play Store** and update **Android System WebView**
-   (and **Google Chrome** if listed) — the screens look best on a current web engine.
-4. A few non-Google apps (Spotify, Netflix, WhatsApp) each need their own one-time login
-   if you want them — you can do that now, or later from the dashboard.
-5. Keep the account on the tablet so apps and the web engine keep updating themselves.
-6. Grown-up menu → **About** should show WebView 100 or higher.
-
-## 6. Done
-
-Turn USB debugging off again (Developer options) and unplug. The tablet now boots
-straight into the home screen, has no lock screen or status bar, stays on while
-charging, and updates itself.
-
-## Adding photos
-
-Each tablet has its own private album: photos are stored on the tablet only.
-
-1. On the tablet: Photos → **+ Add photos** (or the button on the Home screen).
-2. On a phone **connected to the same Wi-Fi**: point the camera at the QR code and tap the link.
-3. Enter your name, optionally a caption, and **Choose photos**. They appear on the tablet in seconds.
-   The same page shows what's on the tablet and lets you remove photos.
-
-If the phone says it can't reach the tablet, the phone is probably on mobile data
-or a guest Wi-Fi network. Switch it to the same Wi-Fi as the tablet.
-
-## Grown-up menu
-
-Press and hold the **top-left corner** of the screen for 5 seconds, then enter the PIN:
-
-- **Wi-Fi settings**: join the recipient's Wi-Fi (unlocks for 10 minutes).
-- **Switch profile**, **Reload**, **Check for app update**.
-- **New photo upload code**: old QR codes stop working (if a photo of the code got shared).
-- **Unlock tablet for 10 minutes**: use other Android settings. It locks again after that.
-
-## Updates
-
-- **Screens and features** (the web app): push to GitHub. Tablets reload within 30 minutes.
-- **The Android app itself** (rarely needed): push changes under `android/`. GitHub
-  builds, tests and releases it; tablets install it silently within 6 hours.
+(`profile tom` for Tom's tablet.) The app is at
+https://github.com/datboi161616-a11y/home-tablets/releases/latest/download/home-tablets.apk
 
 ## Undoing kiosk mode
 

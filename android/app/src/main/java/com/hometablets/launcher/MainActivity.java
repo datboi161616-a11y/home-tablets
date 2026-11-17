@@ -91,7 +91,8 @@ public class MainActivity extends Activity {
     private boolean resumed;
     private boolean requestingProjection;
     private static final int REQ_PROJECTION = 77;
-    private final Runnable projectionStop = () -> stopService(new Intent(this, ScreenCapture.class));
+    private final Runnable projectionStop = () -> { if (!wantMirror) stopService(new Intent(this, ScreenCapture.class)); };
+    private static volatile boolean wantMirror; // is anyone watching their screen right now?
     private android.content.BroadcastReceiver packageWatcher;
     private final java.util.concurrent.ExecutorService encoder = java.util.concurrent.Executors.newSingleThreadExecutor();
     private final Runnable ghostCleanup = this::destroyGhost;
@@ -315,6 +316,14 @@ public class MainActivity extends Activity {
     private boolean applyExtras(Intent intent) {
         if (intent == null) return false;
         boolean changed = false;
+        // Settings (profile, PIN, keys) are only accepted during USB setup. The setup
+        // script switches USB debugging off at the end, so no other app can change them.
+        boolean setupOverUsb = Settings.Global.getInt(getContentResolver(), Settings.Global.ADB_ENABLED, 0) == 1;
+        if (!setupOverUsb) {
+            String screen = intent.getStringExtra("screen");
+            if (screen != null && screen.matches("[a-z]{1,20}")) { pendingScreen = screen; return true; }
+            return false;
+        }
         String profile = intent.getStringExtra("profile");
         if (profile != null && (profile.equals("family") || profile.equals("tom"))) {
             prefs.edit().putString("profile", profile).apply();
@@ -557,6 +566,7 @@ public class MainActivity extends Activity {
         if (requestCode != REQ_PROJECTION) return;
         requestingProjection = false;
         if (resultCode != RESULT_OK || data == null) return;
+        if (!wantMirror) return; // watching stopped while Android was answering: don't start capture
         Intent svc = new Intent(this, ScreenCapture.class)
                 .putExtra(ScreenCapture.EXTRA_CODE, resultCode)
                 .putExtra(ScreenCapture.EXTRA_DATA, data);
@@ -621,16 +631,17 @@ public class MainActivity extends Activity {
         ScreenCapture sc = ScreenCapture.get();
         if (sc != null) {                        // whole screen, any app
             Bitmap whole = sc.latest();
-            if (whole != null) { encode(whole, hd ? 85 : 55, cb); return; }
+            if (whole != null) { encode(whole, hd ? 80 : 55, cb); return; }
         }
         if (!resumed) { cb.got(null); return; } // in another app and whole-screen view isn't set up
-        int w = hd ? root.getWidth() : FRAME_W;
-        int h = hd ? root.getHeight() : frameHeight(root);
+        // HD is capped at 1600px wide so it fits through the hub (1 MiB per message).
+        int w = hd ? Math.min(1600, root.getWidth()) : FRAME_W;
+        int h = root.getWidth() > 0 ? Math.round(w * root.getHeight() / (float) root.getWidth()) : 800;
         if (w <= 0 || h <= 0) { cb.got(null); return; }
         Bitmap bmp = Bitmap.createBitmap(w, h, Bitmap.Config.ARGB_8888);
         try {
             PixelCopy.request(getWindow(), bmp, result -> {
-                if (result == PixelCopy.SUCCESS) encode(bmp, hd ? 82 : 55, cb);
+                if (result == PixelCopy.SUCCESS) encode(bmp, hd ? 75 : 55, cb);
                 else { bmp.recycle(); cb.got(null); }
             }, handler);
         } catch (Exception e) {
@@ -695,6 +706,7 @@ public class MainActivity extends Activity {
                   .put("screen", otherAppOnScreen() != null ? "app: " + otherAppOnScreen() : currentScreen)
                   .put("inApp", otherAppOnScreen() == null ? JSONObject.NULL : otherAppOnScreen())
                   .put("fullView", ScreenCapture.allowedSilently(MainActivity.this))
+                  .put("features", new JSONObject(prefs.getString("features", "{}")))
                   .put("apps", apps.inventory())
                   .put("ip", PhotoServer.wifiIp())
                   .put("photos", photos.count())
@@ -731,8 +743,9 @@ public class MainActivity extends Activity {
         public void streamChanged(boolean mirror, boolean control) {
             boolean allowed = remoteViewAllowed();
             showViewingDot(mirror && allowed);
-            if (mirror && allowed) ensureProjection();
-            else if (ScreenCapture.get() != null) handler.postDelayed(projectionStop, 2 * 60 * 1000);
+            wantMirror = mirror && allowed;
+            if (wantMirror) ensureProjection();
+            else { handler.removeCallbacks(projectionStop); handler.postDelayed(projectionStop, 2 * 60 * 1000); }
             if (control && allowed) ensureGhost();
             else if (ghost != null) handler.postDelayed(ghostCleanup, 2 * 60 * 1000); // keep briefly in case you come back
         }
@@ -836,6 +849,22 @@ public class MainActivity extends Activity {
                             "window.dispatchEvent(new CustomEvent('tablet-camera-record',{detail:{on:" + on + "}}))", null),
                             on && !wasOpen ? 2000 : 100);
                     done.done(true, on ? "Recording started on their screen" : "Recording stopped");
+                    return;
+                }
+
+                // --- optional features (Apps screen, Camera) per tablet ---
+                case "feature": {
+                    String name = a.optString("name");
+                    if (!name.equals("apps") && !name.equals("camera")) { done.done(false, "Unknown feature"); return; }
+                    try {
+                        JSONObject f = new JSONObject(prefs.getString("features", "{}"));
+                        f.put(name, a.optBoolean("on"));
+                        prefs.edit().putString("features", f.toString()).apply();
+                    } catch (Exception e) { done.done(false, "Couldn't save"); return; }
+                    destroyGhost();
+                    web.loadUrl(siteUrl()); // redraw their screen with the change
+                    remote.sendStatus();
+                    done.done(true, (name.equals("apps") ? "Apps" : "Camera") + (a.optBoolean("on") ? " switched on" : " switched off"));
                     return;
                 }
 
@@ -983,6 +1012,21 @@ public class MainActivity extends Activity {
                 runOnUiThread(MainActivity.this::notifyPhotos);
                 return true;
             } catch (Exception e) { android.util.Log.w("HomeTablet", "saveVideo failed", e); return false; }
+        }
+
+        /** Feature switches you set from the dashboard: {"apps":true,...} (only the ones you changed). */
+        @JavascriptInterface
+        public String features() { return prefs.getString("features", "{}"); }
+
+        /** Screen backlight for the night screens: 0..1, or -1 for the normal setting. */
+        @JavascriptInterface
+        public void setBrightness(float level) {
+            if (isGhost) return; // the hidden copy shares their window: never dim their screen
+            runOnUiThread(() -> {
+                WindowManager.LayoutParams lp = getWindow().getAttributes();
+                lp.screenBrightness = level < 0 ? WindowManager.LayoutParams.BRIGHTNESS_OVERRIDE_NONE : Math.max(0.01f, Math.min(1f, level));
+                getWindow().setAttributes(lp);
+            });
         }
 
         /** Camera screen diagnostics (shows in logcat). */

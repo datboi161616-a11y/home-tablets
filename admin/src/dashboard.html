@@ -79,7 +79,15 @@
     family: ['home', 'launcher', 'apps', 'photos', 'addphotos', 'recipe', 'calendar', 'forecast', 'messages', 'night'],
     tom: ['bridge', 'apps', 'flights', 'departures', 'trivia', 'alert', 'missions', 'sky', 'deepimage', 'viewscreen'],
   };
+  // Optional features per tablet. Defaults match the tablet app (js/services/features.js).
+  const FEATURE_DEFAULTS = { family: { apps: true, camera: true }, tom: { apps: false, camera: false } };
+  const featureOn = (s, name) => {
+    const o = (s.features || {})[name];
+    return o === undefined ? !!(FEATURE_DEFAULTS[s.profile || 'family'] || FEATURE_DEFAULTS.family)[name] : !!o;
+  };
   const app = document.getElementById('app');
+  // Only pictures the hub vetted as plain JPEG data go into a style attribute.
+  const safeShot = (u) => typeof u === 'string' && /^data:image\/jpeg;base64,[A-Za-z0-9+/=]+$/.test(u);
   const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c]);
   let token = localStorage.getItem('adminToken');
   let ws, devices = [], connected = false, retry = 0;
@@ -203,14 +211,14 @@
     const state = d.online ? 'on' : 'off';
     return `
       <div class="card click" data-open="${esc(d.id)}">
-        <div class="thumb" style="${d.shot ? `background-image:url('${d.shot}')` : ''}">${d.shot ? '' : 'No picture yet'}</div>
+        <div class="thumb" style="${safeShot(d.shot) ? `background-image:url('${d.shot}')` : ''}">${safeShot(d.shot) ? '' : 'No picture yet'}</div>
         <div class="body">
           <div class="name"><span class="dot ${state}"></span>${esc(d.name)}</div>
           <div class="meta">
             <span>${d.online ? 'Online' : `Offline · seen ${ago(d.lastSeen)}`}</span>
             ${s.profile ? `<span>${s.profile === 'tom' ? 'Tom’s screens' : 'Family screens'}</span>` : ''}
             ${s.screen ? `<span>On: ${esc(s.screen)}</span>` : ''}
-            ${s.battery != null ? `<span>🔋 ${s.battery}%${s.charging ? ' ⚡' : ''}</span>` : ''}
+            ${s.battery != null ? `<span>🔋 ${Number(s.battery) | 0}%${s.charging ? ' ⚡' : ''}</span>` : ''}
             ${s.app ? `<span>App ${esc(s.app)}</span>` : ''}
           </div>
         </div>
@@ -308,6 +316,15 @@
             </div>
           </div>
           <div class="box">
+            <h3>Features on this tablet</h3>
+            ${[['apps', 'Apps screen (YouTube, Spotify…)'], ['camera', 'Camera']].map(([k, label]) => `
+              <div class="app">
+                <button class="switch ${featureOn(s, k) ? 'on' : ''}" data-feature="${k}" data-on="${featureOn(s, k) ? '0' : '1'}"></button>
+                <span class="lbl">${label}</span>
+              </div>`).join('')}
+            <div class="hint" style="margin:0">Off = hidden on their tablet. Changing this reloads their screen.</div>
+          </div>
+          ${featureOn(s, 'camera') ? `<div class="box">
             <h3>Camera (group photo)</h3>
             <div class="hint" style="margin:0">Opens the camera on their tablet — the picture above shows the live view. ${s.fullView ? '' : '<b>Note:</b> set up the one-time USB step so the live camera shows here.'}</div>
             <div class="row">
@@ -322,7 +339,7 @@
               <button id="recStop" data-c="cameraRecord" data-on="0">■ Stop video</button>
             </div>
             <div class="hint" style="margin:0">Photos and videos save to this tablet’s own album.</div>
-          </div>
+          </div>` : ''}
           <div class="box">
             <h3>Apps on their Apps screen</h3>
             <div class="apps">${(s.apps || []).length ? s.apps.map((a) => `
@@ -359,8 +376,14 @@
 
   // Only re-render the parts that change, so the live picture isn't reset.
   let lastKey = '';
+  // Don't redraw while you're typing in a box (PIN, rename, type text); redraw when you leave it.
+  let renderWaiting = false;
+  document.addEventListener('focusout', () => { if (renderWaiting) { renderWaiting = false; setTimeout(render, 0); } });
+
   function render() {
     if (!token) return showLogin();
+    const typing = document.activeElement && ['INPUT', 'SELECT', 'TEXTAREA'].includes(document.activeElement.tagName) && current;
+    if (typing) { renderWaiting = true; return setConnLabel(); }
     const d = current && devices.find((x) => x.id === current);
     if (current && !d) { current = null; }
     const key = current ? `detail:${current}:${JSON.stringify({ ...d, shot: null, lastSeen: null })}` : `list:${JSON.stringify(devices.map((x) => ({ ...x, lastSeen: null })))}`;
@@ -417,6 +440,8 @@
     if ($('navGo')) $('navGo').onclick = () => cmd(d.id, 'nav', { screen: $('navSel').value });
     if ($('typeGo')) $('typeGo').onclick = () => { cmd(d.id, 'type', { text: $('typeText').value }); $('typeText').value = ''; };
     $('theirGo').onclick = () => cmd(d.id, 'show', { screen: $('theirSel').value });
+    document.querySelectorAll('[data-feature]').forEach((el) => el.onclick = () =>
+      cmd(d.id, 'feature', { name: el.dataset.feature, on: el.dataset.on === '1' }));
     document.querySelectorAll('[data-app]').forEach((el) => el.onclick = () =>
       cmd(d.id, 'apps', { pkg: el.dataset.app, allow: el.dataset.allow === '1' }));
     document.querySelectorAll('[data-open-app]').forEach((el) => el.onclick = () => {

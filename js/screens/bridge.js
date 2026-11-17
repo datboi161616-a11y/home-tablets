@@ -1,5 +1,6 @@
 // Tom · Flight deck home screen (Bridge.dc.html in the design)
 import { getLocation } from '../services/location.js';
+import { feature } from '../services/features.js';
 import {
   getAircraft, getRoutes, advance, flightLabel, typeName, fmtAlt, compass, RADIUS_NM,
 } from '../services/aircraft.js';
@@ -49,7 +50,15 @@ export function mount(el) {
   let glow = localStorage.getItem('bridge.glow') || GLOWS[0];
   const v = vals();
   const navBtn = 'min-height: 60px; border: 1px solid #1E3A4A; background: #0A1220; text-decoration: none; font-family: Oxanium, sans-serif; font-size: 15px; font-weight: 700; letter-spacing: 3px; display: flex; align-items: center; justify-content: center';
-  const chip = 'min-height: 44px; padding: 10px 16px; box-sizing: border-box; border: 1px solid #1E3A4A; font-size: 13px; letter-spacing: 3px; display: flex; align-items: center';
+  // The design's chips are DEEP IMAGE + VIEWSCREEN. Apps/Camera appear only if you
+  // switch them on from the dashboard (max three chips so the header stays one line).
+  const extraChips = [
+    feature('apps') && ['#/apps', 'APPS'],
+    feature('camera') && ['#/camera', 'CAMERA'],
+    ['#/deepimage', 'DEEP IMAGE'],
+    ['#/viewscreen', 'VIEWSCREEN'],
+  ].filter(Boolean).slice(0, 3);
+  const chip = 'min-height: 44px; padding: 10px 12px; box-sizing: border-box; border: 1px solid #1E3A4A; font-size: 13px; letter-spacing: 2px; display: flex; align-items: center; white-space: nowrap';
 
   el.innerHTML = `
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Oxanium:wght@300;500;700&family=JetBrains+Mono:wght@400;600&display=swap">
@@ -68,16 +77,13 @@ export function mount(el) {
         <button data-glow aria-label="Change deck colour" style="width:44px;height:44px;margin:-16px -8px -16px -16px;padding:0;border:0;background:none;cursor:pointer;display:flex;align-items:center;justify-content:center">
           <span class="blink" style="width: 12px; height: 12px; border-radius: 50%; background: var(--glow)"></span>
         </button>
-        <div class="glow-c" style="font-family: Oxanium, sans-serif; font-size: 24px; font-weight: 700; letter-spacing: 6px">CAPTAIN TOM · FLIGHT DECK</div>
+        <div class="glow-c" style="font-family: Oxanium, sans-serif; font-size: 24px; font-weight: 700; letter-spacing: 6px; white-space: nowrap">CAPTAIN TOM · FLIGHT DECK</div>
       </div>
-      <div style="display: flex; gap: 28px; align-items: center">
-        <div style="display: flex; gap: 10px; margin: -8px 0">
-          <a href="#/apps" style="${chip}">APPS</a>
-          <a href="#/camera" style="${chip}">CAMERA</a>
-          <a href="#/deepimage" style="${chip}">DEEP IMAGE</a>
-          <a href="#/viewscreen" style="${chip}">VIEWSCREEN</a>
+      <div style="display: flex; gap: 20px; align-items: center">
+        <div style="display: flex; gap: 8px; margin: -8px 0">
+          ${extraChips.map(([href, label]) => `<a href="${href}" style="${chip}">${label}</a>`).join('')}
         </div>
-        <div data-date style="font-size: 16px; letter-spacing: 3px; color: #7FA6B8">${v.dateLine}</div>
+        <div data-date style="font-size: 16px; letter-spacing: 3px; color: #7FA6B8; white-space: nowrap">${v.dateLine}</div>
         <div data-time style="font-family: Oxanium, sans-serif; font-size: 34px; font-weight: 300; color: #FFB547">${v.time}</div>
       </div>
     </div>

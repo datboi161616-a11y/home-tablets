@@ -98,7 +98,7 @@ export function mount(el) {
   // Photo card: this tablet's newest photos, changing every 30 seconds.
   let photoIndex = 0;
   function renderPhoto() {
-    const list = getPhotos().slice(0, 20);
+    const list = getPhotos().filter((p) => !p.video).slice(0, 20); // the card shows stills only
     const bg = $('[data-photo-bg]');
     $('[data-photo-empty]').style.display = list.length ? 'none' : 'flex';
     $('[data-photo-label]').style.display = list.length ? '' : 'none';

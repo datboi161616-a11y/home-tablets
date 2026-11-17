@@ -5,6 +5,7 @@ import { getWeather, describe } from '../services/weather.js';
 import { newPhotoCount, thisWeekCount, unreadNotes } from '../services/family-sample.js';
 import { isTablet, getPhotos } from '../services/tablet-photos.js';
 import { getApps } from '../services/apps.js';
+import { feature } from '../services/features.js';
 
 let timer;
 
@@ -61,8 +62,9 @@ export function mount(el) {
     { href: '#/recipe', icon: 'recipe', title: 'Recipes', sub: 'Family favorites', style: 'accent' },
     { href: '#/messages', icon: 'messages', title: 'Messages', sub: unreadNotes ? `${plural(unreadNotes, 'new note', 'new notes')}` : 'No new notes' },
     // The design's "Grocery list" tile (no grocery screen yet) is now the Apps tile.
-    { href: '#/apps', icon: 'apps', title: 'Apps', sub: appsSub() },
-    { href: '#/camera', icon: 'camera', title: 'Camera', sub: 'Take a photo or video' },
+    feature('apps')
+      ? { href: '#/apps', icon: 'apps', title: 'Apps', sub: appsSub() }
+      : { icon: 'grocery', title: 'Grocery list', sub: 'Shared with phones' }, // the design's original tile
     { href: '#/night', icon: 'night', title: 'Night clock', sub: 'Starts at 10 PM' },
   ];
 

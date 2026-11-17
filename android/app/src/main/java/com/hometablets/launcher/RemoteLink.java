@@ -55,7 +55,7 @@ final class RemoteLink {
             .readTimeout(0, TimeUnit.SECONDS)
             .build();
 
-    private WebSocket socket;
+    private volatile WebSocket socket; // set on the io thread, read on the main thread
     private boolean connected, approved, stopped;
     private boolean mirror, control;
     private int retry;
@@ -136,19 +136,26 @@ final class RemoteLink {
                 if ("pong".equals(text)) return;
                 main.post(() -> onHubMessage(text));
             }
+            // The hub hung up (e.g. "removed" from the dashboard): finish the close properly.
+            @Override public void onClosing(WebSocket ws, int code, String reason) {
+                Log.i(TAG, "Remote link closing " + code + " " + reason);
+                ws.close(1000, null);
+                lost(ws, code);
+            }
             @Override public void onClosed(WebSocket ws, int code, String reason) {
                 Log.i(TAG, "Remote link closed " + code + " " + reason);
-                lost(code);
+                lost(ws, code);
             }
             @Override public void onFailure(WebSocket ws, Throwable t, Response response) {
                 Log.w(TAG, "Remote link failed: " + t.getMessage());
-                lost(response != null ? response.code() : 0);
+                lost(ws, response != null ? response.code() : 0);
             }
         });
     }
 
-    private void lost(int code) {
+    private void lost(WebSocket which, int code) {
         main.post(() -> {
+            if (which != socket) return; // an old connection; already handled
             connected = false;
             socket = null;
             setStream(false, false);
@@ -198,7 +205,10 @@ final class RemoteLink {
         mirror = mirrorOn;
         control = controlOn;
         host.streamChanged(mirror, control);
-        if (!wasOn && (mirror || control)) main.post(frameLoop);
+        if (!wasOn && (mirror || control)) {
+            main.removeCallbacks(frameLoop); // never run two picture loops
+            main.post(frameLoop);
+        }
     }
 
     // ------------------------------------------------------------ tablet → hub
