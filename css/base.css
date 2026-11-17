@@ -1,0 +1,54 @@
+:root {
+  --bg: #ECEEF0;
+  --ink: #1D2430;
+  --ink-2: #4A5363;
+  --card: #FFFFFF;
+  --line: #D9DDE2;
+  --accent: #C2491F;
+  --radius: 24px;
+}
+
+* { box-sizing: border-box; }
+
+html, body {
+  margin: 0;
+  height: 100%;
+  overflow: hidden;
+  background: #000;
+  font-family: Inter, system-ui, sans-serif;
+  color: var(--ink);
+  -webkit-tap-highlight-color: transparent;
+  user-select: none;
+}
+
+a { color: inherit; text-decoration: none; }
+
+/* Fixed design canvas, scaled by app.js to fit the screen. */
+#stage {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+#screen {
+  width: 1280px;
+  height: 800px;
+  flex: none;
+  transform-origin: center center;
+  background: var(--bg);
+  overflow: hidden;
+  position: relative;
+}
+
+.display { font-family: Outfit, system-ui, sans-serif; }
+.muted { color: var(--ink-2); }
+.card { background: var(--card); border-radius: var(--radius); }
+.eyebrow {
+  font-size: 15px; font-weight: 600; letter-spacing: 1px; text-transform: uppercase;
+}
+.pill {
+  border-radius: 999px; padding: 12px 20px; font-size: 16px; font-weight: 600;
+  min-height: 44px; display: inline-flex; align-items: center;
+}
+.skeleton { opacity: .45; }

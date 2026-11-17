@@ -1,0 +1,184 @@
+// Tom · Sky alert (Alert.dc.html in the design)
+// Shows the most important real sky event happening now (see services/skyalert.js).
+// The Bridge jumps here automatically when a new one starts. With nothing going on
+// it shows an "all clear" panel counting down to the next visible Space Station
+// pass, plus a TEST ALERT button that plays the design's 3:00 example.
+import { getLocation } from '../services/location.js';
+import { nextVisiblePass } from '../services/iss.js';
+import { compass } from '../services/aircraft.js';
+import { checkAlerts, testAlert, startTest, stopTest, testActive, markSeen } from '../services/skyalert.js';
+
+let timers = [];
+let alive = false;
+
+const pad = (n) => String(n).padStart(2, '0');
+function countdown(ms) {
+  const s = Math.max(0, Math.round(ms / 1000));
+  const h = Math.floor(s / 3600), m = Math.floor((s % 3600) / 60);
+  return h ? `${h}:${pad(m)}:${pad(s % 60)}` : `${m}:${pad(s % 60)}`;
+}
+const fmt12 = (t) => new Date(t).toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' });
+const bigSize = (text) => Math.min(190, Math.floor(1150 / (Math.max(text.length, 1) * 0.58)));
+
+const CHIPS = [
+  ['launch', 'ROCKET LAUNCH · LIVE IN 10 MIN'],
+  ['aurora', 'NORTHERN LIGHTS POSSIBLE TONIGHT'],
+  ['meteor', 'METEOR SHOWER PEAK'],
+  ['rare', 'RARE PLANE OVERHEAD (B-52, AIR FORCE ONE, A380)'],
+];
+
+export function mount(el) {
+  alive = true;
+  el.innerHTML = `
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Oxanium:wght@300;500;700&family=JetBrains+Mono:wght@400;600&display=swap">
+  <style>
+    .tba a,.tba button.tba-btn{color:#FFD2CB}.tba a:hover{color:#FFFFFF}
+    @keyframes tba-pulse{0%,100%{opacity:1}50%{opacity:.35}}
+    .tba .pulse{animation:tba-pulse 1.6s ease-in-out infinite}
+    .tba-btn{min-height:44px;padding:10px 18px;box-sizing:border-box;border:1px solid #7A2A20;background:none;font-family:inherit;text-decoration:none;font-size:14px;letter-spacing:3px;display:flex;align-items:center;cursor:pointer}
+    .tba.calm{background:#05070D !important;color:#D7E6F0 !important}
+    .tba.calm .pulse{animation:none}
+    .tba.calm [data-bar]{background:#1E3A4A !important}
+    .tba.calm [data-head]{color:#5CE1E6 !important}
+    .tba.calm [data-label],.tba.calm [data-sub],.tba.calm [data-chips-label]{color:#7FA6B8 !important}
+    .tba.calm .tba-btn,.tba.calm [data-chips] > div,.tba.calm [data-chips-wrap]{border-color:#1E3A4A !important;color:#D7E6F0}
+    .tba.calm [data-big]{color:#FFB547 !important}
+    .tba [data-chips] > div.on{border-color:#FF6B57;background:rgba(255,59,46,.18);color:#FFFFFF}
+  </style>
+  <div class="tba calm" style="width: 1280px; height: 800px; box-sizing: border-box; padding: 40px; background: #160606; color: #FFE7E2; font-family: 'JetBrains Mono', monospace; display: flex; flex-direction: column; gap: 24px; position: relative">
+    <div data-bar class="pulse" style="position: absolute; left: 0; right: 0; top: 0; height: 14px; background: #FF3B2E"></div>
+    <div data-bar class="pulse" style="position: absolute; left: 0; right: 0; bottom: 0; height: 14px; background: #FF3B2E"></div>
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 12px">
+      <div data-head class="pulse" style="font-family: Oxanium, sans-serif; font-size: 28px; font-weight: 700; letter-spacing: 10px; color: #FF6B57">SKY ALERT</div>
+      <div style="display: flex; gap: 12px">
+        <button data-test class="tba-btn">TEST ALERT</button>
+        <a data-dismiss href="#/bridge" class="tba-btn">DISMISS</a>
+      </div>
+    </div>
+    <div style="flex-grow: 1; display: flex; flex-direction: column; justify-content: center; gap: 18px; min-width: 0">
+      <div data-label style="font-size: 18px; letter-spacing: 5px; color: #FF9A8C">CHECKING THE SKY…</div>
+      <div data-big style="font-family: Oxanium, sans-serif; font-size: 190px; font-weight: 300; line-height: 1; color: #FFFFFF; white-space: nowrap">--:--</div>
+      <div data-headline style="font-family: Oxanium, sans-serif; font-size: 40px; font-weight: 500">&nbsp;</div>
+      <div data-sub style="font-size: 18px; color: #FF9A8C">&nbsp;</div>
+    </div>
+    <div data-chips-wrap style="border-top: 1px solid #7A2A20; padding-top: 16px; display: flex; flex-direction: column; gap: 10px">
+      <div data-chips-label style="font-size: 13px; letter-spacing: 4px; color: #FF9A8C">THIS SCREEN ALSO GOES RED FOR</div>
+      <div data-chips style="display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; font-size: 15px">
+        ${CHIPS.map(([k, t]) => `<div data-chip="${k}" style="border: 1px solid #7A2A20; padding: 12px 14px">${t}</div>`).join('')}
+      </div>
+    </div>
+  </div>`;
+
+  const $ = (s) => el.querySelector(s);
+  const root = $('.tba');
+  let loc = null;
+  let alert = null;   // active alert (real or test)
+  let calm = null;    // { pass } when nothing is happening
+
+  function setBig(text) {
+    const b = $('[data-big]');
+    if (b.textContent !== text) b.textContent = text;
+    b.style.fontSize = bigSize(text) + 'px';
+  }
+
+  function tick() {
+    if (!alive) return;
+    const now = Date.now();
+    if (alert) {
+      root.classList.remove('calm');
+      $('[data-head]').textContent = alert.test ? 'SKY ALERT · TEST' : 'SKY ALERT';
+      $('[data-test]').style.display = alert.test ? 'none' : '';
+      if (alert.until) {
+        if (alert.until > now) {
+          $('[data-label]').textContent = alert.label;
+          setBig(countdown(alert.until - now));
+        } else if (alert.ends > now) {
+          $('[data-label]').textContent = alert.nowLabel || alert.label;
+          setBig('NOW');
+        } else if (alert.test) {
+          startTest(); // loop the demo, like the design
+          alert = testAlert();
+          return tick();
+        } else {
+          alert = null;
+          refresh();
+          return;
+        }
+      } else {
+        $('[data-label]').textContent = alert.label;
+        setBig(alert.big);
+      }
+      $('[data-headline]').textContent = alert.headline;
+      $('[data-sub]').textContent = alert.sub;
+      el.querySelectorAll('[data-chip]').forEach((c) => c.classList.toggle('on', c.dataset.chip === alert.kind));
+      return;
+    }
+
+    // Nothing happening: calm panel
+    root.classList.add('calm');
+    $('[data-head]').textContent = 'SKY ALERT · ALL CLEAR';
+    $('[data-test]').style.display = '';
+    el.querySelectorAll('[data-chip]').forEach((c) => c.classList.remove('on'));
+    const p = calm?.pass;
+    if (p && p.visEnd < now) { calm = null; refresh(); return; }
+    if (p && p.visStart > now) {
+      $('[data-label]').textContent = 'NOTHING RIGHT NOW · NEXT VISIBLE SPACE STATION PASS IN';
+      setBig(countdown(p.visStart - now));
+      $('[data-headline]').textContent = `${fmt12(p.visStart)} · LOOK ${compass(p.visAz)}`;
+      $('[data-sub]').textContent = `About ${Math.max(1, Math.round((p.visEnd - p.visStart) / 60000))} minutes of bright steady light · This screen goes red 10 minutes before`;
+    } else if (calm) {
+      $('[data-label]').textContent = 'NOTHING RIGHT NOW';
+      setBig('CLEAR');
+      $('[data-headline]').textContent = 'NO SPACE STATION PASSES IN THE DARK FOR 2 DAYS';
+      $('[data-sub]').textContent = 'We keep watching the sky every minute';
+    }
+  }
+
+  async function refresh() {
+    if (testActive()) { alert = testAlert(); tick(); return; }
+    if (!loc) return;
+    try {
+      const a = await checkAlerts(loc);
+      if (!alive || testActive()) return;
+      alert = a;
+      if (a) markSeen(a.id);
+      if (!a && !calm) calm = { pass: await nextVisiblePass(loc) };
+    } catch (e) {
+      console.error(e);
+      if (!calm) calm = { pass: null };
+    }
+    tick();
+  }
+
+  $('[data-test]').addEventListener('click', () => {
+    startTest();
+    alert = testAlert();
+    tick();
+  });
+  $('[data-dismiss]').addEventListener('click', () => {
+    if (alert && !alert.test) markSeen(alert.id);
+    stopTest();
+  });
+
+  if (testActive()) { alert = testAlert(); tick(); }
+  timers.push(setInterval(tick, 1000));
+
+  (async () => {
+    try {
+      loc = await getLocation();
+    } catch (e) {
+      console.error(e);
+      loc = { lat: 40.7128, lon: -74.006, town: '' };
+    }
+    if (!alive) return;
+    await refresh();
+    timers.push(setInterval(refresh, 30 * 1000));
+    timers.push(setInterval(async () => { if (loc) { calm = { pass: await nextVisiblePass(loc) }; } }, 15 * 60 * 1000));
+  })();
+}
+
+export function unmount() {
+  alive = false;
+  timers.forEach(clearInterval);
+  timers = [];
+}

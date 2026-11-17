@@ -1,0 +1,41 @@
+# Publishes the site to GitHub Pages on every push to main.
+# Each deploy stamps version.json with the commit, so every tablet notices
+# the new version within 30 minutes and reloads itself.
+name: Deploy to tablets
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Stamp version
+        run: |
+          echo "{ \"version\": \"${GITHUB_SHA::7}\", \"deployed\": \"$(date -u +%Y-%m-%dT%H:%M:%SZ)\" }" > version.json
+          cat version.json
+
+      - uses: actions/configure-pages@v5
+
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: .
+
+      - id: deployment
+        uses: actions/deploy-pages@v4
