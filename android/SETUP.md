@@ -43,12 +43,13 @@ Music, Calendar and the Play Store** at once. No separate login per app.
 
 Unplug. From now on it updates itself.
 
-**Before you wrap it:** a new screen starts a **hands-on tutorial** instead of Home
-until someone finishes or skips it: a spotlight walks the new owner through the real
-screens (add a calendar event, plan a dinner, find the photo QR code). If you skipped
-it while setting up, turn it back on: grown-up menu → **Tutorial: show again**. It
-comes back at every start until the new owner finishes or skips it. The **Tour**
-button on the App menu (TOUR on Tom's flight deck) runs it again any time.
+**Before you wrap it:** a new screen opens with a short **showcase** instead of Home
+until someone finishes or skips it: it hops across the real screens showing off the
+best features (weather, family photos and the QR code, dinner ideas, cooking mode,
+recipes and the shopping list, calendar, notes, night mode; Tom's: live planes,
+Voyager, tonight's sky, launches, trivia, starfield). If you skipped it while setting
+up, turn it back on: grown-up menu → **Tutorial: show again**. It comes back at every
+start until the new owner finishes or skips it. The **Tour** button on the App menu (TOUR on Tom's flight deck) runs it again any time.
 
 ---
 

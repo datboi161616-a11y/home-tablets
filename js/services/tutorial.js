@@ -1,16 +1,17 @@
-// Hands-on tutorial: a spotlight on the REAL screens. Each step points at something,
-// says what to do, and waits until the person has actually done it (tapped it, typed,
-// saved...). Everything outside the spotlight is dimmed and can't be tapped, so nobody
-// wanders off by accident; "End tutorial" is always there.
+// First-start showcase: a quick "look what it can do" on the REAL screens, the way you'd
+// show off a gift. It hops between the best features, spotlights the good bit, and says
+// one punchy line; the person just taps Next. Taps elsewhere are blocked so the demo
+// doesn't wander off; "Skip the tour" is always there.
 //
-// A step: { route: /regex on the hash/, target: 'css selector' | fn -> element,
-//           say: 'html', wait: fn -> true when done | 'next' (shows a Next button),
-//           optional: true (skip the step if its target never appears), center: true (no target) }
+// A beat: { go: 'route' | fn (jump to that screen when the beat starts), route: /regex on the hash/,
+//           target: 'css selector' | fn -> element (spotlight it) | corner: true (whole screen, caption in the corner)
+//           | center: true (a card in the middle), say: 'html', wait: 'next' | fn -> true when done,
+//           optional: true (skip the beat if its target never appears) }
 import { profile, settings } from '../config.js';
 import { setWelcomeDone } from './welcome-state.js';
 import { myEvents } from './my-events.js';
 
-let script = null, idx = 0, root = null, tick = null, waitingSince = 0, startCount = 0;
+let script = null, idx = 0, root = null, tick = null, waitingSince = 0, startCount = 0, goneFor = -1;
 export const tutorialRunning = () => !!script;
 
 const hash = () => location.hash.replace(/^#\/?/, '');
@@ -19,48 +20,63 @@ const visible = (el) => { if (!el) return null; const r = el.getBoundingClientRe
 const find = (t) => visible(typeof t === 'function' ? t() : q(t));
 const formTitle = () => q('[data-detail] [data-title]');
 
-// ---------------- The family script ----------------
+// ---------------- The showcase scripts ----------------
+// Not a lesson: a quick "look what it can do" on the real screens. Each beat jumps to a
+// screen (go), points at the best bit (target) or lets the whole screen show (corner),
+// and says one punchy thing. The person just taps Next (or the thing itself).
+const H = (title, line) => `<div class="tu-h">${title}</div><div class="tu-l">${line}</div>`;
+const dinnerHref = () => { const d = q('[data-dinner]'); const h = d && d.getAttribute('href'); return h && h.indexOf('#/dish/') === 0 ? h.replace('#/dish/', 'recipe/') : 'recipes'; };
+
 const FAMILY = [
   { center: true, wait: 'start',
-    say: '<b style="font-size:30px">Hi! Let’s learn your kitchen screen by using it.</b><br>You’ll put something on the calendar, plan a dinner and see where family photos go. It takes about three minutes.' },
-  { route: /^home/, target: 'a[href="#/launcher"]', say: 'This is your home screen. Tap <b>All apps</b> to see everything it can do.', wait: () => /^launcher/.test(hash()) },
-  { route: /^launcher/, target: 'a[href="#/calendar"]', say: 'Tap <b>Calendar</b>.', wait: () => /^calendar/.test(hash()) },
-  { route: /^calendar/, target: '.pill[data-add=""]', say: 'Let’s put something on it. Tap <b>+ Add</b>.', wait: () => !!q('[data-form]') },
-  { route: /^calendar/, target: () => formTitle(), say: 'Type something that’s coming up, like <b>Pizza night</b>.',
-    wait: () => { const t = formTitle(); return t && t.value.trim().length >= 2 ? 'next' : false; } },
-  { route: /^calendar/, target: () => { const b = q('[data-f="date+1"]'); return b && b.parentNode; }, say: 'Pick the day with the <b>‹ ›</b> arrows. (Times and repeats are just below.)', wait: 'next' },
-  { route: /^calendar/, target: '[data-f="save"]', say: 'Tap <b>Add to calendar</b>.', wait: () => !q('[data-form]') && myEvents().length > startCount },
-  { route: /^calendar/, target: () => { const c = q('[data-detail] [data-close]'); return c && c.closest('[data-detail] > div'); },
-    say: 'There it is! Tap any event like this later to change it or remove it.', wait: 'next' },
-  { route: /^calendar/, target: '[data-detail] [data-close]', say: 'Tap <b>Close</b>.', wait: () => { const b = q('[data-detail]'); return !b || b.style.display !== 'flex'; } },
-  { route: /^calendar/, target: 'a[href="#/launcher"]', say: 'Tap <b>Menu</b> to go back.', wait: () => /^launcher/.test(hash()) },
-  { route: /^launcher/, target: 'a[href="#/recipes"]', say: 'Now let’s plan a dinner. Tap <b>Recipes</b>.', wait: () => hash() === 'recipes' },
-  { route: /^recipes$/, target: '.rb-meal[href="#/recipes/dinner"]', say: 'Tap <b>Dinner</b>.', wait: () => /^recipes\/dinner$/.test(hash()), optional: true },
-  { route: /^recipes\/dinner$/, target: '.rb-cuisine', say: 'Pick any kind of food you like.', wait: () => /^recipes\/(?!dinner$)[^/]+/.test(hash()) },
-  { route: /^recipes\/./, target: '.rb-card', say: 'Tap a recipe that looks good.', wait: () => /^dish\//.test(hash()) },
-  { route: /^dish\//, target: () => { const d = q('.dz-day'); return d && d.parentNode; }, say: 'Tap a day to have it for dinner that night.', wait: () => !!q('.dz-day.on') },
-  { route: /^dish\//, target: 'a.k-tab[href="#/shopping"]', say: 'Nice! Its ingredients just went on the shopping list. Tap <b>Shopping list</b>.', wait: () => /^shopping/.test(hash()) },
-  { route: /^shopping/, center: true, say: 'Everything you need for the week’s dinners, sorted by aisle. Tap things off as they go in the cart.', wait: 'next' },
-  { route: /^shopping/, target: 'a.k-btn[href="#/home"]', say: 'Tap <b>Home</b>.', wait: () => /^home/.test(hash()) },
-  { route: /^home/, target: '[data-photo-empty] a[href="#/addphotos"]', optional: true,
-    say: 'Family photos play right here. Tap <b>Add photos from a phone</b> to see how they get here.', wait: () => /^addphotos/.test(hash()) },
-  { route: /^addphotos/, target: '[data-qr]', optional: true, say: 'Anyone on your Wi-Fi can point their phone’s camera at this code and send photos. Nothing goes on the internet.', wait: 'next' },
-  { route: /^addphotos/, target: 'a[href="#/home"]', optional: true, say: 'Tap <b>Home</b>.', wait: () => /^home/.test(hash()) },
-  { center: true, wait: 'finish',
-    say: '<b style="font-size:30px">You’re all set!</b><br>That event and dinner are real, so keep them or remove them. To do this again, open <b>All apps</b> and tap <b>Tour</b>.' },
+    say: H(festiveHello(), 'This isn’t a tablet. It’s your new kitchen screen: photos, weather, recipes, the family calendar and more, all in one place. Here’s what it can do.') },
+  { route: /^home/, go: 'home', target: '[data-weather]', wait: 'next',
+    say: H('Weather, at a glance', 'Live for your town, hour by hour, and it even tells you when to grab a jacket.') },
+  { route: /^home/, target: () => { const b = q('[data-photo-bg]'); return b && b.parentNode; }, wait: 'next',
+    say: H('Every photo, from everyone', 'Pictures the family sends from their phones play right here, all day long.') },
+  { route: /^addphotos/, go: 'addphotos', target: '[data-qr]', optional: true, wait: 'next',
+    say: H('No apps. No accounts.', 'Point any phone’s camera at this code and send. Grandma can do it. Try it right now!') },
+  { route: /^home/, go: 'home', target: '[data-dinner]', wait: 'next',
+    say: H('“What’s for dinner?” Solved.', 'A new idea every night, from over 1,000 recipes built right in.') },
+  { route: /^recipe\//, go: () => dinnerHref(), corner: true, wait: 'next',
+    say: H('Cooking mode', 'Big steps you can read from across the kitchen, and timers that ring on any screen.') },
+  { route: /^recipes/, go: 'recipes', corner: true, wait: 'next',
+    say: H('Plan the week, skip the list', 'Tap dinners onto the week and the shopping list writes itself, sorted by aisle. It even goes to the store with you on your phone.') },
+  { route: /^calendar/, go: 'calendar', corner: true, wait: 'next',
+    say: H('The family calendar', 'Birthdays, holidays and plans in one place. Google and iPhone calendars show up here too.') },
+  { route: /^messages/, go: 'messages', corner: true, wait: 'next',
+    say: H('Notes on the fridge, upgraded', 'Leave a message for whoever walks by next, from here or from any phone.') },
+  { route: /^night/, go: 'night', corner: true, wait: 'next',
+    say: H('Goodnight mode', 'At night it dims to a soft clock, then wakes up with you in the morning.') },
+  { center: true, go: 'home', wait: 'finish',
+    say: H('And it keeps getting better', 'New features show up on their own, no updates to install. Enjoy! (Want to see this again? All apps → Tour.)') },
 ];
 
-// ---------------- Tom's script ----------------
 const TOM = [
-  { center: true, wait: 'start', say: '<b style="font-size:30px">Welcome aboard, Captain Tom.</b><br>Quick flight check: you’ll find the planes over your house and take on a trivia question.' },
-  { route: /^bridge/, target: '.tbb a[href="#/flights"]', say: 'Tap the radar to see the real planes flying over your house right now.', wait: () => /^flights/.test(hash()) },
-  { route: /^flights/, target: '[data-radar]', say: 'Every dot is a real plane. Tap one to see where it’s going and how high it is.', wait: 'next' },
-  { route: /^flights/, target: 'a[href="#/bridge"]', say: 'Tap <b>DECK</b> to head back.', wait: () => /^bridge/.test(hash()) },
-  { route: /^bridge/, target: 'a[href="#/trivia"]', say: 'Tap <b>TRIVIA</b>.', wait: () => /^trivia/.test(hash()) },
-  { route: /^trivia/, target: '[data-opts]', say: 'Pick an answer. No pressure!', wait: () => { const n = q('[data-next]'); return n && !/SHOW ANSWER/.test(n.textContent); } },
-  { route: /^trivia/, target: 'a[href="#/bridge"]', say: 'Tap <b>DECK</b> to go back to the flight deck.', wait: () => /^bridge/.test(hash()) },
-  { center: true, wait: 'finish', say: '<b style="font-size:30px">All systems go.</b><br>Tonight’s sky, launches and departures are all on the deck. To run this again, tap <b>TOUR</b>.' },
+  { center: true, wait: 'start',
+    say: H('Welcome aboard, Captain Tom', 'This is your own flight deck: real planes, real rockets, the real night sky. Here’s what it can do.') },
+  { route: /^bridge/, go: 'bridge', target: '.tbb a[href="#/flights"]', wait: 'next',
+    say: H('Real planes. Right now.', 'Every plane flying over your house, live on the radar.') },
+  { route: /^flights/, go: 'flights', corner: true, wait: 'next',
+    say: H('Know every flight', 'The airline, where it came from, where it’s going, how high, and a photo of the actual plane.') },
+  { route: /^bridge/, go: 'bridge', target: '.tbb a[href="#/missions"]', wait: 'next',
+    say: H('Voyager 1, live', 'The farthest thing humans ever built, counting away from Earth as you watch.') },
+  { route: /^sky/, go: 'sky', corner: true, wait: 'next',
+    say: H('Tonight’s sky', 'The moon, the planets, and exactly when the space station flies over your house.') },
+  { route: /^missions/, go: 'missions', corner: true, wait: 'next',
+    say: H('Launch countdowns', 'Real rocket launches, counting down to liftoff.') },
+  { route: /^trivia/, go: 'trivia', corner: true, wait: 'next',
+    say: H('Earn your wings', 'Over 300 space and flight questions. How far can you get?') },
+  { route: /^viewscreen/, go: 'viewscreen', corner: true, wait: 'next',
+    say: H('Night watch', 'After dark, the deck turns into a drifting starfield.') },
+  { center: true, go: 'bridge', wait: 'finish',
+    say: H('All systems go', 'New missions show up on their own. Clear skies, Captain! (TOUR on the deck runs this again.)') },
 ];
+
+function festiveHello() {
+  const d = new Date();
+  return d.getMonth() === 11 || (d.getMonth() === 0 && d.getDate() <= 6) ? 'Merry Christmas!' : 'Say hello to your kitchen screen';
+}
 
 // ---------------- Drawing ----------------
 const tom = () => profile === 'tom';
@@ -79,7 +95,11 @@ function styles() {
   .tu-btn{min-height:56px;padding:0 26px;border:0;border-radius:${t ? '0' : '28px'};font:600 19px ${t ? 'Oxanium,sans-serif' : 'Inter,sans-serif'};cursor:pointer;
     background:${t ? '#5CE1E6' : settings.accent};color:${t ? '#05070D' : '#FFFFFF'};${t ? 'letter-spacing:2px;text-transform:uppercase;' : ''}}
   .tu-end{background:none;border:0;color:${t ? '#7FA6B8' : '#4A5363'};font-size:16px;min-height:44px;cursor:pointer;padding:0 6px;text-decoration:underline}
-  .tu-step{font-size:14px;color:${t ? '#7FA6B8' : '#4A5363'};letter-spacing:1px}`;
+  .tu-step{font-size:14px;color:${t ? '#7FA6B8' : '#4A5363'};letter-spacing:1px}
+  .tu-h{font:${t ? "500 30px Oxanium,sans-serif" : "500 30px Outfit,sans-serif"};line-height:1.15;color:${t ? '#5CE1E6' : '#1D2430'};margin-bottom:8px}
+  .tu-bub.center .tu-h{font-size:40px}
+  .tu-l{font-size:20px;line-height:1.45}
+  .tu-bub.corner{left:auto;right:28px;top:auto;bottom:28px;width:460px}`;
 }
 
 function ensureRoot() {
@@ -127,11 +147,11 @@ function bubble(step, hole, extra) {
   lastKey = key;
   const isStart = step.wait === 'start', isFinish = step.wait === 'finish';
   bub.className = `tu-bub${hole ? '' : ' center'}`;
-  bub.innerHTML = `${!isStart && !isFinish ? `<div class="tu-step">STEP ${idx} OF ${n - 2}</div>` : ''}
+  bub.innerHTML = `${!isStart && !isFinish ? `<div class="tu-step">${idx} / ${n - 2}</div>` : ''}
     <div style="margin-top:${isStart || isFinish ? 0 : 6}px">${step.say}</div>
     <div class="tu-row" style="${hole ? '' : 'justify-content:center;gap:24px'}">
-      ${isFinish ? '' : `<button class="tu-end" data-tu="end">${isStart ? 'Skip for now' : 'End tutorial'}</button>`}
-      ${isStart ? '<button class="tu-btn" data-tu="next">Let’s go</button>' : isFinish ? '<button class="tu-btn" data-tu="done">Done</button>' : showNext ? '<button class="tu-btn" data-tu="next">Next →</button>' : '<span></span>'}
+      ${isFinish ? '' : `<button class="tu-end" data-tu="end">${isStart ? 'Skip for now' : 'Skip the tour'}</button>`}
+      ${isStart ? '<button class="tu-btn" data-tu="next">Show me</button>' : isFinish ? '<button class="tu-btn" data-tu="done">Start using it</button>' : showNext ? '<button class="tu-btn" data-tu="next">Next →</button>' : '<span></span>'}
     </div>`;
   bub.style.display = 'block';
   if (!hole) { bub.style.left = ''; bub.style.top = ''; return; }
@@ -167,7 +187,7 @@ function onClick(e) {
   const b = e.target.closest('[data-tu]');
   if (!b) return;
   const a = b.dataset.tu;
-  if (a === 'end' || a === 'done') stop(true);
+  if (a === 'end' || a === 'done') { stop(true); const home = tom() ? 'bridge' : 'home'; if (hash() !== home) location.hash = `#/${home}`; }
   else if (a === 'next') advance();
   else if (a === 'resume') {
     // Go back to where this step happens.
@@ -180,10 +200,8 @@ function onClick(e) {
 }
 
 function advance() {
-  // "Let's go" on the first card moves on to the home screen.
-  const wasStart = script && script[idx] && script[idx].wait === 'start';
   idx++;
-  if (wasStart) { const home = tom() ? 'bridge' : 'home'; if (hash() !== home) location.hash = `#/${home}`; }
+
   waitingSince = Date.now();
   lastKey = '';
   if (idx >= script.length) stop(true);
@@ -193,6 +211,11 @@ function update() {
   if (!script) return;
   if (!ensureRoot()) return;
   const step = script[idx];
+  if (step.go && goneFor !== idx) {
+    goneFor = idx;
+    const to = typeof step.go === 'function' ? step.go() : step.go;
+    if (to && hash() !== to) { location.hash = `#/${to}`; return; }
+  }
   if (step.center && !step.route) { dims(null); root.querySelector('[data-tu-ring]').style.display = 'none'; bubble(step, null); return; }
   // Done already? (A tap that opens another screen finishes its step before anything else.)
   if (typeof step.wait === 'function' && step.wait() === true) { advance(); update(); return; }
@@ -200,6 +223,13 @@ function update() {
     // Optional steps for a screen we're not on are simply passed.
     if (step.optional) { advance(); return; }
     paused(step);
+    return;
+  }
+  if (step.corner) {
+    root.querySelector('[data-tu-dims]').innerHTML = '<div class="tu-dim" style="left:0;top:0;width:1280px;height:800px;background:transparent"></div>';
+    root.querySelector('[data-tu-ring]').style.display = 'none';
+    bubble(step, null, 'next');
+    root.querySelector('[data-tu-bub]').className = 'tu-bub corner';
     return;
   }
   if (step.center) {
@@ -233,6 +263,7 @@ function update() {
 export function startTutorial() {
   script = tom() ? TOM : FAMILY;
   idx = 0;
+  goneFor = -1;
   lastKey = '';
   waitingSince = Date.now();
   startCount = myEvents().length;
