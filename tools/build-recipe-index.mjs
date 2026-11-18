@@ -2,7 +2,9 @@
 // cuisine files. Run after adding or editing recipes:  node tools/build-recipe-index.mjs
 import fs from 'node:fs';
 
-const ORDER = ['american', 'italian', 'mexican', 'chinese', 'japanese', 'thai', 'indian',
+// Which part of the day each file belongs to (the first screen: Breakfast / Lunch / Dinner).
+const MEAL = { breakfast: 'breakfast', lunch: 'lunch', desserts: 'dessert' }; // everything else: dinner
+const ORDER = ['breakfast', 'lunch', 'american', 'italian', 'mexican', 'chinese', 'japanese', 'thai', 'indian',
   'mediterranean', 'korean', 'southern', 'breakfast', 'desserts'];
 const dir = 'data/recipes';
 const files = fs.readdirSync(dir).filter((f) => f.endsWith('.json') && f !== 'index.json')
@@ -18,7 +20,7 @@ for (const id of files) {
     count[r.type] = (count[r.type] || 0) + 1;
     recipes.push({ id: r.id, t: r.title, c: d.id, ty: r.type, m: r.prep + r.cook, g: r.tags || [], b: r.blurb || '', s: r.serves });
   }
-  cuisines.push({ id: d.id, name: d.name, count: d.recipes.length,
+  cuisines.push({ id: d.id, name: d.name, meal: MEAL[d.id] || 'dinner', count: d.recipes.length,
     types: d.types.map((t) => ({ id: t.id, name: t.name, count: count[t.id] || 0 })).filter((t) => t.count) });
 }
 fs.writeFileSync(`${dir}/index.json`, JSON.stringify({ cuisines, recipes }));

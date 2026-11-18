@@ -1,10 +1,12 @@
 // Family · One recipe (#/dish/<id>): ingredients, steps, add to the week plan, cook it.
 import { getRecipe, loadIndex, ingredientText, metaLine, fmtMinutes, cuisineColor } from '../services/recipe-data.js';
-import { weekDays, daysPlanned, addToPlan, removeFromPlan } from '../services/meal-plan.js';
+import { weekDays, daysPlanned, addToPlan, removeFromPlan, MEALS, defaultMeal } from '../services/meal-plan.js';
 import { esc, kitchenStyles, kitchenTop, wireBack, fillCounts } from './kitchen-ui.js';
 
-// Set by the Week plan's "+ Add" so the next recipe picked goes straight onto that day.
+// Set by the Week plan's "+ Add" ("2026-11-20|lunch") so the next recipe picked goes
+// straight onto that day and meal.
 export const ADD_DAY_KEY = 'kitchen.addDay';
+const pending = () => { const [key, meal] = String(sessionStorage.getItem(ADD_DAY_KEY) || '').split('|'); return key ? { key, meal: meal || 'dinner' } : null; };
 
 export function mount(el, { args = [] } = {}) {
   const id = args[0];
@@ -20,6 +22,9 @@ export function mount(el, { args = [] } = {}) {
     .dz-day .s{font-size:14px;color:#4A5363}
     .dz-day.on{background:#1D2430;border-color:#1D2430;color:#FFFFFF}
     .dz-day.on .s{color:#C9CFD6}
+    .dz-meal{min-height:44px;padding:0 18px;border-radius:999px;border:2px solid #D9DDE2;background:#FFFFFF;font-size:16px;font-weight:600;
+      font-family:Inter,sans-serif;color:#1D2430;cursor:pointer}
+    .dz-meal.on{background:#1D2430;border-color:#1D2430;color:#FFFFFF}
   </style>
   <div class="k-wrap" data-root>
     ${kitchenTop({ title: 'Recipe', back: 'history', backLabel: '← Back', active: 'recipes' })}
@@ -33,12 +38,15 @@ export function mount(el, { args = [] } = {}) {
     if (!r) { root.querySelector('.k-empty').textContent = 'That recipe isn’t here any more.'; return; }
     const cuisine = ix.cuisines.find((c) => c.id === r.cuisine) || { name: '', types: [] };
     const type = cuisine.types.find((t) => t.id === r.type);
+    const p0 = pending();
+    let meal = p0 ? p0.meal : defaultMeal(cuisine.meal);
+    const mealName = (m) => MEALS.find((x) => x[0] === m)[1].toLowerCase();
 
     function render() {
-      const addDay = sessionStorage.getItem(ADD_DAY_KEY);
+      const p = pending();
       const days = weekDays();
-      const on = daysPlanned(r.id);
-      const target = addDay && days.find((d) => d.key === addDay);
+      const on = daysPlanned(r.id, meal);
+      const target = p && days.find((d) => d.key === p.key);
       root.innerHTML = `
         ${kitchenTop({ title: r.title, back: 'history', backLabel: '← Back', active: 'recipes' })}
         <div style="flex-grow:1;min-height:0;display:grid;grid-template-columns:400px minmax(0,1fr);gap:24px">
@@ -60,10 +68,12 @@ export function mount(el, { args = [] } = {}) {
             </div>
             <div class="card" style="padding:20px 24px;display:flex;flex-direction:column;gap:14px">
               <div style="display:flex;align-items:center;gap:12px">
-                <div style="font-size:18px;font-weight:600;flex:1">${on.length ? 'On the week plan — tap a day to change' : 'Add to the week plan'}</div>
-                ${target && on.indexOf(target.key) < 0 ? `<button data-addto="${target.key}" class="k-btn solid">Add to ${esc(target.label)}</button>` : ''}
+                <div style="font-size:18px;font-weight:600;white-space:nowrap">Plan it for</div>
+                ${MEALS.map(([m, name]) => `<button class="dz-meal${m === meal ? ' on' : ''}" data-meal="${m}">${name}</button>`).join('')}
+                <div style="flex:1"></div>
                 <a href="#/recipe/${encodeURIComponent(r.id)}" class="k-btn dark">Cook now</a>
               </div>
+              ${target && daysPlanned(r.id, p.meal).indexOf(target.key) < 0 ? `<button data-addto="${target.key}" data-addmeal="${p.meal}" class="k-btn solid" style="width:100%">Add to ${esc(target.label)} ${mealName(p.meal)}</button>` : ''}
               <div style="display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:10px">
                 ${days.map((d) => `
                   <button class="dz-day${on.indexOf(d.key) >= 0 ? ' on' : ''}" data-day="${d.key}">
@@ -80,16 +90,19 @@ export function mount(el, { args = [] } = {}) {
     root.addEventListener('click', (e) => {
       const add = e.target.closest('[data-addto]');
       if (add) {
-        addToPlan(add.dataset.addto, r.id);
+        addToPlan(add.dataset.addto, r.id, add.dataset.addmeal);
         sessionStorage.removeItem(ADD_DAY_KEY);
         location.hash = '#/plan';
         return;
       }
+      const m = e.target.closest('[data-meal]');
+      if (m) { meal = m.dataset.meal; render(); return; }
       const day = e.target.closest('[data-day]');
       if (!day) return;
       const k = day.dataset.day;
-      if (daysPlanned(r.id).indexOf(k) >= 0) removeFromPlan(k, r.id); else addToPlan(k, r.id);
-      if (sessionStorage.getItem(ADD_DAY_KEY) === k) sessionStorage.removeItem(ADD_DAY_KEY);
+      if (daysPlanned(r.id, meal).indexOf(k) >= 0) removeFromPlan(k, r.id, meal); else addToPlan(k, r.id, meal);
+      const pd = pending();
+      if (pd && pd.key === k && pd.meal === meal) sessionStorage.removeItem(ADD_DAY_KEY);
       render();
     });
   }).catch((err) => {

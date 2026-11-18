@@ -1,6 +1,6 @@
 // This tablet's week plan and shopping list. Saved on this tablet only (localStorage).
 //
-// Plan:  { '2026-11-18': ['chinese-dan-dan-noodles', ...], ... }
+// Plan:  { '2026-11-18': { breakfast: [ids], lunch: [ids], dinner: ['chinese-dan-dan-noodles'] }, ... }
 // List:  { have: {item: true|false}, got: {item: true}, extras: [{id, text, got}] }
 //   have[item] = "we already have it" (left off the list). Pantry basics like salt and
 //   oil start as "have" until someone says they need them.
@@ -8,7 +8,6 @@ import { getRecipe, loadIndex, fmtQty, unitText } from './recipe-data.js';
 
 const PLAN_KEY = 'kitchen.plan.v1';
 const LIST_KEY = 'kitchen.list.v1';
-const MAX_PER_DAY = 4;
 
 const read = (k, d) => { try { return JSON.parse(localStorage.getItem(k) || 'null') || d; } catch (e) { return d; } };
 const write = (k, v) => { localStorage.setItem(k, JSON.stringify(v)); window.dispatchEvent(new Event('kitchen-changed')); };
@@ -38,44 +37,65 @@ export function weekDays(from = new Date()) {
 }
 
 // ---- Plan -----------------------------------------------------------------------
+// Each day has three meals: { breakfast: [ids], lunch: [ids], dinner: [ids] }.
+export const MEALS = [['breakfast', 'Breakfast'], ['lunch', 'Lunch'], ['dinner', 'Dinner']];
+const MEAL_IDS = MEALS.map((m) => m[0]);
+const MAX_PER_MEAL = 3;
+
+/** The meal a recipe goes to by default (from its section of the library). */
+export const defaultMeal = (section) => (section === 'breakfast' || section === 'lunch' ? section : 'dinner');
+
 export function getPlan() {
   const plan = read(PLAN_KEY, {});
   // Forget days more than a week old.
   const cutoff = dayKey(new Date(Date.now() - 8 * 86400000));
-  Object.keys(plan).forEach((k) => { if (k < cutoff || !Array.isArray(plan[k])) delete plan[k]; });
+  Object.keys(plan).forEach((k) => {
+    let d = plan[k];
+    if (Array.isArray(d)) d = { dinner: d }; // plans saved before meals existed were all dinners
+    if (k < cutoff || !d || typeof d !== 'object') { delete plan[k]; return; }
+    const day = {};
+    MEAL_IDS.forEach((m) => { day[m] = Array.isArray(d[m]) ? d[m] : []; });
+    plan[k] = day;
+  });
   return plan;
 }
-export const plannedFor = (key) => getPlan()[key] || [];
+const emptyDay = () => ({ breakfast: [], lunch: [], dinner: [] });
+/** Ids planned for one meal of one day. */
+export const plannedFor = (key, meal = 'dinner') => (getPlan()[key] || emptyDay())[meal];
+/** Every id planned on a day, breakfast first. */
+export const dayIds = (plan, key) => { const d = plan[key] || emptyDay(); return [].concat(d.breakfast, d.lunch, d.dinner); };
 
-export function addToPlan(key, id) {
+export function addToPlan(key, id, meal = 'dinner') {
   const plan = getPlan();
-  const day = plan[key] || [];
-  if (day.indexOf(id) < 0 && day.length < MAX_PER_DAY) day.push(id);
+  const day = plan[key] || emptyDay();
+  if (day[meal].indexOf(id) < 0 && day[meal].length < MAX_PER_MEAL) day[meal].push(id);
   plan[key] = day;
   write(PLAN_KEY, plan);
 }
-export function removeFromPlan(key, id) {
+export function removeFromPlan(key, id, meal = 'dinner') {
   const plan = getPlan();
-  plan[key] = (plan[key] || []).filter((x) => x !== id);
-  if (!plan[key].length) delete plan[key];
+  const day = plan[key] || emptyDay();
+  day[meal] = day[meal].filter((x) => x !== id);
+  plan[key] = day;
+  if (!dayIds(plan, key).length) delete plan[key];
   write(PLAN_KEY, plan);
 }
-/** Days this week a recipe is planned on, e.g. ['2026-11-18'] */
-export function daysPlanned(id) {
+/** Days this week a recipe is planned for a meal, e.g. ['2026-11-18'] */
+export function daysPlanned(id, meal = 'dinner') {
   const plan = getPlan();
-  return weekDays().map((d) => d.key).filter((k) => (plan[k] || []).indexOf(id) >= 0);
+  return weekDays().map((d) => d.key).filter((k) => plan[k] && plan[k][meal].indexOf(id) >= 0);
 }
 /** Recipe ids planned this week, in day order (repeats kept: cooked twice = buy twice). */
 export function weekRecipeIds() {
   const plan = getPlan();
   const ids = [];
-  weekDays().forEach((d) => (plan[d.key] || []).forEach((id) => ids.push(id)));
+  weekDays().forEach((d) => dayIds(plan, d.key).forEach((id) => ids.push(id)));
   return ids;
 }
 
-/** Tonight: the first thing planned for today, else the daily idea. */
+/** Tonight: the first dinner planned for today, else the daily idea. */
 export async function tonight() {
-  const ids = plannedFor(dayKey(new Date()));
+  const ids = plannedFor(dayKey(new Date()), 'dinner');
   const ix = await loadIndex();
   for (const id of ids) if (ix.byId[id]) return { entry: ix.byId[id], planned: true };
   const { dinnerIdea } = await import('./recipe-data.js');

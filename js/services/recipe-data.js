@@ -8,7 +8,7 @@ const BASE = './data/recipes/';
 export const CUISINE_COLORS = {
   american: '#35557F', italian: '#2E6B45', mexican: '#C2491F', chinese: '#A8322A',
   japanese: '#3F4F6B', thai: '#4F7A3A', indian: '#B5701A', mediterranean: '#2C6E8A',
-  korean: '#8A3B5C', southern: '#7A4A2A', breakfast: '#C98A1E', desserts: '#A84E73',
+  korean: '#8A3B5C', southern: '#7A4A2A', breakfast: '#C98A1E', lunch: '#3E7C6E', desserts: '#A84E73',
 };
 export const cuisineColor = (id) => CUISINE_COLORS[id] || '#1D2430';
 
@@ -104,7 +104,9 @@ export function metaLine(r) {
 // Changes once a day (local date), same all day. Dinners only (no desserts/breakfast).
 export async function dinnerIdea(date = new Date()) {
   const ix = await loadIndex();
-  const list = ix.recipes.filter((r) => r.c !== 'desserts' && r.c !== 'breakfast');
+  const dinner = {};
+  ix.cuisines.forEach((c) => { dinner[c.id] = (c.meal || 'dinner') === 'dinner'; });
+  const list = ix.recipes.filter((r) => dinner[r.c]);
   if (!list.length) return null;
   const day = Math.floor(Date.UTC(date.getFullYear(), date.getMonth(), date.getDate()) / 86400000);
   // Step through the list with a stride so neighbouring days aren't the same cuisine.

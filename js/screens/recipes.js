@@ -1,9 +1,10 @@
 // Family · Recipes: browse by cuisine -> type -> recipe, or search.
-//   #/recipes                    all cuisines
+//   #/recipes                    Breakfast / Lunch / Dinner (+ desserts)
+//   #/recipes/dinner             dinner cuisines
 //   #/recipes/chinese            every Chinese recipe
 //   #/recipes/chinese/noodles    just the noodles
 import { loadIndex, searchRecipes, cuisineColor, fmtMinutes } from '../services/recipe-data.js';
-import { getPlan, weekDays } from '../services/meal-plan.js';
+import { getPlan, weekDays, dayIds } from '../services/meal-plan.js';
 import { esc, kitchenStyles, kitchenTop, fillCounts } from './kitchen-ui.js';
 
 let searchTimer;
@@ -12,7 +13,7 @@ let searchTimer;
 function plannedLabels() {
   const plan = getPlan();
   const out = {};
-  weekDays().forEach((d) => (plan[d.key] || []).forEach((id) => { if (!out[id]) out[id] = d.label === 'Today' ? 'Tonight' : d.short; }));
+  weekDays().forEach((d) => dayIds(plan, d.key).forEach((id) => { if (!out[id]) out[id] = d.label === 'Today' ? 'Today' : d.short; }));
   return out;
 }
 
@@ -45,6 +46,13 @@ export function mount(el, { args = [] } = {}) {
     .rb-cuisine:active,.rb-card:active{transform:scale(.97)}
     .rb-cuisine .n{font-size:28px;font-weight:500;line-height:1.1}
     .rb-cuisine .c{font-size:16px;opacity:.9}
+    .rb-meals{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));grid-template-rows:minmax(0,1fr) 120px;gap:20px;height:100%}
+    .rb-meal{border-radius:var(--radius);padding:32px;color:#fff;display:flex;flex-direction:column;justify-content:space-between;transition:transform .1s ease}
+    .rb-meal:active{transform:scale(.98)}
+    .rb-meal .n{font-size:52px;font-weight:500;line-height:1}
+    .rb-meal .c{font-size:18px;opacity:.92;line-height:1.4}
+    .rb-meal.small{grid-column:1 / -1;flex-direction:row;align-items:center;padding:0 32px}
+    .rb-meal.small .n{font-size:32px}
     .rb-cards{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:18px;align-content:start;padding-bottom:4px}
     .rb-card{padding:20px 22px;min-height:178px;display:flex;flex-direction:column;gap:8px;transition:transform .1s ease}
     .rb-t{font-size:23px;font-weight:500;line-height:1.15}
@@ -65,17 +73,39 @@ export function mount(el, { args = [] } = {}) {
     if (!el.isConnected) return;
     const planned = plannedLabels();
     const cuisine = ix.cuisines.find((c) => c.id === cuisineId);
+    const dinnerView = cuisineId === 'dinner';
+    const byMeal = (m) => ix.cuisines.filter((c) => (c.meal || 'dinner') === m);
+    const count = (list) => list.reduce((n, c) => n + c.count, 0);
 
     if (!cuisine) {
-      // ---- All cuisines + search ----
+      // ---- Breakfast / Lunch / Dinner (or the dinner cuisines) + search ----
       root.innerHTML = `
-        ${kitchenTop({ title: 'Recipes', active: 'recipes', extra: `<input data-search class="k-input" style="width:300px" placeholder="Search ${ix.recipes.length} recipes" autocomplete="off">` })}
+        ${kitchenTop({ title: dinnerView ? 'Dinner' : 'Recipes', active: 'recipes',
+          back: dinnerView ? '#/recipes' : '#/home', backLabel: dinnerView ? '← Recipes' : '← Home',
+          extra: `<input data-search class="k-input" style="width:300px" placeholder="Search ${ix.recipes.length} recipes" autocomplete="off">` })}
         <div data-body class="k-scroll"></div>`;
       const body = root.querySelector('[data-body]');
       const names = {};
       ix.cuisines.forEach((c) => { names[c.id] = c.name; });
+      const mealTile = (id, name, list, href, color, small) => (list.length ? `
+          <a href="${href}" class="rb-meal${small ? ' small' : ''}" style="background:${color}">
+            <div class="n display">${esc(name)}</div>
+            <div class="c">${count(list)} recipes${small ? '' : `<br>${esc((list.length > 1 ? list.map((c) => c.name.split(' ')[0]) : list[0].types.map((t) => t.name)).slice(0, 5).join(' · '))}`}</div>
+          </a>` : '');
+      const showMeals = () => {
+        const one = (m) => { const l = byMeal(m); return l.length === 1 ? `#/recipes/${l[0].id}` : `#/recipes/${m}`; };
+        body.style.overflow = 'hidden';
+        body.innerHTML = `<div class="rb-meals">
+          ${mealTile('breakfast', 'Breakfast', byMeal('breakfast'), one('breakfast'), cuisineColor('breakfast'))}
+          ${mealTile('lunch', 'Lunch', byMeal('lunch'), one('lunch'), cuisineColor('lunch'))}
+          ${mealTile('dinner', 'Dinner', byMeal('dinner'), '#/recipes/dinner', '#1D2430')}
+          ${mealTile('dessert', 'Desserts & baking', byMeal('dessert'), one('dessert'), cuisineColor('desserts'), true)}
+        </div>`;
+      };
       const showGrid = () => {
-        body.innerHTML = `<div class="rb-grid">${ix.cuisines.map((c) => `
+        if (!dinnerView) { showMeals(); return; }
+        body.style.overflow = '';
+        body.innerHTML = `<div class="rb-grid">${byMeal('dinner').map((c) => `
           <a href="#/recipes/${c.id}" class="rb-cuisine" style="background:${cuisineColor(c.id)}">
             <div class="n display">${esc(c.name)}</div>
             <div class="c">${c.count} recipes · ${esc(c.types.slice(0, 3).map((t) => t.name).join(', '))}</div>
@@ -88,6 +118,7 @@ export function mount(el, { args = [] } = {}) {
         searchTimer = setTimeout(async () => {
           const q = input.value.trim();
           if (!q) { showGrid(); return; }
+          body.style.overflow = '';
           const hits = await searchRecipes(q, 120);
           if (!el.isConnected || input.value.trim() !== q) return;
           body.innerHTML = hits.length
@@ -101,7 +132,9 @@ export function mount(el, { args = [] } = {}) {
       const type = cuisine.types.find((t) => t.id === typeId);
       const list = ix.recipes.filter((r) => r.c === cuisine.id && (!type || r.ty === type.id));
       root.innerHTML = `
-        ${kitchenTop({ title: type ? `${cuisine.name} · ${type.name}` : cuisine.name, back: '#/recipes', backLabel: '← All cuisines', active: 'recipes' })}
+        ${kitchenTop({ title: type ? `${cuisine.name} · ${type.name}` : cuisine.name, active: 'recipes',
+          back: (cuisine.meal || 'dinner') === 'dinner' ? '#/recipes/dinner' : '#/recipes',
+          backLabel: (cuisine.meal || 'dinner') === 'dinner' ? '← Dinner' : '← Recipes' })}
         <div style="flex-grow:1;min-height:0;display:flex;gap:24px">
           <div class="rb-types">
             <a href="#/recipes/${cuisine.id}" class="rb-type${type ? '' : ' on'}">All ${esc(cuisine.name)}<span>${cuisine.count}</span></a>

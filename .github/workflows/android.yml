@@ -98,7 +98,12 @@ jobs:
           # Always keep the tablet's log, even when a step fails.
           trap 'adb logcat -d > logcat-full.txt 2>/dev/null; grep -E "chromium|HomeTablet|AndroidRuntime|FATAL|DEBUG|libc|ActivityManager: (Process|Killing|Start proc).*hometablets" logcat-full.txt | tail -400 > logcat.txt' EXIT
           adb install -r home-tablets.apk
-          adb shell dpm set-device-owner com.hometablets.launcher/.AdminReceiver
+          # A fresh emulator sometimes still has a setup account for a few seconds; retry.
+          for i in 1 2 3 4 5 6; do
+            adb shell dpm set-device-owner com.hometablets.launcher/.AdminReceiver && break
+            [ "$i" = 6 ] && { adb shell dumpsys account | head -30; exit 1; }
+            sleep 10
+          done
           adb logcat -c
           adb shell am start -n com.hometablets.launcher/.MainActivity --es profile family --es uploadKey ci-test-key
           sleep 45
@@ -114,7 +119,7 @@ jobs:
           done
           code=$(curl -s -o /dev/null -w "%{http_code}" "http://127.0.0.1:8080/?k=wrong-key")
           echo "wrong key -> $code"; [ "$code" = "403" ]
-          curl -sf "http://127.0.0.1:8080/?k=ci-test-key" | grep -q "Add photos to the tablet"
+          curl -sf "http://127.0.0.1:8080/?k=ci-test-key" | grep -q "<h1>Your tablet</h1>"
           curl -sf -X POST --data-binary @shot-family.png -H "Content-Type: image/png" \
             "http://127.0.0.1:8080/api/upload?k=ci-test-key&name=CI%20robot&caption=Emulator%20test" | tee upload.json
           grep -q '"ok":true' upload.json
