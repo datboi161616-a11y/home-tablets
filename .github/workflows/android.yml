@@ -6,7 +6,7 @@ name: Android app
 on:
   push:
     branches: [main]
-    paths: ['android/**', '!android/**/*.md', 'admin/**', '.github/workflows/android.yml']
+    paths: ['android/**', '!android/**/*.md', '.github/workflows/android.yml']
   workflow_dispatch:
 
 permissions:
@@ -68,10 +68,6 @@ jobs:
     # Android 10's original web engine (Chrome 74) crashes in the emulator's software
     # graphics now and then; real tablets have real GPUs. Report it, don't block releases.
     continue-on-error: ${{ matrix.api == 29 }}
-    env:
-      # Android 10 = the tablets' version; its fake camera works, so it tests the camera.
-      # The newer emulator's fake camera never delivers frames, so it skips those steps.
-      E2E_FLAGS: ${{ matrix.api == 34 && '--no-camera' || '' }}
     strategy:
       fail-fast: false
       matrix:
@@ -84,20 +80,6 @@ jobs:
       - uses: actions/download-artifact@v4
         with:
           name: apk
-
-      - uses: actions/setup-node@v4
-        with:
-          node-version: '22'
-
-      # A local copy of the admin hub, so the test can drive remote admin end to end.
-      - name: Start local admin hub
-        run: |
-          cd admin
-          npm ci --no-audit --no-fund
-          echo "ADMIN_PASSWORD=ci-test-password" > .dev.vars
-          nohup npx wrangler dev --port 8787 --ip 127.0.0.1 > ../wrangler.log 2>&1 &
-          for i in $(seq 1 60); do curl -sf http://127.0.0.1:8787/ >/dev/null && echo "hub up" && exit 0; sleep 2; done
-          cat ../wrangler.log; exit 1
 
       - name: Wait for this commit's web app to be live
         run: |
@@ -117,11 +99,8 @@ jobs:
           trap 'adb logcat -d > logcat-full.txt 2>/dev/null; grep -E "chromium|HomeTablet|AndroidRuntime|FATAL|DEBUG|libc|ActivityManager: (Process|Killing|Start proc).*hometablets" logcat-full.txt | tail -400 > logcat.txt' EXIT
           adb install -r home-tablets.apk
           adb shell dpm set-device-owner com.hometablets.launcher/.AdminReceiver
-          # Same one-time USB step as android/SETUP.md: their-screen picture shows any app
-          adb shell appops set com.hometablets.launcher PROJECT_MEDIA allow
           adb logcat -c
-          adb reverse tcp:8787 tcp:8787
-          adb shell am start -n com.hometablets.launcher/.MainActivity --es profile family --es uploadKey ci-test-key --es hub ws://127.0.0.1:8787/ws/device
+          adb shell am start -n com.hometablets.launcher/.MainActivity --es profile family --es uploadKey ci-test-key
           sleep 45
           adb exec-out screencap -p > shot-family.png
 
@@ -150,7 +129,7 @@ jobs:
           sleep 10
           adb exec-out screencap -p > shot-addphotos.png
 
-          # --- Camera: open it on their screen and take a photo remotely (via the hub) ---
+          # --- Camera screen opens (Android 10's emulated camera gives a live picture) ---
           adb shell am start -n com.hometablets.launcher/.MainActivity --es screen camera
           sleep 6
           adb exec-out screencap -p > shot-camera.png
@@ -161,10 +140,8 @@ jobs:
           sleep 3
           adb exec-out screencap -p > shot-after-home.png
 
-          # --- Remote admin, end to end: approve, watch, control the hidden copy, commands ---
-          adb shell am start -n com.hometablets.launcher/.MainActivity --es profile family
-          node admin/test/e2e.mjs http://127.0.0.1:8787 ci-test-password . $E2E_FLAGS
-          adb exec-out screencap -p > shot-after-remote.png
+          # Remote admin (admin/) is parked, so its end-to-end test (admin/test/e2e.mjs)
+          # doesn't run here. Re-add the hub start + e2e steps when bringing it back.
           adb logcat -d > logcat-full.txt
           grep -E "chromium|HomeTablet|AndroidRuntime" logcat-full.txt | tail -80 > logcat.txt || true
           adb shell dumpsys package com.google.android.webview | grep -m1 versionName > webview-version.txt || true
@@ -203,8 +180,6 @@ jobs:
             webview-version.txt
             upload.json
             photos.json
-            remote-*
-            wrangler.log
             logcat-full.txt
 
   release:

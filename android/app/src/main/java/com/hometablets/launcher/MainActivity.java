@@ -425,7 +425,8 @@ public class MainActivity extends Activity {
                 "Unlock tablet for 10 minutes",
                 "Turn off kiosk mode permanently",
                 "New photo upload code (old QR codes stop working)",
-                "Remote viewing: " + (prefs.getBoolean("remoteView", true) ? "ON (tap to turn off)" : "OFF (tap to turn on)"),
+                "Apps screen: " + (featureOn("apps") ? "ON (tap to hide)" : "OFF (tap to show)"),
+                "Camera: " + (featureOn("camera") ? "ON (tap to hide)" : "OFF (tap to show)"),
                 "About: app " + BuildConfig.VERSION_NAME + (Kiosk.isOwner(this) ? ", kiosk on" : ", kiosk off")
                         + ", WebView " + webViewVersion(),
         };
@@ -468,19 +469,40 @@ public class MainActivity extends Activity {
                             web.evaluateJavascript("window.dispatchEvent(new Event('tablet-photos'))", null);
                             Toast.makeText(this, "New QR code ready on the Add photos screen", Toast.LENGTH_LONG).show();
                             break;
-                        case 7: {
-                            boolean on = !prefs.getBoolean("remoteView", true);
-                            prefs.edit().putBoolean("remoteView", on).apply();
-                            if (!on) { showViewingDot(false); destroyGhost(); }
-                            if (remote != null) remote.sendStatus();
-                            Toast.makeText(this, on ? "Remote viewing is on" : "Remote viewing is off", Toast.LENGTH_LONG).show();
+                        case 7:
+                            setFeature("apps", !featureOn("apps"));
                             break;
-                        }
+                        case 8:
+                            setFeature("camera", !featureOn("camera"));
+                            break;
                         default:
                             break;
                     }
                 })
                 .show();
+    }
+
+    /**
+     * Optional features (Apps screen, Camera). Defaults match js/services/features.js:
+     * on for Family tablets, off for Tom's. Only switches you change are stored.
+     */
+    boolean featureOn(String name) {
+        try {
+            JSONObject f = new JSONObject(prefs.getString("features", "{}"));
+            if (f.has(name)) return f.getBoolean(name);
+        } catch (Exception ignored) { }
+        return !"tom".equals(prefs.getString("profile", "family"));
+    }
+
+    void setFeature(String name, boolean on) {
+        try {
+            JSONObject f = new JSONObject(prefs.getString("features", "{}"));
+            f.put(name, on);
+            prefs.edit().putString("features", f.toString()).apply();
+        } catch (Exception ignored) { }
+        destroyGhost();
+        web.loadUrl(siteUrl()); // redraw with the change
+        Toast.makeText(this, (name.equals("apps") ? "Apps screen" : "Camera") + (on ? " is now shown" : " is now hidden"), Toast.LENGTH_LONG).show();
     }
 
     /** e.g. "131.0.6778.39". Should be 100+ for everything to look exactly right. */

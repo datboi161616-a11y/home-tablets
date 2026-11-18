@@ -5,8 +5,7 @@
 #   1. Checks the tablet is connected and USB debugging is allowed
 #   2. Downloads the newest app from GitHub and installs it
 #   3. Turns on kiosk mode (needs a tablet with NO Google account yet)
-#   4. Lets your dashboard show any app on their screen without prompts
-#   5. Asks Family or Tom, and a grown-up PIN, then starts the home screen
+#   4. Asks Family or Tom, and a grown-up PIN, then starts the home screen
 # Safe to run again on a tablet that's already set up (it just updates it).
 
 $ErrorActionPreference = 'Stop'
@@ -15,7 +14,7 @@ $ApkUrl   = 'https://github.com/datboi161616-a11y/home-tablets/releases/latest/d
 $ApkPath  = Join-Path $env:TEMP 'home-tablets.apk'
 
 function Say($text, $color = 'White') { Write-Host $text -ForegroundColor $color }
-function Step($n, $text) { Write-Host ''; Write-Host "[$n/5] $text" -ForegroundColor Cyan }
+function Step($n, $text) { Write-Host ''; Write-Host "[$n/4] $text" -ForegroundColor Cyan }
 function Stop-Setup($text) {
     Write-Host ''
     Write-Host $text -ForegroundColor Red
@@ -93,13 +92,8 @@ connect to Wi-Fi but SKIP signing in to Google. Then run this again.
     }
 }
 
-# ---------------------------------------------------------------- 4. remote view
-Step 4 'Letting your dashboard see their screen (no pop-ups for them)...'
-$null = Adb "shell appops set $Pkg PROJECT_MEDIA allow"
-Say '  Done.' 'Green'
-
-# ---------------------------------------------------------------- 5. profile + PIN
-Step 5 'Which screens should this tablet show?'
+# ---------------------------------------------------------------- 4. profile + PIN
+Step 4 'Which screens should this tablet show?'
 Say '  1) Family'
 Say "  2) Tom (space & flight)"
 do { $choice = Read-Host '  Type 1 or 2' } while ($choice -notin @('1', '2'))

@@ -18,16 +18,15 @@ has `adb`) and a USB-C cable that carries data.
 2. Double-click **`setup\Setup tablet.bat`** in this project.
 3. Pick **1** (Family) or **2** (Tom), and a grown-up PIN (Enter = `2512`).
 
-The script downloads the newest app, installs it, turns on kiosk mode, lets your
-dashboard see their screen without them ever being asked, starts the right screens,
-then switches USB debugging off again. If anything is wrong it tells you exactly
+The script downloads the newest app, installs it, turns on kiosk mode, starts the
+right screens, then switches USB debugging off again. If anything is wrong it tells you exactly
 what to do (most often: the tablet already has a Google account → go back to step 1).
 
 ## 3. Optional: Apps and Camera
 
 Family tablets show the **Apps** and **Camera** buttons; Tom's tablet hides them to
-stay focused on space and flight. Switch either one on or off per tablet from your
-dashboard (**Features on this tablet**).
+stay focused on space and flight. Switch either one per tablet from the grown-up menu
+(**Apps screen: ON/OFF**, **Camera: ON/OFF**).
 
 ## 4. On the tablet: one Google sign-in (about 2 minutes)
 
@@ -42,7 +41,7 @@ Music, Calendar and the Play Store** at once. No separate login per app.
    best on a current web engine.
 4. Optional one-time logins: WhatsApp (messaging for iPhone users), Spotify, Netflix…
 
-Unplug. From now on it updates itself and you manage it from your dashboard.
+Unplug. From now on it updates itself.
 
 ---
 
@@ -55,8 +54,7 @@ Each tablet has its own private album (photos stay on that tablet).
   **Choose photos** (Select All works). They appear in seconds.
 - **Their iPhone photos, automatically:** install **Google Photos** on their iPhone,
   sign in with the tablet's Google account, turn on backup.
-- **Camera:** Photos → **📷 Camera**, or from your dashboard (group photo with a
-  3-2-1 countdown, or video).
+- **Camera:** Photos → **📷 Camera** (photo or video).
 
 If a phone can't reach the tablet, it's on mobile data or a guest Wi-Fi network.
 
@@ -65,8 +63,9 @@ If a phone can't reach the tablet, it's on mobile data or a guest Wi-Fi network.
 Hold the **top-left corner** for 5 seconds, enter the PIN:
 
 - **Wi-Fi settings** (unlocks for 10 minutes), **Switch profile**, **Reload**,
-  **Check for app update**, **New photo upload code**, **Remote viewing on/off**,
-  **Unlock tablet for 10 minutes**, **Turn off kiosk mode permanently**.
+  **Check for app update**, **Unlock tablet for 10 minutes**,
+  **Turn off kiosk mode permanently**, **New photo upload code**,
+  **Apps screen ON/OFF**, **Camera ON/OFF**.
 
 ## Automatic behaviour
 
@@ -88,10 +87,6 @@ adb install -r home-tablets.apk
 
 ```
 adb shell dpm set-device-owner com.hometablets.launcher/.AdminReceiver
-```
-
-```
-adb shell appops set com.hometablets.launcher PROJECT_MEDIA allow
 ```
 
 ```

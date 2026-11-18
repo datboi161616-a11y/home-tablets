@@ -11,6 +11,15 @@ Plain HTML/CSS/JavaScript: no build step, no frameworks, free to host.
 Plug it in and double-click **`setup/Setup tablet.bat`**. Full steps (about 10 minutes
 per tablet): [android/SETUP.md](android/SETUP.md).
 
+## Remote admin (parked)
+
+The remote-admin dashboard (`admin/`: Cloudflare hub, dashboard, end-to-end test) is
+built but **parked** while the focus is the tablet OS. It's switched off on the tablets
+(they only connect when `remote.json` has a hub address, and it's empty) and its test
+no longer runs in CI. To bring it back: deploy `admin/`, put the hub address in
+`remote.json`, and re-add the hub + `admin/test/e2e.mjs` steps to
+`.github/workflows/android.yml` (see the git history before this note).
+
 ## Pushing an update to every tablet
 
 1. Edit the files.
