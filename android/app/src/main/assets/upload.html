@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="theme-color" content="#ECEEF0">
-<title>Your tablet</title>
+<title>Your kitchen screen</title>
 <style>
   :root { --ink:#1D2430; --ink2:#4A5363; --bg:#ECEEF0; --card:#fff; --accent:#C2491F; --line:#D9DDE2; }
   * { box-sizing: border-box; }
@@ -85,8 +85,8 @@
 </head>
 <body>
 <main>
-  <h1>Your tablet</h1>
-  <p class="sub">Everything here goes straight to the tablet over your Wi-Fi and stays on it.</p>
+  <h1>Your kitchen screen</h1>
+  <p class="sub">Everything here goes straight to the kitchen screen over your Wi-Fi and stays on it.</p>
 
   <div class="tabs">
     <button data-tab="photos" class="on">Photos</button>
@@ -111,7 +111,7 @@
   </div>
 
   <div class="card">
-    <h2><span>On the tablet</span><span class="muted" id="count"></span></h2>
+    <h2><span>On the kitchen screen</span><span class="muted" id="count"></span></h2>
     <div class="grid" id="grid"></div>
     <p class="muted" id="empty">No photos yet.</p>
   </div>
@@ -130,7 +130,7 @@
         <span id="notePhotoLabel">Add a photo (optional)</span>
         <input id="notePhoto" type="file" accept="image/*" style="display:none">
       </label>
-      <button class="btn primary" id="noteSend">Leave note on the tablet</button>
+      <button class="btn primary" id="noteSend">Leave note on the kitchen screen</button>
       <div class="status" id="noteStatus"></div>
     </div>
     <div class="card">
@@ -144,7 +144,7 @@
   <section id="tab-shopping" hidden>
   <div class="card">
     <h2><span>Shopping list</span><span id="slCount" class="muted"></span></h2>
-    <p class="muted" style="margin:0 0 12px">From your week plan. Open this before you leave home: it stays on your phone, and ticks go back to the tablet when you're on your Wi-Fi again.</p>
+    <p class="muted" style="margin:0 0 12px">From your week plan. Open this before you leave home: it stays on your phone, and ticks go back to the kitchen screen when you're on your Wi-Fi again.</p>
     <form id="slAdd" style="display:flex;gap:8px;margin:0">
       <input id="slText" type="text" maxlength="60" placeholder="Add something…" style="margin:0;flex:1">
       <button class="pick" style="width:auto;min-height:0;padding:0 20px;font-size:16px" type="submit">Add</button>
@@ -157,7 +157,7 @@
   <section id="tab-recipe" hidden>
   <div class="card">
     <h2><span id="rcHead">Add a recipe</span><button id="rcNew" class="small-btn" style="white-space:nowrap;margin-left:10px" hidden>Cancel</button></h2>
-    <p class="muted" style="margin:0 0 14px">It shows up on the tablet under Recipes &rarr; My recipes, ready for the week plan and shopping list.</p>
+    <p class="muted" style="margin:0 0 14px">It shows up on the kitchen screen under Recipes &rarr; My recipes, ready for the week plan and shopping list.</p>
     <label for="rcTitle">Name</label>
     <input id="rcTitle" type="text" maxlength="60" placeholder="Grandma's pot roast">
     <label for="rcMeal">Meal</label>
@@ -173,11 +173,11 @@
     <textarea id="rcIng" placeholder="2 lb chuck roast&#10;1 onion, sliced&#10;3 carrots"></textarea>
     <label for="rcSteps">Steps <span class="muted">(one per line; "bake 25 minutes" gets a timer)</span></label>
     <textarea id="rcSteps" placeholder="Brown the roast on all sides.&#10;Add the vegetables and broth.&#10;Cook on low for 8 hours."></textarea>
-    <button id="rcSave" class="pick" type="button">Save to the tablet</button>
+    <button id="rcSave" class="pick" type="button">Save to the kitchen screen</button>
     <div id="rcStatus" class="status"></div>
   </div>
   <div class="card">
-    <h2><span>Your recipes on the tablet</span></h2>
+    <h2><span>Your recipes on the kitchen screen</span></h2>
     <div id="rcList" class="muted">Loading…</div>
   </div>
   </section>
@@ -206,7 +206,7 @@
 
     <div class="card">
       <h2><span>Calendars</span></h2>
-      <p class="muted" style="margin:0 0 10px">Show your phone’s calendar on the tablet. Paste its private link:</p>
+      <p class="muted" style="margin:0 0 10px">Show your phone’s calendar on the kitchen screen. Paste its private link:</p>
       <div id="cals"></div>
       <button class="btn" id="calAdd">+ Add a calendar link</button>
       <details>
@@ -227,7 +227,7 @@
           <li>Paste it here. (It ends in <i>basic.ics</i>.)</li>
         </ol>
       </details>
-      <p class="muted" style="margin:10px 0 0">The tablet reads the calendar; it can’t change it. Add events on your phone as usual.</p>
+      <p class="muted" style="margin:10px 0 0">The kitchen screen reads the calendar; it can’t change it. Add events on your phone as usual.</p>
     </div>
 
     <button class="btn primary" id="settingsSave">Save settings</button>
@@ -273,7 +273,7 @@
     var files = Array.prototype.slice.call(e.target.files || []);
     e.target.value = '';
     if (!files.length || sending) return;
-    if (album.max && album.count >= album.max) { setStatus('The tablet’s album is full (' + album.max + '). Remove a few below first.', 'err'); return; }
+    if (album.max && album.count >= album.max) { setStatus('The kitchen screen’s album is full (' + album.max + '). Remove a few below first.', 'err'); return; }
     var name = nameEl.value.trim(), caption = captionEl.value.trim();
     localStorage.setItem('tablet-photo-name', name);
     bar.style.display = 'block';
@@ -299,7 +299,7 @@
     // The caption was for this batch only; start the next batch fresh.
     if (done) captionEl.value = '';
     if (failed.length) setStatus(done + ' sent. ' + failed.length + ' didn’t: ' + failed[0], 'err');
-    else setStatus(done === 1 ? 'Sent! It’s on the tablet now.' : 'All ' + done + ' sent! They’re on the tablet now.', 'ok');
+    else setStatus(done === 1 ? 'Sent! It’s on the kitchen screen now.' : 'All ' + done + ' sent! They’re on the kitchen screen now.', 'ok');
     loadList();
   });
   var sending = false, album = { count: 0, max: 0 };
@@ -351,7 +351,7 @@
         del.textContent = '×';
         del.setAttribute('aria-label', 'Remove');
         del.onclick = async function () {
-          if (!confirm(p.video ? 'Remove this video from the tablet?' : 'Remove this photo from the tablet?')) return;
+          if (!confirm(p.video ? 'Remove this video from the kitchen screen?' : 'Remove this photo from the kitchen screen?')) return;
           d.classList.add('gone'); del.disabled = true;
           try {
             var r = await (await fetch('/api/delete' + q('&id=' + encodeURIComponent(p.id)), { method: 'POST' })).json();
@@ -365,7 +365,7 @@
         grid.appendChild(d);
       });
     } catch (err) {
-      setStatus('Can’t reach the tablet. Is your phone on the same Wi-Fi?', 'err');
+      setStatus('Can’t reach the kitchen screen. Is your phone on the same Wi-Fi?', 'err');
     }
   }
   loadList();
@@ -439,12 +439,12 @@
       if (!r.ok) throw new Error(r.error || 'Note didn\u2019t send');
       noteText.value = ''; setNotePhoto(null); noteCount();
       try { localStorage.removeItem('tablet-note-draft'); } catch (e) {}
-      setMsg($('noteStatus'), 'Sent! It\u2019s on the tablet\u2019s message board.', 'ok');
+      setMsg($('noteStatus'), 'Sent! It\u2019s on the kitchen screen\u2019s message board.', 'ok');
       loadNotes();
     } catch (err) {
-      setMsg($('noteStatus'), err instanceof TypeError ? 'Can\u2019t reach the tablet. Is your phone on the same Wi-Fi? Your note is kept here.' : err.message, 'err');
+      setMsg($('noteStatus'), err instanceof TypeError ? 'Can\u2019t reach the kitchen screen. Is your phone on the same Wi-Fi? Your note is kept here.' : err.message, 'err');
     }
-    this.disabled = false; this.textContent = 'Leave note on the tablet';
+    this.disabled = false; this.textContent = 'Leave note on the kitchen screen';
   };
   // "Today 3:05 PM" / "Yesterday 9:12 AM" / "Nov 3, 4:40 PM"
   function when(t) {
@@ -461,7 +461,7 @@
       $('notesEmpty').style.display = list.length ? 'none' : 'block';
       $('notes').innerHTML = list.slice(0, 30).map(function (n) {
         // Whether someone has seen it on the tablet yet, and any hearts it got.
-        var seen = n.read ? '<span class="seen yes">\u2713 Seen on the tablet</span>' : '<span class="seen">Not seen yet</span>';
+        var seen = n.read ? '<span class="seen yes">\u2713 Seen on the kitchen screen</span>' : '<span class="seen">Not seen yet</span>';
         var love = n.love ? ' \u00b7 <span style="color:var(--accent)">\u2665' + (n.love > 1 ? ' ' + n.love : '') + '</span>' : '';
         return '<div class="note"><div class="t"><b>' + esc(n.who) + '</b> <span class="muted">' + esc(when(n.at)) + '</span><br>' +
           esc(n.text) +
@@ -471,13 +471,13 @@
       }).join('');
       document.querySelectorAll('[data-del-note]').forEach(function (b) {
         b.onclick = function () {
-          if (!confirm('Remove this note from the tablet?')) return;
+          if (!confirm('Remove this note from the kitchen screen?')) return;
           b.disabled = true;
           fetch('/api/notes/delete' + q('&id=' + encodeURIComponent(b.dataset.delNote)), { method: 'POST' }).then(loadNotes)
             .catch(function () { b.disabled = false; setMsg($('noteStatus'), 'Couldn\u2019t remove it. Is your phone on the home Wi-Fi?', 'err'); });
         };
       });
-    }).catch(function () { setMsg($('noteStatus'), 'Can\u2019t reach the tablet. Is your phone on the same Wi-Fi?', 'err'); });
+    }).catch(function () { setMsg($('noteStatus'), 'Can\u2019t reach the kitchen screen. Is your phone on the same Wi-Fi?', 'err'); });
   }
 
   // ===================== tablet settings =====================
@@ -509,7 +509,7 @@
       settingsLoaded = true; settingsDirty = false;
       if ($('settingsStatus').className.indexOf('err') >= 0) setMsg($('settingsStatus'), '');
       drawSettings();
-    }).catch(function () { setMsg($('settingsStatus'), 'Can\u2019t reach the tablet. Is your phone on the same Wi-Fi?', 'err'); });
+    }).catch(function () { setMsg($('settingsStatus'), 'Can\u2019t reach the kitchen screen. Is your phone on the same Wi-Fi?', 'err'); });
   }
 
   function drawSettings() {
@@ -565,7 +565,7 @@
     document.querySelectorAll('[data-cu]').forEach(function (el) {
       el.addEventListener('change', function () { if (el.value.trim()) checkCal(+el.dataset.cu); });
     });
-    $('calAdd').hidden = S.calendars.length >= 6; // the tablet keeps up to 6
+    $('calAdd').hidden = S.calendars.length >= 6; // the kitchen screen keeps up to 6
   }
 
   function checkCal(i) {
@@ -583,7 +583,7 @@
       show();
     }).catch(function () {
       var el = document.querySelector('[data-checked="' + i + '"]');
-      if (el) { el.textContent = 'Couldn\u2019t check: the tablet isn\u2019t answering. Is your phone on the home Wi-Fi?'; el.className = 'err'; }
+      if (el) { el.textContent = 'Couldn\u2019t check: the kitchen screen isn\u2019t answering. Is your phone on the home Wi-Fi?'; el.className = 'err'; }
     });
   }
 
@@ -610,7 +610,7 @@
   $('settingsSave').onclick = async function () {
     // Saving before the tablet's settings arrived would wipe them with blanks.
     if (!settingsLoaded) {
-      setMsg($('settingsStatus'), 'Can\u2019t reach the tablet yet, so nothing was saved. Check your phone is on the home Wi-Fi and try again.', 'err');
+      setMsg($('settingsStatus'), 'Can\u2019t reach the kitchen screen yet, so nothing was saved. Check your phone is on the home Wi-Fi and try again.', 'err');
       loadSettings();
       return;
     }
@@ -629,9 +629,9 @@
       var r = await api('/api/settings', clean);
       if (!r.ok) throw new Error(r.error || 'Couldn\u2019t save');
       S = r.settings; settingsDirty = false; drawSettings();
-      setMsg($('settingsStatus'), 'Saved! The tablet updates right away.', 'ok');
+      setMsg($('settingsStatus'), 'Saved! The kitchen screen updates right away.', 'ok');
     } catch (err) {
-      setMsg($('settingsStatus'), err instanceof TypeError ? 'Can’t reach the tablet, so nothing was saved. Is your phone on the home Wi-Fi?' : err.message, 'err');
+      setMsg($('settingsStatus'), err instanceof TypeError ? 'Can’t reach the kitchen screen, so nothing was saved. Is your phone on the home Wi-Fi?' : err.message, 'err');
     }
     this.disabled = false;
   };
@@ -667,12 +667,12 @@
       html += '<div class="card"><div class="sl-h">' + esc(sec.name) + '</div>' + sorted(sec.items).map(function (x, i) { return row(x.key, 'item', x.name, x.amount, x.got, !i); }).join('') + '</div>';
     });
     if (total && !left) html = '<div class="card ok" style="text-align:center">✓ All done — you got everything!</div>' + html;
-    box.innerHTML = html || '<div class="card muted">Nothing on the list. Plan some meals on the tablet and they show up here.</div>';
+    box.innerHTML = html || '<div class="card muted">Nothing on the list. Plan some meals on the kitchen screen and they show up here.</div>';
     $('slCount').textContent = total ? (left ? left + ' of ' + total + ' to get' : 'All got') : '';
   }
   function slWaiting() {
     var n = slQueue().length;
-    return n ? ' ' + (n === 1 ? '1 change is' : n + ' changes are') + ' waiting to go to the tablet.' : '';
+    return n ? ' ' + (n === 1 ? '1 change is' : n + ' changes are') + ' waiting to go to the kitchen screen.' : '';
   }
   function slAge() {
     if (!SL || !SL.savedAt) return '';
@@ -687,9 +687,9 @@
       fetch('/api/shopping' + q()).then(function (r) { return r.json(); }).then(function (l) {
         l.savedAt = Date.now();
         SL = l; slSave(); renderShopping();
-        slStatus(l.updated ? '✓ Up to date with the tablet' : '', 'muted');
+        slStatus(l.updated ? '✓ Up to date with the kitchen screen' : '', 'muted');
       }).catch(function () {
-        slStatus(SL ? 'Not on your home Wi-Fi: showing the copy saved on this phone' + slAge() + '.' + slWaiting() : 'Can’t reach the tablet. Are you on your home Wi-Fi?', SL ? 'muted' : 'err');
+        slStatus(SL ? 'Not on your home Wi-Fi: showing the copy saved on this phone' + slAge() + '.' + slWaiting() : 'Can’t reach the kitchen screen. Are you on your home Wi-Fi?', SL ? 'muted' : 'err');
       });
     });
   }
@@ -712,11 +712,11 @@
     api('/api/shopping', queue[0]).then(function (r) {
       slFlushing = false;
       localStorage.setItem(SL_QUEUE, JSON.stringify(slQueue().slice(1)));
-      if (!r.ok) slStatus(r.error || 'The tablet didn’t take that', 'err');
+      if (!r.ok) slStatus(r.error || 'The kitchen screen didn’t take that', 'err');
       flushShopping(done);
     }).catch(function () {
       slFlushing = false;
-      slStatus('Saved on this phone. It’ll update the tablet when you’re home.' + slWaiting(), 'muted');
+      slStatus('Saved on this phone. It’ll update the kitchen screen when you’re home.' + slWaiting(), 'muted');
       if (done) done();
     });
   }
@@ -761,7 +761,7 @@
     rcEditing = r ? r.id : '';
     $('rcHead').textContent = r ? 'Editing “' + r.title + '”' : 'Add a recipe';
     $('rcNew').hidden = !r;
-    $('rcSave').textContent = r ? 'Save changes' : 'Save to the tablet';
+    $('rcSave').textContent = r ? 'Save changes' : 'Save to the kitchen screen';
     $('rcTitle').value = r ? r.title : '';
     $('rcMeal').value = r ? r.meal : 'dinner';
     $('rcServes').value = r ? r.serves : 4;
@@ -787,7 +787,7 @@
     RC_FIELDS.forEach(function (f) { if (d[f] != null) $(f).value = d[f]; });
     rcEditing = d.id || '';
     if (d.id) { $('rcHead').textContent = d.head; $('rcNew').hidden = false; $('rcSave').textContent = 'Save changes'; }
-    setMsg($('rcStatus'), 'Picked up where you left off. (Not saved to the tablet yet.)', 'muted');
+    setMsg($('rcStatus'), 'Picked up where you left off. (Not saved to the kitchen screen yet.)', 'muted');
   })();
   function rcHasText() { return !!($('rcTitle').value.trim() || $('rcIng').value.trim() || $('rcSteps').value.trim()); }
   function rcMins(m) { return m >= 60 ? Math.floor(m / 60) + ' hr' + (m % 60 ? ' ' + (m % 60) + ' min' : '') : m + ' min'; }
@@ -801,7 +801,7 @@
           '<button class="small-btn" data-rc-edit="' + esc(r.id) + '">Edit</button>' +
           '<button class="small-btn" data-rc-del="' + esc(r.id) + '">Delete</button></div>';
       }).join('') : 'None yet. The first one you save shows up here.';
-    }).catch(function () { $('rcList').textContent = 'Can’t reach the tablet. Are you on your home Wi-Fi?'; });
+    }).catch(function () { $('rcList').textContent = 'Can’t reach the kitchen screen. Are you on your home Wi-Fi?'; });
   }
   $('rcNew').onclick = function () { rcFill(null); setMsg($('rcStatus'), ''); };
   $('rcSave').onclick = function () {
@@ -817,14 +817,14 @@
       $(miss[0]).classList.add('missing'); $(miss[0]).focus();
       setMsg($('rcStatus'), miss[1], 'err'); return;
     }
-    btn.disabled = true; btn.textContent = 'Saving…'; // one tap = one recipe, even if the tablet is slow
+    btn.disabled = true; btn.textContent = 'Saving…'; // one tap = one recipe, even if the kitchen screen is slow
     setMsg($('rcStatus'), 'Saving…');
     api('/api/recipes', body).then(function (r) {
       if (!r.ok) { setMsg($('rcStatus'), r.error || 'Couldn’t save', 'err'); return; }
       rcFill(null); loadRecipes();
-      setMsg($('rcStatus'), '✓ Saved: ' + r.recipe.title + ' is on the tablet', 'ok');
-    }).catch(function () { setMsg($('rcStatus'), 'Can’t reach the tablet. Are you on your home Wi-Fi? Your recipe is kept here.', 'err'); })
-      .then(function () { btn.disabled = false; if (btn.textContent === 'Saving…') btn.textContent = rcEditing ? 'Save changes' : 'Save to the tablet'; });
+      setMsg($('rcStatus'), '✓ Saved: ' + r.recipe.title + ' is on the kitchen screen', 'ok');
+    }).catch(function () { setMsg($('rcStatus'), 'Can’t reach the kitchen screen. Are you on your home Wi-Fi? Your recipe is kept here.', 'err'); })
+      .then(function () { btn.disabled = false; if (btn.textContent === 'Saving…') btn.textContent = rcEditing ? 'Save changes' : 'Save to the kitchen screen'; });
   };
   $('rcList').addEventListener('click', function (e) {
     var ed = e.target.closest('[data-rc-edit]'), del = e.target.closest('[data-rc-del]');
@@ -834,7 +834,7 @@
     }
     if (del) {
       var rec = RC.filter(function (r) { return r.id === del.dataset.rcDel; })[0];
-      if (!confirm('Delete “' + (rec ? rec.title : 'this recipe') + '” from the tablet?')) return;
+      if (!confirm('Delete “' + (rec ? rec.title : 'this recipe') + '” from the kitchen screen?')) return;
       del.disabled = true;
       fetch('/api/recipes/delete' + q('&id=' + encodeURIComponent(del.dataset.rcDel)), { method: 'POST' }).then(function () {
         if (rcEditing === del.dataset.rcDel) rcFill(null);

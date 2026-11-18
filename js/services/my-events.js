@@ -19,7 +19,7 @@ export function myEvents() {
 
 function write(list) {
   try { localStorage.setItem(KEY, JSON.stringify(list.slice(-MAX))); }
-  catch (e) { throw new Error('This tablet is out of room to save events'); }
+  catch (e) { throw new Error('This screen is out of room to save events'); }
   window.dispatchEvent(new Event('calendar-updated'));
 }
 

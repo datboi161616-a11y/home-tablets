@@ -26,7 +26,7 @@ const esc = (s) => String(s).replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&
 // Right side of the footer: setup hint, a download problem, or a tip.
 function footerNote() {
   const st = calendarStatus();
-  if (!st.calendars) return 'Tap + Add to put something on. Google or iPhone calendars: Add photos → scan the code → Tablet settings';
+  if (!st.calendars) return 'Tap + Add to put something on. Google or iPhone calendars: Add photos → scan the code → Settings';
   if (st.lastError) {
     // Say how old the saved copy is, so nobody trusts a week-old calendar by mistake.
     const at = st.savedAt;
@@ -187,7 +187,7 @@ function showDay(el, d) {
             <div style="width:150px;flex:none;font-weight:600;font-size:17px">${esc(e.time)}${e.endTime ? `<div class="muted" style="font-weight:500;font-size:15px">to ${esc(e.endTime)}</div>` : ''}</div>
             <div style="min-width:0"><div style="font-size:19px;font-weight:500;overflow-wrap:anywhere">${esc(e.title)}</div>
               ${e.location ? `<div class="muted" style="font-size:15px;margin-top:2px;overflow-wrap:anywhere">${esc(e.location)}</div>` : ''}
-              ${e.id ? '<div class="muted" style="font-size:15px;margin-top:2px">Added on this tablet · tap to change</div>' : ''}</div>
+              ${e.id ? '<div class="muted" style="font-size:15px;margin-top:2px">Added here · tap to change</div>' : ''}</div>
           </div>`).join('') : `<div style="display:flex;flex-direction:column;align-items:center;gap:8px;padding:4px 0 12px"><div style="width:240px">${spot.quietDay()}</div><div class="muted" style="font-size:19px">Nothing planned</div></div>`}
       </div>
     </div>`;

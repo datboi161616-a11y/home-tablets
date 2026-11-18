@@ -256,7 +256,7 @@ export function mount(el) {
     if (!v.ready || v.recorder || v.starting) return;
     const type = ['video/webm;codecs=vp8,opus', 'video/webm', 'video/mp4']
       .find((t) => window.MediaRecorder && MediaRecorder.isTypeSupported(t));
-    if (!type) { showSaved('Video isn’t supported on this tablet', null, false); return; }
+    if (!type) { showSaved('Video isn’t supported on this screen', null, false); return; }
     v.starting = true;
     // Switch the microphone on just for this clip. If it can't open, record without sound.
     const mic = navigator.mediaDevices.getUserMedia({ audio: true, video: false });

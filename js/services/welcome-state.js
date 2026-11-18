@@ -1,6 +1,6 @@
-// Has this tablet finished (or skipped) the welcome tour?
-// Until it has, the Home screen opens the tour instead (see app.js).
-// To show it again for a new owner: grown-up menu → "Welcome tour: show again",
+// Has this screen finished (or skipped) the hands-on tutorial (services/tutorial.js)?
+// Until it has, Home starts the tutorial instead (see app.js).
+// To run it again for a new owner: grown-up menu → "Tutorial: show again",
 // or the "Tour" button on the App menu / flight deck.
 const KEY = 'welcome.done.v1';
 

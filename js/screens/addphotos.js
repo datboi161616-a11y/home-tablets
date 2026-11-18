@@ -32,7 +32,7 @@ export function mount(el) {
       </div>
       <div style="display:flex;flex-direction:column;gap:18px;font-size:22px">
         ${[
-          'Connect your phone to the same Wi-Fi as this tablet.',
+          'Connect your phone to the same Wi-Fi as this screen.',
           'Point your phone’s camera at the code and tap the link.',
           'Choose photos. They show up here in a few seconds.',
         ].map((t, i) => `
@@ -42,10 +42,10 @@ export function mount(el) {
           </div>`).join('')}
       </div>
       <a data-latest href="#/photos" style="display:none;flex-direction:column;gap:10px">
-        <div class="eyebrow muted">Newest on this tablet</div>
+        <div class="eyebrow muted">Newest on this screen</div>
         <div data-thumbs style="display:flex;gap:12px;overflow:hidden"></div>
       </a>
-      <div data-status class="muted" style="font-size:18px">Photos stay on this tablet. Nothing is uploaded to the internet.</div>
+      <div data-status class="muted" style="font-size:18px">Photos stay on this screen. Nothing is uploaded to the internet.</div>
     </div>
   </div>`;
 
@@ -71,10 +71,10 @@ export function mount(el) {
     $('[data-url-label]').style.display = url ? '' : 'none';
     if (url === null) {
       // Testing in a normal browser: there is no tablet to send photos to.
-      $('[data-qr]').innerHTML = `<div class="muted" style="font-size:20px">The QR code appears here on the tablet.</div>`;
+      $('[data-qr]').innerHTML = `<div class="muted" style="font-size:20px">The QR code appears here on the kitchen screen.</div>`;
       $('[data-url]').textContent = '';
     } else if (!url) {
-      $('[data-qr]').innerHTML = `<div style="font-size:22px;font-weight:600">Connect the tablet to Wi-Fi first</div>`;
+      $('[data-qr]').innerHTML = `<div style="font-size:22px;font-weight:600">Connect this screen to Wi-Fi first</div>`;
       $('[data-url]').innerHTML = '<span class="muted" style="font-weight:400">Ask a grown-up: hold the top-left corner for 5 seconds → Wi-Fi settings. The code appears here by itself once it’s connected.</span>';
     } else {
       $('[data-qr]').innerHTML = qrSvg(url, 360);
@@ -108,7 +108,7 @@ export function mount(el) {
       // Uploads stop at the limit; say so before someone's photos quietly don't arrive.
       $('[data-status]').innerHTML = `<span style="color:var(--accent);font-weight:600">The album is ${count >= ALBUM_MAX ? 'full' : 'almost full'} (${count} of ${ALBUM_MAX}).</span> Remove a few old ones from the phone page to make room.`;
     } else if (isTablet()) {
-      $('[data-status]').textContent = `${count} photo${count === 1 ? '' : 's'} on this tablet. Photos stay here; nothing is uploaded to the internet.`;
+      $('[data-status]').textContent = `${count} photo${count === 1 ? '' : 's'} on this screen. Photos stay here; nothing is uploaded to the internet.`;
     }
     lastCount = count;
   }

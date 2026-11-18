@@ -161,7 +161,7 @@ export function mount(el) {
         <div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;text-align:center">
           ${tom ? '' : `<div style="margin-bottom:8px">${appsArt(360)}</div>`}
           <div style="font-family:${t.font};font-size:36px;font-weight:500">No apps yet</div>
-          <div style="color:${t.ink2};font-size:20px;max-width:640px">Apps like YouTube or Spotify will show up here once they've been added for this tablet.</div>
+          <div style="color:${t.ink2};font-size:20px;max-width:640px">Apps like YouTube or Spotify will show up here once they've been added for this screen.</div>
         </div>`}
       <div class="ap-msg" data-msg></div>
     </div>`;
@@ -179,7 +179,7 @@ export function mount(el) {
         const pkg = tile.dataset.pkg;
         const a = apps.find((x) => x.pkg === pkg) || { label: 'That app' };
         if (busy) return;
-        if (!hasApps()) { say(`On the tablet, this opens ${a.label}.`); return; }
+        if (!hasApps()) { say(`On the kitchen screen, this opens ${a.label}.`); return; }
         busy = pkg;
         tile.classList.add('busy');
         const name = tile.querySelector('.ap-name');
@@ -198,7 +198,7 @@ export function mount(el) {
           reset();
           say(tom
             ? `${a.label.toUpperCase()} WON'T OPEN. IT MAY NEED INSTALLING AGAIN.`
-            : `${a.label} won’t open. It may need to be installed again — ask the person who set up this tablet.`);
+            : `${a.label} won’t open. It may need to be installed again — ask the person who set up this screen.`);
         }
       });
     });

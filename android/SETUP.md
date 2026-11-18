@@ -43,11 +43,12 @@ Music, Calendar and the Play Store** at once. No separate login per app.
 
 Unplug. From now on it updates itself.
 
-**Before you wrap it:** a new tablet opens a short **welcome tour** instead of Home
-until someone finishes or skips it. If you skipped it while setting up, turn it back
-on: grown-up menu → **Welcome tour: show again**. It stays up (even after a restart)
-until the new owner taps through it. The **Tour** button on the App menu (TOUR on
-Tom's flight deck) replays it any time.
+**Before you wrap it:** a new screen starts a **hands-on tutorial** instead of Home
+until someone finishes or skips it: a spotlight walks the new owner through the real
+screens (add a calendar event, plan a dinner, find the photo QR code). If you skipped
+it while setting up, turn it back on: grown-up menu → **Tutorial: show again**. It
+comes back at every start until the new owner finishes or skips it. The **Tour**
+button on the App menu (TOUR on Tom's flight deck) runs it again any time.
 
 ---
 
@@ -71,7 +72,7 @@ Hold the **top-left corner** for 5 seconds, enter the PIN:
 - **Wi-Fi settings** (unlocks for 10 minutes), **Switch profile**, **Reload**,
   **Check for app update**, **Unlock tablet for 10 minutes**,
   **Turn off kiosk mode permanently**, **New photo upload code**,
-  **Apps screen ON/OFF**, **Camera ON/OFF**, **Welcome tour: show again**.
+  **Apps screen ON/OFF**, **Camera ON/OFF**, **Tutorial: show again**.
 
 ## Automatic behaviour
 

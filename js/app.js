@@ -2,6 +2,7 @@ import { installCompat } from './compat.js';
 import { profile } from './config.js';
 import * as placeholder from './screens/placeholder.js';
 import { welcomeDone } from './services/welcome-state.js';
+import { tutorialRunning } from './services/tutorial.js';
 
 const screenEl = document.getElementById('screen');
 installCompat(screenEl);
@@ -42,7 +43,7 @@ async function navigate() {
   // A brand-new tablet opens the welcome tour instead of Home until it's finished or skipped
   // (never in the hidden admin copy).
   const ghost = (() => { try { return !!(window.TabletNative && window.TabletNative.isGhost && window.TabletNative.isGhost()); } catch (e) { return false; } })();
-  if (name === homeRoute && !ghost && !welcomeDone()) name = 'welcome';
+  if (name === homeRoute && !ghost && !welcomeDone() && !tutorialRunning()) name = 'welcome';
   const args = parts.slice(1).filter(Boolean);
   let mod = placeholder;
   if (SCREENS[name]) {
