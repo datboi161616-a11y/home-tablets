@@ -125,3 +125,20 @@ export async function searchRecipes(text, limit = 200) {
     return words.every((w) => hay.includes(w));
   }).slice(0, limit);
 }
+
+/**
+ * Download every recipe file once a day in the background, so the service worker has
+ * them all and recipes still open when the Wi-Fi is down. One file at a time, gently.
+ */
+export async function prefetchAll() {
+  const today = new Date().toDateString();
+  try { if (localStorage.getItem('recipes.prefetched') === today) return; } catch (e) { return; }
+  try {
+    const ix = await loadIndex();
+    for (const c of ix.cuisines) {
+      await fetch(BASE + `${c.id}.json`).catch(() => null);
+      await new Promise((r) => setTimeout(r, 1500));
+    }
+    localStorage.setItem('recipes.prefetched', today);
+  } catch (e) { /* offline: try again next time */ }
+}

@@ -26,11 +26,14 @@ final class FamilyStore {
     static final int MAX_CALENDARS = 6;
     private static final long MAX_ICS_BYTES = 3L * 1024 * 1024;
 
-    private final File settingsFile, notesFile, calendarCache;
+    private static final int MAX_SHOPPING_CHARS = 256 * 1024;
+
+    private final File settingsFile, notesFile, calendarCache, shoppingFile;
 
     FamilyStore(Context c) {
         settingsFile = new File(c.getFilesDir(), "settings.json");
         notesFile = new File(c.getFilesDir(), "notes.json");
+        shoppingFile = new File(c.getFilesDir(), "shopping.json");
         calendarCache = new File(c.getFilesDir(), "calendars");
         //noinspection ResultOfMethodCallIgnored
         calendarCache.mkdirs();
@@ -226,6 +229,35 @@ final class FamilyStore {
         if (keep.length() == all.length()) return false;
         write(notesFile, keep.toString());
         return true;
+    }
+
+    // ------------------------------------------------------------ shopping list
+    // The tablet's screens work out the list (from the week plan) and save a copy here,
+    // so the phone page can show it. Ticks from the phone go back to the screens.
+
+    synchronized JSONObject shopping() {
+        try { return new JSONObject(read(shoppingFile, "{}")); } catch (Exception e) { return new JSONObject(); }
+    }
+
+    synchronized void saveShopping(String json) throws Exception {
+        if (json == null || json.length() > MAX_SHOPPING_CHARS) throw new Exception("list too big");
+        write(shoppingFile, new JSONObject(json).toString()); // must parse
+    }
+
+    /** A tick or a new item from the phone: {act:"got", key, kind:"item"|"extra", got} or {act:"add", text}. */
+    static JSONObject shoppingAction(JSONObject b) throws Exception {
+        String act = b.optString("act");
+        JSONObject a = new JSONObject().put("act", act);
+        if (act.equals("got")) {
+            String key = clip(b.optString("key"), 100);
+            if (key.isEmpty()) throw new Exception("which item?");
+            a.put("key", key).put("kind", "extra".equals(b.optString("kind")) ? "extra" : "item").put("got", b.optBoolean("got"));
+        } else if (act.equals("add")) {
+            String text = clip(b.optString("text"), 60);
+            if (text.isEmpty()) throw new Exception("Type something first");
+            a.put("text", text);
+        } else throw new Exception("unknown action");
+        return a;
     }
 
     // ------------------------------------------------------------ files

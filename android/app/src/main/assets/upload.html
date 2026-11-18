@@ -27,6 +27,15 @@
   .ph img { width:100%; height:100%; object-fit:cover; display:block; }
   .ph button { position:absolute; top:6px; right:6px; width:36px; height:36px; border-radius:18px; border:0; background:rgba(0,0,0,.6); color:#fff; font-size:18px; cursor:pointer; }
   .muted { color:var(--ink2); font-size:15px; }
+  .sl-row { display:flex; align-items:center; gap:14px; min-height:56px; border-top:1px solid #EEF0F2; cursor:pointer; }
+  .sl-row:first-of-type { border-top:0; }
+  .sl-box { width:28px; height:28px; border-radius:8px; border:2px solid #C9CFD6; flex:none; display:flex; align-items:center; justify-content:center; color:#fff; font-size:17px; }
+  .sl-row.got .sl-box { background:var(--accent); border-color:var(--accent); }
+  .sl-row.got .sl-name { text-decoration:line-through; color:#8A93A3; }
+  .sl-name { font-weight:600; }
+  .sl-name::first-letter { text-transform:uppercase; }
+  .sl-amt { color:var(--ink2); font-size:14px; }
+  .sl-h { font-size:13px; font-weight:700; letter-spacing:1px; text-transform:uppercase; color:var(--ink2); margin-bottom:4px; }
   h2 { font-size:18px; margin:0 0 12px; display:flex; justify-content:space-between; align-items:baseline; }
   .tabs { display:flex; gap:6px; background:#DDE1E6; padding:5px; border-radius:16px; margin:0 0 18px; position:sticky; top:8px; z-index:5; }
   .tabs button { flex:1; border:0; background:transparent; font:inherit; font-weight:600; font-size:15px; padding:12px 6px; border-radius:12px; color:var(--ink2); cursor:pointer; min-height:44px; }
@@ -60,8 +69,9 @@
 
   <div class="tabs">
     <button data-tab="photos" class="on">Photos</button>
-    <button data-tab="note">Leave a note</button>
-    <button data-tab="settings">Tablet settings</button>
+    <button data-tab="note">Note</button>
+    <button data-tab="shopping">Shopping</button>
+    <button data-tab="settings">Settings</button>
   </div>
 
   <section id="tab-photos">
@@ -107,6 +117,19 @@
   </section>
 
   <!-- ===================== Tablet settings ===================== -->
+  <section id="tab-shopping" hidden>
+  <div class="card">
+    <h2><span>Shopping list</span><span id="slCount" class="muted"></span></h2>
+    <p class="muted" style="margin:0 0 12px">From your week plan. Open this before you leave home: it stays on your phone, and ticks go back to the tablet when you're on your Wi-Fi again.</p>
+    <form id="slAdd" style="display:flex;gap:8px;margin:0">
+      <input id="slText" type="text" maxlength="60" placeholder="Add something…" style="margin:0;flex:1">
+      <button class="pick" style="width:auto;min-height:0;padding:0 20px;font-size:16px" type="submit">Add</button>
+    </form>
+    <div id="slStatus" class="status"></div>
+  </div>
+  <div id="slList"></div>
+  </section>
+
   <section id="tab-settings" hidden>
     <div class="card">
       <label for="famName">Name on the home screen</label>
@@ -266,13 +289,14 @@
   var tabs = document.querySelectorAll('[data-tab]');
   function showTab(name) {
     tabs.forEach(function (b) { b.classList.toggle('on', b.dataset.tab === name); });
-    ['photos', 'note', 'settings'].forEach(function (t) { $('tab-' + t).hidden = t !== name; });
+    ['photos', 'note', 'shopping', 'settings'].forEach(function (t) { $('tab-' + t).hidden = t !== name; });
     if (name === 'note') loadNotes();
+    if (name === 'shopping') loadShopping();
     if (name === 'settings') loadSettings();
     try { history.replaceState(null, '', location.pathname + location.search + '#' + name); } catch (e) {}
   }
   tabs.forEach(function (b) { b.onclick = function () { showTab(b.dataset.tab); }; });
-  if (/^#(note|settings)$/.test(location.hash)) showTab(location.hash.slice(1));
+  if (/^#(note|shopping|settings)$/.test(location.hash)) showTab(location.hash.slice(1));
 
   function esc(t) { return String(t == null ? '' : t).replace(/[&<>"']/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]; }); }
   function api(path, body) {
@@ -435,6 +459,91 @@
     } catch (err) { setMsg($('settingsStatus'), err.message, 'err'); }
     this.disabled = false;
   };
+
+  // ===================== shopping list =====================
+  // A copy is kept on this phone so the list still shows at the store (no home Wi-Fi there).
+  // Ticks made away from home wait in a queue and are sent when the tablet can be reached.
+  var SL_COPY = 'tablet-shopping-copy', SL_QUEUE = 'tablet-shopping-queue';
+  var SL = null, slFlushing = false;
+  function slRead(k, d) { try { return JSON.parse(localStorage.getItem(k) || 'null') || d; } catch (e) { return d; } }
+  function slSave() { try { localStorage.setItem(SL_COPY, JSON.stringify(SL)); } catch (e) {} }
+  function slQueue() { return slRead(SL_QUEUE, []); }
+  function slStatus(t, cls) { setMsg($('slStatus'), t, cls); }
+
+  function renderShopping() {
+    var box = $('slList');
+    if (!SL) { box.innerHTML = ''; return; }
+    var left = 0;
+    var row = function (key, kind, name, amt, got) {
+      if (!got) left++;
+      return '<div class="sl-row' + (got ? ' got' : '') + '" data-key="' + esc(key) + '" data-kind="' + kind + '">' +
+        '<div class="sl-box">' + (got ? '&#10003;' : '') + '</div><div><div class="sl-name">' + esc(name) + '</div>' +
+        (amt ? '<div class="sl-amt">' + esc(amt) + '</div>' : '') + '</div></div>';
+    };
+    var html = '';
+    if ((SL.extras || []).length) html += '<div class="card"><div class="sl-h">Added</div>' + SL.extras.map(function (x) { return row(x.id, 'extra', x.text, '', x.got); }).join('') + '</div>';
+    (SL.sections || []).forEach(function (sec) {
+      html += '<div class="card"><div class="sl-h">' + esc(sec.name) + '</div>' + sec.items.map(function (x) { return row(x.key, 'item', x.name, x.amount, x.got); }).join('') + '</div>';
+    });
+    box.innerHTML = html || '<div class="card muted">Nothing on the list. Plan some meals on the tablet and they show up here.</div>';
+    $('slCount').textContent = left ? left + ' to get' : '';
+  }
+
+  function loadShopping() {
+    if (!SL) { SL = slRead(SL_COPY, null); renderShopping(); }
+    flushShopping(function () {
+      if (slQueue().length) return; // keep our ticks showing until they're sent
+      fetch('/api/shopping' + q()).then(function (r) { return r.json(); }).then(function (l) {
+        SL = l; slSave(); renderShopping();
+        slStatus(l.updated ? 'Up to date with the tablet' : '', 'muted');
+      }).catch(function () {
+        slStatus(SL ? 'Not on your home Wi-Fi: showing the copy saved on this phone.' : 'Can’t reach the tablet. Are you on your home Wi-Fi?', SL ? 'muted' : 'err');
+      });
+    });
+  }
+
+  function flushShopping(done) {
+    var queue = slQueue();
+    if (!queue.length || slFlushing) { if (done) done(); return; }
+    slFlushing = true;
+    api('/api/shopping', queue[0]).then(function (r) {
+      slFlushing = false;
+      localStorage.setItem(SL_QUEUE, JSON.stringify(slQueue().slice(1)));
+      if (!r.ok) slStatus(r.error || 'The tablet didn’t take that', 'err');
+      flushShopping(done);
+    }).catch(function () {
+      slFlushing = false;
+      slStatus('Saved on this phone. It’ll update the tablet when you’re home.', 'muted');
+      if (done) done();
+    });
+  }
+  function slSend(action) {
+    var queue = slQueue(); queue.push(action);
+    localStorage.setItem(SL_QUEUE, JSON.stringify(queue));
+    flushShopping();
+  }
+
+  $('slList').addEventListener('click', function (e) {
+    var r = e.target.closest('.sl-row');
+    if (!r || !SL) return;
+    var key = r.dataset.key, kind = r.dataset.kind, got = false;
+    var list = kind === 'extra' ? (SL.extras || []) : [].concat.apply([], (SL.sections || []).map(function (s) { return s.items; }));
+    list.forEach(function (x) { if ((kind === 'extra' ? x.id : x.key) === key) { x.got = !x.got; got = x.got; } });
+    slSave(); renderShopping();
+    slSend({ act: 'got', key: key, kind: kind, got: got });
+  });
+  $('slAdd').addEventListener('submit', function (e) {
+    e.preventDefault();
+    var t = $('slText').value.trim();
+    if (!t) return;
+    SL = SL || { sections: [], extras: [] };
+    SL.extras = (SL.extras || []).concat([{ id: 'phone-' + Date.now(), text: t, got: false }]);
+    slSave(); renderShopping();
+    $('slText').value = '';
+    slSend({ act: 'add', text: t });
+  });
+  // While the list is open: send waiting ticks and pick up changes made on the tablet.
+  setInterval(function () { if (!$('tab-shopping').hidden) loadShopping(); }, 20000);
 })();
 </script>
 </body>

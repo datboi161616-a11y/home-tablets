@@ -44,8 +44,9 @@ export function mount(el) {
         : `<button class="sl-have" data-have="${esc(key)}">Have it</button>`}
     </div>`;
 
+  let again = false;
   async function render() {
-    if (drawing) return;
+    if (drawing) { again = true; return; } // redraw once more when this one finishes
     drawing = true;
     try {
       const list = await buildShoppingList();
@@ -93,6 +94,7 @@ export function mount(el) {
       fillCounts(root);
     } finally {
       drawing = false;
+      if (again && el.isConnected) { again = false; render(); }
     }
   }
 

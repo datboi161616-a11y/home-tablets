@@ -8,6 +8,7 @@ import { getRecipe, loadIndex, fmtQty, unitText } from './recipe-data.js';
 
 const PLAN_KEY = 'kitchen.plan.v1';
 const LIST_KEY = 'kitchen.list.v1';
+const FAV_KEY = 'kitchen.favorites.v1';
 
 const read = (k, d) => { try { return JSON.parse(localStorage.getItem(k) || 'null') || d; } catch (e) { return d; } };
 const write = (k, v) => { localStorage.setItem(k, JSON.stringify(v)); window.dispatchEvent(new Event('kitchen-changed')); };
@@ -231,3 +232,45 @@ export function clearChecked() {
 }
 /** Fresh list: forget ticks, extras and "have" choices. */
 export function resetList() { saveList({ have: {}, got: {}, extras: [] }); }
+
+// ---- The phone's copy of the list ----------------------------------------------------
+// The phone page (QR code on the tablet) shows this list so you can take it to the store.
+// The tablet saves a copy whenever the list changes; ticks and new items made on the
+// phone come back here as 'tablet-shopping' events. Only this tablet and your own phone.
+let syncTimer;
+export function startShoppingSync() {
+  const N = window.TabletNative;
+  if (!N || !N.setShoppingList) return;
+  const push = () => {
+    clearTimeout(syncTimer);
+    syncTimer = setTimeout(async () => {
+      try {
+        const l = await buildShoppingList();
+        N.setShoppingList(JSON.stringify({
+          updated: Date.now(),
+          recipes: l.recipes,
+          sections: l.sections.map((s) => ({ name: s.name, items: s.items.map((x) => ({ key: x.key, name: x.name, amount: x.amount, got: x.got })) })),
+          extras: l.extras,
+        }));
+      } catch (e) { /* try again on the next change */ }
+    }, 400);
+  };
+  onKitchenChanged(push);
+  window.addEventListener('tablet-shopping', (e) => {
+    const a = e.detail || {};
+    if (a.act === 'got') { if (a.kind === 'extra') setExtraGot(a.key, !!a.got); else setGot(a.key, !!a.got); }
+    else if (a.act === 'add') addExtra(a.text);
+  });
+  push();
+  setInterval(push, 60 * 60 * 1000); // the week moves on by itself
+}
+
+// ---- Favourite recipes (hearted on the recipe page) ------------------------------------
+export const favorites = () => read(FAV_KEY, []);
+export const isFavorite = (id) => favorites().indexOf(id) >= 0;
+export function toggleFavorite(id) {
+  const f = favorites().filter((x) => x !== id);
+  if (f.length === favorites().length) f.unshift(id); // newest first
+  write(FAV_KEY, f.slice(0, 500));
+  return f.indexOf(id) >= 0;
+}

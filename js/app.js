@@ -67,6 +67,11 @@ async function navigate() {
 addEventListener('hashchange', navigate);
 navigate();
 
+// Family tablets keep a copy of the shopping list for the phone page.
+if (profile !== 'tom') import('./services/meal-plan.js').then((m) => m.startShoppingSync()).catch(() => {});
+// ...and keep every recipe on the tablet, for when the Wi-Fi is down.
+if (profile !== 'tom') setTimeout(() => import('./services/recipe-data.js').then((m) => m.prefetchAll()).catch(() => {}), 60 * 1000);
+
 // ---- Offline support + pick up pushed updates ----
 if ('serviceWorker' in navigator) navigator.serviceWorker.register('./sw.js');
 

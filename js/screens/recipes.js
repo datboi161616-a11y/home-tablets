@@ -4,10 +4,11 @@
 //   #/recipes/chinese            every Chinese recipe
 //   #/recipes/chinese/noodles    just the noodles
 import { loadIndex, searchRecipes, cuisineColor, fmtMinutes } from '../services/recipe-data.js';
-import { getPlan, weekDays, dayIds } from '../services/meal-plan.js';
+import { getPlan, weekDays, dayIds, favorites } from '../services/meal-plan.js';
 import { esc, kitchenStyles, kitchenTop, fillCounts } from './kitchen-ui.js';
 
 let searchTimer;
+let favs = [];
 
 // "Planned Thu" for recipes already in this week's plan.
 function plannedLabels() {
@@ -23,6 +24,7 @@ function recipeCard(r, planned, cuisineName) {
     <a href="#/dish/${encodeURIComponent(r.id)}" class="card rb-card">
       <div style="display:flex;gap:8px;align-items:center;min-height:28px">
         ${planned[r.id] ? `<span class="k-badge">Planned · ${esc(planned[r.id])}</span>` : ''}
+        ${favs.indexOf(r.id) >= 0 ? '<span style="color:#C2491F;font-size:20px;margin-left:auto" aria-label="Favorite">♥</span>' : ''}
         ${cuisineName ? `<span class="k-tag" style="background:${cuisineColor(r.c)};color:#fff">${esc(cuisineName)}</span>` : ''}
       </div>
       <div class="display rb-t">${esc(r.t)}</div>
@@ -74,6 +76,20 @@ export function mount(el, { args = [] } = {}) {
     const planned = plannedLabels();
     const cuisine = ix.cuisines.find((c) => c.id === cuisineId);
     const dinnerView = cuisineId === 'dinner';
+    favs = favorites();
+    if (cuisineId === 'favorites') {
+      // ---- Hearted recipes ----
+      const names = {};
+      ix.cuisines.forEach((c) => { names[c.id] = c.name; });
+      const list = favs.map((id) => ix.byId[id]).filter(Boolean);
+      root.innerHTML = `
+        ${kitchenTop({ title: 'Favorites', back: '#/recipes', backLabel: '← Recipes', active: 'recipes' })}
+        <div class="k-scroll">${list.length
+          ? `<div class="rb-cards">${list.map((r) => recipeCard(r, planned, names[r.c])).join('')}</div>`
+          : '<div class="k-empty">Tap the ♡ on any recipe to keep it here.</div>'}</div>`;
+      fillCounts(root);
+      return;
+    }
     const byMeal = (m) => ix.cuisines.filter((c) => (c.meal || 'dinner') === m);
     const count = (list) => list.reduce((n, c) => n + c.count, 0);
 
@@ -82,7 +98,7 @@ export function mount(el, { args = [] } = {}) {
       root.innerHTML = `
         ${kitchenTop({ title: dinnerView ? 'Dinner' : 'Recipes', active: 'recipes',
           back: dinnerView ? '#/recipes' : '#/home', backLabel: dinnerView ? '← Recipes' : '← Home',
-          extra: `<input data-search class="k-input" style="width:300px" placeholder="Search ${ix.recipes.length} recipes" autocomplete="off">` })}
+          extra: `<a href="#/recipes/favorites" class="k-btn" style="color:#C2491F">♥ Favorites${favs.length ? ` · ${favs.length}` : ''}</a><input data-search class="k-input" style="width:220px" placeholder="Search recipes" autocomplete="off">` })}
         <div data-body class="k-scroll"></div>`;
       const body = root.querySelector('[data-body]');
       const names = {};

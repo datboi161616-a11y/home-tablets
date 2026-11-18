@@ -142,6 +142,12 @@ jobs:
           curl -sf -X POST -H "Content-Type: application/json" --data '{"who":"Sam","text":"Pizza night Friday?"}' "http://127.0.0.1:8080/api/notes?k=ci-test-key" | tee note.json
           grep -q '"ok":true' note.json
           curl -sf "http://127.0.0.1:8080/api/notes?k=ci-test-key" | grep -q 'Pizza night'
+          # Shopping list: the tablet keeps a copy for the phone; an item added on the phone
+          # goes through the tablet's screens and comes back in that copy.
+          curl -sf "http://127.0.0.1:8080/api/shopping?k=ci-test-key" | tee shopping.json | grep -q '"sections"'
+          curl -sf -X POST -H "Content-Type: application/json" --data '{"act":"add","text":"CI milk"}' "http://127.0.0.1:8080/api/shopping?k=ci-test-key" | grep -q '"ok":true'
+          sleep 4
+          curl -sf "http://127.0.0.1:8080/api/shopping?k=ci-test-key" | tee shopping-after.json | grep -q 'CI milk'
           adb shell am start -n com.hometablets.launcher/.MainActivity --es screen calendar
           sleep 20
           adb exec-out screencap -p > shot-calendar.png
@@ -221,6 +227,8 @@ jobs:
             calcheck.json
             settings-saved.json
             note.json
+            shopping.json
+            shopping-after.json
             logcat-full.txt
 
   release:

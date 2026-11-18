@@ -129,6 +129,12 @@ public class MainActivity extends Activity {
                 @Override public void onFamilyChanged(String what) {
                     tell("settings".equals(what) ? "tablet-family" : "tablet-notes");
                 }
+                @Override public void onShoppingAction(JSONObject action) {
+                    // action is built by FamilyStore.shoppingAction (plain JSON, safe as a JS literal).
+                    MainActivity a = current;
+                    if (a != null) a.runOnUiThread(() -> a.web.evaluateJavascript(
+                            "window.dispatchEvent(new CustomEvent('tablet-shopping',{detail:" + action + "}))", null));
+                }
                 private void tell(String event) {
                     MainActivity a = current;
                     if (a != null) a.runOnUiThread(() ->
@@ -1053,6 +1059,13 @@ public class MainActivity extends Activity {
         /** Message-board notes, newest first. */
         @JavascriptInterface
         public String notes() { return family.notes().toString(); }
+
+        /** The screens save the current shopping list here so the phone page can show it. */
+        @JavascriptInterface
+        public boolean setShoppingList(String json) {
+            if (isGhost) return false;
+            try { family.saveShopping(json); return true; } catch (Exception e) { return false; }
+        }
 
         /** photoBase64 (JPEG) and replyTo may be empty. Returns the new note's id, or "". */
         @JavascriptInterface

@@ -44,6 +44,8 @@ final class PhotoServer {
         void onPhotosChanged();
         /** what: "settings" or "notes" */
         void onFamilyChanged(String what);
+        /** A tick or new item from the phone's shopping list (see FamilyStore.shoppingAction). */
+        void onShoppingAction(JSONObject action);
     }
 
     private static final int MAX_JSON_BODY = 64 * 1024;
@@ -196,6 +198,16 @@ final class PhotoServer {
                     JSONObject n = family.addNote(b.optString("who"), b.optString("text"), b.optString("photo", null), b.optString("replyTo", null));
                     sendJson(out, 200, new JSONObject().put("ok", true).put("note", n));
                     listener.onFamilyChanged("notes");
+                } catch (Exception e) {
+                    sendJson(out, 400, new JSONObject().put("ok", false).put("error", String.valueOf(e.getMessage())));
+                }
+            } else if (method.equals("GET") && path.equals("/api/shopping")) {
+                sendJson(out, 200, family.shopping());
+            } else if (method.equals("POST") && path.equals("/api/shopping")) {
+                try {
+                    JSONObject a = FamilyStore.shoppingAction(new JSONObject(readBody(in, headers)));
+                    listener.onShoppingAction(a);
+                    sendJson(out, 200, new JSONObject().put("ok", true));
                 } catch (Exception e) {
                     sendJson(out, 400, new JSONObject().put("ok", false).put("error", String.valueOf(e.getMessage())));
                 }

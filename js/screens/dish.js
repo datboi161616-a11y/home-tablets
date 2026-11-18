@@ -1,6 +1,6 @@
 // Family · One recipe (#/dish/<id>): ingredients, steps, add to the week plan, cook it.
 import { getRecipe, loadIndex, ingredientText, metaLine, fmtMinutes, cuisineColor } from '../services/recipe-data.js';
-import { weekDays, daysPlanned, addToPlan, removeFromPlan, MEALS, defaultMeal } from '../services/meal-plan.js';
+import { weekDays, daysPlanned, addToPlan, removeFromPlan, MEALS, defaultMeal, isFavorite, toggleFavorite } from '../services/meal-plan.js';
 import { esc, kitchenStyles, kitchenTop, wireBack, fillCounts } from './kitchen-ui.js';
 
 // Set by the Week plan's "+ Add" ("2026-11-20|lunch") so the next recipe picked goes
@@ -48,7 +48,8 @@ export function mount(el, { args = [] } = {}) {
       const on = daysPlanned(r.id, meal);
       const target = p && days.find((d) => d.key === p.key);
       root.innerHTML = `
-        ${kitchenTop({ title: r.title, back: 'history', backLabel: '← Back', active: 'recipes' })}
+        ${kitchenTop({ title: r.title, back: 'history', backLabel: '← Back', active: 'recipes',
+          extra: `<button data-fav class="k-btn" style="color:#C2491F">${isFavorite(r.id) ? '♥ Saved' : '♡ Save'}</button>` })}
         <div style="flex-grow:1;min-height:0;display:grid;grid-template-columns:400px minmax(0,1fr);gap:24px">
           <div class="card" style="padding:26px 28px;display:flex;flex-direction:column;gap:12px;min-height:0">
             <div style="display:flex;gap:8px;flex-wrap:wrap">
@@ -95,6 +96,7 @@ export function mount(el, { args = [] } = {}) {
         location.hash = '#/plan';
         return;
       }
+      if (e.target.closest('[data-fav]')) { toggleFavorite(r.id); render(); return; }
       const m = e.target.closest('[data-meal]');
       if (m) { meal = m.dataset.meal; render(); return; }
       const day = e.target.closest('[data-day]');
