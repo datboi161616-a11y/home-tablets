@@ -4,8 +4,8 @@ import fs from 'node:fs';
 
 // Which part of the day each file belongs to (the first screen: Breakfast / Lunch / Dinner).
 const MEAL = { breakfast: 'breakfast', lunch: 'lunch', desserts: 'dessert' }; // everything else: dinner
-const ORDER = ['breakfast', 'lunch', 'american', 'italian', 'mexican', 'chinese', 'japanese', 'thai', 'indian',
-  'mediterranean', 'korean', 'southern', 'breakfast', 'desserts'];
+const ORDER = ['breakfast', 'lunch', 'american', 'weeknight', 'italian', 'mexican', 'southern', 'chinese', 'japanese', 'thai', 'indian',
+  'mediterranean', 'korean', 'desserts'];
 const dir = 'data/recipes';
 const files = fs.readdirSync(dir).filter((f) => f.endsWith('.json') && f !== 'index.json')
   .map((f) => f.replace('.json', ''))

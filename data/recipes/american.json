@@ -29,6 +29,14 @@
   {
    "id": "sides",
    "name": "Sides & salads"
+  },
+  {
+   "id": "steak",
+   "name": "Steaks & grill"
+  },
+  {
+   "id": "comfort",
+   "name": "Comfort classics"
   }
  ],
  "recipes": [
@@ -2397,107 +2405,6 @@
    ]
   },
   {
-   "id": "american-shrimp-scampi",
-   "title": "Shrimp scampi with linguine",
-   "blurb": "Garlic, lemon and butter, ready in 25 minutes",
-   "type": "seafood",
-   "serves": 4,
-   "prep": 10,
-   "cook": 15,
-   "tags": [
-    "quick"
-   ],
-   "ingredients": [
-    {
-     "q": 12,
-     "u": "oz",
-     "item": "linguine",
-     "aisle": "pantry"
-    },
-    {
-     "q": 1.5,
-     "u": "lb",
-     "item": "large shrimp",
-     "aisle": "seafood",
-     "note": "peeled and deveined"
-    },
-    {
-     "q": 3,
-     "u": "tbsp",
-     "item": "unsalted butter",
-     "aisle": "dairy"
-    },
-    {
-     "q": 2,
-     "u": "tbsp",
-     "item": "olive oil",
-     "aisle": "pantry"
-    },
-    {
-     "q": 5,
-     "u": "clove",
-     "item": "garlic",
-     "aisle": "produce",
-     "note": "minced"
-    },
-    {
-     "q": 0.5,
-     "u": "cup",
-     "item": "chicken broth",
-     "aisle": "pantry"
-    },
-    {
-     "q": 2,
-     "u": "",
-     "item": "lemons",
-     "aisle": "produce",
-     "note": "juiced"
-    },
-    {
-     "q": 0.25,
-     "u": "tsp",
-     "item": "red pepper flakes",
-     "aisle": "spices"
-    },
-    {
-     "q": 0.25,
-     "u": "cup",
-     "item": "fresh parsley",
-     "aisle": "produce",
-     "note": "chopped"
-    },
-    {
-     "q": 1,
-     "u": "tsp",
-     "item": "salt",
-     "aisle": "spices"
-    }
-   ],
-   "steps": [
-    {
-     "text": "Boil the linguine in well-salted water until al dente. Save 1/2 cup of the pasta water.",
-     "timer": 600,
-     "timerLabel": "Boil the pasta"
-    },
-    {
-     "text": "Heat the oil and 1 tbsp butter in a large skillet over medium. Cook the garlic and pepper flakes 30 seconds."
-    },
-    {
-     "text": "Add the shrimp, season with salt, and cook until pink.",
-     "timer": 180,
-     "timerLabel": "Cook the shrimp"
-    },
-    {
-     "text": "Pour in the broth and lemon juice. Simmer 1 minute, then stir in the remaining butter.",
-     "timer": 60,
-     "timerLabel": "Simmer the sauce"
-    },
-    {
-     "text": "Toss in the drained linguine and parsley. Loosen with pasta water if needed."
-    }
-   ]
-  },
-  {
    "id": "american-sheet-pan-shrimp-boil",
    "title": "Sheet-pan shrimp boil",
    "blurb": "Shrimp, sausage, corn and potatoes with Old Bay",
@@ -3571,100 +3478,6 @@
    ]
   },
   {
-   "id": "american-baked-ziti",
-   "title": "Easy baked ziti",
-   "blurb": "Pasta, meat sauce and gooey mozzarella",
-   "type": "casseroles",
-   "serves": 6,
-   "prep": 15,
-   "cook": 40,
-   "tags": [
-    "make ahead",
-    "kid-friendly"
-   ],
-   "ingredients": [
-    {
-     "q": 1,
-     "u": "lb",
-     "item": "ziti",
-     "aisle": "pantry"
-    },
-    {
-     "q": 1,
-     "u": "lb",
-     "item": "ground beef",
-     "aisle": "meat"
-    },
-    {
-     "q": 1,
-     "u": "",
-     "item": "yellow onion",
-     "aisle": "produce",
-     "note": "diced"
-    },
-    {
-     "q": 3,
-     "u": "clove",
-     "item": "garlic",
-     "aisle": "produce",
-     "note": "minced"
-    },
-    {
-     "q": 1,
-     "u": "jar",
-     "item": "marinara sauce (24 oz)",
-     "aisle": "pantry"
-    },
-    {
-     "q": 1,
-     "u": "cup",
-     "item": "ricotta cheese",
-     "aisle": "dairy"
-    },
-    {
-     "q": 3,
-     "u": "cup",
-     "item": "shredded mozzarella cheese",
-     "aisle": "dairy",
-     "note": "divided"
-    },
-    {
-     "q": 0.25,
-     "u": "cup",
-     "item": "grated Parmesan cheese",
-     "aisle": "dairy"
-    }
-   ],
-   "steps": [
-    {
-     "text": "Heat the oven to 375°F. Boil the ziti 2 minutes short of the package time, then drain.",
-     "timer": 540,
-     "timerLabel": "Boil the ziti"
-    },
-    {
-     "text": "Brown the beef and onion in a large pot. Drain the fat. Add the garlic and marinara.",
-     "timer": 600,
-     "timerLabel": "Brown the beef"
-    },
-    {
-     "text": "Stir in the ziti, ricotta and 1.5 cups mozzarella."
-    },
-    {
-     "text": "Pour into a greased 9 by 13 inch dish. Top with the rest of the mozzarella and the Parmesan."
-    },
-    {
-     "text": "Cover with foil and bake.",
-     "timer": 1200,
-     "timerLabel": "Bake covered"
-    },
-    {
-     "text": "Uncover and bake until the cheese is golden.",
-     "timer": 600,
-     "timerLabel": "Bake uncovered"
-    }
-   ]
-  },
-  {
    "id": "american-cheeseburger-casserole",
    "title": "Cheeseburger casserole",
    "blurb": "Burger flavors baked with pasta and cheddar",
@@ -4679,98 +4492,6 @@
     },
     {
      "text": "Split the rolls and toast lightly. Slide a mound into each roll."
-    }
-   ]
-  },
-  {
-   "id": "american-meatball-subs",
-   "title": "Baked meatball subs",
-   "blurb": "Tender meatballs, marinara and bubbly mozzarella",
-   "type": "sandwiches",
-   "serves": 6,
-   "prep": 20,
-   "cook": 35,
-   "tags": [
-    "kid-friendly"
-   ],
-   "ingredients": [
-    {
-     "q": 1.5,
-     "u": "lb",
-     "item": "ground beef",
-     "aisle": "meat"
-    },
-    {
-     "q": 0.5,
-     "u": "cup",
-     "item": "Italian breadcrumbs",
-     "aisle": "pantry"
-    },
-    {
-     "q": 1,
-     "u": "",
-     "item": "large eggs",
-     "aisle": "dairy"
-    },
-    {
-     "q": 0.25,
-     "u": "cup",
-     "item": "grated Parmesan cheese",
-     "aisle": "dairy"
-    },
-    {
-     "q": 1,
-     "u": "tsp",
-     "item": "salt",
-     "aisle": "spices"
-    },
-    {
-     "q": 2,
-     "u": "clove",
-     "item": "garlic",
-     "aisle": "produce",
-     "note": "minced"
-    },
-    {
-     "q": 3,
-     "u": "cup",
-     "item": "marinara sauce",
-     "aisle": "pantry"
-    },
-    {
-     "q": 6,
-     "u": "",
-     "item": "sub rolls",
-     "aisle": "bakery"
-    },
-    {
-     "q": 1.5,
-     "u": "cup",
-     "item": "shredded mozzarella cheese",
-     "aisle": "dairy"
-    }
-   ],
-   "steps": [
-    {
-     "text": "Heat the oven to 400°F. Mix the beef, breadcrumbs, egg, Parmesan, salt and garlic. Roll into 18 meatballs."
-    },
-    {
-     "text": "Bake the meatballs on a lined sheet pan until browned.",
-     "timer": 1080,
-     "timerLabel": "Bake the meatballs"
-    },
-    {
-     "text": "Warm the marinara in a pot. Add the meatballs and simmer until they reach 160°F inside.",
-     "timer": 600,
-     "timerLabel": "Simmer the meatballs"
-    },
-    {
-     "text": "Split the rolls and set on a pan. Fill with meatballs and sauce. Top with mozzarella."
-    },
-    {
-     "text": "Broil until the cheese is bubbly.",
-     "timer": 180,
-     "timerLabel": "Melt the cheese"
     }
    ]
   },
@@ -5884,6 +5605,5566 @@
     },
     {
      "text": "Stir, adding a splash of milk if dry. Serve cold."
+    }
+   ]
+  },
+  {
+   "id": "american-southern-fried-chicken",
+   "title": "Southern buttermilk fried chicken",
+   "blurb": "Crunchy, juicy skillet-fried chicken",
+   "type": "chicken",
+   "serves": 4,
+   "prep": 30,
+   "cook": 35,
+   "tags": [
+    "crowd"
+   ],
+   "ingredients": [
+    {
+     "q": 3,
+     "u": "lb",
+     "item": "bone-in chicken pieces",
+     "note": "thighs, drumsticks, breasts halved",
+     "aisle": "meat"
+    },
+    {
+     "q": 2,
+     "u": "cup",
+     "item": "buttermilk",
+     "aisle": "dairy"
+    },
+    {
+     "q": 2,
+     "u": "tsp",
+     "item": "salt",
+     "aisle": "spices"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "black pepper",
+     "aisle": "spices"
+    },
+    {
+     "q": 2,
+     "u": "cup",
+     "item": "all-purpose flour",
+     "aisle": "pantry"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "paprika",
+     "aisle": "spices"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "garlic powder",
+     "aisle": "spices"
+    },
+    {
+     "q": 3,
+     "u": "cup",
+     "item": "vegetable oil",
+     "note": "for frying",
+     "aisle": "pantry"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Soak chicken in buttermilk with 1 tsp salt and the pepper in the fridge at least 4 hours.",
+     "timer": 14400,
+     "timerLabel": "Marinate chicken"
+    },
+    {
+     "text": "Whisk flour, 1 tsp salt, paprika and garlic powder in a wide dish."
+    },
+    {
+     "text": "Lift chicken from the buttermilk, let the extra drip off, then press into the flour to coat well."
+    },
+    {
+     "text": "Heat 1 inch of oil in a deep skillet to 325°F. Add chicken in batches, skin side down first."
+    },
+    {
+     "text": "Fry, turning once, until deep golden and 165°F inside, about 12 minutes per side.",
+     "timer": 720,
+     "timerLabel": "Fry first side"
+    },
+    {
+     "text": "Drain on a wire rack and rest 5 minutes before serving.",
+     "timer": 300,
+     "timerLabel": "Rest chicken"
+    }
+   ]
+  },
+  {
+   "id": "american-chicken-parmesan",
+   "title": "Crispy chicken Parmesan with marinara",
+   "blurb": "Crispy cutlets under marinara and melted mozzarella",
+   "type": "chicken",
+   "serves": 4,
+   "prep": 20,
+   "cook": 25,
+   "tags": [
+    "kid-friendly"
+   ],
+   "ingredients": [
+    {
+     "q": 1.5,
+     "u": "lb",
+     "item": "boneless skinless chicken breasts",
+     "note": "sliced into 4 cutlets",
+     "aisle": "meat"
+    },
+    {
+     "q": 0.5,
+     "u": "cup",
+     "item": "all-purpose flour",
+     "aisle": "pantry"
+    },
+    {
+     "q": 2,
+     "u": "",
+     "item": "large eggs",
+     "aisle": "dairy"
+    },
+    {
+     "q": 1,
+     "u": "cup",
+     "item": "panko breadcrumbs",
+     "aisle": "pantry"
+    },
+    {
+     "q": 0.5,
+     "u": "cup",
+     "item": "grated Parmesan",
+     "aisle": "dairy"
+    },
+    {
+     "q": 0.25,
+     "u": "cup",
+     "item": "olive oil",
+     "aisle": "pantry"
+    },
+    {
+     "q": 1.5,
+     "u": "cup",
+     "item": "marinara sauce",
+     "aisle": "pantry"
+    },
+    {
+     "q": 1.5,
+     "u": "cup",
+     "item": "shredded mozzarella",
+     "aisle": "dairy"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "salt",
+     "aisle": "spices"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Heat oven to 425°F. Pound cutlets to 1/2 inch thick and season with salt."
+    },
+    {
+     "text": "Set up three dishes: flour, beaten eggs, and panko mixed with half the Parmesan."
+    },
+    {
+     "text": "Coat each cutlet in flour, egg, then crumbs, pressing to stick."
+    },
+    {
+     "text": "Pan-fry in olive oil over medium-high heat until golden, about 3 minutes per side.",
+     "timer": 360,
+     "timerLabel": "Brown cutlets"
+    },
+    {
+     "text": "Move cutlets to a baking sheet. Top with marinara, mozzarella and remaining Parmesan."
+    },
+    {
+     "text": "Bake until bubbly and chicken reaches 165°F.",
+     "timer": 600,
+     "timerLabel": "Bake"
+    }
+   ]
+  },
+  {
+   "id": "american-smothered-chicken",
+   "title": "Smothered chicken with onion gravy",
+   "blurb": "Skillet-browned chicken simmered in rich gravy",
+   "type": "chicken",
+   "serves": 4,
+   "prep": 15,
+   "cook": 45,
+   "tags": [
+    "one pot"
+   ],
+   "ingredients": [
+    {
+     "q": 2,
+     "u": "lb",
+     "item": "bone-in chicken thighs",
+     "aisle": "meat"
+    },
+    {
+     "q": 0.5,
+     "u": "cup",
+     "item": "all-purpose flour",
+     "aisle": "pantry"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "paprika",
+     "aisle": "spices"
+    },
+    {
+     "q": 1.5,
+     "u": "tsp",
+     "item": "salt",
+     "aisle": "spices"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "black pepper",
+     "aisle": "spices"
+    },
+    {
+     "q": 3,
+     "u": "tbsp",
+     "item": "vegetable oil",
+     "aisle": "pantry"
+    },
+    {
+     "q": 2,
+     "u": "",
+     "item": "yellow onion",
+     "note": "sliced",
+     "aisle": "produce"
+    },
+    {
+     "q": 2,
+     "u": "cup",
+     "item": "chicken broth",
+     "aisle": "pantry"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "dried thyme",
+     "aisle": "spices"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Mix 1/4 cup flour, paprika, 1 tsp salt and pepper. Coat chicken thighs well."
+    },
+    {
+     "text": "Brown chicken in hot oil in a large skillet, about 5 minutes per side. Remove to a plate.",
+     "timer": 600,
+     "timerLabel": "Brown chicken"
+    },
+    {
+     "text": "Cook onions in the drippings until soft and golden, about 8 minutes.",
+     "timer": 480,
+     "timerLabel": "Cook onions"
+    },
+    {
+     "text": "Stir in remaining flour for 1 minute, then whisk in broth, thyme and remaining salt."
+    },
+    {
+     "text": "Return chicken to the gravy, cover and simmer until chicken reaches 175°F and gravy is thick.",
+     "timer": 1500,
+     "timerLabel": "Simmer chicken"
+    },
+    {
+     "text": "Serve over rice or mashed potatoes."
+    }
+   ]
+  },
+  {
+   "id": "american-grilled-bbq-chicken-thighs",
+   "title": "Grilled BBQ chicken thighs",
+   "blurb": "Smoky, sticky thighs fresh off the grill",
+   "type": "chicken",
+   "serves": 6,
+   "prep": 15,
+   "cook": 30,
+   "tags": [
+    "grill",
+    "crowd"
+   ],
+   "ingredients": [
+    {
+     "q": 3,
+     "u": "lb",
+     "item": "bone-in chicken thighs",
+     "aisle": "meat"
+    },
+    {
+     "q": 2,
+     "u": "tbsp",
+     "item": "vegetable oil",
+     "aisle": "pantry"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "smoked paprika",
+     "aisle": "spices"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "garlic powder",
+     "aisle": "spices"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "salt",
+     "aisle": "spices"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "black pepper",
+     "aisle": "spices"
+    },
+    {
+     "q": 1,
+     "u": "cup",
+     "item": "barbecue sauce",
+     "aisle": "pantry"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Heat grill to medium and oil the grates. Rub chicken with oil, paprika, garlic powder, salt and pepper."
+    },
+    {
+     "text": "Grill skin side down over indirect heat, lid closed, 15 minutes.",
+     "timer": 900,
+     "timerLabel": "Grill skin side"
+    },
+    {
+     "text": "Flip and grill 10 more minutes.",
+     "timer": 600,
+     "timerLabel": "Grill second side"
+    },
+    {
+     "text": "Brush with barbecue sauce and grill 5 minutes, turning once, until 175°F inside.",
+     "timer": 300,
+     "timerLabel": "Glaze"
+    },
+    {
+     "text": "Rest 5 minutes before serving.",
+     "timer": 300,
+     "timerLabel": "Rest chicken"
+    }
+   ]
+  },
+  {
+   "id": "american-chicken-cordon-bleu",
+   "title": "Chicken cordon bleu",
+   "blurb": "Crispy chicken rolled around ham and Swiss",
+   "type": "chicken",
+   "serves": 4,
+   "prep": 25,
+   "cook": 35,
+   "tags": [],
+   "ingredients": [
+    {
+     "q": 4,
+     "u": "piece",
+     "item": "boneless skinless chicken breasts",
+     "note": "about 6 oz each",
+     "aisle": "meat"
+    },
+    {
+     "q": 4,
+     "u": "slice",
+     "item": "deli ham",
+     "aisle": "meat"
+    },
+    {
+     "q": 4,
+     "u": "slice",
+     "item": "Swiss cheese",
+     "aisle": "dairy"
+    },
+    {
+     "q": 0.5,
+     "u": "cup",
+     "item": "all-purpose flour",
+     "aisle": "pantry"
+    },
+    {
+     "q": 2,
+     "u": "",
+     "item": "large eggs",
+     "aisle": "dairy"
+    },
+    {
+     "q": 1.5,
+     "u": "cup",
+     "item": "panko breadcrumbs",
+     "aisle": "pantry"
+    },
+    {
+     "q": 2,
+     "u": "tbsp",
+     "item": "olive oil",
+     "aisle": "pantry"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "salt",
+     "aisle": "spices"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Heat oven to 400°F. Butterfly each breast, pound to 1/4 inch and season with salt."
+    },
+    {
+     "text": "Lay a slice of ham and cheese on each, roll up and secure with toothpicks."
+    },
+    {
+     "text": "Dredge rolls in flour, beaten egg, then panko."
+    },
+    {
+     "text": "Brown in olive oil in an ovenproof skillet, 2 minutes per side.",
+     "timer": 240,
+     "timerLabel": "Brown rolls"
+    },
+    {
+     "text": "Bake until 165°F inside and crumbs are golden.",
+     "timer": 1200,
+     "timerLabel": "Bake"
+    },
+    {
+     "text": "Rest 5 minutes and remove toothpicks before serving.",
+     "timer": 300,
+     "timerLabel": "Rest"
+    }
+   ]
+  },
+  {
+   "id": "american-chicken-a-la-king",
+   "title": "Chicken a la king over biscuits",
+   "blurb": "Creamy chicken, peas and mushrooms over warm biscuits",
+   "type": "chicken",
+   "serves": 4,
+   "prep": 15,
+   "cook": 25,
+   "tags": [
+    "kid-friendly"
+   ],
+   "ingredients": [
+    {
+     "q": 1.5,
+     "u": "lb",
+     "item": "boneless skinless chicken breasts",
+     "note": "cut in 1-inch pieces",
+     "aisle": "meat"
+    },
+    {
+     "q": 4,
+     "u": "tbsp",
+     "item": "unsalted butter",
+     "aisle": "dairy"
+    },
+    {
+     "q": 8,
+     "u": "oz",
+     "item": "sliced mushrooms",
+     "aisle": "produce"
+    },
+    {
+     "q": 0.25,
+     "u": "cup",
+     "item": "all-purpose flour",
+     "aisle": "pantry"
+    },
+    {
+     "q": 2,
+     "u": "cup",
+     "item": "chicken broth",
+     "aisle": "pantry"
+    },
+    {
+     "q": 0.5,
+     "u": "cup",
+     "item": "whole milk",
+     "aisle": "dairy"
+    },
+    {
+     "q": 1,
+     "u": "cup",
+     "item": "frozen peas",
+     "aisle": "frozen"
+    },
+    {
+     "q": 0.5,
+     "u": "tsp",
+     "item": "salt",
+     "aisle": "spices"
+    },
+    {
+     "q": 4,
+     "u": "",
+     "item": "biscuits",
+     "note": "baked, split",
+     "aisle": "bakery"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Melt 2 tbsp butter in a large skillet. Cook chicken until 165°F inside, about 7 minutes. Remove.",
+     "timer": 420,
+     "timerLabel": "Cook chicken"
+    },
+    {
+     "text": "Add remaining butter and mushrooms. Cook until browned, 5 minutes.",
+     "timer": 300,
+     "timerLabel": "Brown mushrooms"
+    },
+    {
+     "text": "Stir in flour for 1 minute. Slowly whisk in broth and milk."
+    },
+    {
+     "text": "Simmer until thick and creamy.",
+     "timer": 300,
+     "timerLabel": "Thicken sauce"
+    },
+    {
+     "text": "Stir in chicken, peas and salt and heat through, 2 minutes."
+    },
+    {
+     "text": "Spoon over split warm biscuits."
+    }
+   ]
+  },
+  {
+   "id": "american-sheet-pan-chicken-potatoes",
+   "title": "Sheet-pan chicken thighs and potatoes",
+   "blurb": "Crispy thighs roasted over golden potatoes",
+   "type": "chicken",
+   "serves": 4,
+   "prep": 15,
+   "cook": 45,
+   "tags": [
+    "sheet pan",
+    "gluten-free"
+   ],
+   "ingredients": [
+    {
+     "q": 8,
+     "u": "",
+     "item": "bone-in chicken thighs",
+     "aisle": "meat"
+    },
+    {
+     "q": 1.5,
+     "u": "lb",
+     "item": "baby potatoes",
+     "note": "halved",
+     "aisle": "produce"
+    },
+    {
+     "q": 3,
+     "u": "tbsp",
+     "item": "olive oil",
+     "aisle": "pantry"
+    },
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "dried Italian seasoning",
+     "aisle": "spices"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "garlic powder",
+     "aisle": "spices"
+    },
+    {
+     "q": 1.5,
+     "u": "tsp",
+     "item": "salt",
+     "aisle": "spices"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "black pepper",
+     "aisle": "spices"
+    },
+    {
+     "q": 1,
+     "u": "",
+     "item": "lemon",
+     "note": "cut in wedges",
+     "aisle": "produce"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Heat oven to 425°F. Toss potatoes with 1 tbsp oil, half the salt and pepper on a large sheet pan."
+    },
+    {
+     "text": "Rub chicken with remaining oil, Italian seasoning, garlic powder, salt and pepper."
+    },
+    {
+     "text": "Nestle chicken skin side up among the potatoes."
+    },
+    {
+     "text": "Roast until chicken reaches 175°F and skin is crisp.",
+     "timer": 2400,
+     "timerLabel": "Roast"
+    },
+    {
+     "text": "Squeeze lemon over the pan and rest 5 minutes.",
+     "timer": 300,
+     "timerLabel": "Rest"
+    }
+   ]
+  },
+  {
+   "id": "american-ranch-parmesan-chicken",
+   "title": "Ranch Parmesan baked chicken breasts",
+   "blurb": "Crunchy ranch-crumb chicken, easy weeknight bake",
+   "type": "chicken",
+   "serves": 4,
+   "prep": 10,
+   "cook": 25,
+   "tags": [
+    "quick",
+    "kid-friendly"
+   ],
+   "ingredients": [
+    {
+     "q": 4,
+     "u": "piece",
+     "item": "boneless skinless chicken breasts",
+     "note": "thin-sliced or pounded",
+     "aisle": "meat"
+    },
+    {
+     "q": 0.5,
+     "u": "cup",
+     "item": "ranch dressing",
+     "aisle": "dairy"
+    },
+    {
+     "q": 1,
+     "u": "cup",
+     "item": "panko breadcrumbs",
+     "aisle": "pantry"
+    },
+    {
+     "q": 0.5,
+     "u": "cup",
+     "item": "grated Parmesan",
+     "aisle": "dairy"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "garlic powder",
+     "aisle": "spices"
+    },
+    {
+     "q": 0.5,
+     "u": "tsp",
+     "item": "salt",
+     "aisle": "spices"
+    },
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "olive oil",
+     "aisle": "pantry"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Heat oven to 425°F and line a sheet pan with foil. Mix panko, Parmesan, garlic powder, salt and oil."
+    },
+    {
+     "text": "Brush each chicken breast all over with ranch dressing."
+    },
+    {
+     "text": "Press into the crumb mixture to coat the top and sides."
+    },
+    {
+     "text": "Bake on the pan until 165°F inside and golden.",
+     "timer": 1500,
+     "timerLabel": "Bake chicken"
+    },
+    {
+     "text": "Rest 3 minutes before slicing.",
+     "timer": 180,
+     "timerLabel": "Rest"
+    }
+   ]
+  },
+  {
+   "id": "american-slow-cooker-chicken-gravy",
+   "title": "Slow-cooker chicken and gravy",
+   "blurb": "Fall-apart chicken in gravy over mashed potatoes",
+   "type": "chicken",
+   "serves": 6,
+   "prep": 10,
+   "cook": 360,
+   "tags": [
+    "slow cooker",
+    "kid-friendly"
+   ],
+   "ingredients": [
+    {
+     "q": 2,
+     "u": "lb",
+     "item": "boneless skinless chicken breasts",
+     "aisle": "meat"
+    },
+    {
+     "q": 2,
+     "u": "can",
+     "item": "cream of chicken soup (10.5 oz)",
+     "aisle": "canned"
+    },
+    {
+     "q": 1,
+     "u": "pkg",
+     "item": "dry onion soup mix (1 oz)",
+     "aisle": "pantry"
+    },
+    {
+     "q": 1,
+     "u": "cup",
+     "item": "chicken broth",
+     "aisle": "pantry"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "black pepper",
+     "aisle": "spices"
+    },
+    {
+     "q": 2,
+     "u": "tbsp",
+     "item": "cornstarch",
+     "note": "mixed with 2 tbsp water",
+     "aisle": "pantry"
+    },
+    {
+     "q": 2,
+     "u": "lb",
+     "item": "potatoes",
+     "note": "for mashing, to serve",
+     "aisle": "produce"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Put chicken in the slow cooker. Whisk soup, soup mix, broth and pepper and pour over."
+    },
+    {
+     "text": "Cook on low until chicken is tender and 165°F or higher.",
+     "timer": 21600,
+     "timerLabel": "Slow cook on low"
+    },
+    {
+     "text": "Shred the chicken in the pot with two forks."
+    },
+    {
+     "text": "Stir in the cornstarch slurry and cook on high until thickened.",
+     "timer": 900,
+     "timerLabel": "Thicken gravy"
+    },
+    {
+     "text": "Serve over mashed potatoes or egg noodles."
+    }
+   ]
+  },
+  {
+   "id": "american-chicken-cutlets-pan-gravy",
+   "title": "Pan-fried chicken cutlets with gravy",
+   "blurb": "Thin golden cutlets with quick milk gravy",
+   "type": "chicken",
+   "serves": 4,
+   "prep": 15,
+   "cook": 25,
+   "tags": [
+    "quick"
+   ],
+   "ingredients": [
+    {
+     "q": 1.5,
+     "u": "lb",
+     "item": "boneless skinless chicken breasts",
+     "note": "sliced into thin cutlets",
+     "aisle": "meat"
+    },
+    {
+     "q": 0.5,
+     "u": "cup",
+     "item": "all-purpose flour",
+     "aisle": "pantry"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "salt",
+     "aisle": "spices"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "black pepper",
+     "aisle": "spices"
+    },
+    {
+     "q": 4,
+     "u": "tbsp",
+     "item": "vegetable oil",
+     "aisle": "pantry"
+    },
+    {
+     "q": 2,
+     "u": "cup",
+     "item": "whole milk",
+     "aisle": "dairy"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Mix flour, salt and pepper on a plate, saving 2 tbsp of the mixture for gravy. Coat cutlets."
+    },
+    {
+     "text": "Heat oil in a large skillet over medium-high. Fry cutlets 4 minutes per side until 165°F inside.",
+     "timer": 480,
+     "timerLabel": "Fry cutlets"
+    },
+    {
+     "text": "Move cutlets to a plate and keep warm. Leave 3 tbsp of drippings in the pan."
+    },
+    {
+     "text": "Whisk in the saved flour mix and cook 1 minute."
+    },
+    {
+     "text": "Slowly whisk in milk and simmer until thick, 4 minutes. Season with more pepper.",
+     "timer": 240,
+     "timerLabel": "Thicken gravy"
+    },
+    {
+     "text": "Pour gravy over the cutlets."
+    }
+   ]
+  },
+  {
+   "id": "american-slow-cooker-pulled-pork",
+   "title": "Slow-cooker pulled pork",
+   "blurb": "Tender shredded pork shoulder in tangy BBQ sauce",
+   "type": "beef-pork",
+   "serves": 8,
+   "prep": 15,
+   "cook": 480,
+   "tags": [
+    "slow cooker",
+    "crowd"
+   ],
+   "ingredients": [
+    {
+     "q": 4,
+     "u": "lb",
+     "item": "boneless pork shoulder",
+     "aisle": "meat"
+    },
+    {
+     "q": 2,
+     "u": "tbsp",
+     "item": "brown sugar",
+     "aisle": "pantry"
+    },
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "paprika",
+     "aisle": "spices"
+    },
+    {
+     "q": 2,
+     "u": "tsp",
+     "item": "salt",
+     "aisle": "spices"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "black pepper",
+     "aisle": "spices"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "garlic powder",
+     "aisle": "spices"
+    },
+    {
+     "q": 1,
+     "u": "",
+     "item": "yellow onion",
+     "note": "sliced",
+     "aisle": "produce"
+    },
+    {
+     "q": 0.5,
+     "u": "cup",
+     "item": "chicken broth",
+     "aisle": "pantry"
+    },
+    {
+     "q": 1.5,
+     "u": "cup",
+     "item": "barbecue sauce",
+     "aisle": "pantry"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Mix brown sugar, paprika, salt, pepper and garlic powder. Rub all over the pork."
+    },
+    {
+     "text": "Put onion and broth in the slow cooker and set the pork on top."
+    },
+    {
+     "text": "Cook on low until the pork shreds easily and reaches at least 195°F.",
+     "timer": 28800,
+     "timerLabel": "Slow cook on low"
+    },
+    {
+     "text": "Lift out the pork, discard excess fat and shred with two forks."
+    },
+    {
+     "text": "Stir in barbecue sauce and a little cooking liquid. Keep warm on low 15 minutes.",
+     "timer": 900,
+     "timerLabel": "Warm through"
+    },
+    {
+     "text": "Serve on buns or with sides."
+    }
+   ]
+  },
+  {
+   "id": "american-oven-bbq-brisket",
+   "title": "Oven BBQ beef brisket",
+   "blurb": "Foil-braised brisket, sliced thin with sweet-smoky sauce",
+   "type": "beef-pork",
+   "serves": 8,
+   "prep": 15,
+   "cook": 270,
+   "tags": [
+    "make ahead",
+    "crowd"
+   ],
+   "ingredients": [
+    {
+     "q": 4,
+     "u": "lb",
+     "item": "beef brisket",
+     "note": "flat cut",
+     "aisle": "meat"
+    },
+    {
+     "q": 2,
+     "u": "tbsp",
+     "item": "brown sugar",
+     "aisle": "pantry"
+    },
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "paprika",
+     "aisle": "spices"
+    },
+    {
+     "q": 2,
+     "u": "tsp",
+     "item": "salt",
+     "aisle": "spices"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "black pepper",
+     "aisle": "spices"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "garlic powder",
+     "aisle": "spices"
+    },
+    {
+     "q": 1,
+     "u": "",
+     "item": "yellow onion",
+     "note": "sliced",
+     "aisle": "produce"
+    },
+    {
+     "q": 1,
+     "u": "cup",
+     "item": "barbecue sauce",
+     "aisle": "pantry"
+    },
+    {
+     "q": 0.5,
+     "u": "cup",
+     "item": "beef broth",
+     "aisle": "pantry"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Heat oven to 300°F. Mix sugar, paprika, salt, pepper and garlic powder and rub on the brisket."
+    },
+    {
+     "text": "Set brisket fat side up on the onions in a roasting pan. Add broth and cover tightly with foil."
+    },
+    {
+     "text": "Bake until fork tender, about 4 hours.",
+     "timer": 14400,
+     "timerLabel": "Braise brisket"
+    },
+    {
+     "text": "Rest 15 minutes, then slice thin against the grain.",
+     "timer": 900,
+     "timerLabel": "Rest"
+    },
+    {
+     "text": "Warm barbecue sauce with the pan juices and spoon over the slices."
+    }
+   ]
+  },
+  {
+   "id": "american-smothered-pork-chops",
+   "title": "Skillet smothered pork chops with onions",
+   "blurb": "Browned chops simmered in onion gravy",
+   "type": "beef-pork",
+   "serves": 4,
+   "prep": 10,
+   "cook": 35,
+   "tags": [
+    "one pot"
+   ],
+   "ingredients": [
+    {
+     "q": 4,
+     "u": "",
+     "item": "bone-in pork chops",
+     "note": "about 3/4 inch thick",
+     "aisle": "meat"
+    },
+    {
+     "q": 0.5,
+     "u": "cup",
+     "item": "all-purpose flour",
+     "aisle": "pantry"
+    },
+    {
+     "q": 1.5,
+     "u": "tsp",
+     "item": "salt",
+     "aisle": "spices"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "black pepper",
+     "aisle": "spices"
+    },
+    {
+     "q": 3,
+     "u": "tbsp",
+     "item": "vegetable oil",
+     "aisle": "pantry"
+    },
+    {
+     "q": 1,
+     "u": "",
+     "item": "yellow onion",
+     "note": "sliced",
+     "aisle": "produce"
+    },
+    {
+     "q": 2,
+     "u": "cup",
+     "item": "chicken broth",
+     "aisle": "pantry"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "dried thyme",
+     "aisle": "spices"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Season chops with salt and pepper and dredge in 1/4 cup flour."
+    },
+    {
+     "text": "Brown in hot oil in a large skillet, 3 minutes per side. Remove.",
+     "timer": 360,
+     "timerLabel": "Brown chops"
+    },
+    {
+     "text": "Cook onion in the pan until soft, 5 minutes. Stir in remaining flour for 1 minute.",
+     "timer": 300,
+     "timerLabel": "Soften onion"
+    },
+    {
+     "text": "Whisk in broth and thyme, scraping up the browned bits."
+    },
+    {
+     "text": "Return chops to the pan, cover and simmer until pork reaches 145°F.",
+     "timer": 900,
+     "timerLabel": "Simmer chops"
+    },
+    {
+     "text": "Rest 3 minutes and serve with gravy.",
+     "timer": 180,
+     "timerLabel": "Rest"
+    }
+   ]
+  },
+  {
+   "id": "american-roast-pork-loin-gravy",
+   "title": "Roast pork loin with pan gravy",
+   "blurb": "Juicy sliced pork loin with garlic and herbs",
+   "type": "beef-pork",
+   "serves": 6,
+   "prep": 15,
+   "cook": 75,
+   "tags": [],
+   "ingredients": [
+    {
+     "q": 3,
+     "u": "lb",
+     "item": "boneless pork loin roast",
+     "aisle": "meat"
+    },
+    {
+     "q": 2,
+     "u": "tbsp",
+     "item": "olive oil",
+     "aisle": "pantry"
+    },
+    {
+     "q": 4,
+     "u": "clove",
+     "item": "garlic",
+     "note": "minced",
+     "aisle": "produce"
+    },
+    {
+     "q": 2,
+     "u": "tsp",
+     "item": "dried rosemary",
+     "aisle": "spices"
+    },
+    {
+     "q": 2,
+     "u": "tsp",
+     "item": "salt",
+     "aisle": "spices"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "black pepper",
+     "aisle": "spices"
+    },
+    {
+     "q": 2,
+     "u": "tbsp",
+     "item": "all-purpose flour",
+     "aisle": "pantry"
+    },
+    {
+     "q": 1.5,
+     "u": "cup",
+     "item": "chicken broth",
+     "aisle": "pantry"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Heat oven to 375°F. Mix oil, garlic, rosemary, salt and pepper and rub all over the roast."
+    },
+    {
+     "text": "Roast in a pan until the center reaches 145°F, about 1 hour 10 minutes.",
+     "timer": 4200,
+     "timerLabel": "Roast pork"
+    },
+    {
+     "text": "Move to a board, tent with foil and rest 15 minutes.",
+     "timer": 900,
+     "timerLabel": "Rest pork"
+    },
+    {
+     "text": "Whisk flour into the pan drippings over medium heat for 1 minute."
+    },
+    {
+     "text": "Add broth and simmer until thickened, 5 minutes.",
+     "timer": 300,
+     "timerLabel": "Make gravy"
+    },
+    {
+     "text": "Slice the pork and serve with the gravy."
+    }
+   ]
+  },
+  {
+   "id": "american-bbq-country-style-ribs",
+   "title": "Oven BBQ country-style pork ribs",
+   "blurb": "Meaty ribs baked tender and glazed",
+   "type": "beef-pork",
+   "serves": 6,
+   "prep": 10,
+   "cook": 150,
+   "tags": [
+    "make ahead"
+   ],
+   "ingredients": [
+    {
+     "q": 3,
+     "u": "lb",
+     "item": "boneless country-style pork ribs",
+     "aisle": "meat"
+    },
+    {
+     "q": 2,
+     "u": "tsp",
+     "item": "salt",
+     "aisle": "spices"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "black pepper",
+     "aisle": "spices"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "garlic powder",
+     "aisle": "spices"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "paprika",
+     "aisle": "spices"
+    },
+    {
+     "q": 0.5,
+     "u": "cup",
+     "item": "water",
+     "aisle": "pantry"
+    },
+    {
+     "q": 1.5,
+     "u": "cup",
+     "item": "barbecue sauce",
+     "aisle": "pantry"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Heat oven to 325°F. Season ribs with salt, pepper, garlic powder and paprika."
+    },
+    {
+     "text": "Place in a baking dish with the water and cover tightly with foil."
+    },
+    {
+     "text": "Bake until tender, about 2 hours.",
+     "timer": 7200,
+     "timerLabel": "Bake covered"
+    },
+    {
+     "text": "Raise oven to 425°F. Drain most of the liquid and coat ribs with barbecue sauce."
+    },
+    {
+     "text": "Bake uncovered until sauce is sticky, 15 minutes.",
+     "timer": 900,
+     "timerLabel": "Glaze ribs"
+    }
+   ]
+  },
+  {
+   "id": "american-brown-sugar-glazed-ham",
+   "title": "Brown sugar glazed baked ham",
+   "blurb": "Holiday-style ham with a sweet mustard glaze",
+   "type": "beef-pork",
+   "serves": 10,
+   "prep": 15,
+   "cook": 150,
+   "tags": [
+    "holiday",
+    "crowd"
+   ],
+   "ingredients": [
+    {
+     "q": 8,
+     "u": "lb",
+     "item": "fully cooked bone-in ham",
+     "aisle": "meat"
+    },
+    {
+     "q": 1,
+     "u": "cup",
+     "item": "brown sugar",
+     "aisle": "pantry"
+    },
+    {
+     "q": 0.25,
+     "u": "cup",
+     "item": "Dijon mustard",
+     "aisle": "pantry"
+    },
+    {
+     "q": 0.25,
+     "u": "cup",
+     "item": "honey",
+     "aisle": "pantry"
+    },
+    {
+     "q": 0.25,
+     "u": "cup",
+     "item": "apple juice",
+     "aisle": "pantry"
+    },
+    {
+     "q": 0.5,
+     "u": "tsp",
+     "item": "ground cloves",
+     "aisle": "spices"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Heat oven to 325°F. Set the ham cut side down in a roasting pan with a little water. Cover with foil."
+    },
+    {
+     "text": "Bake about 15 minutes per pound, until the center is 120°F.",
+     "timer": 7200,
+     "timerLabel": "Bake ham"
+    },
+    {
+     "text": "Warm sugar, mustard, honey, juice and cloves in a small pot until smooth.",
+     "timer": 180,
+     "timerLabel": "Make glaze"
+    },
+    {
+     "text": "Brush glaze over the ham. Bake uncovered, glazing again halfway, until 140°F.",
+     "timer": 1200,
+     "timerLabel": "Glaze ham"
+    },
+    {
+     "text": "Rest 15 minutes, then carve.",
+     "timer": 900,
+     "timerLabel": "Rest"
+    }
+   ]
+  },
+  {
+   "id": "american-sausage-potato-skillet",
+   "title": "Smoked sausage and potato skillet",
+   "blurb": "Browned kielbasa, crispy potatoes and peppers in one pan",
+   "type": "beef-pork",
+   "serves": 4,
+   "prep": 10,
+   "cook": 25,
+   "tags": [
+    "one pot",
+    "quick"
+   ],
+   "ingredients": [
+    {
+     "q": 1,
+     "u": "lb",
+     "item": "smoked sausage",
+     "note": "sliced",
+     "aisle": "meat"
+    },
+    {
+     "q": 1.5,
+     "u": "lb",
+     "item": "baby potatoes",
+     "note": "cut in 1/2-inch pieces",
+     "aisle": "produce"
+    },
+    {
+     "q": 2,
+     "u": "tbsp",
+     "item": "olive oil",
+     "aisle": "pantry"
+    },
+    {
+     "q": 1,
+     "u": "",
+     "item": "bell pepper",
+     "note": "diced",
+     "aisle": "produce"
+    },
+    {
+     "q": 1,
+     "u": "",
+     "item": "yellow onion",
+     "note": "diced",
+     "aisle": "produce"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "paprika",
+     "aisle": "spices"
+    },
+    {
+     "q": 0.5,
+     "u": "tsp",
+     "item": "salt",
+     "aisle": "spices"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Microwave or boil the potato pieces until just tender, 5 minutes.",
+     "timer": 300,
+     "timerLabel": "Pre-cook potatoes"
+    },
+    {
+     "text": "Heat oil in a large skillet. Brown the potatoes until crispy, 8 minutes.",
+     "timer": 480,
+     "timerLabel": "Crisp potatoes"
+    },
+    {
+     "text": "Add sausage, pepper and onion. Cook until browned and soft, 7 minutes.",
+     "timer": 420,
+     "timerLabel": "Brown sausage"
+    },
+    {
+     "text": "Season with paprika and salt and toss. Serve hot."
+    }
+   ]
+  },
+  {
+   "id": "american-classic-stuffed-peppers",
+   "title": "Classic stuffed bell peppers",
+   "blurb": "Beef and rice stuffed peppers baked in tomato sauce",
+   "type": "beef-pork",
+   "serves": 6,
+   "prep": 25,
+   "cook": 60,
+   "tags": [
+    "make ahead"
+   ],
+   "ingredients": [
+    {
+     "q": 6,
+     "u": "",
+     "item": "bell peppers",
+     "note": "tops cut, seeded",
+     "aisle": "produce"
+    },
+    {
+     "q": 1,
+     "u": "lb",
+     "item": "lean ground beef",
+     "aisle": "meat"
+    },
+    {
+     "q": 1,
+     "u": "cup",
+     "item": "cooked rice",
+     "aisle": "pantry"
+    },
+    {
+     "q": 1,
+     "u": "",
+     "item": "yellow onion",
+     "note": "diced",
+     "aisle": "produce"
+    },
+    {
+     "q": 1,
+     "u": "can",
+     "item": "tomato sauce (15 oz)",
+     "aisle": "canned"
+    },
+    {
+     "q": 1,
+     "u": "cup",
+     "item": "shredded cheddar",
+     "aisle": "dairy"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "salt",
+     "aisle": "spices"
+    },
+    {
+     "q": 0.5,
+     "u": "tsp",
+     "item": "black pepper",
+     "aisle": "spices"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Heat oven to 375°F. Stand peppers upright in a baking dish."
+    },
+    {
+     "text": "Brown beef with onion until cooked through, 8 minutes. Drain fat.",
+     "timer": 480,
+     "timerLabel": "Brown beef"
+    },
+    {
+     "text": "Stir in rice, half the tomato sauce, salt and pepper."
+    },
+    {
+     "text": "Fill peppers and pour the remaining sauce around them. Cover with foil."
+    },
+    {
+     "text": "Bake 40 minutes, then top with cheese and bake until melted. Filling should be 160°F.",
+     "timer": 2700,
+     "timerLabel": "Bake peppers"
+    }
+   ]
+  },
+  {
+   "id": "american-slow-cooker-beef-noodles",
+   "title": "Slow-cooker beef and noodles",
+   "blurb": "Tender beef in gravy over buttery egg noodles",
+   "type": "beef-pork",
+   "serves": 6,
+   "prep": 15,
+   "cook": 480,
+   "tags": [
+    "slow cooker"
+   ],
+   "ingredients": [
+    {
+     "q": 2,
+     "u": "lb",
+     "item": "beef chuck roast",
+     "note": "cut in 2-inch chunks",
+     "aisle": "meat"
+    },
+    {
+     "q": 1,
+     "u": "pkg",
+     "item": "dry onion soup mix (1 oz)",
+     "aisle": "pantry"
+    },
+    {
+     "q": 2,
+     "u": "can",
+     "item": "cream of mushroom soup (10.5 oz)",
+     "aisle": "canned"
+    },
+    {
+     "q": 1,
+     "u": "cup",
+     "item": "beef broth",
+     "aisle": "pantry"
+    },
+    {
+     "q": 12,
+     "u": "oz",
+     "item": "wide egg noodles",
+     "aisle": "pantry"
+    },
+    {
+     "q": 2,
+     "u": "tbsp",
+     "item": "unsalted butter",
+     "aisle": "dairy"
+    },
+    {
+     "q": 0.5,
+     "u": "tsp",
+     "item": "black pepper",
+     "aisle": "spices"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Put beef in the slow cooker. Stir together soup mix, mushroom soup, broth and pepper and pour over."
+    },
+    {
+     "text": "Cook on low until the beef is fork tender.",
+     "timer": 28800,
+     "timerLabel": "Slow cook on low"
+    },
+    {
+     "text": "Shred the beef lightly and stir it into the gravy."
+    },
+    {
+     "text": "Boil noodles in salted water per package directions and drain.",
+     "timer": 480,
+     "timerLabel": "Boil noodles"
+    },
+    {
+     "text": "Toss noodles with butter and serve topped with the beef and gravy."
+    }
+   ]
+  },
+  {
+   "id": "american-baked-pork-chops-stuffing",
+   "title": "Baked pork chops with stuffing",
+   "blurb": "Chops baked under a golden herb stuffing crust",
+   "type": "beef-pork",
+   "serves": 4,
+   "prep": 15,
+   "cook": 40,
+   "tags": [],
+   "ingredients": [
+    {
+     "q": 4,
+     "u": "",
+     "item": "bone-in pork chops",
+     "aisle": "meat"
+    },
+    {
+     "q": 1,
+     "u": "pkg",
+     "item": "stuffing mix (6 oz)",
+     "aisle": "pantry"
+    },
+    {
+     "q": 1.5,
+     "u": "cup",
+     "item": "chicken broth",
+     "aisle": "pantry"
+    },
+    {
+     "q": 2,
+     "u": "tbsp",
+     "item": "unsalted butter",
+     "aisle": "dairy"
+    },
+    {
+     "q": 1,
+     "u": "can",
+     "item": "cream of chicken soup (10.5 oz)",
+     "aisle": "canned"
+    },
+    {
+     "q": 0.5,
+     "u": "tsp",
+     "item": "salt",
+     "aisle": "spices"
+    },
+    {
+     "q": 0.5,
+     "u": "tsp",
+     "item": "black pepper",
+     "aisle": "spices"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Heat oven to 375°F and grease a 9x13 dish. Season chops with salt and pepper."
+    },
+    {
+     "text": "Mix stuffing mix, 1 cup broth and melted butter just until moist."
+    },
+    {
+     "text": "Whisk soup with remaining broth and pour into the dish. Lay chops on top."
+    },
+    {
+     "text": "Mound stuffing over each chop and cover with foil."
+    },
+    {
+     "text": "Bake 25 minutes, uncover and bake until pork reaches 145°F and the top is crisp.",
+     "timer": 2400,
+     "timerLabel": "Bake chops"
+    }
+   ]
+  },
+  {
+   "id": "american-skillet-ribeye-butter",
+   "title": "Skillet ribeye with garlic herb butter",
+   "blurb": "Deep-crusted steakhouse ribeye in a cast iron pan",
+   "type": "steak",
+   "serves": 2,
+   "prep": 10,
+   "cook": 15,
+   "tags": [
+    "quick",
+    "gluten-free"
+   ],
+   "ingredients": [
+    {
+     "q": 2,
+     "u": "",
+     "item": "boneless ribeye steaks",
+     "note": "1 inch thick",
+     "aisle": "meat"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "salt",
+     "aisle": "spices"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "black pepper",
+     "aisle": "spices"
+    },
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "vegetable oil",
+     "aisle": "pantry"
+    },
+    {
+     "q": 2,
+     "u": "tbsp",
+     "item": "unsalted butter",
+     "aisle": "dairy"
+    },
+    {
+     "q": 3,
+     "u": "clove",
+     "item": "garlic",
+     "note": "smashed",
+     "aisle": "produce"
+    },
+    {
+     "q": 3,
+     "u": "sprig",
+     "item": "fresh thyme",
+     "aisle": "produce"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Pat steaks dry and let them sit at room temperature 30 minutes. Season with salt and pepper.",
+     "timer": 1800,
+     "timerLabel": "Come to room temp"
+    },
+    {
+     "text": "Heat a cast iron skillet over high heat until smoking. Add the oil."
+    },
+    {
+     "text": "Sear steaks 3 minutes without moving, flip and sear 2 minutes.",
+     "timer": 300,
+     "timerLabel": "Sear steaks"
+    },
+    {
+     "text": "Add butter, garlic and thyme. Tilt the pan and baste for 1 to 2 minutes until 135°F for medium rare.",
+     "timer": 120,
+     "timerLabel": "Baste"
+    },
+    {
+     "text": "Rest 5 minutes before slicing.",
+     "timer": 300,
+     "timerLabel": "Rest steaks"
+    }
+   ]
+  },
+  {
+   "id": "american-grilled-sirloin-herb-butter",
+   "title": "Grilled sirloin with herb butter",
+   "blurb": "Thick sirloin steaks with a melting parsley butter",
+   "type": "steak",
+   "serves": 4,
+   "prep": 15,
+   "cook": 15,
+   "tags": [
+    "grill",
+    "gluten-free"
+   ],
+   "ingredients": [
+    {
+     "q": 4,
+     "u": "",
+     "item": "top sirloin steaks",
+     "note": "about 8 oz each",
+     "aisle": "meat"
+    },
+    {
+     "q": 2,
+     "u": "tsp",
+     "item": "salt",
+     "aisle": "spices"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "black pepper",
+     "aisle": "spices"
+    },
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "olive oil",
+     "aisle": "pantry"
+    },
+    {
+     "q": 4,
+     "u": "tbsp",
+     "item": "unsalted butter",
+     "note": "softened",
+     "aisle": "dairy"
+    },
+    {
+     "q": 2,
+     "u": "tbsp",
+     "item": "fresh parsley",
+     "note": "chopped",
+     "aisle": "produce"
+    },
+    {
+     "q": 1,
+     "u": "clove",
+     "item": "garlic",
+     "note": "minced",
+     "aisle": "produce"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Mash butter with parsley and garlic. Roll into a log and chill."
+    },
+    {
+     "text": "Heat grill to high. Rub steaks with oil, salt and pepper."
+    },
+    {
+     "text": "Grill 4 to 5 minutes per side to 135°F for medium rare, or 145°F for medium.",
+     "timer": 270,
+     "timerLabel": "Grill first side"
+    },
+    {
+     "text": "Rest 5 minutes with a slice of herb butter on each.",
+     "timer": 300,
+     "timerLabel": "Rest steaks"
+    }
+   ]
+  },
+  {
+   "id": "american-ny-strip-peppercorn",
+   "title": "New York strip with peppercorn pan sauce",
+   "blurb": "Seared strip steak with a creamy peppercorn sauce",
+   "type": "steak",
+   "serves": 2,
+   "prep": 10,
+   "cook": 20,
+   "tags": [],
+   "ingredients": [
+    {
+     "q": 2,
+     "u": "",
+     "item": "New York strip steaks",
+     "note": "about 10 oz each",
+     "aisle": "meat"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "salt",
+     "aisle": "spices"
+    },
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "black pepper",
+     "note": "coarsely cracked",
+     "aisle": "spices"
+    },
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "vegetable oil",
+     "aisle": "pantry"
+    },
+    {
+     "q": 1,
+     "u": "",
+     "item": "shallot",
+     "note": "minced",
+     "aisle": "produce"
+    },
+    {
+     "q": 0.25,
+     "u": "cup",
+     "item": "beef broth",
+     "aisle": "pantry"
+    },
+    {
+     "q": 0.5,
+     "u": "cup",
+     "item": "heavy cream",
+     "aisle": "dairy"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Pat steaks dry, season with salt and press cracked pepper onto both sides."
+    },
+    {
+     "text": "Sear in hot oil in a skillet, 4 minutes per side for medium rare, 135°F. Move to a plate.",
+     "timer": 480,
+     "timerLabel": "Sear steaks"
+    },
+    {
+     "text": "Cook shallot in the pan 1 minute. Add broth and scrape up the browned bits."
+    },
+    {
+     "text": "Stir in cream and simmer until slightly thick, 3 minutes.",
+     "timer": 180,
+     "timerLabel": "Reduce sauce"
+    },
+    {
+     "text": "Rest steaks 5 minutes, then serve with the sauce.",
+     "timer": 300,
+     "timerLabel": "Rest steaks"
+    }
+   ]
+  },
+  {
+   "id": "american-grilled-flank-steak",
+   "title": "Grilled marinated flank steak",
+   "blurb": "Garlicky Worcestershire marinade, sliced thin",
+   "type": "steak",
+   "serves": 4,
+   "prep": 15,
+   "cook": 15,
+   "tags": [
+    "grill"
+   ],
+   "ingredients": [
+    {
+     "q": 1.5,
+     "u": "lb",
+     "item": "flank steak",
+     "aisle": "meat"
+    },
+    {
+     "q": 0.25,
+     "u": "cup",
+     "item": "olive oil",
+     "aisle": "pantry"
+    },
+    {
+     "q": 0.25,
+     "u": "cup",
+     "item": "Worcestershire sauce",
+     "aisle": "pantry"
+    },
+    {
+     "q": 2,
+     "u": "tbsp",
+     "item": "red wine vinegar",
+     "aisle": "pantry"
+    },
+    {
+     "q": 3,
+     "u": "clove",
+     "item": "garlic",
+     "note": "minced",
+     "aisle": "produce"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "black pepper",
+     "aisle": "spices"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "salt",
+     "aisle": "spices"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Whisk oil, Worcestershire, vinegar, garlic, pepper and salt. Add steak in a zip bag and marinate 2 hours or overnight.",
+     "timer": 7200,
+     "timerLabel": "Marinate steak"
+    },
+    {
+     "text": "Heat grill to high. Remove steak and pat dry."
+    },
+    {
+     "text": "Grill 5 to 6 minutes per side for medium rare, 135°F.",
+     "timer": 330,
+     "timerLabel": "Grill first side"
+    },
+    {
+     "text": "Rest 10 minutes, then slice thin against the grain.",
+     "timer": 600,
+     "timerLabel": "Rest steak"
+    }
+   ]
+  },
+  {
+   "id": "american-grilled-tri-tip",
+   "title": "Grilled tri-tip with garlic rub",
+   "blurb": "Juicy California-style roast, sliced against the grain",
+   "type": "steak",
+   "serves": 6,
+   "prep": 10,
+   "cook": 40,
+   "tags": [
+    "grill",
+    "crowd"
+   ],
+   "ingredients": [
+    {
+     "q": 2.5,
+     "u": "lb",
+     "item": "beef tri-tip roast",
+     "aisle": "meat"
+    },
+    {
+     "q": 2,
+     "u": "tbsp",
+     "item": "olive oil",
+     "aisle": "pantry"
+    },
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "garlic powder",
+     "aisle": "spices"
+    },
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "paprika",
+     "aisle": "spices"
+    },
+    {
+     "q": 2,
+     "u": "tsp",
+     "item": "salt",
+     "aisle": "spices"
+    },
+    {
+     "q": 2,
+     "u": "tsp",
+     "item": "black pepper",
+     "aisle": "spices"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Mix oil, garlic powder, paprika, salt and pepper and rub all over the tri-tip. Rest 30 minutes.",
+     "timer": 1800,
+     "timerLabel": "Rest rub in"
+    },
+    {
+     "text": "Set grill for two-zone heat at medium-high. Sear the roast 4 minutes per side over direct heat.",
+     "timer": 480,
+     "timerLabel": "Sear"
+    },
+    {
+     "text": "Move to indirect heat, cover and cook until 130°F for medium rare, about 20 minutes.",
+     "timer": 1200,
+     "timerLabel": "Grill indirect"
+    },
+    {
+     "text": "Rest 10 minutes, then slice thin against the grain.",
+     "timer": 600,
+     "timerLabel": "Rest"
+    }
+   ]
+  },
+  {
+   "id": "american-filet-mignon-mushrooms",
+   "title": "Pan-seared filet mignon with mushrooms",
+   "blurb": "Tender filets with butter-browned mushrooms",
+   "type": "steak",
+   "serves": 2,
+   "prep": 10,
+   "cook": 25,
+   "tags": [
+    "gluten-free"
+   ],
+   "ingredients": [
+    {
+     "q": 2,
+     "u": "",
+     "item": "filet mignon steaks",
+     "note": "about 6 oz each",
+     "aisle": "meat"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "salt",
+     "aisle": "spices"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "black pepper",
+     "aisle": "spices"
+    },
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "vegetable oil",
+     "aisle": "pantry"
+    },
+    {
+     "q": 3,
+     "u": "tbsp",
+     "item": "unsalted butter",
+     "aisle": "dairy"
+    },
+    {
+     "q": 8,
+     "u": "oz",
+     "item": "cremini mushrooms",
+     "note": "sliced",
+     "aisle": "produce"
+    },
+    {
+     "q": 2,
+     "u": "clove",
+     "item": "garlic",
+     "note": "minced",
+     "aisle": "produce"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Heat oven to 400°F. Season steaks and sear in hot oil in an ovenproof skillet, 2 minutes per side.",
+     "timer": 240,
+     "timerLabel": "Sear filets"
+    },
+    {
+     "text": "Roast in the oven to 130°F for medium rare, 5 to 7 minutes.",
+     "timer": 360,
+     "timerLabel": "Roast"
+    },
+    {
+     "text": "Rest steaks on a plate 5 minutes.",
+     "timer": 300,
+     "timerLabel": "Rest"
+    },
+    {
+     "text": "Melt butter in the skillet. Cook mushrooms until browned, 6 minutes, adding garlic at the end.",
+     "timer": 360,
+     "timerLabel": "Brown mushrooms"
+    },
+    {
+     "text": "Serve steaks topped with the mushrooms."
+    }
+   ]
+  },
+  {
+   "id": "american-steak-onions-smothered",
+   "title": "Skillet steak with caramelized onions",
+   "blurb": "Pan-seared sirloin topped with sweet onions",
+   "type": "steak",
+   "serves": 4,
+   "prep": 10,
+   "cook": 30,
+   "tags": [],
+   "ingredients": [
+    {
+     "q": 1.5,
+     "u": "lb",
+     "item": "top sirloin steak",
+     "aisle": "meat"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "salt",
+     "aisle": "spices"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "black pepper",
+     "aisle": "spices"
+    },
+    {
+     "q": 2,
+     "u": "tbsp",
+     "item": "vegetable oil",
+     "aisle": "pantry"
+    },
+    {
+     "q": 2,
+     "u": "",
+     "item": "yellow onion",
+     "note": "thinly sliced",
+     "aisle": "produce"
+    },
+    {
+     "q": 2,
+     "u": "tbsp",
+     "item": "unsalted butter",
+     "aisle": "dairy"
+    },
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "Worcestershire sauce",
+     "aisle": "pantry"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Cook onions in butter in a skillet over medium-low until deep golden, 20 minutes. Stir in Worcestershire.",
+     "timer": 1200,
+     "timerLabel": "Caramelize onions"
+    },
+    {
+     "text": "Season steak with salt and pepper. Heat oil in another skillet over high heat."
+    },
+    {
+     "text": "Sear steak 4 to 5 minutes per side to 135°F for medium rare.",
+     "timer": 300,
+     "timerLabel": "Sear steak"
+    },
+    {
+     "text": "Rest 5 minutes, slice against the grain and top with onions.",
+     "timer": 300,
+     "timerLabel": "Rest steak"
+    }
+   ]
+  },
+  {
+   "id": "american-steak-potato-foil-packs",
+   "title": "Grilled steak and potato foil packs",
+   "blurb": "Sirloin tips, potatoes and onion steamed in foil",
+   "type": "steak",
+   "serves": 4,
+   "prep": 15,
+   "cook": 35,
+   "tags": [
+    "grill",
+    "one pot"
+   ],
+   "ingredients": [
+    {
+     "q": 1.5,
+     "u": "lb",
+     "item": "sirloin steak tips",
+     "note": "cut in 1-inch cubes",
+     "aisle": "meat"
+    },
+    {
+     "q": 1.5,
+     "u": "lb",
+     "item": "baby potatoes",
+     "note": "quartered",
+     "aisle": "produce"
+    },
+    {
+     "q": 1,
+     "u": "",
+     "item": "yellow onion",
+     "note": "sliced",
+     "aisle": "produce"
+    },
+    {
+     "q": 3,
+     "u": "tbsp",
+     "item": "olive oil",
+     "aisle": "pantry"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "garlic powder",
+     "aisle": "spices"
+    },
+    {
+     "q": 1.5,
+     "u": "tsp",
+     "item": "salt",
+     "aisle": "spices"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "black pepper",
+     "aisle": "spices"
+    },
+    {
+     "q": 2,
+     "u": "tbsp",
+     "item": "unsalted butter",
+     "aisle": "dairy"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Heat grill to medium-high. Toss steak, potatoes and onion with oil, garlic powder, salt and pepper."
+    },
+    {
+     "text": "Divide onto four large sheets of heavy foil. Top each with butter and seal tightly."
+    },
+    {
+     "text": "Grill packs, covered, 30 to 35 minutes, turning once, until potatoes are tender and beef is 145°F.",
+     "timer": 2100,
+     "timerLabel": "Grill packs"
+    },
+    {
+     "text": "Open carefully and watch for steam."
+    }
+   ]
+  },
+  {
+   "id": "american-chicken-fried-steak",
+   "title": "Country chicken-fried steak and gravy",
+   "blurb": "Crispy breaded cube steak with peppery white gravy",
+   "type": "comfort",
+   "serves": 4,
+   "prep": 20,
+   "cook": 30,
+   "tags": [],
+   "ingredients": [
+    {
+     "q": 4,
+     "u": "",
+     "item": "beef cube steaks",
+     "note": "about 5 oz each",
+     "aisle": "meat"
+    },
+    {
+     "q": 2,
+     "u": "cup",
+     "item": "all-purpose flour",
+     "aisle": "pantry"
+    },
+    {
+     "q": 2,
+     "u": "tsp",
+     "item": "salt",
+     "aisle": "spices"
+    },
+    {
+     "q": 1.5,
+     "u": "tsp",
+     "item": "black pepper",
+     "aisle": "spices"
+    },
+    {
+     "q": 2,
+     "u": "",
+     "item": "large eggs",
+     "aisle": "dairy"
+    },
+    {
+     "q": 0.5,
+     "u": "cup",
+     "item": "whole milk",
+     "aisle": "dairy"
+    },
+    {
+     "q": 1,
+     "u": "cup",
+     "item": "vegetable oil",
+     "note": "for frying",
+     "aisle": "pantry"
+    },
+    {
+     "q": 2,
+     "u": "cup",
+     "item": "whole milk",
+     "note": "for gravy",
+     "aisle": "dairy"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Mix flour, salt and 1 tsp pepper in a dish. Whisk eggs with 1/2 cup milk in another."
+    },
+    {
+     "text": "Dredge steaks in flour, dip in egg, then flour again, pressing well."
+    },
+    {
+     "text": "Fry in 350°F oil, 3 to 4 minutes per side, until golden and 160°F inside. Drain on a rack.",
+     "timer": 420,
+     "timerLabel": "Fry steaks"
+    },
+    {
+     "text": "Pour off all but 1/4 cup drippings. Whisk in 1/4 cup of the leftover flour and cook 1 minute."
+    },
+    {
+     "text": "Slowly whisk in 2 cups milk. Simmer until thick and season with remaining pepper.",
+     "timer": 300,
+     "timerLabel": "Thicken gravy"
+    },
+    {
+     "text": "Spoon gravy over the steaks."
+    }
+   ]
+  },
+  {
+   "id": "american-dutch-oven-pot-roast",
+   "title": "Dutch oven pot roast",
+   "blurb": "Oven-braised chuck roast with carrots and potatoes",
+   "type": "comfort",
+   "serves": 6,
+   "prep": 20,
+   "cook": 210,
+   "tags": [
+    "crowd"
+   ],
+   "ingredients": [
+    {
+     "q": 3,
+     "u": "lb",
+     "item": "beef chuck roast",
+     "aisle": "meat"
+    },
+    {
+     "q": 2,
+     "u": "tsp",
+     "item": "salt",
+     "aisle": "spices"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "black pepper",
+     "aisle": "spices"
+    },
+    {
+     "q": 2,
+     "u": "tbsp",
+     "item": "vegetable oil",
+     "aisle": "pantry"
+    },
+    {
+     "q": 1,
+     "u": "",
+     "item": "yellow onion",
+     "note": "cut in wedges",
+     "aisle": "produce"
+    },
+    {
+     "q": 2,
+     "u": "cup",
+     "item": "beef broth",
+     "aisle": "pantry"
+    },
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "tomato paste",
+     "aisle": "pantry"
+    },
+    {
+     "q": 1.5,
+     "u": "lb",
+     "item": "potatoes",
+     "note": "cut in chunks",
+     "aisle": "produce"
+    },
+    {
+     "q": 4,
+     "u": "",
+     "item": "carrots",
+     "note": "cut in chunks",
+     "aisle": "produce"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Heat oven to 325°F. Season roast with salt and pepper and sear in hot oil in a Dutch oven, 4 minutes per side.",
+     "timer": 480,
+     "timerLabel": "Sear roast"
+    },
+    {
+     "text": "Add onion, broth and tomato paste, then cover and bake 2 hours.",
+     "timer": 7200,
+     "timerLabel": "Braise roast"
+    },
+    {
+     "text": "Add potatoes and carrots around the roast. Cover and bake until everything is fork tender.",
+     "timer": 4500,
+     "timerLabel": "Braise vegetables"
+    },
+    {
+     "text": "Rest 10 minutes, then shred or slice. Spoon the juices over the top.",
+     "timer": 600,
+     "timerLabel": "Rest"
+    }
+   ]
+  },
+  {
+   "id": "american-swiss-steak",
+   "title": "Swiss steak in tomato gravy",
+   "blurb": "Round steak braised until fork tender in tomatoes and onions",
+   "type": "comfort",
+   "serves": 6,
+   "prep": 15,
+   "cook": 120,
+   "tags": [],
+   "ingredients": [
+    {
+     "q": 2,
+     "u": "lb",
+     "item": "beef round steak",
+     "note": "cut in 6 pieces",
+     "aisle": "meat"
+    },
+    {
+     "q": 0.5,
+     "u": "cup",
+     "item": "all-purpose flour",
+     "aisle": "pantry"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "salt",
+     "aisle": "spices"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "black pepper",
+     "aisle": "spices"
+    },
+    {
+     "q": 3,
+     "u": "tbsp",
+     "item": "vegetable oil",
+     "aisle": "pantry"
+    },
+    {
+     "q": 1,
+     "u": "",
+     "item": "yellow onion",
+     "note": "sliced",
+     "aisle": "produce"
+    },
+    {
+     "q": 1,
+     "u": "can",
+     "item": "diced tomatoes (14.5 oz)",
+     "aisle": "canned"
+    },
+    {
+     "q": 1,
+     "u": "cup",
+     "item": "beef broth",
+     "aisle": "pantry"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Pound steak pieces to 1/2 inch. Coat in flour mixed with salt and pepper."
+    },
+    {
+     "text": "Brown in hot oil in a Dutch oven, 3 minutes per side. Remove.",
+     "timer": 360,
+     "timerLabel": "Brown steak"
+    },
+    {
+     "text": "Cook onion in the pot 3 minutes. Add tomatoes and broth and scrape up the browned bits.",
+     "timer": 180,
+     "timerLabel": "Cook onion"
+    },
+    {
+     "text": "Return steak, cover and simmer on low until very tender.",
+     "timer": 6000,
+     "timerLabel": "Simmer steak"
+    },
+    {
+     "text": "Serve with mashed potatoes or noodles."
+    }
+   ]
+  },
+  {
+   "id": "american-hamburger-steak-onion-gravy",
+   "title": "Hamburger steak with onion gravy",
+   "blurb": "Seared beef patties smothered in onion gravy",
+   "type": "comfort",
+   "serves": 4,
+   "prep": 15,
+   "cook": 30,
+   "tags": [],
+   "ingredients": [
+    {
+     "q": 1.5,
+     "u": "lb",
+     "item": "ground beef",
+     "note": "80% lean",
+     "aisle": "meat"
+    },
+    {
+     "q": 0.5,
+     "u": "cup",
+     "item": "breadcrumbs",
+     "aisle": "pantry"
+    },
+    {
+     "q": 1,
+     "u": "",
+     "item": "large eggs",
+     "aisle": "dairy"
+    },
+    {
+     "q": 1.5,
+     "u": "tsp",
+     "item": "salt",
+     "aisle": "spices"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "black pepper",
+     "aisle": "spices"
+    },
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "vegetable oil",
+     "aisle": "pantry"
+    },
+    {
+     "q": 2,
+     "u": "",
+     "item": "yellow onion",
+     "note": "sliced",
+     "aisle": "produce"
+    },
+    {
+     "q": 2,
+     "u": "tbsp",
+     "item": "all-purpose flour",
+     "aisle": "pantry"
+    },
+    {
+     "q": 1.5,
+     "u": "cup",
+     "item": "beef broth",
+     "aisle": "pantry"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Mix beef, breadcrumbs, egg, 1 tsp salt and pepper. Shape into 4 oval patties."
+    },
+    {
+     "text": "Sear in hot oil in a skillet, 4 minutes per side. Remove to a plate.",
+     "timer": 480,
+     "timerLabel": "Sear patties"
+    },
+    {
+     "text": "Cook onions in the drippings until golden, 8 minutes. Stir in flour for 1 minute.",
+     "timer": 480,
+     "timerLabel": "Cook onions"
+    },
+    {
+     "text": "Whisk in broth and remaining salt and simmer until thick.",
+     "timer": 180,
+     "timerLabel": "Thicken gravy"
+    },
+    {
+     "text": "Return patties to the gravy and simmer until 160°F inside, about 8 minutes.",
+     "timer": 480,
+     "timerLabel": "Cook patties"
+    }
+   ]
+  },
+  {
+   "id": "american-biscuits-sausage-gravy",
+   "title": "Sausage gravy over buttermilk biscuits",
+   "blurb": "Peppery pork sausage gravy over split buttermilk biscuits",
+   "type": "comfort",
+   "serves": 4,
+   "prep": 10,
+   "cook": 25,
+   "tags": [
+    "kid-friendly"
+   ],
+   "ingredients": [
+    {
+     "q": 1,
+     "u": "lb",
+     "item": "breakfast sausage",
+     "note": "bulk pork sausage",
+     "aisle": "meat"
+    },
+    {
+     "q": 0.25,
+     "u": "cup",
+     "item": "all-purpose flour",
+     "aisle": "pantry"
+    },
+    {
+     "q": 3,
+     "u": "cup",
+     "item": "whole milk",
+     "aisle": "dairy"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "black pepper",
+     "aisle": "spices"
+    },
+    {
+     "q": 0.5,
+     "u": "tsp",
+     "item": "salt",
+     "aisle": "spices"
+    },
+    {
+     "q": 8,
+     "u": "",
+     "item": "biscuits",
+     "note": "baked, split",
+     "aisle": "bakery"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Brown the sausage in a large skillet, breaking it up, until cooked through to 160°F, 8 minutes.",
+     "timer": 480,
+     "timerLabel": "Brown sausage"
+    },
+    {
+     "text": "Sprinkle flour over the sausage and stir for 1 minute."
+    },
+    {
+     "text": "Slowly pour in the milk, stirring constantly."
+    },
+    {
+     "text": "Simmer until thick, 6 to 8 minutes. Add pepper and salt.",
+     "timer": 420,
+     "timerLabel": "Thicken gravy"
+    },
+    {
+     "text": "Spoon over warm split biscuits."
+    }
+   ]
+  },
+  {
+   "id": "american-turkey-meatloaf",
+   "title": "Turkey meatloaf with ketchup glaze",
+   "blurb": "Moist lean meatloaf with a sweet tangy top",
+   "type": "comfort",
+   "serves": 6,
+   "prep": 15,
+   "cook": 60,
+   "tags": [
+    "make ahead",
+    "kid-friendly"
+   ],
+   "ingredients": [
+    {
+     "q": 2,
+     "u": "lb",
+     "item": "ground turkey",
+     "aisle": "meat"
+    },
+    {
+     "q": 0.75,
+     "u": "cup",
+     "item": "breadcrumbs",
+     "aisle": "pantry"
+    },
+    {
+     "q": 0.5,
+     "u": "cup",
+     "item": "whole milk",
+     "aisle": "dairy"
+    },
+    {
+     "q": 1,
+     "u": "",
+     "item": "yellow onion",
+     "note": "finely diced",
+     "aisle": "produce"
+    },
+    {
+     "q": 2,
+     "u": "",
+     "item": "large eggs",
+     "aisle": "dairy"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "salt",
+     "aisle": "spices"
+    },
+    {
+     "q": 0.5,
+     "u": "tsp",
+     "item": "black pepper",
+     "aisle": "spices"
+    },
+    {
+     "q": 0.5,
+     "u": "cup",
+     "item": "ketchup",
+     "note": "divided",
+     "aisle": "pantry"
+    },
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "brown sugar",
+     "aisle": "pantry"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Heat oven to 350°F. Soak breadcrumbs in milk for 5 minutes.",
+     "timer": 300,
+     "timerLabel": "Soak crumbs"
+    },
+    {
+     "text": "Mix turkey, soaked crumbs, onion, eggs, salt, pepper and 1/4 cup ketchup."
+    },
+    {
+     "text": "Pack into a loaf pan or shape a loaf on a lined sheet pan."
+    },
+    {
+     "text": "Stir remaining ketchup with the brown sugar and spread on top."
+    },
+    {
+     "text": "Bake until 165°F in the center.",
+     "timer": 3600,
+     "timerLabel": "Bake meatloaf"
+    },
+    {
+     "text": "Rest 10 minutes before slicing.",
+     "timer": 600,
+     "timerLabel": "Rest"
+    }
+   ]
+  },
+  {
+   "id": "american-beef-stroganoff",
+   "title": "Classic beef stroganoff",
+   "blurb": "Seared beef and mushrooms in sour cream sauce over noodles",
+   "type": "comfort",
+   "serves": 4,
+   "prep": 15,
+   "cook": 30,
+   "tags": [],
+   "ingredients": [
+    {
+     "q": 1.5,
+     "u": "lb",
+     "item": "beef sirloin",
+     "note": "sliced in thin strips",
+     "aisle": "meat"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "salt",
+     "aisle": "spices"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "black pepper",
+     "aisle": "spices"
+    },
+    {
+     "q": 3,
+     "u": "tbsp",
+     "item": "unsalted butter",
+     "aisle": "dairy"
+    },
+    {
+     "q": 8,
+     "u": "oz",
+     "item": "sliced mushrooms",
+     "aisle": "produce"
+    },
+    {
+     "q": 1,
+     "u": "",
+     "item": "yellow onion",
+     "note": "diced",
+     "aisle": "produce"
+    },
+    {
+     "q": 2,
+     "u": "tbsp",
+     "item": "all-purpose flour",
+     "aisle": "pantry"
+    },
+    {
+     "q": 1.5,
+     "u": "cup",
+     "item": "beef broth",
+     "aisle": "pantry"
+    },
+    {
+     "q": 0.5,
+     "u": "cup",
+     "item": "sour cream",
+     "aisle": "dairy"
+    },
+    {
+     "q": 12,
+     "u": "oz",
+     "item": "wide egg noodles",
+     "aisle": "pantry"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Boil noodles in salted water until tender and drain.",
+     "timer": 480,
+     "timerLabel": "Boil noodles"
+    },
+    {
+     "text": "Season beef and sear in 1 tbsp butter in a hot skillet, 2 minutes. Remove.",
+     "timer": 120,
+     "timerLabel": "Sear beef"
+    },
+    {
+     "text": "Cook mushrooms and onion in the remaining butter until soft, 7 minutes.",
+     "timer": 420,
+     "timerLabel": "Cook mushrooms"
+    },
+    {
+     "text": "Stir in flour, then broth. Simmer until thick, 4 minutes.",
+     "timer": 240,
+     "timerLabel": "Thicken sauce"
+    },
+    {
+     "text": "Off heat, stir in sour cream and the beef. Serve over noodles."
+    }
+   ]
+  },
+  {
+   "id": "american-goulash",
+   "title": "American goulash",
+   "blurb": "Macaroni, beef and tomatoes in one pot",
+   "type": "comfort",
+   "serves": 6,
+   "prep": 10,
+   "cook": 35,
+   "tags": [
+    "one pot",
+    "kid-friendly"
+   ],
+   "ingredients": [
+    {
+     "q": 1.5,
+     "u": "lb",
+     "item": "lean ground beef",
+     "aisle": "meat"
+    },
+    {
+     "q": 1,
+     "u": "",
+     "item": "yellow onion",
+     "note": "diced",
+     "aisle": "produce"
+    },
+    {
+     "q": 1,
+     "u": "",
+     "item": "bell pepper",
+     "note": "diced",
+     "aisle": "produce"
+    },
+    {
+     "q": 2,
+     "u": "clove",
+     "item": "garlic",
+     "note": "minced",
+     "aisle": "produce"
+    },
+    {
+     "q": 1,
+     "u": "can",
+     "item": "diced tomatoes (14.5 oz)",
+     "aisle": "canned"
+    },
+    {
+     "q": 1,
+     "u": "can",
+     "item": "tomato sauce (15 oz)",
+     "aisle": "canned"
+    },
+    {
+     "q": 2,
+     "u": "cup",
+     "item": "beef broth",
+     "aisle": "pantry"
+    },
+    {
+     "q": 2,
+     "u": "tsp",
+     "item": "Italian seasoning",
+     "aisle": "spices"
+    },
+    {
+     "q": 2,
+     "u": "cup",
+     "item": "elbow macaroni",
+     "note": "dry",
+     "aisle": "pantry"
+    },
+    {
+     "q": 1,
+     "u": "cup",
+     "item": "shredded cheddar",
+     "aisle": "dairy"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Brown beef with onion and pepper in a Dutch oven until cooked through, 8 minutes. Drain fat.",
+     "timer": 480,
+     "timerLabel": "Brown beef"
+    },
+    {
+     "text": "Add garlic, tomatoes, sauce, broth and Italian seasoning and bring to a simmer."
+    },
+    {
+     "text": "Stir in macaroni, cover and simmer until tender, stirring now and then.",
+     "timer": 1080,
+     "timerLabel": "Cook macaroni"
+    },
+    {
+     "text": "Season with salt and black pepper. Top with cheddar and serve."
+    }
+   ]
+  },
+  {
+   "id": "american-roast-turkey-breast-gravy",
+   "title": "Roast turkey breast with gravy",
+   "blurb": "Easy herb-butter turkey breast for any Sunday",
+   "type": "comfort",
+   "serves": 6,
+   "prep": 15,
+   "cook": 100,
+   "tags": [
+    "holiday",
+    "crowd"
+   ],
+   "ingredients": [
+    {
+     "q": 4,
+     "u": "lb",
+     "item": "bone-in turkey breast",
+     "aisle": "meat"
+    },
+    {
+     "q": 4,
+     "u": "tbsp",
+     "item": "unsalted butter",
+     "note": "softened",
+     "aisle": "dairy"
+    },
+    {
+     "q": 2,
+     "u": "tsp",
+     "item": "dried sage",
+     "aisle": "spices"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "dried thyme",
+     "aisle": "spices"
+    },
+    {
+     "q": 1.5,
+     "u": "tsp",
+     "item": "salt",
+     "aisle": "spices"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "black pepper",
+     "aisle": "spices"
+    },
+    {
+     "q": 2,
+     "u": "cup",
+     "item": "chicken broth",
+     "aisle": "pantry"
+    },
+    {
+     "q": 3,
+     "u": "tbsp",
+     "item": "all-purpose flour",
+     "aisle": "pantry"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Heat oven to 350°F. Mix butter, sage, thyme, salt and pepper. Rub it over and under the skin."
+    },
+    {
+     "text": "Roast on a rack with 1 cup broth in the pan until 165°F at the thickest part, about 1.5 hours.",
+     "timer": 5400,
+     "timerLabel": "Roast turkey"
+    },
+    {
+     "text": "Rest 20 minutes, loosely covered.",
+     "timer": 1200,
+     "timerLabel": "Rest turkey"
+    },
+    {
+     "text": "Whisk flour into the pan drippings, then add remaining broth. Simmer until thick.",
+     "timer": 300,
+     "timerLabel": "Make gravy"
+    },
+    {
+     "text": "Slice and serve with gravy."
+    }
+   ]
+  },
+  {
+   "id": "american-country-fried-pork-chops",
+   "title": "Country-fried pork chops",
+   "blurb": "Crispy pan-fried chops, Southern kitchen style",
+   "type": "comfort",
+   "serves": 4,
+   "prep": 15,
+   "cook": 25,
+   "tags": [],
+   "ingredients": [
+    {
+     "q": 4,
+     "u": "",
+     "item": "boneless pork chops",
+     "note": "about 3/4 inch thick",
+     "aisle": "meat"
+    },
+    {
+     "q": 1,
+     "u": "cup",
+     "item": "buttermilk",
+     "aisle": "dairy"
+    },
+    {
+     "q": 1.5,
+     "u": "cup",
+     "item": "all-purpose flour",
+     "aisle": "pantry"
+    },
+    {
+     "q": 2,
+     "u": "tsp",
+     "item": "salt",
+     "aisle": "spices"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "black pepper",
+     "aisle": "spices"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "paprika",
+     "aisle": "spices"
+    },
+    {
+     "q": 1,
+     "u": "cup",
+     "item": "vegetable oil",
+     "note": "for frying",
+     "aisle": "pantry"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Soak chops in buttermilk for 30 minutes.",
+     "timer": 1800,
+     "timerLabel": "Soak chops"
+    },
+    {
+     "text": "Mix flour, salt, pepper and paprika. Coat chops, pressing the flour on."
+    },
+    {
+     "text": "Heat 1/2 inch of oil in a heavy skillet to 350°F."
+    },
+    {
+     "text": "Fry 5 to 6 minutes per side until golden and 145°F inside.",
+     "timer": 660,
+     "timerLabel": "Fry chops"
+    },
+    {
+     "text": "Drain on a rack and rest 3 minutes.",
+     "timer": 180,
+     "timerLabel": "Rest"
+    }
+   ]
+  },
+  {
+   "id": "american-tater-tot-casserole",
+   "title": "Tater tot casserole",
+   "blurb": "Beef, green beans and cheese under crispy tots",
+   "type": "casseroles",
+   "serves": 6,
+   "prep": 15,
+   "cook": 50,
+   "tags": [
+    "kid-friendly",
+    "crowd"
+   ],
+   "ingredients": [
+    {
+     "q": 1.5,
+     "u": "lb",
+     "item": "ground beef",
+     "aisle": "meat"
+    },
+    {
+     "q": 1,
+     "u": "",
+     "item": "yellow onion",
+     "note": "diced",
+     "aisle": "produce"
+    },
+    {
+     "q": 1,
+     "u": "can",
+     "item": "cream of mushroom soup (10.5 oz)",
+     "aisle": "canned"
+    },
+    {
+     "q": 1,
+     "u": "can",
+     "item": "green beans (14.5 oz)",
+     "note": "drained",
+     "aisle": "canned"
+    },
+    {
+     "q": 1.5,
+     "u": "cup",
+     "item": "shredded cheddar",
+     "aisle": "dairy"
+    },
+    {
+     "q": 1,
+     "u": "pkg",
+     "item": "frozen tater tots (32 oz)",
+     "aisle": "frozen"
+    },
+    {
+     "q": 0.5,
+     "u": "tsp",
+     "item": "salt",
+     "aisle": "spices"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Heat oven to 375°F. Brown beef and onion until cooked through, 8 minutes. Drain.",
+     "timer": 480,
+     "timerLabel": "Brown beef"
+    },
+    {
+     "text": "Stir in soup, green beans and salt. Spread in a 9x13 dish."
+    },
+    {
+     "text": "Top with half the cheese, then arrange tots in rows."
+    },
+    {
+     "text": "Bake until bubbly and tots are golden and beef reaches 160°F, about 35 minutes.",
+     "timer": 2100,
+     "timerLabel": "Bake"
+    },
+    {
+     "text": "Sprinkle with remaining cheese and bake 5 minutes more.",
+     "timer": 300,
+     "timerLabel": "Melt cheese"
+    }
+   ]
+  },
+  {
+   "id": "american-classic-meat-lasagna",
+   "title": "Homestyle beef and sausage lasagna",
+   "blurb": "Layers of meat sauce, ricotta and mozzarella",
+   "type": "casseroles",
+   "serves": 8,
+   "prep": 30,
+   "cook": 90,
+   "tags": [
+    "crowd",
+    "make ahead"
+   ],
+   "ingredients": [
+    {
+     "q": 1,
+     "u": "lb",
+     "item": "ground beef",
+     "aisle": "meat"
+    },
+    {
+     "q": 1,
+     "u": "lb",
+     "item": "Italian sausage",
+     "aisle": "meat"
+    },
+    {
+     "q": 1,
+     "u": "jar",
+     "item": "marinara sauce (24 oz)",
+     "aisle": "pantry"
+    },
+    {
+     "q": 1,
+     "u": "can",
+     "item": "crushed tomatoes (28 oz)",
+     "aisle": "canned"
+    },
+    {
+     "q": 15,
+     "u": "oz",
+     "item": "ricotta cheese",
+     "aisle": "dairy"
+    },
+    {
+     "q": 1,
+     "u": "",
+     "item": "large eggs",
+     "aisle": "dairy"
+    },
+    {
+     "q": 0.5,
+     "u": "cup",
+     "item": "grated Parmesan",
+     "aisle": "dairy"
+    },
+    {
+     "q": 12,
+     "u": "",
+     "item": "lasagna noodles",
+     "note": "dry",
+     "aisle": "pantry"
+    },
+    {
+     "q": 4,
+     "u": "cup",
+     "item": "shredded mozzarella",
+     "aisle": "dairy"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Heat oven to 375°F. Brown beef and sausage, drain, then simmer with marinara and tomatoes, 15 minutes.",
+     "timer": 900,
+     "timerLabel": "Simmer sauce"
+    },
+    {
+     "text": "Boil noodles 2 minutes less than the package says, then drain.",
+     "timer": 480,
+     "timerLabel": "Boil noodles"
+    },
+    {
+     "text": "Mix ricotta, egg and Parmesan."
+    },
+    {
+     "text": "Layer sauce, noodles, ricotta and mozzarella in a 9x13 dish, three layers, ending with sauce and cheese."
+    },
+    {
+     "text": "Cover with foil and bake 45 minutes, then uncover and bake until browned and 165°F in the center.",
+     "timer": 3300,
+     "timerLabel": "Bake lasagna"
+    },
+    {
+     "text": "Rest 15 minutes before cutting.",
+     "timer": 900,
+     "timerLabel": "Rest"
+    }
+   ]
+  },
+  {
+   "id": "american-baked-spaghetti",
+   "title": "Cheesy baked spaghetti",
+   "blurb": "Spaghetti and meat sauce baked under bubbling cheese",
+   "type": "casseroles",
+   "serves": 8,
+   "prep": 20,
+   "cook": 50,
+   "tags": [
+    "kid-friendly",
+    "crowd"
+   ],
+   "ingredients": [
+    {
+     "q": 1,
+     "u": "lb",
+     "item": "spaghetti",
+     "aisle": "pantry"
+    },
+    {
+     "q": 1.5,
+     "u": "lb",
+     "item": "ground beef",
+     "aisle": "meat"
+    },
+    {
+     "q": 1,
+     "u": "",
+     "item": "yellow onion",
+     "note": "diced",
+     "aisle": "produce"
+    },
+    {
+     "q": 1,
+     "u": "jar",
+     "item": "marinara sauce (24 oz)",
+     "aisle": "pantry"
+    },
+    {
+     "q": 1,
+     "u": "cup",
+     "item": "sour cream",
+     "aisle": "dairy"
+    },
+    {
+     "q": 3,
+     "u": "cup",
+     "item": "shredded mozzarella",
+     "aisle": "dairy"
+    },
+    {
+     "q": 0.5,
+     "u": "cup",
+     "item": "grated Parmesan",
+     "aisle": "dairy"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Heat oven to 350°F. Boil spaghetti until al dente and drain.",
+     "timer": 540,
+     "timerLabel": "Boil spaghetti"
+    },
+    {
+     "text": "Brown beef and onion, drain, and stir in marinara.",
+     "timer": 480,
+     "timerLabel": "Brown beef"
+    },
+    {
+     "text": "Toss spaghetti with sour cream and half the mozzarella."
+    },
+    {
+     "text": "Spread half in a 9x13 dish, top with half the sauce, then repeat."
+    },
+    {
+     "text": "Cover with remaining cheeses. Bake until bubbly and golden.",
+     "timer": 1800,
+     "timerLabel": "Bake"
+    }
+   ]
+  },
+  {
+   "id": "american-chicken-divan",
+   "title": "Chicken divan",
+   "blurb": "Broccoli and chicken in a creamy cheddar sauce",
+   "type": "casseroles",
+   "serves": 6,
+   "prep": 20,
+   "cook": 45,
+   "tags": [],
+   "ingredients": [
+    {
+     "q": 3,
+     "u": "cup",
+     "item": "cooked chicken",
+     "note": "shredded",
+     "aisle": "meat"
+    },
+    {
+     "q": 4,
+     "u": "cup",
+     "item": "broccoli florets",
+     "aisle": "produce"
+    },
+    {
+     "q": 1,
+     "u": "can",
+     "item": "cream of chicken soup (10.5 oz)",
+     "aisle": "canned"
+    },
+    {
+     "q": 0.5,
+     "u": "cup",
+     "item": "mayonnaise",
+     "aisle": "pantry"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "curry powder",
+     "aisle": "spices"
+    },
+    {
+     "q": 1,
+     "u": "cup",
+     "item": "shredded cheddar",
+     "aisle": "dairy"
+    },
+    {
+     "q": 0.5,
+     "u": "cup",
+     "item": "panko breadcrumbs",
+     "aisle": "pantry"
+    },
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "unsalted butter",
+     "aisle": "dairy"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Heat oven to 350°F. Steam broccoli 3 minutes and spread in a baking dish.",
+     "timer": 180,
+     "timerLabel": "Steam broccoli"
+    },
+    {
+     "text": "Top with the chicken."
+    },
+    {
+     "text": "Stir soup, mayo, curry powder and half the cheddar, and pour over."
+    },
+    {
+     "text": "Toss panko with melted butter and remaining cheese and sprinkle on top."
+    },
+    {
+     "text": "Bake until bubbly and golden.",
+     "timer": 2100,
+     "timerLabel": "Bake"
+    }
+   ]
+  },
+  {
+   "id": "american-sausage-hashbrown-egg-bake",
+   "title": "Sausage and hash brown egg bake",
+   "blurb": "Eggs, sausage, hash browns and cheddar in one dish",
+   "type": "casseroles",
+   "serves": 8,
+   "prep": 15,
+   "cook": 60,
+   "tags": [
+    "make ahead",
+    "crowd"
+   ],
+   "ingredients": [
+    {
+     "q": 1,
+     "u": "lb",
+     "item": "breakfast sausage",
+     "aisle": "meat"
+    },
+    {
+     "q": 20,
+     "u": "oz",
+     "item": "frozen shredded hash browns",
+     "note": "thawed",
+     "aisle": "frozen"
+    },
+    {
+     "q": 8,
+     "u": "",
+     "item": "large eggs",
+     "aisle": "dairy"
+    },
+    {
+     "q": 1,
+     "u": "cup",
+     "item": "whole milk",
+     "aisle": "dairy"
+    },
+    {
+     "q": 2,
+     "u": "cup",
+     "item": "shredded cheddar",
+     "aisle": "dairy"
+    },
+    {
+     "q": 0.5,
+     "u": "tsp",
+     "item": "salt",
+     "aisle": "spices"
+    },
+    {
+     "q": 0.5,
+     "u": "tsp",
+     "item": "black pepper",
+     "aisle": "spices"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Heat oven to 350°F and grease a 9x13 dish. Brown sausage until cooked through and drain.",
+     "timer": 480,
+     "timerLabel": "Brown sausage"
+    },
+    {
+     "text": "Spread hash browns in the dish and top with sausage and 1.5 cups cheese."
+    },
+    {
+     "text": "Whisk eggs, milk, salt and pepper and pour over."
+    },
+    {
+     "text": "Bake until set in the center and eggs reach 160°F, about 50 minutes.",
+     "timer": 3000,
+     "timerLabel": "Bake"
+    },
+    {
+     "text": "Sprinkle with remaining cheese and rest 10 minutes.",
+     "timer": 600,
+     "timerLabel": "Rest"
+    }
+   ]
+  },
+  {
+   "id": "american-chicken-stuffing-bake",
+   "title": "Chicken and stuffing bake",
+   "blurb": "Easy Thanksgiving-flavored chicken dinner in one dish",
+   "type": "casseroles",
+   "serves": 6,
+   "prep": 15,
+   "cook": 50,
+   "tags": [
+    "kid-friendly"
+   ],
+   "ingredients": [
+    {
+     "q": 1.5,
+     "u": "lb",
+     "item": "boneless skinless chicken breasts",
+     "note": "cut in 1-inch pieces",
+     "aisle": "meat"
+    },
+    {
+     "q": 1,
+     "u": "pkg",
+     "item": "stuffing mix (6 oz)",
+     "aisle": "pantry"
+    },
+    {
+     "q": 1.5,
+     "u": "cup",
+     "item": "chicken broth",
+     "aisle": "pantry"
+    },
+    {
+     "q": 1,
+     "u": "can",
+     "item": "cream of chicken soup (10.5 oz)",
+     "aisle": "canned"
+    },
+    {
+     "q": 2,
+     "u": "cup",
+     "item": "frozen mixed vegetables",
+     "aisle": "frozen"
+    },
+    {
+     "q": 3,
+     "u": "tbsp",
+     "item": "unsalted butter",
+     "note": "melted",
+     "aisle": "dairy"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Heat oven to 375°F and grease a 9x13 dish."
+    },
+    {
+     "text": "Mix chicken, soup, vegetables and 1/2 cup broth. Spread in the dish."
+    },
+    {
+     "text": "Stir stuffing mix with remaining broth and the butter. Spoon on top."
+    },
+    {
+     "text": "Cover with foil and bake 25 minutes.",
+     "timer": 1500,
+     "timerLabel": "Bake covered"
+    },
+    {
+     "text": "Uncover and bake until the top is crisp and chicken reaches 165°F.",
+     "timer": 1200,
+     "timerLabel": "Bake uncovered"
+    }
+   ]
+  },
+  {
+   "id": "american-chicken-spaghetti",
+   "title": "Cheesy chicken spaghetti",
+   "blurb": "Creamy, cheesy chicken pasta bake",
+   "type": "casseroles",
+   "serves": 8,
+   "prep": 20,
+   "cook": 45,
+   "tags": [
+    "crowd",
+    "kid-friendly"
+   ],
+   "ingredients": [
+    {
+     "q": 12,
+     "u": "oz",
+     "item": "spaghetti",
+     "aisle": "pantry"
+    },
+    {
+     "q": 3,
+     "u": "cup",
+     "item": "cooked chicken",
+     "note": "shredded",
+     "aisle": "meat"
+    },
+    {
+     "q": 1,
+     "u": "can",
+     "item": "cream of chicken soup (10.5 oz)",
+     "aisle": "canned"
+    },
+    {
+     "q": 1,
+     "u": "can",
+     "item": "diced tomatoes with green chiles (10 oz)",
+     "aisle": "canned"
+    },
+    {
+     "q": 1,
+     "u": "",
+     "item": "bell pepper",
+     "note": "diced",
+     "aisle": "produce"
+    },
+    {
+     "q": 1,
+     "u": "",
+     "item": "yellow onion",
+     "note": "diced",
+     "aisle": "produce"
+    },
+    {
+     "q": 2,
+     "u": "cup",
+     "item": "shredded cheddar",
+     "aisle": "dairy"
+    },
+    {
+     "q": 1,
+     "u": "cup",
+     "item": "chicken broth",
+     "aisle": "pantry"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Heat oven to 350°F. Boil spaghetti 2 minutes short of done and drain.",
+     "timer": 480,
+     "timerLabel": "Boil spaghetti"
+    },
+    {
+     "text": "Cook onion and pepper in a little oil until soft, 5 minutes.",
+     "timer": 300,
+     "timerLabel": "Soften vegetables"
+    },
+    {
+     "text": "Stir in soup, tomatoes, broth, chicken and half the cheese."
+    },
+    {
+     "text": "Toss with the spaghetti and pour into a 9x13 dish. Top with remaining cheese."
+    },
+    {
+     "text": "Bake until bubbly and golden.",
+     "timer": 1500,
+     "timerLabel": "Bake"
+    }
+   ]
+  },
+  {
+   "id": "american-stuffed-shells-beef",
+   "title": "Beef and cheese stuffed shells",
+   "blurb": "Jumbo shells filled with ricotta and baked in sauce",
+   "type": "casseroles",
+   "serves": 6,
+   "prep": 25,
+   "cook": 45,
+   "tags": [
+    "kid-friendly"
+   ],
+   "ingredients": [
+    {
+     "q": 20,
+     "u": "",
+     "item": "jumbo pasta shells",
+     "aisle": "pantry"
+    },
+    {
+     "q": 1,
+     "u": "lb",
+     "item": "ground beef",
+     "aisle": "meat"
+    },
+    {
+     "q": 15,
+     "u": "oz",
+     "item": "ricotta cheese",
+     "aisle": "dairy"
+    },
+    {
+     "q": 2,
+     "u": "cup",
+     "item": "shredded mozzarella",
+     "aisle": "dairy"
+    },
+    {
+     "q": 1,
+     "u": "",
+     "item": "large eggs",
+     "aisle": "dairy"
+    },
+    {
+     "q": 1,
+     "u": "jar",
+     "item": "marinara sauce (24 oz)",
+     "aisle": "pantry"
+    },
+    {
+     "q": 0.25,
+     "u": "cup",
+     "item": "grated Parmesan",
+     "aisle": "dairy"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Heat oven to 375°F. Boil shells 2 minutes short of done and drain.",
+     "timer": 540,
+     "timerLabel": "Boil shells"
+    },
+    {
+     "text": "Brown the beef until cooked through and drain.",
+     "timer": 420,
+     "timerLabel": "Brown beef"
+    },
+    {
+     "text": "Mix beef with ricotta, egg, Parmesan and 1 cup mozzarella."
+    },
+    {
+     "text": "Spread half the marinara in a 9x13 dish. Fill shells and set them in the sauce."
+    },
+    {
+     "text": "Top with remaining sauce and mozzarella. Cover and bake 25 minutes, then uncover 10 minutes.",
+     "timer": 2100,
+     "timerLabel": "Bake"
+    }
+   ]
+  },
+  {
+   "id": "american-kielbasa-scalloped-potatoes",
+   "title": "Scalloped potatoes with kielbasa",
+   "blurb": "Creamy sliced potatoes baked with smoked sausage",
+   "type": "casseroles",
+   "serves": 6,
+   "prep": 25,
+   "cook": 85,
+   "tags": [],
+   "ingredients": [
+    {
+     "q": 2.5,
+     "u": "lb",
+     "item": "russet potatoes",
+     "note": "thinly sliced",
+     "aisle": "produce"
+    },
+    {
+     "q": 1,
+     "u": "lb",
+     "item": "kielbasa",
+     "note": "sliced",
+     "aisle": "meat"
+    },
+    {
+     "q": 3,
+     "u": "tbsp",
+     "item": "unsalted butter",
+     "aisle": "dairy"
+    },
+    {
+     "q": 3,
+     "u": "tbsp",
+     "item": "all-purpose flour",
+     "aisle": "pantry"
+    },
+    {
+     "q": 2.5,
+     "u": "cup",
+     "item": "whole milk",
+     "aisle": "dairy"
+    },
+    {
+     "q": 1.5,
+     "u": "cup",
+     "item": "shredded cheddar",
+     "aisle": "dairy"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "salt",
+     "aisle": "spices"
+    },
+    {
+     "q": 0.5,
+     "u": "tsp",
+     "item": "black pepper",
+     "aisle": "spices"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Heat oven to 375°F and grease a 9x13 dish. Layer potatoes and kielbasa in it."
+    },
+    {
+     "text": "Melt butter, whisk in flour for 1 minute, then add milk, salt and pepper. Simmer until thick, 4 minutes.",
+     "timer": 240,
+     "timerLabel": "Make sauce"
+    },
+    {
+     "text": "Stir in 1 cup cheese until melted and pour over the potatoes."
+    },
+    {
+     "text": "Cover with foil and bake 45 minutes.",
+     "timer": 2700,
+     "timerLabel": "Bake covered"
+    },
+    {
+     "text": "Uncover, top with remaining cheese and bake until potatoes are tender and golden.",
+     "timer": 1800,
+     "timerLabel": "Bake uncovered"
+    }
+   ]
+  },
+  {
+   "id": "american-bacon-cheeseburgers",
+   "title": "Bacon cheeseburgers",
+   "blurb": "Thick beef patties with crispy bacon and melted cheddar",
+   "type": "sandwiches",
+   "serves": 4,
+   "prep": 15,
+   "cook": 20,
+   "tags": [
+    "grill",
+    "kid-friendly"
+   ],
+   "ingredients": [
+    {
+     "q": 1.5,
+     "u": "lb",
+     "item": "ground beef",
+     "note": "80% lean",
+     "aisle": "meat"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "salt",
+     "aisle": "spices"
+    },
+    {
+     "q": 0.5,
+     "u": "tsp",
+     "item": "black pepper",
+     "aisle": "spices"
+    },
+    {
+     "q": 8,
+     "u": "slice",
+     "item": "bacon",
+     "aisle": "meat"
+    },
+    {
+     "q": 4,
+     "u": "slice",
+     "item": "cheddar cheese",
+     "aisle": "dairy"
+    },
+    {
+     "q": 4,
+     "u": "",
+     "item": "hamburger buns",
+     "aisle": "bakery"
+    },
+    {
+     "q": 1,
+     "u": "",
+     "item": "tomato",
+     "note": "sliced",
+     "aisle": "produce"
+    },
+    {
+     "q": 4,
+     "u": "piece",
+     "item": "lettuce leaves",
+     "aisle": "produce"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Cook bacon until crisp, about 10 minutes, and drain on paper towels.",
+     "timer": 600,
+     "timerLabel": "Cook bacon"
+    },
+    {
+     "text": "Shape beef into 4 patties slightly wider than the buns. Season with salt and pepper and press a dimple in each."
+    },
+    {
+     "text": "Cook on a hot grill or skillet 4 to 5 minutes per side until 160°F inside.",
+     "timer": 540,
+     "timerLabel": "Cook burgers"
+    },
+    {
+     "text": "Add cheese for the last minute and toast the buns."
+    },
+    {
+     "text": "Build with bacon, lettuce and tomato."
+    }
+   ]
+  },
+  {
+   "id": "american-patty-melts",
+   "title": "Patty melts",
+   "blurb": "Diner burgers on griddled rye with Swiss and onions",
+   "type": "sandwiches",
+   "serves": 4,
+   "prep": 10,
+   "cook": 30,
+   "tags": [],
+   "ingredients": [
+    {
+     "q": 1.5,
+     "u": "lb",
+     "item": "ground beef",
+     "aisle": "meat"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "salt",
+     "aisle": "spices"
+    },
+    {
+     "q": 0.5,
+     "u": "tsp",
+     "item": "black pepper",
+     "aisle": "spices"
+    },
+    {
+     "q": 2,
+     "u": "",
+     "item": "yellow onion",
+     "note": "thinly sliced",
+     "aisle": "produce"
+    },
+    {
+     "q": 3,
+     "u": "tbsp",
+     "item": "unsalted butter",
+     "aisle": "dairy"
+    },
+    {
+     "q": 8,
+     "u": "slice",
+     "item": "rye bread",
+     "aisle": "bakery"
+    },
+    {
+     "q": 8,
+     "u": "slice",
+     "item": "Swiss cheese",
+     "aisle": "dairy"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Cook onions in 1 tbsp butter over medium-low until golden and sweet, 15 minutes.",
+     "timer": 900,
+     "timerLabel": "Caramelize onions"
+    },
+    {
+     "text": "Shape beef into 4 oval patties and season. Cook in a skillet 4 minutes per side to 160°F.",
+     "timer": 480,
+     "timerLabel": "Cook patties"
+    },
+    {
+     "text": "Butter one side of each bread slice. Layer a slice of cheese, a patty, onions and more cheese on unbuttered sides."
+    },
+    {
+     "text": "Top with bread, buttered side out. Griddle 3 minutes per side until golden and the cheese melts.",
+     "timer": 360,
+     "timerLabel": "Griddle sandwiches"
+    }
+   ]
+  },
+  {
+   "id": "american-reuben-sandwiches",
+   "title": "Grilled Reuben sandwiches",
+   "blurb": "Corned beef, Swiss, sauerkraut and Russian dressing on rye",
+   "type": "sandwiches",
+   "serves": 4,
+   "prep": 10,
+   "cook": 15,
+   "tags": [
+    "quick"
+   ],
+   "ingredients": [
+    {
+     "q": 1,
+     "u": "lb",
+     "item": "sliced corned beef",
+     "note": "deli",
+     "aisle": "meat"
+    },
+    {
+     "q": 8,
+     "u": "slice",
+     "item": "rye bread",
+     "aisle": "bakery"
+    },
+    {
+     "q": 8,
+     "u": "slice",
+     "item": "Swiss cheese",
+     "aisle": "dairy"
+    },
+    {
+     "q": 1,
+     "u": "cup",
+     "item": "sauerkraut",
+     "note": "drained",
+     "aisle": "canned"
+    },
+    {
+     "q": 0.5,
+     "u": "cup",
+     "item": "Russian dressing",
+     "aisle": "pantry"
+    },
+    {
+     "q": 3,
+     "u": "tbsp",
+     "item": "unsalted butter",
+     "aisle": "dairy"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Spread dressing on one side of each bread slice."
+    },
+    {
+     "text": "Layer cheese, corned beef, sauerkraut and more cheese on four slices. Top with remaining bread."
+    },
+    {
+     "text": "Butter the outsides of the sandwiches."
+    },
+    {
+     "text": "Griddle in a skillet over medium heat 3 to 4 minutes per side until golden and the cheese melts.",
+     "timer": 420,
+     "timerLabel": "Griddle sandwiches"
+    }
+   ]
+  },
+  {
+   "id": "american-french-dip-sandwiches",
+   "title": "French dip sandwiches",
+   "blurb": "Roast beef rolls with hot beef au jus for dipping",
+   "type": "sandwiches",
+   "serves": 6,
+   "prep": 10,
+   "cook": 25,
+   "tags": [
+    "quick"
+   ],
+   "ingredients": [
+    {
+     "q": 1.5,
+     "u": "lb",
+     "item": "thinly sliced roast beef",
+     "note": "deli",
+     "aisle": "meat"
+    },
+    {
+     "q": 3,
+     "u": "cup",
+     "item": "beef broth",
+     "aisle": "pantry"
+    },
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "Worcestershire sauce",
+     "aisle": "pantry"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "garlic powder",
+     "aisle": "spices"
+    },
+    {
+     "q": 6,
+     "u": "",
+     "item": "hoagie rolls",
+     "note": "split",
+     "aisle": "bakery"
+    },
+    {
+     "q": 6,
+     "u": "slice",
+     "item": "provolone cheese",
+     "aisle": "dairy"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Simmer broth, Worcestershire and garlic powder in a skillet 5 minutes.",
+     "timer": 300,
+     "timerLabel": "Simmer au jus"
+    },
+    {
+     "text": "Add the beef and warm it in the jus 3 minutes.",
+     "timer": 180,
+     "timerLabel": "Warm beef"
+    },
+    {
+     "text": "Heat oven to 400°F. Fill rolls with beef and cheese and toast on a pan until the cheese melts, 5 minutes.",
+     "timer": 300,
+     "timerLabel": "Melt cheese"
+    },
+    {
+     "text": "Serve with cups of hot jus for dipping."
+    }
+   ]
+  },
+  {
+   "id": "american-hot-turkey-sandwiches",
+   "title": "Open-faced hot turkey sandwiches",
+   "blurb": "Sliced turkey on toast under hot gravy",
+   "type": "sandwiches",
+   "serves": 4,
+   "prep": 10,
+   "cook": 15,
+   "tags": [
+    "quick"
+   ],
+   "ingredients": [
+    {
+     "q": 1,
+     "u": "lb",
+     "item": "sliced roast turkey",
+     "note": "deli",
+     "aisle": "meat"
+    },
+    {
+     "q": 4,
+     "u": "slice",
+     "item": "bread",
+     "note": "thick, toasted",
+     "aisle": "bakery"
+    },
+    {
+     "q": 3,
+     "u": "tbsp",
+     "item": "unsalted butter",
+     "aisle": "dairy"
+    },
+    {
+     "q": 3,
+     "u": "tbsp",
+     "item": "all-purpose flour",
+     "aisle": "pantry"
+    },
+    {
+     "q": 2,
+     "u": "cup",
+     "item": "chicken broth",
+     "aisle": "pantry"
+    },
+    {
+     "q": 0.5,
+     "u": "tsp",
+     "item": "black pepper",
+     "aisle": "spices"
+    },
+    {
+     "q": 2,
+     "u": "cup",
+     "item": "mashed potatoes",
+     "note": "optional, to serve",
+     "aisle": "produce"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Melt butter in a saucepan and whisk in flour for 1 minute.",
+     "timer": 60,
+     "timerLabel": "Cook roux"
+    },
+    {
+     "text": "Slowly whisk in broth and pepper and simmer until thick, 5 minutes.",
+     "timer": 300,
+     "timerLabel": "Thicken gravy"
+    },
+    {
+     "text": "Add the turkey and warm it in the gravy 3 minutes.",
+     "timer": 180,
+     "timerLabel": "Warm turkey"
+    },
+    {
+     "text": "Pile turkey on toast and pour gravy over. Serve with mashed potatoes."
+    }
+   ]
+  },
+  {
+   "id": "american-bbq-pulled-chicken-sandwiches",
+   "title": "BBQ pulled chicken sandwiches",
+   "blurb": "Slow-cooked shredded chicken piled on soft buns",
+   "type": "sandwiches",
+   "serves": 8,
+   "prep": 10,
+   "cook": 240,
+   "tags": [
+    "slow cooker",
+    "crowd"
+   ],
+   "ingredients": [
+    {
+     "q": 3,
+     "u": "lb",
+     "item": "boneless skinless chicken breasts",
+     "aisle": "meat"
+    },
+    {
+     "q": 1.5,
+     "u": "cup",
+     "item": "barbecue sauce",
+     "aisle": "pantry"
+    },
+    {
+     "q": 0.5,
+     "u": "cup",
+     "item": "chicken broth",
+     "aisle": "pantry"
+    },
+    {
+     "q": 2,
+     "u": "tbsp",
+     "item": "brown sugar",
+     "aisle": "pantry"
+    },
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "apple cider vinegar",
+     "aisle": "pantry"
+    },
+    {
+     "q": 8,
+     "u": "",
+     "item": "hamburger buns",
+     "aisle": "bakery"
+    },
+    {
+     "q": 1,
+     "u": "cup",
+     "item": "coleslaw mix",
+     "note": "to serve",
+     "aisle": "produce"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Put chicken in the slow cooker. Mix barbecue sauce, broth, sugar and vinegar and pour over."
+    },
+    {
+     "text": "Cook on low until chicken is tender, 165°F or higher.",
+     "timer": 14400,
+     "timerLabel": "Slow cook on low"
+    },
+    {
+     "text": "Shred the chicken with two forks and stir it in the sauce. Cook 10 more minutes.",
+     "timer": 600,
+     "timerLabel": "Soak in sauce"
+    },
+    {
+     "text": "Serve on toasted buns with coleslaw mix."
+    }
+   ]
+  },
+  {
+   "id": "american-chili-dogs",
+   "title": "Chili dogs",
+   "blurb": "Grilled hot dogs loaded with homemade beef chili and cheese",
+   "type": "sandwiches",
+   "serves": 6,
+   "prep": 10,
+   "cook": 30,
+   "tags": [
+    "kid-friendly"
+   ],
+   "ingredients": [
+    {
+     "q": 8,
+     "u": "",
+     "item": "beef hot dogs",
+     "aisle": "meat"
+    },
+    {
+     "q": 8,
+     "u": "",
+     "item": "hot dog buns",
+     "aisle": "bakery"
+    },
+    {
+     "q": 1,
+     "u": "lb",
+     "item": "ground beef",
+     "aisle": "meat"
+    },
+    {
+     "q": 1,
+     "u": "",
+     "item": "yellow onion",
+     "note": "diced",
+     "aisle": "produce"
+    },
+    {
+     "q": 1,
+     "u": "can",
+     "item": "tomato sauce (8 oz)",
+     "aisle": "canned"
+    },
+    {
+     "q": 2,
+     "u": "tbsp",
+     "item": "chili powder",
+     "aisle": "spices"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "salt",
+     "aisle": "spices"
+    },
+    {
+     "q": 1,
+     "u": "cup",
+     "item": "shredded cheddar",
+     "aisle": "dairy"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Brown beef and onion until cooked through, 8 minutes. Drain.",
+     "timer": 480,
+     "timerLabel": "Brown beef"
+    },
+    {
+     "text": "Stir in tomato sauce, chili powder, salt and 1/2 cup water. Simmer until thick, 15 minutes.",
+     "timer": 900,
+     "timerLabel": "Simmer chili"
+    },
+    {
+     "text": "Grill or pan-cook hot dogs until browned and hot, about 6 minutes.",
+     "timer": 360,
+     "timerLabel": "Cook hot dogs"
+    },
+    {
+     "text": "Nestle hot dogs in buns, spoon chili on top and add cheddar."
+    }
+   ]
+  },
+  {
+   "id": "american-club-sandwiches",
+   "title": "Turkey club sandwiches",
+   "blurb": "Triple-decker turkey, bacon, lettuce and tomato",
+   "type": "sandwiches",
+   "serves": 4,
+   "prep": 15,
+   "cook": 15,
+   "tags": [
+    "quick"
+   ],
+   "ingredients": [
+    {
+     "q": 12,
+     "u": "slice",
+     "item": "bread",
+     "note": "toasted",
+     "aisle": "bakery"
+    },
+    {
+     "q": 1,
+     "u": "lb",
+     "item": "sliced roast turkey",
+     "note": "deli",
+     "aisle": "meat"
+    },
+    {
+     "q": 8,
+     "u": "slice",
+     "item": "bacon",
+     "aisle": "meat"
+    },
+    {
+     "q": 8,
+     "u": "piece",
+     "item": "lettuce leaves",
+     "aisle": "produce"
+    },
+    {
+     "q": 2,
+     "u": "",
+     "item": "tomato",
+     "note": "sliced",
+     "aisle": "produce"
+    },
+    {
+     "q": 0.5,
+     "u": "cup",
+     "item": "mayonnaise",
+     "aisle": "pantry"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Cook bacon until crisp and drain.",
+     "timer": 600,
+     "timerLabel": "Cook bacon"
+    },
+    {
+     "text": "Spread mayo on all the toast."
+    },
+    {
+     "text": "Stack toast, turkey and lettuce, toast, bacon and tomato, then toast."
+    },
+    {
+     "text": "Cut each triple-decker into quarters and secure with toothpicks."
+    }
+   ]
+  },
+  {
+   "id": "american-sausage-pepper-hoagies",
+   "title": "Sausage and pepper hoagies",
+   "blurb": "Grilled Italian sausage with sweet peppers and onions",
+   "type": "sandwiches",
+   "serves": 6,
+   "prep": 10,
+   "cook": 30,
+   "tags": [],
+   "ingredients": [
+    {
+     "q": 6,
+     "u": "",
+     "item": "Italian sausage links",
+     "aisle": "meat"
+    },
+    {
+     "q": 2,
+     "u": "",
+     "item": "bell peppers",
+     "note": "sliced",
+     "aisle": "produce"
+    },
+    {
+     "q": 1,
+     "u": "",
+     "item": "yellow onion",
+     "note": "sliced",
+     "aisle": "produce"
+    },
+    {
+     "q": 2,
+     "u": "tbsp",
+     "item": "olive oil",
+     "aisle": "pantry"
+    },
+    {
+     "q": 6,
+     "u": "",
+     "item": "hoagie rolls",
+     "aisle": "bakery"
+    },
+    {
+     "q": 1,
+     "u": "cup",
+     "item": "shredded provolone",
+     "aisle": "dairy"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "dried oregano",
+     "aisle": "spices"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Cook sausages in a skillet over medium heat, turning, until 160°F inside, about 18 minutes.",
+     "timer": 1080,
+     "timerLabel": "Cook sausages"
+    },
+    {
+     "text": "Remove sausages. Add oil, peppers, onion and oregano and cook until soft, 8 minutes.",
+     "timer": 480,
+     "timerLabel": "Cook peppers"
+    },
+    {
+     "text": "Tuck sausages into rolls, top with peppers and cheese."
+    },
+    {
+     "text": "Broil 1 to 2 minutes until the cheese melts."
+    }
+   ]
+  },
+  {
+   "id": "american-shrimp-and-grits",
+   "title": "Cheesy shrimp and grits with bacon",
+   "blurb": "Creamy cheddar grits topped with garlicky bacon shrimp",
+   "type": "seafood",
+   "serves": 4,
+   "prep": 10,
+   "cook": 30,
+   "tags": [],
+   "ingredients": [
+    {
+     "q": 1.5,
+     "u": "lb",
+     "item": "large shrimp",
+     "note": "peeled and deveined",
+     "aisle": "seafood"
+    },
+    {
+     "q": 1,
+     "u": "cup",
+     "item": "stone-ground grits",
+     "aisle": "pantry"
+    },
+    {
+     "q": 4,
+     "u": "cup",
+     "item": "water",
+     "aisle": "pantry"
+    },
+    {
+     "q": 1,
+     "u": "cup",
+     "item": "shredded cheddar",
+     "aisle": "dairy"
+    },
+    {
+     "q": 4,
+     "u": "slice",
+     "item": "bacon",
+     "note": "chopped",
+     "aisle": "meat"
+    },
+    {
+     "q": 2,
+     "u": "clove",
+     "item": "garlic",
+     "note": "minced",
+     "aisle": "produce"
+    },
+    {
+     "q": 1,
+     "u": "",
+     "item": "lemon",
+     "aisle": "produce"
+    },
+    {
+     "q": 2,
+     "u": "tbsp",
+     "item": "unsalted butter",
+     "aisle": "dairy"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Bring water and 1 tsp salt to a boil. Whisk in grits, then simmer, stirring, until thick and creamy.",
+     "timer": 1200,
+     "timerLabel": "Cook grits"
+    },
+    {
+     "text": "Meanwhile, cook bacon in a skillet until crisp, 8 minutes. Remove, leaving 1 tbsp fat.",
+     "timer": 480,
+     "timerLabel": "Cook bacon"
+    },
+    {
+     "text": "Cook shrimp in the bacon fat 2 minutes per side until pink and opaque. Add garlic for the last 30 seconds.",
+     "timer": 240,
+     "timerLabel": "Cook shrimp"
+    },
+    {
+     "text": "Stir butter and cheddar into the grits."
+    },
+    {
+     "text": "Top with shrimp, bacon and a squeeze of lemon."
+    }
+   ]
+  },
+  {
+   "id": "american-baked-haddock-crackers",
+   "title": "New England baked haddock",
+   "blurb": "Haddock baked in butter under buttery cracker crumbs",
+   "type": "seafood",
+   "serves": 4,
+   "prep": 10,
+   "cook": 20,
+   "tags": [
+    "quick"
+   ],
+   "ingredients": [
+    {
+     "q": 1.5,
+     "u": "lb",
+     "item": "haddock fillets",
+     "aisle": "seafood"
+    },
+    {
+     "q": 0.5,
+     "u": "cup",
+     "item": "butter crackers",
+     "note": "crushed",
+     "aisle": "pantry"
+    },
+    {
+     "q": 3,
+     "u": "tbsp",
+     "item": "unsalted butter",
+     "aisle": "dairy"
+    },
+    {
+     "q": 1,
+     "u": "",
+     "item": "lemon",
+     "aisle": "produce"
+    },
+    {
+     "q": 0.5,
+     "u": "tsp",
+     "item": "paprika",
+     "aisle": "spices"
+    },
+    {
+     "q": 0.5,
+     "u": "tsp",
+     "item": "salt",
+     "aisle": "spices"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Heat oven to 400°F. Lay fish in a baking dish and sprinkle with salt."
+    },
+    {
+     "text": "Melt butter with the juice of half the lemon and toss with cracker crumbs and paprika."
+    },
+    {
+     "text": "Pile the crumbs over the fish."
+    },
+    {
+     "text": "Bake until the fish flakes and reaches 145°F.",
+     "timer": 1080,
+     "timerLabel": "Bake fish"
+    },
+    {
+     "text": "Serve with lemon wedges."
+    }
+   ]
+  },
+  {
+   "id": "american-grilled-shrimp-skewers",
+   "title": "Grilled garlic butter shrimp skewers",
+   "blurb": "Smoky grilled shrimp brushed with lemon garlic butter",
+   "type": "seafood",
+   "serves": 4,
+   "prep": 15,
+   "cook": 10,
+   "tags": [
+    "grill",
+    "quick"
+   ],
+   "ingredients": [
+    {
+     "q": 1.5,
+     "u": "lb",
+     "item": "large shrimp",
+     "note": "peeled and deveined",
+     "aisle": "seafood"
+    },
+    {
+     "q": 3,
+     "u": "tbsp",
+     "item": "unsalted butter",
+     "note": "melted",
+     "aisle": "dairy"
+    },
+    {
+     "q": 3,
+     "u": "clove",
+     "item": "garlic",
+     "note": "minced",
+     "aisle": "produce"
+    },
+    {
+     "q": 1,
+     "u": "",
+     "item": "lemon",
+     "note": "juiced",
+     "aisle": "produce"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "paprika",
+     "aisle": "spices"
+    },
+    {
+     "q": 0.5,
+     "u": "tsp",
+     "item": "salt",
+     "aisle": "spices"
+    },
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "fresh parsley",
+     "note": "chopped",
+     "aisle": "produce"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Soak 8 wooden skewers in water for 20 minutes, if using wood.",
+     "timer": 1200,
+     "timerLabel": "Soak skewers"
+    },
+    {
+     "text": "Mix butter, garlic, lemon juice, paprika and salt. Toss half with the shrimp and thread onto skewers."
+    },
+    {
+     "text": "Grill over medium-high heat 2 to 3 minutes per side until pink and opaque.",
+     "timer": 300,
+     "timerLabel": "Grill shrimp"
+    },
+    {
+     "text": "Brush with the remaining butter and sprinkle with parsley."
+    }
+   ]
+  },
+  {
+   "id": "american-baked-lemon-dill-salmon",
+   "title": "Baked lemon-dill salmon",
+   "blurb": "Foil-baked salmon fillets with butter and fresh dill",
+   "type": "seafood",
+   "serves": 4,
+   "prep": 10,
+   "cook": 20,
+   "tags": [
+    "quick",
+    "healthy",
+    "gluten-free"
+   ],
+   "ingredients": [
+    {
+     "q": 4,
+     "u": "piece",
+     "item": "salmon fillets",
+     "note": "about 6 oz each",
+     "aisle": "seafood"
+    },
+    {
+     "q": 2,
+     "u": "tbsp",
+     "item": "unsalted butter",
+     "note": "melted",
+     "aisle": "dairy"
+    },
+    {
+     "q": 1,
+     "u": "",
+     "item": "lemon",
+     "note": "sliced, divided",
+     "aisle": "produce"
+    },
+    {
+     "q": 2,
+     "u": "tbsp",
+     "item": "fresh dill",
+     "note": "chopped",
+     "aisle": "produce"
+    },
+    {
+     "q": 0.5,
+     "u": "tsp",
+     "item": "salt",
+     "aisle": "spices"
+    },
+    {
+     "q": 0.25,
+     "u": "tsp",
+     "item": "black pepper",
+     "aisle": "spices"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Heat oven to 400°F. Place salmon on a lined pan and brush with butter."
+    },
+    {
+     "text": "Season with salt and pepper and top with dill and lemon slices."
+    },
+    {
+     "text": "Bake until the fish flakes easily and reaches 145°F, 12 to 15 minutes.",
+     "timer": 840,
+     "timerLabel": "Bake salmon"
+    },
+    {
+     "text": "Serve with the remaining lemon."
+    }
+   ]
+  },
+  {
+   "id": "american-beef-barley-soup",
+   "title": "Hearty beef barley soup",
+   "blurb": "Tender beef, barley and vegetables in a rich broth",
+   "type": "soups",
+   "serves": 6,
+   "prep": 20,
+   "cook": 100,
+   "tags": [
+    "one pot",
+    "make ahead"
+   ],
+   "ingredients": [
+    {
+     "q": 1.5,
+     "u": "lb",
+     "item": "beef chuck",
+     "note": "cut in 3/4-inch cubes",
+     "aisle": "meat"
+    },
+    {
+     "q": 2,
+     "u": "tbsp",
+     "item": "vegetable oil",
+     "aisle": "pantry"
+    },
+    {
+     "q": 1,
+     "u": "",
+     "item": "yellow onion",
+     "note": "diced",
+     "aisle": "produce"
+    },
+    {
+     "q": 3,
+     "u": "",
+     "item": "carrots",
+     "note": "sliced",
+     "aisle": "produce"
+    },
+    {
+     "q": 3,
+     "u": "stalk",
+     "item": "celery",
+     "note": "sliced",
+     "aisle": "produce"
+    },
+    {
+     "q": 8,
+     "u": "cup",
+     "item": "beef broth",
+     "aisle": "pantry"
+    },
+    {
+     "q": 0.75,
+     "u": "cup",
+     "item": "pearl barley",
+     "aisle": "pantry"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "dried thyme",
+     "aisle": "spices"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "salt",
+     "aisle": "spices"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Brown beef in oil in a Dutch oven in two batches, 5 minutes each. Remove.",
+     "timer": 600,
+     "timerLabel": "Brown beef"
+    },
+    {
+     "text": "Cook onion, carrots and celery in the pot 5 minutes.",
+     "timer": 300,
+     "timerLabel": "Soften vegetables"
+    },
+    {
+     "text": "Add broth, beef, thyme and salt. Simmer covered 1 hour.",
+     "timer": 3600,
+     "timerLabel": "Simmer beef"
+    },
+    {
+     "text": "Stir in barley and simmer until barley and beef are tender, 30 minutes.",
+     "timer": 1800,
+     "timerLabel": "Cook barley"
+    },
+    {
+     "text": "Season with black pepper and serve."
+    }
+   ]
+  },
+  {
+   "id": "american-ham-and-bean-soup",
+   "title": "Smoky ham hock and navy bean soup",
+   "blurb": "Smoky ham hock and navy beans, simmered slow",
+   "type": "soups",
+   "serves": 8,
+   "prep": 20,
+   "cook": 150,
+   "tags": [
+    "one pot",
+    "make ahead"
+   ],
+   "ingredients": [
+    {
+     "q": 1,
+     "u": "lb",
+     "item": "dried navy beans",
+     "note": "rinsed",
+     "aisle": "pantry"
+    },
+    {
+     "q": 1,
+     "u": "",
+     "item": "smoked ham hock",
+     "aisle": "meat"
+    },
+    {
+     "q": 1,
+     "u": "",
+     "item": "yellow onion",
+     "note": "diced",
+     "aisle": "produce"
+    },
+    {
+     "q": 3,
+     "u": "",
+     "item": "carrots",
+     "note": "diced",
+     "aisle": "produce"
+    },
+    {
+     "q": 3,
+     "u": "stalk",
+     "item": "celery",
+     "note": "diced",
+     "aisle": "produce"
+    },
+    {
+     "q": 8,
+     "u": "cup",
+     "item": "water",
+     "aisle": "pantry"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "black pepper",
+     "aisle": "spices"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "salt",
+     "aisle": "spices"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Cover beans with water by 2 inches and soak overnight, then drain.",
+     "timer": 28800,
+     "timerLabel": "Soak beans"
+    },
+    {
+     "text": "Combine beans, ham hock, vegetables, 8 cups water and pepper in a Dutch oven. Bring to a boil."
+    },
+    {
+     "text": "Cover and simmer until beans are tender, about 2 hours.",
+     "timer": 7200,
+     "timerLabel": "Simmer soup"
+    },
+    {
+     "text": "Remove the hock, shred the meat and stir it back in. Season with salt."
+    }
+   ]
+  },
+  {
+   "id": "american-new-england-clam-chowder",
+   "title": "New England clam chowder",
+   "blurb": "Creamy potato chowder with bacon and tender clams",
+   "type": "soups",
+   "serves": 6,
+   "prep": 15,
+   "cook": 35,
+   "tags": [
+    "one pot"
+   ],
+   "ingredients": [
+    {
+     "q": 4,
+     "u": "slice",
+     "item": "bacon",
+     "note": "chopped",
+     "aisle": "meat"
+    },
+    {
+     "q": 1,
+     "u": "",
+     "item": "yellow onion",
+     "note": "diced",
+     "aisle": "produce"
+    },
+    {
+     "q": 2,
+     "u": "tbsp",
+     "item": "all-purpose flour",
+     "aisle": "pantry"
+    },
+    {
+     "q": 2,
+     "u": "can",
+     "item": "chopped clams (6.5 oz)",
+     "note": "juice reserved",
+     "aisle": "canned"
+    },
+    {
+     "q": 1,
+     "u": "cup",
+     "item": "bottled clam juice",
+     "aisle": "canned"
+    },
+    {
+     "q": 1.5,
+     "u": "lb",
+     "item": "potatoes",
+     "note": "diced",
+     "aisle": "produce"
+    },
+    {
+     "q": 2,
+     "u": "cup",
+     "item": "whole milk",
+     "aisle": "dairy"
+    },
+    {
+     "q": 1,
+     "u": "cup",
+     "item": "heavy cream",
+     "aisle": "dairy"
+    },
+    {
+     "q": 0.5,
+     "u": "tsp",
+     "item": "black pepper",
+     "aisle": "spices"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Cook bacon in a Dutch oven until crisp, 6 minutes. Remove and keep the fat.",
+     "timer": 360,
+     "timerLabel": "Cook bacon"
+    },
+    {
+     "text": "Cook onion in the fat 4 minutes. Stir in flour for 1 minute.",
+     "timer": 240,
+     "timerLabel": "Soften onion"
+    },
+    {
+     "text": "Add clam juice, canned clam liquid and potatoes. Simmer until potatoes are tender, 15 minutes.",
+     "timer": 900,
+     "timerLabel": "Simmer potatoes"
+    },
+    {
+     "text": "Stir in milk, cream, clams and pepper. Heat gently, do not boil, 5 minutes.",
+     "timer": 300,
+     "timerLabel": "Warm chowder"
+    },
+    {
+     "text": "Serve topped with the bacon."
+    }
+   ]
+  },
+  {
+   "id": "american-cheeseburger-soup",
+   "title": "Cheeseburger soup",
+   "blurb": "All the flavors of a cheeseburger in a creamy bowl",
+   "type": "soups",
+   "serves": 6,
+   "prep": 15,
+   "cook": 35,
+   "tags": [
+    "one pot",
+    "kid-friendly"
+   ],
+   "ingredients": [
+    {
+     "q": 1,
+     "u": "lb",
+     "item": "ground beef",
+     "aisle": "meat"
+    },
+    {
+     "q": 1,
+     "u": "",
+     "item": "yellow onion",
+     "note": "diced",
+     "aisle": "produce"
+    },
+    {
+     "q": 3,
+     "u": "cup",
+     "item": "beef broth",
+     "aisle": "pantry"
+    },
+    {
+     "q": 1.5,
+     "u": "lb",
+     "item": "potatoes",
+     "note": "diced",
+     "aisle": "produce"
+    },
+    {
+     "q": 3,
+     "u": "tbsp",
+     "item": "all-purpose flour",
+     "aisle": "pantry"
+    },
+    {
+     "q": 2,
+     "u": "cup",
+     "item": "whole milk",
+     "aisle": "dairy"
+    },
+    {
+     "q": 2,
+     "u": "cup",
+     "item": "shredded cheddar",
+     "aisle": "dairy"
+    },
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "ketchup",
+     "aisle": "pantry"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "salt",
+     "aisle": "spices"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Brown beef and onion until cooked through and drain.",
+     "timer": 480,
+     "timerLabel": "Brown beef"
+    },
+    {
+     "text": "Add broth and potatoes. Simmer until potatoes are tender, 15 minutes.",
+     "timer": 900,
+     "timerLabel": "Simmer potatoes"
+    },
+    {
+     "text": "Whisk flour into milk and stir into the pot. Simmer until thickened, 5 minutes.",
+     "timer": 300,
+     "timerLabel": "Thicken soup"
+    },
+    {
+     "text": "Stir in cheddar, ketchup and salt until melted. Serve with pickles and croutons."
+    }
+   ]
+  },
+  {
+   "id": "american-buttermilk-biscuits",
+   "title": "Flaky buttermilk biscuits",
+   "blurb": "Tall, flaky biscuits with golden tops",
+   "type": "sides",
+   "serves": 8,
+   "prep": 15,
+   "cook": 15,
+   "tags": [
+    "quick",
+    "vegetarian"
+   ],
+   "ingredients": [
+    {
+     "q": 2.5,
+     "u": "cup",
+     "item": "all-purpose flour",
+     "aisle": "pantry"
+    },
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "baking powder",
+     "aisle": "pantry"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "sugar",
+     "aisle": "pantry"
+    },
+    {
+     "q": 0.75,
+     "u": "tsp",
+     "item": "salt",
+     "aisle": "spices"
+    },
+    {
+     "q": 8,
+     "u": "tbsp",
+     "item": "unsalted butter",
+     "note": "cold, cubed",
+     "aisle": "dairy"
+    },
+    {
+     "q": 1,
+     "u": "cup",
+     "item": "buttermilk",
+     "aisle": "dairy"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Heat oven to 450°F. Whisk flour, baking powder, sugar and salt."
+    },
+    {
+     "text": "Cut in cold butter with your fingers until pea-sized crumbs form."
+    },
+    {
+     "text": "Stir in buttermilk just until a shaggy dough forms."
+    },
+    {
+     "text": "Pat to 1 inch thick, cut 8 rounds and place close together on a pan."
+    },
+    {
+     "text": "Bake until tall and golden.",
+     "timer": 900,
+     "timerLabel": "Bake biscuits"
+    }
+   ]
+  },
+  {
+   "id": "american-scalloped-potatoes",
+   "title": "Creamy scalloped potatoes",
+   "blurb": "Thin-sliced potatoes baked in garlic cream sauce",
+   "type": "sides",
+   "serves": 8,
+   "prep": 20,
+   "cook": 90,
+   "tags": [
+    "vegetarian",
+    "holiday"
+   ],
+   "ingredients": [
+    {
+     "q": 3,
+     "u": "lb",
+     "item": "russet potatoes",
+     "note": "thinly sliced",
+     "aisle": "produce"
+    },
+    {
+     "q": 3,
+     "u": "tbsp",
+     "item": "unsalted butter",
+     "aisle": "dairy"
+    },
+    {
+     "q": 3,
+     "u": "tbsp",
+     "item": "all-purpose flour",
+     "aisle": "pantry"
+    },
+    {
+     "q": 2.5,
+     "u": "cup",
+     "item": "whole milk",
+     "aisle": "dairy"
+    },
+    {
+     "q": 2,
+     "u": "clove",
+     "item": "garlic",
+     "note": "minced",
+     "aisle": "produce"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "salt",
+     "aisle": "spices"
+    },
+    {
+     "q": 0.5,
+     "u": "tsp",
+     "item": "black pepper",
+     "aisle": "spices"
+    },
+    {
+     "q": 1,
+     "u": "cup",
+     "item": "shredded Gruyere or cheddar",
+     "aisle": "dairy"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Heat oven to 375°F and butter a 9x13 dish."
+    },
+    {
+     "text": "Melt butter, cook garlic 30 seconds, whisk in flour, then milk, salt and pepper. Simmer until thick.",
+     "timer": 300,
+     "timerLabel": "Make sauce"
+    },
+    {
+     "text": "Layer potatoes in the dish, pouring sauce and a sprinkle of cheese over each layer."
+    },
+    {
+     "text": "Cover with foil and bake 45 minutes.",
+     "timer": 2700,
+     "timerLabel": "Bake covered"
+    },
+    {
+     "text": "Uncover and bake until tender and golden, 30 to 40 minutes.",
+     "timer": 2100,
+     "timerLabel": "Bake uncovered"
+    }
+   ]
+  },
+  {
+   "id": "american-wedge-salad",
+   "title": "Wedge salad with bacon and blue cheese",
+   "blurb": "Steakhouse iceberg wedges with creamy dressing",
+   "type": "sides",
+   "serves": 4,
+   "prep": 15,
+   "cook": 10,
+   "tags": [
+    "quick"
+   ],
+   "ingredients": [
+    {
+     "q": 1,
+     "u": "head",
+     "item": "iceberg lettuce",
+     "note": "quartered",
+     "aisle": "produce"
+    },
+    {
+     "q": 6,
+     "u": "slice",
+     "item": "bacon",
+     "aisle": "meat"
+    },
+    {
+     "q": 1,
+     "u": "cup",
+     "item": "cherry tomatoes",
+     "note": "halved",
+     "aisle": "produce"
+    },
+    {
+     "q": 0.5,
+     "u": "cup",
+     "item": "blue cheese dressing",
+     "aisle": "dairy"
+    },
+    {
+     "q": 0.25,
+     "u": "cup",
+     "item": "blue cheese crumbles",
+     "aisle": "dairy"
+    },
+    {
+     "q": 0.5,
+     "u": "tsp",
+     "item": "black pepper",
+     "aisle": "spices"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Cook bacon until crisp, about 10 minutes, then crumble.",
+     "timer": 600,
+     "timerLabel": "Cook bacon"
+    },
+    {
+     "text": "Set a lettuce wedge on each plate."
+    },
+    {
+     "text": "Spoon dressing over the wedges."
+    },
+    {
+     "text": "Top with bacon, tomatoes, blue cheese and pepper."
     }
    ]
   }

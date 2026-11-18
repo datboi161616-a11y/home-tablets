@@ -5284,6 +5284,5424 @@
      "text": "Brush with honey while hot."
     }
    ]
+  },
+  {
+   "id": "southern-carolina-pulled-pork",
+   "title": "Slow-cooker Carolina pulled pork",
+   "blurb": "Tangy vinegar-pepper pork, fall-apart tender",
+   "type": "bbq",
+   "serves": 8,
+   "prep": 20,
+   "cook": 480,
+   "tags": [
+    "slow cooker",
+    "make ahead",
+    "crowd",
+    "gluten-free"
+   ],
+   "ingredients": [
+    {
+     "q": 4,
+     "u": "lb",
+     "item": "boneless pork shoulder",
+     "aisle": "meat",
+     "note": "cut in 3 big chunks"
+    },
+    {
+     "q": 2,
+     "u": "tbsp",
+     "item": "packed brown sugar",
+     "aisle": "pantry"
+    },
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "smoked paprika",
+     "aisle": "spices"
+    },
+    {
+     "q": 2,
+     "u": "tsp",
+     "item": "salt",
+     "aisle": "spices"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "black pepper",
+     "aisle": "spices"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "garlic powder",
+     "aisle": "spices"
+    },
+    {
+     "q": 1,
+     "u": "",
+     "item": "yellow onion",
+     "aisle": "produce",
+     "note": "sliced"
+    },
+    {
+     "q": 1,
+     "u": "cup",
+     "item": "apple cider vinegar",
+     "aisle": "pantry"
+    },
+    {
+     "q": 0.5,
+     "u": "cup",
+     "item": "water",
+     "aisle": "pantry"
+    },
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "crushed red pepper",
+     "aisle": "spices",
+     "note": "or 2 tsp, to taste"
+    },
+    {
+     "q": 8,
+     "u": "",
+     "item": "hamburger buns",
+     "aisle": "bakery",
+     "note": "to serve"
+    },
+    {
+     "q": 3,
+     "u": "cup",
+     "item": "coleslaw mix",
+     "aisle": "produce",
+     "note": "to serve"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Mix the brown sugar, paprika, salt, black pepper and garlic powder. Rub all over the pork."
+    },
+    {
+     "text": "Put the onion in the slow cooker and set the pork on top."
+    },
+    {
+     "text": "Stir 0.5 cup vinegar, the water and red pepper flakes together and pour around the pork."
+    },
+    {
+     "text": "Cover and cook on low until the pork shreds easily and reaches 200°F inside.",
+     "timer": 28800,
+     "timerLabel": "Slow cook the pork"
+    },
+    {
+     "text": "Lift the pork to a bowl and shred it, tossing out any big pieces of fat."
+    },
+    {
+     "text": "Stir in 0.5 cup of the cooking liquid and the rest of the vinegar. Taste and add salt."
+    },
+    {
+     "text": "Pile on buns with coleslaw mix."
+    }
+   ]
+  },
+  {
+   "id": "southern-oven-st-louis-ribs",
+   "title": "Oven St. Louis-style ribs",
+   "blurb": "Dry-rubbed, slow-baked and glazed until they sticky up",
+   "type": "bbq",
+   "serves": 4,
+   "prep": 20,
+   "cook": 200,
+   "tags": [
+    "make ahead",
+    "gluten-free"
+   ],
+   "ingredients": [
+    {
+     "q": 2,
+     "u": "",
+     "item": "racks St. Louis-style pork ribs (about 2.5 lb each)",
+     "aisle": "meat"
+    },
+    {
+     "q": 3,
+     "u": "tbsp",
+     "item": "packed brown sugar",
+     "aisle": "pantry"
+    },
+    {
+     "q": 2,
+     "u": "tbsp",
+     "item": "smoked paprika",
+     "aisle": "spices"
+    },
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "salt",
+     "aisle": "spices"
+    },
+    {
+     "q": 2,
+     "u": "tsp",
+     "item": "black pepper",
+     "aisle": "spices"
+    },
+    {
+     "q": 2,
+     "u": "tsp",
+     "item": "garlic powder",
+     "aisle": "spices"
+    },
+    {
+     "q": 2,
+     "u": "tsp",
+     "item": "onion powder",
+     "aisle": "spices"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "chili powder",
+     "aisle": "spices"
+    },
+    {
+     "q": 1,
+     "u": "cup",
+     "item": "barbecue sauce",
+     "aisle": "pantry"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Heat the oven to 275°F. Peel the thin membrane off the back of each rack with a paper towel."
+    },
+    {
+     "text": "Mix the sugar, paprika, salt, pepper, garlic powder, onion powder and chili powder. Rub it on both sides."
+    },
+    {
+     "text": "Wrap each rack tightly in foil, meaty side up, and set on a rimmed baking sheet."
+    },
+    {
+     "text": "Bake until the meat is tender and pulls back from the bones.",
+     "timer": 9000,
+     "timerLabel": "Bake wrapped ribs"
+    },
+    {
+     "text": "Heat the broiler. Unwrap the ribs and brush the tops with barbecue sauce."
+    },
+    {
+     "text": "Broil 4 to 6 inches from the heat until the sauce bubbles and darkens, watching closely.",
+     "timer": 300,
+     "timerLabel": "Broil the glaze"
+    },
+    {
+     "text": "Rest the ribs, then slice between the bones.",
+     "timer": 300,
+     "timerLabel": "Rest the ribs"
+    }
+   ]
+  },
+  {
+   "id": "southern-slow-cooker-bbq-brisket",
+   "title": "Slow-cooker BBQ brisket",
+   "blurb": "Sliced beef brisket in a sweet-smoky sauce, no smoker needed",
+   "type": "bbq",
+   "serves": 8,
+   "prep": 20,
+   "cook": 480,
+   "tags": [
+    "slow cooker",
+    "make ahead",
+    "crowd"
+   ],
+   "ingredients": [
+    {
+     "q": 4,
+     "u": "lb",
+     "item": "beef brisket flat",
+     "aisle": "meat",
+     "note": "trimmed"
+    },
+    {
+     "q": 2,
+     "u": "tsp",
+     "item": "salt",
+     "aisle": "spices"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "black pepper",
+     "aisle": "spices"
+    },
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "smoked paprika",
+     "aisle": "spices"
+    },
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "vegetable oil",
+     "aisle": "pantry"
+    },
+    {
+     "q": 1,
+     "u": "",
+     "item": "yellow onion",
+     "aisle": "produce",
+     "note": "sliced"
+    },
+    {
+     "q": 3,
+     "u": "clove",
+     "item": "garlic",
+     "aisle": "produce",
+     "note": "minced"
+    },
+    {
+     "q": 1,
+     "u": "cup",
+     "item": "barbecue sauce",
+     "aisle": "pantry"
+    },
+    {
+     "q": 0.5,
+     "u": "cup",
+     "item": "beef broth",
+     "aisle": "pantry"
+    },
+    {
+     "q": 2,
+     "u": "tbsp",
+     "item": "Worcestershire sauce",
+     "aisle": "pantry"
+    },
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "apple cider vinegar",
+     "aisle": "pantry"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Rub the brisket with salt, pepper and paprika."
+    },
+    {
+     "text": "Sear the brisket in hot oil in a big skillet, 4 minutes per side. Move to the slow cooker.",
+     "timer": 480,
+     "timerLabel": "Sear both sides"
+    },
+    {
+     "text": "Scatter the onion and garlic on top."
+    },
+    {
+     "text": "Whisk the barbecue sauce, broth, Worcestershire and vinegar. Pour over the brisket."
+    },
+    {
+     "text": "Cover and cook on low until fork-tender and 200°F inside.",
+     "timer": 28800,
+     "timerLabel": "Slow cook the brisket"
+    },
+    {
+     "text": "Rest the brisket on a board, then slice against the grain.",
+     "timer": 600,
+     "timerLabel": "Rest the brisket"
+    },
+    {
+     "text": "Skim fat from the sauce, spoon it over the slices and serve."
+    }
+   ]
+  },
+  {
+   "id": "southern-spatchcock-bbq-chicken",
+   "title": "Spatchcock barbecue chicken",
+   "blurb": "Flat roast chicken, fast and juicy, lacquered with sauce",
+   "type": "bbq",
+   "serves": 4,
+   "prep": 20,
+   "cook": 60,
+   "tags": [
+    "gluten-free"
+   ],
+   "ingredients": [
+    {
+     "q": 1,
+     "u": "",
+     "item": "whole chicken (4 to 5 lb)",
+     "aisle": "meat"
+    },
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "smoked paprika",
+     "aisle": "spices"
+    },
+    {
+     "q": 2,
+     "u": "tsp",
+     "item": "salt",
+     "aisle": "spices"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "black pepper",
+     "aisle": "spices"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "garlic powder",
+     "aisle": "spices"
+    },
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "packed brown sugar",
+     "aisle": "pantry"
+    },
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "vegetable oil",
+     "aisle": "pantry"
+    },
+    {
+     "q": 0.75,
+     "u": "cup",
+     "item": "barbecue sauce",
+     "aisle": "pantry"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Heat the oven to 425°F. With kitchen shears cut out the backbone, then press the chicken flat, skin up."
+    },
+    {
+     "text": "Mix paprika, salt, pepper, garlic powder and sugar. Pat the chicken dry, rub with oil, then the spices."
+    },
+    {
+     "text": "Roast on a rimmed baking sheet until the thigh reaches 150°F.",
+     "timer": 2400,
+     "timerLabel": "Roast the chicken"
+    },
+    {
+     "text": "Brush the skin generously with barbecue sauce."
+    },
+    {
+     "text": "Roast until the thickest part of the thigh reaches 165°F and the sauce is tacky.",
+     "timer": 900,
+     "timerLabel": "Finish roasting"
+    },
+    {
+     "text": "Rest the chicken, then carve.",
+     "timer": 600,
+     "timerLabel": "Rest the chicken"
+    }
+   ]
+  },
+  {
+   "id": "southern-oven-bbq-beef-short-ribs",
+   "title": "Oven BBQ beef short ribs",
+   "blurb": "Bone-in short ribs braised until the meat falls off",
+   "type": "bbq",
+   "serves": 4,
+   "prep": 20,
+   "cook": 200,
+   "tags": [
+    "make ahead"
+   ],
+   "ingredients": [
+    {
+     "q": 4,
+     "u": "lb",
+     "item": "bone-in beef short ribs",
+     "aisle": "meat"
+    },
+    {
+     "q": 2,
+     "u": "tsp",
+     "item": "salt",
+     "aisle": "spices"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "black pepper",
+     "aisle": "spices"
+    },
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "vegetable oil",
+     "aisle": "pantry"
+    },
+    {
+     "q": 1,
+     "u": "",
+     "item": "yellow onion",
+     "aisle": "produce",
+     "note": "diced"
+    },
+    {
+     "q": 3,
+     "u": "clove",
+     "item": "garlic",
+     "aisle": "produce",
+     "note": "minced"
+    },
+    {
+     "q": 1,
+     "u": "cup",
+     "item": "barbecue sauce",
+     "aisle": "pantry"
+    },
+    {
+     "q": 1,
+     "u": "cup",
+     "item": "beef broth",
+     "aisle": "pantry"
+    },
+    {
+     "q": 2,
+     "u": "tbsp",
+     "item": "apple cider vinegar",
+     "aisle": "pantry"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Heat the oven to 325°F. Season the short ribs with salt and pepper."
+    },
+    {
+     "text": "Brown the ribs in hot oil in a Dutch oven, in batches, 3 minutes per side. Set aside.",
+     "timer": 720,
+     "timerLabel": "Brown the ribs"
+    },
+    {
+     "text": "Cook the onion in the drippings 4 minutes, add garlic for 30 seconds."
+    },
+    {
+     "text": "Stir in barbecue sauce, broth and vinegar. Return the ribs, bone side up, and bring to a simmer."
+    },
+    {
+     "text": "Cover and braise in the oven until the meat is very tender.",
+     "timer": 9000,
+     "timerLabel": "Braise the ribs"
+    },
+    {
+     "text": "Skim off fat, then simmer the sauce on the stove until slightly thick, about 5 minutes."
+    },
+    {
+     "text": "Spoon the sauce over the ribs and serve."
+    }
+   ]
+  },
+  {
+   "id": "southern-grilled-sausage-potato-packs",
+   "title": "Smoked sausage and potato foil packs",
+   "blurb": "Easy cookout dinner with barbecue-seasoned potatoes",
+   "type": "bbq",
+   "serves": 4,
+   "prep": 15,
+   "cook": 35,
+   "tags": [
+    "grill",
+    "one pot",
+    "kid-friendly"
+   ],
+   "ingredients": [
+    {
+     "q": 1,
+     "u": "lb",
+     "item": "smoked sausage",
+     "aisle": "meat",
+     "note": "cut in 0.5-inch rounds"
+    },
+    {
+     "q": 1.5,
+     "u": "lb",
+     "item": "baby potatoes",
+     "aisle": "produce",
+     "note": "quartered"
+    },
+    {
+     "q": 1,
+     "u": "",
+     "item": "green bell pepper",
+     "aisle": "produce",
+     "note": "diced"
+    },
+    {
+     "q": 1,
+     "u": "",
+     "item": "yellow onion",
+     "aisle": "produce",
+     "note": "diced"
+    },
+    {
+     "q": 2,
+     "u": "tbsp",
+     "item": "olive oil",
+     "aisle": "pantry"
+    },
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "smoked paprika",
+     "aisle": "spices"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "garlic powder",
+     "aisle": "spices"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "salt",
+     "aisle": "spices"
+    },
+    {
+     "q": 0.5,
+     "u": "tsp",
+     "item": "black pepper",
+     "aisle": "spices"
+    },
+    {
+     "q": 0.25,
+     "u": "cup",
+     "item": "barbecue sauce",
+     "aisle": "pantry"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Heat the grill to medium, about 400°F. Tear off four 14-inch sheets of heavy foil."
+    },
+    {
+     "text": "Toss the sausage, potatoes, pepper and onion with oil, paprika, garlic powder, salt and pepper."
+    },
+    {
+     "text": "Divide among the foil sheets and fold into sealed packets, leaving a little air space."
+    },
+    {
+     "text": "Grill with the lid closed, turning once, until the potatoes are tender.",
+     "timer": 1800,
+     "timerLabel": "Grill the packs"
+    },
+    {
+     "text": "Open carefully, steam will escape. Drizzle with barbecue sauce."
+    },
+    {
+     "text": "Serve straight from the foil."
+    }
+   ]
+  },
+  {
+   "id": "southern-memphis-dry-rub-pork-tenderloin",
+   "title": "Memphis dry-rub pork tenderloin",
+   "blurb": "Sweet-smoky spice crust, roasted or grilled, sliced thin",
+   "type": "bbq",
+   "serves": 4,
+   "prep": 15,
+   "cook": 30,
+   "tags": [
+    "grill",
+    "gluten-free"
+   ],
+   "ingredients": [
+    {
+     "q": 2,
+     "u": "",
+     "item": "pork tenderloins (about 1 lb each)",
+     "aisle": "meat"
+    },
+    {
+     "q": 2,
+     "u": "tbsp",
+     "item": "packed brown sugar",
+     "aisle": "pantry"
+    },
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "paprika",
+     "aisle": "spices"
+    },
+    {
+     "q": 2,
+     "u": "tsp",
+     "item": "salt",
+     "aisle": "spices"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "black pepper",
+     "aisle": "spices"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "garlic powder",
+     "aisle": "spices"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "onion powder",
+     "aisle": "spices"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "dry mustard",
+     "aisle": "spices"
+    },
+    {
+     "q": 2,
+     "u": "tbsp",
+     "item": "olive oil",
+     "aisle": "pantry"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Heat the oven to 400°F, or the grill to medium-high. Trim the silver skin off the pork."
+    },
+    {
+     "text": "Mix sugar, paprika, salt, pepper, garlic powder, onion powder and mustard."
+    },
+    {
+     "text": "Rub the pork with oil, then press the spices all over."
+    },
+    {
+     "text": "Sear in an oven-safe skillet 2 minutes per side, then roast (or grill with the lid closed) until 145°F inside.",
+     "timer": 1500,
+     "timerLabel": "Cook the pork"
+    },
+    {
+     "text": "Rest the pork, then slice.",
+     "timer": 300,
+     "timerLabel": "Rest the pork"
+    },
+    {
+     "text": "Serve with the pan juices."
+    }
+   ]
+  },
+  {
+   "id": "southern-sticky-oven-bbq-chicken-thighs",
+   "title": "Sticky oven BBQ chicken thighs",
+   "blurb": "Crisp-edged thighs glazed in sweet and tangy sauce",
+   "type": "bbq",
+   "serves": 4,
+   "prep": 10,
+   "cook": 45,
+   "tags": [
+    "kid-friendly",
+    "sheet pan"
+   ],
+   "ingredients": [
+    {
+     "q": 3,
+     "u": "lb",
+     "item": "bone-in skin-on chicken thighs",
+     "aisle": "meat"
+    },
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "olive oil",
+     "aisle": "pantry"
+    },
+    {
+     "q": 2,
+     "u": "tsp",
+     "item": "smoked paprika",
+     "aisle": "spices"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "salt",
+     "aisle": "spices"
+    },
+    {
+     "q": 0.5,
+     "u": "tsp",
+     "item": "black pepper",
+     "aisle": "spices"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "garlic powder",
+     "aisle": "spices"
+    },
+    {
+     "q": 1,
+     "u": "cup",
+     "item": "barbecue sauce",
+     "aisle": "pantry"
+    },
+    {
+     "q": 2,
+     "u": "tbsp",
+     "item": "honey",
+     "aisle": "pantry"
+    },
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "apple cider vinegar",
+     "aisle": "pantry"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Heat the oven to 425°F and line a rimmed baking sheet with foil."
+    },
+    {
+     "text": "Pat the thighs dry. Toss with oil, paprika, salt, pepper and garlic powder."
+    },
+    {
+     "text": "Roast skin side up until the skin starts to crisp.",
+     "timer": 1500,
+     "timerLabel": "Roast the thighs"
+    },
+    {
+     "text": "Whisk the barbecue sauce, honey and vinegar. Brush half over the chicken."
+    },
+    {
+     "text": "Roast again until the thickest part is 175°F and the glaze is sticky.",
+     "timer": 900,
+     "timerLabel": "Glaze and finish"
+    },
+    {
+     "text": "Brush with the remaining sauce and serve."
+    }
+   ]
+  },
+  {
+   "id": "southern-bbq-pulled-pork-baked-potatoes",
+   "title": "BBQ pulled pork stuffed potatoes",
+   "blurb": "Loaded baked potatoes piled with saucy pork",
+   "type": "bbq",
+   "serves": 4,
+   "prep": 15,
+   "cook": 70,
+   "tags": [
+    "make ahead",
+    "kid-friendly"
+   ],
+   "ingredients": [
+    {
+     "q": 4,
+     "u": "",
+     "item": "large russet potatoes",
+     "aisle": "produce"
+    },
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "olive oil",
+     "aisle": "pantry"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "salt",
+     "aisle": "spices"
+    },
+    {
+     "q": 2,
+     "u": "cup",
+     "item": "cooked pulled pork",
+     "aisle": "meat",
+     "note": "about 1 lb"
+    },
+    {
+     "q": 0.75,
+     "u": "cup",
+     "item": "barbecue sauce",
+     "aisle": "pantry"
+    },
+    {
+     "q": 1,
+     "u": "cup",
+     "item": "shredded cheddar cheese",
+     "aisle": "dairy"
+    },
+    {
+     "q": 4,
+     "u": "tbsp",
+     "item": "sour cream",
+     "aisle": "dairy"
+    },
+    {
+     "q": 2,
+     "u": "",
+     "item": "green onions",
+     "aisle": "produce",
+     "note": "sliced"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Heat the oven to 425°F. Scrub the potatoes, prick with a fork, rub with oil and salt."
+    },
+    {
+     "text": "Bake directly on the oven rack until tender when pierced.",
+     "timer": 3600,
+     "timerLabel": "Bake potatoes"
+    },
+    {
+     "text": "Warm the pork with the barbecue sauce in a saucepan until steaming hot, 165°F."
+    },
+    {
+     "text": "Split the potatoes and fluff the insides with a fork."
+    },
+    {
+     "text": "Top with pork and cheddar. Return to the oven 3 minutes to melt the cheese."
+    },
+    {
+     "text": "Finish with sour cream and green onions."
+    }
+   ]
+  },
+  {
+   "id": "southern-country-style-bbq-ribs-slow-cooker",
+   "title": "Slow-cooker country-style BBQ ribs",
+   "blurb": "Meaty boneless ribs that come out spoon-tender",
+   "type": "bbq",
+   "serves": 6,
+   "prep": 15,
+   "cook": 360,
+   "tags": [
+    "slow cooker",
+    "kid-friendly"
+   ],
+   "ingredients": [
+    {
+     "q": 3,
+     "u": "lb",
+     "item": "boneless country-style pork ribs",
+     "aisle": "meat"
+    },
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "smoked paprika",
+     "aisle": "spices"
+    },
+    {
+     "q": 2,
+     "u": "tsp",
+     "item": "salt",
+     "aisle": "spices"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "black pepper",
+     "aisle": "spices"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "garlic powder",
+     "aisle": "spices"
+    },
+    {
+     "q": 1,
+     "u": "",
+     "item": "yellow onion",
+     "aisle": "produce",
+     "note": "sliced"
+    },
+    {
+     "q": 1.5,
+     "u": "cup",
+     "item": "barbecue sauce",
+     "aisle": "pantry"
+    },
+    {
+     "q": 0.25,
+     "u": "cup",
+     "item": "water",
+     "aisle": "pantry"
+    },
+    {
+     "q": 2,
+     "u": "tbsp",
+     "item": "packed brown sugar",
+     "aisle": "pantry"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Rub the ribs with paprika, salt, pepper and garlic powder."
+    },
+    {
+     "text": "Layer the onion in the slow cooker and add the ribs."
+    },
+    {
+     "text": "Whisk 1 cup barbecue sauce with the water and brown sugar. Pour over the ribs."
+    },
+    {
+     "text": "Cover and cook on low until very tender and at least 195°F inside.",
+     "timer": 21600,
+     "timerLabel": "Slow cook the ribs"
+    },
+    {
+     "text": "Heat the broiler. Move the ribs to a foil-lined pan and brush with the remaining sauce."
+    },
+    {
+     "text": "Broil until the sauce is bubbling and caramelized.",
+     "timer": 240,
+     "timerLabel": "Broil to glaze"
+    },
+    {
+     "text": "Serve with extra sauce from the cooker."
+    }
+   ]
+  },
+  {
+   "id": "southern-oven-bbq-turkey-breast",
+   "title": "Oven BBQ turkey breast",
+   "blurb": "Juicy sliced turkey with a sweet, smoky glaze",
+   "type": "bbq",
+   "serves": 6,
+   "prep": 15,
+   "cook": 90,
+   "tags": [
+    "healthy",
+    "gluten-free"
+   ],
+   "ingredients": [
+    {
+     "q": 3,
+     "u": "lb",
+     "item": "boneless turkey breast",
+     "aisle": "meat"
+    },
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "olive oil",
+     "aisle": "pantry"
+    },
+    {
+     "q": 2,
+     "u": "tsp",
+     "item": "smoked paprika",
+     "aisle": "spices"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "salt",
+     "aisle": "spices"
+    },
+    {
+     "q": 0.5,
+     "u": "tsp",
+     "item": "black pepper",
+     "aisle": "spices"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "garlic powder",
+     "aisle": "spices"
+    },
+    {
+     "q": 0.75,
+     "u": "cup",
+     "item": "barbecue sauce",
+     "aisle": "pantry"
+    },
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "honey",
+     "aisle": "pantry"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Heat the oven to 350°F. Pat the turkey dry and rub with oil, paprika, salt, pepper and garlic powder."
+    },
+    {
+     "text": "Set the turkey in a baking dish and roast uncovered."
+    },
+    {
+     "text": "Roast 50 minutes, then check the temperature.",
+     "timer": 3000,
+     "timerLabel": "First roast"
+    },
+    {
+     "text": "Stir the barbecue sauce and honey. Brush half onto the turkey."
+    },
+    {
+     "text": "Roast until the thickest part reads 165°F, brushing once more halfway.",
+     "timer": 1800,
+     "timerLabel": "Finish roasting"
+    },
+    {
+     "text": "Rest the turkey, then slice and serve with the pan juices.",
+     "timer": 600,
+     "timerLabel": "Rest the turkey"
+    }
+   ]
+  },
+  {
+   "id": "southern-grilled-bbq-shrimp-skewers",
+   "title": "Grilled BBQ shrimp skewers",
+   "blurb": "Quick smoky shrimp, brushed with sauce as they char",
+   "type": "bbq",
+   "serves": 4,
+   "prep": 15,
+   "cook": 8,
+   "tags": [
+    "quick",
+    "grill",
+    "kid-friendly"
+   ],
+   "ingredients": [
+    {
+     "q": 1.5,
+     "u": "lb",
+     "item": "large peeled shrimp",
+     "aisle": "seafood",
+     "note": "tail on"
+    },
+    {
+     "q": 2,
+     "u": "tbsp",
+     "item": "olive oil",
+     "aisle": "pantry"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "smoked paprika",
+     "aisle": "spices"
+    },
+    {
+     "q": 0.5,
+     "u": "tsp",
+     "item": "garlic powder",
+     "aisle": "spices"
+    },
+    {
+     "q": 0.5,
+     "u": "tsp",
+     "item": "salt",
+     "aisle": "spices"
+    },
+    {
+     "q": 0.5,
+     "u": "cup",
+     "item": "barbecue sauce",
+     "aisle": "pantry"
+    },
+    {
+     "q": 1,
+     "u": "",
+     "item": "lemon",
+     "aisle": "produce",
+     "note": "cut in wedges"
+    },
+    {
+     "q": 8,
+     "u": "",
+     "item": "bamboo skewers",
+     "aisle": "pantry",
+     "note": "soaked 30 minutes"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Heat the grill to medium-high."
+    },
+    {
+     "text": "Toss the shrimp with oil, paprika, garlic powder and salt. Thread 5 or 6 onto each skewer."
+    },
+    {
+     "text": "Grill 2 minutes per side, then brush with barbecue sauce.",
+     "timer": 240,
+     "timerLabel": "Grill the shrimp"
+    },
+    {
+     "text": "Grill 1 more minute per side until pink and opaque, 145°F inside."
+    },
+    {
+     "text": "Serve with lemon wedges."
+    }
+   ]
+  },
+  {
+   "id": "southern-alabama-white-sauce-chicken",
+   "title": "Alabama white sauce chicken",
+   "blurb": "Roasted chicken quarters with a peppery mayo-vinegar sauce",
+   "type": "bbq",
+   "serves": 4,
+   "prep": 15,
+   "cook": 50,
+   "tags": [
+    "gluten-free"
+   ],
+   "ingredients": [
+    {
+     "q": 4,
+     "u": "",
+     "item": "chicken leg quarters",
+     "aisle": "meat"
+    },
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "olive oil",
+     "aisle": "pantry"
+    },
+    {
+     "q": 2,
+     "u": "tsp",
+     "item": "salt",
+     "aisle": "spices"
+    },
+    {
+     "q": 2,
+     "u": "tsp",
+     "item": "black pepper",
+     "aisle": "spices"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "garlic powder",
+     "aisle": "spices"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "smoked paprika",
+     "aisle": "spices"
+    },
+    {
+     "q": 1,
+     "u": "cup",
+     "item": "mayonnaise",
+     "aisle": "pantry"
+    },
+    {
+     "q": 3,
+     "u": "tbsp",
+     "item": "apple cider vinegar",
+     "aisle": "pantry"
+    },
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "prepared horseradish",
+     "aisle": "pantry"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "sugar",
+     "aisle": "pantry"
+    },
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "lemon juice",
+     "aisle": "produce"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Heat the oven to 425°F. Pat the chicken dry and rub with oil, salt, 1 tsp pepper, garlic powder and paprika."
+    },
+    {
+     "text": "Roast on a rack set over a baking sheet until the skin is crisp and the thickest part is 175°F.",
+     "timer": 2700,
+     "timerLabel": "Roast the chicken"
+    },
+    {
+     "text": "Whisk the mayonnaise, vinegar, horseradish, sugar, lemon juice and the remaining pepper."
+    },
+    {
+     "text": "Let the chicken rest 5 minutes."
+    },
+    {
+     "text": "Dunk or brush each quarter in about half the sauce and serve the rest alongside."
+    }
+   ]
+  },
+  {
+   "id": "southern-oven-chuck-roast-burnt-ends",
+   "title": "Oven chuck roast burnt ends",
+   "blurb": "Cubed beef with caramelized edges, a brisket-tip stand-in",
+   "type": "bbq",
+   "serves": 6,
+   "prep": 20,
+   "cook": 270,
+   "tags": [
+    "make ahead",
+    "crowd"
+   ],
+   "ingredients": [
+    {
+     "q": 3.5,
+     "u": "lb",
+     "item": "beef chuck roast",
+     "aisle": "meat"
+    },
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "smoked paprika",
+     "aisle": "spices"
+    },
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "salt",
+     "aisle": "spices"
+    },
+    {
+     "q": 2,
+     "u": "tsp",
+     "item": "black pepper",
+     "aisle": "spices"
+    },
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "garlic powder",
+     "aisle": "spices"
+    },
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "packed brown sugar",
+     "aisle": "pantry"
+    },
+    {
+     "q": 1,
+     "u": "cup",
+     "item": "barbecue sauce",
+     "aisle": "pantry"
+    },
+    {
+     "q": 0.25,
+     "u": "cup",
+     "item": "honey",
+     "aisle": "pantry"
+    },
+    {
+     "q": 2,
+     "u": "tbsp",
+     "item": "unsalted butter",
+     "aisle": "dairy"
+    },
+    {
+     "q": 0.5,
+     "u": "cup",
+     "item": "beef broth",
+     "aisle": "pantry"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Heat the oven to 275°F. Mix paprika, salt, pepper, garlic powder and sugar. Rub it on the chuck roast."
+    },
+    {
+     "text": "Roast uncovered on a rack in a roasting pan until it reaches 195°F inside and is tender.",
+     "timer": 10800,
+     "timerLabel": "Roast the chuck"
+    },
+    {
+     "text": "Cut the beef into 1.5-inch cubes and put in a foil pan."
+    },
+    {
+     "text": "Add the barbecue sauce, honey, butter in pieces and broth. Toss to coat."
+    },
+    {
+     "text": "Bake uncovered at 275°F until the sauce is thick and the edges caramelize, stirring once.",
+     "timer": 3600,
+     "timerLabel": "Glaze the burnt ends"
+    },
+    {
+     "text": "Rest 10 minutes and serve."
+    }
+   ]
+  },
+  {
+   "id": "southern-nashville-hot-chicken",
+   "title": "Nashville hot chicken",
+   "blurb": "Crispy fried chicken brushed with cayenne-spiked oil",
+   "type": "comfort",
+   "serves": 4,
+   "prep": 30,
+   "cook": 35,
+   "tags": [
+    "spicy"
+   ],
+   "ingredients": [
+    {
+     "q": 3,
+     "u": "lb",
+     "item": "chicken thighs and drumsticks",
+     "aisle": "meat",
+     "note": "bone-in, skin-on"
+    },
+    {
+     "q": 2,
+     "u": "cup",
+     "item": "buttermilk",
+     "aisle": "dairy"
+    },
+    {
+     "q": 2,
+     "u": "tsp",
+     "item": "salt",
+     "aisle": "spices"
+    },
+    {
+     "q": 2,
+     "u": "cup",
+     "item": "all-purpose flour",
+     "aisle": "pantry"
+    },
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "paprika",
+     "aisle": "spices"
+    },
+    {
+     "q": 2,
+     "u": "tsp",
+     "item": "black pepper",
+     "aisle": "spices"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "garlic powder",
+     "aisle": "spices"
+    },
+    {
+     "q": 1,
+     "u": "quart",
+     "item": "vegetable oil",
+     "aisle": "pantry",
+     "note": "for frying"
+    },
+    {
+     "q": 3,
+     "u": "tbsp",
+     "item": "cayenne pepper",
+     "aisle": "spices"
+    },
+    {
+     "q": 2,
+     "u": "tbsp",
+     "item": "packed brown sugar",
+     "aisle": "pantry"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "chili powder",
+     "aisle": "spices"
+    },
+    {
+     "q": 8,
+     "u": "slice",
+     "item": "white bread",
+     "aisle": "bakery",
+     "note": "to serve"
+    },
+    {
+     "q": 1,
+     "u": "jar",
+     "item": "dill pickle chips",
+     "aisle": "canned",
+     "note": "to serve"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Soak the chicken in buttermilk with 1 tsp salt in the fridge, at least 2 hours."
+    },
+    {
+     "text": "Whisk the flour, paprika, black pepper, garlic powder and 1 tsp salt. Dredge each piece twice, pressing firmly."
+    },
+    {
+     "text": "Heat 2 inches of oil in a heavy pot to 325°F. Fry in batches, holding the oil near 300°F to 325°F."
+    },
+    {
+     "text": "Fry until deep golden and the thickest part reads 175°F.",
+     "timer": 900,
+     "timerLabel": "Fry the chicken"
+    },
+    {
+     "text": "Drain on a rack. Whisk 0.5 cup of the hot frying oil with the cayenne, sugar and chili powder."
+    },
+    {
+     "text": "Brush the spicy oil over the chicken. Serve on white bread with pickles."
+    }
+   ]
+  },
+  {
+   "id": "southern-chicken-and-waffles",
+   "title": "Chicken and waffles",
+   "blurb": "Crisp buttermilk chicken tenders on fluffy waffles with syrup",
+   "type": "comfort",
+   "serves": 4,
+   "prep": 30,
+   "cook": 30,
+   "tags": [
+    "kid-friendly"
+   ],
+   "ingredients": [
+    {
+     "q": 1.5,
+     "u": "lb",
+     "item": "chicken tenders",
+     "aisle": "meat"
+    },
+    {
+     "q": 1,
+     "u": "cup",
+     "item": "buttermilk",
+     "aisle": "dairy"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "salt",
+     "aisle": "spices"
+    },
+    {
+     "q": 1.5,
+     "u": "cup",
+     "item": "all-purpose flour",
+     "aisle": "pantry"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "paprika",
+     "aisle": "spices"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "garlic powder",
+     "aisle": "spices"
+    },
+    {
+     "q": 0.5,
+     "u": "tsp",
+     "item": "black pepper",
+     "aisle": "spices"
+    },
+    {
+     "q": 1,
+     "u": "quart",
+     "item": "vegetable oil",
+     "aisle": "pantry",
+     "note": "for frying"
+    },
+    {
+     "q": 8,
+     "u": "",
+     "item": "frozen waffles",
+     "aisle": "frozen",
+     "note": "or homemade"
+    },
+    {
+     "q": 0.5,
+     "u": "cup",
+     "item": "maple syrup",
+     "aisle": "pantry"
+    },
+    {
+     "q": 2,
+     "u": "tbsp",
+     "item": "unsalted butter",
+     "aisle": "dairy"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Toss the chicken with buttermilk and 0.5 tsp salt. Marinate 30 minutes or up to 4 hours."
+    },
+    {
+     "text": "Whisk flour, paprika, garlic powder, pepper and 0.5 tsp salt. Dredge the chicken, pressing to coat."
+    },
+    {
+     "text": "Heat 1.5 inches of oil in a heavy skillet to 350°F."
+    },
+    {
+     "text": "Fry the tenders in batches until golden and 165°F inside.",
+     "timer": 540,
+     "timerLabel": "Fry the tenders"
+    },
+    {
+     "text": "Drain on a rack. Toast or cook the waffles."
+    },
+    {
+     "text": "Stack waffles with chicken. Top with butter and warm maple syrup."
+    }
+   ]
+  },
+  {
+   "id": "southern-country-fried-steak-onion-gravy",
+   "title": "Country-fried steak with onion gravy",
+   "blurb": "Crisp cube steak smothered in browned onion gravy",
+   "type": "comfort",
+   "serves": 4,
+   "prep": 20,
+   "cook": 35,
+   "tags": [],
+   "ingredients": [
+    {
+     "q": 4,
+     "u": "",
+     "item": "beef cube steaks (about 6 oz each)",
+     "aisle": "meat"
+    },
+    {
+     "q": 1.5,
+     "u": "cup",
+     "item": "all-purpose flour",
+     "aisle": "pantry"
+    },
+    {
+     "q": 2,
+     "u": "tsp",
+     "item": "salt",
+     "aisle": "spices"
+    },
+    {
+     "q": 1.5,
+     "u": "tsp",
+     "item": "black pepper",
+     "aisle": "spices"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "garlic powder",
+     "aisle": "spices"
+    },
+    {
+     "q": 2,
+     "u": "",
+     "item": "large eggs",
+     "aisle": "dairy"
+    },
+    {
+     "q": 0.5,
+     "u": "cup",
+     "item": "whole milk",
+     "aisle": "dairy"
+    },
+    {
+     "q": 0.5,
+     "u": "cup",
+     "item": "vegetable oil",
+     "aisle": "pantry"
+    },
+    {
+     "q": 1,
+     "u": "",
+     "item": "yellow onion",
+     "aisle": "produce",
+     "note": "thinly sliced"
+    },
+    {
+     "q": 2,
+     "u": "cup",
+     "item": "beef broth",
+     "aisle": "pantry"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Mix 1 cup flour with 1.5 tsp salt, 1 tsp pepper and the garlic powder. Beat the eggs with the milk."
+    },
+    {
+     "text": "Dredge each steak in flour, then egg, then flour again, pressing firmly."
+    },
+    {
+     "text": "Fry in 0.5 cup hot oil over medium-high, 4 minutes per side, until golden and 160°F inside. Hold warm.",
+     "timer": 480,
+     "timerLabel": "Fry the steaks"
+    },
+    {
+     "text": "Pour off all but 3 tbsp oil. Cook the onion 6 minutes until browned."
+    },
+    {
+     "text": "Stir in 3 tbsp flour for 1 minute, then whisk in broth and the remaining salt and pepper."
+    },
+    {
+     "text": "Simmer the gravy until thick.",
+     "timer": 180,
+     "timerLabel": "Thicken the gravy"
+    },
+    {
+     "text": "Spoon over the steaks."
+    }
+   ]
+  },
+  {
+   "id": "southern-bbq-meatloaf",
+   "title": "BBQ meatloaf",
+   "blurb": "Tender meatloaf with a sticky barbecue sauce glaze",
+   "type": "comfort",
+   "serves": 6,
+   "prep": 15,
+   "cook": 70,
+   "tags": [
+    "kid-friendly",
+    "make ahead"
+   ],
+   "ingredients": [
+    {
+     "q": 2,
+     "u": "lb",
+     "item": "ground beef (85% lean)",
+     "aisle": "meat"
+    },
+    {
+     "q": 0.75,
+     "u": "cup",
+     "item": "plain breadcrumbs",
+     "aisle": "pantry"
+    },
+    {
+     "q": 1,
+     "u": "",
+     "item": "yellow onion",
+     "aisle": "produce",
+     "note": "finely diced"
+    },
+    {
+     "q": 2,
+     "u": "clove",
+     "item": "garlic",
+     "aisle": "produce",
+     "note": "minced"
+    },
+    {
+     "q": 2,
+     "u": "",
+     "item": "large eggs",
+     "aisle": "dairy"
+    },
+    {
+     "q": 0.5,
+     "u": "cup",
+     "item": "whole milk",
+     "aisle": "dairy"
+    },
+    {
+     "q": 1,
+     "u": "cup",
+     "item": "barbecue sauce",
+     "aisle": "pantry"
+    },
+    {
+     "q": 2,
+     "u": "tbsp",
+     "item": "Worcestershire sauce",
+     "aisle": "pantry"
+    },
+    {
+     "q": 1.5,
+     "u": "tsp",
+     "item": "salt",
+     "aisle": "spices"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "black pepper",
+     "aisle": "spices"
+    },
+    {
+     "q": 2,
+     "u": "tbsp",
+     "item": "ketchup",
+     "aisle": "pantry"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Heat the oven to 350°F. Stir the breadcrumbs and milk together for 5 minutes."
+    },
+    {
+     "text": "Mix in the beef, onion, garlic, eggs, 0.5 cup barbecue sauce, Worcestershire, salt and pepper. Do not overmix."
+    },
+    {
+     "text": "Shape into a loaf on a foil-lined baking sheet."
+    },
+    {
+     "text": "Bake for 40 minutes.",
+     "timer": 2400,
+     "timerLabel": "Bake the loaf"
+    },
+    {
+     "text": "Stir the remaining barbecue sauce with the ketchup and spread over the top."
+    },
+    {
+     "text": "Bake until the center reaches 160°F and the glaze is tacky.",
+     "timer": 1200,
+     "timerLabel": "Finish baking"
+    },
+    {
+     "text": "Rest, then slice.",
+     "timer": 600,
+     "timerLabel": "Rest the meatloaf"
+    }
+   ]
+  },
+  {
+   "id": "southern-smothered-chicken-thighs",
+   "title": "Smothered chicken thighs",
+   "blurb": "Skillet-seared chicken simmered in rich onion gravy",
+   "type": "comfort",
+   "serves": 4,
+   "prep": 15,
+   "cook": 45,
+   "tags": [],
+   "ingredients": [
+    {
+     "q": 2,
+     "u": "lb",
+     "item": "bone-in skin-on chicken thighs",
+     "aisle": "meat"
+    },
+    {
+     "q": 1.5,
+     "u": "tsp",
+     "item": "salt",
+     "aisle": "spices"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "black pepper",
+     "aisle": "spices"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "paprika",
+     "aisle": "spices"
+    },
+    {
+     "q": 0.33,
+     "u": "cup",
+     "item": "all-purpose flour",
+     "aisle": "pantry"
+    },
+    {
+     "q": 3,
+     "u": "tbsp",
+     "item": "vegetable oil",
+     "aisle": "pantry"
+    },
+    {
+     "q": 1,
+     "u": "",
+     "item": "yellow onion",
+     "aisle": "produce",
+     "note": "sliced"
+    },
+    {
+     "q": 0.5,
+     "u": "",
+     "item": "green bell pepper",
+     "aisle": "produce",
+     "note": "sliced"
+    },
+    {
+     "q": 2,
+     "u": "clove",
+     "item": "garlic",
+     "aisle": "produce",
+     "note": "minced"
+    },
+    {
+     "q": 2,
+     "u": "cup",
+     "item": "chicken broth",
+     "aisle": "pantry"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "dried thyme",
+     "aisle": "spices"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Season the chicken with 1 tsp salt, 0.5 tsp pepper and the paprika. Dust with 2 tbsp flour."
+    },
+    {
+     "text": "Sear in hot oil, skin side down first, until browned, 5 minutes per side. Set aside.",
+     "timer": 600,
+     "timerLabel": "Brown the chicken"
+    },
+    {
+     "text": "Cook the onion and pepper in the drippings 5 minutes. Add garlic for 30 seconds."
+    },
+    {
+     "text": "Stir in the remaining flour for 1 minute, then the broth, thyme and remaining salt and pepper."
+    },
+    {
+     "text": "Return the chicken, skin up, and cover."
+    },
+    {
+     "text": "Simmer on low until the chicken reaches 175°F and the gravy is thick.",
+     "timer": 1800,
+     "timerLabel": "Simmer the chicken"
+    },
+    {
+     "text": "Serve over rice or mashed potatoes."
+    }
+   ]
+  },
+  {
+   "id": "southern-turkey-pot-pie-biscuit-topping",
+   "title": "Turkey pot pie with biscuit topping",
+   "blurb": "Creamy turkey and vegetable filling under golden biscuits",
+   "type": "comfort",
+   "serves": 6,
+   "prep": 25,
+   "cook": 45,
+   "tags": [
+    "make ahead",
+    "kid-friendly"
+   ],
+   "ingredients": [
+    {
+     "q": 4,
+     "u": "tbsp",
+     "item": "unsalted butter",
+     "aisle": "dairy"
+    },
+    {
+     "q": 1,
+     "u": "",
+     "item": "yellow onion",
+     "aisle": "produce",
+     "note": "diced"
+    },
+    {
+     "q": 2,
+     "u": "stalk",
+     "item": "celery",
+     "aisle": "produce",
+     "note": "diced"
+    },
+    {
+     "q": 0.33,
+     "u": "cup",
+     "item": "all-purpose flour",
+     "aisle": "pantry"
+    },
+    {
+     "q": 2,
+     "u": "cup",
+     "item": "chicken broth",
+     "aisle": "pantry"
+    },
+    {
+     "q": 0.75,
+     "u": "cup",
+     "item": "whole milk",
+     "aisle": "dairy"
+    },
+    {
+     "q": 3,
+     "u": "cup",
+     "item": "cooked turkey",
+     "aisle": "meat",
+     "note": "shredded or diced"
+    },
+    {
+     "q": 2,
+     "u": "cup",
+     "item": "frozen peas and carrots",
+     "aisle": "frozen"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "dried thyme",
+     "aisle": "spices"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "salt",
+     "aisle": "spices"
+    },
+    {
+     "q": 0.5,
+     "u": "tsp",
+     "item": "black pepper",
+     "aisle": "spices"
+    },
+    {
+     "q": 1,
+     "u": "can",
+     "item": "refrigerated biscuit dough (16.3 oz)",
+     "aisle": "dairy"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Heat the oven to 375°F. Melt the butter in a large oven-safe skillet and cook the onion and celery 5 minutes."
+    },
+    {
+     "text": "Stir in the flour for 1 minute. Whisk in broth and milk and simmer until thick."
+    },
+    {
+     "text": "Simmer, stirring often, until the sauce coats a spoon.",
+     "timer": 240,
+     "timerLabel": "Thicken the filling"
+    },
+    {
+     "text": "Stir in the turkey, peas and carrots, thyme, salt and pepper. Heat through."
+    },
+    {
+     "text": "Arrange the biscuits over the filling, edges touching."
+    },
+    {
+     "text": "Bake until the biscuits are deep golden and cooked through.",
+     "timer": 1500,
+     "timerLabel": "Bake the pot pie"
+    },
+    {
+     "text": "Cool a few minutes before serving.",
+     "timer": 300,
+     "timerLabel": "Cool slightly"
+    }
+   ]
+  },
+  {
+   "id": "southern-beef-pot-pie-flaky-crust",
+   "title": "Beef pot pie with flaky crust",
+   "blurb": "Tender beef and potatoes in gravy under a puff of pastry",
+   "type": "comfort",
+   "serves": 6,
+   "prep": 30,
+   "cook": 150,
+   "tags": [
+    "make ahead"
+   ],
+   "ingredients": [
+    {
+     "q": 2,
+     "u": "lb",
+     "item": "beef chuck roast",
+     "aisle": "meat",
+     "note": "cut in 1-inch cubes"
+    },
+    {
+     "q": 1.5,
+     "u": "tsp",
+     "item": "salt",
+     "aisle": "spices"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "black pepper",
+     "aisle": "spices"
+    },
+    {
+     "q": 2,
+     "u": "tbsp",
+     "item": "vegetable oil",
+     "aisle": "pantry"
+    },
+    {
+     "q": 1,
+     "u": "",
+     "item": "yellow onion",
+     "aisle": "produce",
+     "note": "diced"
+    },
+    {
+     "q": 3,
+     "u": "",
+     "item": "carrots",
+     "aisle": "produce",
+     "note": "sliced"
+    },
+    {
+     "q": 2,
+     "u": "tbsp",
+     "item": "all-purpose flour",
+     "aisle": "pantry"
+    },
+    {
+     "q": 3,
+     "u": "cup",
+     "item": "beef broth",
+     "aisle": "pantry"
+    },
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "tomato paste",
+     "aisle": "pantry"
+    },
+    {
+     "q": 2,
+     "u": "cup",
+     "item": "Yukon gold potatoes",
+     "aisle": "produce",
+     "note": "diced"
+    },
+    {
+     "q": 1,
+     "u": "cup",
+     "item": "frozen peas",
+     "aisle": "frozen"
+    },
+    {
+     "q": 1,
+     "u": "pkg",
+     "item": "refrigerated pie crusts (2 crusts)",
+     "aisle": "bakery"
+    },
+    {
+     "q": 1,
+     "u": "",
+     "item": "large eggs",
+     "aisle": "dairy",
+     "note": "beaten"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Season the beef with salt and pepper. Brown in hot oil in a Dutch oven in two batches, then set aside."
+    },
+    {
+     "text": "Cook the onion and carrots 5 minutes. Stir in flour and tomato paste for 1 minute."
+    },
+    {
+     "text": "Add the broth and beef. Cover and simmer gently on low."
+    },
+    {
+     "text": "Simmer until the beef is nearly tender, adding the potatoes for the last 20 minutes.",
+     "timer": 5400,
+     "timerLabel": "Stew the beef"
+    },
+    {
+     "text": "Stir in the peas. Heat the oven to 400°F. Pour the filling into a 9x13 dish and cover with a crust, cutting vents."
+    },
+    {
+     "text": "Brush the crust with beaten egg."
+    },
+    {
+     "text": "Bake until the crust is golden and the filling bubbles.",
+     "timer": 1800,
+     "timerLabel": "Bake the pot pie"
+    }
+   ]
+  },
+  {
+   "id": "southern-southern-fried-pork-chops",
+   "title": "Southern fried pork chops",
+   "blurb": "Bone-in chops with a crunchy seasoned flour crust",
+   "type": "comfort",
+   "serves": 4,
+   "prep": 15,
+   "cook": 25,
+   "tags": [],
+   "ingredients": [
+    {
+     "q": 4,
+     "u": "",
+     "item": "bone-in pork chops (0.75 inch thick)",
+     "aisle": "meat"
+    },
+    {
+     "q": 1,
+     "u": "cup",
+     "item": "buttermilk",
+     "aisle": "dairy"
+    },
+    {
+     "q": 1.5,
+     "u": "cup",
+     "item": "all-purpose flour",
+     "aisle": "pantry"
+    },
+    {
+     "q": 2,
+     "u": "tsp",
+     "item": "salt",
+     "aisle": "spices"
+    },
+    {
+     "q": 1.5,
+     "u": "tsp",
+     "item": "black pepper",
+     "aisle": "spices"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "paprika",
+     "aisle": "spices"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "garlic powder",
+     "aisle": "spices"
+    },
+    {
+     "q": 0.75,
+     "u": "cup",
+     "item": "vegetable oil",
+     "aisle": "pantry"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Soak the chops in buttermilk 30 minutes or up to 4 hours in the fridge."
+    },
+    {
+     "text": "Mix flour, salt, pepper, paprika and garlic powder in a shallow dish."
+    },
+    {
+     "text": "Heat the oil in a large skillet to 350°F. Dredge each chop, shaking off extra."
+    },
+    {
+     "text": "Fry 5 minutes, flip, and fry until golden and 145°F inside. Work in batches.",
+     "timer": 600,
+     "timerLabel": "Fry the chops"
+    },
+    {
+     "text": "Drain on a rack. Rest 3 minutes before serving."
+    }
+   ]
+  },
+  {
+   "id": "southern-buttermilk-chicken-tenders",
+   "title": "Buttermilk fried chicken tenders",
+   "blurb": "Extra-crunchy tenders with a simple honey-mustard dip",
+   "type": "comfort",
+   "serves": 4,
+   "prep": 20,
+   "cook": 15,
+   "tags": [
+    "kid-friendly",
+    "quick"
+   ],
+   "ingredients": [
+    {
+     "q": 1.5,
+     "u": "lb",
+     "item": "chicken tenders",
+     "aisle": "meat"
+    },
+    {
+     "q": 1,
+     "u": "cup",
+     "item": "buttermilk",
+     "aisle": "dairy"
+    },
+    {
+     "q": 2,
+     "u": "tsp",
+     "item": "salt",
+     "aisle": "spices"
+    },
+    {
+     "q": 1.5,
+     "u": "cup",
+     "item": "all-purpose flour",
+     "aisle": "pantry"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "garlic powder",
+     "aisle": "spices"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "paprika",
+     "aisle": "spices"
+    },
+    {
+     "q": 0.5,
+     "u": "tsp",
+     "item": "black pepper",
+     "aisle": "spices"
+    },
+    {
+     "q": 1,
+     "u": "quart",
+     "item": "vegetable oil",
+     "aisle": "pantry",
+     "note": "for frying"
+    },
+    {
+     "q": 0.25,
+     "u": "cup",
+     "item": "mayonnaise",
+     "aisle": "pantry"
+    },
+    {
+     "q": 2,
+     "u": "tbsp",
+     "item": "yellow mustard",
+     "aisle": "pantry"
+    },
+    {
+     "q": 2,
+     "u": "tbsp",
+     "item": "honey",
+     "aisle": "pantry"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Toss the tenders with buttermilk and 1 tsp salt. Rest 20 minutes."
+    },
+    {
+     "text": "Whisk the flour, garlic powder, paprika, pepper and remaining salt. Dredge the tenders and press firmly."
+    },
+    {
+     "text": "Heat 1.5 inches of oil to 350°F."
+    },
+    {
+     "text": "Fry in batches until golden and 165°F inside.",
+     "timer": 420,
+     "timerLabel": "Fry the tenders"
+    },
+    {
+     "text": "Whisk mayonnaise, mustard and honey for the dip."
+    },
+    {
+     "text": "Drain the tenders on a rack and serve hot."
+    }
+   ]
+  },
+  {
+   "id": "southern-chicken-spaghetti",
+   "title": "Southern chicken spaghetti",
+   "blurb": "Creamy baked pasta with chicken, peppers and cheddar",
+   "type": "comfort",
+   "serves": 8,
+   "prep": 20,
+   "cook": 45,
+   "tags": [
+    "crowd",
+    "make ahead",
+    "kid-friendly"
+   ],
+   "ingredients": [
+    {
+     "q": 12,
+     "u": "oz",
+     "item": "spaghetti",
+     "aisle": "pantry"
+    },
+    {
+     "q": 3,
+     "u": "cup",
+     "item": "cooked chicken",
+     "aisle": "meat",
+     "note": "shredded"
+    },
+    {
+     "q": 2,
+     "u": "tbsp",
+     "item": "unsalted butter",
+     "aisle": "dairy"
+    },
+    {
+     "q": 1,
+     "u": "",
+     "item": "yellow onion",
+     "aisle": "produce",
+     "note": "diced"
+    },
+    {
+     "q": 1,
+     "u": "",
+     "item": "green bell pepper",
+     "aisle": "produce",
+     "note": "diced"
+    },
+    {
+     "q": 1,
+     "u": "can",
+     "item": "cream of chicken soup (10.5 oz)",
+     "aisle": "canned"
+    },
+    {
+     "q": 1,
+     "u": "can",
+     "item": "diced tomatoes with green chiles (10 oz)",
+     "aisle": "canned"
+    },
+    {
+     "q": 1,
+     "u": "cup",
+     "item": "chicken broth",
+     "aisle": "pantry"
+    },
+    {
+     "q": 8,
+     "u": "oz",
+     "item": "sharp cheddar cheese",
+     "aisle": "dairy",
+     "note": "shredded, about 2 cups"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "salt",
+     "aisle": "spices"
+    },
+    {
+     "q": 0.5,
+     "u": "tsp",
+     "item": "black pepper",
+     "aisle": "spices"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Heat the oven to 350°F. Boil the spaghetti 2 minutes short of the package time, then drain."
+    },
+    {
+     "text": "Melt the butter and cook the onion and pepper 6 minutes until soft."
+    },
+    {
+     "text": "Stir in the soup, tomatoes, broth, salt, pepper and chicken. Fold in the spaghetti and 1 cup cheddar."
+    },
+    {
+     "text": "Spread in a greased 9x13 baking dish and top with the remaining cheddar."
+    },
+    {
+     "text": "Bake until bubbly and golden at the edges.",
+     "timer": 1500,
+     "timerLabel": "Bake the casserole"
+    },
+    {
+     "text": "Rest before serving.",
+     "timer": 300,
+     "timerLabel": "Let it set"
+    }
+   ]
+  },
+  {
+   "id": "southern-hamburger-steaks-brown-gravy",
+   "title": "Hamburger steaks with brown onion gravy",
+   "blurb": "Seared beef patties simmered in savory onion gravy",
+   "type": "comfort",
+   "serves": 4,
+   "prep": 15,
+   "cook": 30,
+   "tags": [
+    "kid-friendly"
+   ],
+   "ingredients": [
+    {
+     "q": 1.5,
+     "u": "lb",
+     "item": "ground beef (80% lean)",
+     "aisle": "meat"
+    },
+    {
+     "q": 0.33,
+     "u": "cup",
+     "item": "plain breadcrumbs",
+     "aisle": "pantry"
+    },
+    {
+     "q": 1,
+     "u": "",
+     "item": "large eggs",
+     "aisle": "dairy"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "salt",
+     "aisle": "spices"
+    },
+    {
+     "q": 0.75,
+     "u": "tsp",
+     "item": "black pepper",
+     "aisle": "spices"
+    },
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "Worcestershire sauce",
+     "aisle": "pantry"
+    },
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "vegetable oil",
+     "aisle": "pantry"
+    },
+    {
+     "q": 1,
+     "u": "",
+     "item": "yellow onion",
+     "aisle": "produce",
+     "note": "sliced"
+    },
+    {
+     "q": 2,
+     "u": "tbsp",
+     "item": "unsalted butter",
+     "aisle": "dairy"
+    },
+    {
+     "q": 2,
+     "u": "tbsp",
+     "item": "all-purpose flour",
+     "aisle": "pantry"
+    },
+    {
+     "q": 1.5,
+     "u": "cup",
+     "item": "beef broth",
+     "aisle": "pantry"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Mix the beef, breadcrumbs, egg, salt, 0.5 tsp pepper and Worcestershire. Form four oval patties."
+    },
+    {
+     "text": "Sear in hot oil 4 minutes per side. Move to a plate.",
+     "timer": 480,
+     "timerLabel": "Sear the patties"
+    },
+    {
+     "text": "Melt the butter in the pan and cook the onion 6 minutes until browned."
+    },
+    {
+     "text": "Stir in the flour 1 minute, then whisk in the broth and remaining pepper."
+    },
+    {
+     "text": "Slide the patties back in. Cover and simmer on low until 160°F inside."
+    },
+    {
+     "text": "Simmer the patties in gravy.",
+     "timer": 600,
+     "timerLabel": "Simmer in gravy"
+    },
+    {
+     "text": "Serve over mashed potatoes or rice."
+    }
+   ]
+  },
+  {
+   "id": "southern-cube-steak-gravy-rice",
+   "title": "Cube steak and gravy over rice",
+   "blurb": "Pan-fried cube steak smothered in peppery gravy",
+   "type": "comfort",
+   "serves": 4,
+   "prep": 10,
+   "cook": 30,
+   "tags": [
+    "kid-friendly"
+   ],
+   "ingredients": [
+    {
+     "q": 4,
+     "u": "",
+     "item": "beef cube steaks",
+     "aisle": "meat"
+    },
+    {
+     "q": 0.75,
+     "u": "cup",
+     "item": "all-purpose flour",
+     "aisle": "pantry"
+    },
+    {
+     "q": 1.5,
+     "u": "tsp",
+     "item": "salt",
+     "aisle": "spices"
+    },
+    {
+     "q": 1.5,
+     "u": "tsp",
+     "item": "black pepper",
+     "aisle": "spices"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "garlic powder",
+     "aisle": "spices"
+    },
+    {
+     "q": 0.33,
+     "u": "cup",
+     "item": "vegetable oil",
+     "aisle": "pantry"
+    },
+    {
+     "q": 2,
+     "u": "cup",
+     "item": "beef broth",
+     "aisle": "pantry"
+    },
+    {
+     "q": 0.5,
+     "u": "cup",
+     "item": "whole milk",
+     "aisle": "dairy"
+    },
+    {
+     "q": 3,
+     "u": "cup",
+     "item": "cooked white rice",
+     "aisle": "pantry",
+     "note": "to serve"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Mix 0.5 cup flour with 1 tsp salt, 1 tsp pepper and garlic powder. Coat the steaks."
+    },
+    {
+     "text": "Fry in hot oil 3 to 4 minutes per side until browned and 160°F inside. Set aside.",
+     "timer": 420,
+     "timerLabel": "Brown the steaks"
+    },
+    {
+     "text": "Whisk 3 tbsp flour into 3 tbsp of the pan oil and cook 1 minute."
+    },
+    {
+     "text": "Slowly whisk in the broth and milk. Add the remaining salt and pepper."
+    },
+    {
+     "text": "Simmer until thickened.",
+     "timer": 240,
+     "timerLabel": "Thicken the gravy"
+    },
+    {
+     "text": "Return the steaks to the gravy for 2 minutes. Serve over rice."
+    }
+   ]
+  },
+  {
+   "id": "southern-pecan-crusted-catfish",
+   "title": "Pecan-crusted catfish",
+   "blurb": "Oven-crisp catfish fillets with a toasty nut crust",
+   "type": "comfort",
+   "serves": 4,
+   "prep": 15,
+   "cook": 20,
+   "tags": [
+    "healthy"
+   ],
+   "ingredients": [
+    {
+     "q": 4,
+     "u": "",
+     "item": "catfish fillets (6 oz each)",
+     "aisle": "seafood"
+    },
+    {
+     "q": 0.75,
+     "u": "cup",
+     "item": "pecans",
+     "aisle": "pantry",
+     "note": "finely chopped"
+    },
+    {
+     "q": 0.5,
+     "u": "cup",
+     "item": "plain breadcrumbs",
+     "aisle": "pantry"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "salt",
+     "aisle": "spices"
+    },
+    {
+     "q": 0.5,
+     "u": "tsp",
+     "item": "black pepper",
+     "aisle": "spices"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "paprika",
+     "aisle": "spices"
+    },
+    {
+     "q": 0.25,
+     "u": "cup",
+     "item": "Dijon mustard",
+     "aisle": "pantry"
+    },
+    {
+     "q": 2,
+     "u": "tbsp",
+     "item": "unsalted butter",
+     "aisle": "dairy",
+     "note": "melted"
+    },
+    {
+     "q": 1,
+     "u": "",
+     "item": "lemon",
+     "aisle": "produce",
+     "note": "cut in wedges"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Heat the oven to 425°F and grease a baking sheet."
+    },
+    {
+     "text": "Mix the pecans, breadcrumbs, salt, pepper and paprika. Stir in the melted butter."
+    },
+    {
+     "text": "Pat the fillets dry and brush with mustard. Press the crumb mix on top."
+    },
+    {
+     "text": "Bake until the crust is browned and the fish reaches 145°F.",
+     "timer": 1080,
+     "timerLabel": "Bake the catfish"
+    },
+    {
+     "text": "Serve with lemon wedges."
+    }
+   ]
+  },
+  {
+   "id": "southern-hot-honey-fried-chicken",
+   "title": "Hot honey fried chicken",
+   "blurb": "Golden buttermilk chicken drizzled with spicy honey",
+   "type": "comfort",
+   "serves": 4,
+   "prep": 30,
+   "cook": 35,
+   "tags": [
+    "spicy"
+   ],
+   "ingredients": [
+    {
+     "q": 3.5,
+     "u": "lb",
+     "item": "chicken pieces",
+     "aisle": "meat",
+     "note": "bone-in, skin-on"
+    },
+    {
+     "q": 2,
+     "u": "cup",
+     "item": "buttermilk",
+     "aisle": "dairy"
+    },
+    {
+     "q": 2,
+     "u": "tsp",
+     "item": "salt",
+     "aisle": "spices"
+    },
+    {
+     "q": 2,
+     "u": "cup",
+     "item": "all-purpose flour",
+     "aisle": "pantry"
+    },
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "paprika",
+     "aisle": "spices"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "garlic powder",
+     "aisle": "spices"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "black pepper",
+     "aisle": "spices"
+    },
+    {
+     "q": 1,
+     "u": "quart",
+     "item": "vegetable oil",
+     "aisle": "pantry",
+     "note": "for frying"
+    },
+    {
+     "q": 0.5,
+     "u": "cup",
+     "item": "honey",
+     "aisle": "pantry"
+    },
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "hot sauce",
+     "aisle": "pantry"
+    },
+    {
+     "q": 0.5,
+     "u": "tsp",
+     "item": "crushed red pepper",
+     "aisle": "spices"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Marinate the chicken in buttermilk and 1 tsp salt in the fridge for 2 to 12 hours."
+    },
+    {
+     "text": "Whisk the flour, paprika, garlic powder, pepper and remaining salt. Dredge each piece, pressing firmly."
+    },
+    {
+     "text": "Heat 2 inches of oil in a heavy pot to 325°F. Fry in batches, keeping the oil 300°F to 325°F."
+    },
+    {
+     "text": "Fry until deep golden and dark meat is 175°F, white meat 165°F.",
+     "timer": 1080,
+     "timerLabel": "Fry the chicken"
+    },
+    {
+     "text": "Warm the honey with the hot sauce and red pepper for 1 minute."
+    },
+    {
+     "text": "Drain the chicken on a rack, drizzle with hot honey and serve."
+    }
+   ]
+  },
+  {
+   "id": "southern-sunday-pork-roast-onion-gravy",
+   "title": "Sunday pork roast with onion gravy",
+   "blurb": "Slow-roasted pork shoulder with potatoes and gravy",
+   "type": "comfort",
+   "serves": 6,
+   "prep": 20,
+   "cook": 180,
+   "tags": [
+    "make ahead",
+    "crowd"
+   ],
+   "ingredients": [
+    {
+     "q": 3.5,
+     "u": "lb",
+     "item": "boneless pork shoulder roast",
+     "aisle": "meat"
+    },
+    {
+     "q": 2,
+     "u": "tsp",
+     "item": "salt",
+     "aisle": "spices"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "black pepper",
+     "aisle": "spices"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "garlic powder",
+     "aisle": "spices"
+    },
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "vegetable oil",
+     "aisle": "pantry"
+    },
+    {
+     "q": 2,
+     "u": "",
+     "item": "yellow onion",
+     "aisle": "produce",
+     "note": "sliced"
+    },
+    {
+     "q": 1.5,
+     "u": "lb",
+     "item": "baby potatoes",
+     "aisle": "produce",
+     "note": "halved"
+    },
+    {
+     "q": 2,
+     "u": "cup",
+     "item": "beef broth",
+     "aisle": "pantry"
+    },
+    {
+     "q": 2,
+     "u": "tbsp",
+     "item": "all-purpose flour",
+     "aisle": "pantry"
+    },
+    {
+     "q": 2,
+     "u": "tbsp",
+     "item": "water",
+     "aisle": "pantry"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Heat the oven to 325°F. Rub the pork with salt, pepper and garlic powder."
+    },
+    {
+     "text": "Brown in hot oil in a Dutch oven, 4 minutes per side. Remove.",
+     "timer": 480,
+     "timerLabel": "Brown the pork"
+    },
+    {
+     "text": "Layer the onions in the pot, set the pork on top and add the broth. Cover."
+    },
+    {
+     "text": "Roast 2 hours, then tuck the potatoes around the pork.",
+     "timer": 7200,
+     "timerLabel": "Roast the pork"
+    },
+    {
+     "text": "Cover and roast until the pork is fork-tender, about 195°F, and the potatoes are soft.",
+     "timer": 2700,
+     "timerLabel": "Finish roasting"
+    },
+    {
+     "text": "Move pork and potatoes to a platter. Whisk the flour with the water, stir into the pot juices and simmer 3 minutes."
+    },
+    {
+     "text": "Slice or pull the pork and serve with the gravy."
+    }
+   ]
+  },
+  {
+   "id": "southern-chicken-and-dressing-casserole",
+   "title": "Chicken and dressing casserole",
+   "blurb": "Cornbread stuffing layered with chicken and creamy gravy",
+   "type": "comfort",
+   "serves": 8,
+   "prep": 25,
+   "cook": 60,
+   "tags": [
+    "crowd",
+    "holiday"
+   ],
+   "ingredients": [
+    {
+     "q": 6,
+     "u": "cup",
+     "item": "crumbled cornbread",
+     "aisle": "bakery",
+     "note": "day-old"
+    },
+    {
+     "q": 3,
+     "u": "cup",
+     "item": "cooked chicken",
+     "aisle": "meat",
+     "note": "shredded"
+    },
+    {
+     "q": 4,
+     "u": "tbsp",
+     "item": "unsalted butter",
+     "aisle": "dairy"
+    },
+    {
+     "q": 1,
+     "u": "",
+     "item": "yellow onion",
+     "aisle": "produce",
+     "note": "diced"
+    },
+    {
+     "q": 3,
+     "u": "stalk",
+     "item": "celery",
+     "aisle": "produce",
+     "note": "diced"
+    },
+    {
+     "q": 2,
+     "u": "cup",
+     "item": "chicken broth",
+     "aisle": "pantry"
+    },
+    {
+     "q": 2,
+     "u": "",
+     "item": "large eggs",
+     "aisle": "dairy"
+    },
+    {
+     "q": 1,
+     "u": "can",
+     "item": "cream of chicken soup (10.5 oz)",
+     "aisle": "canned"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "dried sage",
+     "aisle": "spices"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "salt",
+     "aisle": "spices"
+    },
+    {
+     "q": 0.5,
+     "u": "tsp",
+     "item": "black pepper",
+     "aisle": "spices"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Heat the oven to 350°F. Melt the butter and cook the onion and celery 8 minutes."
+    },
+    {
+     "text": "Mix the cornbread, onion mixture, sage, salt and pepper. Whisk the eggs with 1.5 cups broth and stir in."
+    },
+    {
+     "text": "Spread half the dressing in a greased 9x13 dish. Top with the chicken."
+    },
+    {
+     "text": "Stir the soup with the last 0.5 cup broth and pour over the chicken. Cover with the remaining dressing."
+    },
+    {
+     "text": "Bake until golden on top and set in the middle, 165°F.",
+     "timer": 2700,
+     "timerLabel": "Bake the casserole"
+    },
+    {
+     "text": "Rest before serving.",
+     "timer": 300,
+     "timerLabel": "Let it set"
+    }
+   ]
+  },
+  {
+   "id": "southern-pork-chop-rice-bake",
+   "title": "Baked pork chops and rice",
+   "blurb": "Juicy chops nestled in seasoned rice, all in one dish",
+   "type": "comfort",
+   "serves": 4,
+   "prep": 15,
+   "cook": 60,
+   "tags": [
+    "one pot",
+    "kid-friendly"
+   ],
+   "ingredients": [
+    {
+     "q": 4,
+     "u": "",
+     "item": "bone-in pork chops (1 inch thick)",
+     "aisle": "meat"
+    },
+    {
+     "q": 1.5,
+     "u": "cup",
+     "item": "long-grain white rice",
+     "aisle": "pantry"
+    },
+    {
+     "q": 1,
+     "u": "can",
+     "item": "cream of mushroom soup (10.5 oz)",
+     "aisle": "canned"
+    },
+    {
+     "q": 2,
+     "u": "cup",
+     "item": "chicken broth",
+     "aisle": "pantry"
+    },
+    {
+     "q": 1,
+     "u": "",
+     "item": "yellow onion",
+     "aisle": "produce",
+     "note": "diced"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "salt",
+     "aisle": "spices"
+    },
+    {
+     "q": 0.5,
+     "u": "tsp",
+     "item": "black pepper",
+     "aisle": "spices"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "paprika",
+     "aisle": "spices"
+    },
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "vegetable oil",
+     "aisle": "pantry"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Heat the oven to 375°F. Season the chops with half the salt, pepper and paprika."
+    },
+    {
+     "text": "Brown the chops in hot oil, 3 minutes per side.",
+     "timer": 360,
+     "timerLabel": "Brown the chops"
+    },
+    {
+     "text": "In a 9x13 dish stir the rice, soup, broth, onion and the remaining salt and pepper."
+    },
+    {
+     "text": "Set the chops on the rice and cover tightly with foil."
+    },
+    {
+     "text": "Bake until the rice is tender and the pork reaches 145°F.",
+     "timer": 3000,
+     "timerLabel": "Bake the dish"
+    },
+    {
+     "text": "Rest 5 minutes, fluff the rice and serve."
+    }
+   ]
+  },
+  {
+   "id": "southern-shrimp-andouille-jambalaya",
+   "title": "Shrimp and andouille jambalaya",
+   "blurb": "One-pot rice with smoky sausage, peppers and plump shrimp",
+   "type": "cajun",
+   "serves": 6,
+   "prep": 20,
+   "cook": 45,
+   "tags": [
+    "one pot",
+    "spicy",
+    "crowd"
+   ],
+   "ingredients": [
+    {
+     "q": 12,
+     "u": "oz",
+     "item": "andouille sausage",
+     "aisle": "meat",
+     "note": "sliced"
+    },
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "vegetable oil",
+     "aisle": "pantry"
+    },
+    {
+     "q": 1,
+     "u": "",
+     "item": "yellow onion",
+     "aisle": "produce",
+     "note": "diced"
+    },
+    {
+     "q": 1,
+     "u": "",
+     "item": "green bell pepper",
+     "aisle": "produce",
+     "note": "diced"
+    },
+    {
+     "q": 2,
+     "u": "stalk",
+     "item": "celery",
+     "aisle": "produce",
+     "note": "diced"
+    },
+    {
+     "q": 3,
+     "u": "clove",
+     "item": "garlic",
+     "aisle": "produce",
+     "note": "minced"
+    },
+    {
+     "q": 1.5,
+     "u": "tbsp",
+     "item": "Cajun seasoning",
+     "aisle": "spices"
+    },
+    {
+     "q": 1,
+     "u": "can",
+     "item": "diced tomatoes (14.5 oz)",
+     "aisle": "canned"
+    },
+    {
+     "q": 2,
+     "u": "cup",
+     "item": "long-grain white rice",
+     "aisle": "pantry"
+    },
+    {
+     "q": 3,
+     "u": "cup",
+     "item": "chicken broth",
+     "aisle": "pantry"
+    },
+    {
+     "q": 1.5,
+     "u": "lb",
+     "item": "large peeled shrimp",
+     "aisle": "seafood"
+    },
+    {
+     "q": 3,
+     "u": "",
+     "item": "green onions",
+     "aisle": "produce",
+     "note": "sliced"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Brown the sausage in the oil in a Dutch oven, 4 minutes. Remove, leaving the fat."
+    },
+    {
+     "text": "Cook the onion, pepper and celery 6 minutes. Add garlic and Cajun seasoning for 1 minute."
+    },
+    {
+     "text": "Stir in the tomatoes, rice and broth. Return the sausage and bring to a boil."
+    },
+    {
+     "text": "Cover and simmer on low, without lifting the lid, until the rice is nearly tender.",
+     "timer": 1200,
+     "timerLabel": "Simmer the rice"
+    },
+    {
+     "text": "Nestle the shrimp into the rice, cover and cook until pink and 145°F."
+    },
+    {
+     "text": "Turn off the heat and let it steam.",
+     "timer": 300,
+     "timerLabel": "Steam, covered"
+    },
+    {
+     "text": "Fluff with a fork and top with green onions."
+    }
+   ]
+  },
+  {
+   "id": "southern-cajun-sausage-rice-skillet",
+   "title": "Cajun sausage and rice skillet",
+   "blurb": "Smoked sausage, peppers and rice in one skillet",
+   "type": "cajun",
+   "serves": 4,
+   "prep": 10,
+   "cook": 30,
+   "tags": [
+    "one pot",
+    "quick",
+    "kid-friendly"
+   ],
+   "ingredients": [
+    {
+     "q": 14,
+     "u": "oz",
+     "item": "smoked sausage",
+     "aisle": "meat",
+     "note": "sliced"
+    },
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "vegetable oil",
+     "aisle": "pantry"
+    },
+    {
+     "q": 1,
+     "u": "",
+     "item": "yellow onion",
+     "aisle": "produce",
+     "note": "diced"
+    },
+    {
+     "q": 1,
+     "u": "",
+     "item": "red bell pepper",
+     "aisle": "produce",
+     "note": "diced"
+    },
+    {
+     "q": 2,
+     "u": "clove",
+     "item": "garlic",
+     "aisle": "produce",
+     "note": "minced"
+    },
+    {
+     "q": 2,
+     "u": "tsp",
+     "item": "Cajun seasoning",
+     "aisle": "spices"
+    },
+    {
+     "q": 1,
+     "u": "cup",
+     "item": "long-grain white rice",
+     "aisle": "pantry"
+    },
+    {
+     "q": 2,
+     "u": "cup",
+     "item": "chicken broth",
+     "aisle": "pantry"
+    },
+    {
+     "q": 1,
+     "u": "can",
+     "item": "diced tomatoes (14.5 oz)",
+     "aisle": "canned"
+    },
+    {
+     "q": 2,
+     "u": "",
+     "item": "green onions",
+     "aisle": "produce",
+     "note": "sliced"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Brown the sausage in oil in a large deep skillet, 4 minutes."
+    },
+    {
+     "text": "Add the onion and pepper and cook 5 minutes. Stir in garlic and Cajun seasoning."
+    },
+    {
+     "text": "Stir in the rice, broth and tomatoes. Bring to a boil."
+    },
+    {
+     "text": "Cover and cook on low until the rice is tender and the liquid is absorbed.",
+     "timer": 1080,
+     "timerLabel": "Simmer the rice"
+    },
+    {
+     "text": "Rest, covered, then fluff.",
+     "timer": 300,
+     "timerLabel": "Steam, covered"
+    },
+    {
+     "text": "Top with green onions."
+    }
+   ]
+  },
+  {
+   "id": "southern-fried-shrimp-po-boys",
+   "title": "Fried shrimp po’ boys",
+   "blurb": "Cornmeal-crusted shrimp on crusty rolls with remoulade",
+   "type": "cajun",
+   "serves": 4,
+   "prep": 25,
+   "cook": 15,
+   "tags": [
+    "kid-friendly"
+   ],
+   "ingredients": [
+    {
+     "q": 1.5,
+     "u": "lb",
+     "item": "large peeled shrimp",
+     "aisle": "seafood"
+    },
+    {
+     "q": 1,
+     "u": "cup",
+     "item": "buttermilk",
+     "aisle": "dairy"
+    },
+    {
+     "q": 1,
+     "u": "cup",
+     "item": "yellow cornmeal",
+     "aisle": "pantry"
+    },
+    {
+     "q": 0.5,
+     "u": "cup",
+     "item": "all-purpose flour",
+     "aisle": "pantry"
+    },
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "Cajun seasoning",
+     "aisle": "spices"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "salt",
+     "aisle": "spices"
+    },
+    {
+     "q": 3,
+     "u": "cup",
+     "item": "vegetable oil",
+     "aisle": "pantry",
+     "note": "for frying"
+    },
+    {
+     "q": 4,
+     "u": "",
+     "item": "French sandwich rolls",
+     "aisle": "bakery",
+     "note": "split"
+    },
+    {
+     "q": 0.5,
+     "u": "cup",
+     "item": "mayonnaise",
+     "aisle": "pantry"
+    },
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "Creole mustard",
+     "aisle": "pantry"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "hot sauce",
+     "aisle": "pantry"
+    },
+    {
+     "q": 2,
+     "u": "",
+     "item": "tomatoes",
+     "aisle": "produce",
+     "note": "sliced"
+    },
+    {
+     "q": 2,
+     "u": "cup",
+     "item": "shredded lettuce",
+     "aisle": "produce"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Soak the shrimp in the buttermilk 15 minutes."
+    },
+    {
+     "text": "Whisk the mayonnaise, Creole mustard and hot sauce for the sauce."
+    },
+    {
+     "text": "Mix the cornmeal, flour, Cajun seasoning and salt. Heat 1.5 inches of oil to 350°F."
+    },
+    {
+     "text": "Dredge the shrimp in the cornmeal mix, pressing to coat."
+    },
+    {
+     "text": "Fry in small batches until golden and 145°F inside. Drain on a rack.",
+     "timer": 300,
+     "timerLabel": "Fry the shrimp"
+    },
+    {
+     "text": "Spread sauce on the rolls and pile in shrimp, lettuce and tomato."
+    }
+   ]
+  },
+  {
+   "id": "southern-shrimp-maque-choux",
+   "title": "Shrimp maque choux",
+   "blurb": "Creamy skillet corn with bacon, peppers and shrimp",
+   "type": "cajun",
+   "serves": 4,
+   "prep": 15,
+   "cook": 25,
+   "tags": [
+    "one pot",
+    "gluten-free"
+   ],
+   "ingredients": [
+    {
+     "q": 4,
+     "u": "slice",
+     "item": "bacon",
+     "aisle": "meat",
+     "note": "chopped"
+    },
+    {
+     "q": 1,
+     "u": "",
+     "item": "yellow onion",
+     "aisle": "produce",
+     "note": "diced"
+    },
+    {
+     "q": 1,
+     "u": "",
+     "item": "green bell pepper",
+     "aisle": "produce",
+     "note": "diced"
+    },
+    {
+     "q": 3,
+     "u": "clove",
+     "item": "garlic",
+     "aisle": "produce",
+     "note": "minced"
+    },
+    {
+     "q": 4,
+     "u": "cup",
+     "item": "frozen corn kernels",
+     "aisle": "frozen"
+    },
+    {
+     "q": 1,
+     "u": "can",
+     "item": "diced tomatoes (14.5 oz)",
+     "aisle": "canned"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "Cajun seasoning",
+     "aisle": "spices"
+    },
+    {
+     "q": 0.5,
+     "u": "cup",
+     "item": "heavy cream",
+     "aisle": "dairy"
+    },
+    {
+     "q": 1,
+     "u": "lb",
+     "item": "large peeled shrimp",
+     "aisle": "seafood"
+    },
+    {
+     "q": 2,
+     "u": "",
+     "item": "green onions",
+     "aisle": "produce",
+     "note": "sliced"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Cook the bacon in a large skillet until crisp, 6 minutes. Spoon out all but 1 tbsp fat."
+    },
+    {
+     "text": "Cook the onion and pepper in the bacon fat 5 minutes. Add garlic for 30 seconds."
+    },
+    {
+     "text": "Stir in the corn, tomatoes and Cajun seasoning."
+    },
+    {
+     "text": "Simmer until the corn is tender and the juices reduce.",
+     "timer": 600,
+     "timerLabel": "Simmer the corn"
+    },
+    {
+     "text": "Add the cream and shrimp. Cook until the shrimp are pink and 145°F."
+    },
+    {
+     "text": "Top with bacon and green onions."
+    }
+   ]
+  },
+  {
+   "id": "southern-low-country-boil",
+   "title": "Low-country boil",
+   "blurb": "Shrimp, sausage, corn and potatoes in one big pot",
+   "type": "cajun",
+   "serves": 6,
+   "prep": 15,
+   "cook": 35,
+   "tags": [
+    "one pot",
+    "crowd",
+    "gluten-free"
+   ],
+   "ingredients": [
+    {
+     "q": 2,
+     "u": "lb",
+     "item": "baby red potatoes",
+     "aisle": "produce"
+    },
+    {
+     "q": 1,
+     "u": "",
+     "item": "lemon",
+     "aisle": "produce",
+     "note": "halved"
+    },
+    {
+     "q": 3,
+     "u": "tbsp",
+     "item": "Old Bay seasoning",
+     "aisle": "spices"
+    },
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "salt",
+     "aisle": "spices"
+    },
+    {
+     "q": 1,
+     "u": "lb",
+     "item": "smoked sausage",
+     "aisle": "meat",
+     "note": "cut in 2-inch pieces"
+    },
+    {
+     "q": 6,
+     "u": "",
+     "item": "ears corn",
+     "aisle": "produce",
+     "note": "halved"
+    },
+    {
+     "q": 2,
+     "u": "lb",
+     "item": "large shrimp",
+     "aisle": "seafood",
+     "note": "shell-on"
+    },
+    {
+     "q": 0.5,
+     "u": "cup",
+     "item": "unsalted butter",
+     "aisle": "dairy",
+     "note": "melted"
+    },
+    {
+     "q": 1,
+     "u": "",
+     "item": "lemon",
+     "aisle": "produce",
+     "note": "cut in wedges, to serve"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Fill a large stockpot with 4 quarts water. Add the lemon halves, Old Bay and salt."
+    },
+    {
+     "text": "Bring to a boil, add the potatoes."
+    },
+    {
+     "text": "Boil the potatoes until almost tender.",
+     "timer": 720,
+     "timerLabel": "Boil the potatoes"
+    },
+    {
+     "text": "Add the sausage and corn."
+    },
+    {
+     "text": "Boil until the potatoes are tender and the corn is bright.",
+     "timer": 420,
+     "timerLabel": "Boil sausage and corn"
+    },
+    {
+     "text": "Add the shrimp and cook until pink and curled, 145°F. Drain.",
+     "timer": 240,
+     "timerLabel": "Cook the shrimp"
+    },
+    {
+     "text": "Spread on newspaper-lined table. Serve with melted butter and lemon wedges."
+    }
+   ]
+  },
+  {
+   "id": "southern-sheet-pan-cajun-chicken-potatoes",
+   "title": "Sheet-pan Cajun chicken and potatoes",
+   "blurb": "Spice-rubbed thighs roasted with crispy potatoes",
+   "type": "cajun",
+   "serves": 4,
+   "prep": 15,
+   "cook": 45,
+   "tags": [
+    "sheet pan",
+    "spicy"
+   ],
+   "ingredients": [
+    {
+     "q": 2,
+     "u": "lb",
+     "item": "bone-in skin-on chicken thighs",
+     "aisle": "meat"
+    },
+    {
+     "q": 1.5,
+     "u": "lb",
+     "item": "baby potatoes",
+     "aisle": "produce",
+     "note": "halved"
+    },
+    {
+     "q": 1,
+     "u": "",
+     "item": "green bell pepper",
+     "aisle": "produce",
+     "note": "cut in strips"
+    },
+    {
+     "q": 1,
+     "u": "",
+     "item": "yellow onion",
+     "aisle": "produce",
+     "note": "cut in wedges"
+    },
+    {
+     "q": 3,
+     "u": "tbsp",
+     "item": "olive oil",
+     "aisle": "pantry"
+    },
+    {
+     "q": 1.5,
+     "u": "tbsp",
+     "item": "Cajun seasoning",
+     "aisle": "spices"
+    },
+    {
+     "q": 0.5,
+     "u": "tsp",
+     "item": "salt",
+     "aisle": "spices"
+    },
+    {
+     "q": 1,
+     "u": "",
+     "item": "lemon",
+     "aisle": "produce",
+     "note": "cut in wedges"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Heat the oven to 425°F. Toss the chicken with 1 tbsp oil and 1 tbsp Cajun seasoning."
+    },
+    {
+     "text": "Toss the potatoes, pepper and onion with the remaining oil, seasoning and salt on a large rimmed pan."
+    },
+    {
+     "text": "Nestle the chicken on top, skin side up."
+    },
+    {
+     "text": "Roast until the chicken is 175°F and the potatoes are golden.",
+     "timer": 2700,
+     "timerLabel": "Roast the pan"
+    },
+    {
+     "text": "Rest 5 minutes. Squeeze lemon over everything."
+    }
+   ]
+  },
+  {
+   "id": "southern-cajun-chicken-fricassee",
+   "title": "Cajun chicken fricassee",
+   "blurb": "Chicken braised in a deep brown roux gravy over rice",
+   "type": "cajun",
+   "serves": 6,
+   "prep": 20,
+   "cook": 75,
+   "tags": [],
+   "ingredients": [
+    {
+     "q": 3.5,
+     "u": "lb",
+     "item": "bone-in skin-on chicken thighs and drumsticks",
+     "aisle": "meat"
+    },
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "Cajun seasoning",
+     "aisle": "spices"
+    },
+    {
+     "q": 0.33,
+     "u": "cup",
+     "item": "vegetable oil",
+     "aisle": "pantry"
+    },
+    {
+     "q": 0.33,
+     "u": "cup",
+     "item": "all-purpose flour",
+     "aisle": "pantry"
+    },
+    {
+     "q": 1,
+     "u": "",
+     "item": "yellow onion",
+     "aisle": "produce",
+     "note": "diced"
+    },
+    {
+     "q": 1,
+     "u": "",
+     "item": "green bell pepper",
+     "aisle": "produce",
+     "note": "diced"
+    },
+    {
+     "q": 2,
+     "u": "stalk",
+     "item": "celery",
+     "aisle": "produce",
+     "note": "diced"
+    },
+    {
+     "q": 4,
+     "u": "clove",
+     "item": "garlic",
+     "aisle": "produce",
+     "note": "minced"
+    },
+    {
+     "q": 4,
+     "u": "cup",
+     "item": "chicken broth",
+     "aisle": "pantry"
+    },
+    {
+     "q": 2,
+     "u": "",
+     "item": "green onions",
+     "aisle": "produce",
+     "note": "sliced"
+    },
+    {
+     "q": 3,
+     "u": "cup",
+     "item": "cooked white rice",
+     "aisle": "pantry",
+     "note": "to serve"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Season the chicken with the Cajun seasoning. Brown in a Dutch oven with 1 tbsp of the oil, 4 minutes per side. Set aside."
+    },
+    {
+     "text": "Add the remaining oil and flour. Stir constantly over medium-low heat until the roux is peanut-butter brown."
+    },
+    {
+     "text": "Stir the roux, keeping it moving so it does not burn.",
+     "timer": 900,
+     "timerLabel": "Cook the roux"
+    },
+    {
+     "text": "Add the onion, pepper and celery and cook 5 minutes. Stir in garlic."
+    },
+    {
+     "text": "Whisk in the broth, return the chicken, and simmer covered."
+    },
+    {
+     "text": "Simmer until the chicken is 175°F and tender and the gravy has thickened.",
+     "timer": 2700,
+     "timerLabel": "Simmer the chicken"
+    },
+    {
+     "text": "Serve over rice with green onions."
+    }
+   ]
+  },
+  {
+   "id": "southern-muffuletta-sandwich",
+   "title": "Muffuletta sandwich",
+   "blurb": "New Orleans stacked meats and cheese with olive salad",
+   "type": "cajun",
+   "serves": 6,
+   "prep": 20,
+   "cook": 15,
+   "tags": [
+    "make ahead",
+    "crowd"
+   ],
+   "ingredients": [
+    {
+     "q": 1,
+     "u": "",
+     "item": "round Italian loaf (10 inch)",
+     "aisle": "bakery"
+    },
+    {
+     "q": 1,
+     "u": "cup",
+     "item": "giardiniera or olive salad",
+     "aisle": "canned",
+     "note": "drained"
+    },
+    {
+     "q": 0.25,
+     "u": "cup",
+     "item": "olive oil",
+     "aisle": "pantry"
+    },
+    {
+     "q": 3,
+     "u": "oz",
+     "item": "hard salami",
+     "aisle": "meat",
+     "note": "sliced"
+    },
+    {
+     "q": 4,
+     "u": "oz",
+     "item": "deli ham",
+     "aisle": "meat",
+     "note": "sliced"
+    },
+    {
+     "q": 4,
+     "u": "oz",
+     "item": "mortadella",
+     "aisle": "meat",
+     "note": "sliced"
+    },
+    {
+     "q": 6,
+     "u": "slice",
+     "item": "provolone cheese",
+     "aisle": "dairy"
+    },
+    {
+     "q": 4,
+     "u": "slice",
+     "item": "Swiss cheese",
+     "aisle": "dairy"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "dried oregano",
+     "aisle": "spices"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Chop the olive salad and stir in 2 tbsp olive oil and the oregano."
+    },
+    {
+     "text": "Split the loaf and pull out some of the soft center. Brush both cut sides with remaining oil."
+    },
+    {
+     "text": "Spread half the olive salad on the bottom. Layer salami, ham, mortadella, provolone and Swiss."
+    },
+    {
+     "text": "Top with the remaining olive salad and the lid. Wrap tightly."
+    },
+    {
+     "text": "Press with a heavy pan in the fridge so the flavors blend.",
+     "timer": 1800,
+     "timerLabel": "Press and chill"
+    },
+    {
+     "text": "Cut into wedges. Serve cold or warm in a 350°F oven for 10 minutes."
+    }
+   ]
+  },
+  {
+   "id": "southern-cajun-stuffed-bell-peppers",
+   "title": "Cajun stuffed bell peppers",
+   "blurb": "Peppers filled with spiced beef, sausage and rice",
+   "type": "cajun",
+   "serves": 6,
+   "prep": 25,
+   "cook": 60,
+   "tags": [
+    "make ahead",
+    "spicy"
+   ],
+   "ingredients": [
+    {
+     "q": 6,
+     "u": "",
+     "item": "large bell peppers",
+     "aisle": "produce",
+     "note": "tops cut off, seeded"
+    },
+    {
+     "q": 1,
+     "u": "lb",
+     "item": "ground beef (85% lean)",
+     "aisle": "meat"
+    },
+    {
+     "q": 8,
+     "u": "oz",
+     "item": "andouille sausage",
+     "aisle": "meat",
+     "note": "finely diced"
+    },
+    {
+     "q": 1,
+     "u": "",
+     "item": "yellow onion",
+     "aisle": "produce",
+     "note": "diced"
+    },
+    {
+     "q": 3,
+     "u": "clove",
+     "item": "garlic",
+     "aisle": "produce",
+     "note": "minced"
+    },
+    {
+     "q": 2,
+     "u": "tsp",
+     "item": "Cajun seasoning",
+     "aisle": "spices"
+    },
+    {
+     "q": 1,
+     "u": "can",
+     "item": "diced tomatoes (14.5 oz)",
+     "aisle": "canned"
+    },
+    {
+     "q": 2,
+     "u": "cup",
+     "item": "cooked white rice",
+     "aisle": "pantry"
+    },
+    {
+     "q": 1,
+     "u": "cup",
+     "item": "shredded Monterey Jack cheese",
+     "aisle": "dairy"
+    },
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "vegetable oil",
+     "aisle": "pantry"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Heat the oven to 375°F. Bring a pot of water to a boil."
+    },
+    {
+     "text": "Parboil the peppers until slightly softened, then drain and stand in a baking dish.",
+     "timer": 180,
+     "timerLabel": "Parboil peppers"
+    },
+    {
+     "text": "Brown the beef, sausage and onion in oil until the beef is no longer pink, 160°F, then add garlic and Cajun seasoning."
+    },
+    {
+     "text": "Stir in the tomatoes and rice. Spoon into the peppers."
+    },
+    {
+     "text": "Cover with foil and bake until the peppers are tender.",
+     "timer": 2400,
+     "timerLabel": "Bake covered"
+    },
+    {
+     "text": "Top with cheese and bake until melted.",
+     "timer": 600,
+     "timerLabel": "Melt the cheese"
+    }
+   ]
+  },
+  {
+   "id": "southern-smoked-turkey-collard-soup",
+   "title": "Smoked turkey and collard soup",
+   "blurb": "Smoky broth with tender greens and white beans",
+   "type": "stews",
+   "serves": 6,
+   "prep": 15,
+   "cook": 60,
+   "tags": [
+    "healthy",
+    "gluten-free"
+   ],
+   "ingredients": [
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "olive oil",
+     "aisle": "pantry"
+    },
+    {
+     "q": 1,
+     "u": "",
+     "item": "yellow onion",
+     "aisle": "produce",
+     "note": "diced"
+    },
+    {
+     "q": 2,
+     "u": "stalk",
+     "item": "celery",
+     "aisle": "produce",
+     "note": "diced"
+    },
+    {
+     "q": 3,
+     "u": "clove",
+     "item": "garlic",
+     "aisle": "produce",
+     "note": "minced"
+    },
+    {
+     "q": 2,
+     "u": "",
+     "item": "smoked turkey wings or legs (about 1.5 lb)",
+     "aisle": "meat"
+    },
+    {
+     "q": 6,
+     "u": "cup",
+     "item": "chicken broth",
+     "aisle": "pantry"
+    },
+    {
+     "q": 2,
+     "u": "can",
+     "item": "cannellini beans (15 oz)",
+     "aisle": "canned",
+     "note": "drained"
+    },
+    {
+     "q": 1,
+     "u": "bunch",
+     "item": "collard greens",
+     "aisle": "produce",
+     "note": "stemmed, chopped"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "salt",
+     "aisle": "spices"
+    },
+    {
+     "q": 0.5,
+     "u": "tsp",
+     "item": "black pepper",
+     "aisle": "spices"
+    },
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "apple cider vinegar",
+     "aisle": "pantry"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Cook the onion and celery in oil in a Dutch oven for 5 minutes. Add the garlic for 30 seconds."
+    },
+    {
+     "text": "Add the turkey and broth and bring to a boil."
+    },
+    {
+     "text": "Cover and simmer until the turkey is very tender.",
+     "timer": 2700,
+     "timerLabel": "Simmer the turkey"
+    },
+    {
+     "text": "Lift out the turkey. Pull the meat off the bones and return it to the pot, discarding skin and bones."
+    },
+    {
+     "text": "Add the beans and collards."
+    },
+    {
+     "text": "Simmer until the collards are tender.",
+     "timer": 900,
+     "timerLabel": "Cook the collards"
+    },
+    {
+     "text": "Stir in the salt, pepper and vinegar."
+    }
+   ]
+  },
+  {
+   "id": "southern-slow-cooker-pinto-beans-ham-hock",
+   "title": "Slow-cooker pinto beans with ham hock",
+   "blurb": "Creamy, smoky beans to ladle over cornbread",
+   "type": "stews",
+   "serves": 8,
+   "prep": 15,
+   "cook": 600,
+   "tags": [
+    "slow cooker",
+    "make ahead",
+    "gluten-free"
+   ],
+   "ingredients": [
+    {
+     "q": 1,
+     "u": "lb",
+     "item": "dried pinto beans",
+     "aisle": "pantry",
+     "note": "rinsed and sorted"
+    },
+    {
+     "q": 1,
+     "u": "",
+     "item": "smoked ham hock",
+     "aisle": "meat"
+    },
+    {
+     "q": 1,
+     "u": "",
+     "item": "yellow onion",
+     "aisle": "produce",
+     "note": "diced"
+    },
+    {
+     "q": 3,
+     "u": "clove",
+     "item": "garlic",
+     "aisle": "produce",
+     "note": "minced"
+    },
+    {
+     "q": 6,
+     "u": "cup",
+     "item": "water",
+     "aisle": "pantry"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "chili powder",
+     "aisle": "spices"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "salt",
+     "aisle": "spices"
+    },
+    {
+     "q": 0.5,
+     "u": "tsp",
+     "item": "black pepper",
+     "aisle": "spices"
+    },
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "apple cider vinegar",
+     "aisle": "pantry"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Rinse the beans and pick out any stones. No soaking is needed."
+    },
+    {
+     "text": "Put the beans, ham hock, onion, garlic, water, chili powder and pepper in the slow cooker."
+    },
+    {
+     "text": "Cook on high until the beans are completely tender.",
+     "timer": 28800,
+     "timerLabel": "Slow cook the beans"
+    },
+    {
+     "text": "Lift out the hock, shred the meat and return it to the pot, discarding bone and skin."
+    },
+    {
+     "text": "Stir in the salt and vinegar. Mash some beans against the side to thicken."
+    },
+    {
+     "text": "Serve with cornbread and chopped onion."
+    }
+   ]
+  },
+  {
+   "id": "southern-chicken-bog",
+   "title": "Chicken bog",
+   "blurb": "South Carolina rice and chicken pilaf with smoked sausage",
+   "type": "stews",
+   "serves": 6,
+   "prep": 15,
+   "cook": 60,
+   "tags": [
+    "one pot",
+    "crowd"
+   ],
+   "ingredients": [
+    {
+     "q": 3,
+     "u": "lb",
+     "item": "bone-in chicken thighs and drumsticks",
+     "aisle": "meat"
+    },
+    {
+     "q": 12,
+     "u": "oz",
+     "item": "smoked sausage",
+     "aisle": "meat",
+     "note": "sliced"
+    },
+    {
+     "q": 1,
+     "u": "",
+     "item": "yellow onion",
+     "aisle": "produce",
+     "note": "diced"
+    },
+    {
+     "q": 2,
+     "u": "stalk",
+     "item": "celery",
+     "aisle": "produce",
+     "note": "diced"
+    },
+    {
+     "q": 5,
+     "u": "cup",
+     "item": "chicken broth",
+     "aisle": "pantry"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "salt",
+     "aisle": "spices"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "black pepper",
+     "aisle": "spices"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "paprika",
+     "aisle": "spices"
+    },
+    {
+     "q": 2,
+     "u": "cup",
+     "item": "long-grain white rice",
+     "aisle": "pantry"
+    },
+    {
+     "q": 2,
+     "u": "",
+     "item": "green onions",
+     "aisle": "produce",
+     "note": "sliced"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Put the chicken, onion, celery, broth, salt, pepper and paprika in a Dutch oven. Bring to a boil."
+    },
+    {
+     "text": "Simmer covered until the chicken is 175°F.",
+     "timer": 1800,
+     "timerLabel": "Cook the chicken"
+    },
+    {
+     "text": "Lift out the chicken. Pull the meat off the bones and shred it."
+    },
+    {
+     "text": "Add the rice and sausage to the pot and bring back to a boil."
+    },
+    {
+     "text": "Cover and cook on low until the rice is tender and has soaked up the broth.",
+     "timer": 1080,
+     "timerLabel": "Cook the rice"
+    },
+    {
+     "text": "Stir in the chicken and rest 5 minutes. Top with green onions."
+    }
+   ]
+  },
+  {
+   "id": "southern-shrimp-okra-gumbo",
+   "title": "Shrimp and okra gumbo",
+   "blurb": "Dark roux gumbo thickened with okra, loaded with shrimp",
+   "type": "stews",
+   "serves": 6,
+   "prep": 25,
+   "cook": 60,
+   "tags": [
+    "spicy"
+   ],
+   "ingredients": [
+    {
+     "q": 0.5,
+     "u": "cup",
+     "item": "vegetable oil",
+     "aisle": "pantry"
+    },
+    {
+     "q": 0.5,
+     "u": "cup",
+     "item": "all-purpose flour",
+     "aisle": "pantry"
+    },
+    {
+     "q": 1,
+     "u": "",
+     "item": "yellow onion",
+     "aisle": "produce",
+     "note": "diced"
+    },
+    {
+     "q": 1,
+     "u": "",
+     "item": "green bell pepper",
+     "aisle": "produce",
+     "note": "diced"
+    },
+    {
+     "q": 2,
+     "u": "stalk",
+     "item": "celery",
+     "aisle": "produce",
+     "note": "diced"
+    },
+    {
+     "q": 4,
+     "u": "clove",
+     "item": "garlic",
+     "aisle": "produce",
+     "note": "minced"
+    },
+    {
+     "q": 6,
+     "u": "cup",
+     "item": "chicken broth",
+     "aisle": "pantry"
+    },
+    {
+     "q": 2,
+     "u": "cup",
+     "item": "frozen cut okra",
+     "aisle": "frozen"
+    },
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "Cajun seasoning",
+     "aisle": "spices"
+    },
+    {
+     "q": 2,
+     "u": "",
+     "item": "bay leaves",
+     "aisle": "spices"
+    },
+    {
+     "q": 1.5,
+     "u": "lb",
+     "item": "large peeled shrimp",
+     "aisle": "seafood"
+    },
+    {
+     "q": 3,
+     "u": "cup",
+     "item": "cooked white rice",
+     "aisle": "pantry",
+     "note": "to serve"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Heat the oil in a Dutch oven. Whisk in the flour and stir constantly until the roux is the color of chocolate."
+    },
+    {
+     "text": "Stir the roux over medium-low, never walking away.",
+     "timer": 1200,
+     "timerLabel": "Cook the roux"
+    },
+    {
+     "text": "Add the onion, pepper and celery. Cook 5 minutes, then add the garlic."
+    },
+    {
+     "text": "Slowly whisk in the broth. Add okra, Cajun seasoning and bay leaves."
+    },
+    {
+     "text": "Simmer the gumbo, stirring now and then.",
+     "timer": 2400,
+     "timerLabel": "Simmer the gumbo"
+    },
+    {
+     "text": "Add the shrimp and cook until pink and 145°F, about 4 minutes. Remove the bay leaves."
+    },
+    {
+     "text": "Ladle over rice."
+    }
+   ]
+  },
+  {
+   "id": "southern-slow-cooker-brisket-chili",
+   "title": "Slow-cooker brisket chili",
+   "blurb": "Tender beef chunks in a smoky chili, loaded with toppings",
+   "type": "stews",
+   "serves": 8,
+   "prep": 20,
+   "cook": 480,
+   "tags": [
+    "slow cooker",
+    "make ahead",
+    "crowd"
+   ],
+   "ingredients": [
+    {
+     "q": 3,
+     "u": "lb",
+     "item": "beef chuck roast",
+     "aisle": "meat",
+     "note": "cut in 1-inch cubes"
+    },
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "vegetable oil",
+     "aisle": "pantry"
+    },
+    {
+     "q": 1,
+     "u": "",
+     "item": "yellow onion",
+     "aisle": "produce",
+     "note": "diced"
+    },
+    {
+     "q": 4,
+     "u": "clove",
+     "item": "garlic",
+     "aisle": "produce",
+     "note": "minced"
+    },
+    {
+     "q": 3,
+     "u": "tbsp",
+     "item": "chili powder",
+     "aisle": "spices"
+    },
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "ground cumin",
+     "aisle": "spices"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "smoked paprika",
+     "aisle": "spices"
+    },
+    {
+     "q": 1,
+     "u": "can",
+     "item": "crushed tomatoes (28 oz)",
+     "aisle": "canned"
+    },
+    {
+     "q": 1,
+     "u": "cup",
+     "item": "beef broth",
+     "aisle": "pantry"
+    },
+    {
+     "q": 1,
+     "u": "can",
+     "item": "pinto beans (15 oz)",
+     "aisle": "canned",
+     "note": "drained"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "salt",
+     "aisle": "spices"
+    },
+    {
+     "q": 1,
+     "u": "cup",
+     "item": "shredded cheddar cheese",
+     "aisle": "dairy",
+     "note": "to serve"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Brown the beef in the oil in batches, then move to the slow cooker."
+    },
+    {
+     "text": "Cook the onion in the same pan 4 minutes, add garlic and the spices for 30 seconds."
+    },
+    {
+     "text": "Add them to the slow cooker with the tomatoes, broth and salt."
+    },
+    {
+     "text": "Cover and cook on low until the beef is very tender.",
+     "timer": 25200,
+     "timerLabel": "Slow cook the chili"
+    },
+    {
+     "text": "Stir in the beans."
+    },
+    {
+     "text": "Cook 30 more minutes.",
+     "timer": 1800,
+     "timerLabel": "Warm the beans"
+    },
+    {
+     "text": "Serve topped with cheddar."
+    }
+   ]
+  },
+  {
+   "id": "southern-sausage-potato-soup",
+   "title": "Smoked sausage and potato soup",
+   "blurb": "Hearty creamy soup with smoky sausage and kale",
+   "type": "stews",
+   "serves": 6,
+   "prep": 15,
+   "cook": 35,
+   "tags": [
+    "one pot",
+    "kid-friendly"
+   ],
+   "ingredients": [
+    {
+     "q": 1,
+     "u": "lb",
+     "item": "smoked sausage",
+     "aisle": "meat",
+     "note": "halved and sliced"
+    },
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "olive oil",
+     "aisle": "pantry"
+    },
+    {
+     "q": 1,
+     "u": "",
+     "item": "yellow onion",
+     "aisle": "produce",
+     "note": "diced"
+    },
+    {
+     "q": 3,
+     "u": "clove",
+     "item": "garlic",
+     "aisle": "produce",
+     "note": "minced"
+    },
+    {
+     "q": 4,
+     "u": "cup",
+     "item": "chicken broth",
+     "aisle": "pantry"
+    },
+    {
+     "q": 1.5,
+     "u": "lb",
+     "item": "russet potatoes",
+     "aisle": "produce",
+     "note": "peeled, cut in 0.5-inch cubes"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "salt",
+     "aisle": "spices"
+    },
+    {
+     "q": 0.5,
+     "u": "tsp",
+     "item": "black pepper",
+     "aisle": "spices"
+    },
+    {
+     "q": 1,
+     "u": "cup",
+     "item": "heavy cream",
+     "aisle": "dairy"
+    },
+    {
+     "q": 3,
+     "u": "cup",
+     "item": "chopped kale",
+     "aisle": "produce"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Brown the sausage in the oil in a Dutch oven, 4 minutes. Remove."
+    },
+    {
+     "text": "Cook the onion in the pot for 5 minutes, then add the garlic."
+    },
+    {
+     "text": "Add the broth, potatoes, salt and pepper. Bring to a boil."
+    },
+    {
+     "text": "Simmer until the potatoes are tender.",
+     "timer": 900,
+     "timerLabel": "Simmer the potatoes"
+    },
+    {
+     "text": "Mash a few potatoes against the side of the pot to thicken."
+    },
+    {
+     "text": "Stir in the cream, sausage and kale. Simmer 5 minutes."
+    }
+   ]
+  },
+  {
+   "id": "southern-cornbread-dressing",
+   "title": "Southern cornbread dressing",
+   "blurb": "Moist, herby cornbread stuffing baked until golden",
+   "type": "sides",
+   "serves": 10,
+   "prep": 25,
+   "cook": 50,
+   "tags": [
+    "holiday",
+    "make ahead",
+    "crowd"
+   ],
+   "ingredients": [
+    {
+     "q": 8,
+     "u": "cup",
+     "item": "crumbled cornbread",
+     "aisle": "bakery",
+     "note": "day-old"
+    },
+    {
+     "q": 4,
+     "u": "slice",
+     "item": "white bread",
+     "aisle": "bakery",
+     "note": "torn"
+    },
+    {
+     "q": 6,
+     "u": "tbsp",
+     "item": "unsalted butter",
+     "aisle": "dairy"
+    },
+    {
+     "q": 1,
+     "u": "",
+     "item": "yellow onion",
+     "aisle": "produce",
+     "note": "diced"
+    },
+    {
+     "q": 3,
+     "u": "stalk",
+     "item": "celery",
+     "aisle": "produce",
+     "note": "diced"
+    },
+    {
+     "q": 2,
+     "u": "tsp",
+     "item": "dried sage",
+     "aisle": "spices"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "dried thyme",
+     "aisle": "spices"
+    },
+    {
+     "q": 3,
+     "u": "cup",
+     "item": "chicken broth",
+     "aisle": "pantry"
+    },
+    {
+     "q": 3,
+     "u": "",
+     "item": "large eggs",
+     "aisle": "dairy",
+     "note": "beaten"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "salt",
+     "aisle": "spices"
+    },
+    {
+     "q": 0.75,
+     "u": "tsp",
+     "item": "black pepper",
+     "aisle": "spices"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Heat the oven to 350°F. Grease a 9x13 baking dish."
+    },
+    {
+     "text": "Melt the butter and cook the onion and celery 8 minutes until soft."
+    },
+    {
+     "text": "In a large bowl, mix the cornbread, bread, onion mixture, sage, thyme, salt and pepper."
+    },
+    {
+     "text": "Stir in the broth and eggs until the mixture is very moist."
+    },
+    {
+     "text": "Spread in the dish and cover with foil."
+    },
+    {
+     "text": "Bake covered 25 minutes.",
+     "timer": 1500,
+     "timerLabel": "Bake covered"
+    },
+    {
+     "text": "Uncover and bake until golden and set.",
+     "timer": 1200,
+     "timerLabel": "Brown the top"
+    }
+   ]
+  },
+  {
+   "id": "southern-skillet-creamed-corn",
+   "title": "Skillet creamed corn",
+   "blurb": "Sweet corn simmered in cream with a hint of bacon",
+   "type": "sides",
+   "serves": 6,
+   "prep": 10,
+   "cook": 20,
+   "tags": [
+    "quick",
+    "gluten-free"
+   ],
+   "ingredients": [
+    {
+     "q": 4,
+     "u": "slice",
+     "item": "bacon",
+     "aisle": "meat",
+     "note": "chopped"
+    },
+    {
+     "q": 4,
+     "u": "cup",
+     "item": "frozen corn kernels",
+     "aisle": "frozen"
+    },
+    {
+     "q": 2,
+     "u": "tbsp",
+     "item": "unsalted butter",
+     "aisle": "dairy"
+    },
+    {
+     "q": 0.5,
+     "u": "cup",
+     "item": "heavy cream",
+     "aisle": "dairy"
+    },
+    {
+     "q": 0.25,
+     "u": "cup",
+     "item": "whole milk",
+     "aisle": "dairy"
+    },
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "all-purpose flour",
+     "aisle": "pantry"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "sugar",
+     "aisle": "pantry"
+    },
+    {
+     "q": 0.5,
+     "u": "tsp",
+     "item": "salt",
+     "aisle": "spices"
+    },
+    {
+     "q": 0.25,
+     "u": "tsp",
+     "item": "black pepper",
+     "aisle": "spices"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Cook the bacon in a skillet until crisp, 6 minutes. Drain on paper towels, reserving 1 tbsp of fat."
+    },
+    {
+     "text": "Add the butter and corn to the fat and cook 5 minutes."
+    },
+    {
+     "text": "Sprinkle on the flour and stir 1 minute."
+    },
+    {
+     "text": "Add the cream, milk, sugar, salt and pepper."
+    },
+    {
+     "text": "Simmer until thick and creamy.",
+     "timer": 300,
+     "timerLabel": "Thicken the corn"
+    },
+    {
+     "text": "Top with the bacon."
+    }
+   ]
+  },
+  {
+   "id": "southern-sweet-potato-casserole-pecans",
+   "title": "Sweet potato casserole with pecans",
+   "blurb": "Whipped sweet potatoes under a crunchy brown sugar topping",
+   "type": "sides",
+   "serves": 8,
+   "prep": 20,
+   "cook": 70,
+   "tags": [
+    "holiday",
+    "make ahead",
+    "vegetarian"
+   ],
+   "ingredients": [
+    {
+     "q": 3,
+     "u": "lb",
+     "item": "sweet potatoes",
+     "aisle": "produce",
+     "note": "scrubbed"
+    },
+    {
+     "q": 4,
+     "u": "tbsp",
+     "item": "unsalted butter",
+     "aisle": "dairy",
+     "note": "melted"
+    },
+    {
+     "q": 0.25,
+     "u": "cup",
+     "item": "whole milk",
+     "aisle": "dairy"
+    },
+    {
+     "q": 0.25,
+     "u": "cup",
+     "item": "packed brown sugar",
+     "aisle": "pantry"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "vanilla extract",
+     "aisle": "pantry"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "ground cinnamon",
+     "aisle": "spices"
+    },
+    {
+     "q": 0.5,
+     "u": "tsp",
+     "item": "salt",
+     "aisle": "spices"
+    },
+    {
+     "q": 0.75,
+     "u": "cup",
+     "item": "chopped pecans",
+     "aisle": "pantry"
+    },
+    {
+     "q": 0.33,
+     "u": "cup",
+     "item": "all-purpose flour",
+     "aisle": "pantry"
+    },
+    {
+     "q": 0.33,
+     "u": "cup",
+     "item": "packed brown sugar",
+     "aisle": "pantry",
+     "note": "for topping"
+    },
+    {
+     "q": 4,
+     "u": "tbsp",
+     "item": "unsalted butter",
+     "aisle": "dairy",
+     "note": "cold, cubed, for topping"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Heat the oven to 400°F. Prick the potatoes and roast on a baking sheet."
+    },
+    {
+     "text": "Roast until very tender, then cool slightly.",
+     "timer": 3000,
+     "timerLabel": "Roast the potatoes"
+    },
+    {
+     "text": "Lower the oven to 350°F. Peel the potatoes and mash with melted butter, milk, 0.25 cup sugar, vanilla, cinnamon and salt."
+    },
+    {
+     "text": "Spread in a greased 8x8 dish."
+    },
+    {
+     "text": "Rub the flour, topping sugar, cold butter and pecans together with your fingers. Sprinkle over the top."
+    },
+    {
+     "text": "Bake until bubbly and the topping is browned.",
+     "timer": 1500,
+     "timerLabel": "Bake the casserole"
+    }
+   ]
+  },
+  {
+   "id": "southern-yellow-squash-casserole",
+   "title": "Yellow squash casserole",
+   "blurb": "Cheesy baked squash with a buttery cracker crust",
+   "type": "sides",
+   "serves": 8,
+   "prep": 20,
+   "cook": 45,
+   "tags": [
+    "vegetarian",
+    "make ahead"
+   ],
+   "ingredients": [
+    {
+     "q": 2,
+     "u": "lb",
+     "item": "yellow squash",
+     "aisle": "produce",
+     "note": "sliced"
+    },
+    {
+     "q": 1,
+     "u": "",
+     "item": "yellow onion",
+     "aisle": "produce",
+     "note": "diced"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "salt",
+     "aisle": "spices"
+    },
+    {
+     "q": 1.5,
+     "u": "cup",
+     "item": "shredded sharp cheddar cheese",
+     "aisle": "dairy"
+    },
+    {
+     "q": 1,
+     "u": "",
+     "item": "large eggs",
+     "aisle": "dairy",
+     "note": "beaten"
+    },
+    {
+     "q": 0.5,
+     "u": "cup",
+     "item": "mayonnaise",
+     "aisle": "pantry"
+    },
+    {
+     "q": 0.5,
+     "u": "tsp",
+     "item": "black pepper",
+     "aisle": "spices"
+    },
+    {
+     "q": 1,
+     "u": "cup",
+     "item": "crushed butter crackers",
+     "aisle": "bakery"
+    },
+    {
+     "q": 2,
+     "u": "tbsp",
+     "item": "unsalted butter",
+     "aisle": "dairy",
+     "note": "melted"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Heat the oven to 350°F. Simmer the squash and onion in 1 inch of water with 0.5 tsp salt until tender."
+    },
+    {
+     "text": "Simmer the squash.",
+     "timer": 600,
+     "timerLabel": "Cook the squash"
+    },
+    {
+     "text": "Drain well, pressing out extra water, and mash lightly."
+    },
+    {
+     "text": "Stir in 1 cup cheddar, the egg, mayonnaise, pepper and remaining salt."
+    },
+    {
+     "text": "Spread in a greased 2-quart dish. Top with the remaining cheddar, then crackers tossed with the butter."
+    },
+    {
+     "text": "Bake until bubbly and golden.",
+     "timer": 1800,
+     "timerLabel": "Bake the casserole"
+    }
+   ]
+  },
+  {
+   "id": "southern-fried-cabbage-bacon",
+   "title": "Fried cabbage with bacon",
+   "blurb": "Skillet cabbage browned in bacon fat until sweet and tender",
+   "type": "sides",
+   "serves": 6,
+   "prep": 10,
+   "cook": 25,
+   "tags": [
+    "quick",
+    "gluten-free"
+   ],
+   "ingredients": [
+    {
+     "q": 6,
+     "u": "slice",
+     "item": "bacon",
+     "aisle": "meat",
+     "note": "chopped"
+    },
+    {
+     "q": 1,
+     "u": "",
+     "item": "yellow onion",
+     "aisle": "produce",
+     "note": "sliced"
+    },
+    {
+     "q": 1,
+     "u": "head",
+     "item": "green cabbage",
+     "aisle": "produce",
+     "note": "cored and chopped, about 2 lb"
+    },
+    {
+     "q": 3,
+     "u": "clove",
+     "item": "garlic",
+     "aisle": "produce",
+     "note": "minced"
+    },
+    {
+     "q": 0.5,
+     "u": "tsp",
+     "item": "salt",
+     "aisle": "spices"
+    },
+    {
+     "q": 0.5,
+     "u": "tsp",
+     "item": "black pepper",
+     "aisle": "spices"
+    },
+    {
+     "q": 0.5,
+     "u": "tsp",
+     "item": "red pepper flakes",
+     "aisle": "spices"
+    },
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "apple cider vinegar",
+     "aisle": "pantry"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Cook the bacon in a large deep skillet until crisp, 7 minutes. Move to a plate, leaving the fat."
+    },
+    {
+     "text": "Cook the onion in the fat 4 minutes. Add the garlic for 30 seconds."
+    },
+    {
+     "text": "Add the cabbage, salt, pepper and red pepper flakes."
+    },
+    {
+     "text": "Cook, stirring often, until tender and browned at the edges.",
+     "timer": 900,
+     "timerLabel": "Cook the cabbage"
+    },
+    {
+     "text": "Stir in the vinegar and bacon."
+    }
+   ]
+  },
+  {
+   "id": "southern-skillet-bacon-cornbread",
+   "title": "Skillet bacon cornbread",
+   "blurb": "Crisp-edged cornbread baked in bacon drippings",
+   "type": "breads",
+   "serves": 8,
+   "prep": 15,
+   "cook": 25,
+   "tags": [],
+   "ingredients": [
+    {
+     "q": 6,
+     "u": "slice",
+     "item": "bacon",
+     "aisle": "meat",
+     "note": "chopped"
+    },
+    {
+     "q": 1.5,
+     "u": "cup",
+     "item": "yellow cornmeal",
+     "aisle": "pantry"
+    },
+    {
+     "q": 0.5,
+     "u": "cup",
+     "item": "all-purpose flour",
+     "aisle": "pantry"
+    },
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "sugar",
+     "aisle": "pantry"
+    },
+    {
+     "q": 2,
+     "u": "tsp",
+     "item": "baking powder",
+     "aisle": "spices"
+    },
+    {
+     "q": 0.5,
+     "u": "tsp",
+     "item": "baking soda",
+     "aisle": "spices"
+    },
+    {
+     "q": 0.75,
+     "u": "tsp",
+     "item": "salt",
+     "aisle": "spices"
+    },
+    {
+     "q": 1.5,
+     "u": "cup",
+     "item": "buttermilk",
+     "aisle": "dairy"
+    },
+    {
+     "q": 2,
+     "u": "",
+     "item": "large eggs",
+     "aisle": "dairy"
+    },
+    {
+     "q": 2,
+     "u": "tbsp",
+     "item": "unsalted butter",
+     "aisle": "dairy",
+     "note": "melted"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Heat the oven to 425°F. Cook the bacon in a 10-inch cast-iron skillet until crisp. Remove, leaving 2 tbsp fat."
+    },
+    {
+     "text": "Put the skillet in the oven to heat."
+    },
+    {
+     "text": "Whisk the cornmeal, flour, sugar, baking powder, baking soda and salt."
+    },
+    {
+     "text": "Whisk the buttermilk, eggs and butter, then stir into the dry mix with the bacon."
+    },
+    {
+     "text": "Pour into the hot skillet. It should sizzle."
+    },
+    {
+     "text": "Bake until golden and a toothpick comes out clean.",
+     "timer": 1380,
+     "timerLabel": "Bake the cornbread"
+    }
+   ]
+  },
+  {
+   "id": "southern-cathead-biscuits",
+   "title": "Cathead biscuits",
+   "blurb": "Giant, fluffy drop biscuits the size of a cat’s head",
+   "type": "breads",
+   "serves": 6,
+   "prep": 15,
+   "cook": 25,
+   "tags": [
+    "kid-friendly"
+   ],
+   "ingredients": [
+    {
+     "q": 3,
+     "u": "cup",
+     "item": "all-purpose flour",
+     "aisle": "pantry"
+    },
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "baking powder",
+     "aisle": "spices"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "sugar",
+     "aisle": "pantry"
+    },
+    {
+     "q": 0.75,
+     "u": "tsp",
+     "item": "salt",
+     "aisle": "spices"
+    },
+    {
+     "q": 0.5,
+     "u": "cup",
+     "item": "cold unsalted butter",
+     "aisle": "dairy",
+     "note": "cut in cubes (1 stick)"
+    },
+    {
+     "q": 1.25,
+     "u": "cup",
+     "item": "buttermilk",
+     "aisle": "dairy"
+    },
+    {
+     "q": 2,
+     "u": "tbsp",
+     "item": "unsalted butter",
+     "aisle": "dairy",
+     "note": "melted, for brushing"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Heat the oven to 450°F. Grease a 10-inch cast-iron skillet or baking pan."
+    },
+    {
+     "text": "Whisk the flour, baking powder, sugar and salt."
+    },
+    {
+     "text": "Rub in the cold butter until pea-sized crumbs remain."
+    },
+    {
+     "text": "Stir in the buttermilk just until a shaggy dough forms."
+    },
+    {
+     "text": "Scoop six large mounds, about 0.5 cup each, into the pan so they touch."
+    },
+    {
+     "text": "Bake until tall and golden brown.",
+     "timer": 1380,
+     "timerLabel": "Bake the biscuits"
+    },
+    {
+     "text": "Brush with melted butter right away."
+    }
+   ]
   }
  ]
 }

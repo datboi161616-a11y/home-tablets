@@ -8,7 +8,7 @@ const BASE = './data/recipes/';
 export const CUISINE_COLORS = {
   american: '#35557F', italian: '#2E6B45', mexican: '#C2491F', chinese: '#A8322A',
   japanese: '#3F4F6B', thai: '#4F7A3A', indian: '#B5701A', mediterranean: '#2C6E8A',
-  korean: '#8A3B5C', southern: '#7A4A2A', breakfast: '#C98A1E', lunch: '#3E7C6E', desserts: '#A84E73',
+  korean: '#8A3B5C', southern: '#7A4A2A', breakfast: '#C98A1E', lunch: '#3E7C6E', desserts: '#A84E73', weeknight: '#6B5B95',
 };
 export const cuisineColor = (id) => CUISINE_COLORS[id] || '#1D2430';
 
