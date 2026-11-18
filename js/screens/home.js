@@ -7,6 +7,7 @@ import { isTablet, getPhotos, onPhotosChanged } from '../services/tablet-photos.
 import { upcoming, refreshCalendars } from '../services/calendar-data.js';
 import { fmtMinutes } from '../services/recipe-data.js';
 import { tonight } from '../services/meal-plan.js';
+import { getAlerts, untilText, alertColor } from '../services/weather-alerts.js';
 
 let timer, photoTimer, offPhotos, onCalendar;
 
@@ -64,6 +65,7 @@ export function mount(el) {
       </div>
 
       <a href="#/forecast" data-weather class="card skeleton" style="padding:28px;display:flex;flex-direction:column;gap:22px">
+        <div data-w-alert style="display:none;margin:-8px -8px 0;border-radius:14px;padding:10px 16px;color:#fff;font-size:17px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis"></div>
         <div style="display:flex;align-items:center;gap:20px">
           <span data-w-icon>${icon('cloud', 72, settings.accent)}</span>
           <div data-w-temp class="display" style="font-size:80px;font-weight:500;line-height:1">--°</div>
@@ -152,6 +154,13 @@ export function mount(el) {
   (async () => {
     try {
       const loc = await getLocation();
+      getAlerts(loc).then((list) => {
+        if (!el.isConnected || !list.length) return;
+        const box = $('[data-w-alert]');
+        box.style.display = 'block';
+        box.style.background = alertColor(list[0]);
+        box.textContent = `⚠ ${list[0].event} ${untilText(list[0].until)}`;
+      }).catch(() => {});
       const w = await getWeather(loc);
       const d = describe(w.code);
       if (!el.isConnected) return;

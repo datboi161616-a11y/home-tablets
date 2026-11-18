@@ -76,7 +76,7 @@ function render(el) {
 
     <div style="flex-grow:1;min-height:0;display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:12px">
       ${days.map((d) => `
-        <div class="cal-day${d.isToday ? ' today' : ''}" style="${d.isToday ? 'background:var(--ink);color:#fff' : 'background:#fff'}">
+        <div class="cal-day${d.isToday ? ' today' : ''}" data-day="${days.indexOf(d)}" style="cursor:pointer;${d.isToday ? 'background:var(--ink);color:#fff' : 'background:#fff'}">
           <div style="display:flex;flex-direction:column;gap:2px">
             <div class="eyebrow">${d.dow}</div>
             <div class="display" style="font-size:40px;font-weight:500;line-height:1">${d.num}</div>
@@ -88,6 +88,8 @@ function render(el) {
             </div>`).join('')}
         </div>`).join('')}
     </div>
+
+    <div data-detail style="display:none;position:absolute;top:0;right:0;bottom:0;left:0;background:rgba(29,36,48,.45);z-index:5;align-items:center;justify-content:center"></div>
 
     <div style="background:#fff;border-radius:20px;padding:18px 24px;display:flex;justify-content:space-between;align-items:center;font-size:18px">
       <div>${big ? `<span style="font-weight:600">Next big thing:</span> ${esc(big.name)}${big.where ? ` at ${esc(big.where)}` : ''} · ${big.label}` : ''}</div>
@@ -103,10 +105,40 @@ function draw(el) {
   requestAnimationFrame(() => setTimeout(() => { if (el.isConnected) fitDays(el); }, 50));
 }
 
+// Tap a day: everything on it, with full titles, times and places.
+function showDay(el, d) {
+  const box = el.querySelector('[data-detail]');
+  const title = d.date.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' });
+  box.innerHTML = `
+    <div style="background:#fff;border-radius:24px;padding:28px 32px;width:640px;max-height:640px;display:flex;flex-direction:column;gap:16px">
+      <div style="display:flex;align-items:center;justify-content:space-between;gap:16px">
+        <div class="display" style="font-size:32px;font-weight:500">${esc(title)}</div>
+        <button data-close class="pill" style="background:var(--ink);color:#fff;border:none;cursor:pointer">Close</button>
+      </div>
+      <div style="overflow-y:auto;display:flex;flex-direction:column;gap:10px">
+        ${d.events.length ? d.events.map((e) => `
+          <div style="display:flex;gap:14px;align-items:flex-start;padding:12px 0;border-top:1px solid var(--line)">
+            <div style="width:12px;height:12px;border-radius:50%;margin-top:7px;flex:none;background:${colorOf(e.kind)}"></div>
+            <div style="width:150px;flex:none;font-weight:600;font-size:17px">${esc(e.time)}${e.endTime ? `<div class="muted" style="font-weight:500;font-size:15px">to ${esc(e.endTime)}</div>` : ''}</div>
+            <div style="min-width:0"><div style="font-size:19px;font-weight:500;overflow-wrap:anywhere">${esc(e.title)}</div>
+              ${e.location ? `<div class="muted" style="font-size:15px;margin-top:2px;overflow-wrap:anywhere">${esc(e.location)}</div>` : ''}</div>
+          </div>`).join('') : '<div class="muted" style="font-size:19px;padding:12px 0">Nothing planned</div>'}
+      </div>
+    </div>`;
+  box.style.display = 'flex';
+}
+
 export function mount(el) {
   weekOffset = 0;
   draw(el);
   el.addEventListener('click', (e) => {
+    const box = el.querySelector('[data-detail]');
+    if (box && box.style.display === 'flex') {
+      if (e.target === box || e.target.closest('[data-close]')) box.style.display = 'none';
+      return;
+    }
+    const day = e.target.closest('[data-day]');
+    if (day) { showDay(el, getWeek(new Date(Date.now() + weekOffset * 7 * 86400000))[+day.dataset.day]); return; }
     const b = e.target.closest('[data-week]');
     if (!b || b.disabled) return;
     const n = +b.dataset.week;

@@ -2,6 +2,7 @@
 import { settings } from '../config.js';
 import { getLocation } from '../services/location.js';
 import { getWeather, describe } from '../services/weather.js';
+import { getAlerts } from '../services/weather-alerts.js';
 import { photos as samplePhotos } from '../services/family-sample.js';
 import { thisWeekCount } from '../services/calendar-data.js';
 import { unreadCount } from '../services/messages-data.js';
@@ -136,8 +137,12 @@ export function mount(el) {
 
   (async () => {
     try {
-      const w = await getWeather(await getLocation());
+      const loc = await getLocation();
+      const w = await getWeather(loc);
       if (!el.isConnected) return;
+      const alerts = await getAlerts(loc).catch(() => []);
+      if (!el.isConnected) return;
+      if (alerts.length) { $('[data-weather]').textContent = `⚠ ${alerts[0].event}`; return; }
       // e.g. "34° · snow later": say what's coming if it differs from now.
       const now = describe(w.code).label;
       const later = w.hours.map((h) => describe(h.code)).find((d) => d.label !== now);

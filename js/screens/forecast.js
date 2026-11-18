@@ -4,6 +4,7 @@ import { getLocation } from '../services/location.js';
 import { describe } from '../services/weather.js';
 import { getForecast, outlook, advice, fmtTime } from '../services/forecast-data.js';
 import { icon } from '../icons.js';
+import { getAlerts, untilText, alertColor } from '../services/weather-alerts.js';
 
 let timer;
 
@@ -16,6 +17,8 @@ export function mount(el) {
       <a href="#/launcher" class="pill" style="background:#fff">← Menu</a>
       <div data-f-title class="display" style="font-size:40px;font-weight:500">Weather</div>
     </div>
+
+    <div data-f-alert style="display:none;border-radius:20px;padding:16px 24px;color:#fff;flex-direction:column;gap:4px"></div>
 
     <div data-f-top class="skeleton" style="display:grid;grid-template-columns:1.3fr 1fr;gap:24px">
       <div style="background:var(--ink);color:#fff;border-radius:24px;padding:32px;display:flex;align-items:center;gap:28px">
@@ -49,6 +52,18 @@ export function mount(el) {
       const loc = await getLocation();
       if (!el.isConnected) return;
       if (loc.town) $('[data-f-title]').textContent = `Weather in ${loc.town}`;
+      // Watches and warnings from the National Weather Service, most serious first.
+      getAlerts(loc).then((list) => {
+        if (!el.isConnected || !list.length) return;
+        const a = list[0];
+        const box = $('[data-f-alert]');
+        box.style.display = 'flex';
+        box.style.background = alertColor(a);
+        const esc = (t) => String(t).replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+        box.innerHTML = `
+          <div style="font-size:22px;font-weight:700">⚠ ${esc(a.event)} <span style="font-weight:500;opacity:.9">${esc(untilText(a.until))}</span>${list.length > 1 ? `<span style="font-weight:500;opacity:.8"> · also ${esc(list.slice(1).map((x) => x.event).join(', '))}</span>` : ''}</div>
+          ${a.what ? `<div style="font-size:17px;line-height:1.35;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden">${esc(a.what)}</div>` : ''}`;
+      }).catch(() => {});
       const f = await getForecast(loc);
       if (!el.isConnected) return;
       const now = describe(f.code);

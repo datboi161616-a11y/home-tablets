@@ -124,7 +124,8 @@ function itemsOn(d, feeds) {
     if (e.allDay) { time = 'All day'; sort = -1; } else if (e.start >= dayStart) {
       time = fmtTime(e.start); sort = e.start.getHours() * 60 + e.start.getMinutes();
     } else if (e.end >= dayEnd) { time = 'All day'; sort = -1; } else { time = `Until ${fmtTime(e.end)}`; sort = 0; }
-    list.push({ title: e.title, time, kind: e.kind, sort, start: e.start, end: e.end, allDay: time === 'All day' });
+    list.push({ title: e.title, time, kind: e.kind, sort, start: e.start, end: e.end, allDay: time === 'All day', location: e.location || '',
+      endTime: !e.allDay && e.end > e.start && e.end <= dayEnd ? fmtTime(e.end) : '' });
   });
   datedOn(d, list.map((x) => x.title)).forEach((x) => {
     list.push({ title: x.title, time: 'All day', kind: x.kind, sort: -1, start: dayStart, end: dayEnd, allDay: true });
@@ -148,7 +149,7 @@ export function getWeek(date = new Date()) {
       num: d.getDate(),
       isToday: d.getTime() === today.getTime(),
       // Settings dates that aren't birthdays use the main calendar colour.
-      events: itemsOn(d, feeds).map((e) => ({ time: e.time, title: e.title, kind: e.kind === 'event' ? 'family' : e.kind })),
+      events: itemsOn(d, feeds).map((e) => ({ time: e.time, endTime: e.endTime || '', title: e.title, location: e.location || '', kind: e.kind === 'event' ? 'family' : e.kind })),
     });
   }
   return out;

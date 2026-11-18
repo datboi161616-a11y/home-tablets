@@ -170,8 +170,15 @@ export function mount(el) {
   // A phone just sent photos (or one was removed): reload, newest first.
   offPhotos = onPhotosChanged(() => { photos = loadAlbum(); start(); });
 
-  // Tap anywhere (except a button) goes back home.
-  const onTap = (e) => { if (!e.target.closest('a')) location.hash = '#/home'; };
+  // Tap the left or right side to go back / forward a photo; tap the middle to go home.
+  const onTap = (e) => {
+    if (e.target.closest('a')) return;
+    const r = $('[data-root]').getBoundingClientRect();
+    const x = (e.clientX - r.left) / r.width;
+    if (photos.length > 1 && x < 0.22) show((index - 1 + photos.length) % photos.length);
+    else if (photos.length > 1 && x > 0.78) next();
+    else location.hash = '#/home';
+  };
   $('[data-root]').addEventListener('click', onTap);
 
   (async () => {
