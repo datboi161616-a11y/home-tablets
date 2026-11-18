@@ -173,7 +173,7 @@ export const SPACE_IMAGES = [
     distance: '1,350 LIGHT-YEARS' },
 ];
 
-const todayKey = () => {
+export const todayKey = () => {
   const d = new Date();
   return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
 };
@@ -221,6 +221,8 @@ export async function getSpaceImage() {
       url,
       distance: ly ? `${ly[1].toUpperCase()} LIGHT-YEARS` : null,
       credit: 'NASA PICTURE OF THE DAY',
+      // Many APOD pictures are taken by amateur astronomers: name them.
+      copyright: (d.copyright || '').replace(/\s+/g, ' ').trim() || null,
       date: d.date,
     };
   } catch (err) {

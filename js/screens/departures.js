@@ -2,10 +2,19 @@
 // Rows come from real planes in the air near the nearest airport — see
 // services/departures.js for how, and why there is a sample fallback.
 import { getLocation } from '../services/location.js';
-import { getBoard } from '../services/departures.js';
+import { getBoard, hhmm } from '../services/departures.js';
+import { typeName } from '../services/aircraft.js';
 
 const ROWS = 9;
-const COLS = 'grid-template-columns: 110px 150px minmax(0, 1fr) 90px 200px';
+const COLS = 'grid-template-columns: 110px 150px minmax(0, 1fr) 150px 250px';
+
+// "BOEING 737-800" -> "737-800", "EMBRAER 175" -> "E175"; falls back to the code if long.
+function shortType(ac, code) {
+  if (!ac) return code || '—';
+  let n = typeName(ac).replace(/^(BOEING|AIRBUS|BOMBARDIER|CESSNA|PIPER|BEECH|GULFSTREAM) /, '').replace(/^EMBRAER (\d)/, 'E$1').replace(/^EMBRAER /, '');
+  if (n.length > 8 || n === 'UNKNOWN TYPE') n = code || ac.type || '—';
+  return n;
+}
 
 let timers = [];
 let alive = false;
@@ -23,6 +32,8 @@ export function mount(el) {
     @keyframes tbd-blink{50%{opacity:.3}}
     .tbd .blink{animation:tbd-blink 1.4s ease-in-out infinite}
     .tbd-row{display:grid;${COLS};gap:8px;align-items:center;background:#111214;border-top:1px solid #26272B;padding:10px 12px;font-size:24px;letter-spacing:2px}
+    .tbd-tab{min-height:44px;padding:8px 16px;box-sizing:border-box;border:1px solid #3A3628;background:#111214;color:#8A8270;font-family:inherit;font-size:14px;letter-spacing:3px;cursor:pointer}
+    .tbd-tab.on{border-color:#FFD25A;color:#FFD25A;background:#1B1C1F}
     .tbd-row > span{background:#1B1C1F;padding:4px 8px;white-space:nowrap;overflow:hidden;min-height:1.4em}
   </style>
   <div class="tbd" style="width: 1280px; height: 800px; box-sizing: border-box; padding: 28px 40px; background: #05070D; color: #F4E9C8; font-family: 'JetBrains Mono', monospace; display: flex; flex-direction: column; gap: 18px">
@@ -31,7 +42,13 @@ export function mount(el) {
         <a href="#/bridge" style="min-height: 44px; padding: 10px 18px; box-sizing: border-box; border: 1px solid #1E3A4A; text-decoration: none; font-size: 14px; letter-spacing: 3px; display: flex; align-items: center; flex-shrink: 0">◂ DECK</a>
         <div data-title style="font-family: Oxanium, sans-serif; font-size: 24px; font-weight: 700; letter-spacing: 6px; color: #FFD25A; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">DEPARTURES · LOADING…</div>
       </div>
-      <div data-time style="font-family: Oxanium, sans-serif; font-size: 30px; color: #FFD25A">${clock()}</div>
+      <div style="display: flex; align-items: center; gap: 16px; flex-shrink: 0">
+        <div style="display: flex; gap: 8px">
+          <button data-mode="departures" class="tbd-tab">DEPARTURES</button>
+          <button data-mode="arrivals" class="tbd-tab">ARRIVALS</button>
+        </div>
+        <div data-time style="font-family: Oxanium, sans-serif; font-size: 30px; color: #FFD25A">${clock()}</div>
+      </div>
     </div>
     <div data-heads style="display: grid; ${COLS}; gap: 8px; padding: 0 12px; font-size: 13px; letter-spacing: 4px; color: #8A8270">
       <span>TIME</span><span>FLIGHT</span><span>DESTINATION</span><span>GATE</span><span>STATUS</span>
@@ -61,9 +78,11 @@ export function mount(el) {
       const r = rows[i];
       if (r) {
         html.push(`<div class="tbd-row">
-          <span>${esc(r.t)}</span><span>${esc(r.f)}</span><span>${esc(r.d)}</span><span>${esc(r.g)}</span>
+          <span>${esc(r.t)}</span><span>${esc(r.f)}</span><span>${esc(r.d)}</span><span>${esc(board.live ? shortType(r.ac, r.g) : r.g)}</span>
           <span class="${r.cls}" style="color: ${r.c}">${esc(r.s)}</span>
         </div>`);
+      } else if (i === 0 && !board) {
+        html.push('<div class="tbd-row"><span></span><span></span><span class="blink" style="color:#8A8270">LOADING THE BOARD…</span><span></span><span></span></div>');
       } else if (i === 0 && board) {
         const msg = board.airport ? `NO ${label} IN THE AIR RIGHT NOW` : 'NO AIRPORT TRAFFIC NEARBY RIGHT NOW';
         html.push(`<div class="tbd-row"><span></span><span></span><span style="color:#8A8270">${msg}</span><span></span><span></span></div>`);
@@ -72,9 +91,13 @@ export function mount(el) {
       }
     }
     $('[data-board]').innerHTML = html.join('');
-    $('[data-foot]').textContent = board?.sample
-      ? 'SAMPLE DATA · LIVE FLIGHT FEED UNAVAILABLE · ARRIVALS BOARD ALTERNATES EVERY 30 SECONDS'
-      : 'LIVE FROM PLANES IN THE AIR · TIMES ESTIMATED · UPDATED EVERY MINUTE · ARRIVALS ALTERNATE EVERY 30 SECONDS';
+    el.querySelectorAll('[data-mode]').forEach((b) => b.classList.toggle('on', b.dataset.mode === mode));
+    const age = board ? Math.round((Date.now() - board.at) / 60000) : 0;
+    const foot = $('[data-foot]');
+    foot.textContent = !board ? 'CHECKING THE PLANES IN THE AIR…'
+      : board.sample ? 'SAMPLE BOARD · LIVE PLANE FEED NOT REACHABLE · TAP THE BOARD TO SWITCH'
+      : `LIVE FROM PLANES IN THE AIR · TIMES ARE ESTIMATES · ${age >= 3 ? `LAST UPDATE ${age} MIN AGO` : `UPDATED ${hhmm(board.at)}`}`;
+    foot.style.color = board && !board.sample && age >= 3 ? '#FFB547' : '#8A8270';
   }
 
   async function load() {
@@ -88,12 +111,22 @@ export function mount(el) {
     }
   }
 
-  const flip = () => { mode = mode === 'departures' ? 'arrivals' : 'departures'; render(); };
-  $('[data-board]').addEventListener('click', flip);
+  // The board switches by itself every 30 s; a tap switches now and restarts that wait.
+  let flipTimer = null;
+  const show = (m) => {
+    mode = m;
+    render();
+    clearInterval(flipTimer);
+    timers = timers.filter((t) => t !== flipTimer);
+    flipTimer = setInterval(() => show(mode === 'departures' ? 'arrivals' : 'departures'), 30000);
+    timers.push(flipTimer);
+  };
+  $('[data-board]').addEventListener('click', () => show(mode === 'departures' ? 'arrivals' : 'departures'));
+  el.querySelectorAll('[data-mode]').forEach((b) => b.addEventListener('click', () => show(b.dataset.mode)));
 
-  render();
-  timers.push(setInterval(() => { $('[data-time]').textContent = clock(); }, 15000));
-  timers.push(setInterval(flip, 30000));
+  show('departures');
+  // Clock checked every second so the minute changes on time.
+  timers.push(setInterval(() => { const t = clock(); if ($('[data-time]').textContent !== t) $('[data-time]').textContent = t; }, 1000));
 
   (async () => {
     try {

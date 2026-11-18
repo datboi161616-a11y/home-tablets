@@ -5,13 +5,17 @@
 // leave notes too (Photos → Add photos → scan the QR code → "Leave a note").
 import { settings } from '../config.js';
 import {
-  members, loadMessages, postMessage, updateMessage, when, shrinkPhoto, onMessagesChanged,
+  members, loadMessages, postMessage, updateMessage, deleteMessage, when, shrinkPhoto, onMessagesChanged,
 } from '../services/messages-data.js';
 
-let timer, recognizer, root, onClick, featuredId, offNotes;
+let timer, recognizer, root, onClick, featuredId, offNotes, removeTimer;
+let removeArmed = false; // "Remove" was tapped once; the next tap really removes
+const MAXLEN = 400;
 
 const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 const initial = (name) => (name || '?').trim().charAt(0).toUpperCase();
+// Long notes get a smaller font so the whole note fits on the featured card.
+const fitSize = (len) => (len <= 90 ? 44 : len <= 170 ? 36 : len <= 270 ? 30 : 26);
 const Speech = window.SpeechRecognition || window.webkitSpeechRecognition;
 
 const HEART = '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 20s-7-4.5-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 5.5-7 10-7 10z"/></svg>';
@@ -31,6 +35,9 @@ const STYLE = `
     .msg-chip.on { background:var(--ink); border-color:var(--ink); color:#fff; }
     .msg-text { width:100%; height:150px; resize:none; border:2px solid var(--line); border-radius:16px; padding:16px 18px; font:22px/1.35 Inter,sans-serif; color:var(--ink); outline:none; user-select:text; }
     .msg-text:focus { border-color:${settings.accent}; }
+    .msg-btn-remove { min-height:60px; padding:0 22px; border-radius:999px; border:none; background:transparent; color:#5B6573; font-size:17px; font-weight:600; font-family:Inter,sans-serif; cursor:pointer; margin-left:auto; }
+    .msg-btn-remove.armed { background:#B3261E; color:#fff; }
+    .msg-new { display:inline-block; background:${settings.accent}; color:#fff; border-radius:999px; padding:1px 8px; font-size:12px; font-weight:700; letter-spacing:.04em; margin-right:6px; vertical-align:1px; }
     .msg-listening { animation: msg-pulse 1.2s ease-in-out infinite; }
     @keyframes msg-pulse { 50% { opacity:.55; } }
   </style>`;
@@ -56,14 +63,15 @@ function renderBoard() {
         <div style="flex-grow:1;min-height:0;border-radius:16px;background:#C9CFD6;overflow:hidden">
           <img src="${f.photo}" alt="" style="width:100%;height:100%;object-fit:cover;display:block">
         </div>
-        <div class="display" style="font-size:34px;font-weight:500;line-height:1.25;overflow-wrap:anywhere;max-height:128px;overflow:hidden">“${esc(f.text)}”</div>`
+        ${f.text ? `<div class="display" style="font-size:${f.text.length > 120 ? 26 : 34}px;font-weight:500;line-height:1.25;overflow-wrap:anywhere;flex:none;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden">“${esc(f.text)}”</div>` : ''}`
       : `
         <div style="flex-grow:1;min-height:0;display:flex;align-items:center;overflow:hidden">
-          <div class="display" style="font-size:${f.text.length > 140 ? 34 : 44}px;font-weight:500;line-height:1.25;overflow-wrap:anywhere">“${esc(f.text)}”</div>
+          <div class="display" style="font-size:${fitSize((f.text || '').length)}px;font-weight:500;line-height:1.25;overflow-wrap:anywhere">“${esc(f.text)}”</div>
         </div>`}
-      <div style="display:flex;gap:12px">
-        <button data-act="love" class="msg-btn msg-btn-primary">${HEART}${f.loved ? 'Love sent!' : 'Send love'}</button>
-        <button data-act="reply" class="msg-btn msg-btn-outline">Record a reply</button>
+      <div style="display:flex;gap:12px;align-items:center">
+        <button data-act="love" class="msg-btn msg-btn-primary"${f.loved ? ' style="opacity:.75"' : ''}>${HEART}${f.loved ? 'Love sent!' : 'Send love'}</button>
+        <button data-act="reply" class="msg-btn msg-btn-outline">${Speech ? 'Record a reply' : 'Write a reply'}</button>
+        <button data-act="remove" class="msg-btn-remove${removeArmed ? ' armed' : ''}">${removeArmed ? 'Tap again to remove' : 'Remove'}</button>
       </div>` : `
       <div style="flex-grow:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:20px">
         <div class="display muted" style="font-size:30px">No notes yet</div>
@@ -77,12 +85,13 @@ function renderBoard() {
         <button data-act="new" class="pill" style="border:none;background:#fff;color:var(--ink);font-family:Inter,sans-serif;cursor:pointer">+ New note</button>
       </div>
       <div class="msg-scroll" style="display:flex;flex-direction:column;gap:16px;min-height:0;flex-grow:1">
+        ${f && !earlier.length ? '<div class="muted" style="font-size:17px;padding:8px 4px">Older notes will be listed here. Tap one to read it in full.</div>' : ''}
         ${earlier.map((n) => `
           <div class="msg-note" data-id="${esc(n.id)}">
             <div style="width:44px;height:44px;flex-shrink:0;border-radius:50%;background:var(--ink);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:600">${initial(n.who)}</div>
             <div style="display:flex;flex-direction:column;gap:4px;min-width:0">
-              <div class="muted" style="font-size:15px">${esc(n.who)} · ${when(n.at)}${n.loved ? ` · <span style="color:${settings.accent}">♥</span>` : ''}</div>
-              <div style="font-size:18px;line-height:1.35;overflow-wrap:anywhere;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden">${n.photo ? 'Photo · ' : ''}${esc(n.text)}</div>
+              <div class="muted" style="font-size:15px">${n.seen ? '' : '<span class="msg-new">NEW</span>'}${esc(n.who)} · ${when(n.at)}${n.loved ? ` · <span style="color:${settings.accent}">♥</span>` : ''}</div>
+              <div style="font-size:18px;line-height:1.35;overflow-wrap:anywhere;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden">${n.photo ? (n.text ? 'Photo · ' : 'Photo') : ''}${esc(n.text)}</div>
             </div>
           </div>`).join('')}
       </div>
@@ -109,7 +118,8 @@ function openComposer(replyTo) {
           ${people.map((m) => `<button data-who="${esc(m)}" class="msg-chip${m === who ? ' on' : ''}">${esc(m)}</button>`).join('')}
         </div>
       </div>
-      <textarea data-c="text" class="msg-text" maxlength="400" placeholder="${Speech ? 'Tap Speak, or type your note…' : 'Type your note…'}"></textarea>
+      <textarea data-c="text" class="msg-text" maxlength="${MAXLEN}" placeholder="${Speech ? 'Tap Speak, or type your note…' : 'Type your note…'}"></textarea>
+      <div data-c="hint" class="muted" style="font-size:16px;min-height:20px;margin-top:-10px"></div>
       <div style="display:flex;align-items:center;gap:12px">
         ${Speech ? `<button data-c="speak" class="msg-btn msg-btn-outline">${MIC}<span>Speak</span></button>` : ''}
         <label class="msg-btn msg-btn-outline" style="position:relative">${CAMERA}<span data-c="photo-label">Add photo</span>
@@ -124,13 +134,19 @@ function openComposer(replyTo) {
   const text = $('[data-c="text"]');
   const postBtn = $('[data-c="post"]');
   let current = who;
+  const hint = $('[data-c="hint"]');
+  let trouble = '';
   const sync = () => {
     const ok = text.value.trim().length > 0 || photo;
     postBtn.disabled = !ok;
     postBtn.style.opacity = ok ? 1 : 0.45;
+    // A short line under the note: microphone trouble, or how much room is left.
+    const left = MAXLEN - text.value.length;
+    hint.style.color = trouble ? '#B3261E' : '';
+    hint.textContent = trouble || (left <= 60 ? (left ? `Room for ${left} more letters` : 'The note is full') : '');
   };
   sync();
-  text.addEventListener('input', sync);
+  text.addEventListener('input', () => { trouble = ''; sync(); });
 
   $('[data-c="file"]').addEventListener('change', async (e) => {
     const file = e.target.files?.[0];
@@ -165,8 +181,18 @@ function openComposer(replyTo) {
       sync();
     };
     recognizer.onend = stopSpeech;
-    recognizer.onerror = stopSpeech;
-    try { recognizer.start(); } catch { return stopSpeech(); }
+    recognizer.onerror = (e) => {
+      const err = e && e.error;
+      if (err === 'not-allowed' || err === 'service-not-allowed') trouble = 'The microphone isn’t allowed here. Please type your note instead.';
+      else if (err === 'network') trouble = 'Speaking needs the internet. Please type your note instead.';
+      else if (err === 'no-speech') trouble = 'Didn’t hear anything. Tap Speak and try again, or type.';
+      else if (err && err !== 'aborted') trouble = 'Couldn’t listen just now. Tap Speak to try again, or type.';
+      sync();
+      stopSpeech();
+    };
+    trouble = '';
+    sync();
+    try { recognizer.start(); } catch { trouble = 'Couldn’t listen just now. Please type your note instead.'; sync(); return stopSpeech(); }
     const b = $('[data-c="speak"]');
     b.classList.add('msg-listening');
     b.querySelector('span').textContent = 'Listening… tap to stop';
@@ -208,6 +234,7 @@ function closeComposer() {
 export function mount(el) {
   root = el;
   featuredId = undefined;
+  removeArmed = false;
   el.innerHTML = `${STYLE}
   <div style="height:100%;padding:40px;display:flex;flex-direction:column;gap:24px">
     <div style="display:flex;align-items:center;justify-content:space-between">
@@ -227,11 +254,25 @@ export function mount(el) {
     if (e.target.closest('[data-composer]')) return;
     const note = e.target.closest('.msg-note');
     if (note) {
+      removeArmed = false;
       featuredId = note.dataset.id;
       return renderBoard();
     }
     const act = e.target.closest('[data-act]')?.dataset.act;
     const f = loadMessages().find((m) => m.id === featuredId);
+    // Remove takes two taps, so a note can't vanish by accident.
+    if (act !== 'remove' && removeArmed) { removeArmed = false; clearTimeout(removeTimer); renderBoard(); }
+    if (act === 'remove' && f) {
+      clearTimeout(removeTimer);
+      if (!removeArmed) {
+        removeArmed = true;
+        removeTimer = setTimeout(() => { removeArmed = false; if (root) renderBoard(); }, 5000);
+      } else {
+        removeArmed = false;
+        if (deleteMessage(f.id)) featuredId = undefined;
+      }
+      return renderBoard();
+    }
     if (act === 'love' && f && !f.loved) {
       updateMessage(f.id, { loved: true });
       renderBoard();
@@ -250,6 +291,7 @@ export function mount(el) {
 
 export function unmount() {
   clearInterval(timer);
+  clearTimeout(removeTimer);
   offNotes?.();
   closeComposer();
   // The featured note has now been read.

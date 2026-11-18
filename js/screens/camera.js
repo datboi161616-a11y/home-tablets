@@ -8,6 +8,10 @@ import { profile } from '../config.js';
 import { savePhoto, saveVideo, isTablet } from '../services/tablet-photos.js';
 
 const MAX_VIDEO_MS = 60 * 1000; // keep clips small enough to store
+// If nobody touches the screen for this long, the camera switches itself off (with a warning first),
+// so it's never left running on the counter by accident.
+const IDLE_MS = 3 * 60 * 1000;
+const IDLE_WARN_S = 10;
 
 // Everything for one visit to this screen lives in `visit`; leaving the screen ends it,
 // so late callbacks (camera starting, timers, recorder) can tell they're stale.
@@ -56,6 +60,8 @@ export function mount(el) {
     .cam-shutter{position:absolute;left:50%;bottom:32px;transform:translateX(-50%);width:88px;height:88px;border-radius:50%;background:#fff;border:6px solid rgba(255,255,255,.5);cursor:pointer}
     .cam-shutter:active{transform:translateX(-50%) scale(.92)}
     .cam-shutter.rec{background:#FF3B30}
+    .cam-shutter.vid:not(.rec)::after{content:'';position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:40px;height:40px;border-radius:50%;background:#FF3B30}
+    .cam-shutter.wait{opacity:.4;pointer-events:none}
     .cam-shutter.rec::after{content:'';position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:28px;height:28px;border-radius:5px;background:#fff}
     .cam-mode{position:absolute;left:50%;bottom:140px;transform:translateX(-50%);display:flex;gap:8px;background:rgba(0,0,0,.5);border-radius:999px;padding:5px}
     .cam-mode button{border:0;background:transparent;color:#bbb;font-size:16px;font-weight:600;padding:8px 18px;border-radius:999px;cursor:pointer;min-height:44px}
@@ -65,8 +71,12 @@ export function mount(el) {
     .cam-flash.go{animation:cam-flash .35s ease-out}
     @keyframes cam-flash{0%{opacity:.9}100%{opacity:0}}
     .cam-count{position:absolute;top:0;right:0;bottom:0;left:0;display:none;align-items:center;justify-content:center;font-size:220px;font-weight:700;text-shadow:0 4px 30px rgba(0,0,0,.6)}
-    .cam-saved{position:absolute;bottom:40px;left:28px;background:rgba(0,0,0,.6);border-radius:16px;padding:10px 14px;display:none;gap:12px;align-items:center;font-size:15px}
+    .cam-saved{position:absolute;bottom:40px;left:28px;background:rgba(0,0,0,.6);color:#fff;text-decoration:none;border-radius:16px;padding:10px 14px;display:none;gap:12px;align-items:center;font-size:15px;min-height:74px}
+    .cam-see{font-weight:700;text-decoration:underline}
     .cam-saved img{width:72px;height:54px;object-fit:cover;border-radius:8px}
+    .cam-wait{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);background:rgba(0,0,0,.55);padding:14px 26px;border-radius:999px;font-size:22px;font-weight:600}
+    .cam-idle{position:absolute;left:50%;top:96px;transform:translateX(-50%);background:rgba(0,0,0,.7);padding:14px 26px;border-radius:999px;font-size:20px;font-weight:600;display:none;white-space:nowrap}
+    .cam-btn{border:0;background:#fff;color:#111;border-radius:999px;padding:12px 26px;font-size:18px;font-weight:600;min-height:48px;cursor:pointer;font-family:inherit}
     .cam-msg{position:absolute;top:0;right:0;bottom:0;left:0;display:none;flex-direction:column;align-items:center;justify-content:center;gap:16px;text-align:center;padding:40px;background:#000}
   </style>
   <div class="cam-root">
@@ -76,9 +86,11 @@ export function mount(el) {
     <div class="cam-time" data-time>0:00</div>
     <div class="cam-count" data-count></div>
     <div class="cam-flash" data-flash></div>
-    <div class="cam-saved" data-saved><img data-thumb alt=""><span data-saved-text>Saved to photos</span></div>
+    <div class="cam-wait" data-wait>Starting camera…</div>
+    <div class="cam-idle" data-idle></div>
+    <a class="cam-saved" data-saved href="#/photos"><img data-thumb alt=""><span data-saved-text>Saved to photos</span><span class="cam-see">See it ›</span></a>
     <div class="cam-mode"><button data-m="photo" class="on">Photo</button><button data-m="video">Video</button></div>
-    <button class="cam-shutter" data-shutter aria-label="Take photo"></button>
+    <button class="cam-shutter wait" data-shutter aria-label="Take photo"></button>
     <div class="cam-msg" data-msg></div>
   </div>`;
 
@@ -91,20 +103,49 @@ export function mount(el) {
   const live = () => visit === v;
   const later = (fn, ms) => { v.timers.push(setTimeout(() => { if (live()) fn(); }, ms)); };
 
-  function showSaved(text, thumb) {
+  let savedTimer = 0;
+  function showSaved(text, thumb, ok = true) {
     $('[data-saved-text]').textContent = text;
     const img = $('[data-thumb]');
     img.style.display = thumb ? '' : 'none';
     if (thumb) img.src = thumb;
-    $('[data-saved]').style.display = 'flex';
-    later(() => { $('[data-saved]').style.display = 'none'; }, 3500);
+    // "See it" opens the photo frame, which starts with the newest picture: this one.
+    const box = $('[data-saved]');
+    box.querySelector('.cam-see').style.display = ok ? '' : 'none';
+    box.style.pointerEvents = ok ? '' : 'none';
+    box.style.display = 'flex';
+    clearTimeout(savedTimer);
+    savedTimer = setTimeout(() => { if (live()) box.style.display = 'none'; }, 5000);
+    v.timers.push(savedTimer);
   }
 
-  // ---- start the camera (only once per visit; stop it if we've already left) ----
+  function setWaiting(on) {
+    $('[data-wait]').style.display = on ? '' : 'none';
+    $('[data-shutter]').classList.toggle('wait', on);
+  }
+
+  function showProblem(text) {
+    setWaiting(false);
+    const msg = $('[data-msg]');
+    msg.style.display = 'flex';
+    msg.innerHTML = `<div style="font-size:32px;font-weight:600">Camera unavailable</div>
+      <div style="font-size:20px;color:#bbb">${text}</div>
+      <div style="display:flex;gap:16px;margin-top:8px">
+        ${isTablet() ? '<button class="cam-btn" data-retry>Try again</button>' : ''}
+        <a class="cam-done" href="${back()}" style="position:static">Back</a>
+      </div>`;
+    const retry = msg.querySelector('[data-retry]');
+    if (retry) retry.onclick = () => startCamera();
+  }
+
+  // ---- start the camera (stop it if we've already left) ----
   const VIDEO = { facingMode: 'user', width: { ideal: 1920 }, height: { ideal: 1080 } };
   const withTimeout = (p, ms) => Promise.race([p, new Promise((_, no) => setTimeout(() => no(new Error('timeout')), ms))]);
-  (async () => {
+  async function startCamera() {
     log('opening camera');
+    $('[data-msg]').style.display = 'none';
+    setWaiting(true);
+    if (v.stream) { v.stream.getTracks().forEach((t) => t.stop()); v.stream = null; v.ready = false; }
     try {
       // Camera only. The microphone is switched on just while a video is recording.
       const stream = await navigator.mediaDevices.getUserMedia({ video: VIDEO, audio: false });
@@ -120,23 +161,43 @@ export function mount(el) {
         if (video.videoWidth > 0) {
           clearInterval(poll);
           v.ready = true;
+          setWaiting(false);
           log('camera ready ' + video.videoWidth + 'x' + video.videoHeight);
           if (v.queued) { const q = v.queued; v.queued = null; q(); } // a remote request was waiting
         } else if (Date.now() - started > 15000) {
           clearInterval(poll);
           log('camera picture never arrived');
+          stream.getTracks().forEach((t) => t.stop());
+          v.stream = null;
+          showProblem('The camera didn’t start. Tap Try again.');
         }
       }, 200);
       v.timers.push(poll);
     } catch (err) {
       if (!live()) return;
       log('camera unavailable: ' + (err && err.name));
-      $('[data-msg]').style.display = 'flex';
-      $('[data-msg]').innerHTML = `<div style="font-size:32px;font-weight:600">Camera unavailable</div>
-        <div style="font-size:20px;color:#bbb">${isTablet() ? 'The camera is turned off or already in use.' : 'Open this on the tablet to use its camera.'}</div>
-        <a class="cam-done" href="${back()}" style="position:static;margin-top:8px">Back</a>`;
+      showProblem(isTablet() ? 'The camera is turned off or already in use.' : 'Open this on the tablet to use its camera.');
     }
-  })();
+  }
+  startCamera();
+
+  // ---- switch off by itself when nobody's using it ----
+  let idleAt = Date.now();
+  const touched = () => { idleAt = Date.now(); $('[data-idle]').style.display = 'none'; };
+  el.addEventListener('pointerdown', touched, true);
+  el.addEventListener('touchstart', touched, true);
+  const idlePoll = setInterval(() => {
+    if (!live()) return;
+    if (v.recorder || v.shooting || (v.queued && v.stream)) { idleAt = Date.now(); return; }
+    const left = Math.ceil((idleAt + IDLE_MS - Date.now()) / 1000);
+    const box = $('[data-idle]');
+    if (left <= 0) { log('switched off: not used'); location.hash = back(); }
+    else if (left <= IDLE_WARN_S && v.stream) {
+      box.style.display = 'block';
+      box.textContent = `Camera turning off in ${left}… tap to keep it on`;
+    }
+  }, 1000);
+  v.timers.push(idlePoll);
 
   // Run now if the camera is streaming, otherwise as soon as it is.
   const whenReady = (fn) => {
@@ -155,7 +216,7 @@ export function mount(el) {
     shutterSound();
     const flash = $('[data-flash]');
     flash.classList.remove('go'); void flash.offsetWidth; flash.classList.add('go');
-    showSaved(ok || !isTablet() ? 'Saved to photos' : 'Couldn’t save the photo', jpeg);
+    showSaved(ok || !isTablet() ? 'Saved to photos' : 'Couldn’t save the photo', jpeg, ok || !isTablet());
   }
 
   function shoot(countdown) {
@@ -181,7 +242,7 @@ export function mount(el) {
     if (!v.ready || v.recorder || v.starting) return;
     const type = ['video/webm;codecs=vp8,opus', 'video/webm', 'video/mp4']
       .find((t) => window.MediaRecorder && MediaRecorder.isTypeSupported(t));
-    if (!type) { showSaved('Video isn’t supported on this tablet'); return; }
+    if (!type) { showSaved('Video isn’t supported on this tablet', null, false); return; }
     v.starting = true;
     // Switch the microphone on just for this clip. If it can't open, record without sound.
     const mic = navigator.mediaDevices.getUserMedia({ audio: true, video: false });
@@ -204,7 +265,7 @@ export function mount(el) {
         const b64 = await blobToBase64(new Blob(chunks, { type }));
         const ok = saveVideo(b64, `Video · ${stamp()}`);
         log('video ' + Math.round(b64.length * 0.75 / 1024) + ' KB saved=' + ok);
-        if (live()) showSaved(ok || !isTablet() ? 'Video saved to photos' : 'Couldn’t save the video (too long?)');
+        if (live()) showSaved(ok || !isTablet() ? 'Video saved to photos' : 'Couldn’t save the video (too long?)', null, ok || !isTablet());
       } catch (err) { log('video save failed ' + err); }
     };
     rec.start(1000);
@@ -212,10 +273,11 @@ export function mount(el) {
     v.recStart = Date.now();
     shutterSound();
     $('[data-shutter]').classList.add('rec');
+    $('[data-time]').textContent = `0:00 / ${fmt(MAX_VIDEO_MS)}`;
     $('[data-time]').style.display = 'block';
     v.recTimer = setInterval(() => {
       if (!live()) return;
-      $('[data-time]').textContent = fmt(Date.now() - v.recStart);
+      $('[data-time]').textContent = `${fmt(Date.now() - v.recStart)} / ${fmt(MAX_VIDEO_MS)}`;
       if (Date.now() - v.recStart >= MAX_VIDEO_MS) stopRec();
     }, 250);
   }
@@ -234,6 +296,10 @@ export function mount(el) {
     if (v.recorder) stopRec();
     v.mode = m;
     el.querySelectorAll('[data-m]').forEach((b) => b.classList.toggle('on', b.dataset.m === m));
+    // Video mode shows a red record dot on the button, so it's clear it films rather than snaps.
+    const btn = $('[data-shutter]');
+    btn.classList.toggle('vid', m === 'video');
+    btn.setAttribute('aria-label', m === 'video' ? 'Start recording' : 'Take photo');
   }
 
   $('[data-shutter]').onclick = () => {
@@ -244,8 +310,9 @@ export function mount(el) {
   el.querySelectorAll('[data-m]').forEach((b) => { b.onclick = () => setMode(b.dataset.m); });
 
   // From your dashboard: photo with a countdown, or start/stop video.
-  v.onShoot = (e) => { setMode('photo'); whenReady(() => shoot((e.detail && e.detail.countdown) || 3)); };
+  v.onShoot = (e) => { touched(); setMode('photo'); whenReady(() => shoot((e.detail && e.detail.countdown) || 3)); };
   v.onRec = (e) => {
+    touched();
     if (e.detail && e.detail.on) whenReady(() => { setMode('video'); startRec(); });
     else stopRec();
   };

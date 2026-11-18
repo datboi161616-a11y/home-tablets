@@ -25,7 +25,20 @@
   .grid { display:grid; grid-template-columns:repeat(3, 1fr); gap:8px; }
   .ph { position:relative; aspect-ratio:1; border-radius:12px; overflow:hidden; background:#C9CFD6; }
   .ph img { width:100%; height:100%; object-fit:cover; display:block; }
-  .ph button { position:absolute; top:6px; right:6px; width:36px; height:36px; border-radius:18px; border:0; background:rgba(0,0,0,.6); color:#fff; font-size:18px; cursor:pointer; }
+  .ph button { position:absolute; top:4px; right:4px; width:44px; height:44px; border-radius:22px; border:0; background:rgba(0,0,0,.6); color:#fff; font-size:20px; cursor:pointer; }
+  .ph a { display:block; width:100%; height:100%; }
+  .ph .who { position:absolute; left:0; right:0; bottom:0; padding:14px 6px 4px; font-size:12px; font-weight:600; color:#fff; background:linear-gradient(transparent, rgba(0,0,0,.65)); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; pointer-events:none; }
+  .ph.gone { opacity:.35; }
+  .pick.busy { opacity:.6; pointer-events:none; }
+  .count { text-align:right; font-size:13px; color:var(--ink2); margin:-10px 0 12px; }
+  .note-img { display:block; width:96px; height:96px; object-fit:cover; border-radius:10px; margin-top:6px; background:#C9CFD6; }
+  .seen { font-size:13px; color:var(--ink2); }
+  .seen.yes { color:#2F6B4F; }
+  .preview { display:flex; align-items:center; gap:10px; margin:-4px 0 12px; }
+  .preview img { width:64px; height:64px; object-fit:cover; border-radius:10px; }
+  .rc-meta { font-weight:400; font-size:14px; color:var(--ink2); }
+  .missing { border-color:#B3261E !important; }
+  .dirty { color:#8A5A00; font-weight:600; }
   .muted { color:var(--ink2); font-size:15px; }
   .sl-row { display:flex; align-items:center; gap:14px; min-height:56px; border-top:1px solid #EEF0F2; cursor:pointer; }
   .sl-row:first-of-type { border-top:0; }
@@ -42,7 +55,7 @@
   .rc-item { display:flex; align-items:center; gap:10px; min-height:52px; border-top:1px solid #EEF0F2; }
   .rc-item:first-of-type { border-top:0; }
   .rc-item .t { flex:1; font-weight:600; }
-  .small-btn { border:0; background:#F1F2F4; border-radius:10px; padding:10px 14px; font:inherit; font-size:15px; cursor:pointer; }
+  .small-btn { border:0; background:#F1F2F4; border-radius:10px; padding:10px 14px; min-height:44px; font:inherit; font-size:15px; cursor:pointer; }
   h2 { font-size:18px; margin:0 0 12px; display:flex; justify-content:space-between; align-items:baseline; }
   .tabs { display:flex; gap:6px; background:#DDE1E6; padding:5px; border-radius:16px; margin:0 0 18px; position:sticky; top:8px; z-index:5; }
   .tabs button { flex:1; border:0; background:transparent; font:inherit; font-weight:600; font-size:15px; padding:12px 6px; border-radius:12px; color:var(--ink2); cursor:pointer; min-height:44px; }
@@ -54,10 +67,11 @@
   .primary { background:var(--accent); color:#fff; border-color:var(--accent); width:100%; min-height:56px; font-size:18px; border-radius:16px; }
   .chips { display:flex; flex-wrap:wrap; gap:8px; margin-bottom:12px; }
   .chip { display:inline-flex; align-items:center; gap:6px; background:#EEF0F2; border-radius:999px; padding:6px 6px 6px 14px; font-weight:600; }
-  .chip button { width:30px; height:30px; border-radius:15px; border:0; background:#D9DDE2; cursor:pointer; font-size:16px; }
+  .chip button { width:36px; height:36px; border-radius:18px; border:0; background:#D9DDE2; cursor:pointer; font-size:17px; position:relative; }
+  .chip button::after { content:''; position:absolute; top:-5px; left:-5px; right:-5px; bottom:-5px; }
   .row { display:flex; gap:8px; align-items:center; margin-bottom:10px; }
   .row input[type=text] { margin:0; flex:1; min-width:0; }
-  .x { width:40px; height:40px; flex:none; border-radius:20px; border:0; background:#EEF0F2; font-size:18px; cursor:pointer; }
+  .x { width:44px; height:44px; flex:none; border-radius:20px; border:0; background:#EEF0F2; font-size:18px; cursor:pointer; }
   details { margin-top:8px; }
   details summary { cursor:pointer; color:var(--accent); font-weight:600; padding:6px 0; }
   details ol { margin:6px 0 0; padding-left:20px; color:var(--ink2); font-size:15px; }
@@ -88,8 +102,8 @@
     <input id="name" type="text" maxlength="40" placeholder="e.g. Grandma" autocomplete="given-name">
     <label for="caption">Caption <span class="muted">(optional, for this batch)</span></label>
     <input id="caption" type="text" maxlength="120" placeholder="e.g. Thanksgiving 2026">
-    <label class="pick">
-      Choose photos
+    <label class="pick" id="pick">
+      <span id="pickText">Choose photos</span>
       <input id="files" type="file" accept="image/*" multiple>
     </label>
     <div class="bar" id="bar"><div></div></div>
@@ -110,6 +124,8 @@
       <input id="noteWho" type="text" maxlength="30" placeholder="Your name" autocomplete="given-name">
       <label for="noteText">Note</label>
       <textarea id="noteText" maxlength="500" placeholder="e.g. Dinner's in the fridge, back by 6"></textarea>
+      <div class="count" id="noteCount"></div>
+      <div class="preview" id="notePreview" hidden><img id="notePreviewImg" alt="Photo to send"><button class="small-btn" id="notePhotoRemove" type="button">Remove photo</button></div>
       <label class="btn" style="width:100%;margin-bottom:12px">
         <span id="notePhotoLabel">Add a photo (optional)</span>
         <input id="notePhoto" type="file" accept="image/*" style="display:none">
@@ -140,7 +156,7 @@
 
   <section id="tab-recipe" hidden>
   <div class="card">
-    <h2><span id="rcHead">Add a recipe</span><button id="rcNew" class="small-btn" hidden>New</button></h2>
+    <h2><span id="rcHead">Add a recipe</span><button id="rcNew" class="small-btn" style="white-space:nowrap;margin-left:10px" hidden>Cancel</button></h2>
     <p class="muted" style="margin:0 0 14px">It shows up on the tablet under Recipes &rarr; My recipes, ready for the week plan and shopping list.</p>
     <label for="rcTitle">Name</label>
     <input id="rcTitle" type="text" maxlength="60" placeholder="Grandma's pot roast">
@@ -256,10 +272,12 @@
   $('files').addEventListener('change', async function (e) {
     var files = Array.prototype.slice.call(e.target.files || []);
     e.target.value = '';
-    if (!files.length) return;
+    if (!files.length || sending) return;
+    if (album.max && album.count >= album.max) { setStatus('The tablet’s album is full (' + album.max + '). Remove a few below first.', 'err'); return; }
     var name = nameEl.value.trim(), caption = captionEl.value.trim();
     localStorage.setItem('tablet-photo-name', name);
     bar.style.display = 'block';
+    sending = true; $('pick').classList.add('busy'); $('pickText').textContent = 'Sending… keep this page open';
     var done = 0, failed = [];
     for (var i = 0; i < files.length; i++) {
       setStatus('Sending ' + (i + 1) + ' of ' + files.length + '…');
@@ -277,9 +295,17 @@
       bar.firstElementChild.style.width = Math.round(((i + 1) / files.length) * 100) + '%';
     }
     setTimeout(function () { bar.style.display = 'none'; bar.firstElementChild.style.width = '0'; }, 800);
+    sending = false; $('pick').classList.remove('busy'); $('pickText').textContent = 'Choose photos';
+    // The caption was for this batch only; start the next batch fresh.
+    if (done) captionEl.value = '';
     if (failed.length) setStatus(done + ' sent. ' + failed.length + ' didn’t: ' + failed[0], 'err');
     else setStatus(done === 1 ? 'Sent! It’s on the tablet now.' : 'All ' + done + ' sent! They’re on the tablet now.', 'ok');
     loadList();
+  });
+  var sending = false, album = { count: 0, max: 0 };
+  // Leaving the page mid-upload would silently stop the rest of the batch.
+  window.addEventListener('beforeunload', function (e) {
+    if (sending || settingsDirty) { e.preventDefault(); e.returnValue = ''; }
   });
 
   async function loadList() {
@@ -288,7 +314,10 @@
       var grid = $('grid');
       grid.innerHTML = '';
       $('empty').style.display = data.photos.length ? 'none' : 'block';
-      $('count').textContent = data.photos.length + ' of ' + data.max;
+      album = { count: data.photos.length, max: data.max };
+      var n = data.photos.length, room = data.max - n;
+      $('count').textContent = n ? (n === 1 ? '1 photo' : n + ' photos') + (room <= 50 ? ' · room for ' + Math.max(0, room) + ' more' : '') : '';
+      if (statusEl.textContent.indexOf('Can’t reach') === 0) setStatus('');
       data.photos.forEach(function (p) {
         var d = document.createElement('div');
         d.className = 'ph';
@@ -299,20 +328,40 @@
           img.textContent = '▶ Video';
           img.style.cssText = 'width:100%;height:100%;display:flex;align-items:center;justify-content:center;background:#1D2430;color:#fff;font-weight:600';
         } else {
-          img = document.createElement('img');
-          img.loading = 'lazy';
-          img.src = '/api/photo/' + p.id + q();
-          img.alt = p.caption || 'Photo';
+          // Tap a photo to see it full size.
+          img = document.createElement('a');
+          img.href = '/api/photo/' + p.id + q();
+          img.target = '_blank';
+          var pic = document.createElement('img');
+          pic.loading = 'lazy';
+          pic.src = img.href;
+          pic.alt = p.caption || 'Photo';
+          img.appendChild(pic);
+        }
+        d.appendChild(img);
+        // Who sent it (and the caption), so it's clear whose photo is whose.
+        var label = p.name ? 'From ' + p.name : p.caption;
+        if (label) {
+          var who = document.createElement('div');
+          who.className = 'who';
+          who.textContent = label;
+          d.appendChild(who);
         }
         var del = document.createElement('button');
         del.textContent = '×';
         del.setAttribute('aria-label', 'Remove');
         del.onclick = async function () {
           if (!confirm(p.video ? 'Remove this video from the tablet?' : 'Remove this photo from the tablet?')) return;
-          await fetch('/api/delete' + q('&id=' + p.id), { method: 'POST' });
+          d.classList.add('gone'); del.disabled = true;
+          try {
+            var r = await (await fetch('/api/delete' + q('&id=' + encodeURIComponent(p.id)), { method: 'POST' })).json();
+            if (!r.ok) throw new Error();
+          } catch (err) {
+            setStatus('Couldn’t remove that one. Is your phone on the home Wi-Fi?', 'err');
+          }
           loadList();
         };
-        d.appendChild(img); d.appendChild(del);
+        d.appendChild(del);
         grid.appendChild(d);
       });
     } catch (err) {
@@ -326,6 +375,7 @@
   function showTab(name) {
     tabs.forEach(function (b) { b.classList.toggle('on', b.dataset.tab === name); });
     ['photos', 'note', 'shopping', 'recipe', 'settings'].forEach(function (t) { $('tab-' + t).hidden = t !== name; });
+    if (name === 'photos' && !sending) loadList(); // e.g. a photo just sent with a note
     if (name === 'recipe') loadRecipes();
     if (name === 'note') loadNotes();
     if (name === 'shopping') loadShopping();
@@ -345,17 +395,38 @@
   // ===================== leave a note =====================
   var noteWho = $('noteWho'), noteText = $('noteText'), notePhoto = null;
   noteWho.value = localStorage.getItem('tablet-photo-name') || '';
+  // Letters left, so a long note isn't cut off without warning.
+  function noteCount() {
+    var left = 500 - noteText.value.length;
+    $('noteCount').textContent = left <= 100 ? left + ' letters left' : '';
+  }
+  noteText.addEventListener('input', noteCount);
+  // A draft survives the phone switching apps or reloading the page.
+  noteText.value = localStorage.getItem('tablet-note-draft') || '';
+  noteText.addEventListener('input', function () { try { localStorage.setItem('tablet-note-draft', noteText.value); } catch (e) {} });
+  noteCount();
+  var notePreviewUrl = '';
+  function setNotePhoto(blob) {
+    notePhoto = blob;
+    if (notePreviewUrl) URL.revokeObjectURL(notePreviewUrl);
+    notePreviewUrl = blob ? URL.createObjectURL(blob) : '';
+    $('notePreviewImg').src = notePreviewUrl;
+    $('notePreview').hidden = !blob;
+    $('notePhotoLabel').textContent = blob ? 'Choose a different photo' : 'Add a photo (optional)';
+  }
+  $('notePhotoRemove').onclick = function () { setNotePhoto(null); };
   $('notePhoto').addEventListener('change', function (e) {
     var f = e.target.files && e.target.files[0];
+    e.target.value = '';
     if (!f) return;
-    resize(f).then(function (blob) { notePhoto = blob; $('notePhotoLabel').textContent = 'Photo added \u2713 (tap to change)'; })
+    resize(f).then(setNotePhoto)
       .catch(function (err) { setMsg($('noteStatus'), err.message, 'err'); });
   });
   $('noteSend').onclick = async function () {
     var who = noteWho.value.trim(), text = noteText.value.trim();
-    if (!text) { setMsg($('noteStatus'), 'Write something first.', 'err'); return; }
+    if (!text) { setMsg($('noteStatus'), 'Write something first.', 'err'); noteText.focus(); return; }
     localStorage.setItem('tablet-photo-name', who);
-    this.disabled = true;
+    this.disabled = true; this.textContent = 'Sending\u2026';
     try {
       var photoId = null;
       if (notePhoto) {
@@ -366,26 +437,44 @@
       }
       var r = await api('/api/notes', { who: who, text: text, photo: photoId });
       if (!r.ok) throw new Error(r.error || 'Note didn\u2019t send');
-      noteText.value = ''; notePhoto = null; $('notePhotoLabel').textContent = 'Add a photo (optional)';
+      noteText.value = ''; setNotePhoto(null); noteCount();
+      try { localStorage.removeItem('tablet-note-draft'); } catch (e) {}
       setMsg($('noteStatus'), 'Sent! It\u2019s on the tablet\u2019s message board.', 'ok');
       loadNotes();
-    } catch (err) { setMsg($('noteStatus'), err.message, 'err'); }
-    this.disabled = false;
+    } catch (err) {
+      setMsg($('noteStatus'), err instanceof TypeError ? 'Can\u2019t reach the tablet. Is your phone on the same Wi-Fi? Your note is kept here.' : err.message, 'err');
+    }
+    this.disabled = false; this.textContent = 'Leave note on the tablet';
   };
+  // "Today 3:05 PM" / "Yesterday 9:12 AM" / "Nov 3, 4:40 PM"
+  function when(t) {
+    var d = new Date(t), now = new Date();
+    var time = d.toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' });
+    var day0 = new Date(now.getFullYear(), now.getMonth(), now.getDate()).getTime();
+    if (t >= day0) return 'Today ' + time;
+    if (t >= day0 - 864e5) return 'Yesterday ' + time;
+    return d.toLocaleDateString([], { month: 'short', day: 'numeric' }) + ', ' + time;
+  }
   function loadNotes() {
     api('/api/notes').then(function (d) {
       var list = d.notes || [];
       $('notesEmpty').style.display = list.length ? 'none' : 'block';
       $('notes').innerHTML = list.slice(0, 30).map(function (n) {
-        return '<div class="note"><div class="t"><b>' + esc(n.who) + '</b> <span class="muted">' +
-          new Date(n.at).toLocaleString([], { month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit' }) +
-          (n.love ? ' \u00b7 \u2665' : '') + '</span><br>' + esc(n.text) + (n.photo ? ' <span class="muted">(photo)</span>' : '') +
+        // Whether someone has seen it on the tablet yet, and any hearts it got.
+        var seen = n.read ? '<span class="seen yes">\u2713 Seen on the tablet</span>' : '<span class="seen">Not seen yet</span>';
+        var love = n.love ? ' \u00b7 <span style="color:var(--accent)">\u2665' + (n.love > 1 ? ' ' + n.love : '') + '</span>' : '';
+        return '<div class="note"><div class="t"><b>' + esc(n.who) + '</b> <span class="muted">' + esc(when(n.at)) + '</span><br>' +
+          esc(n.text) +
+          (n.photo ? '<a href="/api/photo/' + encodeURIComponent(n.photo) + q() + '" target="_blank"><img class="note-img" loading="lazy" alt="Photo with this note" src="/api/photo/' + encodeURIComponent(n.photo) + q() + '"></a>' : '') +
+          '<div>' + seen + love + '</div>' +
           '</div><button class="x" data-del-note="' + esc(n.id) + '" aria-label="Remove">\u00d7</button></div>';
       }).join('');
       document.querySelectorAll('[data-del-note]').forEach(function (b) {
         b.onclick = function () {
           if (!confirm('Remove this note from the tablet?')) return;
-          fetch('/api/notes/delete' + q('&id=' + b.dataset.delNote), { method: 'POST' }).then(loadNotes);
+          b.disabled = true;
+          fetch('/api/notes/delete' + q('&id=' + encodeURIComponent(b.dataset.delNote)), { method: 'POST' }).then(loadNotes)
+            .catch(function () { b.disabled = false; setMsg($('noteStatus'), 'Couldn\u2019t remove it. Is your phone on the home Wi-Fi?', 'err'); });
         };
       });
     }).catch(function () { setMsg($('noteStatus'), 'Can\u2019t reach the tablet. Is your phone on the same Wi-Fi?', 'err'); });
@@ -394,12 +483,31 @@
   // ===================== tablet settings =====================
   var S = { familyName: '', people: [], dates: [], calendars: [], units: 'fahrenheit' };
   var checks = {}; // calendar link -> last check result, kept across redraws
-  $('famName').addEventListener('input', function () { S.familyName = $('famName').value; });
+  var settingsLoaded = false, settingsDirty = false;
+  // Edits only reach the tablet on "Save settings", so say so plainly until they're saved.
+  function markDirty() {
+    settingsDirty = true;
+    setMsg($('settingsStatus'), 'Not saved yet \u2014 tap \u201cSave settings\u201d when you\u2019re done.', 'dirty');
+  }
+  $('famName').addEventListener('input', function () { S.familyName = $('famName').value; markDirty(); });
   var MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+  function daysIn(month) { return [31, 29, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31][month - 1] || 31; }
+  // "Today!", "Tomorrow", "in 23 days"
+  function untilDate(d) {
+    var now = new Date(), today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+    var next = new Date(now.getFullYear(), d.month - 1, d.day);
+    if (next < today) next = new Date(now.getFullYear() + 1, d.month - 1, d.day);
+    var n = Math.round((next - today) / 864e5);
+    var wd = next.toLocaleDateString([], { weekday: 'long' });
+    return n === 0 ? 'Today!' : n === 1 ? 'Tomorrow (' + wd + ')' : 'In ' + n + ' days (' + wd + ')';
+  }
 
   function loadSettings() {
+    if (settingsDirty && settingsLoaded) return; // don't throw away changes that haven't been saved yet
     api('/api/settings').then(function (d) {
       S = { familyName: d.familyName || '', people: d.people || [], dates: d.dates || [], calendars: d.calendars || [], units: d.units || 'fahrenheit' };
+      settingsLoaded = true; settingsDirty = false;
+      if ($('settingsStatus').className.indexOf('err') >= 0) setMsg($('settingsStatus'), '');
       drawSettings();
     }).catch(function () { setMsg($('settingsStatus'), 'Can\u2019t reach the tablet. Is your phone on the same Wi-Fi?', 'err'); });
   }
@@ -408,30 +516,33 @@
     $('famName').value = S.familyName;
     document.querySelectorAll('[data-u]').forEach(function (b) {
       b.classList.toggle('on', b.dataset.u === S.units);
-      b.onclick = function () { S.units = b.dataset.u; drawSettings(); };
+      b.onclick = function () { if (S.units !== b.dataset.u) { S.units = b.dataset.u; markDirty(); } drawSettings(); };
     });
     $('people').innerHTML = S.people.map(function (p, i) {
-      return '<span class="chip">' + esc(p) + '<button data-del-person="' + i + '" aria-label="Remove">\u00d7</button></span>';
+      return '<span class="chip">' + esc(p) + '<button data-del-person="' + i + '" aria-label="Remove ' + esc(p) + '">\u00d7</button></span>';
     }).join('') || '<span class="muted">No one added yet.</span>';
     document.querySelectorAll('[data-del-person]').forEach(function (b) {
-      b.onclick = function () { S.people.splice(+b.dataset.delPerson, 1); drawSettings(); };
+      b.onclick = function () { S.people.splice(+b.dataset.delPerson, 1); markDirty(); drawSettings(); };
     });
 
     $('dates').innerHTML = S.dates.map(function (d, i) {
-      var days = ''; for (var n = 1; n <= 31; n++) days += '<option' + (n === d.day ? ' selected' : '') + '>' + n + '</option>';
-      return '<div class="row" style="flex-wrap:wrap">' +
-        '<input type="text" data-dn="' + i + '" value="' + esc(d.name) + '" placeholder="e.g. Ava\u2019s birthday" style="flex:1 1 100%">' +
+      if (d.day > daysIn(d.month)) d.day = daysIn(d.month);
+      var days = ''; for (var n = 1; n <= daysIn(d.month); n++) days += '<option' + (n === d.day ? ' selected' : '') + '>' + n + '</option>';
+      return '<div style="margin-bottom:14px"><div class="row">' +
+        '<input type="text" data-dn="' + i + '" value="' + esc(d.name) + '" placeholder="e.g. Ava\u2019s birthday">' +
+        '<button class="x" data-del-date="' + i + '" aria-label="Remove">\u00d7</button></div>' +
+        '<div class="row" style="flex-wrap:wrap;margin-bottom:4px">' +
         '<select data-dm="' + i + '">' + MONTHS.map(function (m, k) { return '<option value="' + (k + 1) + '"' + (k + 1 === d.month ? ' selected' : '') + '>' + m + '</option>'; }).join('') + '</select>' +
         '<select data-dd="' + i + '">' + days + '</select>' +
-        '<select data-dk="' + i + '"><option value="birthday"' + (d.kind === 'birthday' ? ' selected' : '') + '>Birthday</option><option value="event"' + (d.kind !== 'birthday' ? ' selected' : '') + '>Special day</option></select>' +
-        '<button class="x" data-del-date="' + i + '" aria-label="Remove">\u00d7</button></div>';
+        '<select data-dk="' + i + '"><option value="birthday"' + (d.kind === 'birthday' ? ' selected' : '') + '>Birthday</option><option value="event"' + (d.kind !== 'birthday' ? ' selected' : '') + '>Special day</option></select></div>' +
+        '<div class="muted">' + esc(untilDate(d)) + '</div></div>';
     }).join('');
     bind('[data-dn]', 'dn', function (i, v) { S.dates[i].name = v; });
-    bind('[data-dm]', 'dm', function (i, v) { S.dates[i].month = +v; });
-    bind('[data-dd]', 'dd', function (i, v) { S.dates[i].day = +v; });
+    bind('[data-dm]', 'dm', function (i, v) { S.dates[i].month = +v; drawSettings(); });
+    bind('[data-dd]', 'dd', function (i, v) { S.dates[i].day = +v; drawSettings(); });
     bind('[data-dk]', 'dk', function (i, v) { S.dates[i].kind = v; });
     document.querySelectorAll('[data-del-date]').forEach(function (b) {
-      b.onclick = function () { S.dates.splice(+b.dataset.delDate, 1); drawSettings(); };
+      b.onclick = function () { S.dates.splice(+b.dataset.delDate, 1); markDirty(); drawSettings(); };
     });
 
     $('cals').innerHTML = S.calendars.map(function (c, i) {
@@ -445,38 +556,64 @@
     bind('[data-cn]', 'cn', function (i, v) { S.calendars[i].name = v; });
     bind('[data-cu]', 'cu', function (i, v) { S.calendars[i].url = v.trim(); });
     document.querySelectorAll('[data-del-cal]').forEach(function (b) {
-      b.onclick = function () { S.calendars.splice(+b.dataset.delCal, 1); drawSettings(); };
+      b.onclick = function () { S.calendars.splice(+b.dataset.delCal, 1); markDirty(); drawSettings(); };
     });
     document.querySelectorAll('[data-check]').forEach(function (b) {
-      b.onclick = function () {
-        var i = +b.dataset.check, out = document.querySelector('[data-checked="' + i + '"]');
-        out.textContent = 'Checking\u2026'; out.className = 'muted';
-        var url = S.calendars[i].url;
-        fetch('/api/calendar-check' + q('&url=' + encodeURIComponent(url))).then(function (r) { return r.json(); }).then(function (r) {
-          checks[url] = { text: r.ok ? '\u2713 Works \u2014 ' + r.events + ' events found' : (r.error || 'That link didn\u2019t work'), cls: r.ok ? 'ok' : 'err' };
-          var el = document.querySelector('[data-checked="' + i + '"]');
-          if (el) { el.textContent = checks[url].text; el.className = checks[url].cls; }
-        });
-      };
+      b.onclick = function () { checkCal(+b.dataset.check); };
+    });
+    // Check a pasted link straight away, so a wrong link shows up before saving.
+    document.querySelectorAll('[data-cu]').forEach(function (el) {
+      el.addEventListener('change', function () { if (el.value.trim()) checkCal(+el.dataset.cu); });
+    });
+    $('calAdd').hidden = S.calendars.length >= 6; // the tablet keeps up to 6
+  }
+
+  function checkCal(i) {
+    var out = document.querySelector('[data-checked="' + i + '"]');
+    var url = S.calendars[i] && S.calendars[i].url;
+    if (!out) return;
+    if (!url) { out.textContent = 'Paste the link first.'; out.className = 'err'; return; }
+    out.textContent = 'Checking\u2026'; out.className = 'muted';
+    var show = function () {
+      var el = document.querySelector('[data-checked="' + i + '"]');
+      if (el && S.calendars[i] && S.calendars[i].url === url) { el.textContent = checks[url].text; el.className = checks[url].cls; }
+    };
+    fetch('/api/calendar-check' + q('&url=' + encodeURIComponent(url))).then(function (r) { return r.json(); }).then(function (r) {
+      checks[url] = { text: r.ok ? '\u2713 Works \u2014 ' + r.events + ' events found' : (r.error || 'That link didn\u2019t work'), cls: r.ok ? 'ok' : 'err' };
+      show();
+    }).catch(function () {
+      var el = document.querySelector('[data-checked="' + i + '"]');
+      if (el) { el.textContent = 'Couldn\u2019t check: the tablet isn\u2019t answering. Is your phone on the home Wi-Fi?'; el.className = 'err'; }
     });
   }
 
   function bind(sel, key, set) {
     document.querySelectorAll(sel).forEach(function (el) {
-      el.addEventListener(el.tagName === 'SELECT' ? 'change' : 'input', function () { set(+el.getAttribute('data-' + key), el.value); });
+      el.addEventListener(el.tagName === 'SELECT' ? 'change' : 'input', function () { markDirty(); set(+el.getAttribute('data-' + key), el.value); });
     });
   }
 
   $('personAdd').onclick = function () {
     var v = $('personName').value.trim();
-    if (!v || S.people.indexOf(v) >= 0) return;
-    S.people.push(v); $('personName').value = ''; drawSettings();
+    if (!v) { $('personName').focus(); return; }
+    var dupe = S.people.some(function (p) { return p.toLowerCase() === v.toLowerCase(); });
+    if (dupe) { setMsg($('settingsStatus'), v + ' is already on the list.', 'err'); return; }
+    S.people.push(v); $('personName').value = ''; markDirty(); drawSettings();
   };
-  $('personName').addEventListener('keydown', function (e) { if (e.key === 'Enter') $('personAdd').click(); });
-  $('dateAdd').onclick = function () { S.dates.push({ name: '', month: new Date().getMonth() + 1, day: 1, kind: 'birthday' }); drawSettings(); };
-  $('calAdd').onclick = function () { S.calendars.push({ name: S.calendars.length ? 'Calendar ' + (S.calendars.length + 1) : 'Our calendar', url: '' }); drawSettings(); };
+  $('personName').addEventListener('keydown', function (e) { if (e.key === 'Enter') { e.preventDefault(); $('personAdd').click(); } });
+  $('dateAdd').onclick = function () {
+    S.dates.push({ name: '', month: new Date().getMonth() + 1, day: 1, kind: 'birthday' }); markDirty(); drawSettings();
+    var inputs = document.querySelectorAll('[data-dn]'); if (inputs.length) inputs[inputs.length - 1].focus();
+  };
+  $('calAdd').onclick = function () { S.calendars.push({ name: S.calendars.length ? 'Calendar ' + (S.calendars.length + 1) : 'Our calendar', url: '' }); markDirty(); drawSettings(); };
 
   $('settingsSave').onclick = async function () {
+    // Saving before the tablet's settings arrived would wipe them with blanks.
+    if (!settingsLoaded) {
+      setMsg($('settingsStatus'), 'Can\u2019t reach the tablet yet, so nothing was saved. Check your phone is on the home Wi-Fi and try again.', 'err');
+      loadSettings();
+      return;
+    }
     S.familyName = $('famName').value.trim();
     var failed = S.calendars.filter(function (c) { return checks[c.url] && checks[c.url].cls === 'err'; });
     if (failed.length && !confirm('One calendar link didn\u2019t work when checked. Save anyway?')) return;
@@ -491,9 +628,11 @@
     try {
       var r = await api('/api/settings', clean);
       if (!r.ok) throw new Error(r.error || 'Couldn\u2019t save');
-      S = r.settings; drawSettings();
+      S = r.settings; settingsDirty = false; drawSettings();
       setMsg($('settingsStatus'), 'Saved! The tablet updates right away.', 'ok');
-    } catch (err) { setMsg($('settingsStatus'), err.message, 'err'); }
+    } catch (err) {
+      setMsg($('settingsStatus'), err instanceof TypeError ? 'Can’t reach the tablet, so nothing was saved. Is your phone on the home Wi-Fi?' : err.message, 'err');
+    }
     this.disabled = false;
   };
 
@@ -510,20 +649,35 @@
   function renderShopping() {
     var box = $('slList');
     if (!SL) { box.innerHTML = ''; return; }
-    var left = 0;
-    var row = function (key, kind, name, amt, got) {
+    var left = 0, total = 0;
+    var row = function (key, kind, name, amt, got, first) {
+      total++;
       if (!got) left++;
-      return '<div class="sl-row' + (got ? ' got' : '') + '" data-key="' + esc(key) + '" data-kind="' + kind + '">' +
+      return '<div class="sl-row' + (got ? ' got' : '') + '" data-key="' + esc(key) + '" data-kind="' + kind + '"' + (first ? ' style="border-top:0"' : '') + '>' +
         '<div class="sl-box">' + (got ? '&#10003;' : '') + '</div><div><div class="sl-name">' + esc(name) + '</div>' +
         (amt ? '<div class="sl-amt">' + esc(amt) + '</div>' : '') + '</div></div>';
     };
+    // Things still to get stay on top; ticked ones drop to the bottom of their aisle.
+    var sorted = function (items) {
+      return items.filter(function (x) { return !x.got; }).concat(items.filter(function (x) { return x.got; }));
+    };
     var html = '';
-    if ((SL.extras || []).length) html += '<div class="card"><div class="sl-h">Added</div>' + SL.extras.map(function (x) { return row(x.id, 'extra', x.text, '', x.got); }).join('') + '</div>';
+    if ((SL.extras || []).length) html += '<div class="card"><div class="sl-h">Added by hand</div>' + sorted(SL.extras).map(function (x, i) { return row(x.id, 'extra', x.text, '', x.got, !i); }).join('') + '</div>';
     (SL.sections || []).forEach(function (sec) {
-      html += '<div class="card"><div class="sl-h">' + esc(sec.name) + '</div>' + sec.items.map(function (x) { return row(x.key, 'item', x.name, x.amount, x.got); }).join('') + '</div>';
+      html += '<div class="card"><div class="sl-h">' + esc(sec.name) + '</div>' + sorted(sec.items).map(function (x, i) { return row(x.key, 'item', x.name, x.amount, x.got, !i); }).join('') + '</div>';
     });
+    if (total && !left) html = '<div class="card ok" style="text-align:center">✓ All done — you got everything!</div>' + html;
     box.innerHTML = html || '<div class="card muted">Nothing on the list. Plan some meals on the tablet and they show up here.</div>';
-    $('slCount').textContent = left ? left + ' to get' : '';
+    $('slCount').textContent = total ? (left ? left + ' of ' + total + ' to get' : 'All got') : '';
+  }
+  function slWaiting() {
+    var n = slQueue().length;
+    return n ? ' ' + (n === 1 ? '1 change is' : n + ' changes are') + ' waiting to go to the tablet.' : '';
+  }
+  function slAge() {
+    if (!SL || !SL.savedAt) return '';
+    var d = new Date(SL.savedAt), today = new Date().toDateString() === d.toDateString();
+    return ' (from ' + (today ? 'today ' : d.toLocaleDateString([], { weekday: 'short' }) + ' ') + d.toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' }) + ')';
   }
 
   function loadShopping() {
@@ -531,13 +685,25 @@
     flushShopping(function () {
       if (slQueue().length) return; // keep our ticks showing until they're sent
       fetch('/api/shopping' + q()).then(function (r) { return r.json(); }).then(function (l) {
+        l.savedAt = Date.now();
         SL = l; slSave(); renderShopping();
-        slStatus(l.updated ? 'Up to date with the tablet' : '', 'muted');
+        slStatus(l.updated ? '✓ Up to date with the tablet' : '', 'muted');
       }).catch(function () {
-        slStatus(SL ? 'Not on your home Wi-Fi: showing the copy saved on this phone.' : 'Can’t reach the tablet. Are you on your home Wi-Fi?', SL ? 'muted' : 'err');
+        slStatus(SL ? 'Not on your home Wi-Fi: showing the copy saved on this phone' + slAge() + '.' + slWaiting() : 'Can’t reach the tablet. Are you on your home Wi-Fi?', SL ? 'muted' : 'err');
       });
     });
   }
+  // Back on the home Wi-Fi or back in this page: send waiting ticks right away.
+  function refreshVisible() {
+    if (document.hidden) return;
+    if (!$('tab-shopping').hidden) loadShopping();
+    else if (!$('tab-photos').hidden && !sending) loadList();
+    else if (!$('tab-note').hidden) loadNotes();
+    else if (!$('tab-settings').hidden) loadSettings();
+  }
+  document.addEventListener('visibilitychange', refreshVisible);
+  window.addEventListener('online', refreshVisible);
+  window.addEventListener('pageshow', function (e) { if (e.persisted) refreshVisible(); });
 
   function flushShopping(done) {
     var queue = slQueue();
@@ -550,7 +716,7 @@
       flushShopping(done);
     }).catch(function () {
       slFlushing = false;
-      slStatus('Saved on this phone. It’ll update the tablet when you’re home.', 'muted');
+      slStatus('Saved on this phone. It’ll update the tablet when you’re home.' + slWaiting(), 'muted');
       if (done) done();
     });
   }
@@ -572,8 +738,13 @@
   $('slAdd').addEventListener('submit', function (e) {
     e.preventDefault();
     var t = $('slText').value.trim();
-    if (!t) return;
+    if (!t) { $('slText').focus(); return; }
     SL = SL || { sections: [], extras: [] };
+    // Already there and not ticked yet? Don't add it twice.
+    var lower = t.toLowerCase(), already = null;
+    (SL.extras || []).forEach(function (x) { if (!x.got && String(x.text).toLowerCase() === lower) already = x.text; });
+    (SL.sections || []).forEach(function (s) { s.items.forEach(function (x) { if (!x.got && String(x.name).toLowerCase() === lower) already = x.name + (x.amount ? ' (' + x.amount + ')' : ''); }); });
+    if (already) { slStatus('“' + already + '” is already on the list.', 'err'); return; }
     SL.extras = (SL.extras || []).concat([{ id: 'phone-' + Date.now(), text: t, got: false }]);
     slSave(); renderShopping();
     $('slText').value = '';
@@ -585,10 +756,12 @@
   // ===================== your own recipes =====================
   var RC = [], rcEditing = '';
   function rcLines(id) { return $(id).value.split('\n').map(function (x) { return x.trim(); }).filter(Boolean); }
+  var RC_DRAFT = 'tablet-recipe-draft', RC_FIELDS = ['rcTitle', 'rcMeal', 'rcServes', 'rcPrep', 'rcCook', 'rcIng', 'rcSteps'];
   function rcFill(r) {
     rcEditing = r ? r.id : '';
-    $('rcHead').textContent = r ? 'Edit recipe' : 'Add a recipe';
+    $('rcHead').textContent = r ? 'Editing “' + r.title + '”' : 'Add a recipe';
     $('rcNew').hidden = !r;
+    $('rcSave').textContent = r ? 'Save changes' : 'Save to the tablet';
     $('rcTitle').value = r ? r.title : '';
     $('rcMeal').value = r ? r.meal : 'dinner';
     $('rcServes').value = r ? r.serves : 4;
@@ -596,37 +769,77 @@
     $('rcCook').value = r ? r.cook : 30;
     $('rcIng').value = r ? r.ingredients.join('\n') : '';
     $('rcSteps').value = r ? r.steps.join('\n') : '';
+    RC_FIELDS.forEach(function (id) { $(id).classList.remove('missing'); });
+    try { localStorage.removeItem(RC_DRAFT); } catch (e) {}
   }
+  // Typing a long recipe on a phone is work: keep a draft in case the page reloads or you switch apps.
+  RC_FIELDS.forEach(function (id) {
+    $(id).addEventListener('input', function () {
+      $(id).classList.remove('missing');
+      var d = { id: rcEditing, head: $('rcHead').textContent };
+      RC_FIELDS.forEach(function (f) { d[f] = $(f).value; });
+      try { localStorage.setItem(RC_DRAFT, JSON.stringify(d)); } catch (e) {}
+    });
+  });
+  (function () {
+    var d = slRead(RC_DRAFT, null);
+    if (!d) return;
+    RC_FIELDS.forEach(function (f) { if (d[f] != null) $(f).value = d[f]; });
+    rcEditing = d.id || '';
+    if (d.id) { $('rcHead').textContent = d.head; $('rcNew').hidden = false; $('rcSave').textContent = 'Save changes'; }
+    setMsg($('rcStatus'), 'Picked up where you left off. (Not saved to the tablet yet.)', 'muted');
+  })();
+  function rcHasText() { return !!($('rcTitle').value.trim() || $('rcIng').value.trim() || $('rcSteps').value.trim()); }
+  function rcMins(m) { return m >= 60 ? Math.floor(m / 60) + ' hr' + (m % 60 ? ' ' + (m % 60) + ' min' : '') : m + ' min'; }
   function loadRecipes() {
     fetch('/api/recipes' + q()).then(function (r) { return r.json(); }).then(function (d) {
       RC = d.recipes || [];
       $('rcList').innerHTML = RC.length ? RC.map(function (r) {
-        return '<div class="rc-item"><div class="t">' + esc(r.title) + '</div>' +
+        var total = (r.prep || 0) + (r.cook || 0);
+        var meta = [r.meal ? r.meal.charAt(0).toUpperCase() + r.meal.slice(1) : '', total ? rcMins(total) : '', 'serves ' + r.serves].filter(Boolean).join(' · ');
+        return '<div class="rc-item"><div class="t">' + esc(r.title) + '<div class="rc-meta">' + esc(meta) + '</div></div>' +
           '<button class="small-btn" data-rc-edit="' + esc(r.id) + '">Edit</button>' +
           '<button class="small-btn" data-rc-del="' + esc(r.id) + '">Delete</button></div>';
-      }).join('') : 'None yet.';
+      }).join('') : 'None yet. The first one you save shows up here.';
     }).catch(function () { $('rcList').textContent = 'Can’t reach the tablet. Are you on your home Wi-Fi?'; });
   }
-  $('rcNew').onclick = function () { rcFill(null); };
+  $('rcNew').onclick = function () { rcFill(null); setMsg($('rcStatus'), ''); };
   $('rcSave').onclick = function () {
+    var btn = this;
     var body = {
       id: rcEditing, title: $('rcTitle').value.trim(), meal: $('rcMeal').value,
       serves: parseInt($('rcServes').value, 10) || 4, prep: parseInt($('rcPrep').value, 10) || 0, cook: parseInt($('rcCook').value, 10) || 0,
       ingredients: rcLines('rcIng'), steps: rcLines('rcSteps')
     };
+    // Say exactly what's missing and take you to it, instead of a vague error.
+    var miss = !body.title ? ['rcTitle', 'Give the recipe a name.'] : !body.ingredients.length ? ['rcIng', 'Add at least one ingredient.'] : !body.steps.length ? ['rcSteps', 'Add at least one step.'] : null;
+    if (miss) {
+      $(miss[0]).classList.add('missing'); $(miss[0]).focus();
+      setMsg($('rcStatus'), miss[1], 'err'); return;
+    }
+    btn.disabled = true; btn.textContent = 'Saving…'; // one tap = one recipe, even if the tablet is slow
     setMsg($('rcStatus'), 'Saving…');
     api('/api/recipes', body).then(function (r) {
       if (!r.ok) { setMsg($('rcStatus'), r.error || 'Couldn’t save', 'err'); return; }
-      setMsg($('rcStatus'), '✓ Saved: ' + r.recipe.title + ' is on the tablet', 'ok');
       rcFill(null); loadRecipes();
-    }).catch(function () { setMsg($('rcStatus'), 'Can’t reach the tablet. Are you on your home Wi-Fi?', 'err'); });
+      setMsg($('rcStatus'), '✓ Saved: ' + r.recipe.title + ' is on the tablet', 'ok');
+    }).catch(function () { setMsg($('rcStatus'), 'Can’t reach the tablet. Are you on your home Wi-Fi? Your recipe is kept here.', 'err'); })
+      .then(function () { btn.disabled = false; if (btn.textContent === 'Saving…') btn.textContent = rcEditing ? 'Save changes' : 'Save to the tablet'; });
   };
   $('rcList').addEventListener('click', function (e) {
     var ed = e.target.closest('[data-rc-edit]'), del = e.target.closest('[data-rc-del]');
-    if (ed) { rcFill(RC.filter(function (r) { return r.id === ed.dataset.rcEdit; })[0]); window.scrollTo(0, 0); }
+    if (ed) {
+      if (ed.dataset.rcEdit !== rcEditing && rcHasText() && !confirm('Replace what you’ve typed with this recipe?')) return;
+      rcFill(RC.filter(function (r) { return r.id === ed.dataset.rcEdit; })[0]); setMsg($('rcStatus'), ''); window.scrollTo(0, 0);
+    }
     if (del) {
-      if (!confirm('Delete this recipe from the tablet?')) return;
-      fetch('/api/recipes/delete' + q('&id=' + encodeURIComponent(del.dataset.rcDel)), { method: 'POST' }).then(loadRecipes);
+      var rec = RC.filter(function (r) { return r.id === del.dataset.rcDel; })[0];
+      if (!confirm('Delete “' + (rec ? rec.title : 'this recipe') + '” from the tablet?')) return;
+      del.disabled = true;
+      fetch('/api/recipes/delete' + q('&id=' + encodeURIComponent(del.dataset.rcDel)), { method: 'POST' }).then(function () {
+        if (rcEditing === del.dataset.rcDel) rcFill(null);
+        loadRecipes();
+      }).catch(function () { del.disabled = false; setMsg($('rcStatus'), 'Couldn’t delete it. Are you on your home Wi-Fi?', 'err'); });
     }
   });
 })();

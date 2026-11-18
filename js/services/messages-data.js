@@ -100,6 +100,19 @@ export function updateMessage(id, patch) {
   return m;
 }
 
+/** Take a note off the board for good. Returns true if it was removed. */
+export function deleteMessage(id) {
+  if (onTablet()) {
+    if (!N().deleteNote) return false;
+    try { return !!N().deleteNote(id); } catch (e) { return false; }
+  }
+  const list = loadLocal();
+  const left = list.filter((m) => m.id !== id);
+  if (left.length === list.length) return false;
+  saveLocal(left);
+  return true;
+}
+
 /** Notes nobody has looked at yet (for the App menu). */
 export function unreadCount() {
   return loadMessages().filter((m) => !m.seen).length;

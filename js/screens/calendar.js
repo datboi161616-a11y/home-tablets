@@ -14,7 +14,14 @@ const esc = (s) => String(s).replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&
 function footerNote() {
   const st = calendarStatus();
   if (!st.calendars) return 'Add your Google or iPhone calendar: Photos → Add photos → scan the code → Tablet settings';
-  if (st.lastError) return `${st.lastError} · showing saved events`;
+  if (st.lastError) {
+    // Say how old the saved copy is, so nobody trusts a week-old calendar by mistake.
+    const at = st.savedAt;
+    if (!at) return `${st.lastError} · it will keep trying`;
+    const time = at.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' });
+    const day = at.toDateString() === new Date().toDateString() ? 'today' : at.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' });
+    return `${st.lastError} · showing events saved ${day} at ${time}`;
+  }
   return 'Add events on your phone’s calendar — they show up here';
 }
 
@@ -45,9 +52,24 @@ function weekTitle(days) {
   return `Week of ${days[0].date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}`;
 }
 
+// "Nov 16 – 22" or "Nov 30 – Dec 6": which dates the arrows have landed on.
+function weekRange(days) {
+  const a = days[0].date, b = days[6].date;
+  const md = (d) => d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+  return a.getMonth() === b.getMonth() ? `${md(a)} – ${b.getDate()}` : `${md(a)} – ${md(b)}`;
+}
+
+// "Thanksgiving · Nov 26 · in 8 days"
+function countdown(big) {
+  if (big.days === 0) return 'today!';
+  if (big.days === 1) return 'tomorrow';
+  return `in ${big.days} days`;
+}
+
 function render(el) {
   const days = getWeek(new Date(Date.now() + weekOffset * 7 * 86400000));
   const big = nextBigThing();
+  const today = new Date(); today.setHours(0, 0, 0, 0);
 
   el.innerHTML = `
   <style>
@@ -57,13 +79,17 @@ function render(el) {
     [data-week][disabled] { opacity:.3; }
     .cal-more { font-size:14px; font-weight:600; opacity:.7; flex:none; }
     .cal-day { border-radius:20px; padding:18px 14px; display:flex; flex-direction:column; gap:12px; min-height:0; overflow:hidden; }
+    .cal-day.past { opacity:.55; }
     .cal-day.today .cal-ev[data-kind="birthday"] { box-shadow: inset 0 0 0 2px rgba(255,255,255,.35); }
   </style>
   <div style="height:100%;padding:40px;display:flex;flex-direction:column;gap:24px">
     <div style="display:flex;align-items:center;justify-content:space-between">
       <div style="display:flex;align-items:center;gap:16px">
         <a href="#/launcher" class="pill" style="background:#fff">← Menu</a>
-        <div class="display" style="font-size:40px;font-weight:500;min-width:250px">${weekTitle(days)}</div>
+        <div style="min-width:250px;display:flex;flex-direction:column">
+          <div class="display" style="font-size:40px;font-weight:500;line-height:1.1">${weekTitle(days)}</div>
+          <div class="muted" style="font-size:16px;font-weight:500">${weekRange(days)}</div>
+        </div>
         <button data-week="-1" class="pill" style="background:#fff;border:none;font-size:22px;padding:0 18px;cursor:pointer"${weekOffset <= 0 ? ' disabled' : ''} aria-label="Earlier week">‹</button>
         <button data-week="1" class="pill" style="background:#fff;border:none;font-size:22px;padding:0 18px;cursor:pointer"${weekOffset >= MAX_AHEAD ? ' disabled' : ''} aria-label="Later week">›</button>
         ${weekOffset ? '<button data-week="0" class="pill" style="background:var(--ink);color:#fff;border:none;cursor:pointer">Today</button>' : ''}
@@ -76,7 +102,7 @@ function render(el) {
 
     <div style="flex-grow:1;min-height:0;display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:12px">
       ${days.map((d) => `
-        <div class="cal-day${d.isToday ? ' today' : ''}" data-day="${days.indexOf(d)}" style="cursor:pointer;${d.isToday ? 'background:var(--ink);color:#fff' : 'background:#fff'}">
+        <div class="cal-day${d.isToday ? ' today' : ''}${!d.isToday && d.date < today ? ' past' : ''}" data-day="${days.indexOf(d)}" style="cursor:pointer;${d.isToday ? 'background:var(--ink);color:#fff' : 'background:#fff'}">
           <div style="display:flex;flex-direction:column;gap:2px">
             <div class="eyebrow">${d.dow}</div>
             <div class="display" style="font-size:40px;font-weight:500;line-height:1">${d.num}</div>
@@ -92,7 +118,7 @@ function render(el) {
     <div data-detail style="display:none;position:absolute;top:0;right:0;bottom:0;left:0;background:rgba(29,36,48,.45);z-index:5;align-items:center;justify-content:center"></div>
 
     <div style="background:#fff;border-radius:20px;padding:18px 24px;display:flex;justify-content:space-between;align-items:center;font-size:18px">
-      <div>${big ? `<span style="font-weight:600">Next big thing:</span> ${esc(big.name)}${big.where ? ` at ${esc(big.where)}` : ''} · ${big.label}` : ''}</div>
+      <div style="white-space:nowrap;flex:none;max-width:62%;overflow:hidden;text-overflow:ellipsis">${big ? `<span style="font-weight:600">Next big thing:</span> ${esc(big.name)}${big.where ? ` at ${esc(big.where)}` : ''} · ${big.label} · <span style="font-weight:600">${countdown(big)}</span>` : ''}</div>
       <div class="muted" style="text-align:right;margin-left:16px">${esc(footerNote())}</div>
     </div>
   </div>`;
@@ -131,7 +157,25 @@ function showDay(el, d) {
 export function mount(el) {
   weekOffset = 0;
   draw(el);
+  // Swipe left/right across the week to change weeks (like turning a page).
+  let touch = null, swipedAt = 0;
+  el.addEventListener('touchstart', (e) => {
+    const t = e.touches[0];
+    touch = e.touches.length === 1 ? { x: t.clientX, y: t.clientY } : null;
+  }, { passive: true });
+  el.addEventListener('touchend', (e) => {
+    const t = e.changedTouches[0];
+    const box = el.querySelector('[data-detail]');
+    if (!touch || !t || (box && box.style.display === 'flex')) { touch = null; return; }
+    const dx = t.clientX - touch.x, dy = t.clientY - touch.y;
+    touch = null;
+    if (Math.abs(dx) < 80 || Math.abs(dx) < Math.abs(dy) * 1.5) return;
+    const next = Math.max(0, Math.min(MAX_AHEAD, weekOffset + (dx < 0 ? 1 : -1)));
+    swipedAt = Date.now();
+    if (next !== weekOffset) { weekOffset = next; draw(el); }
+  });
   el.addEventListener('click', (e) => {
+    if (Date.now() - swipedAt < 500) return; // the tap that ends a swipe doesn't open a day
     const box = el.querySelector('[data-detail]');
     if (box && box.style.display === 'flex') {
       if (e.target === box || e.target.closest('[data-close]')) box.style.display = 'none';

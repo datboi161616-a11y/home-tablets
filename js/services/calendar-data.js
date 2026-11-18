@@ -207,7 +207,7 @@ export function firstTomorrow() {
   return e ? { title: e.title, time: e.time } : null;
 }
 
-/** { configured: any calendar link or date set, calendars: number of links, lastError, updatedAt } */
+/** { configured: any calendar link or date set, calendars: number of links, lastError, updatedAt, savedAt } */
 export function calendarStatus() {
   const fam = getFamily();
   const c = readCache();
@@ -217,6 +217,8 @@ export function calendarStatus() {
     calendars: links,
     lastError: links ? c.error || '' : '',
     updatedAt: c.at ? new Date(c.at) : null,
+    // When the events on screen were last downloaded successfully (null: never).
+    savedAt: links && c.okAt ? new Date(c.okAt) : null,
   };
 }
 
@@ -271,7 +273,9 @@ export function refreshCalendars(force = false) {
       events.sort((a, b) => a.s - b.s);
       const error = failed.length ? `Couldn't update ${failed.join(', ')}` : '';
       // A failed download is retried sooner than a good one (in about 5 minutes).
-      writeCache({ at: failed.length ? Date.now() - REFRESH_MS + 5 * 60 * 1000 : Date.now(), sig, error, events });
+      // okAt = when the saved events were last downloaded without trouble.
+      const okAt = failed.length ? (sameLinks ? old.okAt || 0 : 0) : Date.now();
+      writeCache({ at: failed.length ? Date.now() - REFRESH_MS + 5 * 60 * 1000 : Date.now(), sig, error, events, okAt });
     })
     .catch((err) => { console.error('calendar refresh', err); })
     .then(() => {

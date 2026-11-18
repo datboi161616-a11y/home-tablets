@@ -10,18 +10,25 @@ import { getLocation } from '../services/location.js';
 import { getIssPasses, getCloudCover, fmtTime } from '../services/space.js';
 import { position, sunAlt, moonPhase, compass, CONSTELLATIONS } from '../services/astro.js';
 
-let timer;
+let timer, refreshTimer;
 let ctx = null; // { el, loc, passes, clouds }
 
 const STEP = 10 * 60000;
 const R = 228; // chart radius in px (inside the 2px border)
 const PLANETS = [ // brightest first
-  { id: 'venus', name: 'VENUS', color: '#FFF3D6', dot: 16, minAlt: 5 },
-  { id: 'jupiter', name: 'JUPITER', color: '#FFB547', dot: 16, minAlt: 10 },
-  { id: 'mars', name: 'MARS', color: '#FF8A65', dot: 12, minAlt: 10 },
-  { id: 'saturn', name: 'SATURN', color: '#E9E4D6', dot: 12, minAlt: 10 },
-  { id: 'mercury', name: 'MERCURY', color: '#C9C2B5', dot: 10, minAlt: 5 },
+  { id: 'venus', name: 'VENUS', color: '#FFF3D6', dot: 16, minAlt: 5, hint: 'THE BRIGHTEST "STAR" IN THE SKY' },
+  { id: 'jupiter', name: 'JUPITER', color: '#FFB547', dot: 16, minAlt: 10, hint: 'VERY BRIGHT, STEADY, NO TWINKLE' },
+  { id: 'mars', name: 'MARS', color: '#FF8A65', dot: 12, minAlt: 10, hint: 'A STEADY ORANGE-RED DOT' },
+  { id: 'saturn', name: 'SATURN', color: '#E9E4D6', dot: 12, minAlt: 10, hint: 'A STEADY, PALE GOLD "STAR"' },
+  { id: 'mercury', name: 'MERCURY', color: '#C9C2B5', dot: 10, minAlt: 5, hint: 'LOW DOWN IN THE TWILIGHT GLOW' },
 ];
+const ISS_SOON = 20 * 60000; // redraw often from 20 min before a flyover until it ends
+
+/** Cloud cover in plain words. */
+function skyWords(pct) {
+  return pct < 20 ? 'CLEAR SKIES' : pct < 45 ? 'MOSTLY CLEAR' : pct < 70 ? 'PARTLY CLOUDY'
+    : pct < 90 ? 'MOSTLY CLOUDY' : 'OVERCAST';
+}
 
 // ---------------------------------------------------------------- time helpers
 function shortTime(d) {
@@ -108,7 +115,7 @@ function compute(loc, now = new Date()) {
   const planets = [];
   for (const p of PLANETS) {
     const s = summarize(track(p.id, times, lat, lon), p.minAlt);
-    if (s) planets.push({ name: p.name, where: whereText(s.best), when: whenText(times, s, night), color: p.color === '#FFB547' ? p.color : '#D7E6F0' });
+    if (s) planets.push({ name: p.name, hint: p.hint, where: whereText(s.best), when: whenText(times, s, night), color: p.color === '#FFB547' ? p.color : '#D7E6F0' });
     const at = position(p.id, ref, lat, lon);
     if (at.alt > 0 && (s || at.alt > 5)) marks.push({ ...at, label: p.name, color: p.color, dot: p.dot, labelColor: p.id === 'jupiter' ? '#FFB547' : '#D7E6F0' });
   }
@@ -117,7 +124,7 @@ function compute(loc, now = new Date()) {
   let moon = null;
   const ms = summarize(track('moon', times, lat, lon), 5);
   if (ms && phase.fraction > 0.03) {
-    moon = { name: 'MOON', where: whereText(ms.best), when: whenText(times, ms, night), color: '#D7E6F0' };
+    moon = { name: 'MOON', hint: `${phase.name.toUpperCase()} · ${Math.round(phase.fraction * 100)}% LIT`, where: whereText(ms.best), when: whenText(times, ms, night), color: '#D7E6F0' };
   }
   const mAt = position('moon', ref, lat, lon);
   if (mAt.alt > 0) marks.push({ ...mAt, label: 'MOON', color: '#E9E4D6', dot: 22, labelColor: '#D7E6F0' });
@@ -127,7 +134,7 @@ function compute(loc, now = new Date()) {
   for (const c of CONSTELLATIONS) {
     const s = summarize(track(c, times, lat, lon), 20);
     if (!s || s.best.alt < 30) continue;
-    constellation = { name: c.name, where: whereText(s.best), when: whenText(times, s, night), color: '#D7E6F0' };
+    constellation = { name: c.name, hint: c.hint, where: whereText(s.best), when: whenText(times, s, night), color: '#D7E6F0' };
     const at = position(c, ref, lat, lon);
     const later = position(c, new Date(ref.getTime() + 30 * 60000), lat, lon);
     if (at.alt > 3) marks.push({ ...at, label: `${c.name}${later.alt > at.alt && at.alt < 35 ? ' RISING' : ''}`, text: true });
@@ -173,11 +180,19 @@ function rowsFor(sky, iss) {
   if (iss) {
     const p = iss.pass;
     const mins = Math.max(1, Math.round((p.end - p.start) / 60000));
+    const now = Date.now();
+    const until = Math.round((p.start - now) / 60000);
+    const height = p.maxAlt >= 60 ? 'PASSES NEARLY OVERHEAD' : p.maxAlt >= 30 ? 'CLIMBS HALFWAY UP' : 'STAYS LOW IN THE SKY';
+    let when;
+    if (!iss.tonight) when = `${p.start.toLocaleDateString('en-US', { weekday: 'short' }).toUpperCase()} ${fmtTime(p.start)}`;
+    else if (p.start <= now) when = 'RIGHT NOW!';
+    else if (until <= 60) when = `IN ${Math.max(1, until)} MIN · ${fmtTime(p.start)}`;
+    else when = fmtTime(p.start);
     issRow = {
-      name: 'ISS FLYOVER', color: '#5CE1E6',
+      name: 'ISS FLYOVER', color: '#5CE1E6', live: iss.tonight && until <= 60,
+      hint: iss.tonight ? `${height} · ${mins} MIN` : 'NO FLYOVER TONIGHT · NEXT ONE',
       where: `${compass(p.startAz, true)} → ${compass(p.endAz, true)}`,
-      when: iss.tonight ? `${fmtTime(p.start)} · ${mins} MIN`
-        : `${p.start.toLocaleDateString('en-US', { weekday: 'short' }).toUpperCase()} ${fmtTime(p.start)}`,
+      when,
     };
   }
   const others = [sky.moon, sky.constellation].filter(Boolean);
@@ -199,7 +214,7 @@ function render() {
       .filter((v) => v != null);
     if (vals.length) cloudAvg = Math.round(vals.reduce((a, b) => a + b, 0) / vals.length);
   }
-  if (cloudAvg != null) bits.push(`CLOUD COVER ${cloudAvg}%`);
+  if (cloudAvg != null) bits.push(skyWords(cloudAvg));
   $('[data-sub]').textContent = bits.join(' · ');
 
   // Chart
@@ -210,27 +225,47 @@ function render() {
     const [ex, ey] = xy(iss.pass.path[iss.pass.path.length - 1]);
     path = `<svg width="460" height="460" viewBox="0 0 460 460" style="position:absolute;left:0;top:0;overflow:visible">
         <polyline points="${pts}" fill="none" stroke="#5CE1E6" stroke-width="2"/>
-        <circle cx="${ex}" cy="${ey}" r="4" fill="#5CE1E6"/></svg>
-      <div style="position:absolute;${sx > 300 ? `right:${460 - sx}px` : `left:${Math.max(4, sx - 10)}px`};top:${sy + (sy < 230 ? 8 : -26)}px;font-size:13px;color:#5CE1E6;white-space:nowrap">ISS PATH ${fmtTime(iss.pass.start)}</div>`;
+        <circle cx="${ex}" cy="${ey}" r="4" fill="#5CE1E6"/>${issNow(iss.pass)}</svg>
+      <div style="position:absolute;${sx > 300 ? `right:${460 - sx}px` : `left:${Math.max(4, sx - 10)}px`};top:${sy + (sy < 230 ? 18 : -36)}px;font-size:13px;color:#5CE1E6;white-space:nowrap">ISS PATH ${fmtTime(iss.pass.start)}</div>`;
   }
   const placed = [];
   $('[data-marks]').innerHTML = path + sky.marks.map((m) => markHTML(m, placed)).join('');
-  $('[data-ref]').textContent = `SKY AT ${fmtTime(roundTo(sky.ref.getTime(), 5 * 60000))}`;
+  // Say clearly when the chart isn't "right now" (in the daytime it shows the evening sky).
+  const live = Math.abs(sky.ref - Date.now()) < 60000;
+  $('[data-ref]').textContent = live ? 'SKY RIGHT NOW' : `SKY TONIGHT AT ${fmtTime(roundTo(sky.ref.getTime(), 5 * 60000))}`;
   $('[data-phase]').textContent = `${sky.phase.name.toUpperCase()} · ${Math.round(sky.phase.fraction * 100)}% LIT`;
 
   // List
   const rows = rowsFor(sky, iss);
   $('[data-rows]').innerHTML = rows.length ? rows.map((o) => `
-    <div class="sk-row">
-      <div class="sk-ox sk-ell" style="font-size:24px;font-weight:500;color:${o.color}">${o.name}</div>
-      <div class="sk-ell" style="font-size:15px"><span style="color:#7FA6B8">LOOK </span>${o.where}</div>
-      <div class="sk-ell" style="font-size:15px"><span style="color:#7FA6B8">BEST </span>${o.when}</div>
+    <div class="sk-row"${o.live ? ' style="border-color:#5CE1E6"' : ''}>
+      <div style="min-width:0">
+        <div class="sk-ox sk-ell" style="font-size:24px;font-weight:500;color:${o.color}">${o.name}</div>
+        <div class="sk-ell" style="font-size:13px;letter-spacing:1px;color:#7FA6B8;margin-top:4px">${o.hint || ''}</div>
+      </div>
+      <div style="min-width:0;display:flex;flex-direction:column;gap:6px">
+        <div class="sk-ell" style="font-size:15px"><span style="color:#7FA6B8">LOOK </span>${o.where}</div>
+        <div class="sk-ell" style="font-size:15px${o.live ? ';color:#FFB547;font-weight:600' : ''}"><span style="color:#7FA6B8;font-weight:400">BEST </span>${o.when}</div>
+      </div>
     </div>`).join('')
     : '<div class="sk-row" style="grid-template-columns:1fr;font-size:15px;color:#7FA6B8">NOTHING BRIGHT IS UP TONIGHT — TRY STAR-SPOTTING!</div>';
 
   $('[data-tip]').textContent = cloudAvg != null && cloudAvg >= 70
     ? 'CLOUDY TONIGHT. IF THE CLOUDS BREAK, LOOK FOR THE MOON AND BRIGHT PLANETS FIRST — THEY SHINE THROUGH THIN CLOUD.'
     : 'TIP: GIVE YOUR EYES 15 MINUTES IN THE DARK. THE ISS LOOKS LIKE A BRIGHT, STEADY STAR MOVING FAST WITH NO BLINKING LIGHTS.';
+
+  // Is a flyover about to start (or happening)? Then the caller redraws every few seconds.
+  return !!(iss?.tonight && iss.pass.start - Date.now() < ISS_SOON && iss.pass.end > Date.now());
+}
+
+/** A bright dot where the ISS is right now, while a flyover is happening. */
+function issNow(pass) {
+  const now = Date.now();
+  if (now < pass.start || now > pass.end) return '';
+  const k = Math.min(pass.path.length - 1, Math.max(0, Math.round((now - pass.start) / 30000)));
+  const [x, y] = xy(pass.path[k]);
+  return `<circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="14" fill="none" stroke="#FFB547" stroke-width="2" class="sk-pulse"/>
+    <circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="7" fill="#FFB547"/>`;
 }
 
 export function mount(el) {
@@ -241,8 +276,10 @@ export function mount(el) {
     .sk-root a{color:#5CE1E6}
     .sk-ox{font-family:Oxanium,sans-serif}
     .sk-nsew{position:absolute;font-family:Oxanium,sans-serif;font-size:18px;color:#5CE1E6}
-    .sk-row{border:1px solid #1E3A4A;background:#0A1220;padding:16px 20px;display:grid;grid-template-columns:1.1fr 1fr 1fr;gap:12px;align-items:center}
+    .sk-row{border:1px solid #1E3A4A;background:#0A1220;padding:16px 20px;display:grid;grid-template-columns:minmax(0,1fr) 230px;gap:16px;align-items:center;padding:14px 20px}
     .sk-ell{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0}
+    @keyframes sk-pulse{0%{opacity:1}100%{opacity:.15}}
+    .sk-pulse{animation:sk-pulse 1s ease-in-out infinite alternate}
   </style>
   <div class="sk-root">
     <div style="display:flex;align-items:center;justify-content:space-between;gap:24px;border-bottom:1px solid #1E3A4A;padding-bottom:14px">
@@ -289,16 +326,28 @@ export function mount(el) {
     ctx.loc = loc;
     el.querySelector('[data-title]').textContent =
       loc.town ? `TONIGHT'S SKY OVER ${loc.town.toUpperCase()}` : "TONIGHT'S SKY";
-    render();
-    timer = setInterval(() => ctx === mine && render(), 5 * 60000); // things move: redraw every 5 min
-
-    getCloudCover(loc).then((c) => { if (ctx === mine && c) { ctx.clouds = c; render(); } });
-    getIssPasses(loc, 72).then((p) => { if (ctx === mine) { ctx.passes = p; render(); } })
-      .catch((err) => console.warn('iss', err));
+    // Things move: redraw every 5 min, or every 10 s around an ISS flyover so the
+    // "IN 3 MIN" countdown and the ISS dot on the chart keep up.
+    const tick = () => {
+      if (ctx !== mine) return;
+      const soon = render();
+      clearTimeout(timer);
+      timer = setTimeout(tick, soon ? 10000 : 5 * 60000);
+    };
+    // The cloud forecast and ISS orbit are refreshed every hour while the screen stays open.
+    const refresh = () => {
+      getCloudCover(loc).then((c) => { if (ctx === mine && c) { ctx.clouds = c; tick(); } });
+      getIssPasses(loc, 72).then((p) => { if (ctx === mine) { ctx.passes = p; tick(); } })
+        .catch((err) => console.warn('iss', err));
+    };
+    tick();
+    refresh();
+    refreshTimer = setInterval(refresh, 60 * 60000);
   })();
 }
 
 export function unmount() {
-  clearInterval(timer);
+  clearTimeout(timer);
+  clearInterval(refreshTimer);
   ctx = null;
 }

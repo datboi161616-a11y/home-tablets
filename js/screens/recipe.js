@@ -92,6 +92,22 @@ const shortTitle = (t) => (t.length > 18 ? `${t.slice(0, 17)}…` : t);
 // Long steps get slightly smaller type so they always fit the card.
 const stepSize = (text) => (text.length <= 90 ? 46 : text.length <= 130 ? 40 : 34);
 
+// Which ingredients a step mentions ("Add the beef, onion and garlic" -> beef, onion, garlic),
+// so the list can point them out. Describing words are skipped so "brown sugar" matches "sugar", not "brown".
+const PLAIN = ['fresh', 'large', 'small', 'medium', 'ground', 'lean', 'whole', 'chopped', 'sliced', 'diced', 'minced',
+  'unsalted', 'salted', 'boneless', 'skinless', 'black', 'white', 'brown', 'yellow', 'green', 'dried', 'extra',
+  'virgin', 'light', 'dark', 'sauce', 'powder', 'leaves', 'cooked', 'frozen', 'canned', 'low-sodium', 'plain', 'sweet'];
+function ingredientWords(ing) {
+  if (!ing || typeof ing === 'string') return [];
+  return String(ing.item).toLowerCase().replace(/\([^)]*\)/g, ' ').split(/[^a-z-]+/)
+    .filter((w) => w.length >= 3 && PLAIN.indexOf(w) < 0)
+    .map((w) => w.replace(/oes$/, 'o').replace(/([^s])s$/, '$1')); // "eggs" -> "egg", "tomatoes" -> "tomato"
+}
+function usedIn(r, stepText) {
+  const text = ` ${String(stepText).toLowerCase()} `;
+  return r.ingredients.map((ing) => ingredientWords(ing).some((w) => new RegExp(`[^a-z]${w}(es|s)?[^a-z]`).test(text)));
+}
+
 // ---- Screen -----------------------------------------------------------------
 export function mount(el, ctx) {
   el.innerHTML = '<div class="k-empty" style="height:100%;display:flex;align-items:center;justify-content:center;font-size:22px;color:#4A5363">Loading recipe…</div>';
@@ -156,6 +172,15 @@ async function start(el, args) {
     .rc-ing{display:flex;align-items:center;gap:12px;font-size:19px;min-height:44px;cursor:pointer}
     .rc-ing input{width:22px;height:22px;accent-color:${a};flex:none;margin:0}
     .rc-ing.on span{color:#4A5363;text-decoration:line-through}
+    .rc-ing{border-radius:12px;margin:0 -12px;padding:0 12px;flex:none}
+    .rc-ing.use{background:${a}1A;font-weight:600}
+    .rc-dots{display:flex;align-items:center;flex:1;min-width:0;justify-content:flex-end}
+    .rc-dot{flex:0 1 40px;min-width:22px;height:44px;border:none;background:transparent;cursor:pointer;display:flex;align-items:center;justify-content:center;padding:0}
+    .rc-dot i{width:14px;height:14px;border-radius:50%;background:#D9DDE2;display:block}
+    .rc-dot.past i{background:${a};opacity:.45}
+    .rc-dot.on i{background:${a};width:20px;height:20px}
+    .rc-next{font-size:20px;color:#4A5363;line-height:1.35;overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical}
+    .rc-next b{color:#1D2430;font-weight:600}
     .rc-timer{display:flex;align-items:center;gap:20px;border-radius:20px;background:#F4F5F7;padding:18px 18px 18px 26px}
     .rc-timer.done{background:${a};color:#FFFFFF;animation:rc-pulse 1s ease-in-out infinite alternate}
     @keyframes rc-pulse{from{opacity:1}to{opacity:.8}}
@@ -189,6 +214,13 @@ async function start(el, args) {
   const $ = (sel) => el.querySelector(sel);
 
   // ---- Cooking mode ----
+  let armed = false; // "Start over" needs a second tap, so a stray tap doesn't wipe everything
+  let armTimer;
+  function showIngCount() {
+    const n = s.checked.filter(Boolean).length;
+    $('[data-ingcount]').textContent = n ? `Ingredients · ${n} of ${r.ingredients.length} ready` : 'Ingredients';
+  }
+
   function renderCook() {
     sideHtml = '';
     $('[data-cook]').innerHTML = `
@@ -199,26 +231,33 @@ async function start(el, args) {
       <a href="#/recipes" class="pill rc-pillbtn">All recipes</a>
     </div>
     <div style="flex-grow:1;display:grid;grid-template-columns:380px minmax(0,1fr);gap:24px;min-height:0">
-      <div class="card" style="padding:28px;display:flex;flex-direction:column;gap:14px;overflow:auto">
-        <div class="eyebrow muted">Ingredients</div>
+      <div data-ings class="card" style="padding:28px;display:flex;flex-direction:column;gap:14px;overflow:auto">
+        <div data-ingcount class="eyebrow muted"></div>
         ${r.ingredients.map((ing, i) => `
           <label class="rc-ing${s.checked[i] ? ' on' : ''}">
             <input type="checkbox" data-ing="${i}"${s.checked[i] ? ' checked' : ''}><span>${esc(ingredientText(ing, scaleFor(r)))}</span>
           </label>`).join('')}
       </div>
       <div class="card" style="padding:40px;display:flex;flex-direction:column;justify-content:space-between;gap:24px;min-width:0">
-        <div style="display:flex;flex-direction:column;gap:20px">
-          <div data-stepnum style="font-size:18px;font-weight:600;color:${a}"></div>
+        <div style="display:flex;flex-direction:column;gap:14px">
+          <div style="display:flex;align-items:center;gap:16px;margin:-12px 0 -6px">
+            <div data-stepnum style="font-size:18px;font-weight:600;color:${a};flex:none"></div>
+            <div data-dots class="rc-dots">${r.steps.map((_, j) => `<button class="rc-dot" data-goto="${j}" aria-label="Step ${j + 1}"><i></i></button>`).join('')}</div>
+          </div>
           <div data-steptext class="display" style="font-size:46px;font-weight:500;line-height:1.2"></div>
         </div>
         <div data-timerbox></div>
-        <div style="display:flex;align-items:center;gap:16px">
-          <button data-prev class="rc-btn rc-ghost">Back</button>
-          <button data-next class="rc-btn rc-solid"></button>
-          <div data-side style="margin-left:auto;display:flex;gap:10px;align-items:center;justify-content:flex-end;flex-wrap:wrap;min-width:0"></div>
+        <div style="display:flex;flex-direction:column;gap:20px">
+          <div data-nextup class="rc-next"></div>
+          <div style="display:flex;align-items:center;gap:16px">
+            <button data-prev class="rc-btn rc-ghost">Back</button>
+            <button data-next class="rc-btn rc-solid"></button>
+            <div data-side style="margin-left:auto;display:flex;gap:10px;align-items:center;justify-content:flex-end;flex-wrap:wrap;min-width:0"></div>
+          </div>
         </div>
       </div>
     </div>`;
+    showIngCount();
     renderStep();
   }
 
@@ -231,7 +270,25 @@ async function start(el, args) {
     text.textContent = step.text;
     text.style.fontSize = `${stepSize(step.text)}px`;
     $('[data-prev]').disabled = i === 0;
+    armed = false;
+    clearTimeout(armTimer);
     $('[data-next]').textContent = last ? 'Start over' : 'Next step';
+    // Where you are: a dot per step (tap one to jump there).
+    el.querySelectorAll('[data-goto]').forEach((d, j) => { d.className = `rc-dot${j === i ? ' on' : j < i ? ' past' : ''}`; });
+    // A peek at what's coming, so nobody gets caught out.
+    $('[data-nextup]').innerHTML = last ? '<b>Last step.</b> Enjoy!' : `<b>Next:</b> ${esc(r.steps[i + 1].text)}`;
+    // Point out the ingredients this step uses, and bring the first one into view.
+    const use = usedIn(r, step.text);
+    let first = null;
+    el.querySelectorAll('[data-ing]').forEach((cb) => {
+      const on = use[+cb.dataset.ing];
+      cb.parentElement.classList.toggle('use', on);
+      if (on && !first) first = cb.parentElement;
+    });
+    const box = $('[data-ings]');
+    if (first && (first.offsetTop < box.scrollTop || first.offsetTop + first.offsetHeight > box.scrollTop + box.clientHeight)) {
+      box.scrollTop = Math.max(0, first.offsetTop - 70);
+    }
     $('[data-timerbox]').innerHTML = step.timer ? `
       <div class="rc-timer" data-timer>
         <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="13" r="8"/><path d="M12 9v4l2.5 2.5M10 2h4"/></svg>
@@ -331,12 +388,22 @@ async function start(el, args) {
     } else if (t.matches('[data-prev]')) setStep(i - 1);
     else if (t.matches('[data-next]')) {
       if (i === r.steps.length - 1) {
+        if (!armed) {
+          armed = true;
+          t.textContent = 'Tap again to start over';
+          clearTimeout(armTimer);
+          armTimer = setTimeout(() => { armed = false; if (el.isConnected && s.step === i) t.textContent = 'Start over'; }, 4000);
+          return;
+        }
         // Start over: clear ticks and timers.
         s.checked = s.checked.map(() => false);
         s.timers = {};
         el.querySelectorAll('[data-ing]').forEach((cb) => { cb.checked = false; cb.parentElement.classList.remove('on'); });
+        showIngCount();
         setStep(0);
       } else setStep(i + 1);
+    } else if (t.matches('[data-goto]')) {
+      setStep(+t.dataset.goto);
     } else if (t.matches('[data-ttoggle]')) {
       const st = status(s, i);
       if (st === 'running') s.timers[i] = { left: remaining(r, s, i) };
@@ -359,6 +426,7 @@ async function start(el, args) {
     s.checked[+cb.dataset.ing] = cb.checked;
     cb.parentElement.classList.toggle('on', cb.checked);
     save(r, s);
+    showIngCount();
   }
   root.addEventListener('click', onClick);
   root.addEventListener('change', onChange);

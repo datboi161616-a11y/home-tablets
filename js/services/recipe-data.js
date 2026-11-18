@@ -129,17 +129,32 @@ export async function dinnerIdea(date = new Date()) {
   return list[(day * 37) % list.length];
 }
 
-/** Simple search over titles, blurbs, tags and cuisine names. */
+// Lower-case, accents off ("sauté" -> "saute"), punctuation to spaces.
+const plain = (s) => String(s || '').toLowerCase().replace(/[àáâä]/g, 'a').replace(/[èéêë]/g, 'e').replace(/[ìíîï]/g, 'i')
+  .replace(/[òóôö]/g, 'o').replace(/[ùúûü]/g, 'u').replace(/ñ/g, 'n').replace(/ç/g, 'c').replace(/[^a-z0-9]+/g, ' ');
+// "tacos" also finds "taco", "potatoes" finds "potato", "berries" finds "berry".
+const stem = (w) => (w.length > 4 && /ies$/.test(w) ? `${w.slice(0, -3)}y`
+  : w.length > 4 && /oes$/.test(w) ? w.slice(0, -2)
+    : w.length > 3 && /[^s]s$/.test(w) ? w.slice(0, -1) : w);
+
+/** Search over titles, blurbs, tags and cuisine names. Title matches come first. */
 export async function searchRecipes(text, limit = 200) {
   const ix = await loadIndex();
-  const words = String(text).toLowerCase().split(/\s+/).filter(Boolean);
+  const words = plain(text).split(' ').filter(Boolean);
   if (!words.length) return [];
   const names = {};
-  ix.cuisines.forEach((c) => { names[c.id] = c.name.toLowerCase(); });
-  return ix.recipes.filter((r) => {
-    const hay = `${r.t} ${r.b} ${r.g.join(' ')} ${names[r.c]} ${r.ty}`.toLowerCase();
-    return words.every((w) => hay.includes(w));
-  }).slice(0, limit);
+  ix.cuisines.forEach((c) => { names[c.id] = c.name; });
+  const hits = [];
+  ix.recipes.forEach((r, n) => {
+    const title = plain(r.t);
+    const hay = ` ${title} ${plain(r.b)} ${plain((r.g || []).join(' '))} ${plain(names[r.c])} ${plain(r.ty)}`;
+    const has = (h, w) => h.indexOf(w) >= 0 || h.indexOf(stem(w)) >= 0;
+    if (!words.every((w) => has(hay, w))) return;
+    // Every word in the title > some words in the title > found elsewhere; then the library's order.
+    const inTitle = words.filter((w) => has(title, w)).length;
+    hits.push({ r, rank: (inTitle === words.length ? 0 : inTitle ? 1 : 2) * 1e6 + n });
+  });
+  return hits.sort((a, b) => a.rank - b.rank).slice(0, limit).map((h) => h.r);
 }
 
 /**

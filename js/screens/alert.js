@@ -6,26 +6,31 @@
 import { getLocation } from '../services/location.js';
 import { nextVisiblePass } from '../services/iss.js';
 import { compass } from '../services/aircraft.js';
-import { checkAlerts, testAlert, startTest, stopTest, testActive, markSeen } from '../services/skyalert.js';
+import { passDay } from '../services/space.js';
+import { checkAlerts, testAlert, startTest, stopTest, testActive, markSeen, nextShower, heightWords } from '../services/skyalert.js';
 
 let timers = [];
 let alive = false;
 
 const pad = (n) => String(n).padStart(2, '0');
+// Under an hour it ticks as 9:59; longer waits read "6 HR 01 MIN" so the
+// countdown can't be mistaken for a clock time (it sits right above one).
 function countdown(ms) {
   const s = Math.max(0, Math.round(ms / 1000));
   const h = Math.floor(s / 3600), m = Math.floor((s % 3600) / 60);
-  return h ? `${h}:${pad(m)}:${pad(s % 60)}` : `${m}:${pad(s % 60)}`;
+  return h ? `${h} HR ${pad(m)} MIN` : `${m}:${pad(s % 60)}`;
 }
-const fmt12 = (t) => new Date(t).toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' });
 const bigSize = (text) => Math.min(190, Math.floor(1150 / (Math.max(text.length, 1) * 0.58)));
 
+// Every kind of alert has a chip, so the one going off lights up.
 const CHIPS = [
-  ['launch', 'ROCKET LAUNCH · LIVE IN 10 MIN'],
-  ['aurora', 'NORTHERN LIGHTS POSSIBLE TONIGHT'],
+  ['iss', 'SPACE STATION FLYING OVER'],
+  ['launch', 'ROCKET ABOUT TO LAUNCH'],
+  ['plane', 'RARE OR VERY LOW PLANE'],
+  ['aurora', 'NORTHERN LIGHTS TONIGHT'],
   ['meteor', 'METEOR SHOWER PEAK'],
-  ['rare', 'RARE PLANE OVERHEAD (B-52, AIR FORCE ONE, A380)'],
 ];
+const chipKind = (kind) => (kind === 'rare' || kind === 'overhead' ? 'plane' : kind);
 
 export function mount(el) {
   alive = true;
@@ -51,8 +56,9 @@ export function mount(el) {
     <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 12px">
       <div data-head class="pulse" style="font-family: Oxanium, sans-serif; font-size: 28px; font-weight: 700; letter-spacing: 10px; color: #FF6B57">SKY ALERT</div>
       <div style="display: flex; gap: 12px">
+        <a data-link href="#/bridge" class="tba-btn" style="display: none"></a>
         <button data-test class="tba-btn">TEST ALERT</button>
-        <a data-dismiss href="#/bridge" class="tba-btn">DISMISS</a>
+        <a data-dismiss href="#/bridge" class="tba-btn">◂ DECK</a>
       </div>
     </div>
     <div style="flex-grow: 1; display: flex; flex-direction: column; justify-content: center; gap: 18px; min-width: 0">
@@ -62,9 +68,9 @@ export function mount(el) {
       <div data-sub style="font-size: 18px; color: #FF9A8C">&nbsp;</div>
     </div>
     <div data-chips-wrap style="border-top: 1px solid #7A2A20; padding-top: 16px; display: flex; flex-direction: column; gap: 10px">
-      <div data-chips-label style="font-size: 13px; letter-spacing: 4px; color: #FF9A8C">THIS SCREEN ALSO GOES RED FOR</div>
-      <div data-chips style="display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; font-size: 15px">
-        ${CHIPS.map(([k, t]) => `<div data-chip="${k}" style="border: 1px solid #7A2A20; padding: 12px 14px">${t}</div>`).join('')}
+      <div data-chips-label style="font-size: 13px; letter-spacing: 4px; color: #FF9A8C">THIS SCREEN GOES RED FOR</div>
+      <div data-chips style="display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 12px; font-size: 15px">
+        ${CHIPS.map(([k, t]) => `<div data-chip="${k}" style="border: 1px solid #7A2A20; padding: 12px 14px">${t}${k === 'meteor' ? '<span data-shower></span>' : ''}</div>`).join('')}
       </div>
     </div>
   </div>`;
@@ -110,7 +116,17 @@ export function mount(el) {
       }
       $('[data-headline]').textContent = alert.headline;
       $('[data-sub]').textContent = alert.sub;
-      el.querySelectorAll('[data-chip]').forEach((c) => c.classList.toggle('on', c.dataset.chip === alert.kind));
+      el.querySelectorAll('[data-chip]').forEach((c) => c.classList.toggle('on', c.dataset.chip === chipKind(alert.kind)));
+      $('[data-dismiss]').textContent = 'DISMISS';
+      // A way to the screen with more about it (launch details, the plane radar).
+      const link = $('[data-link]');
+      if (alert.link) {
+        link.setAttribute('href', alert.link.href);
+        link.textContent = alert.link.label + ' ▸';
+        link.style.display = '';
+      } else {
+        link.style.display = 'none';
+      }
       return;
     }
 
@@ -118,14 +134,22 @@ export function mount(el) {
     root.classList.add('calm');
     $('[data-head]').textContent = 'SKY ALERT · ALL CLEAR';
     $('[data-test]').style.display = '';
+    $('[data-link]').style.display = 'none';
+    $('[data-dismiss]').textContent = '◂ DECK';
     el.querySelectorAll('[data-chip]').forEach((c) => c.classList.remove('on'));
+    const sh = nextShower();
+    if (sh) {
+      const isTonight = sh.date.toDateString() === new Date(now - (new Date(now).getHours() <= 4 ? 86400000 : 0)).toDateString();
+      $('[data-shower]').textContent = isTonight ? ' · TONIGHT!'
+        : ` · NEXT: ${sh.name}, ${sh.date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }).toUpperCase()}`;
+    }
     const p = calm?.pass;
     if (p && p.visEnd < now) { calm = null; refresh(); return; }
     if (p && p.visStart > now) {
       $('[data-label]').textContent = 'NOTHING RIGHT NOW · NEXT VISIBLE SPACE STATION PASS IN';
       setBig(countdown(p.visStart - now));
-      $('[data-headline]').textContent = `${fmt12(p.visStart)} · LOOK ${compass(p.visAz)}`;
-      $('[data-sub]').textContent = `About ${Math.max(1, Math.round((p.visEnd - p.visStart) / 60000))} minutes of bright steady light · This screen goes red 10 minutes before`;
+      $('[data-headline]').textContent = `${passDay(new Date(p.visStart))} · LOOK ${compass(p.visAz)}`;
+      $('[data-sub]').textContent = `About ${Math.max(1, Math.round((p.visEnd - p.visStart) / 60000))} minutes of bright steady light, ${heightWords(p.visMaxEl)} · This screen goes red 10 minutes before`;
     } else if (calm) {
       $('[data-label]').textContent = 'NOTHING RIGHT NOW';
       setBig('CLEAR');

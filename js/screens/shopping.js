@@ -6,7 +6,7 @@ import {
 } from '../services/meal-plan.js';
 import { esc, kitchenStyles, kitchenTop, fillCounts } from './kitchen-ui.js';
 
-let off;
+let off, stopTimers;
 
 export function mount(el) {
   const a = settings.accent;
@@ -24,13 +24,30 @@ export function mount(el) {
     .sl-n::first-letter{text-transform:uppercase}
     .sl-a{font-size:14px;color:#4A5363;line-height:1.3}
     .sl-row.got .sl-n{text-decoration:line-through;color:#8A93A3}
-    .sl-have{min-height:40px;padding:0 12px;border-radius:999px;border:none;background:#F1F2F4;color:#1D2430;font-size:14px;font-weight:600;cursor:pointer;flex:none;font-family:Inter,sans-serif}
+    .sl-sec.done{opacity:.6}
+    .sl-left{float:right;letter-spacing:0;text-transform:none;font-weight:600;color:#8A93A3}
+    .sl-sec.done .sl-left{color:${a}}
+    .sl-note{font-size:16px;color:#4A5363;margin-top:-10px;min-height:0}
+    .sl-have{min-height:44px;padding:0 12px;border-radius:999px;border:none;background:#F1F2F4;color:#1D2430;font-size:14px;font-weight:600;cursor:pointer;flex:none;font-family:Inter,sans-serif}
     .sl-chip{min-height:44px;padding:0 16px;border-radius:999px;border:none;background:#FFFFFF;color:#1D2430;font-size:15px;font-weight:600;cursor:pointer;font-family:Inter,sans-serif;display:inline-flex;align-items:center;gap:6px}
   </style>
   <div class="k-wrap" data-root>${kitchenTop({ title: 'Shopping list', active: 'shopping' })}<div class="k-empty k-scroll">Building your list…</div></div>`;
   const root = el.querySelector('[data-root]');
   let scrollTop = 0;
   let drawing = false;
+  let typing = false; // keep the keyboard up after "Add", for adding several things in a row
+  let note = ''; // e.g. "Milk is already on the list"
+  let noteTimer;
+  let clearArmed = false; // "Done shopping" needs a second tap
+  let clearTimer;
+
+  // Ticked-off things sink to the bottom of their aisle, so what's left to get is on top.
+  const byGot = (list) => list.filter((x) => !x.got).concat(list.filter((x) => x.got));
+  // Aisle box with a "3 left" / "All got" count; boxes that are all ticked fade back.
+  const section = (title, items, rowsHtml) => {
+    const n = items.filter((x) => !x.got).length;
+    return `<div class="sl-sec${n ? '' : ' done'}"><div class="sl-h">${esc(title)}<span class="sl-left">${n ? `${n} left` : '✓ All got'}</span></div>${rowsHtml}</div>`;
+  };
 
   const row = (key, name, amount, from, got, kind) => `
     <div class="sl-row${got ? ' got' : ''}">
@@ -64,9 +81,10 @@ export function mount(el) {
             <input data-addtext class="k-input" style="flex:1" maxlength="60" placeholder="Add something else — milk, paper towels…" autocomplete="off">
             <button class="k-btn dark" type="submit">Add</button>
           </form>
-          <div class="muted" style="font-size:17px;flex:none">${list.recipes ? `${list.recipes} planned meal${list.recipes > 1 ? 's' : ''} · ${left} to get` : `${left} to get`}</div>
-          ${anyGot ? '<button data-clear class="k-btn line">Done shopping</button>' : ''}
+          <div class="muted" style="font-size:17px;flex:none">${list.recipes ? `${list.recipes} planned meal${list.recipes > 1 ? 's' : ''} · ` : ''}${left ? `${left} to get` : anyGot ? 'Got everything!' : '0 to get'}</div>
+          ${anyGot ? `<button data-clear class="k-btn ${clearArmed ? 'solid' : 'line'}">${clearArmed ? 'Tap again to clear ticks' : 'Done shopping'}</button>` : ''}
         </div>
+        ${note ? `<div class="sl-note">${esc(note)}</div>` : ''}
         <div data-body class="k-scroll">
           ${!list.recipes && !list.extras.length ? `
             <div class="k-empty">
@@ -75,10 +93,10 @@ export function mount(el) {
               <a href="#/recipes" class="k-btn solid">Find recipes</a>
             </div>` : `
           <div class="sl-cols">
-            ${list.extras.length ? `<div class="sl-sec"><div class="sl-h">Added by you</div>
-              ${list.extras.map((x) => row(x.id, x.text, '', '', x.got, 'extra')).join('')}</div>` : ''}
-            ${list.sections.map((s) => `<div class="sl-sec"><div class="sl-h">${esc(s.name)}</div>
-              ${s.items.map((x) => row(x.key, x.name, x.amount, from(x.from), x.got, 'item')).join('')}</div>`).join('')}
+            ${list.extras.length ? section('Added by you', list.extras,
+              byGot(list.extras).map((x) => row(x.id, x.text, '', '', x.got, 'extra')).join('')) : ''}
+            ${list.sections.map((s) => section(s.name, s.items,
+              byGot(s.items).map((x) => row(x.key, x.name, x.amount, from(x.from), x.got, 'item')).join(''))).join('')}
           </div>
           ${list.have.length ? `
             <div style="margin-top:4px;display:flex;flex-direction:column;gap:10px">
@@ -91,6 +109,7 @@ export function mount(el) {
         </div>`;
       const body = root.querySelector('[data-body]');
       if (body) body.scrollTop = scrollTop;
+      if (typing) { typing = false; const input = root.querySelector('[data-addtext]'); if (input) input.focus(); }
       fillCounts(root);
     } finally {
       drawing = false;
@@ -107,15 +126,34 @@ export function mount(el) {
     } else if (t.dataset.have) setHave(t.dataset.have, true);
     else if (t.dataset.need) setHave(t.dataset.need, false);
     else if (t.dataset.rmextra) removeExtra(t.dataset.rmextra);
-    else if (t.matches('[data-clear]')) clearChecked();
+    else if (t.matches('[data-clear]')) {
+      clearTimeout(clearTimer);
+      if (clearArmed) { clearArmed = false; clearChecked(); return; }
+      clearArmed = true; // a stray tap shouldn't wipe the ticks
+      clearTimer = setTimeout(() => { clearArmed = false; if (el.isConnected) render(); }, 4000);
+      render();
+    }
   });
+  function say(text) {
+    note = text;
+    clearTimeout(noteTimer);
+    noteTimer = setTimeout(() => { note = ''; if (el.isConnected) render(); }, 5000);
+  }
   root.addEventListener('submit', (e) => {
     e.preventDefault();
     const input = root.querySelector('[data-addtext]');
-    addExtra(input.value);
+    const text = input.value.trim();
+    if (!text) return;
+    typing = true;
+    const what = addExtra(text);
+    const name = text.charAt(0).toUpperCase() + text.slice(1);
+    if (what === 'there') { say(`${name} is already on the list.`); input.value = ''; render(); }
+    else if (what === 'back') say(`${name} is back on the list.`);
+    else say('');
   });
 
   off = onKitchenChanged(() => { if (el.isConnected) render(); });
+  stopTimers = () => { clearTimeout(noteTimer); clearTimeout(clearTimer); };
   render().catch((err) => {
     console.error(err);
     const msg = root.querySelector('.k-empty');
@@ -123,4 +161,9 @@ export function mount(el) {
   });
 }
 
-export function unmount() { if (off) off(); off = null; }
+export function unmount() {
+  if (off) off();
+  off = null;
+  if (stopTimers) stopTimers();
+  stopTimers = null;
+}

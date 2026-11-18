@@ -10,7 +10,7 @@ import { isTablet, getPhotos, onPhotosChanged } from '../services/tablet-photos.
 import { feature } from '../services/features.js';
 
 const SLIDE_MS = 60 * 1000;
-let clockTimer, slideTimer, fadeTimer, offPhotos;
+let clockTimer, slideTimer, fadeTimer, weatherTimer, offPhotos;
 
 function clockParts() {
   const now = new Date();
@@ -39,6 +39,8 @@ export function mount(el) {
   let photos = loadAlbum();
   let index = 0;
   let weatherText = '';
+  let broken = 0; // photos in a row that wouldn't load
+  let preload = null;
 
   el.innerHTML = `
   <style>
@@ -51,6 +53,9 @@ export function mount(el) {
     @keyframes ph-pan-b{from{transform:scale(1.08) translate(-2%,1%)}to{transform:scale(1) translate(1.5%,0)}}
     .ph-dot{height:8px;width:8px;border-radius:4px;background:rgba(255,255,255,.5);transition:width .4s,background .4s}
     .ph-dot.on{width:28px;background:#fff}
+    .ph-clamp{overflow:hidden;display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2;max-width:620px}
+    .ph-arrow{position:absolute;top:50%;margin-top:-32px;width:64px;height:64px;border-radius:32px;background:rgba(10,12,16,.4);color:#fff;
+      display:none;align-items:center;justify-content:center;font-size:40px;line-height:1;opacity:.75;pointer-events:none}
   </style>
   <div class="ph-root" data-root>
     <div data-slides></div>
@@ -60,10 +65,12 @@ export function mount(el) {
       <div data-date style="font-size:22px;font-weight:500">${c.date}</div>
     </div>
     <div style="position:absolute;right:48px;bottom:44px;display:flex;flex-direction:column;align-items:flex-end;gap:14px;max-width:620px;text-align:right">
-      <div data-title class="display" style="font-size:28px;font-weight:500"></div>
-      <div data-caption style="font-size:18px;color:#E6E9ED"></div>
+      <div data-title class="display ph-clamp" style="font-size:28px;font-weight:500;line-height:1.2"></div>
+      <div data-caption class="ph-clamp" style="font-size:18px;color:#E6E9ED;line-height:1.3"></div>
       <div data-dots style="display:flex;gap:8px;font-size:16px;font-weight:600"></div>
     </div>
+    <div class="ph-arrow" data-arrow style="left:28px">‹</div>
+    <div class="ph-arrow" data-arrow style="right:28px">›</div>
     <div data-empty style="display:none;position:absolute;top:0;left:0;right:0;bottom:220px;align-items:center;justify-content:center;flex-direction:column;gap:20px;text-align:center">
       <div class="display" style="font-size:44px;font-weight:500">No photos yet</div>
       <div style="font-size:20px;color:#E6E9ED">Send some from a phone on the same Wi-Fi.</div>
@@ -114,6 +121,14 @@ export function mount(el) {
       slide.innerHTML = `
         <div style="position:absolute;top:0;right:0;bottom:0;left:0;background:${u} center/cover no-repeat;filter:blur(28px) brightness(.55);transform:scale(1.1)"></div>
         <div style="position:absolute;top:6%;right:6%;bottom:6%;left:6%;background:${u} center/contain no-repeat"></div>`;
+      // A missing or damaged file would leave a blank grey screen for a whole minute: skip it.
+      const probe = new Image();
+      probe.onload = () => { broken = 0; };
+      probe.onerror = () => {
+        if (!el.isConnected || slidesEl.lastChild !== slide || photos.length < 2) return;
+        if (++broken < photos.length) next();
+      };
+      probe.src = encodeURI(p.src);
     } else {
       slide.style.cssText = slideBg(p);
     }
@@ -140,6 +155,11 @@ export function mount(el) {
       clearTimeout(slideTimer);
       if (photos.length > 1) slideTimer = setTimeout(next, SLIDE_MS);
     }
+
+    // Load the next photo in the background so it fades in whole, not half-drawn.
+    const up = photos.length > 1 && photos[(i + 1) % photos.length];
+    if (up && up.src && !up.video) { preload = new Image(); preload.src = encodeURI(up.src); }
+    el.querySelectorAll('[data-arrow]').forEach((a) => { a.style.display = photos.length > 1 ? 'flex' : 'none'; });
   }
 
   function next() { show((index + 1) % photos.length); }
@@ -159,6 +179,7 @@ export function mount(el) {
       $('[data-title]').textContent = '';
       $('[data-caption]').textContent = '';
       $('[data-dots]').innerHTML = '';
+      el.querySelectorAll('[data-arrow]').forEach((a) => { a.style.display = 'none'; });
       return;
     }
     show(0); // newest first
@@ -181,7 +202,8 @@ export function mount(el) {
   };
   $('[data-root]').addEventListener('click', onTap);
 
-  (async () => {
+  // The frame can stay up all day, so keep the temperature fresh (the weather service caches it).
+  const loadWeather = async () => {
     try {
       const w = await getWeather(await getLocation());
       if (!el.isConnected) return;
@@ -190,11 +212,14 @@ export function mount(el) {
     } catch (err) {
       console.error(err);
     }
-  })();
+  };
+  loadWeather();
+  weatherTimer = setInterval(loadWeather, 15 * 60 * 1000);
 }
 
 export function unmount() {
   clearInterval(clockTimer);
+  clearInterval(weatherTimer);
   clearTimeout(slideTimer);
   clearTimeout(fadeTimer);
   offPhotos?.();

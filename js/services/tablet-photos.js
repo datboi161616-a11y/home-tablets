@@ -10,7 +10,17 @@ const N = () => window.TabletNative;
 
 export const isTablet = () => !!(N() && N().photoList);
 
-const fmtDay = (ms) => new Date(ms).toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+// "today", "yesterday", "Nov 3", or "Nov 3, 2024" for older years: easier to read than bare dates.
+function fmtDay(ms) {
+  const d = new Date(ms);
+  const midnight = new Date(); midnight.setHours(0, 0, 0, 0);
+  if (d >= midnight) return 'today';
+  if (d >= midnight - 864e5) return 'yesterday';
+  const opts = { month: 'short', day: 'numeric' };
+  if (d.getFullYear() !== midnight.getFullYear()) opts.year = 'numeric';
+  return d.toLocaleDateString('en-US', opts);
+}
+const cap = (s) => s.charAt(0).toUpperCase() + s.slice(1);
 
 /** Newest first: [{ id, src, video, title, line, name, added }] — or [] when not on a tablet. */
 export function getPhotos() {
@@ -24,7 +34,7 @@ export function getPhotos() {
       name: p.name,
       added: p.added,
       title: p.caption || `Added ${fmtDay(p.added)}`,
-      line: [p.name && `Added by ${p.name}`, p.caption && fmtDay(p.added)].filter(Boolean).join(' · '),
+      line: [p.name && `Added by ${p.name}`, p.caption && cap(fmtDay(p.added))].filter(Boolean).join(' · '),
     }));
   } catch (err) {
     console.error(err);

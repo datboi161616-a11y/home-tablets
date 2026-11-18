@@ -128,6 +128,15 @@ export function advance(ac, home, seconds) {
 
 export const COMPASS = ['NORTH', 'NORTHEAST', 'EAST', 'SOUTHEAST', 'SOUTH', 'SOUTHWEST', 'WEST', 'NORTHWEST'];
 export const compass = (az) => COMPASS[Math.round((((az % 360) + 360) % 360) / 45) % 8];
+const SHORT = { NORTH: "N", NORTHEAST: "NE", EAST: "E", SOUTHEAST: "SE", SOUTH: "S", SOUTHWEST: "SW", WEST: "W", NORTHWEST: "NW" };
+export const compassShort = (az) => SHORT[compass(az)];
+
+// Distance from the house in everyday miles (feed distances are nautical miles).
+export const fmtMiles = (nm) => { const mi = nm * 1.15078; return mi < 1 ? "UNDER 1 MI" : `${Math.round(mi)} MI`; };
+
+// "↑" climbing, "↓" descending, "" level (vertical rate in ft/min).
+export const trend = (ac) => (ac.onGround ? "" : ac.vrate > 300 ? "↑" : ac.vrate < -300 ? "↓" : "");
+export const trendWord = (ac) => (ac.onGround ? "ON THE GROUND" : ac.vrate > 300 ? "CLIMBING" : ac.vrate < -300 ? "DESCENDING" : "FLYING LEVEL");
 
 // ---------- fetching ----------
 function normalize(a, home) {
@@ -297,12 +306,14 @@ function sampleAircraft(loc) {
     ['SWA908', 'B38M', 22000, 382, 200, 13.6, 160, { flight: 'WN 908', airline: 'SOUTHWEST', from: 'BALTIMORE/BWI', to: 'NASHVILLE/BNA' }],
     ['RCH451', 'C17', 26000, 408, 110, 15.5, 40, { flight: 'RCH 451', airline: 'US AIR FORCE', from: null, to: null }],
   ];
+  // a few climbing / descending so the up/down arrows show in the preview too
+  const VRATE = { FDX1207: -1500, SWA908: 1800, N172TM: 0 };
   const list = raw.map(([callsign, type, alt, gs, track, dst, dir, route]) => {
     const lat = loc.lat + (dst / NM_PER_DEG) * Math.cos(rad(dir));
     const lon = loc.lon + ((dst / NM_PER_DEG) * Math.sin(rad(dir))) / Math.cos(rad(loc.lat));
     return {
       hex: callsign.toLowerCase(), callsign, reg: '', type, desc: '', alt, onGround: false, gs, track,
-      vrate: 0, lat, lon, dst, dir, military: callsign.startsWith('RCH'), interesting: false,
+      vrate: VRATE[callsign] || 0, lat, lon, dst, dir, military: callsign.startsWith('RCH'), interesting: false,
       sampleRoute: route && { flight: route.flight, airline: route.airline, from: sap(route.from), to: sap(route.to) },
     };
   });

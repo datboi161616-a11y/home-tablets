@@ -27,22 +27,38 @@ export const left = (t) => (t.end != null ? Math.max(0, t.end - Date.now()) : t.
 export const state = (t) => (t.end == null ? 'paused' : t.end <= Date.now() ? (t.ack ? 'stopped' : 'done') : 'running');
 export const ringing = () => timers().some((t) => state(t) === 'done' && Date.now() - t.end < RING_MS);
 
-export function labelFor(secs) {
-  const m = Math.round(secs / 60);
-  return m >= 60 && m % 60 === 0 ? `${m / 60} hr timer` : `${m} min timer`;
+/** "25 min", "1 hr", "1 hr 30 min" */
+export function minutesText(m) {
+  if (m < 60) return `${m} min`;
+  const h = Math.floor(m / 60), r = m % 60;
+  return r ? `${h} hr ${r} min` : `${h} hr`;
 }
+export const labelFor = (secs) => `${minutesText(Math.round(secs / 60))} timer`;
 
+/** Start a timer. Returns false if all MAX timers are still going (nothing is dropped). */
 export function addTimer(secs, label) {
-  const list = timers().slice(-(MAX - 1));
-  list.push({ id: `t${Date.now()}`, label: label || labelFor(secs), secs, end: Date.now() + secs * 1000 });
+  const list = timers();
+  // Make room by clearing finished-and-stopped timers, oldest first; never drop one that's
+  // still counting or ringing.
+  while (list.length >= MAX) {
+    const i = list.findIndex((t) => state(t) === 'stopped');
+    if (i < 0) return false;
+    list.splice(i, 1);
+  }
+  list.push({ id: `t${Date.now()}${Math.floor(Math.random() * 1000)}`, label: label || labelFor(secs), secs, end: Date.now() + secs * 1000 });
   write(list);
+  return true;
 }
 function change(id, fn) { write(timers().map((t) => (t.id === id ? fn(Object.assign({}, t)) : t))); }
 export const pauseTimer = (id) => change(id, (t) => ({ id: t.id, label: t.label, secs: t.secs, left: left(t) }));
 export const resumeTimer = (id) => change(id, (t) => ({ id: t.id, label: t.label, secs: t.secs, end: Date.now() + t.left }));
+// +1 min also works on a ringing or finished timer ("just one more minute"): it counts again.
+// `secs` grows too, so the progress bar stays right.
 export const addMinute = (id) => change(id, (t) => (t.end != null
-  ? { id: t.id, label: t.label, secs: t.secs, end: Math.max(t.end, Date.now()) + 60000 }
-  : Object.assign(t, { left: t.left + 60000 })));
+  ? { id: t.id, label: t.label, secs: Math.max(t.secs, Math.ceil(left(t) / 1000)) + 60, end: Math.max(t.end, Date.now()) + 60000 }
+  : Object.assign(t, { left: t.left + 60000, secs: t.secs + 60 })));
+/** Run a finished timer again for its full time. */
+export const restartTimer = (id) => change(id, (t) => ({ id: t.id, label: t.label, secs: t.secs, end: Date.now() + t.secs * 1000 }));
 export const removeTimer = (id) => write(timers().filter((t) => t.id !== id));
 /** Stop every timer that's ringing. */
 export function stopRinging() {

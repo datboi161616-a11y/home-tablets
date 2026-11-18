@@ -21,6 +21,27 @@ const SHOWERS = [ // [name, month, peak night day, peak meteors/hour]
   ['URSIDS', 12, 22, 10],
 ];
 
+// The next meteor shower peak night from today: { name, date, rate }.
+export function nextShower(now = new Date()) {
+  const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+  // Before 5 AM it is still last night's sky.
+  if (now.getHours() <= 4) today.setDate(today.getDate() - 1);
+  for (const year of [today.getFullYear(), today.getFullYear() + 1]) {
+    for (const [name, m, d, rate] of SHOWERS) {
+      const date = new Date(year, m - 1, d);
+      if (date >= today) return { name, date, rate };
+    }
+  }
+  return null;
+}
+
+// How high the Space Station climbs, in plain words.
+export function heightWords(maxEl) {
+  if (maxEl >= 60) return 'passing almost straight overhead';
+  if (maxEl >= 35) return 'climbing high in the sky';
+  return 'staying low in the sky';
+}
+
 async function cachedJSON(key, url, maxAge) {
   const c = JSON.parse(localStorage.getItem(key) || 'null');
   if (c && Date.now() - c.at < maxAge) return c.data;
@@ -47,7 +68,7 @@ async function issAlert(loc) {
     label: 'SPACE STATION OVERHEAD IN',
     nowLabel: 'SPACE STATION OVERHEAD NOW',
     headline: `GO OUTSIDE · LOOK ${compass(p.visAz)}`,
-    sub: `Bright steady light crossing the sky for about ${mins} minute${mins > 1 ? 's' : ''}` +
+    sub: `Bright steady light for about ${mins} minute${mins > 1 ? 's' : ''}, ${heightWords(p.visMaxEl)}` +
       (crew.onIss ? ` · ${crew.onIss} people aboard right now` : ''),
   };
 }
@@ -65,7 +86,9 @@ async function launchAlert() {
     id: `launch-${l.id}`, kind: 'launch', until: Date.parse(l.net), ends: Date.parse(l.net) + 10 * 60000,
     label: 'ROCKET LAUNCH IN', nowLabel: 'ROCKET LAUNCHING NOW',
     headline: `${rocket}${mission ? ' · ' + mission : ''}`,
-    sub: `${l.location || l.pad || ''} · Find the live stream on the space missions screen`,
+    // (There is no live stream on the tablet, so don't promise one.)
+    sub: [l.location || l.pad, 'Countdown and details on the space missions screen'].filter(Boolean).join(' · '),
+    link: { href: '#/missions', label: 'LAUNCH DETAILS' },
   };
 }
 
@@ -86,12 +109,14 @@ async function planeAlert(loc) {
       id: `rare-${ac.hex}`, kind: 'rare', big: RARE[ac.type] || 'AF ONE',
       label: 'RARE PLANE OVERHEAD', headline: `GO OUTSIDE · ${look}`,
       sub: `${typeName(ac)} · ${fmtAlt(ac)} · ${miles} miles away · ${flightLabel(ac, route)}`,
+      link: { href: '#/flights', label: 'SEE IT ON THE RADAR' },
     };
   }
   return {
     id: `over-${ac.hex}`, kind: 'overhead', big: flightLabel(ac, route),
     label: 'PLANE PASSING RIGHT OVER YOUR HOUSE', headline: `${look} · ${fmtAlt(ac)}`,
     sub: `${typeName(ac)} · ${routeText(ac, route)}`,
+    link: { href: '#/flights', label: 'SEE IT ON THE RADAR' },
   };
 }
 

@@ -10,6 +10,20 @@ import { esc, kitchenStyles, kitchenTop, fillCounts } from './kitchen-ui.js';
 let searchTimer;
 let favs = [];
 
+// Coming back from a recipe puts you where you were: the same search, the same scroll spot.
+// Kept for a while only, so opening Recipes later in the day starts fresh.
+const MEMO_KEY = 'recipes.memo';
+const MEMO_MS = 15 * 60 * 1000;
+function memo() {
+  try {
+    const m = JSON.parse(sessionStorage.getItem(MEMO_KEY) || '{}') || {};
+    return m.at && Date.now() - m.at < MEMO_MS ? m : {};
+  } catch (e) { return {}; }
+}
+function setMemo(patch) {
+  try { sessionStorage.setItem(MEMO_KEY, JSON.stringify(Object.assign(memo(), patch, { at: Date.now() }))); } catch (e) { /* full */ }
+}
+
 // "Planned Thu" for recipes already in this week's plan.
 function plannedLabels() {
   const plan = getPlan();
@@ -31,7 +45,7 @@ function recipeCard(r, planned, cuisineName) {
       ${r.b ? `<div class="rb-b">${esc(r.b)}</div>` : ''}
       <div style="flex-grow:1"></div>
       <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
-        <span style="font-size:16px;font-weight:600">${fmtMinutes(r.m)}</span>
+        ${r.m ? `<span style="font-size:16px;font-weight:600">${fmtMinutes(r.m)}</span>` : ''}
         ${tags.map((t) => `<span class="k-tag">${esc(t)}</span>`).join('')}
       </div>
     </a>`;
@@ -67,10 +81,29 @@ export function mount(el, { args = [] } = {}) {
     .rb-type span{color:#4A5363;font-weight:500;font-size:16px}
     .rb-type.on{background:#1D2430;color:#FFFFFF}
     .rb-type.on span{color:#C9CFD6}
+    .rb-search{position:relative;flex:none}
+    .rb-search .k-input{width:240px;padding-right:56px}
+    .rb-clear{position:absolute;right:4px;top:50%;margin-top:-24px;width:48px;height:48px;border:none;border-radius:50%;background:transparent;
+      font-size:26px;line-height:1;color:#4A5363;cursor:pointer;display:none}
+    .rb-found{font-size:17px;font-weight:600;color:#4A5363;margin:0 2px 14px}
   </style>
   <div class="k-wrap" data-root></div>`;
 
   const root = el.querySelector('[data-root]');
+  const here = location.hash;
+
+  // Remember how far down the list was scrolled (per page), and put it back on return.
+  // `key()` names the spot (the page, plus the search words when searching); null = don't keep.
+  const keepScroll = (box, key = () => here) => {
+    const at = (memo().scroll || {})[key()];
+    if (at) box.scrollTop = at;
+    const save = () => { const k = key(); if (k == null) return; const sc = memo().scroll || {}; sc[k] = box.scrollTop; setMemo({ scroll: sc }); };
+    let t;
+    box.addEventListener('scroll', () => { clearTimeout(t); t = setTimeout(save, 200); });
+    box.addEventListener('click', save); // tapping a recipe saves the spot right away
+  };
+
+  const load = () => {
   root.innerHTML = `${kitchenTop({ title: 'Recipes', active: 'recipes' })}<div class="k-empty k-scroll">Loading recipes…</div>`;
 
   loadIndex().then((ix) => {
@@ -89,6 +122,7 @@ export function mount(el, { args = [] } = {}) {
         <div class="k-scroll">${list.length
           ? `<div class="rb-cards">${list.map((r) => recipeCard(r, planned, names[r.c])).join('')}</div>`
           : '<div class="k-empty">Tap the ♡ on any recipe to keep it here.</div>'}</div>`;
+      keepScroll(root.querySelector('.k-scroll'));
       fillCounts(root);
       return;
     }
@@ -100,7 +134,7 @@ export function mount(el, { args = [] } = {}) {
       root.innerHTML = `
         ${kitchenTop({ title: dinnerView ? 'Dinner' : 'Recipes', active: 'recipes',
           back: dinnerView ? '#/recipes' : '#/home', backLabel: dinnerView ? '← Recipes' : '← Home',
-          extra: `<a href="#/recipes/favorites" class="k-btn" style="color:#C2491F">♥ Favorites${favs.length ? ` · ${favs.length}` : ''}</a><input data-search class="k-input" style="width:220px" placeholder="Search recipes" autocomplete="off">` })}
+          extra: `<a href="#/recipes/favorites" class="k-btn" style="color:#C2491F">♥ Favorites${favs.length ? ` · ${favs.length}` : ''}</a><div class="rb-search"><input data-search class="k-input" placeholder="Search recipes" autocomplete="off"><button data-clear class="rb-clear" aria-label="Clear search">×</button></div>` })}
         <div data-body class="k-scroll"></div>`;
       const body = root.querySelector('[data-body]');
       const names = {};
@@ -108,7 +142,7 @@ export function mount(el, { args = [] } = {}) {
       const mealTile = (id, name, list, href, color, small) => (list.length ? `
           <a href="${href}" class="rb-meal${small ? ' small' : ''}" style="background:${color}">
             <div class="n display">${esc(name)}</div>
-            <div class="c">${count(list)} recipes${small ? '' : `<br>${esc((list.length > 1 ? list.map((c) => c.name.split(' ')[0]) : list[0].types.map((t) => t.name)).slice(0, 5).join(' · '))}`}</div>
+            <div class="c">${count(list)} recipes${small ? '' : `<br>${esc((list.length > 1 ? list.map((c) => c.name.split(' & ')[0]) : list[0].types.map((t) => t.name)).slice(0, 5).join(' · '))}`}</div>
           </a>` : '');
       const mineCount = (ix.cuisines.find((c) => c.id === 'mine') || { count: 0 }).count;
       const showMeals = () => {
@@ -134,22 +168,38 @@ export function mount(el, { args = [] } = {}) {
             <div class="c">${c.count} recipes · ${esc(c.types.slice(0, 3).map((t) => t.name).join(', '))}</div>
           </a>`).join('')}</div>`;
       };
-      showGrid();
       const input = root.querySelector('[data-search]');
+      const clearBtn = root.querySelector('[data-clear]');
+      const runSearch = async (restoring) => {
+        const q = input.value.trim();
+        clearBtn.style.display = q ? 'block' : 'none';
+        const qs = memo().qs || {}; qs[here] = q; setMemo({ qs });
+        if (!q) { showGrid(); return; }
+        body.style.overflow = '';
+        const hits = await searchRecipes(q, 120);
+        if (!el.isConnected || input.value.trim() !== q) return;
+        body.innerHTML = hits.length
+          ? `<div class="rb-found">${hits.length >= 120 ? 'Over 100' : hits.length} recipe${hits.length === 1 ? '' : 's'} found for “${esc(q)}”</div>
+             <div class="rb-cards">${hits.map((r) => recipeCard(r, planned, names[r.c])).join('')}</div>`
+          : `<div class="k-empty">Nothing found for “${esc(q)}”.<br>Try one simple word, like “chicken” or “soup”.
+               <button data-clear class="k-btn line">Clear the search</button></div>`;
+        if (!restoring) { body.scrollTop = 0; return; }
+        else { const at = (memo().scroll || {})[`${here}?${q}`]; if (at) body.scrollTop = at; }
+      };
       input.addEventListener('input', () => {
         clearTimeout(searchTimer);
-        searchTimer = setTimeout(async () => {
-          const q = input.value.trim();
-          if (!q) { showGrid(); return; }
-          body.style.overflow = '';
-          const hits = await searchRecipes(q, 120);
-          if (!el.isConnected || input.value.trim() !== q) return;
-          body.innerHTML = hits.length
-            ? `<div class="rb-cards">${hits.map((r) => recipeCard(r, planned, names[r.c])).join('')}</div>`
-            : `<div class="k-empty">Nothing found for “${esc(q)}”</div>`;
-          body.scrollTop = 0;
-        }, 250);
+        searchTimer = setTimeout(() => runSearch(false), 250);
       });
+      root.addEventListener('click', (e) => {
+        if (!e.target.closest('[data-clear]')) return;
+        input.value = '';
+        runSearch(false);
+        input.focus();
+      });
+      // Back from a recipe you found by searching: the search (and the spot in it) is still there.
+      keepScroll(body, () => (input.value.trim() ? `${here}?${input.value.trim()}` : null));
+      const lastQ = (memo().qs || {})[here];
+      if (lastQ) { input.value = lastQ; runSearch(true); } else showGrid();
     } else {
       // ---- One cuisine, optionally one type ----
       const type = cuisine.types.find((t) => t.id === typeId);
@@ -169,12 +219,17 @@ export function mount(el, { args = [] } = {}) {
             ? `<div class="rb-cards">${list.map((r) => recipeCard(r, planned)).join('')}</div>`
             : `<div class="k-empty">${cuisine.id === 'mine' ? 'Your own recipes live here.<a href="#/myrecipe" class="k-btn solid">+ Add a recipe</a>' : 'Nothing here yet.'}</div>`}</div>
         </div>`;
+      keepScroll(root.querySelector('.k-scroll'));
     }
     fillCounts(root);
   }).catch((err) => {
     console.error(err);
-    if (el.isConnected) root.querySelector('.k-empty').textContent = 'Recipes need the internet the first time. Check the Wi-Fi.';
+    const box = el.isConnected && root.querySelector('.k-empty');
+    if (box) box.innerHTML = 'Recipes need the internet the first time. Check the Wi-Fi.<button data-retry class="k-btn solid">Try again</button>';
   });
+  };
+  root.addEventListener('click', (e) => { if (e.target.closest('[data-retry]')) load(); });
+  load();
 }
 
 export function unmount() { clearTimeout(searchTimer); }

@@ -2,7 +2,7 @@
 import { getLocation } from '../services/location.js';
 import { feature } from '../services/features.js';
 import {
-  getAircraft, getRoutes, advance, flightLabel, typeName, fmtAlt, compass, RADIUS_NM,
+  getAircraft, getRoutes, advance, flightLabel, typeName, fmtAlt, compass, compassShort, fmtMiles, trend, RADIUS_NM,
 } from '../services/aircraft.js';
 import { nextVisiblePass, getCrew } from '../services/iss.js';
 import { getBoard } from '../services/departures.js';
@@ -29,7 +29,16 @@ function vals() {
   const age = ((now.getTime() - Date.UTC(2000, 0, 6, 18, 14)) / 86400000) % 29.530589;
   const p = age / 29.530589;
   const lit = Math.round(((1 - Math.cos(2 * Math.PI * p)) / 2) * 100);
-  const names = ['NEW MOON', 'WAXING CRESCENT', 'FIRST QUARTER', 'WAXING GIBBOUS', 'FULL MOON', 'WANING GIBBOUS', 'LAST QUARTER', 'WANING CRESCENT'];
+  // Named phases (new/quarter/full) only within about a day of the exact moment;
+  // the rest of the month is crescent or gibbous, like a printed calendar says.
+  const MONTH = 29.530589;
+  const near = (d) => Math.abs(age - d) < 1.1 || Math.abs(age - d - MONTH) < 1.1 || Math.abs(age - d + MONTH) < 1.1;
+  const moonName = near(0) ? 'NEW MOON' : near(MONTH / 4) ? 'FIRST QUARTER' : near(MONTH / 2) ? 'FULL MOON' : near((3 * MONTH) / 4) ? 'LAST QUARTER'
+    : age < MONTH / 4 ? 'WAXING CRESCENT' : age < MONTH / 2 ? 'WAXING GIBBOUS' : age < (3 * MONTH) / 4 ? 'WANING GIBBOUS' : 'WANING CRESCENT';
+  const toFull = Math.round((((MONTH / 2 - age) % MONTH) + MONTH) % MONTH);
+  const moonNext = near(MONTH / 2) ? 'BRIGHTEST NIGHTS OF THE MONTH'
+    : toFull <= 1 ? 'FULL MOON TOMORROW' : `FULL MOON IN ${toFull} DAYS`;
+  const years = now.getFullYear() - 1977 - (now < new Date(now.getFullYear(), 8, 5) ? 1 : 0);
   const shift = (p < 0.5 ? -1 : 1) * Math.round((lit / 100) * 84);
   return {
     time: pad(now.getHours()) + ':' + pad(now.getMinutes()),
@@ -39,7 +48,9 @@ function vals() {
     vgrStatus: until > 0
       ? 'IN ' + Math.ceil(until / 3600000) + ' HOURS IT BECOMES THE FIRST HUMAN-MADE OBJECT ONE LIGHT-DAY FROM EARTH.'
       : 'CROSSED ONE LIGHT-DAY FROM EARTH ON NOV 18, 2026. NOTHING WE HAVE BUILT HAS GONE FARTHER.',
-    moonName: names[Math.round(p * 8) % 8],
+    moonName,
+    moonNext,
+    vgrYears: years,
     moonLit: lit,
     moonShift: shift,
   };
@@ -90,7 +101,7 @@ export function mount(el) {
 
     <div style="flex-grow: 1; display: grid; grid-template-columns: 1fr 1.35fr 1fr; gap: 20px; min-height: 0">
       <a href="#/flights" style="border: 1px solid #1E3A4A; background: #0A1220; padding: 22px; text-decoration: none; color: #D7E6F0; display: flex; flex-direction: column; gap: 14px; min-width: 0">
-        <div style="font-size: 13px; letter-spacing: 4px; color: #7FA6B8; display:flex; justify-content:space-between">OVER YOUR HOUSE RIGHT NOW<span data-sample style="color:#FFB547"></span></div>
+        <div style="font-size: 12px; letter-spacing: 2px; color: #7FA6B8; white-space: nowrap">OVER YOUR HOUSE NOW</div>
         <div style="align-self: center; position: relative; width: 210px; height: 210px; border-radius: 50%; border: 2px solid var(--glow); box-sizing: border-box; overflow: hidden; flex-shrink: 0">
           <div class="sweep"></div>
           <div style="position: absolute; top:52px;right:52px;bottom:52px;left:52px; border-radius: 50%; border: 1px solid #1E3A4A"></div>
@@ -98,6 +109,7 @@ export function mount(el) {
           <div data-blips></div>
         </div>
         <div data-count style="font-family: Oxanium, sans-serif; font-size: 40px; text-align: center; color: #FFB547; line-height: 1">— PLANES</div>
+        <div data-sample style="font-size: 12px; letter-spacing: 2px; text-align: center; color: #7FA6B8; margin-top: -6px">WITHIN 25 MILES</div>
         <div style="margin-top: auto; border-top: 1px solid #1E3A4A; padding-top: 12px; display: flex; flex-direction: column; gap: 4px; min-width: 0">
           <div class="glow-c" style="font-size: 12px; letter-spacing: 3px">CLOSEST</div>
           <div data-c-flight style="font-family: Oxanium, sans-serif; font-size: 20px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">SCANNING…</div>
@@ -106,12 +118,17 @@ export function mount(el) {
       </a>
 
       <a href="#/missions" style="border: 1px solid var(--glow); background: #0A1220; color: #D7E6F0; text-decoration: none; clip-path: polygon(0 0, calc(100% - 32px) 0, 100% 32px, 100% 100%, 32px 100%, 0 calc(100% - 32px)); padding: 28px 32px; display: flex; flex-direction: column; gap: 12px">
-        <div style="display: flex; justify-content: space-between; font-size: 13px; letter-spacing: 4px"><span class="glow-c">VOYAGER 1 · FARTHEST EVER</span><span style="color: #7FA6B8">LAUNCHED 1977</span></div>
+        <div class="glow-c" style="font-size: 13px; letter-spacing: 4px; white-space: nowrap">VOYAGER 1 · FARTHEST EVER</div>
         <div style="font-size: 14px; letter-spacing: 3px; color: #7FA6B8; margin-top: 8px">DISTANCE FROM EARTH (KM)</div>
         <div data-vkm style="font-family: Oxanium, sans-serif; font-size: 56px; font-weight: 500; line-height: 1; color: #FFB547">${v.vgrKm}</div>
         <div style="font-size: 14px; letter-spacing: 3px; color: #7FA6B8; margin-top: 10px">A SIGNAL SENT NOW ARRIVES IN</div>
         <div data-vdelay style="font-family: Oxanium, sans-serif; font-size: 44px; font-weight: 300; line-height: 1">${v.vgrDelay}</div>
-        <div data-vstatus style="margin-top: auto; background: rgba(255,181,71,0.12); border-left: 4px solid #FFB547; padding: 12px 16px; font-size: 15px; line-height: 1.4">${v.vgrStatus}</div>
+        <div style="margin-top: auto; border-top: 1px solid #1E3A4A; padding-top: 14px; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px">
+          <div><div style="font-size: 11px; letter-spacing: 2px; color: #7FA6B8">SPEED (MPH)</div><div style="font-family: Oxanium, sans-serif; font-size: 22px">38,000</div></div>
+          <div><div style="font-size: 11px; letter-spacing: 2px; color: #7FA6B8">LAUNCHED</div><div style="font-family: Oxanium, sans-serif; font-size: 22px">SEP 1977</div></div>
+          <div><div style="font-size: 11px; letter-spacing: 2px; color: #7FA6B8">YEARS FLYING</div><div data-vyears style="font-family: Oxanium, sans-serif; font-size: 22px">${v.vgrYears}</div></div>
+        </div>
+        <div data-vstatus style=" background: rgba(255,181,71,0.12); border-left: 4px solid #FFB547; padding: 12px 16px; font-size: 15px; line-height: 1.4">${v.vgrStatus}</div>
       </a>
 
       <div style="display: flex; flex-direction: column; gap: 20px; min-height: 0">
@@ -121,6 +138,7 @@ export function mount(el) {
             <div style="font-size: 12px; letter-spacing: 3px; color: #7FA6B8">MOON TONIGHT</div>
             <div data-moon-name style="font-family: Oxanium, sans-serif; font-size: 20px">${v.moonName}</div>
             <div style="font-size: 13px; color: #7FA6B8"><span data-moon-lit>${v.moonLit}</span>% LIT</div>
+            <div data-moon-next style="font-size: 13px; color: #FFB547">${v.moonNext}</div>
           </div>
         </a>
         <a href="#/alert" style="flex-grow: 1; border: 1px solid #1E3A4A; background: #0A1220; color: #D7E6F0; text-decoration: none; padding: 20px 22px; display: flex; flex-direction: column; gap: 8px">
@@ -128,6 +146,7 @@ export function mount(el) {
           <div data-iss-title style="font-family: Oxanium, sans-serif; font-size: 22px">CALCULATING…</div>
           <div data-iss-time style="font-family: Oxanium, sans-serif; font-size: 36px; color: #FFB547; line-height: 1">--:--</div>
           <div data-iss-sub style="font-size: 14px; color: #7FA6B8">&nbsp;</div>
+          <div data-iss-tip style="font-size: 13px; line-height: 1.45; color: #D7E6F0; border-left: 3px solid var(--glow); padding-left: 10px; margin-top: 6px; display: none">LOOKS LIKE A BRIGHT, STEADY STAR GLIDING ACROSS THE SKY. NO BLINKING LIGHTS, NO SOUND.</div>
           <div style="margin-top: auto; border-top: 1px solid #1E3A4A; padding-top: 12px; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px">
             <div><div style="font-size: 11px; letter-spacing: 2px; color: #7FA6B8">ABOARD</div><div data-iss-crew style="font-family: Oxanium, sans-serif; font-size: 20px">--</div></div>
             <div><div style="font-size: 11px; letter-spacing: 2px; color: #7FA6B8">MPH</div><div style="font-family: Oxanium, sans-serif; font-size: 20px">17,500</div></div>
@@ -170,6 +189,8 @@ export function mount(el) {
     $('[data-moon]').style.left = n.moonShift + 'px';
     $('[data-moon-name]').textContent = n.moonName;
     $('[data-moon-lit]').textContent = n.moonLit;
+    $('[data-moon-next]').textContent = n.moonNext;
+    $('[data-vyears]').textContent = n.vgrYears;
   }, 1000));
 
   let loc = null;
@@ -193,7 +214,10 @@ export function mount(el) {
       if (!alive) return;
       const air = data.list.filter((a) => !a.onGround);
       planes = { at: data.at, list: air, sample: data.sample };
-      $('[data-sample]').textContent = data.sample ? 'SAMPLE' : '';
+      const sm = $('[data-sample]');
+      const age = Math.round((Date.now() - data.at) / 60000);
+      sm.textContent = data.sample ? 'SAMPLE · NO LIVE FEED' : age >= 2 ? `LAST UPDATE ${age} MIN AGO` : 'WITHIN 25 MILES';
+      sm.style.color = data.sample || age >= 2 ? '#FFB547' : '#7FA6B8';
       $('[data-count]').textContent = `${air.length} PLANE${air.length === 1 ? '' : 'S'}`;
       drawRadar();
       const c = air[0];
@@ -207,9 +231,13 @@ export function mount(el) {
       const codes = route?.from && route?.to ? ` · ${route.from.iata || route.from.city} → ${route.to.iata || route.to.city}` : '';
       $('[data-c-flight]').textContent = flightLabel(c, route) + codes;
       $('[data-c-sub]').textContent = `${typeName(c)}
-${fmtAlt(c)}`;
+${fmtAlt(c)}${trend(c) ? ' ' + trend(c) : ''} · ${fmtMiles(c.dst)} ${compassShort(c.dir)}`;
     } catch (e) {
       console.error(e);
+      if (alive && !planes) {
+        $('[data-c-flight]').textContent = 'RADAR OFFLINE';
+        $('[data-c-sub]').textContent = 'TRYING AGAIN SHORTLY';
+      }
     }
   }
 
@@ -238,6 +266,7 @@ ${fmtAlt(c)}`;
       $('[data-iss-title]').textContent = title;
       $('[data-iss-time]').textContent = fmt12(p.visStart);
       $('[data-iss-sub]').textContent = `LOOK ${compass(p.visAz)} · ${mins} MIN`;
+      $('[data-iss-tip]').style.display = 'block';
     } catch (e) {
       console.error(e);
       $('[data-iss-title]').textContent = 'PASS DATA OFFLINE';
@@ -262,6 +291,7 @@ ${fmtAlt(c)}`;
       }
     } catch (e) {
       console.error(e);
+      if (alive && $('[data-dep-line]').textContent === 'LOADING BOARD…') $('[data-dep-line]').textContent = 'BOARD OFFLINE · TRYING AGAIN SHORTLY';
     }
   }
 

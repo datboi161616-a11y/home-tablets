@@ -148,17 +148,18 @@ export function position(body, date, lat, lon) {
   return altAz(body, date, lat, lon);
 }
 
-// Famous, easy-to-find star patterns: RA (degrees) / Dec of their middle.
+// Famous, easy-to-find star patterns: RA (degrees) / Dec of their middle, and a
+// short "how to recognise it" hint for people who don't know the sky.
 export const CONSTELLATIONS = [
-  { name: 'ORION', ra: 83.8, dec: -1 },
-  { name: 'BIG DIPPER', ra: 178, dec: 55 },
-  { name: 'CASSIOPEIA', ra: 15, dec: 60 },
-  { name: 'PLEIADES', ra: 56.8, dec: 24.1 },
-  { name: 'SUMMER TRIANGLE', ra: 295, dec: 30 },
-  { name: 'SCORPIUS', ra: 253, dec: -30 },
-  { name: 'LEO', ra: 160, dec: 15 },
-  { name: 'GEMINI', ra: 108, dec: 23 },
-  { name: 'PEGASUS SQUARE', ra: 354, dec: 22 },
+  { name: 'ORION', ra: 83.8, dec: -1, hint: 'THREE STARS IN A ROW: HIS BELT' },
+  { name: 'BIG DIPPER', ra: 178, dec: 55, hint: 'SEVEN STARS SHAPED LIKE A LADLE' },
+  { name: 'CASSIOPEIA', ra: 15, dec: 60, hint: 'FIVE STARS MAKING A BIG W' },
+  { name: 'PLEIADES', ra: 56.8, dec: 24.1, hint: 'A TINY, MISTY CLUMP OF STARS' },
+  { name: 'SUMMER TRIANGLE', ra: 295, dec: 30, hint: 'THREE BRIGHT STARS, BIG TRIANGLE' },
+  { name: 'SCORPIUS', ra: 253, dec: -30, hint: 'A HOOK OF STARS, RED STAR AT HEART' },
+  { name: 'LEO', ra: 160, dec: 15, hint: 'A BACKWARDS QUESTION MARK' },
+  { name: 'GEMINI', ra: 108, dec: 23, hint: 'TWO BRIGHT "TWIN" STARS SIDE BY SIDE' },
+  { name: 'PEGASUS SQUARE', ra: 354, dec: 22, hint: 'A GIANT SQUARE OF FOUR STARS' },
 ];
 
 // ---------------------------------------------------------------- ISS passes

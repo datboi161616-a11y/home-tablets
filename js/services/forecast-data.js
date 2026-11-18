@@ -10,10 +10,24 @@ const MAX_AGE = 15 * 60 * 1000;
 const COMPASS = ['N', 'NE', 'E', 'SE', 'S', 'SW', 'W', 'NW'];
 const compass = (deg) => COMPASS[Math.round(((deg % 360) + 360) % 360 / 45) % 8];
 
-export async function getForecast(loc) {
-  const cached = JSON.parse(localStorage.getItem(CACHE_KEY) || 'null');
-  if (cached && Date.now() - cached.at < MAX_AGE && cached.lat === loc.lat && cached.lon === loc.lon) return cached;
+// Offline (or Open-Meteo down): the last saved forecast for this place, up to
+// two days old, marked stale so the screen can say when it is from.
+const STALE_MAX = 2 * 24 * 3600 * 1000;
 
+export async function getForecast(loc) {
+  let cached = null;
+  try { cached = JSON.parse(localStorage.getItem(CACHE_KEY) || 'null'); } catch (e) { cached = null; }
+  const samePlace = cached && cached.lat === loc.lat && cached.lon === loc.lon;
+  if (samePlace && Date.now() - cached.at < MAX_AGE) return cached;
+  try {
+    return await download(loc);
+  } catch (err) {
+    if (samePlace && Date.now() - cached.at < STALE_MAX) return Object.assign({}, cached, { stale: true });
+    throw err;
+  }
+}
+
+async function download(loc) {
   const url = new URL('https://api.open-meteo.com/v1/forecast');
   url.search = new URLSearchParams({
     latitude: loc.lat, longitude: loc.lon, timezone: 'auto',
@@ -21,7 +35,7 @@ export async function getForecast(loc) {
     wind_speed_unit: 'mph',
     precipitation_unit: 'inch',
     current: 'temperature_2m,apparent_temperature,weather_code,wind_speed_10m,wind_direction_10m,is_day',
-    hourly: 'temperature_2m,weather_code,precipitation_probability,snowfall,precipitation',
+    hourly: 'temperature_2m,weather_code,precipitation_probability,snowfall,precipitation,is_day',
     daily: 'weather_code,temperature_2m_max,temperature_2m_min,sunrise,sunset,precipitation_probability_max,snowfall_sum,precipitation_sum,wind_speed_10m_max',
     forecast_days: 7,
   });
@@ -64,8 +78,9 @@ export async function getForecast(loc) {
     slickFrom: slickFrom && slickFrom.toISOString(),
     rainFrom: rainFrom && rainFrom.toISOString(),
     // The next 12 hours, starting with this one.
-    hours: d.hourly.time.map((t, i) => ({ time: t, temp: Math.round(d.hourly.temperature_2m[i]), code: d.hourly.weather_code[i], rain: d.hourly.precipitation_probability[i] || 0 }))
-      .filter((h) => new Date(h.time).getTime() > now - 3600000).slice(0, 12),
+    // (A saved copy keeps all of them so it can still show the right hours later.)
+    hours: d.hourly.time.map((t, i) => ({ time: t, temp: Math.round(d.hourly.temperature_2m[i]), code: d.hourly.weather_code[i], rain: d.hourly.precipitation_probability[i] || 0, isDay: d.hourly.is_day ? !!d.hourly.is_day[i] : true }))
+      .filter((h) => new Date(h.time).getTime() > now - 3600000).slice(0, 48),
     days: d.daily.time.map((t, i) => ({
       date: t,
       code: d.daily.weather_code[i],
@@ -74,7 +89,7 @@ export async function getForecast(loc) {
       rain: d.daily.precipitation_probability_max[i],
     })),
   };
-  localStorage.setItem(CACHE_KEY, JSON.stringify(result));
+  try { localStorage.setItem(CACHE_KEY, JSON.stringify(result)); } catch (e) { /* storage full: still show it */ }
   return result;
 }
 

@@ -4,7 +4,7 @@
 // List:  { have: {item: true|false}, got: {item: true}, extras: [{id, text, got}] }
 //   have[item] = "we already have it" (left off the list). Pantry basics like salt and
 //   oil start as "have" until someone says they need them.
-import { getRecipe, loadIndex, fmtQty, unitText } from './recipe-data.js';
+import { getRecipe, cachedRecipe, loadIndex, fmtQty, unitText } from './recipe-data.js';
 
 const PLAN_KEY = 'kitchen.plan.v1';
 const LIST_KEY = 'kitchen.list.v1';
@@ -139,6 +139,8 @@ const norm = (s) => {
   const k = String(s).toLowerCase().replace(/\s*\([^)]*\)/g, '').replace(/\s+/g, ' ').trim();
   return ALIASES[k] || k;
 };
+// Keep the size on cans and jars ("diced tomatoes (14.5 oz)"); drop other notes in brackets.
+const itemKey = (i) => (/^(can|jar|pkg)$/.test(i.u) ? i.item.toLowerCase().trim() : norm(i.item));
 
 // "1 cup + 2 tbsp", "1½ lb", "3 cloves"
 function amountText(parts) {
@@ -175,8 +177,7 @@ export async function buildShoppingList() {
     if (!r) { if (!/^my-/.test(ids[n])) missing++; return; } // a deleted own recipe just drops off
     (r.ingredients || []).forEach((i) => {
       if (typeof i === 'string') return;
-      // Keep the size on cans and jars ("diced tomatoes (14.5 oz)"); drop other notes in brackets.
-      const key = /^(can|jar|pkg)$/.test(i.u) ? i.item.toLowerCase().trim() : norm(i.item);
+      const key = itemKey(i);
       if (!key || SKIP.indexOf(key) >= 0) return;
       const it = items[key] || (items[key] = {
         key, name: key, aisle: i.aisle || 'pantry', from: [],
@@ -215,12 +216,44 @@ export async function shoppingCount() {
 export function setHave(key, have) { const s = getListState(); s.have[key] = have; if (have) delete s.got[key]; saveList(s); }
 export function setGot(key, got) { const s = getListState(); if (got) s.got[key] = true; else delete s.got[key]; saveList(s); }
 
+/**
+ * Add your own item. If it's already known, don't add it twice:
+ * resolves 'back' (it was in "Already have" or ticked off: back on the list),
+ * 'there' (already on the list), or 'added'. Returns '' for empty text.
+ */
 export function addExtra(text) {
   const t = String(text || '').trim().slice(0, 60);
-  if (!t) return;
+  if (!t) return '';
   const s = getListState();
+  const key = norm(t);
+  const same = s.extras.filter((x) => norm(x.text) === key)[0];
+  if (same) {
+    if (!same.got) return 'there';
+    same.got = false;
+    saveList(s);
+    return 'back';
+  }
+  if (plannedKeys().indexOf(key) >= 0) {
+    // A planned recipe already needs it: use that line instead of adding a second one.
+    const markedHave = key in s.have ? !!s.have[key] : STAPLES.indexOf(key) >= 0;
+    if (!markedHave && !s.got[key]) return 'there';
+    s.have[key] = false;
+    delete s.got[key];
+    saveList(s);
+    return 'back';
+  }
   s.extras.push({ id: `x${Date.now()}`, text: t, got: false });
   saveList(s);
+  return 'added';
+}
+// List keys the planned recipes need (only recipes already loaded; good enough to avoid doubles).
+function plannedKeys() {
+  const out = [];
+  weekRecipeIds().forEach((id) => {
+    const r = cachedRecipe(id);
+    ((r && r.ingredients) || []).forEach((i) => { if (typeof i !== 'string') out.push(itemKey(i)); });
+  });
+  return out;
 }
 export function setExtraGot(id, got) { const s = getListState(); s.extras.forEach((x) => { if (x.id === id) x.got = got; }); saveList(s); }
 export function removeExtra(id) { const s = getListState(); s.extras = s.extras.filter((x) => x.id !== id); saveList(s); }
