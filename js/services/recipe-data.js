@@ -78,10 +78,11 @@ const PLURAL = { clove: 'cloves', can: 'cans', jar: 'jars', pkg: 'pkgs', bunch: 
   pint: 'pints', dash: 'dashes', stick: 'sticks', piece: 'pieces', cup: 'cups' };
 export const unitText = (u, q) => (q != null && q > 1 && PLURAL[u] ? PLURAL[u] : u);
 
-/** "2 cloves garlic, minced" */
-export function ingredientText(i) {
+/** "2 cloves garlic, minced". `scale` multiplies the amount (serving size changed). */
+export function ingredientText(i, scale = 1) {
   if (typeof i === 'string') return i;
-  const amt = i.q == null ? '' : `${fmtQty(i.q)} ${unitText(i.u, i.q)}`.trim();
+  const q = i.q == null ? null : i.q * scale;
+  const amt = q == null ? '' : `${fmtQty(q)} ${unitText(i.u, q)}`.trim();
   const base = amt ? `${amt} ${i.item}` : i.item.charAt(0).toUpperCase() + i.item.slice(1);
   return i.note ? `${base}, ${i.note}` : base;
 }
@@ -94,9 +95,9 @@ export function fmtMinutes(m) {
 }
 
 /** "Serves 4 · 15 min prep · 30 min cook" */
-export function metaLine(r) {
+export function metaLine(r, serves) {
   if (r.meta) return r.meta;
-  return [`Serves ${r.serves}`, r.prep ? `${fmtMinutes(r.prep)} prep` : '', r.cook ? `${fmtMinutes(r.cook)} cook` : '']
+  return [`Serves ${serves || r.serves}`, r.prep ? `${fmtMinutes(r.prep)} prep` : '', r.cook ? `${fmtMinutes(r.cook)} cook` : '']
     .filter(Boolean).join(' · ');
 }
 

@@ -1,6 +1,6 @@
 // Family · One recipe (#/dish/<id>): ingredients, steps, add to the week plan, cook it.
 import { getRecipe, loadIndex, ingredientText, metaLine, fmtMinutes, cuisineColor } from '../services/recipe-data.js';
-import { weekDays, daysPlanned, addToPlan, removeFromPlan, MEALS, defaultMeal, isFavorite, toggleFavorite } from '../services/meal-plan.js';
+import { weekDays, daysPlanned, addToPlan, removeFromPlan, MEALS, defaultMeal, isFavorite, toggleFavorite, servingsFor, scaleFor, setServings } from '../services/meal-plan.js';
 import { esc, kitchenStyles, kitchenTop, wireBack, fillCounts } from './kitchen-ui.js';
 
 // Set by the Week plan's "+ Add" ("2026-11-20|lunch") so the next recipe picked goes
@@ -58,9 +58,14 @@ export function mount(el, { args = [] } = {}) {
               ${(r.tags || []).slice(0, 3).map((t) => `<span class="k-tag">${esc(t)}</span>`).join('')}
             </div>
             ${r.blurb ? `<div style="font-size:18px;color:#4A5363;line-height:1.35">${esc(r.blurb)}</div>` : ''}
-            <div style="font-size:17px;font-weight:600">${esc(metaLine(r))}</div>
-            <div class="eyebrow muted" style="margin-top:6px">Ingredients</div>
-            <div class="k-scroll">${r.ingredients.map((i) => `<div class="dz-ing">${esc(ingredientText(i))}</div>`).join('')}</div>
+            <div style="font-size:17px;font-weight:600">${esc(metaLine(r, servingsFor(r)))}</div>
+            <div style="display:flex;align-items:center;gap:10px;margin-top:4px">
+              <div class="eyebrow muted" style="flex:1">Ingredients</div>
+              <button class="dz-meal" data-serves="-1" aria-label="Fewer servings">−</button>
+              <div style="font-size:16px;font-weight:600;min-width:84px;text-align:center">Serves ${servingsFor(r)}</div>
+              <button class="dz-meal" data-serves="1" aria-label="More servings">+</button>
+            </div>
+            <div class="k-scroll">${r.ingredients.map((i) => `<div class="dz-ing">${esc(ingredientText(i, scaleFor(r)))}</div>`).join('')}</div>
           </div>
           <div style="display:flex;flex-direction:column;gap:20px;min-height:0;min-width:0">
             <div class="card" style="padding:26px 30px;flex-grow:1;min-height:0;display:flex;flex-direction:column;gap:10px">
@@ -97,6 +102,8 @@ export function mount(el, { args = [] } = {}) {
         return;
       }
       if (e.target.closest('[data-fav]')) { toggleFavorite(r.id); render(); return; }
+      const sv = e.target.closest('[data-serves]');
+      if (sv) { setServings(r, servingsFor(r) + +sv.dataset.serves); render(); return; }
       const m = e.target.closest('[data-meal]');
       if (m) { meal = m.dataset.meal; render(); return; }
       const day = e.target.closest('[data-day]');

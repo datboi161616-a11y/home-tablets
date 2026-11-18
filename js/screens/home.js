@@ -50,10 +50,16 @@ export function mount(el) {
         </div>
         <div style="display:flex;align-items:center;justify-content:space-between;gap:16px;margin-top:8px">
           <div class="display" style="font-size:30px;font-weight:500"><span data-greeting>${c.greeting}</span>, ${esc(settings.familyName)}</div>
-          <a href="#/launcher" class="pill" style="background:var(--card);color:var(--ink);gap:8px;flex:none">
+          <div style="display:flex;gap:10px;flex:none">
+          <a href="#/timers" class="pill" style="background:var(--card);color:var(--ink);gap:8px">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="13" r="8"/><path d="M12 9v4l2.5 2.5M10 2h4"/></svg>
+            Timers
+          </a>
+          <a href="#/launcher" class="pill" style="background:var(--card);color:var(--ink);gap:8px">
             <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><rect x="3" y="3" width="7" height="7" rx="2"/><rect x="14" y="3" width="7" height="7" rx="2"/><rect x="3" y="14" width="7" height="7" rx="2"/><rect x="14" y="14" width="7" height="7" rx="2"/></svg>
             All apps
           </a>
+          </div>
         </div>
       </div>
 

@@ -9,6 +9,7 @@ import { getRecipe, loadIndex, fmtQty, unitText } from './recipe-data.js';
 const PLAN_KEY = 'kitchen.plan.v1';
 const LIST_KEY = 'kitchen.list.v1';
 const FAV_KEY = 'kitchen.favorites.v1';
+const SERVES_KEY = 'kitchen.servings.v1';
 
 const read = (k, d) => { try { return JSON.parse(localStorage.getItem(k) || 'null') || d; } catch (e) { return d; } };
 const write = (k, v) => { localStorage.setItem(k, JSON.stringify(v)); window.dispatchEvent(new Event('kitchen-changed')); };
@@ -183,9 +184,10 @@ export async function buildShoppingList() {
       });
       if (it.from.indexOf(r.title) < 0) it.from.push(r.title);
       if (i.q == null) return;
-      if (VOL[i.u]) it.parts.vol += i.q * VOL[i.u];
-      else if (WT[i.u]) it.parts.wt += i.q * WT[i.u];
-      else it.parts.other[i.u] = (it.parts.other[i.u] || 0) + i.q;
+      const q = i.q * scaleFor(r);
+      if (VOL[i.u]) it.parts.vol += q * VOL[i.u];
+      else if (WT[i.u]) it.parts.wt += q * WT[i.u];
+      else it.parts.other[i.u] = (it.parts.other[i.u] || 0) + q;
     });
   });
 
@@ -273,4 +275,17 @@ export function toggleFavorite(id) {
   if (f.length === favorites().length) f.unshift(id); // newest first
   write(FAV_KEY, f.slice(0, 500));
   return f.indexOf(id) >= 0;
+}
+
+// ---- Serving size chosen for a recipe (used everywhere: recipe page, cooking, list) -------
+export function servingsFor(r) {
+  const n = read(SERVES_KEY, {})[r.id];
+  return n && n > 0 ? n : r.serves;
+}
+export const scaleFor = (r) => (r.serves ? servingsFor(r) / r.serves : 1);
+export function setServings(r, n) {
+  const all = read(SERVES_KEY, {});
+  n = Math.max(1, Math.min(24, Math.round(n)));
+  if (n === r.serves) delete all[r.id]; else all[r.id] = n;
+  write(SERVES_KEY, all);
 }

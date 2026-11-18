@@ -17,7 +17,7 @@ fit();
 const SCREENS = {
   // Family
   home: 'Home dashboard', launcher: 'Apps', photos: 'Photo frame', recipe: 'Cooking mode',
-  recipes: 'Recipes', dish: 'Recipe', plan: 'Week plan', shopping: 'Shopping list',
+  recipes: 'Recipes', dish: 'Recipe', plan: 'Week plan', shopping: 'Shopping list', timers: 'Timers',
   addphotos: 'Add photos', apps: 'Apps', camera: 'Camera', calendar: 'Calendar', forecast: 'Weather', messages: 'Messages', night: 'Night clock',
   // Tom · Space & Flight
   bridge: 'Flight deck', flights: 'Planes overhead', departures: 'Departures', trivia: 'Trivia',
@@ -29,6 +29,7 @@ export const homeRoute = profile === 'tom' ? 'bridge' : 'home';
 
 let current = null;
 let navId = 0;
+let timerSvc = null; // kitchen timers (family tablets): the countdown chip on every screen
 
 async function navigate() {
   const id = ++navId;
@@ -55,6 +56,7 @@ async function navigate() {
   const host = document.createElement('div');
   host.style.cssText = 'position:absolute;top:0;right:0;bottom:0;left:0';
   screenEl.appendChild(host);
+  if (timerSvc && timerSvc.chip) { timerSvc.setRoute(name); screenEl.appendChild(timerSvc.chip); }
   current = mod;
   try { mod.mount(host, { name, args, title: SCREENS[name], homeRoute }); }
   catch (err) {
@@ -67,6 +69,13 @@ async function navigate() {
 addEventListener('hashchange', navigate);
 navigate();
 
+// Family tablets: kitchen timers that ring on any screen.
+if (profile !== 'tom') import('./services/timers.js').then((m) => {
+  m.startTimers();
+  timerSvc = m;
+  m.setRoute(screenName());
+  screenEl.appendChild(m.chip);
+}).catch(() => {});
 // Family tablets keep a copy of the shopping list for the phone page.
 if (profile !== 'tom') import('./services/meal-plan.js').then((m) => m.startShoppingSync()).catch(() => {});
 // ...and keep every recipe on the tablet, for when the Wi-Fi is down.
