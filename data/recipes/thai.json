@@ -1,0 +1,6190 @@
+{
+ "id": "thai",
+ "name": "Thai & Vietnamese",
+ "types": [
+  {
+   "id": "curries",
+   "name": "Curries"
+  },
+  {
+   "id": "noodles",
+   "name": "Noodles"
+  },
+  {
+   "id": "stir-fry",
+   "name": "Stir-fry"
+  },
+  {
+   "id": "soups",
+   "name": "Soups & pho"
+  },
+  {
+   "id": "salads",
+   "name": "Salads & rolls"
+  },
+  {
+   "id": "rice",
+   "name": "Rice dishes"
+  }
+ ],
+ "recipes": [
+  {
+   "id": "thai-green-curry-chicken",
+   "title": "Thai green curry with chicken",
+   "blurb": "Creamy, herby coconut curry with tender chicken and veggies",
+   "type": "curries",
+   "serves": 4,
+   "prep": 15,
+   "cook": 25,
+   "tags": [
+    "spicy",
+    "one pot"
+   ],
+   "ingredients": [
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "vegetable oil",
+     "aisle": "pantry"
+    },
+    {
+     "q": 3,
+     "u": "tbsp",
+     "item": "green curry paste",
+     "aisle": "international"
+    },
+    {
+     "q": 2,
+     "u": "can",
+     "item": "coconut milk (13.5 oz)",
+     "aisle": "canned"
+    },
+    {
+     "q": 1.5,
+     "u": "lb",
+     "item": "boneless skinless chicken thighs",
+     "aisle": "meat",
+     "note": "cut in bite-size pieces"
+    },
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "fish sauce",
+     "aisle": "international"
+    },
+    {
+     "q": 2,
+     "u": "tsp",
+     "item": "sugar",
+     "aisle": "pantry"
+    },
+    {
+     "q": 1,
+     "u": "can",
+     "item": "sliced bamboo shoots (8 oz)",
+     "aisle": "canned",
+     "note": "drained"
+    },
+    {
+     "q": 1,
+     "u": "",
+     "item": "red bell pepper",
+     "aisle": "produce",
+     "note": "sliced"
+    },
+    {
+     "q": 1,
+     "u": "cup",
+     "item": "fresh basil leaves",
+     "aisle": "produce"
+    },
+    {
+     "q": 2,
+     "u": "cup",
+     "item": "jasmine rice",
+     "aisle": "international",
+     "note": "to serve"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Heat the oil in a large pot over medium heat."
+    },
+    {
+     "text": "Fry the curry paste for 1 minute until fragrant, stirring.",
+     "timer": 60,
+     "timerLabel": "Fry the paste"
+    },
+    {
+     "text": "Pour in the coconut milk and stir until smooth. Add fish sauce and sugar."
+    },
+    {
+     "text": "Add the chicken and simmer gently until cooked through, 165°F inside.",
+     "timer": 600,
+     "timerLabel": "Simmer chicken"
+    },
+    {
+     "text": "Add bamboo shoots and bell pepper. Simmer 5 more minutes.",
+     "timer": 300,
+     "timerLabel": "Simmer veggies"
+    },
+    {
+     "text": "Stir in the basil. Serve over hot jasmine rice."
+    }
+   ]
+  },
+  {
+   "id": "thai-red-curry-chicken",
+   "title": "Thai red curry with chicken",
+   "blurb": "Classic red curry with bell pepper and bamboo shoots",
+   "type": "curries",
+   "serves": 4,
+   "prep": 15,
+   "cook": 25,
+   "tags": [
+    "spicy",
+    "one pot"
+   ],
+   "ingredients": [
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "vegetable oil",
+     "aisle": "pantry"
+    },
+    {
+     "q": 3,
+     "u": "tbsp",
+     "item": "red curry paste",
+     "aisle": "international"
+    },
+    {
+     "q": 2,
+     "u": "can",
+     "item": "coconut milk (13.5 oz)",
+     "aisle": "canned"
+    },
+    {
+     "q": 1.5,
+     "u": "lb",
+     "item": "boneless skinless chicken breasts",
+     "aisle": "meat",
+     "note": "sliced thin"
+    },
+    {
+     "q": 2,
+     "u": "tbsp",
+     "item": "fish sauce",
+     "aisle": "international"
+    },
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "brown sugar",
+     "aisle": "pantry"
+    },
+    {
+     "q": 1,
+     "u": "",
+     "item": "red bell pepper",
+     "aisle": "produce",
+     "note": "sliced"
+    },
+    {
+     "q": 1,
+     "u": "can",
+     "item": "sliced bamboo shoots (8 oz)",
+     "aisle": "canned",
+     "note": "drained"
+    },
+    {
+     "q": 0.5,
+     "u": "cup",
+     "item": "fresh basil leaves",
+     "aisle": "produce"
+    },
+    {
+     "q": 2,
+     "u": "cup",
+     "item": "jasmine rice",
+     "aisle": "international",
+     "note": "to serve"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Heat the oil in a pot and fry the curry paste 1 minute.",
+     "timer": 60,
+     "timerLabel": "Fry the paste"
+    },
+    {
+     "text": "Stir in the coconut milk, fish sauce and brown sugar."
+    },
+    {
+     "text": "Add the chicken and simmer until cooked through, 165°F inside.",
+     "timer": 720,
+     "timerLabel": "Simmer chicken"
+    },
+    {
+     "text": "Add the pepper and bamboo shoots. Simmer 5 minutes.",
+     "timer": 300,
+     "timerLabel": "Simmer veggies"
+    },
+    {
+     "text": "Stir in the basil and serve over jasmine rice."
+    }
+   ]
+  },
+  {
+   "id": "thai-massaman-beef",
+   "title": "Massaman beef curry",
+   "blurb": "Slow-simmered beef and potatoes in a mild, nutty curry",
+   "type": "curries",
+   "serves": 6,
+   "prep": 20,
+   "cook": 180,
+   "tags": [
+    "make ahead",
+    "gluten-free"
+   ],
+   "ingredients": [
+    {
+     "q": 2,
+     "u": "lb",
+     "item": "beef chuck roast",
+     "aisle": "meat",
+     "note": "cut in 1.5-inch cubes"
+    },
+    {
+     "q": 2,
+     "u": "tbsp",
+     "item": "vegetable oil",
+     "aisle": "pantry"
+    },
+    {
+     "q": 3,
+     "u": "tbsp",
+     "item": "massaman curry paste",
+     "aisle": "international"
+    },
+    {
+     "q": 2,
+     "u": "can",
+     "item": "coconut milk (13.5 oz)",
+     "aisle": "canned"
+    },
+    {
+     "q": 1,
+     "u": "",
+     "item": "yellow onion",
+     "aisle": "produce",
+     "note": "cut in wedges"
+    },
+    {
+     "q": 1.5,
+     "u": "lb",
+     "item": "baby potatoes",
+     "aisle": "produce",
+     "note": "halved"
+    },
+    {
+     "q": 2,
+     "u": "tbsp",
+     "item": "fish sauce",
+     "aisle": "international"
+    },
+    {
+     "q": 2,
+     "u": "tbsp",
+     "item": "brown sugar",
+     "aisle": "pantry"
+    },
+    {
+     "q": 2,
+     "u": "tbsp",
+     "item": "tamarind paste",
+     "aisle": "international"
+    },
+    {
+     "q": 0.5,
+     "u": "cup",
+     "item": "roasted peanuts",
+     "aisle": "pantry"
+    },
+    {
+     "q": 2,
+     "u": "cup",
+     "item": "jasmine rice",
+     "aisle": "international",
+     "note": "to serve"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Brown the beef in oil in a Dutch oven, in batches. Set aside."
+    },
+    {
+     "text": "Fry the curry paste in the same pot for 1 minute.",
+     "timer": 60,
+     "timerLabel": "Fry the paste"
+    },
+    {
+     "text": "Add coconut milk, onion, fish sauce, sugar, tamarind and beef. Bring to a simmer."
+    },
+    {
+     "text": "Cover and simmer on low until the beef is nearly tender.",
+     "timer": 5400,
+     "timerLabel": "Simmer beef"
+    },
+    {
+     "text": "Add potatoes and peanuts. Cook until potatoes are tender.",
+     "timer": 1800,
+     "timerLabel": "Cook potatoes"
+    },
+    {
+     "text": "Taste and adjust salt or sugar. Serve over rice."
+    }
+   ]
+  },
+  {
+   "id": "thai-panang-beef",
+   "title": "Panang beef curry",
+   "blurb": "Thick, rich curry with thin-sliced beef and lime leaf",
+   "type": "curries",
+   "serves": 4,
+   "prep": 10,
+   "cook": 20,
+   "tags": [
+    "quick",
+    "gluten-free"
+   ],
+   "ingredients": [
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "vegetable oil",
+     "aisle": "pantry"
+    },
+    {
+     "q": 3,
+     "u": "tbsp",
+     "item": "panang curry paste",
+     "aisle": "international"
+    },
+    {
+     "q": 1,
+     "u": "can",
+     "item": "coconut milk (13.5 oz)",
+     "aisle": "canned"
+    },
+    {
+     "q": 1,
+     "u": "lb",
+     "item": "beef sirloin",
+     "aisle": "meat",
+     "note": "sliced thin"
+    },
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "fish sauce",
+     "aisle": "international"
+    },
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "brown sugar",
+     "aisle": "pantry"
+    },
+    {
+     "q": 4,
+     "u": "",
+     "item": "kaffir lime leaves",
+     "aisle": "international",
+     "note": "or zest of 1 lime"
+    },
+    {
+     "q": 1,
+     "u": "",
+     "item": "red bell pepper",
+     "aisle": "produce",
+     "note": "sliced"
+    },
+    {
+     "q": 2,
+     "u": "cup",
+     "item": "jasmine rice",
+     "aisle": "international",
+     "note": "to serve"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Heat oil in a skillet over medium heat. Fry curry paste 1 minute.",
+     "timer": 60,
+     "timerLabel": "Fry the paste"
+    },
+    {
+     "text": "Stir in half the coconut milk and cook until oil separates, 3 minutes.",
+     "timer": 180,
+     "timerLabel": "Reduce sauce"
+    },
+    {
+     "text": "Add remaining coconut milk, fish sauce, sugar and lime leaves."
+    },
+    {
+     "text": "Add the beef and bell pepper. Simmer until beef is just cooked.",
+     "timer": 360,
+     "timerLabel": "Simmer beef"
+    },
+    {
+     "text": "Serve over jasmine rice."
+    }
+   ]
+  },
+  {
+   "id": "thai-yellow-curry-chicken",
+   "title": "Thai yellow curry with potatoes",
+   "blurb": "Mild, golden curry with chicken, potato and onion",
+   "type": "curries",
+   "serves": 4,
+   "prep": 15,
+   "cook": 30,
+   "tags": [
+    "kid-friendly",
+    "one pot"
+   ],
+   "ingredients": [
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "vegetable oil",
+     "aisle": "pantry"
+    },
+    {
+     "q": 3,
+     "u": "tbsp",
+     "item": "yellow curry paste",
+     "aisle": "international"
+    },
+    {
+     "q": 2,
+     "u": "can",
+     "item": "coconut milk (13.5 oz)",
+     "aisle": "canned"
+    },
+    {
+     "q": 1.5,
+     "u": "lb",
+     "item": "boneless skinless chicken thighs",
+     "aisle": "meat",
+     "note": "cut in bite-size pieces"
+    },
+    {
+     "q": 1,
+     "u": "lb",
+     "item": "Yukon gold potatoes",
+     "aisle": "produce",
+     "note": "cut in 1-inch pieces"
+    },
+    {
+     "q": 1,
+     "u": "",
+     "item": "yellow onion",
+     "aisle": "produce",
+     "note": "cut in wedges"
+    },
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "fish sauce",
+     "aisle": "international"
+    },
+    {
+     "q": 2,
+     "u": "tsp",
+     "item": "sugar",
+     "aisle": "pantry"
+    },
+    {
+     "q": 2,
+     "u": "cup",
+     "item": "jasmine rice",
+     "aisle": "international",
+     "note": "to serve"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Heat oil in a pot. Fry the curry paste 1 minute.",
+     "timer": 60,
+     "timerLabel": "Fry the paste"
+    },
+    {
+     "text": "Stir in the coconut milk, fish sauce and sugar."
+    },
+    {
+     "text": "Add potatoes and onion. Simmer until potatoes begin to soften.",
+     "timer": 600,
+     "timerLabel": "Simmer potatoes"
+    },
+    {
+     "text": "Add the chicken. Simmer until chicken reaches 165°F and potatoes are tender.",
+     "timer": 900,
+     "timerLabel": "Simmer chicken"
+    },
+    {
+     "text": "Serve over jasmine rice."
+    }
+   ]
+  },
+  {
+   "id": "thai-veggie-tofu-red-curry",
+   "title": "Red curry with tofu and vegetables",
+   "blurb": "Plant-based red curry loaded with veg",
+   "type": "curries",
+   "serves": 4,
+   "prep": 15,
+   "cook": 20,
+   "tags": [
+    "vegan",
+    "vegetarian",
+    "gluten-free",
+    "one pot"
+   ],
+   "ingredients": [
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "vegetable oil",
+     "aisle": "pantry"
+    },
+    {
+     "q": 3,
+     "u": "tbsp",
+     "item": "red curry paste",
+     "aisle": "international",
+     "note": "check it is vegan"
+    },
+    {
+     "q": 2,
+     "u": "can",
+     "item": "coconut milk (13.5 oz)",
+     "aisle": "canned"
+    },
+    {
+     "q": 14,
+     "u": "oz",
+     "item": "extra-firm tofu",
+     "aisle": "dairy",
+     "note": "cubed"
+    },
+    {
+     "q": 1,
+     "u": "",
+     "item": "red bell pepper",
+     "aisle": "produce",
+     "note": "sliced"
+    },
+    {
+     "q": 1,
+     "u": "cup",
+     "item": "broccoli florets",
+     "aisle": "produce"
+    },
+    {
+     "q": 1,
+     "u": "",
+     "item": "zucchini",
+     "aisle": "produce",
+     "note": "sliced in half moons"
+    },
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "soy sauce",
+     "aisle": "international"
+    },
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "brown sugar",
+     "aisle": "pantry"
+    },
+    {
+     "q": 1,
+     "u": "",
+     "item": "limes",
+     "aisle": "produce",
+     "note": "juiced"
+    },
+    {
+     "q": 2,
+     "u": "cup",
+     "item": "jasmine rice",
+     "aisle": "international",
+     "note": "to serve"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Heat oil in a pot and fry the curry paste 1 minute.",
+     "timer": 60,
+     "timerLabel": "Fry the paste"
+    },
+    {
+     "text": "Stir in coconut milk, soy sauce and sugar. Bring to a simmer."
+    },
+    {
+     "text": "Add tofu, pepper, broccoli and zucchini."
+    },
+    {
+     "text": "Simmer until the vegetables are tender but bright.",
+     "timer": 720,
+     "timerLabel": "Simmer curry"
+    },
+    {
+     "text": "Stir in the lime juice and serve over jasmine rice."
+    }
+   ]
+  },
+  {
+   "id": "thai-shrimp-pineapple-curry",
+   "title": "Red curry shrimp with pineapple",
+   "blurb": "Sweet, spicy and ready in 20 minutes",
+   "type": "curries",
+   "serves": 4,
+   "prep": 10,
+   "cook": 12,
+   "tags": [
+    "quick",
+    "spicy"
+   ],
+   "ingredients": [
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "vegetable oil",
+     "aisle": "pantry"
+    },
+    {
+     "q": 3,
+     "u": "tbsp",
+     "item": "red curry paste",
+     "aisle": "international"
+    },
+    {
+     "q": 1,
+     "u": "can",
+     "item": "coconut milk (13.5 oz)",
+     "aisle": "canned"
+    },
+    {
+     "q": 1,
+     "u": "cup",
+     "item": "chicken broth",
+     "aisle": "canned"
+    },
+    {
+     "q": 1.25,
+     "u": "lb",
+     "item": "large shrimp",
+     "aisle": "seafood",
+     "note": "peeled and deveined"
+    },
+    {
+     "q": 1,
+     "u": "can",
+     "item": "pineapple chunks (8 oz)",
+     "aisle": "canned",
+     "note": "drained"
+    },
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "fish sauce",
+     "aisle": "international"
+    },
+    {
+     "q": 1,
+     "u": "",
+     "item": "red bell pepper",
+     "aisle": "produce",
+     "note": "sliced"
+    },
+    {
+     "q": 0.5,
+     "u": "cup",
+     "item": "fresh basil leaves",
+     "aisle": "produce"
+    },
+    {
+     "q": 2,
+     "u": "cup",
+     "item": "jasmine rice",
+     "aisle": "international",
+     "note": "to serve"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Heat oil in a pot and fry the curry paste 1 minute.",
+     "timer": 60,
+     "timerLabel": "Fry the paste"
+    },
+    {
+     "text": "Stir in coconut milk, broth and fish sauce. Bring to a simmer."
+    },
+    {
+     "text": "Add pepper and pineapple. Simmer 3 minutes.",
+     "timer": 180,
+     "timerLabel": "Simmer"
+    },
+    {
+     "text": "Add shrimp. Cook until pink and curled, 3 to 4 minutes.",
+     "timer": 210,
+     "timerLabel": "Cook shrimp"
+    },
+    {
+     "text": "Stir in basil and serve over jasmine rice."
+    }
+   ]
+  },
+  {
+   "id": "thai-pumpkin-coconut-curry",
+   "title": "Butternut squash coconut curry",
+   "blurb": "Silky squash in a mild red curry sauce",
+   "type": "curries",
+   "serves": 4,
+   "prep": 15,
+   "cook": 30,
+   "tags": [
+    "vegan",
+    "vegetarian",
+    "gluten-free",
+    "healthy"
+   ],
+   "ingredients": [
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "vegetable oil",
+     "aisle": "pantry"
+    },
+    {
+     "q": 2,
+     "u": "tbsp",
+     "item": "red curry paste",
+     "aisle": "international",
+     "note": "check it is vegan"
+    },
+    {
+     "q": 1,
+     "u": "can",
+     "item": "coconut milk (13.5 oz)",
+     "aisle": "canned"
+    },
+    {
+     "q": 1,
+     "u": "cup",
+     "item": "vegetable broth",
+     "aisle": "canned"
+    },
+    {
+     "q": 1.5,
+     "u": "lb",
+     "item": "butternut squash",
+     "aisle": "produce",
+     "note": "peeled, cut in 1-inch cubes"
+    },
+    {
+     "q": 1,
+     "u": "can",
+     "item": "chickpeas (15 oz)",
+     "aisle": "canned",
+     "note": "drained"
+    },
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "soy sauce",
+     "aisle": "international"
+    },
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "brown sugar",
+     "aisle": "pantry"
+    },
+    {
+     "q": 2,
+     "u": "cup",
+     "item": "baby spinach",
+     "aisle": "produce"
+    },
+    {
+     "q": 2,
+     "u": "cup",
+     "item": "jasmine rice",
+     "aisle": "international",
+     "note": "to serve"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Fry the curry paste in oil for 1 minute.",
+     "timer": 60,
+     "timerLabel": "Fry the paste"
+    },
+    {
+     "text": "Add coconut milk, broth, soy sauce, sugar and squash."
+    },
+    {
+     "text": "Simmer, partly covered, until the squash is tender.",
+     "timer": 1200,
+     "timerLabel": "Simmer squash"
+    },
+    {
+     "text": "Add chickpeas and spinach. Cook until spinach wilts, 2 minutes.",
+     "timer": 120,
+     "timerLabel": "Wilt spinach"
+    },
+    {
+     "text": "Serve over jasmine rice."
+    }
+   ]
+  },
+  {
+   "id": "thai-vietnamese-chicken-curry",
+   "title": "Vietnamese chicken curry (ca ri ga)",
+   "blurb": "Lemongrass chicken, carrots and potatoes in coconut curry",
+   "type": "curries",
+   "serves": 4,
+   "prep": 15,
+   "cook": 40,
+   "tags": [
+    "one pot",
+    "kid-friendly"
+   ],
+   "ingredients": [
+    {
+     "q": 2,
+     "u": "tbsp",
+     "item": "vegetable oil",
+     "aisle": "pantry"
+    },
+    {
+     "q": 2,
+     "u": "stalk",
+     "item": "lemongrass",
+     "aisle": "produce",
+     "note": "bruised, cut in 3-inch pieces"
+    },
+    {
+     "q": 3,
+     "u": "clove",
+     "item": "garlic",
+     "aisle": "produce",
+     "note": "minced"
+    },
+    {
+     "q": 2,
+     "u": "tbsp",
+     "item": "yellow curry powder",
+     "aisle": "spices"
+    },
+    {
+     "q": 2,
+     "u": "lb",
+     "item": "bone-in chicken thighs",
+     "aisle": "meat"
+    },
+    {
+     "q": 2,
+     "u": "cup",
+     "item": "chicken broth",
+     "aisle": "canned"
+    },
+    {
+     "q": 1,
+     "u": "can",
+     "item": "coconut milk (13.5 oz)",
+     "aisle": "canned"
+    },
+    {
+     "q": 2,
+     "u": "",
+     "item": "carrots",
+     "aisle": "produce",
+     "note": "cut in chunks"
+    },
+    {
+     "q": 1,
+     "u": "lb",
+     "item": "Yukon gold potatoes",
+     "aisle": "produce",
+     "note": "cut in chunks"
+    },
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "fish sauce",
+     "aisle": "international"
+    },
+    {
+     "q": 1,
+     "u": "",
+     "item": "baguette",
+     "aisle": "bakery",
+     "note": "to serve"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Heat oil in a Dutch oven. Brown the chicken skin-side down, 5 minutes per side.",
+     "timer": 600,
+     "timerLabel": "Brown chicken"
+    },
+    {
+     "text": "Add lemongrass, garlic and curry powder. Stir 1 minute.",
+     "timer": 60,
+     "timerLabel": "Toast spices"
+    },
+    {
+     "text": "Pour in broth, coconut milk and fish sauce. Bring to a simmer."
+    },
+    {
+     "text": "Add carrots and potatoes. Simmer covered until chicken hits 175°F and vegetables are tender.",
+     "timer": 1800,
+     "timerLabel": "Simmer curry"
+    },
+    {
+     "text": "Remove lemongrass. Serve with baguette or rice."
+    }
+   ]
+  },
+  {
+   "id": "thai-pad-thai-chicken",
+   "title": "Chicken pad Thai",
+   "blurb": "The takeout favorite, made at home",
+   "type": "noodles",
+   "serves": 4,
+   "prep": 20,
+   "cook": 15,
+   "tags": [
+    "quick",
+    "kid-friendly"
+   ],
+   "ingredients": [
+    {
+     "q": 8,
+     "u": "oz",
+     "item": "flat rice noodles",
+     "aisle": "international"
+    },
+    {
+     "q": 3,
+     "u": "tbsp",
+     "item": "tamarind paste",
+     "aisle": "international"
+    },
+    {
+     "q": 3,
+     "u": "tbsp",
+     "item": "fish sauce",
+     "aisle": "international"
+    },
+    {
+     "q": 3,
+     "u": "tbsp",
+     "item": "brown sugar",
+     "aisle": "pantry"
+    },
+    {
+     "q": 2,
+     "u": "tbsp",
+     "item": "vegetable oil",
+     "aisle": "pantry"
+    },
+    {
+     "q": 1,
+     "u": "lb",
+     "item": "boneless skinless chicken breasts",
+     "aisle": "meat",
+     "note": "sliced thin"
+    },
+    {
+     "q": 3,
+     "u": "clove",
+     "item": "garlic",
+     "aisle": "produce",
+     "note": "minced"
+    },
+    {
+     "q": 2,
+     "u": "",
+     "item": "large eggs",
+     "aisle": "dairy"
+    },
+    {
+     "q": 3,
+     "u": "cup",
+     "item": "bean sprouts",
+     "aisle": "produce"
+    },
+    {
+     "q": 4,
+     "u": "",
+     "item": "green onions",
+     "aisle": "produce",
+     "note": "sliced"
+    },
+    {
+     "q": 0.5,
+     "u": "cup",
+     "item": "roasted peanuts",
+     "aisle": "pantry",
+     "note": "chopped"
+    },
+    {
+     "q": 1,
+     "u": "",
+     "item": "limes",
+     "aisle": "produce",
+     "note": "cut in wedges"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Soak the noodles in hot water until pliable but firm.",
+     "timer": 600,
+     "timerLabel": "Soak noodles"
+    },
+    {
+     "text": "Whisk the tamarind, fish sauce and sugar together."
+    },
+    {
+     "text": "Heat oil in a wok on high. Cook the chicken until 165°F inside. Add garlic.",
+     "timer": 300,
+     "timerLabel": "Cook chicken"
+    },
+    {
+     "text": "Push chicken aside. Scramble the eggs, then mix in."
+    },
+    {
+     "text": "Add drained noodles and sauce. Toss until the noodles are tender.",
+     "timer": 150,
+     "timerLabel": "Toss noodles"
+    },
+    {
+     "text": "Add sprouts and green onions. Serve with peanuts and lime."
+    }
+   ]
+  },
+  {
+   "id": "thai-tofu-pad-thai",
+   "title": "Vegetarian pad Thai with tofu",
+   "blurb": "Tofu, sprouts and peanuts in tangy tamarind sauce",
+   "type": "noodles",
+   "serves": 4,
+   "prep": 20,
+   "cook": 15,
+   "tags": [
+    "vegetarian",
+    "quick"
+   ],
+   "ingredients": [
+    {
+     "q": 8,
+     "u": "oz",
+     "item": "flat rice noodles",
+     "aisle": "international"
+    },
+    {
+     "q": 3,
+     "u": "tbsp",
+     "item": "tamarind paste",
+     "aisle": "international"
+    },
+    {
+     "q": 3,
+     "u": "tbsp",
+     "item": "soy sauce",
+     "aisle": "international"
+    },
+    {
+     "q": 3,
+     "u": "tbsp",
+     "item": "brown sugar",
+     "aisle": "pantry"
+    },
+    {
+     "q": 2,
+     "u": "tbsp",
+     "item": "vegetable oil",
+     "aisle": "pantry"
+    },
+    {
+     "q": 14,
+     "u": "oz",
+     "item": "extra-firm tofu",
+     "aisle": "dairy",
+     "note": "pressed, cubed"
+    },
+    {
+     "q": 3,
+     "u": "clove",
+     "item": "garlic",
+     "aisle": "produce",
+     "note": "minced"
+    },
+    {
+     "q": 2,
+     "u": "",
+     "item": "large eggs",
+     "aisle": "dairy"
+    },
+    {
+     "q": 3,
+     "u": "cup",
+     "item": "bean sprouts",
+     "aisle": "produce"
+    },
+    {
+     "q": 4,
+     "u": "",
+     "item": "green onions",
+     "aisle": "produce",
+     "note": "sliced"
+    },
+    {
+     "q": 0.5,
+     "u": "cup",
+     "item": "roasted peanuts",
+     "aisle": "pantry",
+     "note": "chopped"
+    },
+    {
+     "q": 1,
+     "u": "",
+     "item": "limes",
+     "aisle": "produce",
+     "note": "cut in wedges"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Soak the noodles in hot water until pliable.",
+     "timer": 600,
+     "timerLabel": "Soak noodles"
+    },
+    {
+     "text": "Whisk tamarind, soy sauce and sugar together."
+    },
+    {
+     "text": "Fry tofu in oil in a wok until golden, 5 minutes. Add garlic.",
+     "timer": 300,
+     "timerLabel": "Brown tofu"
+    },
+    {
+     "text": "Push tofu aside and scramble the eggs."
+    },
+    {
+     "text": "Add noodles and sauce. Toss until tender, 2 to 3 minutes.",
+     "timer": 150,
+     "timerLabel": "Toss noodles"
+    },
+    {
+     "text": "Fold in sprouts and green onions. Top with peanuts and lime."
+    }
+   ]
+  },
+  {
+   "id": "thai-pad-see-ew",
+   "title": "Pad see ew",
+   "blurb": "Wide rice noodles with broccolini in sweet soy",
+   "type": "noodles",
+   "serves": 4,
+   "prep": 15,
+   "cook": 12,
+   "tags": [
+    "quick"
+   ],
+   "ingredients": [
+    {
+     "q": 12,
+     "u": "oz",
+     "item": "wide rice noodles",
+     "aisle": "international"
+    },
+    {
+     "q": 3,
+     "u": "tbsp",
+     "item": "vegetable oil",
+     "aisle": "pantry"
+    },
+    {
+     "q": 1,
+     "u": "lb",
+     "item": "boneless skinless chicken thighs",
+     "aisle": "meat",
+     "note": "sliced thin"
+    },
+    {
+     "q": 4,
+     "u": "clove",
+     "item": "garlic",
+     "aisle": "produce",
+     "note": "minced"
+    },
+    {
+     "q": 2,
+     "u": "",
+     "item": "large eggs",
+     "aisle": "dairy"
+    },
+    {
+     "q": 1,
+     "u": "bunch",
+     "item": "broccolini",
+     "aisle": "produce",
+     "note": "cut in 2-inch pieces"
+    },
+    {
+     "q": 3,
+     "u": "tbsp",
+     "item": "dark soy sauce",
+     "aisle": "international"
+    },
+    {
+     "q": 2,
+     "u": "tbsp",
+     "item": "oyster sauce",
+     "aisle": "international"
+    },
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "soy sauce",
+     "aisle": "international"
+    },
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "sugar",
+     "aisle": "pantry"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "white pepper",
+     "aisle": "spices"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Cook or soak the noodles per package until just tender. Drain.",
+     "timer": 480,
+     "timerLabel": "Prep noodles"
+    },
+    {
+     "text": "Mix dark soy, oyster sauce, soy sauce, sugar and pepper."
+    },
+    {
+     "text": "Heat oil in a wok on high. Cook chicken until 165°F inside. Add garlic.",
+     "timer": 300,
+     "timerLabel": "Cook chicken"
+    },
+    {
+     "text": "Push aside and scramble the eggs. Add broccolini and a splash of water."
+    },
+    {
+     "text": "Add noodles and sauce. Toss until the noodles char lightly.",
+     "timer": 120,
+     "timerLabel": "Char noodles"
+    }
+   ]
+  },
+  {
+   "id": "thai-drunken-noodles",
+   "title": "Drunken noodles (pad kee mao)",
+   "blurb": "Spicy wide noodles with basil and chilies",
+   "type": "noodles",
+   "serves": 4,
+   "prep": 15,
+   "cook": 12,
+   "tags": [
+    "spicy",
+    "quick"
+   ],
+   "ingredients": [
+    {
+     "q": 12,
+     "u": "oz",
+     "item": "wide rice noodles",
+     "aisle": "international"
+    },
+    {
+     "q": 2,
+     "u": "tbsp",
+     "item": "vegetable oil",
+     "aisle": "pantry"
+    },
+    {
+     "q": 1,
+     "u": "lb",
+     "item": "ground chicken",
+     "aisle": "meat"
+    },
+    {
+     "q": 5,
+     "u": "clove",
+     "item": "garlic",
+     "aisle": "produce",
+     "note": "minced"
+    },
+    {
+     "q": 3,
+     "u": "",
+     "item": "Thai chilies",
+     "aisle": "produce",
+     "note": "sliced"
+    },
+    {
+     "q": 1,
+     "u": "",
+     "item": "red bell pepper",
+     "aisle": "produce",
+     "note": "sliced"
+    },
+    {
+     "q": 0.5,
+     "u": "",
+     "item": "yellow onion",
+     "aisle": "produce",
+     "note": "sliced"
+    },
+    {
+     "q": 3,
+     "u": "tbsp",
+     "item": "oyster sauce",
+     "aisle": "international"
+    },
+    {
+     "q": 2,
+     "u": "tbsp",
+     "item": "soy sauce",
+     "aisle": "international"
+    },
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "fish sauce",
+     "aisle": "international"
+    },
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "sugar",
+     "aisle": "pantry"
+    },
+    {
+     "q": 1,
+     "u": "cup",
+     "item": "fresh basil leaves",
+     "aisle": "produce"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Cook or soak the noodles until just tender. Drain.",
+     "timer": 480,
+     "timerLabel": "Prep noodles"
+    },
+    {
+     "text": "Mix oyster sauce, soy sauce, fish sauce and sugar."
+    },
+    {
+     "text": "Heat oil in a wok on high. Stir-fry garlic and chilies 20 seconds."
+    },
+    {
+     "text": "Add chicken. Cook until 165°F inside, breaking it up.",
+     "timer": 300,
+     "timerLabel": "Cook chicken"
+    },
+    {
+     "text": "Add onion and pepper for 2 minutes, then noodles and sauce. Toss.",
+     "timer": 120,
+     "timerLabel": "Toss noodles"
+    },
+    {
+     "text": "Stir in basil until wilted."
+    }
+   ]
+  },
+  {
+   "id": "thai-khao-soi",
+   "title": "Khao soi chicken noodle curry",
+   "blurb": "Northern Thai coconut curry noodle soup",
+   "type": "noodles",
+   "serves": 4,
+   "prep": 15,
+   "cook": 35,
+   "tags": [
+    "spicy"
+   ],
+   "ingredients": [
+    {
+     "q": 2,
+     "u": "tbsp",
+     "item": "vegetable oil",
+     "aisle": "pantry"
+    },
+    {
+     "q": 3,
+     "u": "tbsp",
+     "item": "red curry paste",
+     "aisle": "international"
+    },
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "yellow curry powder",
+     "aisle": "spices"
+    },
+    {
+     "q": 1,
+     "u": "can",
+     "item": "coconut milk (13.5 oz)",
+     "aisle": "canned"
+    },
+    {
+     "q": 3,
+     "u": "cup",
+     "item": "chicken broth",
+     "aisle": "canned"
+    },
+    {
+     "q": 1.5,
+     "u": "lb",
+     "item": "bone-in chicken thighs",
+     "aisle": "meat"
+    },
+    {
+     "q": 2,
+     "u": "tbsp",
+     "item": "fish sauce",
+     "aisle": "international"
+    },
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "brown sugar",
+     "aisle": "pantry"
+    },
+    {
+     "q": 12,
+     "u": "oz",
+     "item": "fresh egg noodles",
+     "aisle": "international"
+    },
+    {
+     "q": 2,
+     "u": "",
+     "item": "shallots",
+     "aisle": "produce",
+     "note": "sliced thin"
+    },
+    {
+     "q": 1,
+     "u": "",
+     "item": "limes",
+     "aisle": "produce",
+     "note": "cut in wedges"
+    },
+    {
+     "q": 2,
+     "u": "",
+     "item": "green onions",
+     "aisle": "produce",
+     "note": "sliced"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Fry the curry paste and curry powder in oil 1 minute.",
+     "timer": 60,
+     "timerLabel": "Fry the paste"
+    },
+    {
+     "text": "Add coconut milk, broth, fish sauce, sugar and chicken. Bring to a simmer."
+    },
+    {
+     "text": "Simmer until the chicken hits 175°F.",
+     "timer": 1500,
+     "timerLabel": "Simmer chicken"
+    },
+    {
+     "text": "Pull chicken off the bone and shred. Return to the pot."
+    },
+    {
+     "text": "Boil the noodles until tender. Drain and divide among bowls.",
+     "timer": 240,
+     "timerLabel": "Boil noodles"
+    },
+    {
+     "text": "Ladle the curry over noodles. Top with shallots, green onions and lime."
+    }
+   ]
+  },
+  {
+   "id": "thai-thai-peanut-noodles",
+   "title": "Thai peanut noodles",
+   "blurb": "Cold or warm noodles in creamy peanut sauce",
+   "type": "noodles",
+   "serves": 4,
+   "prep": 15,
+   "cook": 10,
+   "tags": [
+    "quick",
+    "vegetarian",
+    "kid-friendly"
+   ],
+   "ingredients": [
+    {
+     "q": 12,
+     "u": "oz",
+     "item": "spaghetti or lo mein noodles",
+     "aisle": "pantry"
+    },
+    {
+     "q": 0.33,
+     "u": "cup",
+     "item": "creamy peanut butter",
+     "aisle": "pantry"
+    },
+    {
+     "q": 3,
+     "u": "tbsp",
+     "item": "soy sauce",
+     "aisle": "international"
+    },
+    {
+     "q": 2,
+     "u": "tbsp",
+     "item": "rice vinegar",
+     "aisle": "international"
+    },
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "honey",
+     "aisle": "pantry"
+    },
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "sesame oil",
+     "aisle": "international"
+    },
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "sriracha",
+     "aisle": "international"
+    },
+    {
+     "q": 1,
+     "u": "inch",
+     "item": "fresh ginger",
+     "aisle": "produce",
+     "note": "grated"
+    },
+    {
+     "q": 2,
+     "u": "clove",
+     "item": "garlic",
+     "aisle": "produce",
+     "note": "minced"
+    },
+    {
+     "q": 2,
+     "u": "",
+     "item": "carrots",
+     "aisle": "produce",
+     "note": "shredded"
+    },
+    {
+     "q": 1,
+     "u": "",
+     "item": "cucumber",
+     "aisle": "produce",
+     "note": "julienned"
+    },
+    {
+     "q": 0.25,
+     "u": "cup",
+     "item": "roasted peanuts",
+     "aisle": "pantry",
+     "note": "chopped"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Boil the noodles until tender. Drain and rinse in cool water.",
+     "timer": 480,
+     "timerLabel": "Boil noodles"
+    },
+    {
+     "text": "Whisk peanut butter, soy sauce, vinegar, honey, sesame oil and sriracha."
+    },
+    {
+     "text": "Add ginger, garlic and 3 tbsp hot water to loosen the sauce."
+    },
+    {
+     "text": "Toss noodles with the sauce."
+    },
+    {
+     "text": "Top with carrots, cucumber and peanuts."
+    }
+   ]
+  },
+  {
+   "id": "thai-bun-thit-nuong",
+   "title": "Grilled pork vermicelli bowls (bun thit nuong)",
+   "blurb": "Lemongrass pork over cool noodles and herbs",
+   "type": "noodles",
+   "serves": 4,
+   "prep": 25,
+   "cook": 15,
+   "tags": [
+    "grill"
+   ],
+   "ingredients": [
+    {
+     "q": 1.5,
+     "u": "lb",
+     "item": "pork shoulder",
+     "aisle": "meat",
+     "note": "sliced thin"
+    },
+    {
+     "q": 3,
+     "u": "stalk",
+     "item": "lemongrass",
+     "aisle": "produce",
+     "note": "minced"
+    },
+    {
+     "q": 4,
+     "u": "clove",
+     "item": "garlic",
+     "aisle": "produce",
+     "note": "minced"
+    },
+    {
+     "q": 3,
+     "u": "tbsp",
+     "item": "fish sauce",
+     "aisle": "international",
+     "note": "for marinade"
+    },
+    {
+     "q": 2,
+     "u": "tbsp",
+     "item": "sugar",
+     "aisle": "pantry",
+     "note": "for marinade"
+    },
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "vegetable oil",
+     "aisle": "pantry"
+    },
+    {
+     "q": 8,
+     "u": "oz",
+     "item": "rice vermicelli",
+     "aisle": "international"
+    },
+    {
+     "q": 1,
+     "u": "head",
+     "item": "butter lettuce",
+     "aisle": "produce",
+     "note": "torn"
+    },
+    {
+     "q": 1,
+     "u": "",
+     "item": "cucumber",
+     "aisle": "produce",
+     "note": "sliced"
+    },
+    {
+     "q": 2,
+     "u": "",
+     "item": "carrots",
+     "aisle": "produce",
+     "note": "shredded"
+    },
+    {
+     "q": 1,
+     "u": "cup",
+     "item": "fresh mint and cilantro",
+     "aisle": "produce"
+    },
+    {
+     "q": 0.25,
+     "u": "cup",
+     "item": "roasted peanuts",
+     "aisle": "pantry",
+     "note": "chopped"
+    },
+    {
+     "q": 3,
+     "u": "tbsp",
+     "item": "fish sauce",
+     "aisle": "international",
+     "note": "for nuoc cham"
+    },
+    {
+     "q": 2,
+     "u": "tbsp",
+     "item": "sugar",
+     "aisle": "pantry",
+     "note": "for nuoc cham"
+    },
+    {
+     "q": 2,
+     "u": "",
+     "item": "limes",
+     "aisle": "produce",
+     "note": "juiced, for nuoc cham"
+    },
+    {
+     "q": 0.5,
+     "u": "cup",
+     "item": "water",
+     "aisle": "pantry",
+     "note": "for nuoc cham"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Mix pork with lemongrass, garlic, fish sauce, sugar and oil. Marinate.",
+     "timer": 1800,
+     "timerLabel": "Marinate pork"
+    },
+    {
+     "text": "Whisk nuoc cham: fish sauce, sugar, lime juice and water."
+    },
+    {
+     "text": "Cook the vermicelli per package. Rinse cold and drain.",
+     "timer": 300,
+     "timerLabel": "Boil vermicelli"
+    },
+    {
+     "text": "Grill or pan-sear pork on high until browned and 145°F inside.",
+     "timer": 420,
+     "timerLabel": "Cook pork"
+    },
+    {
+     "text": "Divide lettuce, noodles, cucumber, carrot and herbs among bowls."
+    },
+    {
+     "text": "Top with pork and peanuts. Spoon nuoc cham over."
+    }
+   ]
+  },
+  {
+   "id": "thai-bun-bo-xao",
+   "title": "Lemongrass beef noodle bowls (bun bo xao)",
+   "blurb": "Quick stir-fried beef over cool vermicelli",
+   "type": "noodles",
+   "serves": 4,
+   "prep": 20,
+   "cook": 10,
+   "tags": [
+    "quick"
+   ],
+   "ingredients": [
+    {
+     "q": 1.25,
+     "u": "lb",
+     "item": "flank steak",
+     "aisle": "meat",
+     "note": "sliced thin against the grain"
+    },
+    {
+     "q": 2,
+     "u": "stalk",
+     "item": "lemongrass",
+     "aisle": "produce",
+     "note": "minced"
+    },
+    {
+     "q": 3,
+     "u": "clove",
+     "item": "garlic",
+     "aisle": "produce",
+     "note": "minced"
+    },
+    {
+     "q": 2,
+     "u": "tbsp",
+     "item": "fish sauce",
+     "aisle": "international",
+     "note": "for beef"
+    },
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "sugar",
+     "aisle": "pantry",
+     "note": "for beef"
+    },
+    {
+     "q": 2,
+     "u": "tbsp",
+     "item": "vegetable oil",
+     "aisle": "pantry"
+    },
+    {
+     "q": 1,
+     "u": "",
+     "item": "yellow onion",
+     "aisle": "produce",
+     "note": "sliced"
+    },
+    {
+     "q": 8,
+     "u": "oz",
+     "item": "rice vermicelli",
+     "aisle": "international"
+    },
+    {
+     "q": 1,
+     "u": "head",
+     "item": "butter lettuce",
+     "aisle": "produce",
+     "note": "torn"
+    },
+    {
+     "q": 1,
+     "u": "",
+     "item": "cucumber",
+     "aisle": "produce",
+     "note": "sliced"
+    },
+    {
+     "q": 1,
+     "u": "cup",
+     "item": "fresh mint",
+     "aisle": "produce"
+    },
+    {
+     "q": 3,
+     "u": "tbsp",
+     "item": "fish sauce",
+     "aisle": "international",
+     "note": "for nuoc cham"
+    },
+    {
+     "q": 2,
+     "u": "tbsp",
+     "item": "sugar",
+     "aisle": "pantry",
+     "note": "for nuoc cham"
+    },
+    {
+     "q": 2,
+     "u": "",
+     "item": "limes",
+     "aisle": "produce",
+     "note": "juiced, for nuoc cham"
+    },
+    {
+     "q": 0.5,
+     "u": "cup",
+     "item": "water",
+     "aisle": "pantry",
+     "note": "for nuoc cham"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Toss beef with lemongrass, garlic, fish sauce and sugar. Rest.",
+     "timer": 900,
+     "timerLabel": "Marinate beef"
+    },
+    {
+     "text": "Whisk nuoc cham: fish sauce, sugar, lime juice and water."
+    },
+    {
+     "text": "Cook vermicelli per package. Rinse cold and drain.",
+     "timer": 300,
+     "timerLabel": "Boil vermicelli"
+    },
+    {
+     "text": "Sear beef and onion in hot oil in batches, 2 minutes each.",
+     "timer": 240,
+     "timerLabel": "Sear beef"
+    },
+    {
+     "text": "Layer lettuce, noodles, cucumber and mint in bowls."
+    },
+    {
+     "text": "Top with beef. Spoon nuoc cham over."
+    }
+   ]
+  },
+  {
+   "id": "thai-rad-na-chicken",
+   "title": "Rad na chicken gravy noodles",
+   "blurb": "Pan-fried noodles under a silky ginger gravy",
+   "type": "noodles",
+   "serves": 4,
+   "prep": 15,
+   "cook": 20,
+   "tags": [
+    "kid-friendly"
+   ],
+   "ingredients": [
+    {
+     "q": 12,
+     "u": "oz",
+     "item": "wide rice noodles",
+     "aisle": "international"
+    },
+    {
+     "q": 3,
+     "u": "tbsp",
+     "item": "vegetable oil",
+     "aisle": "pantry"
+    },
+    {
+     "q": 1,
+     "u": "lb",
+     "item": "boneless skinless chicken breasts",
+     "aisle": "meat",
+     "note": "sliced thin"
+    },
+    {
+     "q": 4,
+     "u": "clove",
+     "item": "garlic",
+     "aisle": "produce",
+     "note": "minced"
+    },
+    {
+     "q": 1,
+     "u": "inch",
+     "item": "fresh ginger",
+     "aisle": "produce",
+     "note": "grated"
+    },
+    {
+     "q": 2,
+     "u": "cup",
+     "item": "chicken broth",
+     "aisle": "canned"
+    },
+    {
+     "q": 2,
+     "u": "tbsp",
+     "item": "oyster sauce",
+     "aisle": "international"
+    },
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "soy sauce",
+     "aisle": "international"
+    },
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "sugar",
+     "aisle": "pantry"
+    },
+    {
+     "q": 2,
+     "u": "tbsp",
+     "item": "cornstarch",
+     "aisle": "pantry",
+     "note": "mixed with 3 tbsp water"
+    },
+    {
+     "q": 1,
+     "u": "bunch",
+     "item": "broccolini",
+     "aisle": "produce",
+     "note": "cut in 2-inch pieces"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Cook the noodles until tender. Drain well.",
+     "timer": 480,
+     "timerLabel": "Cook noodles"
+    },
+    {
+     "text": "Pan-fry noodles in 2 tbsp oil until browned in spots. Set on plates.",
+     "timer": 240,
+     "timerLabel": "Brown noodles"
+    },
+    {
+     "text": "Cook chicken in remaining oil until 165°F inside. Add garlic and ginger.",
+     "timer": 300,
+     "timerLabel": "Cook chicken"
+    },
+    {
+     "text": "Add broth, oyster sauce, soy sauce, sugar and broccolini. Simmer.",
+     "timer": 240,
+     "timerLabel": "Simmer gravy"
+    },
+    {
+     "text": "Stir in cornstarch slurry until thick. Pour over noodles."
+    }
+   ]
+  },
+  {
+   "id": "thai-pad-kra-pao",
+   "title": "Pad kra pao (Thai basil chicken)",
+   "blurb": "Fiery garlic-chili chicken with basil, the street food classic",
+   "type": "stir-fry",
+   "serves": 4,
+   "prep": 10,
+   "cook": 10,
+   "tags": [
+    "quick",
+    "spicy"
+   ],
+   "ingredients": [
+    {
+     "q": 2,
+     "u": "tbsp",
+     "item": "vegetable oil",
+     "aisle": "pantry"
+    },
+    {
+     "q": 1.25,
+     "u": "lb",
+     "item": "ground chicken",
+     "aisle": "meat"
+    },
+    {
+     "q": 6,
+     "u": "clove",
+     "item": "garlic",
+     "aisle": "produce",
+     "note": "minced"
+    },
+    {
+     "q": 4,
+     "u": "",
+     "item": "Thai chilies",
+     "aisle": "produce",
+     "note": "sliced"
+    },
+    {
+     "q": 1,
+     "u": "",
+     "item": "red bell pepper",
+     "aisle": "produce",
+     "note": "diced"
+    },
+    {
+     "q": 2,
+     "u": "tbsp",
+     "item": "oyster sauce",
+     "aisle": "international"
+    },
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "soy sauce",
+     "aisle": "international"
+    },
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "fish sauce",
+     "aisle": "international"
+    },
+    {
+     "q": 2,
+     "u": "tsp",
+     "item": "sugar",
+     "aisle": "pantry"
+    },
+    {
+     "q": 2,
+     "u": "cup",
+     "item": "fresh basil leaves",
+     "aisle": "produce"
+    },
+    {
+     "q": 4,
+     "u": "",
+     "item": "large eggs",
+     "aisle": "dairy",
+     "note": "fried, to serve"
+    },
+    {
+     "q": 2,
+     "u": "cup",
+     "item": "jasmine rice",
+     "aisle": "international",
+     "note": "to serve"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Mix oyster sauce, soy sauce, fish sauce and sugar."
+    },
+    {
+     "text": "Heat oil in a wok on high. Fry garlic and chilies 20 seconds."
+    },
+    {
+     "text": "Add chicken and cook until 165°F inside, breaking it up.",
+     "timer": 300,
+     "timerLabel": "Cook chicken"
+    },
+    {
+     "text": "Add the bell pepper and sauce. Toss 1 minute.",
+     "timer": 60,
+     "timerLabel": "Toss"
+    },
+    {
+     "text": "Turn off the heat. Stir in the basil."
+    },
+    {
+     "text": "Serve over rice with a fried egg."
+    }
+   ]
+  },
+  {
+   "id": "thai-cashew-chicken",
+   "title": "Thai cashew chicken",
+   "blurb": "Sweet-savory chicken with toasted cashews and chili",
+   "type": "stir-fry",
+   "serves": 4,
+   "prep": 15,
+   "cook": 12,
+   "tags": [
+    "quick",
+    "kid-friendly"
+   ],
+   "ingredients": [
+    {
+     "q": 1.5,
+     "u": "lb",
+     "item": "boneless skinless chicken breasts",
+     "aisle": "meat",
+     "note": "cut in 1-inch pieces"
+    },
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "cornstarch",
+     "aisle": "pantry"
+    },
+    {
+     "q": 2,
+     "u": "tbsp",
+     "item": "vegetable oil",
+     "aisle": "pantry"
+    },
+    {
+     "q": 1,
+     "u": "",
+     "item": "red bell pepper",
+     "aisle": "produce",
+     "note": "diced"
+    },
+    {
+     "q": 1,
+     "u": "",
+     "item": "yellow onion",
+     "aisle": "produce",
+     "note": "cut in wedges"
+    },
+    {
+     "q": 3,
+     "u": "clove",
+     "item": "garlic",
+     "aisle": "produce",
+     "note": "minced"
+    },
+    {
+     "q": 3,
+     "u": "tbsp",
+     "item": "oyster sauce",
+     "aisle": "international"
+    },
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "soy sauce",
+     "aisle": "international"
+    },
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "brown sugar",
+     "aisle": "pantry"
+    },
+    {
+     "q": 0.75,
+     "u": "cup",
+     "item": "roasted cashews",
+     "aisle": "pantry"
+    },
+    {
+     "q": 3,
+     "u": "",
+     "item": "green onions",
+     "aisle": "produce",
+     "note": "sliced"
+    },
+    {
+     "q": 2,
+     "u": "cup",
+     "item": "jasmine rice",
+     "aisle": "international",
+     "note": "to serve"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Toss the chicken with the cornstarch."
+    },
+    {
+     "text": "Heat oil in a wok on high. Cook chicken until golden, 4 minutes.",
+     "timer": 240,
+     "timerLabel": "Sear chicken"
+    },
+    {
+     "text": "Add onion, pepper and garlic. Cook 2 minutes.",
+     "timer": 120,
+     "timerLabel": "Cook veggies"
+    },
+    {
+     "text": "Add oyster sauce, soy sauce and sugar. Toss until chicken is 165°F inside."
+    },
+    {
+     "text": "Stir in cashews and green onions. Serve over rice."
+    }
+   ]
+  },
+  {
+   "id": "thai-pad-king-ginger-chicken",
+   "title": "Ginger chicken stir-fry (pad king)",
+   "blurb": "Lots of fresh ginger, mushrooms and onion",
+   "type": "stir-fry",
+   "serves": 4,
+   "prep": 15,
+   "cook": 12,
+   "tags": [
+    "quick",
+    "healthy"
+   ],
+   "ingredients": [
+    {
+     "q": 1.5,
+     "u": "lb",
+     "item": "boneless skinless chicken thighs",
+     "aisle": "meat",
+     "note": "sliced thin"
+    },
+    {
+     "q": 2,
+     "u": "tbsp",
+     "item": "vegetable oil",
+     "aisle": "pantry"
+    },
+    {
+     "q": 3,
+     "u": "inch",
+     "item": "fresh ginger",
+     "aisle": "produce",
+     "note": "cut in thin matchsticks"
+    },
+    {
+     "q": 3,
+     "u": "clove",
+     "item": "garlic",
+     "aisle": "produce",
+     "note": "minced"
+    },
+    {
+     "q": 8,
+     "u": "oz",
+     "item": "cremini mushrooms",
+     "aisle": "produce",
+     "note": "sliced"
+    },
+    {
+     "q": 1,
+     "u": "",
+     "item": "yellow onion",
+     "aisle": "produce",
+     "note": "sliced"
+    },
+    {
+     "q": 3,
+     "u": "tbsp",
+     "item": "oyster sauce",
+     "aisle": "international"
+    },
+    {
+     "q": 2,
+     "u": "tbsp",
+     "item": "soy sauce",
+     "aisle": "international"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "sugar",
+     "aisle": "pantry"
+    },
+    {
+     "q": 3,
+     "u": "",
+     "item": "green onions",
+     "aisle": "produce",
+     "note": "cut in 2-inch pieces"
+    },
+    {
+     "q": 2,
+     "u": "cup",
+     "item": "jasmine rice",
+     "aisle": "international",
+     "note": "to serve"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Heat oil in a wok on high. Sear the chicken until golden, 4 minutes.",
+     "timer": 240,
+     "timerLabel": "Sear chicken"
+    },
+    {
+     "text": "Add ginger and garlic. Stir 30 seconds."
+    },
+    {
+     "text": "Add mushrooms and onion. Cook until softened, 3 minutes.",
+     "timer": 180,
+     "timerLabel": "Cook veggies"
+    },
+    {
+     "text": "Add oyster sauce, soy sauce, sugar and a splash of water. Check chicken is 165°F."
+    },
+    {
+     "text": "Toss in green onions. Serve over rice."
+    }
+   ]
+  },
+  {
+   "id": "thai-pad-pak-ruam",
+   "title": "Pad pak ruam (mixed vegetable tofu stir-fry)",
+   "blurb": "Colorful veggies and tofu in garlic sauce",
+   "type": "stir-fry",
+   "serves": 4,
+   "prep": 20,
+   "cook": 12,
+   "tags": [
+    "vegetarian",
+    "healthy",
+    "quick"
+   ],
+   "ingredients": [
+    {
+     "q": 2,
+     "u": "tbsp",
+     "item": "vegetable oil",
+     "aisle": "pantry"
+    },
+    {
+     "q": 14,
+     "u": "oz",
+     "item": "extra-firm tofu",
+     "aisle": "dairy",
+     "note": "cubed"
+    },
+    {
+     "q": 4,
+     "u": "clove",
+     "item": "garlic",
+     "aisle": "produce",
+     "note": "minced"
+    },
+    {
+     "q": 2,
+     "u": "cup",
+     "item": "broccoli florets",
+     "aisle": "produce"
+    },
+    {
+     "q": 2,
+     "u": "",
+     "item": "carrots",
+     "aisle": "produce",
+     "note": "sliced thin"
+    },
+    {
+     "q": 1,
+     "u": "cup",
+     "item": "snap peas",
+     "aisle": "produce"
+    },
+    {
+     "q": 1,
+     "u": "cup",
+     "item": "baby corn",
+     "aisle": "canned",
+     "note": "drained"
+    },
+    {
+     "q": 2,
+     "u": "tbsp",
+     "item": "soy sauce",
+     "aisle": "international"
+    },
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "vegetarian oyster sauce",
+     "aisle": "international"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "sugar",
+     "aisle": "pantry"
+    },
+    {
+     "q": 0.25,
+     "u": "cup",
+     "item": "water",
+     "aisle": "pantry"
+    },
+    {
+     "q": 2,
+     "u": "cup",
+     "item": "jasmine rice",
+     "aisle": "international",
+     "note": "to serve"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Brown the tofu in oil in a wok on high, 5 minutes. Remove.",
+     "timer": 300,
+     "timerLabel": "Brown tofu"
+    },
+    {
+     "text": "Stir-fry garlic, broccoli and carrots 3 minutes.",
+     "timer": 180,
+     "timerLabel": "Cook veggies"
+    },
+    {
+     "text": "Add snap peas and baby corn. Cook 2 minutes.",
+     "timer": 120,
+     "timerLabel": "Cook veggies"
+    },
+    {
+     "text": "Add soy sauce, oyster sauce, sugar, water and tofu. Toss 1 minute."
+    },
+    {
+     "text": "Serve over jasmine rice."
+    }
+   ]
+  },
+  {
+   "id": "thai-garlic-pepper-pork",
+   "title": "Garlic pepper pork (moo tod gratiem)",
+   "blurb": "Crispy-edged pork with loads of garlic and black pepper",
+   "type": "stir-fry",
+   "serves": 4,
+   "prep": 10,
+   "cook": 10,
+   "tags": [
+    "quick"
+   ],
+   "ingredients": [
+    {
+     "q": 1.25,
+     "u": "lb",
+     "item": "pork tenderloin",
+     "aisle": "meat",
+     "note": "sliced thin"
+    },
+    {
+     "q": 8,
+     "u": "clove",
+     "item": "garlic",
+     "aisle": "produce",
+     "note": "minced"
+    },
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "black pepper",
+     "aisle": "spices",
+     "note": "coarsely ground"
+    },
+    {
+     "q": 2,
+     "u": "tbsp",
+     "item": "vegetable oil",
+     "aisle": "pantry"
+    },
+    {
+     "q": 2,
+     "u": "tbsp",
+     "item": "oyster sauce",
+     "aisle": "international"
+    },
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "soy sauce",
+     "aisle": "international"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "sugar",
+     "aisle": "pantry"
+    },
+    {
+     "q": 1,
+     "u": "",
+     "item": "cucumber",
+     "aisle": "produce",
+     "note": "sliced, to serve"
+    },
+    {
+     "q": 2,
+     "u": "cup",
+     "item": "jasmine rice",
+     "aisle": "international",
+     "note": "to serve"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Toss the pork with half the garlic, the pepper, soy sauce and sugar."
+    },
+    {
+     "text": "Heat oil in a wok on high. Add pork in a single layer."
+    },
+    {
+     "text": "Cook until browned and 145°F inside, 4 minutes.",
+     "timer": 240,
+     "timerLabel": "Cook pork"
+    },
+    {
+     "text": "Add remaining garlic and oyster sauce. Toss 30 seconds."
+    },
+    {
+     "text": "Serve over rice with cucumber."
+    }
+   ]
+  },
+  {
+   "id": "thai-thai-beef-broccoli",
+   "title": "Thai beef and broccoli",
+   "blurb": "Tender sirloin and crisp broccoli in a garlicky sauce",
+   "type": "stir-fry",
+   "serves": 4,
+   "prep": 15,
+   "cook": 10,
+   "tags": [
+    "quick"
+   ],
+   "ingredients": [
+    {
+     "q": 1.25,
+     "u": "lb",
+     "item": "beef sirloin",
+     "aisle": "meat",
+     "note": "sliced thin against the grain"
+    },
+    {
+     "q": 2,
+     "u": "tbsp",
+     "item": "vegetable oil",
+     "aisle": "pantry"
+    },
+    {
+     "q": 4,
+     "u": "clove",
+     "item": "garlic",
+     "aisle": "produce",
+     "note": "minced"
+    },
+    {
+     "q": 4,
+     "u": "cup",
+     "item": "broccoli florets",
+     "aisle": "produce"
+    },
+    {
+     "q": 3,
+     "u": "tbsp",
+     "item": "oyster sauce",
+     "aisle": "international"
+    },
+    {
+     "q": 2,
+     "u": "tbsp",
+     "item": "soy sauce",
+     "aisle": "international"
+    },
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "fish sauce",
+     "aisle": "international"
+    },
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "brown sugar",
+     "aisle": "pantry"
+    },
+    {
+     "q": 0.25,
+     "u": "cup",
+     "item": "water",
+     "aisle": "pantry"
+    },
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "cornstarch",
+     "aisle": "pantry"
+    },
+    {
+     "q": 2,
+     "u": "cup",
+     "item": "jasmine rice",
+     "aisle": "international",
+     "note": "to serve"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Whisk oyster sauce, soy sauce, fish sauce, sugar, water and cornstarch."
+    },
+    {
+     "text": "Sear beef in hot oil in two batches, 2 minutes each. Remove.",
+     "timer": 240,
+     "timerLabel": "Sear beef"
+    },
+    {
+     "text": "Cook broccoli and garlic with a splash of water until bright, 3 minutes.",
+     "timer": 180,
+     "timerLabel": "Steam broccoli"
+    },
+    {
+     "text": "Return the beef. Pour in the sauce and toss until glossy."
+    },
+    {
+     "text": "Serve over jasmine rice."
+    }
+   ]
+  },
+  {
+   "id": "thai-lemongrass-chicken",
+   "title": "Vietnamese lemongrass chicken (ga xao sa ot)",
+   "blurb": "Fragrant lemongrass and chili chicken",
+   "type": "stir-fry",
+   "serves": 4,
+   "prep": 15,
+   "cook": 12,
+   "tags": [
+    "spicy",
+    "quick"
+   ],
+   "ingredients": [
+    {
+     "q": 1.5,
+     "u": "lb",
+     "item": "boneless skinless chicken thighs",
+     "aisle": "meat",
+     "note": "sliced thin"
+    },
+    {
+     "q": 3,
+     "u": "stalk",
+     "item": "lemongrass",
+     "aisle": "produce",
+     "note": "minced"
+    },
+    {
+     "q": 4,
+     "u": "clove",
+     "item": "garlic",
+     "aisle": "produce",
+     "note": "minced"
+    },
+    {
+     "q": 2,
+     "u": "",
+     "item": "Thai chilies",
+     "aisle": "produce",
+     "note": "minced"
+    },
+    {
+     "q": 2,
+     "u": "tbsp",
+     "item": "fish sauce",
+     "aisle": "international"
+    },
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "sugar",
+     "aisle": "pantry"
+    },
+    {
+     "q": 2,
+     "u": "tbsp",
+     "item": "vegetable oil",
+     "aisle": "pantry"
+    },
+    {
+     "q": 1,
+     "u": "",
+     "item": "yellow onion",
+     "aisle": "produce",
+     "note": "sliced"
+    },
+    {
+     "q": 2,
+     "u": "",
+     "item": "green onions",
+     "aisle": "produce",
+     "note": "sliced"
+    },
+    {
+     "q": 2,
+     "u": "cup",
+     "item": "jasmine rice",
+     "aisle": "international",
+     "note": "to serve"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Toss chicken with lemongrass, garlic, chilies, fish sauce and sugar."
+    },
+    {
+     "text": "Marinate at room temperature.",
+     "timer": 900,
+     "timerLabel": "Marinate chicken"
+    },
+    {
+     "text": "Heat oil in a wok on high. Cook onion 2 minutes.",
+     "timer": 120,
+     "timerLabel": "Cook onion"
+    },
+    {
+     "text": "Add the chicken. Cook until browned and 165°F inside.",
+     "timer": 480,
+     "timerLabel": "Cook chicken"
+    },
+    {
+     "text": "Top with green onions. Serve over rice."
+    }
+   ]
+  },
+  {
+   "id": "thai-bo-luc-lac",
+   "title": "Shaking beef (bo luc lac)",
+   "blurb": "Seared beef cubes with garlic butter over greens",
+   "type": "stir-fry",
+   "serves": 4,
+   "prep": 15,
+   "cook": 10,
+   "tags": [
+    "quick"
+   ],
+   "ingredients": [
+    {
+     "q": 1.5,
+     "u": "lb",
+     "item": "beef sirloin",
+     "aisle": "meat",
+     "note": "cut in 1-inch cubes"
+    },
+    {
+     "q": 3,
+     "u": "tbsp",
+     "item": "soy sauce",
+     "aisle": "international"
+    },
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "oyster sauce",
+     "aisle": "international"
+    },
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "sugar",
+     "aisle": "pantry"
+    },
+    {
+     "q": 4,
+     "u": "clove",
+     "item": "garlic",
+     "aisle": "produce",
+     "note": "minced"
+    },
+    {
+     "q": 2,
+     "u": "tbsp",
+     "item": "vegetable oil",
+     "aisle": "pantry"
+    },
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "unsalted butter",
+     "aisle": "dairy"
+    },
+    {
+     "q": 1,
+     "u": "",
+     "item": "red onion",
+     "aisle": "produce",
+     "note": "sliced in rings"
+    },
+    {
+     "q": 4,
+     "u": "cup",
+     "item": "watercress or baby arugula",
+     "aisle": "produce"
+    },
+    {
+     "q": 2,
+     "u": "",
+     "item": "limes",
+     "aisle": "produce",
+     "note": "juiced"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "black pepper",
+     "aisle": "spices"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Marinate beef with soy sauce, oyster sauce, sugar and half the garlic.",
+     "timer": 900,
+     "timerLabel": "Marinate beef"
+    },
+    {
+     "text": "Heat oil in a skillet on very high. Sear beef in two batches."
+    },
+    {
+     "text": "Shake the pan; cook 2 minutes per batch for medium.",
+     "timer": 240,
+     "timerLabel": "Sear beef"
+    },
+    {
+     "text": "Add butter and remaining garlic. Toss 30 seconds."
+    },
+    {
+     "text": "Mix greens, onion, lime juice and pepper. Top with beef."
+    }
+   ]
+  },
+  {
+   "id": "thai-chili-garlic-shrimp",
+   "title": "Thai chili garlic shrimp",
+   "blurb": "Plump shrimp in spicy garlic sauce with green beans",
+   "type": "stir-fry",
+   "serves": 4,
+   "prep": 10,
+   "cook": 10,
+   "tags": [
+    "quick",
+    "spicy"
+   ],
+   "ingredients": [
+    {
+     "q": 1.25,
+     "u": "lb",
+     "item": "large shrimp",
+     "aisle": "seafood",
+     "note": "peeled and deveined"
+    },
+    {
+     "q": 2,
+     "u": "tbsp",
+     "item": "vegetable oil",
+     "aisle": "pantry"
+    },
+    {
+     "q": 5,
+     "u": "clove",
+     "item": "garlic",
+     "aisle": "produce",
+     "note": "minced"
+    },
+    {
+     "q": 8,
+     "u": "oz",
+     "item": "green beans",
+     "aisle": "produce",
+     "note": "trimmed, cut in 2-inch pieces"
+    },
+    {
+     "q": 2,
+     "u": "tbsp",
+     "item": "sambal oelek",
+     "aisle": "international"
+    },
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "fish sauce",
+     "aisle": "international"
+    },
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "soy sauce",
+     "aisle": "international"
+    },
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "brown sugar",
+     "aisle": "pantry"
+    },
+    {
+     "q": 1,
+     "u": "",
+     "item": "limes",
+     "aisle": "produce",
+     "note": "juiced"
+    },
+    {
+     "q": 2,
+     "u": "cup",
+     "item": "jasmine rice",
+     "aisle": "international",
+     "note": "to serve"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Mix sambal, fish sauce, soy sauce, sugar and lime juice."
+    },
+    {
+     "text": "Heat oil in a wok on high. Stir-fry green beans 3 minutes.",
+     "timer": 180,
+     "timerLabel": "Cook beans"
+    },
+    {
+     "text": "Add garlic and shrimp. Cook until pink, 3 minutes.",
+     "timer": 180,
+     "timerLabel": "Cook shrimp"
+    },
+    {
+     "text": "Pour in the sauce and toss 1 minute."
+    },
+    {
+     "text": "Serve over jasmine rice."
+    }
+   ]
+  },
+  {
+   "id": "thai-pho-bo",
+   "title": "Beef pho (pho bo)",
+   "blurb": "Star anise broth, rice noodles and rare beef",
+   "type": "soups",
+   "serves": 6,
+   "prep": 20,
+   "cook": 180,
+   "tags": [
+    "make ahead",
+    "gluten-free"
+   ],
+   "ingredients": [
+    {
+     "q": 3,
+     "u": "lb",
+     "item": "beef marrow or knuckle bones",
+     "aisle": "meat"
+    },
+    {
+     "q": 1,
+     "u": "",
+     "item": "yellow onion",
+     "aisle": "produce",
+     "note": "halved"
+    },
+    {
+     "q": 4,
+     "u": "inch",
+     "item": "fresh ginger",
+     "aisle": "produce",
+     "note": "halved"
+    },
+    {
+     "q": 4,
+     "u": "quart",
+     "item": "water",
+     "aisle": "pantry"
+    },
+    {
+     "q": 3,
+     "u": "",
+     "item": "star anise",
+     "aisle": "spices"
+    },
+    {
+     "q": 4,
+     "u": "",
+     "item": "whole cloves",
+     "aisle": "spices"
+    },
+    {
+     "q": 1,
+     "u": "",
+     "item": "cinnamon stick",
+     "aisle": "spices"
+    },
+    {
+     "q": 3,
+     "u": "tbsp",
+     "item": "fish sauce",
+     "aisle": "international"
+    },
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "sugar",
+     "aisle": "pantry"
+    },
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "salt",
+     "aisle": "spices"
+    },
+    {
+     "q": 14,
+     "u": "oz",
+     "item": "rice noodles",
+     "aisle": "international"
+    },
+    {
+     "q": 1,
+     "u": "lb",
+     "item": "beef sirloin",
+     "aisle": "meat",
+     "note": "sliced paper thin"
+    },
+    {
+     "q": 2,
+     "u": "cup",
+     "item": "bean sprouts",
+     "aisle": "produce"
+    },
+    {
+     "q": 1,
+     "u": "",
+     "item": "limes",
+     "aisle": "produce",
+     "note": "cut in wedges"
+    },
+    {
+     "q": 1,
+     "u": "cup",
+     "item": "fresh basil and cilantro",
+     "aisle": "produce"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Boil the bones 5 minutes, then drain and rinse well.",
+     "timer": 300,
+     "timerLabel": "Parboil bones"
+    },
+    {
+     "text": "Char the onion and ginger under the broiler until blackened."
+    },
+    {
+     "text": "Add bones, onion, ginger, water and spices to a pot. Simmer gently, skimming.",
+     "timer": 9000,
+     "timerLabel": "Simmer broth"
+    },
+    {
+     "text": "Strain the broth. Season with fish sauce, sugar and salt."
+    },
+    {
+     "text": "Cook noodles per package. Divide among bowls.",
+     "timer": 240,
+     "timerLabel": "Cook noodles"
+    },
+    {
+     "text": "Top with raw beef and ladle boiling broth over. Add sprouts, herbs and lime."
+    }
+   ]
+  },
+  {
+   "id": "thai-pho-ga",
+   "title": "Chicken pho (pho ga)",
+   "blurb": "Lighter, quicker pho with a clear ginger broth",
+   "type": "soups",
+   "serves": 6,
+   "prep": 15,
+   "cook": 75,
+   "tags": [
+    "healthy",
+    "gluten-free"
+   ],
+   "ingredients": [
+    {
+     "q": 3.5,
+     "u": "lb",
+     "item": "whole chicken",
+     "aisle": "meat",
+     "note": "or bone-in thighs"
+    },
+    {
+     "q": 1,
+     "u": "",
+     "item": "yellow onion",
+     "aisle": "produce",
+     "note": "halved"
+    },
+    {
+     "q": 3,
+     "u": "inch",
+     "item": "fresh ginger",
+     "aisle": "produce",
+     "note": "halved"
+    },
+    {
+     "q": 3,
+     "u": "quart",
+     "item": "water",
+     "aisle": "pantry"
+    },
+    {
+     "q": 2,
+     "u": "",
+     "item": "star anise",
+     "aisle": "spices"
+    },
+    {
+     "q": 1,
+     "u": "",
+     "item": "cinnamon stick",
+     "aisle": "spices"
+    },
+    {
+     "q": 3,
+     "u": "tbsp",
+     "item": "fish sauce",
+     "aisle": "international"
+    },
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "sugar",
+     "aisle": "pantry"
+    },
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "salt",
+     "aisle": "spices"
+    },
+    {
+     "q": 14,
+     "u": "oz",
+     "item": "rice noodles",
+     "aisle": "international"
+    },
+    {
+     "q": 2,
+     "u": "cup",
+     "item": "bean sprouts",
+     "aisle": "produce"
+    },
+    {
+     "q": 3,
+     "u": "",
+     "item": "green onions",
+     "aisle": "produce",
+     "note": "sliced"
+    },
+    {
+     "q": 1,
+     "u": "",
+     "item": "limes",
+     "aisle": "produce",
+     "note": "cut in wedges"
+    },
+    {
+     "q": 1,
+     "u": "cup",
+     "item": "fresh cilantro",
+     "aisle": "produce"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Char the onion and ginger under the broiler until blackened."
+    },
+    {
+     "text": "Add chicken, onion, ginger, water and spices to a pot. Bring to a boil, then lower to a simmer."
+    },
+    {
+     "text": "Simmer until the chicken reaches 165°F, skimming foam.",
+     "timer": 3000,
+     "timerLabel": "Simmer chicken"
+    },
+    {
+     "text": "Remove chicken and shred the meat. Strain the broth and season with fish sauce, sugar, salt."
+    },
+    {
+     "text": "Cook noodles per package and divide among bowls.",
+     "timer": 240,
+     "timerLabel": "Cook noodles"
+    },
+    {
+     "text": "Add chicken, ladle hot broth over. Top with sprouts, green onions, cilantro, lime."
+    }
+   ]
+  },
+  {
+   "id": "thai-vegetarian-pho",
+   "title": "Vegetarian pho",
+   "blurb": "Mushroom and spice broth with tofu and rice noodles",
+   "type": "soups",
+   "serves": 4,
+   "prep": 15,
+   "cook": 60,
+   "tags": [
+    "vegetarian",
+    "vegan",
+    "healthy"
+   ],
+   "ingredients": [
+    {
+     "q": 1,
+     "u": "",
+     "item": "yellow onion",
+     "aisle": "produce",
+     "note": "halved"
+    },
+    {
+     "q": 3,
+     "u": "inch",
+     "item": "fresh ginger",
+     "aisle": "produce",
+     "note": "halved"
+    },
+    {
+     "q": 6,
+     "u": "cup",
+     "item": "vegetable broth",
+     "aisle": "canned"
+    },
+    {
+     "q": 2,
+     "u": "cup",
+     "item": "water",
+     "aisle": "pantry"
+    },
+    {
+     "q": 8,
+     "u": "oz",
+     "item": "shiitake mushrooms",
+     "aisle": "produce",
+     "note": "sliced"
+    },
+    {
+     "q": 2,
+     "u": "",
+     "item": "star anise",
+     "aisle": "spices"
+    },
+    {
+     "q": 1,
+     "u": "",
+     "item": "cinnamon stick",
+     "aisle": "spices"
+    },
+    {
+     "q": 3,
+     "u": "tbsp",
+     "item": "soy sauce",
+     "aisle": "international"
+    },
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "sugar",
+     "aisle": "pantry"
+    },
+    {
+     "q": 8,
+     "u": "oz",
+     "item": "rice noodles",
+     "aisle": "international"
+    },
+    {
+     "q": 14,
+     "u": "oz",
+     "item": "extra-firm tofu",
+     "aisle": "dairy",
+     "note": "cubed"
+    },
+    {
+     "q": 2,
+     "u": "cup",
+     "item": "bean sprouts",
+     "aisle": "produce"
+    },
+    {
+     "q": 1,
+     "u": "",
+     "item": "limes",
+     "aisle": "produce",
+     "note": "cut in wedges"
+    },
+    {
+     "q": 1,
+     "u": "cup",
+     "item": "fresh basil",
+     "aisle": "produce"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Char the onion and ginger under the broiler until blackened."
+    },
+    {
+     "text": "Simmer onion, ginger, broth, water, mushrooms, star anise and cinnamon.",
+     "timer": 2700,
+     "timerLabel": "Simmer broth"
+    },
+    {
+     "text": "Strain. Season with soy sauce and sugar; keep hot."
+    },
+    {
+     "text": "Cook noodles per package and divide among bowls.",
+     "timer": 240,
+     "timerLabel": "Cook noodles"
+    },
+    {
+     "text": "Add tofu, ladle broth over, and top with sprouts, basil and lime."
+    }
+   ]
+  },
+  {
+   "id": "thai-tom-yum-goong",
+   "title": "Tom yum goong (hot and sour shrimp soup)",
+   "blurb": "Lemongrass, galangal and lime in a bright, spicy broth",
+   "type": "soups",
+   "serves": 4,
+   "prep": 15,
+   "cook": 20,
+   "tags": [
+    "spicy",
+    "healthy",
+    "gluten-free"
+   ],
+   "ingredients": [
+    {
+     "q": 6,
+     "u": "cup",
+     "item": "chicken broth",
+     "aisle": "canned"
+    },
+    {
+     "q": 3,
+     "u": "stalk",
+     "item": "lemongrass",
+     "aisle": "produce",
+     "note": "bruised, cut in 2-inch pieces"
+    },
+    {
+     "q": 1,
+     "u": "inch",
+     "item": "galangal",
+     "aisle": "international",
+     "note": "sliced, or ginger"
+    },
+    {
+     "q": 5,
+     "u": "",
+     "item": "kaffir lime leaves",
+     "aisle": "international",
+     "note": "torn"
+    },
+    {
+     "q": 8,
+     "u": "oz",
+     "item": "button mushrooms",
+     "aisle": "produce",
+     "note": "halved"
+    },
+    {
+     "q": 1,
+     "u": "lb",
+     "item": "large shrimp",
+     "aisle": "seafood",
+     "note": "peeled and deveined"
+    },
+    {
+     "q": 3,
+     "u": "tbsp",
+     "item": "fish sauce",
+     "aisle": "international"
+    },
+    {
+     "q": 3,
+     "u": "",
+     "item": "limes",
+     "aisle": "produce",
+     "note": "juiced"
+    },
+    {
+     "q": 2,
+     "u": "",
+     "item": "Thai chilies",
+     "aisle": "produce",
+     "note": "crushed"
+    },
+    {
+     "q": 2,
+     "u": "tbsp",
+     "item": "chili paste in oil",
+     "aisle": "international"
+    },
+    {
+     "q": 0.25,
+     "u": "cup",
+     "item": "fresh cilantro",
+     "aisle": "produce"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Bring broth, lemongrass, galangal and lime leaves to a boil."
+    },
+    {
+     "text": "Simmer to infuse.",
+     "timer": 600,
+     "timerLabel": "Infuse broth"
+    },
+    {
+     "text": "Add mushrooms and chili paste. Cook 3 minutes.",
+     "timer": 180,
+     "timerLabel": "Cook mushrooms"
+    },
+    {
+     "text": "Add shrimp and cook until pink, 3 minutes.",
+     "timer": 180,
+     "timerLabel": "Cook shrimp"
+    },
+    {
+     "text": "Off the heat, stir in fish sauce, lime juice and chilies."
+    },
+    {
+     "text": "Top with cilantro. Do not eat the lemongrass pieces."
+    }
+   ]
+  },
+  {
+   "id": "thai-tom-kha-gai",
+   "title": "Tom kha gai (coconut chicken soup)",
+   "blurb": "Creamy, tangy coconut soup with mushrooms",
+   "type": "soups",
+   "serves": 4,
+   "prep": 15,
+   "cook": 25,
+   "tags": [
+    "gluten-free",
+    "one pot"
+   ],
+   "ingredients": [
+    {
+     "q": 3,
+     "u": "cup",
+     "item": "chicken broth",
+     "aisle": "canned"
+    },
+    {
+     "q": 2,
+     "u": "can",
+     "item": "coconut milk (13.5 oz)",
+     "aisle": "canned"
+    },
+    {
+     "q": 3,
+     "u": "stalk",
+     "item": "lemongrass",
+     "aisle": "produce",
+     "note": "bruised, cut in 2-inch pieces"
+    },
+    {
+     "q": 1,
+     "u": "inch",
+     "item": "galangal",
+     "aisle": "international",
+     "note": "sliced, or ginger"
+    },
+    {
+     "q": 1,
+     "u": "lb",
+     "item": "boneless skinless chicken thighs",
+     "aisle": "meat",
+     "note": "sliced thin"
+    },
+    {
+     "q": 8,
+     "u": "oz",
+     "item": "button mushrooms",
+     "aisle": "produce",
+     "note": "sliced"
+    },
+    {
+     "q": 2,
+     "u": "tbsp",
+     "item": "fish sauce",
+     "aisle": "international"
+    },
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "sugar",
+     "aisle": "pantry"
+    },
+    {
+     "q": 2,
+     "u": "",
+     "item": "limes",
+     "aisle": "produce",
+     "note": "juiced"
+    },
+    {
+     "q": 2,
+     "u": "",
+     "item": "Thai chilies",
+     "aisle": "produce",
+     "note": "sliced"
+    },
+    {
+     "q": 0.25,
+     "u": "cup",
+     "item": "fresh cilantro",
+     "aisle": "produce"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Simmer broth, coconut milk, lemongrass and galangal.",
+     "timer": 600,
+     "timerLabel": "Infuse broth"
+    },
+    {
+     "text": "Add chicken and mushrooms. Simmer until chicken is 165°F inside.",
+     "timer": 720,
+     "timerLabel": "Simmer chicken"
+    },
+    {
+     "text": "Stir in fish sauce and sugar."
+    },
+    {
+     "text": "Off the heat, add lime juice and chilies."
+    },
+    {
+     "text": "Top with cilantro. Do not eat the lemongrass pieces."
+    }
+   ]
+  },
+  {
+   "id": "thai-khao-tom",
+   "title": "Khao tom (Thai chicken rice soup)",
+   "blurb": "Cozy ginger rice porridge with chicken",
+   "type": "soups",
+   "serves": 4,
+   "prep": 10,
+   "cook": 35,
+   "tags": [
+    "kid-friendly",
+    "one pot",
+    "healthy"
+   ],
+   "ingredients": [
+    {
+     "q": 6,
+     "u": "cup",
+     "item": "chicken broth",
+     "aisle": "canned"
+    },
+    {
+     "q": 1,
+     "u": "cup",
+     "item": "cooked jasmine rice",
+     "aisle": "international",
+     "note": "or 0.5 cup uncooked"
+    },
+    {
+     "q": 3,
+     "u": "inch",
+     "item": "fresh ginger",
+     "aisle": "produce",
+     "note": "sliced"
+    },
+    {
+     "q": 1,
+     "u": "lb",
+     "item": "boneless skinless chicken thighs",
+     "aisle": "meat",
+     "note": "cut in bite-size pieces"
+    },
+    {
+     "q": 2,
+     "u": "tbsp",
+     "item": "fish sauce",
+     "aisle": "international"
+    },
+    {
+     "q": 3,
+     "u": "clove",
+     "item": "garlic",
+     "aisle": "produce",
+     "note": "sliced"
+    },
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "vegetable oil",
+     "aisle": "pantry"
+    },
+    {
+     "q": 3,
+     "u": "",
+     "item": "green onions",
+     "aisle": "produce",
+     "note": "sliced"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "white pepper",
+     "aisle": "spices"
+    },
+    {
+     "q": 1,
+     "u": "cup",
+     "item": "fresh cilantro",
+     "aisle": "produce"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Fry garlic in oil until golden, 2 minutes. Set aside for topping.",
+     "timer": 120,
+     "timerLabel": "Fry garlic"
+    },
+    {
+     "text": "Simmer broth, rice and ginger until the rice is very soft.",
+     "timer": 1200,
+     "timerLabel": "Simmer rice"
+    },
+    {
+     "text": "Add chicken and simmer until 165°F inside.",
+     "timer": 600,
+     "timerLabel": "Simmer chicken"
+    },
+    {
+     "text": "Stir in fish sauce and white pepper."
+    },
+    {
+     "text": "Top with fried garlic, green onions and cilantro."
+    }
+   ]
+  },
+  {
+   "id": "thai-canh-chua-shrimp",
+   "title": "Canh chua (Vietnamese sour shrimp soup)",
+   "blurb": "Tangy tamarind soup with tomato and pineapple",
+   "type": "soups",
+   "serves": 4,
+   "prep": 15,
+   "cook": 20,
+   "tags": [
+    "healthy",
+    "quick"
+   ],
+   "ingredients": [
+    {
+     "q": 6,
+     "u": "cup",
+     "item": "chicken broth",
+     "aisle": "canned"
+    },
+    {
+     "q": 3,
+     "u": "tbsp",
+     "item": "tamarind paste",
+     "aisle": "international"
+    },
+    {
+     "q": 1,
+     "u": "can",
+     "item": "pineapple chunks (8 oz)",
+     "aisle": "canned",
+     "note": "with juice"
+    },
+    {
+     "q": 3,
+     "u": "",
+     "item": "tomatoes",
+     "aisle": "produce",
+     "note": "cut in wedges"
+    },
+    {
+     "q": 1,
+     "u": "lb",
+     "item": "large shrimp",
+     "aisle": "seafood",
+     "note": "peeled and deveined"
+    },
+    {
+     "q": 2,
+     "u": "stalk",
+     "item": "celery",
+     "aisle": "produce",
+     "note": "sliced on the diagonal"
+    },
+    {
+     "q": 2,
+     "u": "cup",
+     "item": "bean sprouts",
+     "aisle": "produce"
+    },
+    {
+     "q": 3,
+     "u": "tbsp",
+     "item": "fish sauce",
+     "aisle": "international"
+    },
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "sugar",
+     "aisle": "pantry"
+    },
+    {
+     "q": 0.5,
+     "u": "cup",
+     "item": "fresh cilantro",
+     "aisle": "produce",
+     "note": "chopped"
+    },
+    {
+     "q": 2,
+     "u": "clove",
+     "item": "garlic",
+     "aisle": "produce",
+     "note": "minced"
+    },
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "vegetable oil",
+     "aisle": "pantry"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Fry the garlic in oil 30 seconds in a pot."
+    },
+    {
+     "text": "Add broth, tamarind and pineapple with juice. Bring to a boil."
+    },
+    {
+     "text": "Add tomatoes and celery. Simmer 5 minutes.",
+     "timer": 300,
+     "timerLabel": "Simmer"
+    },
+    {
+     "text": "Add shrimp and cook until pink, 3 minutes.",
+     "timer": 180,
+     "timerLabel": "Cook shrimp"
+    },
+    {
+     "text": "Stir in fish sauce, sugar, sprouts and cilantro. Taste and adjust."
+    }
+   ]
+  },
+  {
+   "id": "thai-bo-kho",
+   "title": "Bo kho (Vietnamese beef stew)",
+   "blurb": "Lemongrass and star anise beef stew with carrots",
+   "type": "soups",
+   "serves": 6,
+   "prep": 20,
+   "cook": 150,
+   "tags": [
+    "make ahead",
+    "one pot"
+   ],
+   "ingredients": [
+    {
+     "q": 2.5,
+     "u": "lb",
+     "item": "beef chuck roast",
+     "aisle": "meat",
+     "note": "cut in 2-inch cubes"
+    },
+    {
+     "q": 2,
+     "u": "tbsp",
+     "item": "vegetable oil",
+     "aisle": "pantry"
+    },
+    {
+     "q": 1,
+     "u": "",
+     "item": "yellow onion",
+     "aisle": "produce",
+     "note": "diced"
+    },
+    {
+     "q": 4,
+     "u": "clove",
+     "item": "garlic",
+     "aisle": "produce",
+     "note": "minced"
+    },
+    {
+     "q": 2,
+     "u": "stalk",
+     "item": "lemongrass",
+     "aisle": "produce",
+     "note": "bruised, cut in 3-inch pieces"
+    },
+    {
+     "q": 2,
+     "u": "",
+     "item": "star anise",
+     "aisle": "spices"
+    },
+    {
+     "q": 2,
+     "u": "tbsp",
+     "item": "tomato paste",
+     "aisle": "canned"
+    },
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "curry powder",
+     "aisle": "spices"
+    },
+    {
+     "q": 3,
+     "u": "cup",
+     "item": "beef broth",
+     "aisle": "canned"
+    },
+    {
+     "q": 2,
+     "u": "tbsp",
+     "item": "fish sauce",
+     "aisle": "international"
+    },
+    {
+     "q": 1,
+     "u": "lb",
+     "item": "carrots",
+     "aisle": "produce",
+     "note": "cut in chunks"
+    },
+    {
+     "q": 1,
+     "u": "",
+     "item": "baguette",
+     "aisle": "bakery",
+     "note": "to serve"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Brown the beef in oil in a Dutch oven, in batches. Set aside."
+    },
+    {
+     "text": "Cook onion, garlic and lemongrass 3 minutes. Add tomato paste, curry powder and star anise.",
+     "timer": 180,
+     "timerLabel": "Cook aromatics"
+    },
+    {
+     "text": "Return the beef. Add broth and fish sauce. Bring to a simmer."
+    },
+    {
+     "text": "Cover and simmer on low until the beef is nearly tender.",
+     "timer": 5400,
+     "timerLabel": "Simmer beef"
+    },
+    {
+     "text": "Add carrots. Cook until tender and the sauce thickens.",
+     "timer": 2400,
+     "timerLabel": "Cook carrots"
+    },
+    {
+     "text": "Serve with baguette or over rice noodles."
+    }
+   ]
+  },
+  {
+   "id": "thai-gaeng-jued-tofu",
+   "title": "Thai tofu and glass noodle soup (gaeng jued)",
+   "blurb": "Clear garlicky broth, soft tofu and greens",
+   "type": "soups",
+   "serves": 4,
+   "prep": 15,
+   "cook": 20,
+   "tags": [
+    "vegetarian",
+    "healthy",
+    "quick"
+   ],
+   "ingredients": [
+    {
+     "q": 6,
+     "u": "cup",
+     "item": "vegetable broth",
+     "aisle": "canned"
+    },
+    {
+     "q": 4,
+     "u": "clove",
+     "item": "garlic",
+     "aisle": "produce",
+     "note": "minced"
+    },
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "vegetable oil",
+     "aisle": "pantry"
+    },
+    {
+     "q": 3,
+     "u": "oz",
+     "item": "glass noodles",
+     "aisle": "international"
+    },
+    {
+     "q": 14,
+     "u": "oz",
+     "item": "soft tofu",
+     "aisle": "dairy",
+     "note": "cubed"
+    },
+    {
+     "q": 2,
+     "u": "",
+     "item": "carrots",
+     "aisle": "produce",
+     "note": "sliced thin"
+    },
+    {
+     "q": 4,
+     "u": "cup",
+     "item": "napa cabbage",
+     "aisle": "produce",
+     "note": "chopped"
+    },
+    {
+     "q": 2,
+     "u": "tbsp",
+     "item": "soy sauce",
+     "aisle": "international"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "white pepper",
+     "aisle": "spices"
+    },
+    {
+     "q": 3,
+     "u": "",
+     "item": "green onions",
+     "aisle": "produce",
+     "note": "sliced"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Soak the glass noodles in hot water until soft, then drain and cut.",
+     "timer": 600,
+     "timerLabel": "Soak noodles"
+    },
+    {
+     "text": "Fry garlic in oil in a pot until golden, 1 minute."
+    },
+    {
+     "text": "Add broth and carrots. Simmer until carrots soften.",
+     "timer": 480,
+     "timerLabel": "Simmer carrots"
+    },
+    {
+     "text": "Add cabbage, tofu and noodles. Simmer 3 minutes.",
+     "timer": 180,
+     "timerLabel": "Simmer"
+    },
+    {
+     "text": "Season with soy sauce and pepper. Top with green onions."
+    }
+   ]
+  },
+  {
+   "id": "thai-shrimp-summer-rolls",
+   "title": "Shrimp summer rolls (goi cuon)",
+   "blurb": "Fresh rice paper rolls with shrimp, herbs and peanut dip",
+   "type": "salads",
+   "serves": 4,
+   "prep": 30,
+   "cook": 10,
+   "tags": [
+    "healthy",
+    "gluten-free",
+    "kid-friendly"
+   ],
+   "ingredients": [
+    {
+     "q": 12,
+     "u": "",
+     "item": "rice paper wrappers",
+     "aisle": "international"
+    },
+    {
+     "q": 24,
+     "u": "",
+     "item": "medium shrimp",
+     "aisle": "seafood",
+     "note": "peeled, deveined"
+    },
+    {
+     "q": 4,
+     "u": "oz",
+     "item": "rice vermicelli",
+     "aisle": "international"
+    },
+    {
+     "q": 1,
+     "u": "head",
+     "item": "butter lettuce",
+     "aisle": "produce",
+     "note": "leaves separated"
+    },
+    {
+     "q": 1,
+     "u": "",
+     "item": "cucumber",
+     "aisle": "produce",
+     "note": "julienned"
+    },
+    {
+     "q": 2,
+     "u": "",
+     "item": "carrots",
+     "aisle": "produce",
+     "note": "julienned"
+    },
+    {
+     "q": 0.5,
+     "u": "cup",
+     "item": "fresh mint",
+     "aisle": "produce"
+    },
+    {
+     "q": 0.5,
+     "u": "cup",
+     "item": "fresh cilantro",
+     "aisle": "produce"
+    },
+    {
+     "q": 0.33,
+     "u": "cup",
+     "item": "hoisin sauce",
+     "aisle": "international",
+     "note": "for dip"
+    },
+    {
+     "q": 2,
+     "u": "tbsp",
+     "item": "creamy peanut butter",
+     "aisle": "pantry",
+     "note": "for dip"
+    },
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "water",
+     "aisle": "pantry",
+     "note": "for dip"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Boil the shrimp until pink, then cool and halve lengthwise.",
+     "timer": 180,
+     "timerLabel": "Boil shrimp"
+    },
+    {
+     "text": "Cook the vermicelli per package. Rinse cold and drain.",
+     "timer": 300,
+     "timerLabel": "Boil vermicelli"
+    },
+    {
+     "text": "Whisk hoisin, peanut butter and water for the dip."
+    },
+    {
+     "text": "Dip one wrapper in warm water for 10 seconds until barely soft."
+    },
+    {
+     "text": "Layer lettuce, noodles, veggies, herbs and 4 shrimp halves. Fold in sides and roll tight."
+    },
+    {
+     "text": "Repeat with remaining wrappers. Serve with dip."
+    }
+   ]
+  },
+  {
+   "id": "thai-tofu-summer-rolls",
+   "title": "Tofu summer rolls",
+   "blurb": "Crisp tofu and veggie rolls with sweet chili dip",
+   "type": "salads",
+   "serves": 4,
+   "prep": 30,
+   "cook": 10,
+   "tags": [
+    "vegan",
+    "vegetarian",
+    "healthy"
+   ],
+   "ingredients": [
+    {
+     "q": 12,
+     "u": "",
+     "item": "rice paper wrappers",
+     "aisle": "international"
+    },
+    {
+     "q": 14,
+     "u": "oz",
+     "item": "extra-firm tofu",
+     "aisle": "dairy",
+     "note": "cut in sticks"
+    },
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "soy sauce",
+     "aisle": "international"
+    },
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "vegetable oil",
+     "aisle": "pantry"
+    },
+    {
+     "q": 4,
+     "u": "oz",
+     "item": "rice vermicelli",
+     "aisle": "international"
+    },
+    {
+     "q": 1,
+     "u": "",
+     "item": "cucumber",
+     "aisle": "produce",
+     "note": "julienned"
+    },
+    {
+     "q": 2,
+     "u": "",
+     "item": "carrots",
+     "aisle": "produce",
+     "note": "julienned"
+    },
+    {
+     "q": 1,
+     "u": "head",
+     "item": "butter lettuce",
+     "aisle": "produce",
+     "note": "leaves separated"
+    },
+    {
+     "q": 0.5,
+     "u": "cup",
+     "item": "fresh mint",
+     "aisle": "produce"
+    },
+    {
+     "q": 0.5,
+     "u": "cup",
+     "item": "fresh basil",
+     "aisle": "produce"
+    },
+    {
+     "q": 0.5,
+     "u": "cup",
+     "item": "sweet chili sauce",
+     "aisle": "international",
+     "note": "for dip"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Toss tofu sticks with soy sauce. Pan-fry in oil until golden on all sides.",
+     "timer": 420,
+     "timerLabel": "Brown tofu"
+    },
+    {
+     "text": "Cook the vermicelli per package. Rinse cold and drain.",
+     "timer": 300,
+     "timerLabel": "Boil vermicelli"
+    },
+    {
+     "text": "Dip one wrapper in warm water for 10 seconds until barely soft."
+    },
+    {
+     "text": "Layer lettuce, noodles, tofu, veggies and herbs. Fold in sides and roll tight."
+    },
+    {
+     "text": "Repeat with the rest. Serve with sweet chili sauce."
+    }
+   ]
+  },
+  {
+   "id": "thai-cha-gio",
+   "title": "Vietnamese fried spring rolls (cha gio)",
+   "blurb": "Crispy rolls of pork, shrimp and glass noodles",
+   "type": "salads",
+   "serves": 6,
+   "prep": 40,
+   "cook": 20,
+   "tags": [
+    "make ahead",
+    "crowd"
+   ],
+   "ingredients": [
+    {
+     "q": 1,
+     "u": "lb",
+     "item": "ground pork",
+     "aisle": "meat"
+    },
+    {
+     "q": 0.5,
+     "u": "lb",
+     "item": "shrimp",
+     "aisle": "seafood",
+     "note": "peeled, deveined, minced"
+    },
+    {
+     "q": 2,
+     "u": "oz",
+     "item": "glass noodles",
+     "aisle": "international",
+     "note": "soaked, chopped"
+    },
+    {
+     "q": 1,
+     "u": "",
+     "item": "carrot",
+     "aisle": "produce",
+     "note": "grated"
+    },
+    {
+     "q": 3,
+     "u": "",
+     "item": "green onions",
+     "aisle": "produce",
+     "note": "minced"
+    },
+    {
+     "q": 3,
+     "u": "clove",
+     "item": "garlic",
+     "aisle": "produce",
+     "note": "minced"
+    },
+    {
+     "q": 2,
+     "u": "tbsp",
+     "item": "fish sauce",
+     "aisle": "international"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "black pepper",
+     "aisle": "spices"
+    },
+    {
+     "q": 1,
+     "u": "",
+     "item": "large eggs",
+     "aisle": "dairy"
+    },
+    {
+     "q": 20,
+     "u": "",
+     "item": "rice paper wrappers",
+     "aisle": "international"
+    },
+    {
+     "q": 3,
+     "u": "cup",
+     "item": "vegetable oil",
+     "aisle": "pantry",
+     "note": "for frying"
+    },
+    {
+     "q": 1,
+     "u": "head",
+     "item": "butter lettuce",
+     "aisle": "produce",
+     "note": "to serve"
+    },
+    {
+     "q": 1,
+     "u": "cup",
+     "item": "fresh mint",
+     "aisle": "produce",
+     "note": "to serve"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Mix pork, shrimp, noodles, carrot, green onions, garlic, fish sauce, pepper and egg."
+    },
+    {
+     "text": "Dip a wrapper in warm water and lay flat. Add 2 tbsp filling."
+    },
+    {
+     "text": "Fold in the sides and roll tightly. Repeat with the rest."
+    },
+    {
+     "text": "Heat oil to 350°F in a deep skillet."
+    },
+    {
+     "text": "Fry rolls in batches until golden and pork reaches 160°F, about 6 minutes.",
+     "timer": 360,
+     "timerLabel": "Fry rolls"
+    },
+    {
+     "text": "Drain on a rack. Wrap in lettuce with mint and dip in fish sauce."
+    }
+   ]
+  },
+  {
+   "id": "thai-som-tam",
+   "title": "Green papaya salad (som tam)",
+   "blurb": "Crunchy, spicy, sour and sweet pounded salad",
+   "type": "salads",
+   "serves": 4,
+   "prep": 20,
+   "cook": 0,
+   "tags": [
+    "vegan",
+    "healthy",
+    "spicy",
+    "quick"
+   ],
+   "ingredients": [
+    {
+     "q": 4,
+     "u": "cup",
+     "item": "shredded green papaya",
+     "aisle": "produce",
+     "note": "or shredded carrots and cabbage"
+    },
+    {
+     "q": 3,
+     "u": "clove",
+     "item": "garlic",
+     "aisle": "produce"
+    },
+    {
+     "q": 3,
+     "u": "",
+     "item": "Thai chilies",
+     "aisle": "produce"
+    },
+    {
+     "q": 3,
+     "u": "tbsp",
+     "item": "lime juice",
+     "aisle": "produce"
+    },
+    {
+     "q": 2,
+     "u": "tbsp",
+     "item": "fish sauce",
+     "aisle": "international"
+    },
+    {
+     "q": 2,
+     "u": "tbsp",
+     "item": "palm sugar",
+     "aisle": "international",
+     "note": "or brown sugar"
+    },
+    {
+     "q": 1,
+     "u": "cup",
+     "item": "cherry tomatoes",
+     "aisle": "produce",
+     "note": "halved"
+    },
+    {
+     "q": 0.5,
+     "u": "cup",
+     "item": "green beans",
+     "aisle": "produce",
+     "note": "cut in 1-inch pieces"
+    },
+    {
+     "q": 0.25,
+     "u": "cup",
+     "item": "roasted peanuts",
+     "aisle": "pantry"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Pound the garlic and chilies in a mortar, or mince them finely."
+    },
+    {
+     "text": "Mix in lime juice, fish sauce and sugar until the sugar dissolves."
+    },
+    {
+     "text": "Add green beans and bruise lightly with a spoon."
+    },
+    {
+     "text": "Toss in papaya and tomatoes. Taste for sweet, sour and heat."
+    },
+    {
+     "text": "Top with peanuts and serve right away."
+    }
+   ]
+  },
+  {
+   "id": "thai-larb-gai",
+   "title": "Larb gai (chicken salad with mint)",
+   "blurb": "Zesty minced chicken with toasted rice powder",
+   "type": "salads",
+   "serves": 4,
+   "prep": 15,
+   "cook": 10,
+   "tags": [
+    "quick",
+    "spicy",
+    "gluten-free"
+   ],
+   "ingredients": [
+    {
+     "q": 1.25,
+     "u": "lb",
+     "item": "ground chicken",
+     "aisle": "meat"
+    },
+    {
+     "q": 2,
+     "u": "tbsp",
+     "item": "uncooked jasmine rice",
+     "aisle": "international",
+     "note": "for toasting"
+    },
+    {
+     "q": 3,
+     "u": "tbsp",
+     "item": "lime juice",
+     "aisle": "produce"
+    },
+    {
+     "q": 2,
+     "u": "tbsp",
+     "item": "fish sauce",
+     "aisle": "international"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "sugar",
+     "aisle": "pantry"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "red pepper flakes",
+     "aisle": "spices"
+    },
+    {
+     "q": 3,
+     "u": "",
+     "item": "shallots",
+     "aisle": "produce",
+     "note": "sliced thin"
+    },
+    {
+     "q": 3,
+     "u": "",
+     "item": "green onions",
+     "aisle": "produce",
+     "note": "sliced"
+    },
+    {
+     "q": 0.5,
+     "u": "cup",
+     "item": "fresh mint",
+     "aisle": "produce"
+    },
+    {
+     "q": 0.5,
+     "u": "cup",
+     "item": "fresh cilantro",
+     "aisle": "produce"
+    },
+    {
+     "q": 1,
+     "u": "head",
+     "item": "butter lettuce",
+     "aisle": "produce",
+     "note": "leaves, to serve"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Toast the rice in a dry skillet until deep golden, then grind to a coarse powder.",
+     "timer": 240,
+     "timerLabel": "Toast rice"
+    },
+    {
+     "text": "Cook the chicken in a splash of water until 165°F, breaking it up.",
+     "timer": 360,
+     "timerLabel": "Cook chicken"
+    },
+    {
+     "text": "Take off the heat. Stir in lime juice, fish sauce, sugar and pepper flakes."
+    },
+    {
+     "text": "Mix in shallots, green onions, herbs and rice powder."
+    },
+    {
+     "text": "Spoon into lettuce cups."
+    }
+   ]
+  },
+  {
+   "id": "thai-yum-nuea",
+   "title": "Thai grilled beef salad (yum nuea)",
+   "blurb": "Seared steak with cucumber, tomato and a lime-chili dressing",
+   "type": "salads",
+   "serves": 4,
+   "prep": 20,
+   "cook": 10,
+   "tags": [
+    "grill",
+    "gluten-free",
+    "healthy"
+   ],
+   "ingredients": [
+    {
+     "q": 1.25,
+     "u": "lb",
+     "item": "flank steak",
+     "aisle": "meat"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "black pepper",
+     "aisle": "spices"
+    },
+    {
+     "q": 3,
+     "u": "tbsp",
+     "item": "lime juice",
+     "aisle": "produce"
+    },
+    {
+     "q": 2,
+     "u": "tbsp",
+     "item": "fish sauce",
+     "aisle": "international"
+    },
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "brown sugar",
+     "aisle": "pantry"
+    },
+    {
+     "q": 2,
+     "u": "",
+     "item": "Thai chilies",
+     "aisle": "produce",
+     "note": "sliced"
+    },
+    {
+     "q": 2,
+     "u": "clove",
+     "item": "garlic",
+     "aisle": "produce",
+     "note": "minced"
+    },
+    {
+     "q": 1,
+     "u": "",
+     "item": "cucumber",
+     "aisle": "produce",
+     "note": "sliced"
+    },
+    {
+     "q": 1,
+     "u": "cup",
+     "item": "cherry tomatoes",
+     "aisle": "produce",
+     "note": "halved"
+    },
+    {
+     "q": 0.5,
+     "u": "",
+     "item": "red onion",
+     "aisle": "produce",
+     "note": "sliced thin"
+    },
+    {
+     "q": 0.5,
+     "u": "cup",
+     "item": "fresh mint",
+     "aisle": "produce"
+    },
+    {
+     "q": 4,
+     "u": "cup",
+     "item": "romaine lettuce",
+     "aisle": "produce",
+     "note": "chopped"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Season steak with pepper. Grill or sear on high for 4 minutes per side for medium (135°F).",
+     "timer": 480,
+     "timerLabel": "Cook steak"
+    },
+    {
+     "text": "Rest the steak before slicing.",
+     "timer": 420,
+     "timerLabel": "Rest steak"
+    },
+    {
+     "text": "Whisk lime juice, fish sauce, sugar, chilies and garlic."
+    },
+    {
+     "text": "Slice the steak thin against the grain."
+    },
+    {
+     "text": "Toss with cucumber, tomatoes, onion, mint, lettuce and dressing."
+    }
+   ]
+  },
+  {
+   "id": "thai-yum-woon-sen",
+   "title": "Glass noodle salad with shrimp (yum woon sen)",
+   "blurb": "Slippery noodles, shrimp and pork in a spicy lime dressing",
+   "type": "salads",
+   "serves": 4,
+   "prep": 20,
+   "cook": 10,
+   "tags": [
+    "spicy",
+    "quick"
+   ],
+   "ingredients": [
+    {
+     "q": 4,
+     "u": "oz",
+     "item": "glass noodles",
+     "aisle": "international"
+    },
+    {
+     "q": 0.5,
+     "u": "lb",
+     "item": "ground pork",
+     "aisle": "meat"
+    },
+    {
+     "q": 0.5,
+     "u": "lb",
+     "item": "medium shrimp",
+     "aisle": "seafood",
+     "note": "peeled, deveined"
+    },
+    {
+     "q": 3,
+     "u": "tbsp",
+     "item": "lime juice",
+     "aisle": "produce"
+    },
+    {
+     "q": 2,
+     "u": "tbsp",
+     "item": "fish sauce",
+     "aisle": "international"
+    },
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "sugar",
+     "aisle": "pantry"
+    },
+    {
+     "q": 2,
+     "u": "",
+     "item": "Thai chilies",
+     "aisle": "produce",
+     "note": "sliced"
+    },
+    {
+     "q": 1,
+     "u": "",
+     "item": "tomatoes",
+     "aisle": "produce",
+     "note": "cut in wedges"
+    },
+    {
+     "q": 0.5,
+     "u": "",
+     "item": "red onion",
+     "aisle": "produce",
+     "note": "sliced thin"
+    },
+    {
+     "q": 2,
+     "u": "",
+     "item": "green onions",
+     "aisle": "produce",
+     "note": "sliced"
+    },
+    {
+     "q": 0.5,
+     "u": "cup",
+     "item": "fresh cilantro",
+     "aisle": "produce"
+    },
+    {
+     "q": 0.25,
+     "u": "cup",
+     "item": "roasted peanuts",
+     "aisle": "pantry"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Soak the glass noodles in hot water until soft. Drain and cut short.",
+     "timer": 480,
+     "timerLabel": "Soak noodles"
+    },
+    {
+     "text": "Cook pork and shrimp in a little water until pork is 160°F and shrimp are pink.",
+     "timer": 300,
+     "timerLabel": "Cook meats"
+    },
+    {
+     "text": "Whisk lime juice, fish sauce, sugar and chilies."
+    },
+    {
+     "text": "Toss noodles, meat, tomato, onion, green onions and dressing."
+    },
+    {
+     "text": "Top with cilantro and peanuts."
+    }
+   ]
+  },
+  {
+   "id": "thai-goi-ga",
+   "title": "Vietnamese chicken cabbage salad (goi ga)",
+   "blurb": "Shredded chicken, cabbage and herbs in nuoc cham",
+   "type": "salads",
+   "serves": 4,
+   "prep": 20,
+   "cook": 20,
+   "tags": [
+    "healthy",
+    "gluten-free",
+    "make ahead"
+   ],
+   "ingredients": [
+    {
+     "q": 1.5,
+     "u": "lb",
+     "item": "boneless skinless chicken breasts",
+     "aisle": "meat"
+    },
+    {
+     "q": 4,
+     "u": "cup",
+     "item": "shredded green cabbage",
+     "aisle": "produce"
+    },
+    {
+     "q": 2,
+     "u": "",
+     "item": "carrots",
+     "aisle": "produce",
+     "note": "julienned"
+    },
+    {
+     "q": 0.5,
+     "u": "",
+     "item": "red onion",
+     "aisle": "produce",
+     "note": "sliced thin"
+    },
+    {
+     "q": 1,
+     "u": "cup",
+     "item": "fresh mint",
+     "aisle": "produce",
+     "note": "chopped"
+    },
+    {
+     "q": 0.5,
+     "u": "cup",
+     "item": "fresh cilantro",
+     "aisle": "produce",
+     "note": "chopped"
+    },
+    {
+     "q": 3,
+     "u": "tbsp",
+     "item": "fish sauce",
+     "aisle": "international"
+    },
+    {
+     "q": 3,
+     "u": "tbsp",
+     "item": "lime juice",
+     "aisle": "produce"
+    },
+    {
+     "q": 2,
+     "u": "tbsp",
+     "item": "sugar",
+     "aisle": "pantry"
+    },
+    {
+     "q": 1,
+     "u": "",
+     "item": "Thai chilies",
+     "aisle": "produce",
+     "note": "minced"
+    },
+    {
+     "q": 0.25,
+     "u": "cup",
+     "item": "roasted peanuts",
+     "aisle": "pantry",
+     "note": "chopped"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Poach the chicken in simmering water until 165°F inside.",
+     "timer": 1080,
+     "timerLabel": "Poach chicken"
+    },
+    {
+     "text": "Cool and shred the chicken."
+    },
+    {
+     "text": "Whisk fish sauce, lime juice, sugar and chili until sugar dissolves."
+    },
+    {
+     "text": "Toss the cabbage, carrots, onion and herbs with the chicken."
+    },
+    {
+     "text": "Add the dressing and toss. Top with peanuts."
+    }
+   ]
+  },
+  {
+   "id": "thai-thai-cucumber-salad",
+   "title": "Thai cucumber salad",
+   "blurb": "Cool, sweet-sour cucumbers with shallot and peanuts",
+   "type": "salads",
+   "serves": 4,
+   "prep": 15,
+   "cook": 0,
+   "tags": [
+    "vegan",
+    "vegetarian",
+    "healthy",
+    "quick"
+   ],
+   "ingredients": [
+    {
+     "q": 3,
+     "u": "",
+     "item": "cucumbers",
+     "aisle": "produce",
+     "note": "halved and sliced thin"
+    },
+    {
+     "q": 2,
+     "u": "",
+     "item": "shallots",
+     "aisle": "produce",
+     "note": "sliced thin"
+    },
+    {
+     "q": 1,
+     "u": "",
+     "item": "Thai chilies",
+     "aisle": "produce",
+     "note": "sliced"
+    },
+    {
+     "q": 0.25,
+     "u": "cup",
+     "item": "rice vinegar",
+     "aisle": "international"
+    },
+    {
+     "q": 2,
+     "u": "tbsp",
+     "item": "sugar",
+     "aisle": "pantry"
+    },
+    {
+     "q": 0.5,
+     "u": "tsp",
+     "item": "salt",
+     "aisle": "spices"
+    },
+    {
+     "q": 0.25,
+     "u": "cup",
+     "item": "fresh cilantro",
+     "aisle": "produce",
+     "note": "chopped"
+    },
+    {
+     "q": 0.25,
+     "u": "cup",
+     "item": "roasted peanuts",
+     "aisle": "pantry",
+     "note": "chopped"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Warm vinegar, sugar and salt, stirring until dissolved. Cool."
+    },
+    {
+     "text": "Combine cucumbers, shallots and chili in a bowl."
+    },
+    {
+     "text": "Pour the dressing over and toss."
+    },
+    {
+     "text": "Chill before serving.",
+     "timer": 900,
+     "timerLabel": "Chill salad"
+    },
+    {
+     "text": "Top with cilantro and peanuts."
+    }
+   ]
+  },
+  {
+   "id": "thai-thai-peanut-slaw",
+   "title": "Crunchy Thai peanut slaw",
+   "blurb": "Cabbage, carrot and edamame in a peanut-lime dressing",
+   "type": "salads",
+   "serves": 6,
+   "prep": 20,
+   "cook": 0,
+   "tags": [
+    "vegetarian",
+    "healthy",
+    "crowd",
+    "make ahead"
+   ],
+   "ingredients": [
+    {
+     "q": 4,
+     "u": "cup",
+     "item": "shredded red cabbage",
+     "aisle": "produce"
+    },
+    {
+     "q": 4,
+     "u": "cup",
+     "item": "shredded napa cabbage",
+     "aisle": "produce"
+    },
+    {
+     "q": 2,
+     "u": "",
+     "item": "carrots",
+     "aisle": "produce",
+     "note": "shredded"
+    },
+    {
+     "q": 1,
+     "u": "cup",
+     "item": "shelled edamame",
+     "aisle": "frozen",
+     "note": "thawed"
+    },
+    {
+     "q": 1,
+     "u": "",
+     "item": "red bell pepper",
+     "aisle": "produce",
+     "note": "sliced thin"
+    },
+    {
+     "q": 0.5,
+     "u": "cup",
+     "item": "fresh cilantro",
+     "aisle": "produce",
+     "note": "chopped"
+    },
+    {
+     "q": 0.25,
+     "u": "cup",
+     "item": "creamy peanut butter",
+     "aisle": "pantry"
+    },
+    {
+     "q": 3,
+     "u": "tbsp",
+     "item": "lime juice",
+     "aisle": "produce"
+    },
+    {
+     "q": 2,
+     "u": "tbsp",
+     "item": "soy sauce",
+     "aisle": "international"
+    },
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "honey",
+     "aisle": "pantry"
+    },
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "sesame oil",
+     "aisle": "international"
+    },
+    {
+     "q": 0.25,
+     "u": "cup",
+     "item": "roasted peanuts",
+     "aisle": "pantry",
+     "note": "chopped"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Whisk peanut butter, lime juice, soy sauce, honey and sesame oil. Thin with water."
+    },
+    {
+     "text": "Toss the cabbages, carrots, edamame and pepper in a large bowl."
+    },
+    {
+     "text": "Add the dressing and cilantro. Toss to coat."
+    },
+    {
+     "text": "Let it sit to soften slightly.",
+     "timer": 600,
+     "timerLabel": "Rest slaw"
+    },
+    {
+     "text": "Top with peanuts."
+    }
+   ]
+  },
+  {
+   "id": "thai-thai-chicken-fried-rice",
+   "title": "Thai chicken fried rice (khao pad gai)",
+   "blurb": "Day-old rice, egg and chicken with a lime squeeze",
+   "type": "rice",
+   "serves": 4,
+   "prep": 10,
+   "cook": 12,
+   "tags": [
+    "quick",
+    "kid-friendly"
+   ],
+   "ingredients": [
+    {
+     "q": 3,
+     "u": "tbsp",
+     "item": "vegetable oil",
+     "aisle": "pantry"
+    },
+    {
+     "q": 1,
+     "u": "lb",
+     "item": "boneless skinless chicken breasts",
+     "aisle": "meat",
+     "note": "diced small"
+    },
+    {
+     "q": 4,
+     "u": "clove",
+     "item": "garlic",
+     "aisle": "produce",
+     "note": "minced"
+    },
+    {
+     "q": 1,
+     "u": "",
+     "item": "yellow onion",
+     "aisle": "produce",
+     "note": "diced"
+    },
+    {
+     "q": 3,
+     "u": "cup",
+     "item": "cooked jasmine rice",
+     "aisle": "international",
+     "note": "cold, day-old"
+    },
+    {
+     "q": 2,
+     "u": "",
+     "item": "large eggs",
+     "aisle": "dairy"
+    },
+    {
+     "q": 2,
+     "u": "tbsp",
+     "item": "soy sauce",
+     "aisle": "international"
+    },
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "oyster sauce",
+     "aisle": "international"
+    },
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "fish sauce",
+     "aisle": "international"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "sugar",
+     "aisle": "pantry"
+    },
+    {
+     "q": 3,
+     "u": "",
+     "item": "green onions",
+     "aisle": "produce",
+     "note": "sliced"
+    },
+    {
+     "q": 1,
+     "u": "",
+     "item": "limes",
+     "aisle": "produce",
+     "note": "cut in wedges"
+    },
+    {
+     "q": 1,
+     "u": "",
+     "item": "cucumber",
+     "aisle": "produce",
+     "note": "sliced, to serve"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Heat 2 tbsp oil in a wok on high. Cook the chicken until 165°F inside.",
+     "timer": 300,
+     "timerLabel": "Cook chicken"
+    },
+    {
+     "text": "Add garlic and onion. Cook 2 minutes.",
+     "timer": 120,
+     "timerLabel": "Cook onion"
+    },
+    {
+     "text": "Push aside. Add 1 tbsp oil and scramble the eggs."
+    },
+    {
+     "text": "Add rice and break up clumps. Fry until hot and lightly toasted.",
+     "timer": 180,
+     "timerLabel": "Fry rice"
+    },
+    {
+     "text": "Add soy sauce, oyster sauce, fish sauce and sugar. Toss."
+    },
+    {
+     "text": "Top with green onions. Serve with lime and cucumber."
+    }
+   ]
+  },
+  {
+   "id": "thai-pineapple-fried-rice",
+   "title": "Pineapple fried rice",
+   "blurb": "Sweet pineapple, cashews and shrimp in curry-scented rice",
+   "type": "rice",
+   "serves": 4,
+   "prep": 15,
+   "cook": 12,
+   "tags": [
+    "quick",
+    "kid-friendly"
+   ],
+   "ingredients": [
+    {
+     "q": 3,
+     "u": "tbsp",
+     "item": "vegetable oil",
+     "aisle": "pantry"
+    },
+    {
+     "q": 1,
+     "u": "lb",
+     "item": "medium shrimp",
+     "aisle": "seafood",
+     "note": "peeled and deveined"
+    },
+    {
+     "q": 3,
+     "u": "clove",
+     "item": "garlic",
+     "aisle": "produce",
+     "note": "minced"
+    },
+    {
+     "q": 1,
+     "u": "",
+     "item": "yellow onion",
+     "aisle": "produce",
+     "note": "diced"
+    },
+    {
+     "q": 1,
+     "u": "",
+     "item": "red bell pepper",
+     "aisle": "produce",
+     "note": "diced"
+    },
+    {
+     "q": 3,
+     "u": "cup",
+     "item": "cooked jasmine rice",
+     "aisle": "international",
+     "note": "cold, day-old"
+    },
+    {
+     "q": 1,
+     "u": "can",
+     "item": "pineapple chunks (8 oz)",
+     "aisle": "canned",
+     "note": "drained"
+    },
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "yellow curry powder",
+     "aisle": "spices"
+    },
+    {
+     "q": 2,
+     "u": "tbsp",
+     "item": "soy sauce",
+     "aisle": "international"
+    },
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "fish sauce",
+     "aisle": "international"
+    },
+    {
+     "q": 0.5,
+     "u": "cup",
+     "item": "roasted cashews",
+     "aisle": "pantry"
+    },
+    {
+     "q": 3,
+     "u": "",
+     "item": "green onions",
+     "aisle": "produce",
+     "note": "sliced"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Heat 2 tbsp oil in a wok on high. Cook shrimp until pink, 3 minutes. Remove.",
+     "timer": 180,
+     "timerLabel": "Cook shrimp"
+    },
+    {
+     "text": "Add 1 tbsp oil, garlic, onion and bell pepper. Cook 3 minutes.",
+     "timer": 180,
+     "timerLabel": "Cook veggies"
+    },
+    {
+     "text": "Add rice and curry powder. Fry until hot.",
+     "timer": 180,
+     "timerLabel": "Fry rice"
+    },
+    {
+     "text": "Add pineapple, soy sauce and fish sauce. Toss."
+    },
+    {
+     "text": "Return the shrimp. Top with cashews and green onions."
+    }
+   ]
+  },
+  {
+   "id": "thai-basil-fried-rice",
+   "title": "Thai basil fried rice",
+   "blurb": "Spicy fried rice with chicken, chilies and holy basil",
+   "type": "rice",
+   "serves": 4,
+   "prep": 10,
+   "cook": 10,
+   "tags": [
+    "quick",
+    "spicy"
+   ],
+   "ingredients": [
+    {
+     "q": 3,
+     "u": "tbsp",
+     "item": "vegetable oil",
+     "aisle": "pantry"
+    },
+    {
+     "q": 1,
+     "u": "lb",
+     "item": "ground chicken",
+     "aisle": "meat"
+    },
+    {
+     "q": 5,
+     "u": "clove",
+     "item": "garlic",
+     "aisle": "produce",
+     "note": "minced"
+    },
+    {
+     "q": 3,
+     "u": "",
+     "item": "Thai chilies",
+     "aisle": "produce",
+     "note": "sliced"
+    },
+    {
+     "q": 1,
+     "u": "",
+     "item": "red bell pepper",
+     "aisle": "produce",
+     "note": "diced"
+    },
+    {
+     "q": 3,
+     "u": "cup",
+     "item": "cooked jasmine rice",
+     "aisle": "international",
+     "note": "cold, day-old"
+    },
+    {
+     "q": 2,
+     "u": "tbsp",
+     "item": "oyster sauce",
+     "aisle": "international"
+    },
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "soy sauce",
+     "aisle": "international"
+    },
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "fish sauce",
+     "aisle": "international"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "sugar",
+     "aisle": "pantry"
+    },
+    {
+     "q": 1.5,
+     "u": "cup",
+     "item": "fresh basil leaves",
+     "aisle": "produce"
+    },
+    {
+     "q": 2,
+     "u": "",
+     "item": "large eggs",
+     "aisle": "dairy",
+     "note": "fried, to serve"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Heat oil in a wok on high. Fry garlic and chilies 20 seconds."
+    },
+    {
+     "text": "Add chicken. Cook until 165°F inside, breaking it up.",
+     "timer": 300,
+     "timerLabel": "Cook chicken"
+    },
+    {
+     "text": "Add bell pepper and rice. Fry until hot.",
+     "timer": 180,
+     "timerLabel": "Fry rice"
+    },
+    {
+     "text": "Add oyster sauce, soy sauce, fish sauce and sugar. Toss."
+    },
+    {
+     "text": "Turn off heat, stir in basil. Top with a fried egg."
+    }
+   ]
+  },
+  {
+   "id": "thai-khao-man-gai",
+   "title": "Khao man gai (Thai chicken and rice)",
+   "blurb": "Poached chicken over ginger-garlic rice with dipping sauce",
+   "type": "rice",
+   "serves": 4,
+   "prep": 20,
+   "cook": 60,
+   "tags": [
+    "one pot",
+    "kid-friendly"
+   ],
+   "ingredients": [
+    {
+     "q": 2,
+     "u": "lb",
+     "item": "bone-in chicken thighs",
+     "aisle": "meat",
+     "note": "skin on"
+    },
+    {
+     "q": 2,
+     "u": "cup",
+     "item": "jasmine rice",
+     "aisle": "international"
+    },
+    {
+     "q": 4,
+     "u": "clove",
+     "item": "garlic",
+     "aisle": "produce",
+     "note": "minced"
+    },
+    {
+     "q": 2,
+     "u": "inch",
+     "item": "fresh ginger",
+     "aisle": "produce",
+     "note": "sliced"
+    },
+    {
+     "q": 3.5,
+     "u": "cup",
+     "item": "water",
+     "aisle": "pantry"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "salt",
+     "aisle": "spices"
+    },
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "vegetable oil",
+     "aisle": "pantry"
+    },
+    {
+     "q": 3,
+     "u": "tbsp",
+     "item": "soy sauce",
+     "aisle": "international",
+     "note": "for sauce"
+    },
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "rice vinegar",
+     "aisle": "international",
+     "note": "for sauce"
+    },
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "sriracha",
+     "aisle": "international",
+     "note": "for sauce"
+    },
+    {
+     "q": 1,
+     "u": "",
+     "item": "cucumber",
+     "aisle": "produce",
+     "note": "sliced"
+    },
+    {
+     "q": 0.25,
+     "u": "cup",
+     "item": "fresh cilantro",
+     "aisle": "produce"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Simmer the chicken, half the ginger and the water in a pot, covered, until chicken hits 175°F.",
+     "timer": 1800,
+     "timerLabel": "Poach chicken"
+    },
+    {
+     "text": "Remove chicken. Save and strain the cooking broth."
+    },
+    {
+     "text": "Fry rice, garlic and remaining ginger in oil for 2 minutes.",
+     "timer": 120,
+     "timerLabel": "Toast rice"
+    },
+    {
+     "text": "Add 3 cups hot broth and salt. Cover and cook on low until tender.",
+     "timer": 1080,
+     "timerLabel": "Cook rice"
+    },
+    {
+     "text": "Whisk soy sauce, vinegar, sriracha and 2 tbsp broth for the sauce."
+    },
+    {
+     "text": "Slice the chicken. Serve over rice with cucumber, cilantro and sauce."
+    }
+   ]
+  },
+  {
+   "id": "thai-com-tam-pork",
+   "title": "Grilled pork rice plate (com tam)",
+   "blurb": "Lemongrass pork chops over rice with pickles and egg",
+   "type": "rice",
+   "serves": 4,
+   "prep": 20,
+   "cook": 20,
+   "tags": [
+    "grill"
+   ],
+   "ingredients": [
+    {
+     "q": 1.5,
+     "u": "lb",
+     "item": "boneless pork chops",
+     "aisle": "meat",
+     "note": "sliced 0.5-inch thick"
+    },
+    {
+     "q": 3,
+     "u": "stalk",
+     "item": "lemongrass",
+     "aisle": "produce",
+     "note": "minced"
+    },
+    {
+     "q": 3,
+     "u": "clove",
+     "item": "garlic",
+     "aisle": "produce",
+     "note": "minced"
+    },
+    {
+     "q": 3,
+     "u": "tbsp",
+     "item": "fish sauce",
+     "aisle": "international"
+    },
+    {
+     "q": 2,
+     "u": "tbsp",
+     "item": "sugar",
+     "aisle": "pantry"
+    },
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "vegetable oil",
+     "aisle": "pantry"
+    },
+    {
+     "q": 2,
+     "u": "cup",
+     "item": "jasmine rice",
+     "aisle": "international"
+    },
+    {
+     "q": 4,
+     "u": "",
+     "item": "large eggs",
+     "aisle": "dairy",
+     "note": "fried"
+    },
+    {
+     "q": 1,
+     "u": "",
+     "item": "cucumber",
+     "aisle": "produce",
+     "note": "sliced"
+    },
+    {
+     "q": 2,
+     "u": "",
+     "item": "tomatoes",
+     "aisle": "produce",
+     "note": "sliced"
+    },
+    {
+     "q": 2,
+     "u": "tbsp",
+     "item": "nuoc cham dipping sauce",
+     "aisle": "international",
+     "note": "or fish sauce mixed with lime"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Marinate pork with lemongrass, garlic, fish sauce, sugar and oil.",
+     "timer": 1800,
+     "timerLabel": "Marinate pork"
+    },
+    {
+     "text": "Cook the rice per package directions.",
+     "timer": 1080,
+     "timerLabel": "Cook rice"
+    },
+    {
+     "text": "Grill or pan-sear the pork until browned and 145°F inside, 4 minutes per side.",
+     "timer": 480,
+     "timerLabel": "Cook pork"
+    },
+    {
+     "text": "Fry the eggs sunny-side up."
+    },
+    {
+     "text": "Plate rice, pork, egg, cucumber and tomato. Spoon sauce over."
+    }
+   ]
+  },
+  {
+   "id": "thai-banh-mi-bowls",
+   "title": "Banh mi rice bowls",
+   "blurb": "Pork, quick pickles, cucumber and cilantro over rice",
+   "type": "rice",
+   "serves": 4,
+   "prep": 25,
+   "cook": 15,
+   "tags": [
+    "quick"
+   ],
+   "ingredients": [
+    {
+     "q": 1.25,
+     "u": "lb",
+     "item": "ground pork",
+     "aisle": "meat"
+    },
+    {
+     "q": 2,
+     "u": "tbsp",
+     "item": "soy sauce",
+     "aisle": "international"
+    },
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "fish sauce",
+     "aisle": "international"
+    },
+    {
+     "q": 2,
+     "u": "tsp",
+     "item": "sugar",
+     "aisle": "pantry"
+    },
+    {
+     "q": 2,
+     "u": "clove",
+     "item": "garlic",
+     "aisle": "produce",
+     "note": "minced"
+    },
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "vegetable oil",
+     "aisle": "pantry"
+    },
+    {
+     "q": 2,
+     "u": "",
+     "item": "carrots",
+     "aisle": "produce",
+     "note": "shredded"
+    },
+    {
+     "q": 0.25,
+     "u": "cup",
+     "item": "rice vinegar",
+     "aisle": "international"
+    },
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "sugar",
+     "aisle": "pantry",
+     "note": "for pickles"
+    },
+    {
+     "q": 3,
+     "u": "cup",
+     "item": "cooked jasmine rice",
+     "aisle": "international"
+    },
+    {
+     "q": 1,
+     "u": "",
+     "item": "cucumber",
+     "aisle": "produce",
+     "note": "sliced"
+    },
+    {
+     "q": 1,
+     "u": "",
+     "item": "jalapeño peppers",
+     "aisle": "produce",
+     "note": "sliced"
+    },
+    {
+     "q": 0.5,
+     "u": "cup",
+     "item": "fresh cilantro",
+     "aisle": "produce"
+    },
+    {
+     "q": 0.33,
+     "u": "cup",
+     "item": "mayonnaise",
+     "aisle": "pantry"
+    },
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "sriracha",
+     "aisle": "international"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Toss carrots with vinegar and sugar. Let them pickle.",
+     "timer": 900,
+     "timerLabel": "Pickle carrots"
+    },
+    {
+     "text": "Heat oil in a skillet. Cook pork with garlic until 160°F, breaking it up.",
+     "timer": 420,
+     "timerLabel": "Cook pork"
+    },
+    {
+     "text": "Add soy sauce, fish sauce and sugar. Cook 1 minute.",
+     "timer": 60,
+     "timerLabel": "Glaze pork"
+    },
+    {
+     "text": "Mix mayonnaise and sriracha."
+    },
+    {
+     "text": "Divide rice into bowls. Top with pork, pickles, cucumber, jalapeño and cilantro."
+    },
+    {
+     "text": "Drizzle with the sriracha mayo."
+    }
+   ]
+  },
+  {
+   "id": "thai-khai-jiao-rice",
+   "title": "Thai omelet over rice (khai jiao)",
+   "blurb": "Crispy, puffy omelet with sweet chili sauce",
+   "type": "rice",
+   "serves": 4,
+   "prep": 5,
+   "cook": 10,
+   "tags": [
+    "quick",
+    "vegetarian",
+    "kid-friendly"
+   ],
+   "ingredients": [
+    {
+     "q": 8,
+     "u": "",
+     "item": "large eggs",
+     "aisle": "dairy"
+    },
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "fish sauce",
+     "aisle": "international"
+    },
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "lime juice",
+     "aisle": "produce"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "black pepper",
+     "aisle": "spices"
+    },
+    {
+     "q": 0.5,
+     "u": "cup",
+     "item": "vegetable oil",
+     "aisle": "pantry"
+    },
+    {
+     "q": 3,
+     "u": "cup",
+     "item": "cooked jasmine rice",
+     "aisle": "international"
+    },
+    {
+     "q": 0.25,
+     "u": "cup",
+     "item": "sweet chili sauce",
+     "aisle": "international"
+    },
+    {
+     "q": 3,
+     "u": "",
+     "item": "green onions",
+     "aisle": "produce",
+     "note": "sliced"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Whisk eggs with fish sauce, lime juice and pepper."
+    },
+    {
+     "text": "Heat the oil in a wok until shimmering, about 350°F."
+    },
+    {
+     "text": "Pour in a quarter of the eggs from high up. Fry until puffed and golden, 1 minute.",
+     "timer": 60,
+     "timerLabel": "Fry omelet"
+    },
+    {
+     "text": "Flip, cook 30 seconds, and drain. Repeat for 4 omelets.",
+     "timer": 30,
+     "timerLabel": "Flip omelet"
+    },
+    {
+     "text": "Put each over rice. Top with chili sauce and green onions."
+    }
+   ]
+  },
+  {
+   "id": "thai-tofu-veggie-fried-rice",
+   "title": "Thai vegetable tofu fried rice",
+   "blurb": "Wok rice with crispy tofu, broccoli and egg",
+   "type": "rice",
+   "serves": 4,
+   "prep": 15,
+   "cook": 15,
+   "tags": [
+    "vegetarian",
+    "quick"
+   ],
+   "ingredients": [
+    {
+     "q": 3,
+     "u": "tbsp",
+     "item": "vegetable oil",
+     "aisle": "pantry"
+    },
+    {
+     "q": 14,
+     "u": "oz",
+     "item": "extra-firm tofu",
+     "aisle": "dairy",
+     "note": "diced small"
+    },
+    {
+     "q": 3,
+     "u": "clove",
+     "item": "garlic",
+     "aisle": "produce",
+     "note": "minced"
+    },
+    {
+     "q": 1,
+     "u": "",
+     "item": "yellow onion",
+     "aisle": "produce",
+     "note": "diced"
+    },
+    {
+     "q": 1,
+     "u": "cup",
+     "item": "broccoli florets",
+     "aisle": "produce",
+     "note": "chopped small"
+    },
+    {
+     "q": 1,
+     "u": "",
+     "item": "carrot",
+     "aisle": "produce",
+     "note": "diced"
+    },
+    {
+     "q": 3,
+     "u": "cup",
+     "item": "cooked jasmine rice",
+     "aisle": "international",
+     "note": "cold, day-old"
+    },
+    {
+     "q": 2,
+     "u": "",
+     "item": "large eggs",
+     "aisle": "dairy"
+    },
+    {
+     "q": 3,
+     "u": "tbsp",
+     "item": "soy sauce",
+     "aisle": "international"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "sugar",
+     "aisle": "pantry"
+    },
+    {
+     "q": 0.5,
+     "u": "tsp",
+     "item": "white pepper",
+     "aisle": "spices"
+    },
+    {
+     "q": 1,
+     "u": "",
+     "item": "limes",
+     "aisle": "produce",
+     "note": "cut in wedges"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Fry the tofu in 2 tbsp oil until golden, 6 minutes. Remove.",
+     "timer": 360,
+     "timerLabel": "Brown tofu"
+    },
+    {
+     "text": "Cook garlic, onion, broccoli and carrot 4 minutes.",
+     "timer": 240,
+     "timerLabel": "Cook veggies"
+    },
+    {
+     "text": "Push aside. Add 1 tbsp oil and scramble the eggs."
+    },
+    {
+     "text": "Add rice, tofu, soy sauce, sugar and pepper. Fry until hot.",
+     "timer": 180,
+     "timerLabel": "Fry rice"
+    },
+    {
+     "text": "Serve with lime wedges."
+    }
+   ]
+  },
+  {
+   "id": "thai-satay-chicken-rice-bowls",
+   "title": "Chicken satay rice bowls",
+   "blurb": "Turmeric grilled chicken skewers with peanut sauce",
+   "type": "rice",
+   "serves": 4,
+   "prep": 25,
+   "cook": 15,
+   "tags": [
+    "grill",
+    "kid-friendly"
+   ],
+   "ingredients": [
+    {
+     "q": 1.5,
+     "u": "lb",
+     "item": "boneless skinless chicken thighs",
+     "aisle": "meat",
+     "note": "cut in strips"
+    },
+    {
+     "q": 1,
+     "u": "can",
+     "item": "coconut milk (13.5 oz)",
+     "aisle": "canned",
+     "note": "divided"
+    },
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "ground turmeric",
+     "aisle": "spices"
+    },
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "curry powder",
+     "aisle": "spices"
+    },
+    {
+     "q": 2,
+     "u": "tbsp",
+     "item": "soy sauce",
+     "aisle": "international"
+    },
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "brown sugar",
+     "aisle": "pantry"
+    },
+    {
+     "q": 0.33,
+     "u": "cup",
+     "item": "creamy peanut butter",
+     "aisle": "pantry"
+    },
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "lime juice",
+     "aisle": "produce"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "sriracha",
+     "aisle": "international"
+    },
+    {
+     "q": 2,
+     "u": "cup",
+     "item": "jasmine rice",
+     "aisle": "international"
+    },
+    {
+     "q": 1,
+     "u": "",
+     "item": "cucumber",
+     "aisle": "produce",
+     "note": "sliced"
+    },
+    {
+     "q": 1,
+     "u": "",
+     "item": "carrot",
+     "aisle": "produce",
+     "note": "shredded"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Mix half the coconut milk with turmeric, curry powder, soy sauce and sugar. Add the chicken."
+    },
+    {
+     "text": "Marinate in the fridge.",
+     "timer": 1800,
+     "timerLabel": "Marinate chicken"
+    },
+    {
+     "text": "Cook the rice per package directions.",
+     "timer": 1080,
+     "timerLabel": "Cook rice"
+    },
+    {
+     "text": "Thread the chicken on skewers. Grill or broil until 165°F inside, 5 minutes per side.",
+     "timer": 600,
+     "timerLabel": "Cook chicken"
+    },
+    {
+     "text": "Whisk the rest of the coconut milk with peanut butter, lime juice and sriracha. Warm gently."
+    },
+    {
+     "text": "Serve chicken over rice with cucumber, carrot and peanut sauce."
+    }
+   ]
+  }
+ ]
+}

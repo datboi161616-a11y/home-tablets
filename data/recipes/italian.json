@@ -1,0 +1,6220 @@
+{
+  "id": "italian",
+  "name": "Italian",
+  "types": [
+    {
+      "id": "pasta",
+      "name": "Pasta"
+    },
+    {
+      "id": "baked",
+      "name": "Baked pasta & lasagna"
+    },
+    {
+      "id": "pizza",
+      "name": "Pizza & breads"
+    },
+    {
+      "id": "chicken",
+      "name": "Chicken & meat"
+    },
+    {
+      "id": "soups",
+      "name": "Soups & risotto"
+    },
+    {
+      "id": "sides",
+      "name": "Salads & sides"
+    }
+  ],
+  "recipes": [
+    {
+      "id": "one-pot-spaghetti",
+      "title": "One-pot spaghetti with meat sauce",
+      "blurb": "Everything cooks in one pot, pasta and sauce together",
+      "type": "pasta",
+      "serves": 4,
+      "prep": 10,
+      "cook": 30,
+      "tags": [
+        "one pot",
+        "kid-friendly"
+      ],
+      "ingredients": [
+        {
+          "q": 1,
+          "u": "lb",
+          "item": "ground beef",
+          "aisle": "meat"
+        },
+        {
+          "q": 1,
+          "u": "",
+          "item": "yellow onion",
+          "note": "diced",
+          "aisle": "produce"
+        },
+        {
+          "q": 2,
+          "u": "clove",
+          "item": "garlic",
+          "note": "minced",
+          "aisle": "produce"
+        },
+        {
+          "q": 1,
+          "u": "jar",
+          "item": "marinara sauce (24 oz)",
+          "aisle": "canned"
+        },
+        {
+          "q": 3,
+          "u": "cup",
+          "item": "water",
+          "aisle": "pantry"
+        },
+        {
+          "q": 1,
+          "u": "tsp",
+          "item": "Italian seasoning",
+          "aisle": "spices"
+        },
+        {
+          "q": 0.5,
+          "u": "tsp",
+          "item": "salt",
+          "aisle": "spices"
+        },
+        {
+          "q": 12,
+          "u": "oz",
+          "item": "spaghetti",
+          "note": "broken in half",
+          "aisle": "pantry"
+        },
+        {
+          "q": null,
+          "u": "cup",
+          "item": "grated Parmesan cheese",
+          "note": "to serve",
+          "aisle": "dairy"
+        }
+      ],
+      "steps": [
+        {
+          "text": "In a large pot over medium-high heat, brown the beef and onion, breaking it up, until no pink is left.",
+          "timer": 480,
+          "timerLabel": "Brown the beef"
+        },
+        {
+          "text": "Stir in the garlic for 1 minute. Spoon off any extra fat."
+        },
+        {
+          "text": "Add the marinara, water, Italian seasoning and salt. Bring to a boil."
+        },
+        {
+          "text": "Add the spaghetti and push it down under the sauce."
+        },
+        {
+          "text": "Turn the heat to low, cover, and simmer. Stir every few minutes so it doesn’t stick.",
+          "timer": 900,
+          "timerLabel": "Simmer the pasta"
+        },
+        {
+          "text": "When the pasta is tender, turn off the heat and let it sit uncovered to thicken.",
+          "timer": 300,
+          "timerLabel": "Let it thicken"
+        },
+        {
+          "text": "Serve with grated Parmesan on top."
+        }
+      ]
+    },
+    {
+      "id": "italian-spaghetti-carbonara",
+      "title": "Spaghetti carbonara",
+      "blurb": "Silky egg, pecorino and crispy pancetta, no cream",
+      "type": "pasta",
+      "serves": 4,
+      "prep": 10,
+      "cook": 20,
+      "tags": [
+        "quick"
+      ],
+      "ingredients": [
+        {
+          "q": 1,
+          "u": "lb",
+          "item": "spaghetti",
+          "aisle": "pantry"
+        },
+        {
+          "q": 6,
+          "u": "oz",
+          "item": "pancetta",
+          "note": "diced",
+          "aisle": "meat"
+        },
+        {
+          "q": 3,
+          "u": "",
+          "item": "large eggs",
+          "aisle": "dairy"
+        },
+        {
+          "q": 2,
+          "u": "",
+          "item": "large egg yolks",
+          "aisle": "dairy"
+        },
+        {
+          "q": 1,
+          "u": "cup",
+          "item": "grated pecorino romano",
+          "aisle": "dairy"
+        },
+        {
+          "q": 1.5,
+          "u": "tsp",
+          "item": "black pepper",
+          "note": "freshly ground",
+          "aisle": "spices"
+        },
+        {
+          "q": null,
+          "u": "",
+          "item": "salt",
+          "note": "for the pasta water",
+          "aisle": "spices"
+        }
+      ],
+      "steps": [
+        {
+          "text": "Bring a large pot of well-salted water to a boil."
+        },
+        {
+          "text": "Cook the pancetta in a big skillet over medium heat until crisp. Turn off the heat.",
+          "timer": 420,
+          "timerLabel": "Crisp the pancetta"
+        },
+        {
+          "text": "Whisk the eggs, yolks, pecorino and pepper in a bowl into a thick paste."
+        },
+        {
+          "text": "Boil the spaghetti until al dente. Save 1 cup of pasta water, then drain.",
+          "timer": 540,
+          "timerLabel": "Boil the spaghetti"
+        },
+        {
+          "text": "Toss the hot spaghetti in the skillet with the pancetta and its fat, off the heat."
+        },
+        {
+          "text": "Pour in the egg mixture and toss fast, adding pasta water a splash at a time until creamy."
+        },
+        {
+          "text": "Serve right away with more pecorino and pepper."
+        }
+      ]
+    },
+    {
+      "id": "italian-cacio-e-pepe",
+      "title": "Cacio e pepe",
+      "blurb": "Rome’s three-ingredient classic: pecorino, pepper, pasta",
+      "type": "pasta",
+      "serves": 4,
+      "prep": 5,
+      "cook": 15,
+      "tags": [
+        "quick",
+        "vegetarian"
+      ],
+      "ingredients": [
+        {
+          "q": 1,
+          "u": "lb",
+          "item": "spaghetti",
+          "aisle": "pantry"
+        },
+        {
+          "q": 2,
+          "u": "cup",
+          "item": "grated pecorino romano",
+          "aisle": "dairy"
+        },
+        {
+          "q": 2,
+          "u": "tsp",
+          "item": "black pepper",
+          "note": "coarsely ground",
+          "aisle": "spices"
+        },
+        {
+          "q": 2,
+          "u": "tbsp",
+          "item": "unsalted butter",
+          "aisle": "dairy"
+        },
+        {
+          "q": null,
+          "u": "",
+          "item": "salt",
+          "note": "for the pasta water",
+          "aisle": "spices"
+        }
+      ],
+      "steps": [
+        {
+          "text": "Boil the spaghetti in well-salted water, using only about 3 quarts so the water stays starchy."
+        },
+        {
+          "text": "Cook the spaghetti until 1 minute short of al dente.",
+          "timer": 480,
+          "timerLabel": "Boil the spaghetti"
+        },
+        {
+          "text": "Toast the pepper and butter in a large skillet over medium heat for 1 minute."
+        },
+        {
+          "text": "Scoop 1 cup pasta water into the skillet, then move the spaghetti in with tongs."
+        },
+        {
+          "text": "Take the pan off the heat. Add the pecorino a handful at a time, tossing hard until creamy."
+        },
+        {
+          "text": "Loosen with more pasta water if needed and serve right away."
+        }
+      ]
+    },
+    {
+      "id": "italian-spaghetti-aglio-e-olio",
+      "title": "Spaghetti aglio e olio",
+      "blurb": "Garlic, olive oil and chili flakes, ready in 20 minutes",
+      "type": "pasta",
+      "serves": 4,
+      "prep": 5,
+      "cook": 15,
+      "tags": [
+        "quick",
+        "vegan"
+      ],
+      "ingredients": [
+        {
+          "q": 1,
+          "u": "lb",
+          "item": "spaghetti",
+          "aisle": "pantry"
+        },
+        {
+          "q": 0.33,
+          "u": "cup",
+          "item": "olive oil",
+          "aisle": "pantry"
+        },
+        {
+          "q": 6,
+          "u": "clove",
+          "item": "garlic",
+          "note": "thinly sliced",
+          "aisle": "produce"
+        },
+        {
+          "q": 0.5,
+          "u": "tsp",
+          "item": "red pepper flakes",
+          "aisle": "spices"
+        },
+        {
+          "q": 0.5,
+          "u": "cup",
+          "item": "fresh parsley",
+          "note": "chopped",
+          "aisle": "produce"
+        },
+        {
+          "q": null,
+          "u": "",
+          "item": "salt",
+          "note": "for the pasta water",
+          "aisle": "spices"
+        },
+        {
+          "q": null,
+          "u": "cup",
+          "item": "grated Parmesan cheese",
+          "note": "optional, to serve",
+          "aisle": "dairy"
+        }
+      ],
+      "steps": [
+        {
+          "text": "Boil the spaghetti in well-salted water until al dente. Save 1 cup of pasta water, then drain."
+        },
+        {
+          "text": "Boil the spaghetti until al dente.",
+          "timer": 540,
+          "timerLabel": "Boil the spaghetti"
+        },
+        {
+          "text": "While it cooks, warm the oil and sliced garlic in a large skillet over low heat."
+        },
+        {
+          "text": "Cook gently until the garlic is pale gold, not brown. Add the pepper flakes.",
+          "timer": 180,
+          "timerLabel": "Soften the garlic"
+        },
+        {
+          "text": "Add the spaghetti and ½ cup pasta water. Toss over medium heat until glossy."
+        },
+        {
+          "text": "Stir in the parsley, taste for salt, and serve."
+        }
+      ]
+    },
+    {
+      "id": "italian-fettuccine-alfredo",
+      "title": "Fettuccine Alfredo",
+      "blurb": "Buttery, creamy and cheesy, the Italian-American favorite",
+      "type": "pasta",
+      "serves": 4,
+      "prep": 5,
+      "cook": 20,
+      "tags": [
+        "quick",
+        "vegetarian",
+        "kid-friendly"
+      ],
+      "ingredients": [
+        {
+          "q": 1,
+          "u": "lb",
+          "item": "fettuccine",
+          "aisle": "pantry"
+        },
+        {
+          "q": 4,
+          "u": "tbsp",
+          "item": "unsalted butter",
+          "aisle": "dairy"
+        },
+        {
+          "q": 1.5,
+          "u": "cup",
+          "item": "heavy cream",
+          "aisle": "dairy"
+        },
+        {
+          "q": 2,
+          "u": "clove",
+          "item": "garlic",
+          "note": "minced",
+          "aisle": "produce"
+        },
+        {
+          "q": 1.5,
+          "u": "cup",
+          "item": "grated Parmesan cheese",
+          "aisle": "dairy"
+        },
+        {
+          "q": 0.25,
+          "u": "tsp",
+          "item": "ground nutmeg",
+          "aisle": "spices"
+        },
+        {
+          "q": null,
+          "u": "",
+          "item": "salt",
+          "aisle": "spices"
+        },
+        {
+          "q": null,
+          "u": "",
+          "item": "black pepper",
+          "aisle": "spices"
+        },
+        {
+          "q": 2,
+          "u": "tbsp",
+          "item": "fresh parsley",
+          "note": "chopped",
+          "aisle": "produce"
+        }
+      ],
+      "steps": [
+        {
+          "text": "Boil the fettuccine in salted water until al dente. Save 1 cup pasta water, then drain.",
+          "timer": 600,
+          "timerLabel": "Boil the fettuccine"
+        },
+        {
+          "text": "Melt the butter in a large skillet over medium heat. Cook the garlic for 30 seconds."
+        },
+        {
+          "text": "Pour in the cream and simmer until it just starts to thicken.",
+          "timer": 240,
+          "timerLabel": "Simmer the cream"
+        },
+        {
+          "text": "Turn the heat to low. Whisk in the Parmesan and nutmeg until smooth."
+        },
+        {
+          "text": "Toss in the fettuccine, adding pasta water a splash at a time until the sauce coats it."
+        },
+        {
+          "text": "Season with salt and pepper, sprinkle with parsley, and serve hot."
+        }
+      ]
+    },
+    {
+      "id": "italian-penne-alla-vodka",
+      "title": "Penne alla vodka",
+      "blurb": "Creamy blush tomato sauce with a little pepper flake heat",
+      "type": "pasta",
+      "serves": 4,
+      "prep": 10,
+      "cook": 25,
+      "tags": [
+        "kid-friendly"
+      ],
+      "ingredients": [
+        {
+          "q": 1,
+          "u": "lb",
+          "item": "penne",
+          "aisle": "pantry"
+        },
+        {
+          "q": 2,
+          "u": "tbsp",
+          "item": "olive oil",
+          "aisle": "pantry"
+        },
+        {
+          "q": 0.5,
+          "u": "",
+          "item": "yellow onion",
+          "note": "finely diced",
+          "aisle": "produce"
+        },
+        {
+          "q": 3,
+          "u": "clove",
+          "item": "garlic",
+          "note": "minced",
+          "aisle": "produce"
+        },
+        {
+          "q": 2,
+          "u": "tbsp",
+          "item": "tomato paste",
+          "aisle": "canned"
+        },
+        {
+          "q": 0.25,
+          "u": "cup",
+          "item": "vodka",
+          "aisle": "beverages"
+        },
+        {
+          "q": 1,
+          "u": "can",
+          "item": "crushed tomatoes (28 oz)",
+          "aisle": "canned"
+        },
+        {
+          "q": 0.5,
+          "u": "cup",
+          "item": "heavy cream",
+          "aisle": "dairy"
+        },
+        {
+          "q": 0.5,
+          "u": "tsp",
+          "item": "red pepper flakes",
+          "aisle": "spices"
+        },
+        {
+          "q": 0.5,
+          "u": "cup",
+          "item": "grated Parmesan cheese",
+          "note": "plus more to serve",
+          "aisle": "dairy"
+        },
+        {
+          "q": 0.25,
+          "u": "cup",
+          "item": "fresh basil",
+          "note": "torn",
+          "aisle": "produce"
+        },
+        {
+          "q": null,
+          "u": "",
+          "item": "salt",
+          "aisle": "spices"
+        }
+      ],
+      "steps": [
+        {
+          "text": "Cook the onion in olive oil over medium heat until soft, about 5 minutes."
+        },
+        {
+          "text": "Add the garlic, tomato paste and pepper flakes. Stir for 2 minutes until the paste darkens."
+        },
+        {
+          "text": "Pour in the vodka and let it bubble until nearly gone.",
+          "timer": 120,
+          "timerLabel": "Cook off the vodka"
+        },
+        {
+          "text": "Add the tomatoes and a pinch of salt. Simmer, stirring now and then.",
+          "timer": 900,
+          "timerLabel": "Simmer the sauce"
+        },
+        {
+          "text": "Meanwhile boil the penne in salted water until al dente. Save a cup of pasta water, then drain.",
+          "timer": 660,
+          "timerLabel": "Boil the penne"
+        },
+        {
+          "text": "Stir the cream and Parmesan into the sauce, then toss with the penne, adding pasta water to loosen."
+        },
+        {
+          "text": "Top with basil and serve."
+        }
+      ]
+    },
+    {
+      "id": "italian-tagliatelle-bolognese",
+      "title": "Tagliatelle with Bolognese",
+      "blurb": "Slow-simmered meat ragu with milk and wine, weekend comfort",
+      "type": "pasta",
+      "serves": 6,
+      "prep": 25,
+      "cook": 180,
+      "tags": [
+        "make ahead"
+      ],
+      "ingredients": [
+        {
+          "q": 2,
+          "u": "tbsp",
+          "item": "olive oil",
+          "aisle": "pantry"
+        },
+        {
+          "q": 4,
+          "u": "oz",
+          "item": "pancetta",
+          "note": "finely diced",
+          "aisle": "meat"
+        },
+        {
+          "q": 1,
+          "u": "",
+          "item": "yellow onion",
+          "note": "finely diced",
+          "aisle": "produce"
+        },
+        {
+          "q": 1,
+          "u": "stalk",
+          "item": "celery",
+          "note": "finely diced",
+          "aisle": "produce"
+        },
+        {
+          "q": 1,
+          "u": "",
+          "item": "carrot",
+          "note": "finely diced",
+          "aisle": "produce"
+        },
+        {
+          "q": 1,
+          "u": "lb",
+          "item": "ground beef",
+          "aisle": "meat"
+        },
+        {
+          "q": 0.5,
+          "u": "lb",
+          "item": "ground pork",
+          "aisle": "meat"
+        },
+        {
+          "q": 0.5,
+          "u": "cup",
+          "item": "dry white wine",
+          "aisle": "beverages"
+        },
+        {
+          "q": 0.5,
+          "u": "cup",
+          "item": "whole milk",
+          "aisle": "dairy"
+        },
+        {
+          "q": 1,
+          "u": "can",
+          "item": "crushed tomatoes (28 oz)",
+          "aisle": "canned"
+        },
+        {
+          "q": 1,
+          "u": "lb",
+          "item": "tagliatelle",
+          "aisle": "pantry"
+        },
+        {
+          "q": null,
+          "u": "",
+          "item": "salt",
+          "aisle": "spices"
+        },
+        {
+          "q": null,
+          "u": "cup",
+          "item": "grated Parmesan cheese",
+          "note": "to serve",
+          "aisle": "dairy"
+        }
+      ],
+      "steps": [
+        {
+          "text": "Heat the oil in a Dutch oven. Cook the pancetta, onion, celery and carrot over medium heat until soft."
+        },
+        {
+          "text": "Add the beef and pork. Cook, breaking it up, until no pink is left."
+        },
+        {
+          "text": "Pour in the wine and simmer until it has mostly evaporated.",
+          "timer": 300,
+          "timerLabel": "Reduce the wine"
+        },
+        {
+          "text": "Add the milk and simmer until absorbed, stirring often.",
+          "timer": 600,
+          "timerLabel": "Simmer the milk"
+        },
+        {
+          "text": "Stir in the tomatoes and 1 tsp salt. Bring to a bare simmer."
+        },
+        {
+          "text": "Cover partly and cook on low, stirring now and then, until rich and thick.",
+          "timer": 9000,
+          "timerLabel": "Slow simmer"
+        },
+        {
+          "text": "Boil the tagliatelle in salted water until al dente, then drain.",
+          "timer": 480,
+          "timerLabel": "Boil the tagliatelle"
+        },
+        {
+          "text": "Toss the pasta with the ragu and serve with Parmesan."
+        }
+      ]
+    },
+    {
+      "id": "italian-bucatini-all-amatriciana",
+      "title": "Bucatini all’amatriciana",
+      "blurb": "Tomato, guanciale and pecorino with a little heat",
+      "type": "pasta",
+      "serves": 4,
+      "prep": 10,
+      "cook": 25,
+      "tags": [],
+      "ingredients": [
+        {
+          "q": 1,
+          "u": "lb",
+          "item": "bucatini",
+          "aisle": "pantry"
+        },
+        {
+          "q": 6,
+          "u": "oz",
+          "item": "guanciale or pancetta",
+          "note": "diced",
+          "aisle": "meat"
+        },
+        {
+          "q": 1,
+          "u": "tbsp",
+          "item": "olive oil",
+          "aisle": "pantry"
+        },
+        {
+          "q": 0.5,
+          "u": "tsp",
+          "item": "red pepper flakes",
+          "aisle": "spices"
+        },
+        {
+          "q": 0.5,
+          "u": "cup",
+          "item": "dry white wine",
+          "aisle": "beverages"
+        },
+        {
+          "q": 1,
+          "u": "can",
+          "item": "whole peeled tomatoes (28 oz)",
+          "note": "crushed by hand",
+          "aisle": "canned"
+        },
+        {
+          "q": 0.75,
+          "u": "cup",
+          "item": "grated pecorino romano",
+          "aisle": "dairy"
+        },
+        {
+          "q": null,
+          "u": "",
+          "item": "salt",
+          "aisle": "spices"
+        }
+      ],
+      "steps": [
+        {
+          "text": "Cook the guanciale in the oil in a large skillet over medium heat until the fat renders and edges crisp."
+        },
+        {
+          "text": "Stir in the pepper flakes, then the wine. Let it bubble for 2 minutes."
+        },
+        {
+          "text": "Add the tomatoes, break them up, and simmer until the sauce thickens.",
+          "timer": 1200,
+          "timerLabel": "Simmer the sauce"
+        },
+        {
+          "text": "Meanwhile boil the bucatini in salted water until al dente. Save 1 cup pasta water, then drain.",
+          "timer": 600,
+          "timerLabel": "Boil the bucatini"
+        },
+        {
+          "text": "Toss the bucatini in the sauce with a splash of pasta water."
+        },
+        {
+          "text": "Add half the pecorino, toss, and serve with the rest on top."
+        }
+      ]
+    },
+    {
+      "id": "italian-spaghetti-and-meatballs",
+      "title": "Spaghetti and meatballs",
+      "blurb": "Tender beef-pork meatballs simmered in simple tomato sauce",
+      "type": "pasta",
+      "serves": 6,
+      "prep": 25,
+      "cook": 45,
+      "tags": [
+        "kid-friendly",
+        "make ahead"
+      ],
+      "ingredients": [
+        {
+          "q": 1,
+          "u": "lb",
+          "item": "ground beef",
+          "aisle": "meat"
+        },
+        {
+          "q": 0.5,
+          "u": "lb",
+          "item": "ground pork",
+          "aisle": "meat"
+        },
+        {
+          "q": 0.5,
+          "u": "cup",
+          "item": "plain breadcrumbs",
+          "aisle": "pantry"
+        },
+        {
+          "q": 0.33,
+          "u": "cup",
+          "item": "whole milk",
+          "aisle": "dairy"
+        },
+        {
+          "q": 1,
+          "u": "",
+          "item": "large eggs",
+          "aisle": "dairy"
+        },
+        {
+          "q": 0.33,
+          "u": "cup",
+          "item": "grated Parmesan cheese",
+          "aisle": "dairy"
+        },
+        {
+          "q": 3,
+          "u": "clove",
+          "item": "garlic",
+          "note": "minced",
+          "aisle": "produce"
+        },
+        {
+          "q": 2,
+          "u": "tbsp",
+          "item": "fresh parsley",
+          "note": "chopped",
+          "aisle": "produce"
+        },
+        {
+          "q": 1,
+          "u": "tsp",
+          "item": "salt",
+          "aisle": "spices"
+        },
+        {
+          "q": 2,
+          "u": "tbsp",
+          "item": "olive oil",
+          "aisle": "pantry"
+        },
+        {
+          "q": 2,
+          "u": "can",
+          "item": "crushed tomatoes (28 oz)",
+          "aisle": "canned"
+        },
+        {
+          "q": 1,
+          "u": "lb",
+          "item": "spaghetti",
+          "aisle": "pantry"
+        }
+      ],
+      "steps": [
+        {
+          "text": "Soak the breadcrumbs in the milk for 5 minutes. Mix with the meats, egg, Parmesan, 2 garlic, parsley and salt."
+        },
+        {
+          "text": "Roll into about 18 meatballs, handling the meat lightly."
+        },
+        {
+          "text": "Brown the meatballs in the oil in a Dutch oven, turning, then set aside. Cook the last garlic for 30 seconds."
+        },
+        {
+          "text": "Add the tomatoes and ½ tsp salt and bring to a simmer. Nestle the meatballs in."
+        },
+        {
+          "text": "Cover partly and simmer gently. Meatballs are done at 160°F inside.",
+          "timer": 1800,
+          "timerLabel": "Simmer the meatballs"
+        },
+        {
+          "text": "Boil the spaghetti in salted water until al dente, then drain.",
+          "timer": 600,
+          "timerLabel": "Boil the spaghetti"
+        },
+        {
+          "text": "Serve the spaghetti topped with sauce, meatballs and more Parmesan."
+        }
+      ]
+    },
+    {
+      "id": "italian-pesto-pasta-green-beans-potatoes",
+      "title": "Pesto pasta with green beans and potatoes",
+      "blurb": "The Ligurian way: trofie-style pasta, tender potato and basil pesto",
+      "type": "pasta",
+      "serves": 4,
+      "prep": 15,
+      "cook": 25,
+      "tags": [
+        "vegetarian"
+      ],
+      "ingredients": [
+        {
+          "q": 12,
+          "u": "oz",
+          "item": "trofie or fusilli pasta",
+          "aisle": "pantry"
+        },
+        {
+          "q": 2,
+          "u": "",
+          "item": "Yukon gold potatoes",
+          "note": "peeled, cut in half-inch cubes",
+          "aisle": "produce"
+        },
+        {
+          "q": 8,
+          "u": "oz",
+          "item": "green beans",
+          "note": "trimmed, cut in 2-inch pieces",
+          "aisle": "produce"
+        },
+        {
+          "q": 2,
+          "u": "cup",
+          "item": "fresh basil leaves",
+          "note": "packed",
+          "aisle": "produce"
+        },
+        {
+          "q": 0.33,
+          "u": "cup",
+          "item": "pine nuts",
+          "note": "toasted",
+          "aisle": "pantry"
+        },
+        {
+          "q": 1,
+          "u": "clove",
+          "item": "garlic",
+          "aisle": "produce"
+        },
+        {
+          "q": 0.5,
+          "u": "cup",
+          "item": "grated Parmesan cheese",
+          "aisle": "dairy"
+        },
+        {
+          "q": 0.5,
+          "u": "cup",
+          "item": "olive oil",
+          "aisle": "pantry"
+        },
+        {
+          "q": null,
+          "u": "",
+          "item": "salt",
+          "aisle": "spices"
+        }
+      ],
+      "steps": [
+        {
+          "text": "Bring a large pot of salted water to a boil."
+        },
+        {
+          "text": "Blend the basil, pine nuts, garlic, Parmesan, oil and ½ tsp salt into a coarse pesto."
+        },
+        {
+          "text": "Boil the potatoes alone for 5 minutes.",
+          "timer": 300,
+          "timerLabel": "Start the potatoes"
+        },
+        {
+          "text": "Add the pasta and green beans to the same pot. Cook until the pasta is al dente.",
+          "timer": 600,
+          "timerLabel": "Cook pasta and beans"
+        },
+        {
+          "text": "Save ½ cup of cooking water, then drain everything."
+        },
+        {
+          "text": "Toss with the pesto and enough cooking water to make it creamy. Serve warm."
+        }
+      ]
+    },
+    {
+      "id": "italian-classic-lasagna",
+      "title": "Classic meat lasagna",
+      "blurb": "Layers of meat sauce, ricotta and mozzarella, the Sunday dinner",
+      "type": "baked",
+      "serves": 8,
+      "prep": 40,
+      "cook": 75,
+      "tags": [
+        "make ahead",
+        "crowd"
+      ],
+      "ingredients": [
+        {
+          "q": 12,
+          "u": "piece",
+          "item": "lasagna noodles",
+          "aisle": "pantry"
+        },
+        {
+          "q": 1,
+          "u": "lb",
+          "item": "ground beef",
+          "aisle": "meat"
+        },
+        {
+          "q": 0.5,
+          "u": "lb",
+          "item": "Italian sausage",
+          "note": "casings removed",
+          "aisle": "meat"
+        },
+        {
+          "q": 1,
+          "u": "",
+          "item": "yellow onion",
+          "note": "diced",
+          "aisle": "produce"
+        },
+        {
+          "q": 3,
+          "u": "clove",
+          "item": "garlic",
+          "note": "minced",
+          "aisle": "produce"
+        },
+        {
+          "q": 1,
+          "u": "jar",
+          "item": "marinara sauce (24 oz)",
+          "aisle": "canned"
+        },
+        {
+          "q": 1,
+          "u": "can",
+          "item": "tomato sauce (15 oz)",
+          "aisle": "canned"
+        },
+        {
+          "q": 15,
+          "u": "oz",
+          "item": "ricotta cheese",
+          "aisle": "dairy"
+        },
+        {
+          "q": 1,
+          "u": "",
+          "item": "large eggs",
+          "aisle": "dairy"
+        },
+        {
+          "q": 3,
+          "u": "cup",
+          "item": "shredded mozzarella",
+          "aisle": "dairy"
+        },
+        {
+          "q": 0.5,
+          "u": "cup",
+          "item": "grated Parmesan cheese",
+          "aisle": "dairy"
+        },
+        {
+          "q": 2,
+          "u": "tbsp",
+          "item": "fresh parsley",
+          "note": "chopped",
+          "aisle": "produce"
+        },
+        {
+          "q": null,
+          "u": "",
+          "item": "salt",
+          "aisle": "spices"
+        }
+      ],
+      "steps": [
+        {
+          "text": "Heat the oven to 375°F. Boil the noodles in salted water until barely tender, then drain."
+        },
+        {
+          "text": "Brown the beef, sausage and onion until no pink is left. Add the garlic, marinara and tomato sauce and simmer 10 minutes."
+        },
+        {
+          "text": "Mix the ricotta, egg, half the Parmesan, parsley and a pinch of salt."
+        },
+        {
+          "text": "Spread sauce in a 9x13 dish. Layer noodles, ricotta, mozzarella and sauce, repeating three times."
+        },
+        {
+          "text": "Finish with sauce, mozzarella and the rest of the Parmesan. Cover with foil."
+        },
+        {
+          "text": "Bake covered, then uncover and bake until bubbly and browned.",
+          "timer": 3600,
+          "timerLabel": "Bake the lasagna"
+        },
+        {
+          "text": "Let it rest so the layers set before cutting.",
+          "timer": 900,
+          "timerLabel": "Rest the lasagna"
+        }
+      ]
+    },
+    {
+      "id": "italian-veggie-lasagna-bianca",
+      "title": "Spinach and mushroom lasagna",
+      "blurb": "Creamy white sauce, spinach, mushrooms and three cheeses",
+      "type": "baked",
+      "serves": 8,
+      "prep": 35,
+      "cook": 60,
+      "tags": [
+        "vegetarian",
+        "make ahead"
+      ],
+      "ingredients": [
+        {
+          "q": 12,
+          "u": "piece",
+          "item": "lasagna noodles",
+          "aisle": "pantry"
+        },
+        {
+          "q": 4,
+          "u": "tbsp",
+          "item": "unsalted butter",
+          "aisle": "dairy"
+        },
+        {
+          "q": 0.25,
+          "u": "cup",
+          "item": "all-purpose flour",
+          "aisle": "pantry"
+        },
+        {
+          "q": 3,
+          "u": "cup",
+          "item": "whole milk",
+          "aisle": "dairy"
+        },
+        {
+          "q": 0.25,
+          "u": "tsp",
+          "item": "ground nutmeg",
+          "aisle": "spices"
+        },
+        {
+          "q": 16,
+          "u": "oz",
+          "item": "cremini mushrooms",
+          "note": "sliced",
+          "aisle": "produce"
+        },
+        {
+          "q": 3,
+          "u": "clove",
+          "item": "garlic",
+          "note": "minced",
+          "aisle": "produce"
+        },
+        {
+          "q": 20,
+          "u": "oz",
+          "item": "frozen chopped spinach",
+          "note": "thawed and squeezed dry",
+          "aisle": "frozen"
+        },
+        {
+          "q": 15,
+          "u": "oz",
+          "item": "ricotta cheese",
+          "aisle": "dairy"
+        },
+        {
+          "q": 3,
+          "u": "cup",
+          "item": "shredded mozzarella",
+          "aisle": "dairy"
+        },
+        {
+          "q": 0.5,
+          "u": "cup",
+          "item": "grated Parmesan cheese",
+          "aisle": "dairy"
+        },
+        {
+          "q": null,
+          "u": "",
+          "item": "salt",
+          "aisle": "spices"
+        },
+        {
+          "q": null,
+          "u": "",
+          "item": "black pepper",
+          "aisle": "spices"
+        }
+      ],
+      "steps": [
+        {
+          "text": "Heat the oven to 375°F. Boil the noodles until barely tender, then drain."
+        },
+        {
+          "text": "Melt the butter, whisk in the flour for 1 minute, then slowly whisk in the milk. Simmer until thick. Add nutmeg, salt and pepper."
+        },
+        {
+          "text": "Sauté the mushrooms and garlic in a dry skillet until browned. Mix in the spinach and ricotta."
+        },
+        {
+          "text": "Spread white sauce in a 9x13 dish. Layer noodles, spinach filling, mozzarella and sauce, three layers."
+        },
+        {
+          "text": "Top with sauce, mozzarella and Parmesan. Cover with foil."
+        },
+        {
+          "text": "Bake covered for 30 minutes, then uncover and bake until golden.",
+          "timer": 2700,
+          "timerLabel": "Bake the lasagna"
+        },
+        {
+          "text": "Let it rest before cutting.",
+          "timer": 600,
+          "timerLabel": "Rest the lasagna"
+        }
+      ]
+    },
+    {
+      "id": "italian-baked-ziti",
+      "title": "Baked ziti",
+      "blurb": "Cheesy ziti in meaty tomato sauce, easy for a crowd",
+      "type": "baked",
+      "serves": 8,
+      "prep": 20,
+      "cook": 50,
+      "tags": [
+        "crowd",
+        "kid-friendly"
+      ],
+      "ingredients": [
+        {
+          "q": 1,
+          "u": "lb",
+          "item": "ziti",
+          "aisle": "pantry"
+        },
+        {
+          "q": 1,
+          "u": "lb",
+          "item": "ground beef",
+          "aisle": "meat"
+        },
+        {
+          "q": 1,
+          "u": "",
+          "item": "yellow onion",
+          "note": "diced",
+          "aisle": "produce"
+        },
+        {
+          "q": 3,
+          "u": "clove",
+          "item": "garlic",
+          "note": "minced",
+          "aisle": "produce"
+        },
+        {
+          "q": 1,
+          "u": "jar",
+          "item": "marinara sauce (24 oz)",
+          "aisle": "canned"
+        },
+        {
+          "q": 1,
+          "u": "can",
+          "item": "crushed tomatoes (14.5 oz)",
+          "aisle": "canned"
+        },
+        {
+          "q": 15,
+          "u": "oz",
+          "item": "ricotta cheese",
+          "aisle": "dairy"
+        },
+        {
+          "q": 3,
+          "u": "cup",
+          "item": "shredded mozzarella",
+          "aisle": "dairy"
+        },
+        {
+          "q": 0.5,
+          "u": "cup",
+          "item": "grated Parmesan cheese",
+          "aisle": "dairy"
+        },
+        {
+          "q": 1,
+          "u": "tsp",
+          "item": "Italian seasoning",
+          "aisle": "spices"
+        },
+        {
+          "q": null,
+          "u": "",
+          "item": "salt",
+          "aisle": "spices"
+        }
+      ],
+      "steps": [
+        {
+          "text": "Heat the oven to 375°F. Boil the ziti 2 minutes short of the package time, then drain."
+        },
+        {
+          "text": "Brown the beef and onion in a large pot until no pink is left. Add the garlic, marinara, tomatoes and seasoning and simmer 10 minutes."
+        },
+        {
+          "text": "Stir the ziti into the sauce. Mix the ricotta with half the Parmesan and a pinch of salt."
+        },
+        {
+          "text": "Spread half the pasta in a 9x13 dish, dot with ricotta, then add the rest of the pasta."
+        },
+        {
+          "text": "Top with mozzarella and the remaining Parmesan. Cover with foil."
+        },
+        {
+          "text": "Bake covered for 25 minutes, then uncover and bake until browned and bubbly.",
+          "timer": 2400,
+          "timerLabel": "Bake the ziti"
+        },
+        {
+          "text": "Let it stand 5 minutes before serving."
+        }
+      ]
+    },
+    {
+      "id": "italian-stuffed-shells",
+      "title": "Ricotta-stuffed shells",
+      "blurb": "Jumbo shells filled with ricotta and spinach in marinara",
+      "type": "baked",
+      "serves": 6,
+      "prep": 30,
+      "cook": 35,
+      "tags": [
+        "vegetarian",
+        "make ahead"
+      ],
+      "ingredients": [
+        {
+          "q": 24,
+          "u": "piece",
+          "item": "jumbo pasta shells",
+          "aisle": "pantry"
+        },
+        {
+          "q": 15,
+          "u": "oz",
+          "item": "ricotta cheese",
+          "aisle": "dairy"
+        },
+        {
+          "q": 10,
+          "u": "oz",
+          "item": "frozen chopped spinach",
+          "note": "thawed and squeezed dry",
+          "aisle": "frozen"
+        },
+        {
+          "q": 2,
+          "u": "cup",
+          "item": "shredded mozzarella",
+          "aisle": "dairy"
+        },
+        {
+          "q": 0.5,
+          "u": "cup",
+          "item": "grated Parmesan cheese",
+          "aisle": "dairy"
+        },
+        {
+          "q": 1,
+          "u": "",
+          "item": "large eggs",
+          "aisle": "dairy"
+        },
+        {
+          "q": 2,
+          "u": "clove",
+          "item": "garlic",
+          "note": "minced",
+          "aisle": "produce"
+        },
+        {
+          "q": 0.25,
+          "u": "tsp",
+          "item": "ground nutmeg",
+          "aisle": "spices"
+        },
+        {
+          "q": null,
+          "u": "",
+          "item": "salt",
+          "aisle": "spices"
+        },
+        {
+          "q": null,
+          "u": "",
+          "item": "black pepper",
+          "aisle": "spices"
+        },
+        {
+          "q": 1,
+          "u": "jar",
+          "item": "marinara sauce (24 oz)",
+          "aisle": "canned"
+        }
+      ],
+      "steps": [
+        {
+          "text": "Heat the oven to 375°F. Boil the shells 2 minutes short of tender, then drain and cool on a tray."
+        },
+        {
+          "text": "Mix the ricotta, spinach, 1 cup mozzarella, half the Parmesan, egg, garlic, nutmeg, salt and pepper."
+        },
+        {
+          "text": "Spread half the marinara in a 9x13 dish."
+        },
+        {
+          "text": "Fill each shell with about 2 tablespoons of filling. Set them in the sauce, open side up."
+        },
+        {
+          "text": "Spoon the rest of the sauce over, top with mozzarella and Parmesan, and cover with foil."
+        },
+        {
+          "text": "Bake covered for 25 minutes, then uncover and bake until bubbling.",
+          "timer": 2100,
+          "timerLabel": "Bake the shells"
+        }
+      ]
+    },
+    {
+      "id": "italian-manicotti",
+      "title": "Baked manicotti",
+      "blurb": "Tubes of pasta stuffed with ricotta, baked in red sauce",
+      "type": "baked",
+      "serves": 6,
+      "prep": 30,
+      "cook": 45,
+      "tags": [
+        "vegetarian",
+        "make ahead"
+      ],
+      "ingredients": [
+        {
+          "q": 14,
+          "u": "piece",
+          "item": "manicotti shells",
+          "aisle": "pantry"
+        },
+        {
+          "q": 15,
+          "u": "oz",
+          "item": "ricotta cheese",
+          "aisle": "dairy"
+        },
+        {
+          "q": 2,
+          "u": "cup",
+          "item": "shredded mozzarella",
+          "aisle": "dairy"
+        },
+        {
+          "q": 0.5,
+          "u": "cup",
+          "item": "grated Parmesan cheese",
+          "aisle": "dairy"
+        },
+        {
+          "q": 1,
+          "u": "",
+          "item": "large eggs",
+          "aisle": "dairy"
+        },
+        {
+          "q": 2,
+          "u": "tbsp",
+          "item": "fresh parsley",
+          "note": "chopped",
+          "aisle": "produce"
+        },
+        {
+          "q": 0.5,
+          "u": "tsp",
+          "item": "salt",
+          "aisle": "spices"
+        },
+        {
+          "q": 0.25,
+          "u": "tsp",
+          "item": "black pepper",
+          "aisle": "spices"
+        },
+        {
+          "q": 1,
+          "u": "jar",
+          "item": "marinara sauce (24 oz)",
+          "aisle": "canned"
+        },
+        {
+          "q": 1,
+          "u": "can",
+          "item": "tomato sauce (15 oz)",
+          "aisle": "canned"
+        }
+      ],
+      "steps": [
+        {
+          "text": "Heat the oven to 375°F. Boil the manicotti 3 minutes short of tender, then drain on a tray."
+        },
+        {
+          "text": "Mix the ricotta, 1 cup mozzarella, half the Parmesan, egg, parsley, salt and pepper."
+        },
+        {
+          "text": "Stir the marinara and tomato sauce together. Spread 1 cup in a 9x13 dish."
+        },
+        {
+          "text": "Spoon the filling into the shells using a zip bag with a corner snipped. Lay them in the dish."
+        },
+        {
+          "text": "Cover with the rest of the sauce, then the remaining mozzarella and Parmesan. Cover with foil."
+        },
+        {
+          "text": "Bake covered for 30 minutes, then uncover and bake until browned.",
+          "timer": 2400,
+          "timerLabel": "Bake the manicotti"
+        }
+      ]
+    },
+    {
+      "id": "italian-lasagna-roll-ups",
+      "title": "Lasagna roll-ups",
+      "blurb": "Individual lasagna spirals, easy to serve and portion",
+      "type": "baked",
+      "serves": 6,
+      "prep": 30,
+      "cook": 40,
+      "tags": [
+        "kid-friendly",
+        "make ahead"
+      ],
+      "ingredients": [
+        {
+          "q": 12,
+          "u": "piece",
+          "item": "lasagna noodles",
+          "aisle": "pantry"
+        },
+        {
+          "q": 15,
+          "u": "oz",
+          "item": "ricotta cheese",
+          "aisle": "dairy"
+        },
+        {
+          "q": 2,
+          "u": "cup",
+          "item": "shredded mozzarella",
+          "aisle": "dairy"
+        },
+        {
+          "q": 0.5,
+          "u": "cup",
+          "item": "grated Parmesan cheese",
+          "aisle": "dairy"
+        },
+        {
+          "q": 1,
+          "u": "",
+          "item": "large eggs",
+          "aisle": "dairy"
+        },
+        {
+          "q": 1,
+          "u": "tsp",
+          "item": "Italian seasoning",
+          "aisle": "spices"
+        },
+        {
+          "q": 1,
+          "u": "lb",
+          "item": "ground beef",
+          "aisle": "meat"
+        },
+        {
+          "q": 1,
+          "u": "jar",
+          "item": "marinara sauce (24 oz)",
+          "aisle": "canned"
+        },
+        {
+          "q": null,
+          "u": "",
+          "item": "salt",
+          "aisle": "spices"
+        }
+      ],
+      "steps": [
+        {
+          "text": "Heat the oven to 375°F. Boil the noodles until just tender, then drain and lay flat on a tray."
+        },
+        {
+          "text": "Brown the beef until no pink is left, then drain. Stir in the marinara."
+        },
+        {
+          "text": "Mix the ricotta, 1 cup mozzarella, half the Parmesan, egg, seasoning and a pinch of salt."
+        },
+        {
+          "text": "Spread meat sauce in a 9x13 dish. Spread 3 tablespoons filling on each noodle and roll up."
+        },
+        {
+          "text": "Set the rolls seam side down in the dish. Top with sauce, mozzarella and Parmesan, then cover with foil."
+        },
+        {
+          "text": "Bake covered for 25 minutes, then uncover and bake until bubbly.",
+          "timer": 2400,
+          "timerLabel": "Bake the roll-ups"
+        }
+      ]
+    },
+    {
+      "id": "italian-eggplant-parmesan",
+      "title": "Eggplant Parmesan",
+      "blurb": "Crispy baked eggplant slices layered with sauce and mozzarella",
+      "type": "baked",
+      "serves": 6,
+      "prep": 30,
+      "cook": 55,
+      "tags": [
+        "vegetarian"
+      ],
+      "ingredients": [
+        {
+          "q": 2,
+          "u": "lb",
+          "item": "eggplant",
+          "note": "sliced half-inch thick",
+          "aisle": "produce"
+        },
+        {
+          "q": 1,
+          "u": "cup",
+          "item": "plain breadcrumbs",
+          "aisle": "pantry"
+        },
+        {
+          "q": 0.5,
+          "u": "cup",
+          "item": "grated Parmesan cheese",
+          "aisle": "dairy"
+        },
+        {
+          "q": 2,
+          "u": "",
+          "item": "large eggs",
+          "note": "beaten",
+          "aisle": "dairy"
+        },
+        {
+          "q": 1,
+          "u": "tsp",
+          "item": "Italian seasoning",
+          "aisle": "spices"
+        },
+        {
+          "q": null,
+          "u": "",
+          "item": "salt",
+          "aisle": "spices"
+        },
+        {
+          "q": 0.25,
+          "u": "cup",
+          "item": "olive oil",
+          "aisle": "pantry"
+        },
+        {
+          "q": 1,
+          "u": "jar",
+          "item": "marinara sauce (24 oz)",
+          "aisle": "canned"
+        },
+        {
+          "q": 2,
+          "u": "cup",
+          "item": "shredded mozzarella",
+          "aisle": "dairy"
+        },
+        {
+          "q": 0.25,
+          "u": "cup",
+          "item": "fresh basil",
+          "note": "torn",
+          "aisle": "produce"
+        }
+      ],
+      "steps": [
+        {
+          "text": "Heat the oven to 425°F. Salt the eggplant slices and let them sit on towels to draw out moisture."
+        },
+        {
+          "text": "Salt and drain the slices, then pat dry.",
+          "timer": 600,
+          "timerLabel": "Drain the eggplant"
+        },
+        {
+          "text": "Mix the breadcrumbs, half the Parmesan and the Italian seasoning. Dip slices in egg, then crumbs."
+        },
+        {
+          "text": "Brush with oil and bake on two lined sheet pans, flipping once, until golden.",
+          "timer": 1500,
+          "timerLabel": "Bake the eggplant"
+        },
+        {
+          "text": "Lower the oven to 375°F. Spread sauce in a baking dish, then layer eggplant, sauce and mozzarella."
+        },
+        {
+          "text": "Top with the remaining cheese. Bake until bubbling and golden.",
+          "timer": 1200,
+          "timerLabel": "Bake the casserole"
+        },
+        {
+          "text": "Rest 5 minutes and scatter with basil."
+        }
+      ]
+    },
+    {
+      "id": "italian-baked-rigatoni-sausage",
+      "title": "Baked rigatoni with sausage",
+      "blurb": "Italian sausage, tomato sauce and melty cheese in one dish",
+      "type": "baked",
+      "serves": 8,
+      "prep": 20,
+      "cook": 45,
+      "tags": [
+        "crowd"
+      ],
+      "ingredients": [
+        {
+          "q": 1,
+          "u": "lb",
+          "item": "rigatoni",
+          "aisle": "pantry"
+        },
+        {
+          "q": 1.25,
+          "u": "lb",
+          "item": "Italian sausage",
+          "note": "casings removed",
+          "aisle": "meat"
+        },
+        {
+          "q": 1,
+          "u": "",
+          "item": "yellow onion",
+          "note": "diced",
+          "aisle": "produce"
+        },
+        {
+          "q": 3,
+          "u": "clove",
+          "item": "garlic",
+          "note": "minced",
+          "aisle": "produce"
+        },
+        {
+          "q": 1,
+          "u": "jar",
+          "item": "marinara sauce (24 oz)",
+          "aisle": "canned"
+        },
+        {
+          "q": 1,
+          "u": "can",
+          "item": "crushed tomatoes (14.5 oz)",
+          "aisle": "canned"
+        },
+        {
+          "q": 0.5,
+          "u": "cup",
+          "item": "heavy cream",
+          "aisle": "dairy"
+        },
+        {
+          "q": 2.5,
+          "u": "cup",
+          "item": "shredded mozzarella",
+          "aisle": "dairy"
+        },
+        {
+          "q": 0.5,
+          "u": "cup",
+          "item": "grated Parmesan cheese",
+          "aisle": "dairy"
+        },
+        {
+          "q": null,
+          "u": "",
+          "item": "salt",
+          "aisle": "spices"
+        }
+      ],
+      "steps": [
+        {
+          "text": "Heat the oven to 375°F. Boil the rigatoni 2 minutes short of the package time, then drain."
+        },
+        {
+          "text": "Brown the sausage and onion in a large pot, breaking it up, until cooked through. Add the garlic."
+        },
+        {
+          "text": "Stir in the marinara, tomatoes and cream and simmer for 5 minutes."
+        },
+        {
+          "text": "Mix in the rigatoni and half the mozzarella, then pour into a 9x13 dish."
+        },
+        {
+          "text": "Top with the rest of the mozzarella and the Parmesan."
+        },
+        {
+          "text": "Bake uncovered until browned and bubbling.",
+          "timer": 1500,
+          "timerLabel": "Bake the rigatoni"
+        },
+        {
+          "text": "Let it cool 5 minutes before serving."
+        }
+      ]
+    },
+    {
+      "id": "italian-tortellini-bake",
+      "title": "Cheese tortellini bake",
+      "blurb": "Fridge tortellini baked with sauce and mozzarella, no boiling",
+      "type": "baked",
+      "serves": 6,
+      "prep": 10,
+      "cook": 35,
+      "tags": [
+        "kid-friendly",
+        "vegetarian"
+      ],
+      "ingredients": [
+        {
+          "q": 20,
+          "u": "oz",
+          "item": "refrigerated cheese tortellini",
+          "aisle": "dairy"
+        },
+        {
+          "q": 1,
+          "u": "jar",
+          "item": "marinara sauce (24 oz)",
+          "aisle": "canned"
+        },
+        {
+          "q": 0.5,
+          "u": "cup",
+          "item": "water",
+          "aisle": "pantry"
+        },
+        {
+          "q": 1,
+          "u": "can",
+          "item": "diced tomatoes (14.5 oz)",
+          "aisle": "canned"
+        },
+        {
+          "q": 1,
+          "u": "tsp",
+          "item": "Italian seasoning",
+          "aisle": "spices"
+        },
+        {
+          "q": 2,
+          "u": "cup",
+          "item": "shredded mozzarella",
+          "aisle": "dairy"
+        },
+        {
+          "q": 0.25,
+          "u": "cup",
+          "item": "grated Parmesan cheese",
+          "aisle": "dairy"
+        },
+        {
+          "q": 5,
+          "u": "oz",
+          "item": "baby spinach",
+          "aisle": "produce"
+        },
+        {
+          "q": null,
+          "u": "",
+          "item": "salt",
+          "aisle": "spices"
+        }
+      ],
+      "steps": [
+        {
+          "text": "Heat the oven to 375°F."
+        },
+        {
+          "text": "Stir the marinara, water, diced tomatoes, seasoning and a pinch of salt in a 9x13 dish."
+        },
+        {
+          "text": "Fold in the tortellini, spinach and half the mozzarella."
+        },
+        {
+          "text": "Cover tightly with foil."
+        },
+        {
+          "text": "Bake covered until the tortellini is tender.",
+          "timer": 1500,
+          "timerLabel": "Bake covered"
+        },
+        {
+          "text": "Uncover, add the remaining mozzarella and Parmesan."
+        },
+        {
+          "text": "Bake uncovered until the cheese is melted and golden.",
+          "timer": 600,
+          "timerLabel": "Brown the cheese"
+        }
+      ]
+    },
+    {
+      "id": "italian-chicken-broccoli-alfredo-bake",
+      "title": "Chicken broccoli Alfredo bake",
+      "blurb": "Creamy Alfredo pasta with chicken and broccoli under crispy cheese",
+      "type": "baked",
+      "serves": 6,
+      "prep": 20,
+      "cook": 35,
+      "tags": [
+        "kid-friendly"
+      ],
+      "ingredients": [
+        {
+          "q": 12,
+          "u": "oz",
+          "item": "penne",
+          "aisle": "pantry"
+        },
+        {
+          "q": 1.5,
+          "u": "lb",
+          "item": "boneless skinless chicken breasts",
+          "note": "cut in 1-inch pieces",
+          "aisle": "meat"
+        },
+        {
+          "q": 1,
+          "u": "tbsp",
+          "item": "olive oil",
+          "aisle": "pantry"
+        },
+        {
+          "q": 3,
+          "u": "cup",
+          "item": "broccoli florets",
+          "aisle": "produce"
+        },
+        {
+          "q": 3,
+          "u": "tbsp",
+          "item": "unsalted butter",
+          "aisle": "dairy"
+        },
+        {
+          "q": 3,
+          "u": "clove",
+          "item": "garlic",
+          "note": "minced",
+          "aisle": "produce"
+        },
+        {
+          "q": 3,
+          "u": "tbsp",
+          "item": "all-purpose flour",
+          "aisle": "pantry"
+        },
+        {
+          "q": 1.5,
+          "u": "cup",
+          "item": "whole milk",
+          "aisle": "dairy"
+        },
+        {
+          "q": 0.5,
+          "u": "cup",
+          "item": "heavy cream",
+          "aisle": "dairy"
+        },
+        {
+          "q": 1,
+          "u": "cup",
+          "item": "grated Parmesan cheese",
+          "aisle": "dairy"
+        },
+        {
+          "q": 1.5,
+          "u": "cup",
+          "item": "shredded mozzarella",
+          "aisle": "dairy"
+        },
+        {
+          "q": null,
+          "u": "",
+          "item": "salt",
+          "aisle": "spices"
+        },
+        {
+          "q": null,
+          "u": "",
+          "item": "black pepper",
+          "aisle": "spices"
+        }
+      ],
+      "steps": [
+        {
+          "text": "Heat the oven to 400°F. Boil the penne 2 minutes short of tender, adding the broccoli for the last minute. Drain."
+        },
+        {
+          "text": "Season the chicken with salt and pepper. Cook in the oil until golden and no longer pink, 6 to 8 minutes."
+        },
+        {
+          "text": "Melt the butter, cook the garlic 30 seconds, then whisk in the flour. Slowly add the milk and cream."
+        },
+        {
+          "text": "Simmer, stirring, until thick. Whisk in the Parmesan.",
+          "timer": 240,
+          "timerLabel": "Thicken the sauce"
+        },
+        {
+          "text": "Stir the pasta, broccoli and chicken into the sauce. Pour into a 9x13 dish and top with mozzarella."
+        },
+        {
+          "text": "Bake until bubbly and golden. The chicken should reach 165°F.",
+          "timer": 1200,
+          "timerLabel": "Bake the pasta"
+        }
+      ]
+    },
+    {
+      "id": "italian-margherita-pizza",
+      "title": "Margherita pizza",
+      "blurb": "Chewy homemade crust, tomato, fresh mozzarella and basil",
+      "type": "pizza",
+      "serves": 4,
+      "prep": 20,
+      "cook": 90,
+      "tags": [
+        "vegetarian"
+      ],
+      "ingredients": [
+        {
+          "q": 3.5,
+          "u": "cup",
+          "item": "all-purpose flour",
+          "aisle": "pantry"
+        },
+        {
+          "q": 2.25,
+          "u": "tsp",
+          "item": "active dry yeast",
+          "aisle": "pantry"
+        },
+        {
+          "q": 1,
+          "u": "tsp",
+          "item": "sugar",
+          "aisle": "pantry"
+        },
+        {
+          "q": 1.5,
+          "u": "tsp",
+          "item": "salt",
+          "aisle": "spices"
+        },
+        {
+          "q": 1.25,
+          "u": "cup",
+          "item": "water",
+          "note": "warm (110°F)",
+          "aisle": "pantry"
+        },
+        {
+          "q": 2,
+          "u": "tbsp",
+          "item": "olive oil",
+          "aisle": "pantry"
+        },
+        {
+          "q": 1,
+          "u": "cup",
+          "item": "crushed tomatoes",
+          "aisle": "canned"
+        },
+        {
+          "q": 8,
+          "u": "oz",
+          "item": "fresh mozzarella",
+          "note": "sliced",
+          "aisle": "dairy"
+        },
+        {
+          "q": 0.25,
+          "u": "cup",
+          "item": "fresh basil",
+          "note": "leaves",
+          "aisle": "produce"
+        }
+      ],
+      "steps": [
+        {
+          "text": "Mix the flour, yeast, sugar and 1 tsp salt. Stir in the warm water and 1 tbsp oil until a shaggy dough forms."
+        },
+        {
+          "text": "Knead on a floured counter until smooth, about 8 minutes. Put it in an oiled bowl and cover."
+        },
+        {
+          "text": "Let the dough rise until doubled.",
+          "timer": 3600,
+          "timerLabel": "Rise the dough"
+        },
+        {
+          "text": "Heat the oven with a pizza stone or upside-down sheet pan to 500°F. Mix the tomatoes with ½ tsp salt."
+        },
+        {
+          "text": "Divide the dough in 2, stretch each into a 12-inch round, and top with sauce and mozzarella."
+        },
+        {
+          "text": "Slide onto the hot pan and bake until the crust is browned and the cheese bubbles.",
+          "timer": 600,
+          "timerLabel": "Bake the pizza"
+        },
+        {
+          "text": "Scatter with basil and drizzle with the remaining oil."
+        }
+      ]
+    },
+    {
+      "id": "italian-pepperoni-pizza",
+      "title": "Pepperoni pizza",
+      "blurb": "The family favorite with a crisp golden crust",
+      "type": "pizza",
+      "serves": 4,
+      "prep": 20,
+      "cook": 100,
+      "tags": [
+        "kid-friendly"
+      ],
+      "ingredients": [
+        {
+          "q": 3.5,
+          "u": "cup",
+          "item": "all-purpose flour",
+          "aisle": "pantry"
+        },
+        {
+          "q": 2.25,
+          "u": "tsp",
+          "item": "active dry yeast",
+          "aisle": "pantry"
+        },
+        {
+          "q": 1,
+          "u": "tsp",
+          "item": "sugar",
+          "aisle": "pantry"
+        },
+        {
+          "q": 1.5,
+          "u": "tsp",
+          "item": "salt",
+          "aisle": "spices"
+        },
+        {
+          "q": 1.25,
+          "u": "cup",
+          "item": "water",
+          "note": "warm (110°F)",
+          "aisle": "pantry"
+        },
+        {
+          "q": 2,
+          "u": "tbsp",
+          "item": "olive oil",
+          "aisle": "pantry"
+        },
+        {
+          "q": 1,
+          "u": "cup",
+          "item": "pizza sauce",
+          "aisle": "canned"
+        },
+        {
+          "q": 3,
+          "u": "cup",
+          "item": "shredded mozzarella",
+          "aisle": "dairy"
+        },
+        {
+          "q": 4,
+          "u": "oz",
+          "item": "sliced pepperoni",
+          "aisle": "meat"
+        },
+        {
+          "q": 1,
+          "u": "tsp",
+          "item": "dried oregano",
+          "aisle": "spices"
+        }
+      ],
+      "steps": [
+        {
+          "text": "Mix the flour, yeast, sugar and salt. Stir in the warm water and oil, then knead 8 minutes until smooth."
+        },
+        {
+          "text": "Cover the dough and let it rise until doubled.",
+          "timer": 3600,
+          "timerLabel": "Rise the dough"
+        },
+        {
+          "text": "Heat the oven to 475°F with a sheet pan inside. Divide the dough in 2 and stretch to 12-inch rounds."
+        },
+        {
+          "text": "Top each with sauce, mozzarella, pepperoni and oregano."
+        },
+        {
+          "text": "Bake on the hot pan until the crust is deep golden and cheese is bubbly.",
+          "timer": 780,
+          "timerLabel": "Bake the pizza"
+        },
+        {
+          "text": "Let it rest 2 minutes, then slice."
+        }
+      ]
+    },
+    {
+      "id": "italian-white-pizza",
+      "title": "White pizza with ricotta and garlic",
+      "blurb": "No red sauce: garlic oil, ricotta and mozzarella",
+      "type": "pizza",
+      "serves": 4,
+      "prep": 15,
+      "cook": 20,
+      "tags": [
+        "vegetarian",
+        "quick"
+      ],
+      "ingredients": [
+        {
+          "q": 1,
+          "u": "lb",
+          "item": "pizza dough",
+          "note": "store-bought, room temperature",
+          "aisle": "dairy"
+        },
+        {
+          "q": 3,
+          "u": "tbsp",
+          "item": "olive oil",
+          "aisle": "pantry"
+        },
+        {
+          "q": 3,
+          "u": "clove",
+          "item": "garlic",
+          "note": "minced",
+          "aisle": "produce"
+        },
+        {
+          "q": 0.75,
+          "u": "cup",
+          "item": "ricotta cheese",
+          "aisle": "dairy"
+        },
+        {
+          "q": 2,
+          "u": "cup",
+          "item": "shredded mozzarella",
+          "aisle": "dairy"
+        },
+        {
+          "q": 0.25,
+          "u": "cup",
+          "item": "grated Parmesan cheese",
+          "aisle": "dairy"
+        },
+        {
+          "q": 0.5,
+          "u": "tsp",
+          "item": "dried oregano",
+          "aisle": "spices"
+        },
+        {
+          "q": 0.25,
+          "u": "tsp",
+          "item": "red pepper flakes",
+          "aisle": "spices"
+        },
+        {
+          "q": null,
+          "u": "",
+          "item": "black pepper",
+          "aisle": "spices"
+        }
+      ],
+      "steps": [
+        {
+          "text": "Heat the oven to 500°F with a sheet pan inside."
+        },
+        {
+          "text": "Warm the oil and garlic in a small pan for 1 minute, then take it off the heat."
+        },
+        {
+          "text": "Stretch the dough into a 14-inch round on parchment. Brush with garlic oil."
+        },
+        {
+          "text": "Dot with ricotta, then cover with mozzarella, Parmesan, oregano and pepper flakes."
+        },
+        {
+          "text": "Slide onto the hot pan. Bake until crisp and browned at the edges.",
+          "timer": 720,
+          "timerLabel": "Bake the pizza"
+        },
+        {
+          "text": "Finish with black pepper and slice."
+        }
+      ]
+    },
+    {
+      "id": "italian-sicilian-sheet-pan-pizza",
+      "title": "Sicilian sheet-pan pizza",
+      "blurb": "Thick, airy, crisp-bottomed square pizza for a crowd",
+      "type": "pizza",
+      "serves": 8,
+      "prep": 20,
+      "cook": 110,
+      "tags": [
+        "crowd"
+      ],
+      "ingredients": [
+        {
+          "q": 4,
+          "u": "cup",
+          "item": "all-purpose flour",
+          "aisle": "pantry"
+        },
+        {
+          "q": 2.25,
+          "u": "tsp",
+          "item": "active dry yeast",
+          "aisle": "pantry"
+        },
+        {
+          "q": 2,
+          "u": "tsp",
+          "item": "sugar",
+          "aisle": "pantry"
+        },
+        {
+          "q": 2,
+          "u": "tsp",
+          "item": "salt",
+          "aisle": "spices"
+        },
+        {
+          "q": 1.75,
+          "u": "cup",
+          "item": "water",
+          "note": "warm (110°F)",
+          "aisle": "pantry"
+        },
+        {
+          "q": 0.25,
+          "u": "tbsp",
+          "item": "olive oil",
+          "aisle": "pantry"
+        },
+        {
+          "q": 1,
+          "u": "can",
+          "item": "crushed tomatoes (14.5 oz)",
+          "aisle": "canned"
+        },
+        {
+          "q": 0.5,
+          "u": "tsp",
+          "item": "dried oregano",
+          "aisle": "spices"
+        },
+        {
+          "q": 4,
+          "u": "cup",
+          "item": "shredded mozzarella",
+          "aisle": "dairy"
+        },
+        {
+          "q": 0.25,
+          "u": "cup",
+          "item": "grated Parmesan cheese",
+          "aisle": "dairy"
+        }
+      ],
+      "steps": [
+        {
+          "text": "Mix the flour, yeast, sugar and salt. Stir in the water until sticky, then knead 5 minutes."
+        },
+        {
+          "text": "Oil a 13x18 sheet pan with 2 tbsp oil. Press the dough in, cover, and let it rise."
+        },
+        {
+          "text": "Let rise until puffy and doubled.",
+          "timer": 3600,
+          "timerLabel": "Rise the dough"
+        },
+        {
+          "text": "Heat the oven to 450°F. Mix the tomatoes with oregano and a pinch of salt."
+        },
+        {
+          "text": "Spread the sauce on, leaving a border. Top with mozzarella and Parmesan."
+        },
+        {
+          "text": "Bake on the lowest rack until the cheese is bubbly and the bottom is golden.",
+          "timer": 1500,
+          "timerLabel": "Bake the pizza"
+        },
+        {
+          "text": "Rest 5 minutes, then cut into squares."
+        }
+      ]
+    },
+    {
+      "id": "italian-rosemary-focaccia",
+      "title": "Rosemary sea-salt focaccia",
+      "blurb": "Dimpled, olive-oil rich bread with a crisp, golden base",
+      "type": "pizza",
+      "serves": 12,
+      "prep": 15,
+      "cook": 150,
+      "tags": [
+        "vegan",
+        "make ahead"
+      ],
+      "ingredients": [
+        {
+          "q": 3.5,
+          "u": "cup",
+          "item": "all-purpose flour",
+          "aisle": "pantry"
+        },
+        {
+          "q": 2,
+          "u": "tsp",
+          "item": "active dry yeast",
+          "aisle": "pantry"
+        },
+        {
+          "q": 2,
+          "u": "tsp",
+          "item": "sugar",
+          "aisle": "pantry"
+        },
+        {
+          "q": 2,
+          "u": "tsp",
+          "item": "salt",
+          "aisle": "spices"
+        },
+        {
+          "q": 1.75,
+          "u": "cup",
+          "item": "water",
+          "note": "warm (110°F)",
+          "aisle": "pantry"
+        },
+        {
+          "q": 0.33,
+          "u": "cup",
+          "item": "olive oil",
+          "aisle": "pantry"
+        },
+        {
+          "q": 2,
+          "u": "sprig",
+          "item": "fresh rosemary",
+          "note": "leaves only",
+          "aisle": "produce"
+        },
+        {
+          "q": 1,
+          "u": "tsp",
+          "item": "flaky sea salt",
+          "aisle": "spices"
+        }
+      ],
+      "steps": [
+        {
+          "text": "Stir the flour, yeast, sugar and 2 tsp salt in a large bowl. Mix in the water and 2 tbsp oil into a wet, sticky dough."
+        },
+        {
+          "text": "Cover and let it rise until doubled.",
+          "timer": 5400,
+          "timerLabel": "First rise"
+        },
+        {
+          "text": "Pour 2 tbsp oil into a 9x13 pan. Turn the dough in, fold it over, and stretch it toward the corners."
+        },
+        {
+          "text": "Let it rest and puff up a bit.",
+          "timer": 1800,
+          "timerLabel": "Second rise"
+        },
+        {
+          "text": "Heat the oven to 425°F. Dimple the dough with oiled fingers, drizzle with oil, and scatter rosemary and sea salt."
+        },
+        {
+          "text": "Bake until deep golden.",
+          "timer": 1500,
+          "timerLabel": "Bake the focaccia"
+        },
+        {
+          "text": "Cool in the pan for 10 minutes, then slice."
+        }
+      ]
+    },
+    {
+      "id": "italian-garlic-bread",
+      "title": "Cheesy garlic bread",
+      "blurb": "Buttery garlic and parsley on crusty bread, with a melted cheese top",
+      "type": "pizza",
+      "serves": 8,
+      "prep": 10,
+      "cook": 15,
+      "tags": [
+        "quick",
+        "vegetarian",
+        "kid-friendly"
+      ],
+      "ingredients": [
+        {
+          "q": 1,
+          "u": "piece",
+          "item": "Italian bread loaf",
+          "note": "about 16 oz, halved lengthwise",
+          "aisle": "bakery"
+        },
+        {
+          "q": 0.5,
+          "u": "stick",
+          "item": "unsalted butter",
+          "note": "softened",
+          "aisle": "dairy"
+        },
+        {
+          "q": 4,
+          "u": "clove",
+          "item": "garlic",
+          "note": "minced",
+          "aisle": "produce"
+        },
+        {
+          "q": 2,
+          "u": "tbsp",
+          "item": "fresh parsley",
+          "note": "chopped",
+          "aisle": "produce"
+        },
+        {
+          "q": 0.25,
+          "u": "cup",
+          "item": "grated Parmesan cheese",
+          "aisle": "dairy"
+        },
+        {
+          "q": 1,
+          "u": "cup",
+          "item": "shredded mozzarella",
+          "aisle": "dairy"
+        },
+        {
+          "q": null,
+          "u": "",
+          "item": "salt",
+          "aisle": "spices"
+        }
+      ],
+      "steps": [
+        {
+          "text": "Heat the oven to 400°F."
+        },
+        {
+          "text": "Mix the butter, garlic, parsley, Parmesan and a pinch of salt."
+        },
+        {
+          "text": "Spread the butter on the cut sides of the bread and put them on a sheet pan."
+        },
+        {
+          "text": "Bake until the edges are golden.",
+          "timer": 600,
+          "timerLabel": "Bake the bread"
+        },
+        {
+          "text": "Top with mozzarella and bake until melted and bubbly."
+        },
+        {
+          "text": "Bake until the cheese melts.",
+          "timer": 300,
+          "timerLabel": "Melt the cheese"
+        },
+        {
+          "text": "Slice and serve warm."
+        }
+      ]
+    },
+    {
+      "id": "italian-tomato-bruschetta",
+      "title": "Tomato basil bruschetta",
+      "blurb": "Grilled bread rubbed with garlic, topped with fresh tomatoes",
+      "type": "pizza",
+      "serves": 6,
+      "prep": 15,
+      "cook": 10,
+      "tags": [
+        "quick",
+        "vegan",
+        "healthy"
+      ],
+      "ingredients": [
+        {
+          "q": 1,
+          "u": "piece",
+          "item": "baguette",
+          "note": "cut in 12 slices",
+          "aisle": "bakery"
+        },
+        {
+          "q": 1.5,
+          "u": "lb",
+          "item": "ripe plum tomatoes",
+          "note": "diced",
+          "aisle": "produce"
+        },
+        {
+          "q": 2,
+          "u": "clove",
+          "item": "garlic",
+          "note": "halved, 1 minced",
+          "aisle": "produce"
+        },
+        {
+          "q": 0.25,
+          "u": "cup",
+          "item": "fresh basil",
+          "note": "thinly sliced",
+          "aisle": "produce"
+        },
+        {
+          "q": 3,
+          "u": "tbsp",
+          "item": "olive oil",
+          "aisle": "pantry"
+        },
+        {
+          "q": 1,
+          "u": "tsp",
+          "item": "balsamic vinegar",
+          "aisle": "pantry"
+        },
+        {
+          "q": null,
+          "u": "",
+          "item": "salt",
+          "aisle": "spices"
+        },
+        {
+          "q": null,
+          "u": "",
+          "item": "black pepper",
+          "aisle": "spices"
+        }
+      ],
+      "steps": [
+        {
+          "text": "Mix the tomatoes, minced garlic, basil, 2 tbsp oil, vinegar, salt and pepper. Let it sit."
+        },
+        {
+          "text": "Let the tomatoes sit to soak up flavor.",
+          "timer": 600,
+          "timerLabel": "Marinate the tomatoes"
+        },
+        {
+          "text": "Heat the oven to 425°F. Brush the bread with the remaining oil."
+        },
+        {
+          "text": "Toast the slices on a sheet pan until golden, turning once.",
+          "timer": 420,
+          "timerLabel": "Toast the bread"
+        },
+        {
+          "text": "Rub the warm toast with the cut side of the other garlic clove."
+        },
+        {
+          "text": "Spoon on the tomato mixture just before serving."
+        }
+      ]
+    },
+    {
+      "id": "italian-calzones",
+      "title": "Cheese and pepperoni calzones",
+      "blurb": "Folded pizza pockets with ricotta, mozzarella and pepperoni",
+      "type": "pizza",
+      "serves": 4,
+      "prep": 20,
+      "cook": 35,
+      "tags": [
+        "kid-friendly"
+      ],
+      "ingredients": [
+        {
+          "q": 1.5,
+          "u": "lb",
+          "item": "pizza dough",
+          "note": "store-bought, room temperature",
+          "aisle": "dairy"
+        },
+        {
+          "q": 1,
+          "u": "cup",
+          "item": "ricotta cheese",
+          "aisle": "dairy"
+        },
+        {
+          "q": 1.5,
+          "u": "cup",
+          "item": "shredded mozzarella",
+          "aisle": "dairy"
+        },
+        {
+          "q": 2,
+          "u": "oz",
+          "item": "sliced pepperoni",
+          "note": "chopped",
+          "aisle": "meat"
+        },
+        {
+          "q": 0.25,
+          "u": "cup",
+          "item": "grated Parmesan cheese",
+          "aisle": "dairy"
+        },
+        {
+          "q": 1,
+          "u": "tsp",
+          "item": "dried oregano",
+          "aisle": "spices"
+        },
+        {
+          "q": 1,
+          "u": "",
+          "item": "large eggs",
+          "note": "beaten",
+          "aisle": "dairy"
+        },
+        {
+          "q": 1,
+          "u": "cup",
+          "item": "marinara sauce",
+          "note": "warmed, to serve",
+          "aisle": "canned"
+        }
+      ],
+      "steps": [
+        {
+          "text": "Heat the oven to 450°F and line a sheet pan with parchment."
+        },
+        {
+          "text": "Mix the ricotta, mozzarella, pepperoni, Parmesan and oregano."
+        },
+        {
+          "text": "Cut the dough into 4 and roll each into a 8-inch round."
+        },
+        {
+          "text": "Put filling on half of each round. Fold over, press the edges, and crimp with a fork."
+        },
+        {
+          "text": "Brush with egg and cut a small slit in each to let steam out."
+        },
+        {
+          "text": "Bake until deep golden brown.",
+          "timer": 1200,
+          "timerLabel": "Bake the calzones"
+        },
+        {
+          "text": "Rest 5 minutes and serve with warm marinara."
+        }
+      ]
+    },
+    {
+      "id": "italian-stromboli",
+      "title": "Italian stromboli",
+      "blurb": "Rolled pizza dough with salami, ham, provolone and peppers",
+      "type": "pizza",
+      "serves": 6,
+      "prep": 20,
+      "cook": 30,
+      "tags": [
+        "kid-friendly"
+      ],
+      "ingredients": [
+        {
+          "q": 1,
+          "u": "lb",
+          "item": "pizza dough",
+          "note": "store-bought, room temperature",
+          "aisle": "dairy"
+        },
+        {
+          "q": 4,
+          "u": "oz",
+          "item": "sliced Genoa salami",
+          "aisle": "meat"
+        },
+        {
+          "q": 4,
+          "u": "oz",
+          "item": "sliced deli ham",
+          "aisle": "meat"
+        },
+        {
+          "q": 6,
+          "u": "slice",
+          "item": "provolone cheese",
+          "aisle": "dairy"
+        },
+        {
+          "q": 1,
+          "u": "cup",
+          "item": "shredded mozzarella",
+          "aisle": "dairy"
+        },
+        {
+          "q": 0.5,
+          "u": "cup",
+          "item": "roasted red peppers",
+          "note": "drained and chopped",
+          "aisle": "canned"
+        },
+        {
+          "q": 1,
+          "u": "",
+          "item": "large eggs",
+          "note": "beaten",
+          "aisle": "dairy"
+        },
+        {
+          "q": 1,
+          "u": "tsp",
+          "item": "Italian seasoning",
+          "aisle": "spices"
+        },
+        {
+          "q": 1,
+          "u": "cup",
+          "item": "marinara sauce",
+          "note": "warmed, to serve",
+          "aisle": "canned"
+        }
+      ],
+      "steps": [
+        {
+          "text": "Heat the oven to 400°F and line a sheet pan with parchment."
+        },
+        {
+          "text": "Roll the dough into a 12x16 rectangle on the parchment."
+        },
+        {
+          "text": "Layer the provolone, salami, ham, mozzarella and peppers, leaving a 1-inch border."
+        },
+        {
+          "text": "Roll up from the long side, pinch the seam and ends, and set seam side down."
+        },
+        {
+          "text": "Brush with egg, sprinkle with Italian seasoning, and cut 4 slits on top."
+        },
+        {
+          "text": "Bake until deep golden.",
+          "timer": 1500,
+          "timerLabel": "Bake the stromboli"
+        },
+        {
+          "text": "Rest 10 minutes, slice, and serve with warm marinara."
+        }
+      ]
+    },
+    {
+      "id": "italian-garlic-knots",
+      "title": "Garlic knots",
+      "blurb": "Soft pizzeria-style knots brushed with garlic butter",
+      "type": "pizza",
+      "serves": 12,
+      "prep": 20,
+      "cook": 35,
+      "tags": [
+        "vegetarian",
+        "kid-friendly"
+      ],
+      "ingredients": [
+        {
+          "q": 1,
+          "u": "lb",
+          "item": "pizza dough",
+          "note": "store-bought, room temperature",
+          "aisle": "dairy"
+        },
+        {
+          "q": 4,
+          "u": "tbsp",
+          "item": "unsalted butter",
+          "note": "melted",
+          "aisle": "dairy"
+        },
+        {
+          "q": 3,
+          "u": "clove",
+          "item": "garlic",
+          "note": "minced",
+          "aisle": "produce"
+        },
+        {
+          "q": 1,
+          "u": "tbsp",
+          "item": "fresh parsley",
+          "note": "chopped",
+          "aisle": "produce"
+        },
+        {
+          "q": 0.25,
+          "u": "cup",
+          "item": "grated Parmesan cheese",
+          "aisle": "dairy"
+        },
+        {
+          "q": 0.5,
+          "u": "tsp",
+          "item": "dried oregano",
+          "aisle": "spices"
+        },
+        {
+          "q": 0.25,
+          "u": "tsp",
+          "item": "salt",
+          "aisle": "spices"
+        }
+      ],
+      "steps": [
+        {
+          "text": "Heat the oven to 400°F and line a sheet pan with parchment."
+        },
+        {
+          "text": "Roll the dough into a rectangle and cut it into 12 strips."
+        },
+        {
+          "text": "Roll each strip into a rope and tie into a loose knot. Tuck the ends under."
+        },
+        {
+          "text": "Cover the knots and let them puff up.",
+          "timer": 900,
+          "timerLabel": "Let the knots rest"
+        },
+        {
+          "text": "Bake until golden brown.",
+          "timer": 1080,
+          "timerLabel": "Bake the knots"
+        },
+        {
+          "text": "Stir the garlic into the melted butter with the parsley, Parmesan, oregano and salt."
+        },
+        {
+          "text": "Toss the hot knots in the garlic butter and serve warm."
+        }
+      ]
+    },
+    {
+      "id": "italian-chicken-parmesan",
+      "title": "Chicken Parmesan",
+      "blurb": "Crispy breaded cutlets under marinara and melted mozzarella",
+      "type": "chicken",
+      "serves": 4,
+      "prep": 20,
+      "cook": 30,
+      "tags": [
+        "kid-friendly"
+      ],
+      "ingredients": [
+        {
+          "q": 1.5,
+          "u": "lb",
+          "item": "boneless skinless chicken breasts",
+          "note": "sliced into 4 thin cutlets",
+          "aisle": "meat"
+        },
+        {
+          "q": 0.5,
+          "u": "cup",
+          "item": "all-purpose flour",
+          "aisle": "pantry"
+        },
+        {
+          "q": 2,
+          "u": "",
+          "item": "large eggs",
+          "note": "beaten",
+          "aisle": "dairy"
+        },
+        {
+          "q": 1,
+          "u": "cup",
+          "item": "panko breadcrumbs",
+          "aisle": "pantry"
+        },
+        {
+          "q": 0.5,
+          "u": "cup",
+          "item": "grated Parmesan cheese",
+          "aisle": "dairy"
+        },
+        {
+          "q": 1,
+          "u": "tsp",
+          "item": "Italian seasoning",
+          "aisle": "spices"
+        },
+        {
+          "q": 0.5,
+          "u": "tsp",
+          "item": "salt",
+          "aisle": "spices"
+        },
+        {
+          "q": 0.25,
+          "u": "cup",
+          "item": "olive oil",
+          "aisle": "pantry"
+        },
+        {
+          "q": 1.5,
+          "u": "cup",
+          "item": "marinara sauce",
+          "aisle": "canned"
+        },
+        {
+          "q": 1.5,
+          "u": "cup",
+          "item": "shredded mozzarella",
+          "aisle": "dairy"
+        }
+      ],
+      "steps": [
+        {
+          "text": "Heat the oven to 425°F. Pound the chicken to half-inch thick and season with the salt."
+        },
+        {
+          "text": "Set up three dishes: flour, beaten eggs, and panko mixed with Parmesan and Italian seasoning."
+        },
+        {
+          "text": "Coat each cutlet in flour, then egg, then the crumbs."
+        },
+        {
+          "text": "Fry the cutlets in the oil until golden on both sides, about 3 minutes per side.",
+          "timer": 360,
+          "timerLabel": "Fry the cutlets"
+        },
+        {
+          "text": "Move the cutlets to a baking sheet. Top with marinara and mozzarella."
+        },
+        {
+          "text": "Bake until the cheese melts and the chicken reaches 165°F.",
+          "timer": 600,
+          "timerLabel": "Bake the cutlets"
+        },
+        {
+          "text": "Serve with spaghetti or a salad."
+        }
+      ]
+    },
+    {
+      "id": "italian-chicken-piccata",
+      "title": "Chicken piccata",
+      "blurb": "Pan-seared cutlets in a bright lemon-caper butter sauce",
+      "type": "chicken",
+      "serves": 4,
+      "prep": 15,
+      "cook": 20,
+      "tags": [
+        "quick"
+      ],
+      "ingredients": [
+        {
+          "q": 1.5,
+          "u": "lb",
+          "item": "boneless skinless chicken breasts",
+          "note": "sliced into 4 thin cutlets",
+          "aisle": "meat"
+        },
+        {
+          "q": 0.33,
+          "u": "cup",
+          "item": "all-purpose flour",
+          "aisle": "pantry"
+        },
+        {
+          "q": 0.5,
+          "u": "tsp",
+          "item": "salt",
+          "aisle": "spices"
+        },
+        {
+          "q": 0.25,
+          "u": "tsp",
+          "item": "black pepper",
+          "aisle": "spices"
+        },
+        {
+          "q": 2,
+          "u": "tbsp",
+          "item": "olive oil",
+          "aisle": "pantry"
+        },
+        {
+          "q": 3,
+          "u": "tbsp",
+          "item": "unsalted butter",
+          "aisle": "dairy"
+        },
+        {
+          "q": 0.5,
+          "u": "cup",
+          "item": "chicken broth",
+          "aisle": "canned"
+        },
+        {
+          "q": 3,
+          "u": "tbsp",
+          "item": "fresh lemon juice",
+          "aisle": "produce"
+        },
+        {
+          "q": 2,
+          "u": "tbsp",
+          "item": "capers",
+          "note": "drained",
+          "aisle": "pantry"
+        },
+        {
+          "q": 2,
+          "u": "tbsp",
+          "item": "fresh parsley",
+          "note": "chopped",
+          "aisle": "produce"
+        }
+      ],
+      "steps": [
+        {
+          "text": "Pound the chicken thin. Season with salt and pepper and dredge in the flour."
+        },
+        {
+          "text": "Brown the cutlets in the oil over medium-high heat, 3 minutes per side. Move to a plate.",
+          "timer": 360,
+          "timerLabel": "Sear the chicken"
+        },
+        {
+          "text": "Add the broth and lemon juice to the pan, scraping up the browned bits."
+        },
+        {
+          "text": "Simmer until reduced by half.",
+          "timer": 180,
+          "timerLabel": "Reduce the sauce"
+        },
+        {
+          "text": "Stir in the butter and capers until the sauce is glossy."
+        },
+        {
+          "text": "Return the chicken for 1 minute. It should be 165°F inside. Sprinkle with parsley."
+        }
+      ]
+    },
+    {
+      "id": "italian-chicken-marsala",
+      "title": "Chicken marsala",
+      "blurb": "Golden chicken and mushrooms in a rich marsala wine sauce",
+      "type": "chicken",
+      "serves": 4,
+      "prep": 15,
+      "cook": 30,
+      "tags": [],
+      "ingredients": [
+        {
+          "q": 1.5,
+          "u": "lb",
+          "item": "boneless skinless chicken breasts",
+          "note": "sliced into 4 thin cutlets",
+          "aisle": "meat"
+        },
+        {
+          "q": 0.33,
+          "u": "cup",
+          "item": "all-purpose flour",
+          "aisle": "pantry"
+        },
+        {
+          "q": 0.5,
+          "u": "tsp",
+          "item": "salt",
+          "aisle": "spices"
+        },
+        {
+          "q": 0.25,
+          "u": "tsp",
+          "item": "black pepper",
+          "aisle": "spices"
+        },
+        {
+          "q": 2,
+          "u": "tbsp",
+          "item": "olive oil",
+          "aisle": "pantry"
+        },
+        {
+          "q": 2,
+          "u": "tbsp",
+          "item": "unsalted butter",
+          "aisle": "dairy"
+        },
+        {
+          "q": 10,
+          "u": "oz",
+          "item": "cremini mushrooms",
+          "note": "sliced",
+          "aisle": "produce"
+        },
+        {
+          "q": 2,
+          "u": "clove",
+          "item": "garlic",
+          "note": "minced",
+          "aisle": "produce"
+        },
+        {
+          "q": 0.75,
+          "u": "cup",
+          "item": "marsala wine",
+          "aisle": "beverages"
+        },
+        {
+          "q": 0.5,
+          "u": "cup",
+          "item": "chicken broth",
+          "aisle": "canned"
+        },
+        {
+          "q": 2,
+          "u": "tbsp",
+          "item": "fresh parsley",
+          "note": "chopped",
+          "aisle": "produce"
+        }
+      ],
+      "steps": [
+        {
+          "text": "Pound the chicken thin. Season with salt and pepper and dredge in the flour."
+        },
+        {
+          "text": "Brown the cutlets in the oil, 3 minutes per side. Move to a plate.",
+          "timer": 360,
+          "timerLabel": "Sear the chicken"
+        },
+        {
+          "text": "Melt the butter in the pan. Cook the mushrooms until browned and the liquid is gone."
+        },
+        {
+          "text": "Stir in the garlic for 30 seconds, then add the marsala and broth."
+        },
+        {
+          "text": "Simmer until the sauce reduces by about a third.",
+          "timer": 480,
+          "timerLabel": "Reduce the sauce"
+        },
+        {
+          "text": "Return the chicken to the pan and simmer 3 minutes. It should reach 165°F inside."
+        },
+        {
+          "text": "Sprinkle with parsley and serve."
+        }
+      ]
+    },
+    {
+      "id": "italian-chicken-cacciatore",
+      "title": "Chicken cacciatore",
+      "blurb": "Hunter-style chicken braised with peppers, tomatoes and wine",
+      "type": "chicken",
+      "serves": 6,
+      "prep": 20,
+      "cook": 60,
+      "tags": [
+        "make ahead"
+      ],
+      "ingredients": [
+        {
+          "q": 3,
+          "u": "lb",
+          "item": "bone-in skin-on chicken thighs",
+          "aisle": "meat"
+        },
+        {
+          "q": 1,
+          "u": "tsp",
+          "item": "salt",
+          "aisle": "spices"
+        },
+        {
+          "q": 0.5,
+          "u": "tsp",
+          "item": "black pepper",
+          "aisle": "spices"
+        },
+        {
+          "q": 2,
+          "u": "tbsp",
+          "item": "olive oil",
+          "aisle": "pantry"
+        },
+        {
+          "q": 1,
+          "u": "",
+          "item": "yellow onion",
+          "note": "sliced",
+          "aisle": "produce"
+        },
+        {
+          "q": 1,
+          "u": "",
+          "item": "red bell pepper",
+          "note": "sliced",
+          "aisle": "produce"
+        },
+        {
+          "q": 1,
+          "u": "",
+          "item": "green bell pepper",
+          "note": "sliced",
+          "aisle": "produce"
+        },
+        {
+          "q": 8,
+          "u": "oz",
+          "item": "white mushrooms",
+          "note": "sliced",
+          "aisle": "produce"
+        },
+        {
+          "q": 4,
+          "u": "clove",
+          "item": "garlic",
+          "note": "minced",
+          "aisle": "produce"
+        },
+        {
+          "q": 0.5,
+          "u": "cup",
+          "item": "dry red wine",
+          "aisle": "beverages"
+        },
+        {
+          "q": 1,
+          "u": "can",
+          "item": "crushed tomatoes (28 oz)",
+          "aisle": "canned"
+        },
+        {
+          "q": 1,
+          "u": "tsp",
+          "item": "dried oregano",
+          "aisle": "spices"
+        }
+      ],
+      "steps": [
+        {
+          "text": "Season the chicken with salt and pepper. Brown it skin side down in the oil in a Dutch oven, then set aside."
+        },
+        {
+          "text": "Brown the chicken well.",
+          "timer": 480,
+          "timerLabel": "Brown the chicken"
+        },
+        {
+          "text": "Cook the onion, peppers and mushrooms in the drippings until soft. Add the garlic."
+        },
+        {
+          "text": "Pour in the wine and scrape the pan. Stir in the tomatoes and oregano."
+        },
+        {
+          "text": "Return the chicken to the pot and spoon some sauce over. Cover and simmer on low."
+        },
+        {
+          "text": "Simmer until the chicken is tender and reaches 175°F.",
+          "timer": 2700,
+          "timerLabel": "Braise the chicken"
+        },
+        {
+          "text": "Serve over polenta, rice or pasta."
+        }
+      ]
+    },
+    {
+      "id": "italian-sausage-and-peppers",
+      "title": "Sausage and peppers",
+      "blurb": "Italian sausage with sweet peppers and onion, the street-fair classic",
+      "type": "chicken",
+      "serves": 4,
+      "prep": 10,
+      "cook": 35,
+      "tags": [
+        "sheet pan",
+        "kid-friendly"
+      ],
+      "ingredients": [
+        {
+          "q": 1.5,
+          "u": "lb",
+          "item": "sweet Italian sausage links",
+          "aisle": "meat"
+        },
+        {
+          "q": 3,
+          "u": "",
+          "item": "bell peppers",
+          "note": "sliced",
+          "aisle": "produce"
+        },
+        {
+          "q": 1,
+          "u": "",
+          "item": "yellow onion",
+          "note": "sliced",
+          "aisle": "produce"
+        },
+        {
+          "q": 3,
+          "u": "clove",
+          "item": "garlic",
+          "note": "sliced",
+          "aisle": "produce"
+        },
+        {
+          "q": 2,
+          "u": "tbsp",
+          "item": "olive oil",
+          "aisle": "pantry"
+        },
+        {
+          "q": 1,
+          "u": "tsp",
+          "item": "dried oregano",
+          "aisle": "spices"
+        },
+        {
+          "q": 0.5,
+          "u": "tsp",
+          "item": "salt",
+          "aisle": "spices"
+        },
+        {
+          "q": null,
+          "u": "",
+          "item": "black pepper",
+          "aisle": "spices"
+        }
+      ],
+      "steps": [
+        {
+          "text": "Heat the oven to 425°F."
+        },
+        {
+          "text": "Put the peppers, onion and garlic on a large sheet pan. Toss with the oil, oregano, salt and pepper."
+        },
+        {
+          "text": "Nestle the sausages among the vegetables."
+        },
+        {
+          "text": "Roast, turning the sausages and stirring halfway.",
+          "timer": 1500,
+          "timerLabel": "Roast"
+        },
+        {
+          "text": "Check that the sausages reach 160°F inside. Roast a few more minutes if not."
+        },
+        {
+          "text": "Serve in rolls or over pasta."
+        }
+      ]
+    },
+    {
+      "id": "italian-italian-beef-sandwiches",
+      "title": "Slow cooker Italian beef sandwiches",
+      "blurb": "Tender shredded beef with pepperoncini, piled on crusty rolls",
+      "type": "chicken",
+      "serves": 8,
+      "prep": 15,
+      "cook": 480,
+      "tags": [
+        "slow cooker",
+        "crowd"
+      ],
+      "ingredients": [
+        {
+          "q": 3,
+          "u": "lb",
+          "item": "beef chuck roast",
+          "aisle": "meat"
+        },
+        {
+          "q": 1,
+          "u": "jar",
+          "item": "pepperoncini peppers (16 oz)",
+          "note": "with juice",
+          "aisle": "canned"
+        },
+        {
+          "q": 1,
+          "u": "pkg",
+          "item": "Italian dressing mix (0.7 oz)",
+          "aisle": "spices"
+        },
+        {
+          "q": 2,
+          "u": "cup",
+          "item": "beef broth",
+          "aisle": "canned"
+        },
+        {
+          "q": 4,
+          "u": "clove",
+          "item": "garlic",
+          "note": "smashed",
+          "aisle": "produce"
+        },
+        {
+          "q": 8,
+          "u": "piece",
+          "item": "hoagie rolls",
+          "aisle": "bakery"
+        },
+        {
+          "q": 8,
+          "u": "slice",
+          "item": "provolone cheese",
+          "aisle": "dairy"
+        }
+      ],
+      "steps": [
+        {
+          "text": "Put the roast in a slow cooker. Sprinkle with the dressing mix."
+        },
+        {
+          "text": "Add the broth, garlic and pepperoncini with their juice."
+        },
+        {
+          "text": "Cover and cook on low until the beef is very tender.",
+          "timer": 28800,
+          "timerLabel": "Slow cook"
+        },
+        {
+          "text": "Shred the beef with two forks and stir it back into the juices."
+        },
+        {
+          "text": "Let it soak up the juices.",
+          "timer": 600,
+          "timerLabel": "Rest the beef"
+        },
+        {
+          "text": "Pile on split rolls, top with provolone, and broil until melted. Serve with extra juice."
+        }
+      ]
+    },
+    {
+      "id": "italian-tuscan-garlic-chicken",
+      "title": "Creamy Tuscan chicken",
+      "blurb": "Seared chicken in garlic cream sauce with sun-dried tomatoes and spinach",
+      "type": "chicken",
+      "serves": 4,
+      "prep": 10,
+      "cook": 30,
+      "tags": [
+        "quick"
+      ],
+      "ingredients": [
+        {
+          "q": 1.5,
+          "u": "lb",
+          "item": "boneless skinless chicken breasts",
+          "note": "sliced into 4 thin cutlets",
+          "aisle": "meat"
+        },
+        {
+          "q": 0.75,
+          "u": "tsp",
+          "item": "salt",
+          "aisle": "spices"
+        },
+        {
+          "q": 0.25,
+          "u": "tsp",
+          "item": "black pepper",
+          "aisle": "spices"
+        },
+        {
+          "q": 2,
+          "u": "tbsp",
+          "item": "olive oil",
+          "aisle": "pantry"
+        },
+        {
+          "q": 4,
+          "u": "clove",
+          "item": "garlic",
+          "note": "minced",
+          "aisle": "produce"
+        },
+        {
+          "q": 0.5,
+          "u": "cup",
+          "item": "sun-dried tomatoes",
+          "note": "chopped",
+          "aisle": "pantry"
+        },
+        {
+          "q": 1,
+          "u": "cup",
+          "item": "chicken broth",
+          "aisle": "canned"
+        },
+        {
+          "q": 0.75,
+          "u": "cup",
+          "item": "heavy cream",
+          "aisle": "dairy"
+        },
+        {
+          "q": 0.5,
+          "u": "cup",
+          "item": "grated Parmesan cheese",
+          "aisle": "dairy"
+        },
+        {
+          "q": 1,
+          "u": "tsp",
+          "item": "Italian seasoning",
+          "aisle": "spices"
+        },
+        {
+          "q": 3,
+          "u": "cup",
+          "item": "baby spinach",
+          "aisle": "produce"
+        }
+      ],
+      "steps": [
+        {
+          "text": "Season the chicken with the salt and pepper."
+        },
+        {
+          "text": "Sear in the oil over medium-high heat until golden, 5 minutes per side. Move to a plate.",
+          "timer": 600,
+          "timerLabel": "Sear the chicken"
+        },
+        {
+          "text": "Cook the garlic and sun-dried tomatoes in the pan for 1 minute."
+        },
+        {
+          "text": "Pour in the broth, cream, Parmesan and Italian seasoning. Simmer until it thickens."
+        },
+        {
+          "text": "Simmer until slightly thickened.",
+          "timer": 240,
+          "timerLabel": "Thicken the sauce"
+        },
+        {
+          "text": "Stir in the spinach until wilted, then return the chicken. It should reach 165°F inside."
+        }
+      ]
+    },
+    {
+      "id": "italian-chicken-saltimbocca",
+      "title": "Chicken saltimbocca",
+      "blurb": "Chicken wrapped with prosciutto and sage, pan-seared in white wine",
+      "type": "chicken",
+      "serves": 4,
+      "prep": 15,
+      "cook": 20,
+      "tags": [
+        "quick"
+      ],
+      "ingredients": [
+        {
+          "q": 1.5,
+          "u": "lb",
+          "item": "boneless skinless chicken breasts",
+          "note": "sliced into 4 thin cutlets",
+          "aisle": "meat"
+        },
+        {
+          "q": 0.25,
+          "u": "tsp",
+          "item": "black pepper",
+          "aisle": "spices"
+        },
+        {
+          "q": 8,
+          "u": "slice",
+          "item": "prosciutto",
+          "aisle": "meat"
+        },
+        {
+          "q": 12,
+          "u": "",
+          "item": "fresh sage leaves",
+          "aisle": "produce"
+        },
+        {
+          "q": 0.25,
+          "u": "cup",
+          "item": "all-purpose flour",
+          "aisle": "pantry"
+        },
+        {
+          "q": 2,
+          "u": "tbsp",
+          "item": "olive oil",
+          "aisle": "pantry"
+        },
+        {
+          "q": 2,
+          "u": "tbsp",
+          "item": "unsalted butter",
+          "aisle": "dairy"
+        },
+        {
+          "q": 0.5,
+          "u": "cup",
+          "item": "dry white wine",
+          "aisle": "beverages"
+        },
+        {
+          "q": 0.5,
+          "u": "cup",
+          "item": "chicken broth",
+          "aisle": "canned"
+        }
+      ],
+      "steps": [
+        {
+          "text": "Pound the chicken thin and season with pepper. Lay 3 sage leaves on each, then wrap with 2 prosciutto slices."
+        },
+        {
+          "text": "Dust lightly with flour on both sides."
+        },
+        {
+          "text": "Cook in the oil over medium-high heat, prosciutto side down first, 3 minutes per side. Move to a plate.",
+          "timer": 360,
+          "timerLabel": "Sear the chicken"
+        },
+        {
+          "text": "Add the wine and broth to the pan, scraping up the browned bits."
+        },
+        {
+          "text": "Simmer until reduced by half.",
+          "timer": 240,
+          "timerLabel": "Reduce the sauce"
+        },
+        {
+          "text": "Whisk in the butter. Return the chicken, which should be 165°F inside, and spoon the sauce over."
+        }
+      ]
+    },
+    {
+      "id": "italian-pork-milanese",
+      "title": "Pork Milanese",
+      "blurb": "Thin crispy breaded pork cutlets with lemon and arugula",
+      "type": "chicken",
+      "serves": 4,
+      "prep": 20,
+      "cook": 15,
+      "tags": [
+        "quick"
+      ],
+      "ingredients": [
+        {
+          "q": 1.5,
+          "u": "lb",
+          "item": "boneless pork loin chops",
+          "note": "pounded thin",
+          "aisle": "meat"
+        },
+        {
+          "q": 0.5,
+          "u": "cup",
+          "item": "all-purpose flour",
+          "aisle": "pantry"
+        },
+        {
+          "q": 2,
+          "u": "",
+          "item": "large eggs",
+          "note": "beaten",
+          "aisle": "dairy"
+        },
+        {
+          "q": 1.5,
+          "u": "cup",
+          "item": "plain breadcrumbs",
+          "aisle": "pantry"
+        },
+        {
+          "q": 0.25,
+          "u": "cup",
+          "item": "grated Parmesan cheese",
+          "aisle": "dairy"
+        },
+        {
+          "q": 0.75,
+          "u": "tsp",
+          "item": "salt",
+          "aisle": "spices"
+        },
+        {
+          "q": 0.33,
+          "u": "cup",
+          "item": "olive oil",
+          "aisle": "pantry"
+        },
+        {
+          "q": 4,
+          "u": "cup",
+          "item": "baby arugula",
+          "aisle": "produce"
+        },
+        {
+          "q": 1,
+          "u": "",
+          "item": "lemon",
+          "note": "cut in wedges",
+          "aisle": "produce"
+        }
+      ],
+      "steps": [
+        {
+          "text": "Pound the pork to a quarter-inch thick. Season with the salt."
+        },
+        {
+          "text": "Set out three dishes: flour, eggs, and breadcrumbs mixed with Parmesan."
+        },
+        {
+          "text": "Coat each cutlet in flour, then egg, then breadcrumbs, pressing them on."
+        },
+        {
+          "text": "Fry in hot oil until golden, 2 to 3 minutes per side, in batches.",
+          "timer": 360,
+          "timerLabel": "Fry the cutlets"
+        },
+        {
+          "text": "Check that the pork reaches 145°F inside. Drain on paper towels."
+        },
+        {
+          "text": "Serve topped with arugula dressed with a squeeze of lemon and a wedge on the side."
+        }
+      ]
+    },
+    {
+      "id": "italian-baked-italian-meatballs",
+      "title": "Baked Italian meatballs",
+      "blurb": "Easy oven meatballs, no frying, great for subs or pasta",
+      "type": "chicken",
+      "serves": 6,
+      "prep": 20,
+      "cook": 25,
+      "tags": [
+        "make ahead",
+        "kid-friendly",
+        "sheet pan"
+      ],
+      "ingredients": [
+        {
+          "q": 1.5,
+          "u": "lb",
+          "item": "ground beef",
+          "aisle": "meat"
+        },
+        {
+          "q": 0.5,
+          "u": "lb",
+          "item": "Italian sausage",
+          "note": "casings removed",
+          "aisle": "meat"
+        },
+        {
+          "q": 0.5,
+          "u": "cup",
+          "item": "plain breadcrumbs",
+          "aisle": "pantry"
+        },
+        {
+          "q": 0.5,
+          "u": "cup",
+          "item": "grated Parmesan cheese",
+          "aisle": "dairy"
+        },
+        {
+          "q": 1,
+          "u": "",
+          "item": "large eggs",
+          "aisle": "dairy"
+        },
+        {
+          "q": 3,
+          "u": "clove",
+          "item": "garlic",
+          "note": "minced",
+          "aisle": "produce"
+        },
+        {
+          "q": 2,
+          "u": "tbsp",
+          "item": "fresh parsley",
+          "note": "chopped",
+          "aisle": "produce"
+        },
+        {
+          "q": 1,
+          "u": "tsp",
+          "item": "Italian seasoning",
+          "aisle": "spices"
+        },
+        {
+          "q": 0.5,
+          "u": "tsp",
+          "item": "salt",
+          "aisle": "spices"
+        },
+        {
+          "q": 2,
+          "u": "cup",
+          "item": "marinara sauce",
+          "note": "warmed",
+          "aisle": "canned"
+        }
+      ],
+      "steps": [
+        {
+          "text": "Heat the oven to 400°F and line a sheet pan with parchment."
+        },
+        {
+          "text": "Mix the meats, breadcrumbs, Parmesan, egg, garlic, parsley, seasoning and salt with your hands."
+        },
+        {
+          "text": "Roll into about 24 meatballs and set them on the pan."
+        },
+        {
+          "text": "Bake until browned and cooked through. They should reach 160°F inside.",
+          "timer": 1500,
+          "timerLabel": "Bake the meatballs"
+        },
+        {
+          "text": "Simmer the meatballs in the warm marinara for a few minutes."
+        },
+        {
+          "text": "Serve with pasta, on rolls or on their own."
+        }
+      ]
+    },
+    {
+      "id": "italian-beef-braciole",
+      "title": "Beef braciole",
+      "blurb": "Rolled flank steak stuffed with cheese and herbs, simmered in sauce",
+      "type": "chicken",
+      "serves": 6,
+      "prep": 30,
+      "cook": 120,
+      "tags": [
+        "make ahead"
+      ],
+      "ingredients": [
+        {
+          "q": 2,
+          "u": "lb",
+          "item": "flank steak",
+          "note": "butterflied thin",
+          "aisle": "meat"
+        },
+        {
+          "q": 4,
+          "u": "clove",
+          "item": "garlic",
+          "note": "minced",
+          "aisle": "produce"
+        },
+        {
+          "q": 0.5,
+          "u": "cup",
+          "item": "plain breadcrumbs",
+          "aisle": "pantry"
+        },
+        {
+          "q": 0.5,
+          "u": "cup",
+          "item": "grated Parmesan cheese",
+          "aisle": "dairy"
+        },
+        {
+          "q": 0.25,
+          "u": "cup",
+          "item": "fresh parsley",
+          "note": "chopped",
+          "aisle": "produce"
+        },
+        {
+          "q": 4,
+          "u": "oz",
+          "item": "prosciutto",
+          "aisle": "meat"
+        },
+        {
+          "q": 0.5,
+          "u": "tsp",
+          "item": "salt",
+          "aisle": "spices"
+        },
+        {
+          "q": null,
+          "u": "",
+          "item": "black pepper",
+          "aisle": "spices"
+        },
+        {
+          "q": 2,
+          "u": "tbsp",
+          "item": "olive oil",
+          "aisle": "pantry"
+        },
+        {
+          "q": 1,
+          "u": "",
+          "item": "yellow onion",
+          "note": "diced",
+          "aisle": "produce"
+        },
+        {
+          "q": 2,
+          "u": "can",
+          "item": "crushed tomatoes (28 oz)",
+          "aisle": "canned"
+        },
+        {
+          "q": 0.5,
+          "u": "cup",
+          "item": "dry red wine",
+          "aisle": "beverages"
+        }
+      ],
+      "steps": [
+        {
+          "text": "Lay the steak flat. Cover with prosciutto, then garlic, breadcrumbs, Parmesan, parsley, salt and pepper."
+        },
+        {
+          "text": "Roll it up from the short side and tie with kitchen twine."
+        },
+        {
+          "text": "Brown the roll on all sides in the oil in a Dutch oven. Set aside.",
+          "timer": 480,
+          "timerLabel": "Brown the roll"
+        },
+        {
+          "text": "Cook the onion in the same pot. Add the wine and scrape the pan, then add the tomatoes."
+        },
+        {
+          "text": "Return the roll and bring to a gentle simmer. Cover."
+        },
+        {
+          "text": "Simmer on low, turning once, until the beef is very tender.",
+          "timer": 6300,
+          "timerLabel": "Simmer the braciole"
+        },
+        {
+          "text": "Rest the roll, remove the twine, and slice into rounds. Serve with the sauce."
+        }
+      ]
+    },
+    {
+      "id": "italian-minestrone",
+      "title": "Minestrone",
+      "blurb": "Hearty vegetable soup with beans and pasta",
+      "type": "soups",
+      "serves": 6,
+      "prep": 20,
+      "cook": 40,
+      "tags": [
+        "vegetarian",
+        "healthy",
+        "make ahead"
+      ],
+      "ingredients": [
+        {
+          "q": 2,
+          "u": "tbsp",
+          "item": "olive oil",
+          "aisle": "pantry"
+        },
+        {
+          "q": 1,
+          "u": "",
+          "item": "yellow onion",
+          "note": "diced",
+          "aisle": "produce"
+        },
+        {
+          "q": 2,
+          "u": "",
+          "item": "carrot",
+          "note": "diced",
+          "aisle": "produce"
+        },
+        {
+          "q": 2,
+          "u": "stalk",
+          "item": "celery",
+          "note": "diced",
+          "aisle": "produce"
+        },
+        {
+          "q": 3,
+          "u": "clove",
+          "item": "garlic",
+          "note": "minced",
+          "aisle": "produce"
+        },
+        {
+          "q": 1,
+          "u": "can",
+          "item": "diced tomatoes (14.5 oz)",
+          "aisle": "canned"
+        },
+        {
+          "q": 6,
+          "u": "cup",
+          "item": "vegetable broth",
+          "aisle": "canned"
+        },
+        {
+          "q": 1,
+          "u": "can",
+          "item": "cannellini beans (15 oz)",
+          "note": "drained and rinsed",
+          "aisle": "canned"
+        },
+        {
+          "q": 1,
+          "u": "",
+          "item": "zucchini",
+          "note": "diced",
+          "aisle": "produce"
+        },
+        {
+          "q": 0.75,
+          "u": "cup",
+          "item": "small pasta (ditalini)",
+          "aisle": "pantry"
+        },
+        {
+          "q": 2,
+          "u": "cup",
+          "item": "baby spinach",
+          "aisle": "produce"
+        },
+        {
+          "q": 1,
+          "u": "tsp",
+          "item": "Italian seasoning",
+          "aisle": "spices"
+        },
+        {
+          "q": null,
+          "u": "",
+          "item": "salt",
+          "aisle": "spices"
+        },
+        {
+          "q": null,
+          "u": "",
+          "item": "black pepper",
+          "aisle": "spices"
+        },
+        {
+          "q": null,
+          "u": "cup",
+          "item": "grated Parmesan cheese",
+          "note": "to serve",
+          "aisle": "dairy"
+        }
+      ],
+      "steps": [
+        {
+          "text": "Cook the onion, carrots and celery in the oil over medium heat until softened."
+        },
+        {
+          "text": "Cook the vegetables until soft.",
+          "timer": 420,
+          "timerLabel": "Soften the vegetables"
+        },
+        {
+          "text": "Add the garlic and cook 30 seconds. Stir in the tomatoes, broth, Italian seasoning and 1 tsp salt."
+        },
+        {
+          "text": "Bring to a boil, then simmer.",
+          "timer": 900,
+          "timerLabel": "Simmer the soup"
+        },
+        {
+          "text": "Add the beans, zucchini and pasta."
+        },
+        {
+          "text": "Simmer until the pasta is tender.",
+          "timer": 600,
+          "timerLabel": "Cook the pasta"
+        },
+        {
+          "text": "Stir in the spinach, season with salt and pepper, and serve with Parmesan."
+        }
+      ]
+    },
+    {
+      "id": "italian-pasta-e-fagioli",
+      "title": "Pasta e fagioli",
+      "blurb": "Rustic pasta and white bean soup, thick and cozy",
+      "type": "soups",
+      "serves": 6,
+      "prep": 15,
+      "cook": 35,
+      "tags": [
+        "healthy",
+        "make ahead"
+      ],
+      "ingredients": [
+        {
+          "q": 2,
+          "u": "tbsp",
+          "item": "olive oil",
+          "aisle": "pantry"
+        },
+        {
+          "q": 4,
+          "u": "oz",
+          "item": "pancetta",
+          "note": "diced",
+          "aisle": "meat"
+        },
+        {
+          "q": 1,
+          "u": "",
+          "item": "yellow onion",
+          "note": "diced",
+          "aisle": "produce"
+        },
+        {
+          "q": 2,
+          "u": "",
+          "item": "carrot",
+          "note": "diced",
+          "aisle": "produce"
+        },
+        {
+          "q": 2,
+          "u": "stalk",
+          "item": "celery",
+          "note": "diced",
+          "aisle": "produce"
+        },
+        {
+          "q": 3,
+          "u": "clove",
+          "item": "garlic",
+          "note": "minced",
+          "aisle": "produce"
+        },
+        {
+          "q": 2,
+          "u": "tbsp",
+          "item": "tomato paste",
+          "aisle": "canned"
+        },
+        {
+          "q": 2,
+          "u": "can",
+          "item": "cannellini beans (15 oz)",
+          "note": "drained and rinsed",
+          "aisle": "canned"
+        },
+        {
+          "q": 1,
+          "u": "can",
+          "item": "diced tomatoes (14.5 oz)",
+          "aisle": "canned"
+        },
+        {
+          "q": 5,
+          "u": "cup",
+          "item": "chicken broth",
+          "aisle": "canned"
+        },
+        {
+          "q": 1,
+          "u": "sprig",
+          "item": "fresh rosemary",
+          "aisle": "produce"
+        },
+        {
+          "q": 1,
+          "u": "cup",
+          "item": "ditalini pasta",
+          "aisle": "pantry"
+        },
+        {
+          "q": null,
+          "u": "cup",
+          "item": "grated Parmesan cheese",
+          "note": "to serve",
+          "aisle": "dairy"
+        }
+      ],
+      "steps": [
+        {
+          "text": "Cook the pancetta in the oil in a Dutch oven until crisp."
+        },
+        {
+          "text": "Add the onion, carrots and celery. Cook until soft, about 6 minutes."
+        },
+        {
+          "text": "Stir in the garlic and tomato paste for 1 minute."
+        },
+        {
+          "text": "Add the beans, tomatoes, broth and rosemary. Mash about half a cup of beans against the side of the pot."
+        },
+        {
+          "text": "Simmer to blend the flavors.",
+          "timer": 1200,
+          "timerLabel": "Simmer the soup"
+        },
+        {
+          "text": "Add the pasta and cook until tender, stirring often.",
+          "timer": 600,
+          "timerLabel": "Cook the pasta"
+        },
+        {
+          "text": "Remove the rosemary and serve with Parmesan and a drizzle of oil."
+        }
+      ]
+    },
+    {
+      "id": "italian-italian-wedding-soup",
+      "title": "Italian wedding soup",
+      "blurb": "Tiny meatballs, spinach and pasta in a clear savory broth",
+      "type": "soups",
+      "serves": 6,
+      "prep": 25,
+      "cook": 30,
+      "tags": [
+        "kid-friendly",
+        "make ahead"
+      ],
+      "ingredients": [
+        {
+          "q": 1,
+          "u": "lb",
+          "item": "ground beef",
+          "aisle": "meat"
+        },
+        {
+          "q": 0.5,
+          "u": "cup",
+          "item": "plain breadcrumbs",
+          "aisle": "pantry"
+        },
+        {
+          "q": 0.25,
+          "u": "cup",
+          "item": "grated Parmesan cheese",
+          "aisle": "dairy"
+        },
+        {
+          "q": 1,
+          "u": "",
+          "item": "large eggs",
+          "aisle": "dairy"
+        },
+        {
+          "q": 2,
+          "u": "clove",
+          "item": "garlic",
+          "note": "minced",
+          "aisle": "produce"
+        },
+        {
+          "q": 1,
+          "u": "tsp",
+          "item": "salt",
+          "aisle": "spices"
+        },
+        {
+          "q": 1,
+          "u": "tbsp",
+          "item": "olive oil",
+          "aisle": "pantry"
+        },
+        {
+          "q": 1,
+          "u": "",
+          "item": "yellow onion",
+          "note": "diced",
+          "aisle": "produce"
+        },
+        {
+          "q": 2,
+          "u": "",
+          "item": "carrot",
+          "note": "diced",
+          "aisle": "produce"
+        },
+        {
+          "q": 2,
+          "u": "stalk",
+          "item": "celery",
+          "note": "diced",
+          "aisle": "produce"
+        },
+        {
+          "q": 8,
+          "u": "cup",
+          "item": "chicken broth",
+          "aisle": "canned"
+        },
+        {
+          "q": 0.75,
+          "u": "cup",
+          "item": "acini di pepe pasta",
+          "aisle": "pantry"
+        },
+        {
+          "q": 5,
+          "u": "oz",
+          "item": "baby spinach",
+          "aisle": "produce"
+        }
+      ],
+      "steps": [
+        {
+          "text": "Mix the beef, breadcrumbs, Parmesan, egg, 1 garlic clove and ½ tsp salt. Roll into small marble-sized balls."
+        },
+        {
+          "text": "Cook the onion, carrots and celery in the oil until soft. Add the remaining garlic."
+        },
+        {
+          "text": "Add the broth and remaining salt and bring to a boil."
+        },
+        {
+          "text": "Drop in the meatballs and the pasta."
+        },
+        {
+          "text": "Simmer until the meatballs hit 160°F inside and the pasta is tender.",
+          "timer": 600,
+          "timerLabel": "Simmer the soup"
+        },
+        {
+          "text": "Stir in the spinach until wilted, then serve with Parmesan."
+        }
+      ]
+    },
+    {
+      "id": "italian-zuppa-toscana",
+      "title": "Zuppa Toscana",
+      "blurb": "Sausage, potatoes and kale in a creamy broth",
+      "type": "soups",
+      "serves": 6,
+      "prep": 15,
+      "cook": 35,
+      "tags": [],
+      "ingredients": [
+        {
+          "q": 1,
+          "u": "lb",
+          "item": "Italian sausage",
+          "note": "casings removed",
+          "aisle": "meat"
+        },
+        {
+          "q": 1,
+          "u": "",
+          "item": "yellow onion",
+          "note": "diced",
+          "aisle": "produce"
+        },
+        {
+          "q": 3,
+          "u": "clove",
+          "item": "garlic",
+          "note": "minced",
+          "aisle": "produce"
+        },
+        {
+          "q": 6,
+          "u": "cup",
+          "item": "chicken broth",
+          "aisle": "canned"
+        },
+        {
+          "q": 1.5,
+          "u": "lb",
+          "item": "russet potatoes",
+          "note": "sliced quarter-inch thick",
+          "aisle": "produce"
+        },
+        {
+          "q": 1,
+          "u": "bunch",
+          "item": "kale",
+          "note": "stemmed and chopped",
+          "aisle": "produce"
+        },
+        {
+          "q": 1,
+          "u": "cup",
+          "item": "heavy cream",
+          "aisle": "dairy"
+        },
+        {
+          "q": 0.5,
+          "u": "tsp",
+          "item": "red pepper flakes",
+          "aisle": "spices"
+        },
+        {
+          "q": null,
+          "u": "",
+          "item": "salt",
+          "aisle": "spices"
+        },
+        {
+          "q": null,
+          "u": "",
+          "item": "black pepper",
+          "aisle": "spices"
+        }
+      ],
+      "steps": [
+        {
+          "text": "Brown the sausage in a large pot over medium heat, breaking it up. Remove with a slotted spoon."
+        },
+        {
+          "text": "Cook the onion in the drippings until soft, then add the garlic and pepper flakes."
+        },
+        {
+          "text": "Add the broth and potatoes and bring to a boil."
+        },
+        {
+          "text": "Simmer until the potatoes are tender.",
+          "timer": 900,
+          "timerLabel": "Cook the potatoes"
+        },
+        {
+          "text": "Stir in the kale and sausage and simmer until the kale is tender."
+        },
+        {
+          "text": "Simmer the kale.",
+          "timer": 300,
+          "timerLabel": "Simmer the kale"
+        },
+        {
+          "text": "Stir in the cream, heat through, and season with salt and pepper."
+        }
+      ]
+    },
+    {
+      "id": "italian-tomato-basil-soup",
+      "title": "Creamy tomato basil soup",
+      "blurb": "Smooth tomato soup, perfect with grilled cheese",
+      "type": "soups",
+      "serves": 6,
+      "prep": 10,
+      "cook": 30,
+      "tags": [
+        "vegetarian",
+        "kid-friendly",
+        "make ahead"
+      ],
+      "ingredients": [
+        {
+          "q": 2,
+          "u": "tbsp",
+          "item": "unsalted butter",
+          "aisle": "dairy"
+        },
+        {
+          "q": 1,
+          "u": "",
+          "item": "yellow onion",
+          "note": "chopped",
+          "aisle": "produce"
+        },
+        {
+          "q": 3,
+          "u": "clove",
+          "item": "garlic",
+          "note": "minced",
+          "aisle": "produce"
+        },
+        {
+          "q": 2,
+          "u": "can",
+          "item": "whole peeled tomatoes (28 oz)",
+          "aisle": "canned"
+        },
+        {
+          "q": 2,
+          "u": "cup",
+          "item": "vegetable broth",
+          "aisle": "canned"
+        },
+        {
+          "q": 0.5,
+          "u": "cup",
+          "item": "fresh basil",
+          "note": "leaves",
+          "aisle": "produce"
+        },
+        {
+          "q": 1,
+          "u": "tsp",
+          "item": "sugar",
+          "aisle": "pantry"
+        },
+        {
+          "q": 0.5,
+          "u": "cup",
+          "item": "heavy cream",
+          "aisle": "dairy"
+        },
+        {
+          "q": null,
+          "u": "",
+          "item": "salt",
+          "aisle": "spices"
+        },
+        {
+          "q": null,
+          "u": "",
+          "item": "black pepper",
+          "aisle": "spices"
+        }
+      ],
+      "steps": [
+        {
+          "text": "Melt the butter in a large pot. Cook the onion until soft, about 6 minutes, then add the garlic."
+        },
+        {
+          "text": "Add the tomatoes with their juice, broth, sugar and half the basil."
+        },
+        {
+          "text": "Bring to a boil, then simmer.",
+          "timer": 1200,
+          "timerLabel": "Simmer the soup"
+        },
+        {
+          "text": "Blend until smooth with an immersion blender, or in batches in a blender."
+        },
+        {
+          "text": "Stir in the cream and season with salt and pepper."
+        },
+        {
+          "text": "Top with the remaining basil and serve."
+        }
+      ]
+    },
+    {
+      "id": "italian-tortellini-spinach-soup",
+      "title": "Tortellini and spinach soup",
+      "blurb": "Cheese tortellini in garlicky broth, ready in 25 minutes",
+      "type": "soups",
+      "serves": 6,
+      "prep": 10,
+      "cook": 20,
+      "tags": [
+        "quick",
+        "vegetarian",
+        "kid-friendly"
+      ],
+      "ingredients": [
+        {
+          "q": 1,
+          "u": "tbsp",
+          "item": "olive oil",
+          "aisle": "pantry"
+        },
+        {
+          "q": 0.5,
+          "u": "",
+          "item": "yellow onion",
+          "note": "diced",
+          "aisle": "produce"
+        },
+        {
+          "q": 2,
+          "u": "",
+          "item": "carrot",
+          "note": "sliced",
+          "aisle": "produce"
+        },
+        {
+          "q": 3,
+          "u": "clove",
+          "item": "garlic",
+          "note": "minced",
+          "aisle": "produce"
+        },
+        {
+          "q": 6,
+          "u": "cup",
+          "item": "vegetable broth",
+          "aisle": "canned"
+        },
+        {
+          "q": 1,
+          "u": "can",
+          "item": "diced tomatoes (14.5 oz)",
+          "aisle": "canned"
+        },
+        {
+          "q": 1,
+          "u": "tsp",
+          "item": "Italian seasoning",
+          "aisle": "spices"
+        },
+        {
+          "q": 9,
+          "u": "oz",
+          "item": "refrigerated cheese tortellini",
+          "aisle": "dairy"
+        },
+        {
+          "q": 5,
+          "u": "oz",
+          "item": "baby spinach",
+          "aisle": "produce"
+        },
+        {
+          "q": null,
+          "u": "cup",
+          "item": "grated Parmesan cheese",
+          "note": "to serve",
+          "aisle": "dairy"
+        },
+        {
+          "q": null,
+          "u": "",
+          "item": "salt",
+          "aisle": "spices"
+        }
+      ],
+      "steps": [
+        {
+          "text": "Cook the onion and carrots in the oil until soft, about 5 minutes. Add the garlic for 30 seconds."
+        },
+        {
+          "text": "Add the broth, tomatoes and Italian seasoning. Bring to a boil."
+        },
+        {
+          "text": "Simmer to soften the carrots.",
+          "timer": 300,
+          "timerLabel": "Simmer the broth"
+        },
+        {
+          "text": "Add the tortellini."
+        },
+        {
+          "text": "Cook until the tortellini float and are tender.",
+          "timer": 420,
+          "timerLabel": "Cook the tortellini"
+        },
+        {
+          "text": "Stir in the spinach until wilted. Season with salt and serve with Parmesan."
+        }
+      ]
+    },
+    {
+      "id": "italian-mushroom-risotto",
+      "title": "Mushroom risotto",
+      "blurb": "Creamy arborio rice with browned mushrooms and Parmesan",
+      "type": "soups",
+      "serves": 4,
+      "prep": 15,
+      "cook": 40,
+      "tags": [
+        "vegetarian"
+      ],
+      "ingredients": [
+        {
+          "q": 5,
+          "u": "cup",
+          "item": "vegetable broth",
+          "aisle": "canned"
+        },
+        {
+          "q": 3,
+          "u": "tbsp",
+          "item": "unsalted butter",
+          "aisle": "dairy"
+        },
+        {
+          "q": 1,
+          "u": "lb",
+          "item": "cremini mushrooms",
+          "note": "sliced",
+          "aisle": "produce"
+        },
+        {
+          "q": 1,
+          "u": "",
+          "item": "shallot",
+          "note": "minced",
+          "aisle": "produce"
+        },
+        {
+          "q": 2,
+          "u": "clove",
+          "item": "garlic",
+          "note": "minced",
+          "aisle": "produce"
+        },
+        {
+          "q": 1.5,
+          "u": "cup",
+          "item": "arborio rice",
+          "aisle": "pantry"
+        },
+        {
+          "q": 0.5,
+          "u": "cup",
+          "item": "dry white wine",
+          "aisle": "beverages"
+        },
+        {
+          "q": 0.75,
+          "u": "cup",
+          "item": "grated Parmesan cheese",
+          "aisle": "dairy"
+        },
+        {
+          "q": 2,
+          "u": "tbsp",
+          "item": "fresh parsley",
+          "note": "chopped",
+          "aisle": "produce"
+        },
+        {
+          "q": null,
+          "u": "",
+          "item": "salt",
+          "aisle": "spices"
+        },
+        {
+          "q": null,
+          "u": "",
+          "item": "black pepper",
+          "aisle": "spices"
+        }
+      ],
+      "steps": [
+        {
+          "text": "Warm the broth in a pot and keep it at a bare simmer."
+        },
+        {
+          "text": "Melt 1 tbsp butter in a wide pot. Cook the mushrooms until browned, then set aside."
+        },
+        {
+          "text": "Melt another tbsp butter. Cook the shallot and garlic 2 minutes, then stir in the rice until the edges look clear."
+        },
+        {
+          "text": "Add the wine and stir until absorbed.",
+          "timer": 120,
+          "timerLabel": "Absorb the wine"
+        },
+        {
+          "text": "Add the broth a ladle at a time, stirring often, waiting until absorbed each time.",
+          "timer": 1500,
+          "timerLabel": "Add broth gradually"
+        },
+        {
+          "text": "The rice should be creamy but still a little firm. Stir in the mushrooms, remaining butter and Parmesan."
+        },
+        {
+          "text": "Season with salt and pepper, sprinkle with parsley, and serve at once."
+        }
+      ]
+    },
+    {
+      "id": "italian-risotto-alla-milanese",
+      "title": "Risotto alla Milanese",
+      "blurb": "Golden saffron risotto, the classic partner for braised meats",
+      "type": "soups",
+      "serves": 4,
+      "prep": 10,
+      "cook": 35,
+      "tags": [
+        "vegetarian",
+        "gluten-free"
+      ],
+      "ingredients": [
+        {
+          "q": 5,
+          "u": "cup",
+          "item": "chicken broth",
+          "aisle": "canned"
+        },
+        {
+          "q": 1,
+          "u": "pinch",
+          "item": "saffron threads",
+          "aisle": "spices"
+        },
+        {
+          "q": 4,
+          "u": "tbsp",
+          "item": "unsalted butter",
+          "aisle": "dairy"
+        },
+        {
+          "q": 0.5,
+          "u": "",
+          "item": "yellow onion",
+          "note": "finely diced",
+          "aisle": "produce"
+        },
+        {
+          "q": 1.5,
+          "u": "cup",
+          "item": "arborio rice",
+          "aisle": "pantry"
+        },
+        {
+          "q": 0.5,
+          "u": "cup",
+          "item": "dry white wine",
+          "aisle": "beverages"
+        },
+        {
+          "q": 0.75,
+          "u": "cup",
+          "item": "grated Parmesan cheese",
+          "aisle": "dairy"
+        },
+        {
+          "q": null,
+          "u": "",
+          "item": "salt",
+          "aisle": "spices"
+        },
+        {
+          "q": null,
+          "u": "",
+          "item": "black pepper",
+          "aisle": "spices"
+        }
+      ],
+      "steps": [
+        {
+          "text": "Warm the broth with the saffron and keep it at a bare simmer."
+        },
+        {
+          "text": "Melt 2 tbsp butter in a wide pot. Cook the onion until soft, about 5 minutes."
+        },
+        {
+          "text": "Stir in the rice for 2 minutes until the edges look clear."
+        },
+        {
+          "text": "Add the wine and stir until absorbed.",
+          "timer": 120,
+          "timerLabel": "Absorb the wine"
+        },
+        {
+          "text": "Add the broth a ladle at a time, stirring often, until the rice is creamy and just tender.",
+          "timer": 1500,
+          "timerLabel": "Add broth gradually"
+        },
+        {
+          "text": "Take off the heat. Stir in the remaining butter and the Parmesan until glossy."
+        },
+        {
+          "text": "Season with salt and pepper and serve right away."
+        }
+      ]
+    },
+    {
+      "id": "italian-lemon-orzo-chicken-soup",
+      "title": "Lemon chicken orzo soup",
+      "blurb": "Bright, light chicken soup with tender orzo and spinach",
+      "type": "soups",
+      "serves": 6,
+      "prep": 15,
+      "cook": 30,
+      "tags": [
+        "healthy",
+        "quick"
+      ],
+      "ingredients": [
+        {
+          "q": 1,
+          "u": "tbsp",
+          "item": "olive oil",
+          "aisle": "pantry"
+        },
+        {
+          "q": 1,
+          "u": "",
+          "item": "yellow onion",
+          "note": "diced",
+          "aisle": "produce"
+        },
+        {
+          "q": 2,
+          "u": "",
+          "item": "carrot",
+          "note": "diced",
+          "aisle": "produce"
+        },
+        {
+          "q": 2,
+          "u": "stalk",
+          "item": "celery",
+          "note": "diced",
+          "aisle": "produce"
+        },
+        {
+          "q": 3,
+          "u": "clove",
+          "item": "garlic",
+          "note": "minced",
+          "aisle": "produce"
+        },
+        {
+          "q": 8,
+          "u": "cup",
+          "item": "chicken broth",
+          "aisle": "canned"
+        },
+        {
+          "q": 1,
+          "u": "lb",
+          "item": "boneless skinless chicken breasts",
+          "aisle": "meat"
+        },
+        {
+          "q": 0.75,
+          "u": "cup",
+          "item": "orzo",
+          "aisle": "pantry"
+        },
+        {
+          "q": 5,
+          "u": "oz",
+          "item": "baby spinach",
+          "aisle": "produce"
+        },
+        {
+          "q": 2,
+          "u": "",
+          "item": "lemon",
+          "note": "juiced",
+          "aisle": "produce"
+        },
+        {
+          "q": 2,
+          "u": "tbsp",
+          "item": "fresh dill",
+          "note": "chopped",
+          "aisle": "produce"
+        },
+        {
+          "q": null,
+          "u": "",
+          "item": "salt",
+          "aisle": "spices"
+        },
+        {
+          "q": null,
+          "u": "",
+          "item": "black pepper",
+          "aisle": "spices"
+        }
+      ],
+      "steps": [
+        {
+          "text": "Cook the onion, carrots and celery in the oil until soft. Add the garlic for 30 seconds."
+        },
+        {
+          "text": "Add the broth and chicken and bring to a boil."
+        },
+        {
+          "text": "Simmer until the chicken is cooked, 165°F inside. Remove and shred it.",
+          "timer": 1080,
+          "timerLabel": "Poach the chicken"
+        },
+        {
+          "text": "Add the orzo to the broth."
+        },
+        {
+          "text": "Cook until the orzo is tender.",
+          "timer": 540,
+          "timerLabel": "Cook the orzo"
+        },
+        {
+          "text": "Return the chicken, add the spinach, lemon juice and dill, and season with salt and pepper."
+        }
+      ]
+    },
+    {
+      "id": "italian-stracciatella",
+      "title": "Stracciatella (Italian egg drop soup)",
+      "blurb": "Light Roman broth with ribbons of egg and Parmesan",
+      "type": "soups",
+      "serves": 4,
+      "prep": 5,
+      "cook": 15,
+      "tags": [
+        "quick",
+        "healthy"
+      ],
+      "ingredients": [
+        {
+          "q": 6,
+          "u": "cup",
+          "item": "chicken broth",
+          "aisle": "canned"
+        },
+        {
+          "q": 3,
+          "u": "",
+          "item": "large eggs",
+          "aisle": "dairy"
+        },
+        {
+          "q": 0.33,
+          "u": "cup",
+          "item": "grated Parmesan cheese",
+          "aisle": "dairy"
+        },
+        {
+          "q": 2,
+          "u": "tbsp",
+          "item": "fresh parsley",
+          "note": "chopped",
+          "aisle": "produce"
+        },
+        {
+          "q": 0.25,
+          "u": "tsp",
+          "item": "ground nutmeg",
+          "aisle": "spices"
+        },
+        {
+          "q": 5,
+          "u": "oz",
+          "item": "baby spinach",
+          "aisle": "produce"
+        },
+        {
+          "q": null,
+          "u": "",
+          "item": "salt",
+          "aisle": "spices"
+        },
+        {
+          "q": null,
+          "u": "",
+          "item": "black pepper",
+          "aisle": "spices"
+        }
+      ],
+      "steps": [
+        {
+          "text": "Whisk the eggs with the Parmesan, parsley, nutmeg and a pinch of salt."
+        },
+        {
+          "text": "Bring the broth to a boil in a pot, then lower to a simmer.",
+          "timer": 300,
+          "timerLabel": "Heat the broth"
+        },
+        {
+          "text": "Stir in the spinach until wilted."
+        },
+        {
+          "text": "Slowly pour in the egg mixture while stirring the soup gently in one direction."
+        },
+        {
+          "text": "Let the egg set into ribbons.",
+          "timer": 60,
+          "timerLabel": "Set the egg"
+        },
+        {
+          "text": "Season with salt and pepper and serve with more Parmesan."
+        }
+      ]
+    },
+    {
+      "id": "italian-white-bean-kale-soup",
+      "title": "Tuscan white bean and kale soup",
+      "blurb": "Creamy cannellini, kale and rosemary, with a Parmesan rind",
+      "type": "soups",
+      "serves": 6,
+      "prep": 15,
+      "cook": 40,
+      "tags": [
+        "vegetarian",
+        "healthy",
+        "make ahead"
+      ],
+      "ingredients": [
+        {
+          "q": 3,
+          "u": "tbsp",
+          "item": "olive oil",
+          "aisle": "pantry"
+        },
+        {
+          "q": 1,
+          "u": "",
+          "item": "yellow onion",
+          "note": "diced",
+          "aisle": "produce"
+        },
+        {
+          "q": 2,
+          "u": "",
+          "item": "carrot",
+          "note": "diced",
+          "aisle": "produce"
+        },
+        {
+          "q": 2,
+          "u": "stalk",
+          "item": "celery",
+          "note": "diced",
+          "aisle": "produce"
+        },
+        {
+          "q": 4,
+          "u": "clove",
+          "item": "garlic",
+          "note": "minced",
+          "aisle": "produce"
+        },
+        {
+          "q": 2,
+          "u": "can",
+          "item": "cannellini beans (15 oz)",
+          "note": "drained and rinsed",
+          "aisle": "canned"
+        },
+        {
+          "q": 6,
+          "u": "cup",
+          "item": "vegetable broth",
+          "aisle": "canned"
+        },
+        {
+          "q": 1,
+          "u": "sprig",
+          "item": "fresh rosemary",
+          "aisle": "produce"
+        },
+        {
+          "q": 1,
+          "u": "bunch",
+          "item": "kale",
+          "note": "stemmed and chopped",
+          "aisle": "produce"
+        },
+        {
+          "q": 1,
+          "u": "",
+          "item": "lemon",
+          "note": "juiced",
+          "aisle": "produce"
+        },
+        {
+          "q": null,
+          "u": "",
+          "item": "salt",
+          "aisle": "spices"
+        },
+        {
+          "q": null,
+          "u": "",
+          "item": "black pepper",
+          "aisle": "spices"
+        },
+        {
+          "q": null,
+          "u": "cup",
+          "item": "grated Parmesan cheese",
+          "note": "to serve",
+          "aisle": "dairy"
+        }
+      ],
+      "steps": [
+        {
+          "text": "Cook the onion, carrots and celery in the oil in a Dutch oven until soft, about 7 minutes."
+        },
+        {
+          "text": "Stir in the garlic for 30 seconds. Add the beans, broth and rosemary."
+        },
+        {
+          "text": "Bring to a boil, then simmer.",
+          "timer": 1200,
+          "timerLabel": "Simmer the soup"
+        },
+        {
+          "text": "Mash about a cup of beans against the pot to thicken the soup."
+        },
+        {
+          "text": "Add the kale and simmer until tender."
+        },
+        {
+          "text": "Simmer the kale.",
+          "timer": 480,
+          "timerLabel": "Simmer the kale"
+        },
+        {
+          "text": "Remove the rosemary, stir in the lemon juice, and season with salt and pepper. Serve with Parmesan."
+        }
+      ]
+    },
+    {
+      "id": "italian-caprese-salad",
+      "title": "Caprese salad",
+      "blurb": "Ripe tomato, fresh mozzarella and basil with balsamic",
+      "type": "sides",
+      "serves": 4,
+      "prep": 10,
+      "cook": 0,
+      "tags": [
+        "quick",
+        "vegetarian",
+        "gluten-free",
+        "healthy"
+      ],
+      "ingredients": [
+        {
+          "q": 4,
+          "u": "",
+          "item": "ripe tomatoes",
+          "note": "sliced",
+          "aisle": "produce"
+        },
+        {
+          "q": 8,
+          "u": "oz",
+          "item": "fresh mozzarella",
+          "note": "sliced",
+          "aisle": "dairy"
+        },
+        {
+          "q": 0.5,
+          "u": "cup",
+          "item": "fresh basil",
+          "note": "leaves",
+          "aisle": "produce"
+        },
+        {
+          "q": 2,
+          "u": "tbsp",
+          "item": "olive oil",
+          "aisle": "pantry"
+        },
+        {
+          "q": 1,
+          "u": "tbsp",
+          "item": "balsamic glaze",
+          "aisle": "pantry"
+        },
+        {
+          "q": null,
+          "u": "",
+          "item": "salt",
+          "aisle": "spices"
+        },
+        {
+          "q": null,
+          "u": "",
+          "item": "black pepper",
+          "aisle": "spices"
+        }
+      ],
+      "steps": [
+        {
+          "text": "Slice the tomatoes and mozzarella about a quarter-inch thick."
+        },
+        {
+          "text": "Overlap the slices on a platter, tucking basil leaves in between."
+        },
+        {
+          "text": "Drizzle with the olive oil and balsamic glaze."
+        },
+        {
+          "text": "Sprinkle with salt and pepper just before serving."
+        }
+      ]
+    },
+    {
+      "id": "italian-caesar-salad",
+      "title": "Caesar salad with garlic croutons",
+      "blurb": "Crisp romaine, creamy lemon dressing and homemade croutons",
+      "type": "sides",
+      "serves": 4,
+      "prep": 20,
+      "cook": 12,
+      "tags": [
+        "vegetarian"
+      ],
+      "ingredients": [
+        {
+          "q": 2,
+          "u": "head",
+          "item": "romaine lettuce",
+          "note": "chopped",
+          "aisle": "produce"
+        },
+        {
+          "q": 3,
+          "u": "cup",
+          "item": "bread cubes",
+          "note": "from Italian bread",
+          "aisle": "bakery"
+        },
+        {
+          "q": 3,
+          "u": "tbsp",
+          "item": "olive oil",
+          "aisle": "pantry"
+        },
+        {
+          "q": 2,
+          "u": "clove",
+          "item": "garlic",
+          "note": "minced",
+          "aisle": "produce"
+        },
+        {
+          "q": 0.5,
+          "u": "cup",
+          "item": "mayonnaise",
+          "aisle": "pantry"
+        },
+        {
+          "q": 2,
+          "u": "tbsp",
+          "item": "fresh lemon juice",
+          "aisle": "produce"
+        },
+        {
+          "q": 1,
+          "u": "tsp",
+          "item": "Dijon mustard",
+          "aisle": "pantry"
+        },
+        {
+          "q": 1,
+          "u": "tsp",
+          "item": "Worcestershire sauce",
+          "aisle": "pantry"
+        },
+        {
+          "q": 0.5,
+          "u": "cup",
+          "item": "grated Parmesan cheese",
+          "aisle": "dairy"
+        },
+        {
+          "q": null,
+          "u": "",
+          "item": "black pepper",
+          "aisle": "spices"
+        },
+        {
+          "q": null,
+          "u": "",
+          "item": "salt",
+          "aisle": "spices"
+        }
+      ],
+      "steps": [
+        {
+          "text": "Heat the oven to 375°F. Toss the bread with 2 tbsp oil, half the garlic and a pinch of salt."
+        },
+        {
+          "text": "Bake the croutons on a sheet pan, stirring once, until crisp.",
+          "timer": 720,
+          "timerLabel": "Bake the croutons"
+        },
+        {
+          "text": "Whisk the mayonnaise, lemon juice, mustard, Worcestershire, remaining garlic, 1 tbsp oil and ¼ cup Parmesan."
+        },
+        {
+          "text": "Toss the romaine with the dressing until coated."
+        },
+        {
+          "text": "Top with the croutons, remaining Parmesan and plenty of pepper."
+        }
+      ]
+    },
+    {
+      "id": "italian-italian-chopped-salad",
+      "title": "Italian chopped salad",
+      "blurb": "Crunchy lettuce, salami, provolone and chickpeas with red wine vinaigrette",
+      "type": "sides",
+      "serves": 6,
+      "prep": 20,
+      "cook": 0,
+      "tags": [
+        "quick",
+        "make ahead"
+      ],
+      "ingredients": [
+        {
+          "q": 2,
+          "u": "head",
+          "item": "romaine lettuce",
+          "note": "chopped",
+          "aisle": "produce"
+        },
+        {
+          "q": 1,
+          "u": "can",
+          "item": "chickpeas (15 oz)",
+          "note": "drained and rinsed",
+          "aisle": "canned"
+        },
+        {
+          "q": 4,
+          "u": "oz",
+          "item": "Genoa salami",
+          "note": "diced",
+          "aisle": "meat"
+        },
+        {
+          "q": 4,
+          "u": "oz",
+          "item": "provolone cheese",
+          "note": "diced",
+          "aisle": "dairy"
+        },
+        {
+          "q": 1,
+          "u": "cup",
+          "item": "cherry tomatoes",
+          "note": "halved",
+          "aisle": "produce"
+        },
+        {
+          "q": 0.5,
+          "u": "cup",
+          "item": "pepperoncini",
+          "note": "sliced",
+          "aisle": "canned"
+        },
+        {
+          "q": 0.5,
+          "u": "cup",
+          "item": "red onion",
+          "note": "thinly sliced",
+          "aisle": "produce"
+        },
+        {
+          "q": 0.33,
+          "u": "cup",
+          "item": "olive oil",
+          "aisle": "pantry"
+        },
+        {
+          "q": 3,
+          "u": "tbsp",
+          "item": "red wine vinegar",
+          "aisle": "pantry"
+        },
+        {
+          "q": 1,
+          "u": "tsp",
+          "item": "dried oregano",
+          "aisle": "spices"
+        },
+        {
+          "q": null,
+          "u": "",
+          "item": "salt",
+          "aisle": "spices"
+        },
+        {
+          "q": null,
+          "u": "",
+          "item": "black pepper",
+          "aisle": "spices"
+        }
+      ],
+      "steps": [
+        {
+          "text": "Whisk the oil, vinegar, oregano, salt and pepper in a small bowl."
+        },
+        {
+          "text": "Put the lettuce, chickpeas, salami, provolone, tomatoes, pepperoncini and onion in a large bowl."
+        },
+        {
+          "text": "Pour on the dressing and toss well."
+        },
+        {
+          "text": "Taste and add salt and pepper as needed. Serve right away."
+        }
+      ]
+    },
+    {
+      "id": "italian-panzanella",
+      "title": "Panzanella (Tuscan bread salad)",
+      "blurb": "Toasted bread, juicy tomatoes, cucumber and basil",
+      "type": "sides",
+      "serves": 6,
+      "prep": 15,
+      "cook": 15,
+      "tags": [
+        "vegan",
+        "healthy"
+      ],
+      "ingredients": [
+        {
+          "q": 6,
+          "u": "cup",
+          "item": "rustic bread cubes",
+          "aisle": "bakery"
+        },
+        {
+          "q": 0.33,
+          "u": "cup",
+          "item": "olive oil",
+          "aisle": "pantry"
+        },
+        {
+          "q": 2,
+          "u": "lb",
+          "item": "ripe tomatoes",
+          "note": "cut in chunks",
+          "aisle": "produce"
+        },
+        {
+          "q": 1,
+          "u": "",
+          "item": "cucumber",
+          "note": "peeled, sliced",
+          "aisle": "produce"
+        },
+        {
+          "q": 0.5,
+          "u": "",
+          "item": "red onion",
+          "note": "thinly sliced",
+          "aisle": "produce"
+        },
+        {
+          "q": 0.5,
+          "u": "cup",
+          "item": "fresh basil",
+          "note": "torn",
+          "aisle": "produce"
+        },
+        {
+          "q": 3,
+          "u": "tbsp",
+          "item": "red wine vinegar",
+          "aisle": "pantry"
+        },
+        {
+          "q": 1,
+          "u": "clove",
+          "item": "garlic",
+          "note": "minced",
+          "aisle": "produce"
+        },
+        {
+          "q": null,
+          "u": "",
+          "item": "salt",
+          "aisle": "spices"
+        },
+        {
+          "q": null,
+          "u": "",
+          "item": "black pepper",
+          "aisle": "spices"
+        }
+      ],
+      "steps": [
+        {
+          "text": "Heat the oven to 400°F. Toss the bread with 2 tbsp oil and a pinch of salt."
+        },
+        {
+          "text": "Toast the bread on a sheet pan, stirring once, until crisp and golden.",
+          "timer": 900,
+          "timerLabel": "Toast the bread"
+        },
+        {
+          "text": "Mix the tomatoes, cucumber, onion and 1 tsp salt in a large bowl."
+        },
+        {
+          "text": "Whisk the vinegar, garlic, pepper and the remaining oil."
+        },
+        {
+          "text": "Add the bread, basil and dressing to the bowl and toss."
+        },
+        {
+          "text": "Let it sit so the bread soaks up the juices.",
+          "timer": 600,
+          "timerLabel": "Let it soak"
+        }
+      ]
+    },
+    {
+      "id": "italian-arugula-parmesan-salad",
+      "title": "Arugula salad with shaved Parmesan",
+      "blurb": "Peppery greens, lemon and olive oil in two minutes",
+      "type": "sides",
+      "serves": 4,
+      "prep": 5,
+      "cook": 0,
+      "tags": [
+        "quick",
+        "vegetarian",
+        "gluten-free",
+        "healthy"
+      ],
+      "ingredients": [
+        {
+          "q": 6,
+          "u": "oz",
+          "item": "baby arugula",
+          "aisle": "produce"
+        },
+        {
+          "q": 3,
+          "u": "tbsp",
+          "item": "olive oil",
+          "aisle": "pantry"
+        },
+        {
+          "q": 2,
+          "u": "tbsp",
+          "item": "fresh lemon juice",
+          "aisle": "produce"
+        },
+        {
+          "q": 2,
+          "u": "oz",
+          "item": "Parmesan cheese",
+          "note": "shaved with a peeler",
+          "aisle": "dairy"
+        },
+        {
+          "q": 2,
+          "u": "tbsp",
+          "item": "pine nuts",
+          "note": "toasted",
+          "aisle": "pantry"
+        },
+        {
+          "q": null,
+          "u": "",
+          "item": "salt",
+          "aisle": "spices"
+        },
+        {
+          "q": null,
+          "u": "",
+          "item": "black pepper",
+          "aisle": "spices"
+        }
+      ],
+      "steps": [
+        {
+          "text": "Whisk the oil, lemon juice, salt and pepper in a large bowl."
+        },
+        {
+          "text": "Add the arugula and toss gently."
+        },
+        {
+          "text": "Top with Parmesan shavings and pine nuts and serve right away."
+        },
+        {
+          "text": "Add a little more lemon if you want it brighter."
+        }
+      ]
+    },
+    {
+      "id": "italian-italian-pasta-salad",
+      "title": "Italian pasta salad",
+      "blurb": "Rotini with veggies, olives and mozzarella pearls in Italian dressing",
+      "type": "sides",
+      "serves": 8,
+      "prep": 15,
+      "cook": 15,
+      "tags": [
+        "make ahead",
+        "crowd",
+        "vegetarian"
+      ],
+      "ingredients": [
+        {
+          "q": 1,
+          "u": "lb",
+          "item": "rotini pasta",
+          "aisle": "pantry"
+        },
+        {
+          "q": 1,
+          "u": "cup",
+          "item": "cherry tomatoes",
+          "note": "halved",
+          "aisle": "produce"
+        },
+        {
+          "q": 1,
+          "u": "",
+          "item": "cucumber",
+          "note": "diced",
+          "aisle": "produce"
+        },
+        {
+          "q": 1,
+          "u": "",
+          "item": "red bell pepper",
+          "note": "diced",
+          "aisle": "produce"
+        },
+        {
+          "q": 0.5,
+          "u": "cup",
+          "item": "black olives",
+          "note": "sliced",
+          "aisle": "canned"
+        },
+        {
+          "q": 8,
+          "u": "oz",
+          "item": "mozzarella pearls",
+          "aisle": "dairy"
+        },
+        {
+          "q": 0.75,
+          "u": "cup",
+          "item": "Italian dressing",
+          "aisle": "pantry"
+        },
+        {
+          "q": 0.25,
+          "u": "cup",
+          "item": "grated Parmesan cheese",
+          "aisle": "dairy"
+        },
+        {
+          "q": 1,
+          "u": "tsp",
+          "item": "Italian seasoning",
+          "aisle": "spices"
+        },
+        {
+          "q": null,
+          "u": "",
+          "item": "salt",
+          "aisle": "spices"
+        }
+      ],
+      "steps": [
+        {
+          "text": "Boil the rotini in salted water until al dente.",
+          "timer": 600,
+          "timerLabel": "Boil the pasta"
+        },
+        {
+          "text": "Drain and rinse under cold water until cool."
+        },
+        {
+          "text": "Toss the pasta with the tomatoes, cucumber, pepper, olives and mozzarella."
+        },
+        {
+          "text": "Add the dressing, Parmesan and seasoning and toss to coat."
+        },
+        {
+          "text": "Chill so the flavors blend.",
+          "timer": 1800,
+          "timerLabel": "Chill the salad"
+        },
+        {
+          "text": "Toss again and add a splash more dressing before serving."
+        }
+      ]
+    },
+    {
+      "id": "italian-creamy-polenta",
+      "title": "Creamy Parmesan polenta",
+      "blurb": "Soft, buttery polenta, a cozy base for sauces and braises",
+      "type": "sides",
+      "serves": 6,
+      "prep": 5,
+      "cook": 35,
+      "tags": [
+        "vegetarian",
+        "gluten-free"
+      ],
+      "ingredients": [
+        {
+          "q": 3,
+          "u": "cup",
+          "item": "water",
+          "aisle": "pantry"
+        },
+        {
+          "q": 1,
+          "u": "cup",
+          "item": "whole milk",
+          "aisle": "dairy"
+        },
+        {
+          "q": 1,
+          "u": "cup",
+          "item": "coarse cornmeal (polenta)",
+          "aisle": "pantry"
+        },
+        {
+          "q": 1,
+          "u": "tsp",
+          "item": "salt",
+          "aisle": "spices"
+        },
+        {
+          "q": 3,
+          "u": "tbsp",
+          "item": "unsalted butter",
+          "aisle": "dairy"
+        },
+        {
+          "q": 0.5,
+          "u": "cup",
+          "item": "grated Parmesan cheese",
+          "aisle": "dairy"
+        },
+        {
+          "q": null,
+          "u": "",
+          "item": "black pepper",
+          "aisle": "spices"
+        }
+      ],
+      "steps": [
+        {
+          "text": "Bring the water, milk and salt to a boil in a heavy pot."
+        },
+        {
+          "text": "Slowly whisk in the polenta in a thin stream so it doesn’t clump."
+        },
+        {
+          "text": "Lower the heat and cook, stirring every few minutes."
+        },
+        {
+          "text": "Cook until thick and creamy, adding a splash of water if it gets too stiff.",
+          "timer": 1800,
+          "timerLabel": "Cook the polenta"
+        },
+        {
+          "text": "Stir in the butter and Parmesan, and season with pepper."
+        },
+        {
+          "text": "Serve hot, right away, as it firms up as it cools."
+        }
+      ]
+    },
+    {
+      "id": "italian-green-beans-tomatoes",
+      "title": "Italian green beans with tomatoes",
+      "blurb": "Fagiolini: tender beans braised with garlic and tomato",
+      "type": "sides",
+      "serves": 6,
+      "prep": 10,
+      "cook": 25,
+      "tags": [
+        "vegan",
+        "healthy",
+        "gluten-free"
+      ],
+      "ingredients": [
+        {
+          "q": 1.5,
+          "u": "lb",
+          "item": "green beans",
+          "note": "trimmed",
+          "aisle": "produce"
+        },
+        {
+          "q": 3,
+          "u": "tbsp",
+          "item": "olive oil",
+          "aisle": "pantry"
+        },
+        {
+          "q": 0.5,
+          "u": "",
+          "item": "yellow onion",
+          "note": "sliced",
+          "aisle": "produce"
+        },
+        {
+          "q": 3,
+          "u": "clove",
+          "item": "garlic",
+          "note": "sliced",
+          "aisle": "produce"
+        },
+        {
+          "q": 1,
+          "u": "can",
+          "item": "diced tomatoes (14.5 oz)",
+          "aisle": "canned"
+        },
+        {
+          "q": 0.5,
+          "u": "tsp",
+          "item": "dried oregano",
+          "aisle": "spices"
+        },
+        {
+          "q": null,
+          "u": "",
+          "item": "salt",
+          "aisle": "spices"
+        },
+        {
+          "q": null,
+          "u": "",
+          "item": "black pepper",
+          "aisle": "spices"
+        },
+        {
+          "q": 2,
+          "u": "tbsp",
+          "item": "fresh basil",
+          "note": "torn",
+          "aisle": "produce"
+        }
+      ],
+      "steps": [
+        {
+          "text": "Cook the onion in the oil in a large skillet until soft, about 4 minutes. Add the garlic for 30 seconds."
+        },
+        {
+          "text": "Stir in the tomatoes, oregano, ½ tsp salt and pepper."
+        },
+        {
+          "text": "Add the green beans and stir to coat."
+        },
+        {
+          "text": "Cover and simmer until the beans are tender.",
+          "timer": 1200,
+          "timerLabel": "Simmer the beans"
+        },
+        {
+          "text": "Uncover and cook a few minutes until the sauce thickens."
+        },
+        {
+          "text": "Stir in the basil and serve warm."
+        }
+      ]
+    },
+    {
+      "id": "italian-sauteed-broccoli-rabe",
+      "title": "Sautéed broccoli rabe with garlic",
+      "blurb": "Slightly bitter greens with lots of garlic and chili",
+      "type": "sides",
+      "serves": 4,
+      "prep": 10,
+      "cook": 15,
+      "tags": [
+        "vegan",
+        "healthy",
+        "gluten-free"
+      ],
+      "ingredients": [
+        {
+          "q": 1.5,
+          "u": "lb",
+          "item": "broccoli rabe",
+          "note": "trimmed",
+          "aisle": "produce"
+        },
+        {
+          "q": 3,
+          "u": "tbsp",
+          "item": "olive oil",
+          "aisle": "pantry"
+        },
+        {
+          "q": 5,
+          "u": "clove",
+          "item": "garlic",
+          "note": "thinly sliced",
+          "aisle": "produce"
+        },
+        {
+          "q": 0.5,
+          "u": "tsp",
+          "item": "red pepper flakes",
+          "aisle": "spices"
+        },
+        {
+          "q": 1,
+          "u": "",
+          "item": "lemon",
+          "note": "cut in wedges",
+          "aisle": "produce"
+        },
+        {
+          "q": null,
+          "u": "",
+          "item": "salt",
+          "aisle": "spices"
+        }
+      ],
+      "steps": [
+        {
+          "text": "Boil the broccoli rabe in a large pot of salted water."
+        },
+        {
+          "text": "Boil for 2 minutes to tame the bitterness, then drain well.",
+          "timer": 120,
+          "timerLabel": "Blanch the greens"
+        },
+        {
+          "text": "Warm the oil, garlic and pepper flakes in a large skillet over medium heat until the garlic is fragrant."
+        },
+        {
+          "text": "Add the greens and toss."
+        },
+        {
+          "text": "Cook, stirring, until tender and glossy.",
+          "timer": 300,
+          "timerLabel": "Saute the greens"
+        },
+        {
+          "text": "Season with salt and serve with lemon wedges."
+        }
+      ]
+    }
+  ]
+}

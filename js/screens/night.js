@@ -2,10 +2,11 @@
 // Dim warm-on-black clock. Tap anywhere to go back home.
 import { getLocation } from '../services/location.js';
 import { getWeather, describe } from '../services/weather.js';
-// TODO(backend): "First up" comes from the shared family calendar.
-import { firstTomorrow } from '../services/family-sample.js';
+import { firstTomorrow } from '../services/calendar-data.js';
 
 let timer;
+
+const esc = (s) => String(s).replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 
 function clockParts() {
   const now = new Date();
@@ -32,7 +33,7 @@ export function mount(el) {
     <div style="display:flex;justify-content:space-between;align-items:flex-end;font-size:20px">
       <div style="display:flex;flex-direction:column;gap:6px"><span style="${label}">Tomorrow</span><span data-tomorrow>—</span></div>
       <div style="display:flex;flex-direction:column;gap:6px;align-items:flex-end"><span style="${label}">First up</span>
-        <span>${ev ? `${ev.name} · ${ev.time}` : 'Nothing planned'}</span></div>
+        <span style="max-width:560px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${ev ? esc(`${ev.title} · ${ev.time}`) : 'Nothing planned'}</span></div>
     </div>
   </a>`;
 

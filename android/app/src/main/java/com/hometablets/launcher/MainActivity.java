@@ -99,6 +99,7 @@ public class MainActivity extends Activity {
     private SharedPreferences prefs;
     private PhotoStore photos;
     private static PhotoServer photoServer;
+    private static FamilyStore family;          // settings + message-board notes (set up from a phone)
     private String pendingScreen;
     private final Handler handler = new Handler(Looper.getMainLooper());
     private final Runnable cornerHold = this::askPin;
@@ -121,11 +122,18 @@ public class MainActivity extends Activity {
         // Phones on the same Wi-Fi add photos through this (QR code on the tablet).
         current = this;
         photos = new PhotoStore(this);
+        if (family == null) family = new FamilyStore(this);
         if (photoServer == null) {
-            photoServer = new PhotoServer(this, photos, () -> {
-                MainActivity a = current;
-                if (a != null) a.runOnUiThread(() ->
-                        a.web.evaluateJavascript("window.dispatchEvent(new Event('tablet-photos'))", null));
+            photoServer = new PhotoServer(this, photos, family, new PhotoServer.Listener() {
+                @Override public void onPhotosChanged() { tell("tablet-photos"); }
+                @Override public void onFamilyChanged(String what) {
+                    tell("settings".equals(what) ? "tablet-family" : "tablet-notes");
+                }
+                private void tell(String event) {
+                    MainActivity a = current;
+                    if (a != null) a.runOnUiThread(() ->
+                            a.web.evaluateJavascript("window.dispatchEvent(new Event('" + event + "'))", null));
+                }
             });
             photoServer.start();
         }
@@ -1034,6 +1042,59 @@ public class MainActivity extends Activity {
                 runOnUiThread(MainActivity.this::notifyPhotos);
                 return true;
             } catch (Exception e) { android.util.Log.w("HomeTablet", "saveVideo failed", e); return false; }
+        }
+
+        // ---- family settings, notes and calendars (set up from a phone) ----
+
+        /** {familyName, people, dates, calendars, units} */
+        @JavascriptInterface
+        public String familySettings() { return family.settings().toString(); }
+
+        /** Message-board notes, newest first. */
+        @JavascriptInterface
+        public String notes() { return family.notes().toString(); }
+
+        /** photoBase64 (JPEG) and replyTo may be empty. Returns the new note's id, or "". */
+        @JavascriptInterface
+        public String addNote(String who, String text, String photoBase64, String replyTo) {
+            if (isGhost) return "";
+            try {
+                String photoId = null;
+                if (photoBase64 != null && !photoBase64.isEmpty()) {
+                    photoId = photos.saveMedia(photoBase64.replaceFirst("^data:[^,]+,", ""), false, "From the message board");
+                    runOnUiThread(MainActivity.this::notifyPhotos);
+                }
+                String id = family.addNote(who, text, photoId, replyTo).optString("id");
+                runOnUiThread(() -> web.evaluateJavascript("window.dispatchEvent(new Event('tablet-notes'))", null));
+                return id;
+            } catch (Exception e) { return ""; }
+        }
+
+        @JavascriptInterface
+        public boolean loveNote(String id) {
+            try { return family.updateNote(id, new JSONObject().put("love", true)); } catch (Exception e) { return false; }
+        }
+
+        @JavascriptInterface
+        public void markNotesRead() {
+            if (isGhost) return;
+            try { family.markAllRead(); } catch (Exception ignored) { }
+        }
+
+        @JavascriptInterface
+        public boolean deleteNote(String id) {
+            try { return family.deleteNote(id); } catch (Exception e) { return false; }
+        }
+
+        /** Downloads the saved calendar links; calls window[callback](jsonArray of {name, ics, ok, error}). */
+        @JavascriptInterface
+        public void fetchCalendars(String callback) {
+            if (callback == null || !callback.matches("[A-Za-z0-9_]{1,64}")) return;
+            new Thread(() -> {
+                String json = family.fetchCalendars().toString();
+                String js = "window['" + callback + "']&&window['" + callback + "'](" + json + ")";
+                runOnUiThread(() -> owner.evaluateJavascript(js, null));
+            }, "calendars").start();
         }
 
         /** Feature switches you set from the dashboard: {"apps":true,...} (only the ones you changed). */

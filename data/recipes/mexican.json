@@ -1,0 +1,5915 @@
+{
+ "id": "mexican",
+ "name": "Mexican & Tex-Mex",
+ "types": [
+  {
+   "id": "tacos",
+   "name": "Tacos"
+  },
+  {
+   "id": "enchiladas",
+   "name": "Enchiladas & burritos"
+  },
+  {
+   "id": "bowls",
+   "name": "Bowls & quesadillas"
+  },
+  {
+   "id": "soups",
+   "name": "Soups & stews"
+  },
+  {
+   "id": "chicken",
+   "name": "Chicken & meat"
+  },
+  {
+   "id": "sides",
+   "name": "Rice, beans & salsas"
+  }
+ ],
+ "recipes": [
+  {
+   "id": "beef-tacos",
+   "title": "Ground beef tacos",
+   "blurb": "Classic weeknight crunchy tacos with all the toppings",
+   "type": "tacos",
+   "serves": 4,
+   "prep": 10,
+   "cook": 15,
+   "tags": [
+    "quick",
+    "kid-friendly"
+   ],
+   "ingredients": [
+    {
+     "q": 1,
+     "u": "lb",
+     "item": "ground beef",
+     "aisle": "meat"
+    },
+    {
+     "q": 1,
+     "u": "pkg",
+     "item": "taco seasoning (1 oz)",
+     "aisle": "spices"
+    },
+    {
+     "q": 0.67,
+     "u": "cup",
+     "item": "water",
+     "aisle": "pantry"
+    },
+    {
+     "q": 10,
+     "u": "",
+     "item": "taco shells",
+     "aisle": "pantry"
+    },
+    {
+     "q": 1,
+     "u": "cup",
+     "item": "shredded cheddar",
+     "aisle": "dairy"
+    },
+    {
+     "q": 1,
+     "u": "cup",
+     "item": "shredded lettuce",
+     "aisle": "produce"
+    },
+    {
+     "q": 1,
+     "u": "",
+     "item": "tomato",
+     "note": "diced",
+     "aisle": "produce"
+    },
+    {
+     "q": 0.5,
+     "u": "cup",
+     "item": "sour cream",
+     "aisle": "dairy"
+    },
+    {
+     "q": 0.5,
+     "u": "cup",
+     "item": "salsa",
+     "aisle": "pantry"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Heat the oven to 350°F for the taco shells."
+    },
+    {
+     "text": "Brown the beef in a skillet over medium-high heat, breaking it up, until no pink is left.",
+     "timer": 480,
+     "timerLabel": "Brown the beef"
+    },
+    {
+     "text": "Spoon off the extra fat. Stir in the taco seasoning and water."
+    },
+    {
+     "text": "Simmer, stirring now and then, until the sauce thickens.",
+     "timer": 300,
+     "timerLabel": "Simmer"
+    },
+    {
+     "text": "Stand the shells on a baking sheet and warm them in the oven.",
+     "timer": 300,
+     "timerLabel": "Warm the shells"
+    },
+    {
+     "text": "Set out the cheese, lettuce, tomato, sour cream and salsa. Everyone builds their own."
+    }
+   ]
+  },
+  {
+   "id": "mexican-carne-asada-tacos",
+   "title": "Carne asada tacos",
+   "blurb": "Citrus-marinated grilled steak on warm corn tortillas",
+   "type": "tacos",
+   "serves": 4,
+   "prep": 20,
+   "cook": 10,
+   "tags": [
+    "grill",
+    "gluten-free"
+   ],
+   "ingredients": [
+    {
+     "q": 1.5,
+     "u": "lb",
+     "item": "skirt steak",
+     "aisle": "meat"
+    },
+    {
+     "q": 3,
+     "u": "",
+     "item": "limes",
+     "note": "divided",
+     "aisle": "produce"
+    },
+    {
+     "q": 0.33,
+     "u": "cup",
+     "item": "orange juice",
+     "aisle": "beverages"
+    },
+    {
+     "q": 4,
+     "u": "clove",
+     "item": "garlic",
+     "note": "minced",
+     "aisle": "produce"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "ground cumin",
+     "aisle": "spices"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "chili powder",
+     "aisle": "spices"
+    },
+    {
+     "q": 0.25,
+     "u": "cup",
+     "item": "vegetable oil",
+     "aisle": "pantry"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "salt",
+     "aisle": "spices"
+    },
+    {
+     "q": 12,
+     "u": "",
+     "item": "corn tortillas",
+     "aisle": "bakery"
+    },
+    {
+     "q": 0.5,
+     "u": "cup",
+     "item": "chopped fresh cilantro",
+     "aisle": "produce"
+    },
+    {
+     "q": 0.5,
+     "u": "",
+     "item": "white onion",
+     "note": "finely diced",
+     "aisle": "produce"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Whisk the juice of 2 limes, orange juice, garlic, cumin, chili powder, oil and salt in a dish."
+    },
+    {
+     "text": "Add the steak, turn to coat, and marinate in the fridge.",
+     "timer": 1800,
+     "timerLabel": "Marinate"
+    },
+    {
+     "text": "Heat a grill or cast iron pan to high heat."
+    },
+    {
+     "text": "Cook the steak 4 to 5 minutes per side for medium (130°F).",
+     "timer": 270,
+     "timerLabel": "Cook one side"
+    },
+    {
+     "text": "Rest the steak on a board, then slice thinly across the grain.",
+     "timer": 300,
+     "timerLabel": "Rest the steak"
+    },
+    {
+     "text": "Warm the tortillas on the grill for 20 seconds per side."
+    },
+    {
+     "text": "Fill with steak, onion and cilantro. Serve with lime wedges."
+    }
+   ]
+  },
+  {
+   "id": "mexican-pork-al-pastor-tacos",
+   "title": "Pork al pastor tacos",
+   "blurb": "Chile-pineapple marinated pork, sheet-pan style",
+   "type": "tacos",
+   "serves": 6,
+   "prep": 20,
+   "cook": 25,
+   "tags": [
+    "spicy",
+    "sheet pan"
+   ],
+   "ingredients": [
+    {
+     "q": 2,
+     "u": "lb",
+     "item": "pork shoulder",
+     "note": "sliced thin",
+     "aisle": "meat"
+    },
+    {
+     "q": 3,
+     "u": "",
+     "item": "dried guajillo chiles",
+     "note": "stemmed and seeded",
+     "aisle": "international"
+    },
+    {
+     "q": 2,
+     "u": "tbsp",
+     "item": "chipotle peppers in adobo",
+     "aisle": "canned"
+    },
+    {
+     "q": 1,
+     "u": "cup",
+     "item": "fresh pineapple",
+     "note": "cut in chunks, divided",
+     "aisle": "produce"
+    },
+    {
+     "q": 0.25,
+     "u": "cup",
+     "item": "white vinegar",
+     "aisle": "pantry"
+    },
+    {
+     "q": 4,
+     "u": "clove",
+     "item": "garlic",
+     "aisle": "produce"
+    },
+    {
+     "q": 2,
+     "u": "tsp",
+     "item": "dried oregano",
+     "aisle": "spices"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "ground cumin",
+     "aisle": "spices"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "salt",
+     "aisle": "spices"
+    },
+    {
+     "q": 12,
+     "u": "",
+     "item": "corn tortillas",
+     "aisle": "bakery"
+    },
+    {
+     "q": 0.5,
+     "u": "",
+     "item": "white onion",
+     "note": "diced",
+     "aisle": "produce"
+    },
+    {
+     "q": 0.5,
+     "u": "cup",
+     "item": "chopped fresh cilantro",
+     "aisle": "produce"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Soak the guajillo chiles in hot water until soft.",
+     "timer": 600,
+     "timerLabel": "Soak chiles"
+    },
+    {
+     "text": "Blend the chiles, chipotle, half the pineapple, vinegar, garlic, oregano, cumin and salt until smooth."
+    },
+    {
+     "text": "Coat the pork in the marinade. Refrigerate at least 1 hour, up to overnight.",
+     "timer": 3600,
+     "timerLabel": "Marinate"
+    },
+    {
+     "text": "Heat the oven to 450°F. Spread the pork in one layer on a lined sheet pan."
+    },
+    {
+     "text": "Roast until browned at the edges and 145°F inside, adding the rest of the pineapple halfway.",
+     "timer": 1500,
+     "timerLabel": "Roast"
+    },
+    {
+     "text": "Chop the pork and pineapple. Pile onto warm tortillas with onion and cilantro."
+    }
+   ]
+  },
+  {
+   "id": "mexican-carnitas-tacos",
+   "title": "Slow cooker carnitas tacos",
+   "blurb": "Fall-apart pork crisped under the broiler",
+   "type": "tacos",
+   "serves": 8,
+   "prep": 15,
+   "cook": 480,
+   "tags": [
+    "slow cooker",
+    "crowd",
+    "gluten-free"
+   ],
+   "ingredients": [
+    {
+     "q": 3,
+     "u": "lb",
+     "item": "pork shoulder",
+     "note": "cut in 3-inch chunks",
+     "aisle": "meat"
+    },
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "salt",
+     "aisle": "spices"
+    },
+    {
+     "q": 2,
+     "u": "tsp",
+     "item": "ground cumin",
+     "aisle": "spices"
+    },
+    {
+     "q": 2,
+     "u": "tsp",
+     "item": "dried oregano",
+     "aisle": "spices"
+    },
+    {
+     "q": 1,
+     "u": "",
+     "item": "yellow onion",
+     "note": "quartered",
+     "aisle": "produce"
+    },
+    {
+     "q": 5,
+     "u": "clove",
+     "item": "garlic",
+     "note": "smashed",
+     "aisle": "produce"
+    },
+    {
+     "q": 2,
+     "u": "",
+     "item": "oranges",
+     "note": "juiced",
+     "aisle": "produce"
+    },
+    {
+     "q": 2,
+     "u": "",
+     "item": "limes",
+     "note": "juiced",
+     "aisle": "produce"
+    },
+    {
+     "q": 16,
+     "u": "",
+     "item": "corn tortillas",
+     "aisle": "bakery"
+    },
+    {
+     "q": 1,
+     "u": "cup",
+     "item": "chopped fresh cilantro",
+     "aisle": "produce"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Rub the pork with salt, cumin and oregano."
+    },
+    {
+     "text": "Put the onion and garlic in the slow cooker. Add the pork and pour the orange and lime juice over it."
+    },
+    {
+     "text": "Cook on low until the pork shreds easily.",
+     "timer": 28800,
+     "timerLabel": "Slow cook on low"
+    },
+    {
+     "text": "Shred the pork with two forks and stir it in the juices."
+    },
+    {
+     "text": "Spread the pork on a sheet pan and broil until the tips crisp.",
+     "timer": 300,
+     "timerLabel": "Broil"
+    },
+    {
+     "text": "Warm the tortillas and fill with pork and cilantro."
+    }
+   ]
+  },
+  {
+   "id": "mexican-baja-fish-tacos",
+   "title": "Baja fish tacos",
+   "blurb": "Crispy cod with crunchy slaw and a creamy lime sauce",
+   "type": "tacos",
+   "serves": 4,
+   "prep": 20,
+   "cook": 10,
+   "tags": [],
+   "ingredients": [
+    {
+     "q": 1.5,
+     "u": "lb",
+     "item": "cod fillets",
+     "note": "cut in strips",
+     "aisle": "seafood"
+    },
+    {
+     "q": 1,
+     "u": "cup",
+     "item": "all-purpose flour",
+     "note": "divided",
+     "aisle": "pantry"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "chili powder",
+     "aisle": "spices"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "salt",
+     "aisle": "spices"
+    },
+    {
+     "q": 0.75,
+     "u": "cup",
+     "item": "beer or sparkling water",
+     "aisle": "beverages"
+    },
+    {
+     "q": 2,
+     "u": "cup",
+     "item": "vegetable oil",
+     "note": "for frying",
+     "aisle": "pantry"
+    },
+    {
+     "q": 2,
+     "u": "cup",
+     "item": "shredded cabbage",
+     "aisle": "produce"
+    },
+    {
+     "q": 0.5,
+     "u": "cup",
+     "item": "mayonnaise",
+     "aisle": "pantry"
+    },
+    {
+     "q": 0.25,
+     "u": "cup",
+     "item": "sour cream",
+     "aisle": "dairy"
+    },
+    {
+     "q": 2,
+     "u": "",
+     "item": "limes",
+     "note": "juiced",
+     "aisle": "produce"
+    },
+    {
+     "q": 8,
+     "u": "",
+     "item": "corn tortillas",
+     "aisle": "bakery"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Stir the mayonnaise, sour cream and juice of 1 lime into a sauce. Toss the cabbage with a spoonful of it."
+    },
+    {
+     "text": "Whisk 3/4 cup flour, chili powder, salt and beer into a smooth batter."
+    },
+    {
+     "text": "Heat the oil in a deep skillet to 375°F."
+    },
+    {
+     "text": "Dust the fish with the remaining flour, dip in batter and fry in batches until golden. Fish should reach 145°F.",
+     "timer": 180,
+     "timerLabel": "Fry each batch"
+    },
+    {
+     "text": "Drain the fish on paper towels. Warm the tortillas."
+    },
+    {
+     "text": "Fill with fish, slaw and sauce. Squeeze lime over the top."
+    }
+   ]
+  },
+  {
+   "id": "mexican-chicken-tinga-tacos",
+   "title": "Chicken tinga tacos",
+   "blurb": "Smoky chipotle-tomato shredded chicken",
+   "type": "tacos",
+   "serves": 6,
+   "prep": 15,
+   "cook": 30,
+   "tags": [
+    "spicy",
+    "make ahead"
+   ],
+   "ingredients": [
+    {
+     "q": 1.5,
+     "u": "lb",
+     "item": "boneless skinless chicken thighs",
+     "aisle": "meat"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "salt",
+     "aisle": "spices"
+    },
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "vegetable oil",
+     "aisle": "pantry"
+    },
+    {
+     "q": 1,
+     "u": "",
+     "item": "yellow onion",
+     "note": "sliced",
+     "aisle": "produce"
+    },
+    {
+     "q": 3,
+     "u": "clove",
+     "item": "garlic",
+     "note": "minced",
+     "aisle": "produce"
+    },
+    {
+     "q": 1,
+     "u": "can",
+     "item": "crushed tomatoes (14.5 oz)",
+     "aisle": "canned"
+    },
+    {
+     "q": 2,
+     "u": "",
+     "item": "chipotle peppers in adobo",
+     "note": "chopped, plus 1 tbsp sauce",
+     "aisle": "canned"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "dried oregano",
+     "aisle": "spices"
+    },
+    {
+     "q": 12,
+     "u": "",
+     "item": "corn tortillas",
+     "aisle": "bakery"
+    },
+    {
+     "q": 0.5,
+     "u": "cup",
+     "item": "crumbled cotija cheese",
+     "aisle": "dairy"
+    },
+    {
+     "q": 1,
+     "u": "",
+     "item": "avocado",
+     "note": "sliced",
+     "aisle": "produce"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Cover the chicken with water in a pot, add the salt and simmer until 165°F inside.",
+     "timer": 1200,
+     "timerLabel": "Simmer chicken"
+    },
+    {
+     "text": "Shred the chicken with two forks."
+    },
+    {
+     "text": "Heat the oil in a skillet and cook the onion until soft. Add the garlic for 30 seconds.",
+     "timer": 300,
+     "timerLabel": "Cook onion"
+    },
+    {
+     "text": "Blend the tomatoes, chipotles, adobo sauce and oregano until smooth. Pour into the skillet."
+    },
+    {
+     "text": "Add the chicken and simmer until the sauce clings to it.",
+     "timer": 600,
+     "timerLabel": "Simmer"
+    },
+    {
+     "text": "Serve on warm tortillas with cotija and avocado."
+    }
+   ]
+  },
+  {
+   "id": "mexican-shrimp-tacos",
+   "title": "Garlic-lime shrimp tacos",
+   "blurb": "Quick skillet shrimp with a cool mango salsa",
+   "type": "tacos",
+   "serves": 4,
+   "prep": 15,
+   "cook": 8,
+   "tags": [
+    "quick"
+   ],
+   "ingredients": [
+    {
+     "q": 1.25,
+     "u": "lb",
+     "item": "large shrimp",
+     "note": "peeled and deveined",
+     "aisle": "seafood"
+    },
+    {
+     "q": 2,
+     "u": "tbsp",
+     "item": "olive oil",
+     "aisle": "pantry"
+    },
+    {
+     "q": 3,
+     "u": "clove",
+     "item": "garlic",
+     "note": "minced",
+     "aisle": "produce"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "chili powder",
+     "aisle": "spices"
+    },
+    {
+     "q": 0.5,
+     "u": "tsp",
+     "item": "salt",
+     "aisle": "spices"
+    },
+    {
+     "q": 2,
+     "u": "",
+     "item": "limes",
+     "note": "juiced",
+     "aisle": "produce"
+    },
+    {
+     "q": 1,
+     "u": "",
+     "item": "mango",
+     "note": "diced",
+     "aisle": "produce"
+    },
+    {
+     "q": 0.25,
+     "u": "",
+     "item": "red onion",
+     "note": "finely diced",
+     "aisle": "produce"
+    },
+    {
+     "q": 0.25,
+     "u": "cup",
+     "item": "chopped fresh cilantro",
+     "aisle": "produce"
+    },
+    {
+     "q": 8,
+     "u": "",
+     "item": "small flour tortillas",
+     "aisle": "bakery"
+    },
+    {
+     "q": 1,
+     "u": "cup",
+     "item": "shredded cabbage",
+     "aisle": "produce"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Toss the shrimp with the oil, garlic, chili powder, salt and half the lime juice."
+    },
+    {
+     "text": "Mix the mango, red onion, cilantro and remaining lime juice for the salsa."
+    },
+    {
+     "text": "Heat a large skillet over medium-high heat."
+    },
+    {
+     "text": "Cook the shrimp until pink and curled, about 2 minutes per side.",
+     "timer": 240,
+     "timerLabel": "Cook the shrimp"
+    },
+    {
+     "text": "Warm the tortillas in a dry pan."
+    },
+    {
+     "text": "Fill with cabbage, shrimp and mango salsa."
+    }
+   ]
+  },
+  {
+   "id": "mexican-sweet-potato-black-bean-tacos",
+   "title": "Sweet potato black bean tacos",
+   "blurb": "Roasted sweet potato with smoky beans and lime crema",
+   "type": "tacos",
+   "serves": 4,
+   "prep": 15,
+   "cook": 25,
+   "tags": [
+    "vegetarian",
+    "sheet pan",
+    "healthy"
+   ],
+   "ingredients": [
+    {
+     "q": 2,
+     "u": "",
+     "item": "sweet potatoes",
+     "note": "peeled, cut in half-inch cubes",
+     "aisle": "produce"
+    },
+    {
+     "q": 2,
+     "u": "tbsp",
+     "item": "olive oil",
+     "aisle": "pantry"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "chili powder",
+     "aisle": "spices"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "ground cumin",
+     "aisle": "spices"
+    },
+    {
+     "q": 0.5,
+     "u": "tsp",
+     "item": "salt",
+     "aisle": "spices"
+    },
+    {
+     "q": 1,
+     "u": "can",
+     "item": "black beans (15 oz)",
+     "note": "drained and rinsed",
+     "aisle": "canned"
+    },
+    {
+     "q": 0.5,
+     "u": "cup",
+     "item": "sour cream",
+     "aisle": "dairy"
+    },
+    {
+     "q": 1,
+     "u": "",
+     "item": "lime",
+     "note": "juiced",
+     "aisle": "produce"
+    },
+    {
+     "q": 8,
+     "u": "",
+     "item": "corn tortillas",
+     "aisle": "bakery"
+    },
+    {
+     "q": 1,
+     "u": "",
+     "item": "avocado",
+     "note": "sliced",
+     "aisle": "produce"
+    },
+    {
+     "q": 0.25,
+     "u": "cup",
+     "item": "chopped fresh cilantro",
+     "aisle": "produce"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Heat the oven to 425°F."
+    },
+    {
+     "text": "Toss the sweet potatoes with oil, chili powder, cumin and salt on a sheet pan."
+    },
+    {
+     "text": "Roast, stirring once, until tender and browned.",
+     "timer": 1500,
+     "timerLabel": "Roast"
+    },
+    {
+     "text": "Warm the black beans in a small pot."
+    },
+    {
+     "text": "Stir the sour cream and lime juice together."
+    },
+    {
+     "text": "Fill warm tortillas with potatoes, beans, avocado, crema and cilantro."
+    }
+   ]
+  },
+  {
+   "id": "mexican-breakfast-tacos",
+   "title": "Egg and chorizo breakfast tacos",
+   "blurb": "Scrambled eggs, spicy chorizo and potatoes in a warm tortilla",
+   "type": "tacos",
+   "serves": 4,
+   "prep": 10,
+   "cook": 15,
+   "tags": [
+    "quick"
+   ],
+   "ingredients": [
+    {
+     "q": 6,
+     "u": "oz",
+     "item": "Mexican chorizo",
+     "note": "casing removed",
+     "aisle": "meat"
+    },
+    {
+     "q": 1,
+     "u": "",
+     "item": "russet potato",
+     "note": "small dice",
+     "aisle": "produce"
+    },
+    {
+     "q": 8,
+     "u": "",
+     "item": "large eggs",
+     "aisle": "dairy"
+    },
+    {
+     "q": 2,
+     "u": "tbsp",
+     "item": "whole milk",
+     "aisle": "dairy"
+    },
+    {
+     "q": 0.25,
+     "u": "tsp",
+     "item": "salt",
+     "aisle": "spices"
+    },
+    {
+     "q": 8,
+     "u": "",
+     "item": "small flour tortillas",
+     "aisle": "bakery"
+    },
+    {
+     "q": 1,
+     "u": "cup",
+     "item": "shredded Mexican cheese",
+     "aisle": "dairy"
+    },
+    {
+     "q": 0.5,
+     "u": "cup",
+     "item": "salsa",
+     "aisle": "pantry"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Cook the potato in a skillet over medium heat until golden and tender.",
+     "timer": 420,
+     "timerLabel": "Cook potato"
+    },
+    {
+     "text": "Add the chorizo and cook, breaking it up, until cooked through.",
+     "timer": 360,
+     "timerLabel": "Cook chorizo"
+    },
+    {
+     "text": "Whisk the eggs with the milk and salt."
+    },
+    {
+     "text": "Pour the eggs over the chorizo and stir gently until just set.",
+     "timer": 120,
+     "timerLabel": "Scramble"
+    },
+    {
+     "text": "Warm the tortillas in a dry pan."
+    },
+    {
+     "text": "Fill with eggs, cheese and salsa."
+    }
+   ]
+  },
+  {
+   "id": "mexican-chorizo-potato-tacos",
+   "title": "Chorizo and potato tacos",
+   "blurb": "Crispy taco-stand favorite on corn tortillas",
+   "type": "tacos",
+   "serves": 4,
+   "prep": 10,
+   "cook": 25,
+   "tags": [],
+   "ingredients": [
+    {
+     "q": 12,
+     "u": "oz",
+     "item": "Mexican chorizo",
+     "note": "casing removed",
+     "aisle": "meat"
+    },
+    {
+     "q": 1.5,
+     "u": "lb",
+     "item": "Yukon gold potatoes",
+     "note": "cut in half-inch cubes",
+     "aisle": "produce"
+    },
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "vegetable oil",
+     "aisle": "pantry"
+    },
+    {
+     "q": 12,
+     "u": "",
+     "item": "corn tortillas",
+     "aisle": "bakery"
+    },
+    {
+     "q": 0.5,
+     "u": "",
+     "item": "white onion",
+     "note": "finely diced",
+     "aisle": "produce"
+    },
+    {
+     "q": 0.5,
+     "u": "cup",
+     "item": "chopped fresh cilantro",
+     "aisle": "produce"
+    },
+    {
+     "q": 1,
+     "u": "",
+     "item": "lime",
+     "note": "cut in wedges",
+     "aisle": "produce"
+    },
+    {
+     "q": 0.5,
+     "u": "cup",
+     "item": "salsa verde",
+     "aisle": "pantry"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Boil the potatoes in salted water until just tender, then drain.",
+     "timer": 600,
+     "timerLabel": "Boil potatoes"
+    },
+    {
+     "text": "Cook the chorizo in a skillet over medium heat, breaking it up, until cooked through.",
+     "timer": 480,
+     "timerLabel": "Cook chorizo"
+    },
+    {
+     "text": "Add the potatoes and cook, stirring, until crisp at the edges.",
+     "timer": 480,
+     "timerLabel": "Crisp potatoes"
+    },
+    {
+     "text": "Warm the tortillas in a hot dry skillet, 20 seconds per side."
+    },
+    {
+     "text": "Fill with the chorizo and potatoes, then top with onion and cilantro."
+    },
+    {
+     "text": "Serve with lime wedges and salsa verde."
+    }
+   ]
+  },
+  {
+   "id": "mexican-chicken-enchiladas-red",
+   "title": "Red chicken enchiladas",
+   "blurb": "Rolled tortillas with chicken, cheese and red enchilada sauce",
+   "type": "enchiladas",
+   "serves": 6,
+   "prep": 20,
+   "cook": 25,
+   "tags": [
+    "kid-friendly",
+    "make ahead"
+   ],
+   "ingredients": [
+    {
+     "q": 3,
+     "u": "cup",
+     "item": "cooked shredded chicken",
+     "aisle": "meat"
+    },
+    {
+     "q": 2,
+     "u": "can",
+     "item": "red enchilada sauce (10 oz)",
+     "aisle": "canned"
+    },
+    {
+     "q": 3,
+     "u": "cup",
+     "item": "shredded Mexican cheese",
+     "note": "divided",
+     "aisle": "dairy"
+    },
+    {
+     "q": 0.5,
+     "u": "cup",
+     "item": "sour cream",
+     "aisle": "dairy"
+    },
+    {
+     "q": 1,
+     "u": "can",
+     "item": "diced green chiles (4 oz)",
+     "aisle": "canned"
+    },
+    {
+     "q": 10,
+     "u": "",
+     "item": "small flour tortillas",
+     "aisle": "bakery"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "ground cumin",
+     "aisle": "spices"
+    },
+    {
+     "q": 0.25,
+     "u": "cup",
+     "item": "chopped fresh cilantro",
+     "aisle": "produce"
+    },
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "vegetable oil",
+     "aisle": "pantry"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Heat the oven to 375°F. Grease a 9x13 baking dish and spread 1/2 cup sauce in the bottom."
+    },
+    {
+     "text": "Mix the chicken, 1 cup cheese, sour cream, green chiles and cumin."
+    },
+    {
+     "text": "Spoon filling down the middle of each tortilla and roll up. Set seam side down in the dish."
+    },
+    {
+     "text": "Pour the remaining sauce over the top and sprinkle with 2 cups cheese."
+    },
+    {
+     "text": "Cover with foil and bake 15 minutes.",
+     "timer": 900,
+     "timerLabel": "Bake covered"
+    },
+    {
+     "text": "Remove the foil and bake until bubbly.",
+     "timer": 600,
+     "timerLabel": "Bake uncovered"
+    },
+    {
+     "text": "Top with cilantro and let rest 5 minutes before serving."
+    }
+   ]
+  },
+  {
+   "id": "mexican-enchiladas-suizas",
+   "title": "Chicken enchiladas suizas",
+   "blurb": "Creamy green tomatillo sauce with melted Monterey Jack",
+   "type": "enchiladas",
+   "serves": 6,
+   "prep": 20,
+   "cook": 30,
+   "tags": [],
+   "ingredients": [
+    {
+     "q": 1.5,
+     "u": "lb",
+     "item": "tomatillos",
+     "note": "husked and rinsed",
+     "aisle": "produce"
+    },
+    {
+     "q": 2,
+     "u": "",
+     "item": "jalapeño peppers",
+     "note": "stemmed",
+     "aisle": "produce"
+    },
+    {
+     "q": 0.5,
+     "u": "",
+     "item": "white onion",
+     "note": "quartered",
+     "aisle": "produce"
+    },
+    {
+     "q": 3,
+     "u": "clove",
+     "item": "garlic",
+     "aisle": "produce"
+    },
+    {
+     "q": 0.5,
+     "u": "cup",
+     "item": "chopped fresh cilantro",
+     "aisle": "produce"
+    },
+    {
+     "q": 0.5,
+     "u": "cup",
+     "item": "heavy cream",
+     "aisle": "dairy"
+    },
+    {
+     "q": 3,
+     "u": "cup",
+     "item": "cooked shredded chicken",
+     "aisle": "meat"
+    },
+    {
+     "q": 12,
+     "u": "",
+     "item": "corn tortillas",
+     "aisle": "bakery"
+    },
+    {
+     "q": 2,
+     "u": "cup",
+     "item": "shredded Monterey Jack cheese",
+     "aisle": "dairy"
+    },
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "vegetable oil",
+     "aisle": "pantry"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "salt",
+     "aisle": "spices"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Heat the oven to 375°F. Simmer tomatillos, jalapeños, onion and garlic in water until soft.",
+     "timer": 600,
+     "timerLabel": "Simmer tomatillos"
+    },
+    {
+     "text": "Blend the cooked vegetables with the cilantro, cream and salt until smooth."
+    },
+    {
+     "text": "Warm the tortillas in a skillet with the oil until pliable."
+    },
+    {
+     "text": "Dip each tortilla in the sauce, fill with chicken and a little cheese, and roll."
+    },
+    {
+     "text": "Place seam side down in a baking dish. Pour on the remaining sauce and cheese."
+    },
+    {
+     "text": "Bake until bubbly and lightly browned.",
+     "timer": 1200,
+     "timerLabel": "Bake"
+    }
+   ]
+  },
+  {
+   "id": "mexican-cheese-enchiladas",
+   "title": "Cheese enchiladas",
+   "blurb": "Gooey cheddar and Jack enchiladas in a quick chili gravy",
+   "type": "enchiladas",
+   "serves": 6,
+   "prep": 15,
+   "cook": 25,
+   "tags": [
+    "vegetarian",
+    "kid-friendly"
+   ],
+   "ingredients": [
+    {
+     "q": 2,
+     "u": "can",
+     "item": "red enchilada sauce (10 oz)",
+     "aisle": "canned"
+    },
+    {
+     "q": 3,
+     "u": "cup",
+     "item": "shredded cheddar",
+     "note": "divided",
+     "aisle": "dairy"
+    },
+    {
+     "q": 1,
+     "u": "cup",
+     "item": "shredded Monterey Jack cheese",
+     "aisle": "dairy"
+    },
+    {
+     "q": 0.5,
+     "u": "",
+     "item": "white onion",
+     "note": "finely diced",
+     "aisle": "produce"
+    },
+    {
+     "q": 12,
+     "u": "",
+     "item": "corn tortillas",
+     "aisle": "bakery"
+    },
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "vegetable oil",
+     "aisle": "pantry"
+    },
+    {
+     "q": 0.25,
+     "u": "cup",
+     "item": "sliced black olives",
+     "aisle": "canned"
+    },
+    {
+     "q": 0.25,
+     "u": "cup",
+     "item": "sour cream",
+     "aisle": "dairy"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Heat the oven to 350°F. Spread 1/2 cup sauce in a 9x13 baking dish."
+    },
+    {
+     "text": "Warm the sauce in a wide skillet. Heat the tortillas in the oil, a few seconds per side, until soft."
+    },
+    {
+     "text": "Dip each tortilla in warm sauce. Fill with cheddar, Jack and a little onion, then roll up."
+    },
+    {
+     "text": "Lay the enchiladas seam side down in the dish. Pour the rest of the sauce over them."
+    },
+    {
+     "text": "Top with the remaining cheddar and olives."
+    },
+    {
+     "text": "Bake until the cheese is bubbling.",
+     "timer": 1200,
+     "timerLabel": "Bake"
+    },
+    {
+     "text": "Serve with sour cream."
+    }
+   ]
+  },
+  {
+   "id": "mexican-beef-enchiladas",
+   "title": "Ground beef enchiladas",
+   "blurb": "Seasoned beef and cheese under red sauce",
+   "type": "enchiladas",
+   "serves": 6,
+   "prep": 20,
+   "cook": 30,
+   "tags": [
+    "kid-friendly"
+   ],
+   "ingredients": [
+    {
+     "q": 1,
+     "u": "lb",
+     "item": "ground beef",
+     "aisle": "meat"
+    },
+    {
+     "q": 0.5,
+     "u": "",
+     "item": "yellow onion",
+     "note": "diced",
+     "aisle": "produce"
+    },
+    {
+     "q": 2,
+     "u": "tsp",
+     "item": "chili powder",
+     "aisle": "spices"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "ground cumin",
+     "aisle": "spices"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "garlic powder",
+     "aisle": "spices"
+    },
+    {
+     "q": 2,
+     "u": "can",
+     "item": "red enchilada sauce (10 oz)",
+     "aisle": "canned"
+    },
+    {
+     "q": 10,
+     "u": "",
+     "item": "small flour tortillas",
+     "aisle": "bakery"
+    },
+    {
+     "q": 2,
+     "u": "cup",
+     "item": "shredded cheddar",
+     "note": "divided",
+     "aisle": "dairy"
+    },
+    {
+     "q": 0.5,
+     "u": "tsp",
+     "item": "salt",
+     "aisle": "spices"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Heat the oven to 375°F."
+    },
+    {
+     "text": "Brown the beef and onion in a skillet until no pink is left. Drain the fat.",
+     "timer": 480,
+     "timerLabel": "Brown the beef"
+    },
+    {
+     "text": "Stir in the chili powder, cumin, garlic powder, salt and 1/2 cup sauce."
+    },
+    {
+     "text": "Spread 1/2 cup sauce in a 9x13 dish. Fill each tortilla with beef and a little cheese, roll, and set in the dish."
+    },
+    {
+     "text": "Pour on the remaining sauce and top with the rest of the cheese."
+    },
+    {
+     "text": "Bake until hot and bubbly.",
+     "timer": 1500,
+     "timerLabel": "Bake"
+    }
+   ]
+  },
+  {
+   "id": "mexican-spinach-black-bean-enchiladas",
+   "title": "Spinach and black bean enchiladas",
+   "blurb": "Meatless enchiladas packed with greens and beans",
+   "type": "enchiladas",
+   "serves": 6,
+   "prep": 20,
+   "cook": 30,
+   "tags": [
+    "vegetarian",
+    "healthy"
+   ],
+   "ingredients": [
+    {
+     "q": 1,
+     "u": "can",
+     "item": "black beans (15 oz)",
+     "note": "drained and rinsed",
+     "aisle": "canned"
+    },
+    {
+     "q": 5,
+     "u": "oz",
+     "item": "baby spinach",
+     "aisle": "produce"
+    },
+    {
+     "q": 1,
+     "u": "cup",
+     "item": "frozen corn",
+     "aisle": "frozen"
+    },
+    {
+     "q": 2,
+     "u": "cup",
+     "item": "shredded Mexican cheese",
+     "note": "divided",
+     "aisle": "dairy"
+    },
+    {
+     "q": 2,
+     "u": "can",
+     "item": "green enchilada sauce (10 oz)",
+     "aisle": "canned"
+    },
+    {
+     "q": 10,
+     "u": "",
+     "item": "small flour tortillas",
+     "aisle": "bakery"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "ground cumin",
+     "aisle": "spices"
+    },
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "olive oil",
+     "aisle": "pantry"
+    },
+    {
+     "q": 2,
+     "u": "clove",
+     "item": "garlic",
+     "note": "minced",
+     "aisle": "produce"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Heat the oven to 375°F."
+    },
+    {
+     "text": "Warm the oil in a skillet. Cook the garlic 30 seconds, then add the spinach and cook until wilted.",
+     "timer": 180,
+     "timerLabel": "Wilt spinach"
+    },
+    {
+     "text": "Stir in the beans, corn, cumin and 1 cup cheese."
+    },
+    {
+     "text": "Spread 1/2 cup sauce in a 9x13 dish. Fill and roll each tortilla, placing seam side down."
+    },
+    {
+     "text": "Top with the remaining sauce and cheese."
+    },
+    {
+     "text": "Bake until bubbly.",
+     "timer": 1500,
+     "timerLabel": "Bake"
+    }
+   ]
+  },
+  {
+   "id": "mexican-enchilada-casserole",
+   "title": "Chicken enchilada casserole",
+   "blurb": "Layered, no-roll version that feeds a crowd",
+   "type": "enchiladas",
+   "serves": 8,
+   "prep": 15,
+   "cook": 35,
+   "tags": [
+    "crowd",
+    "make ahead"
+   ],
+   "ingredients": [
+    {
+     "q": 3,
+     "u": "cup",
+     "item": "cooked shredded chicken",
+     "aisle": "meat"
+    },
+    {
+     "q": 2,
+     "u": "can",
+     "item": "red enchilada sauce (10 oz)",
+     "aisle": "canned"
+    },
+    {
+     "q": 1,
+     "u": "can",
+     "item": "black beans (15 oz)",
+     "note": "drained and rinsed",
+     "aisle": "canned"
+    },
+    {
+     "q": 1,
+     "u": "cup",
+     "item": "frozen corn",
+     "aisle": "frozen"
+    },
+    {
+     "q": 12,
+     "u": "",
+     "item": "corn tortillas",
+     "note": "cut in half",
+     "aisle": "bakery"
+    },
+    {
+     "q": 3,
+     "u": "cup",
+     "item": "shredded Mexican cheese",
+     "note": "divided",
+     "aisle": "dairy"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "ground cumin",
+     "aisle": "spices"
+    },
+    {
+     "q": 0.5,
+     "u": "cup",
+     "item": "sour cream",
+     "aisle": "dairy"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Heat the oven to 375°F. Grease a 9x13 baking dish."
+    },
+    {
+     "text": "Mix the chicken, beans, corn and cumin."
+    },
+    {
+     "text": "Spread 1/2 cup sauce in the dish and cover with half the tortillas."
+    },
+    {
+     "text": "Layer half the chicken mix, 1 cup cheese and some sauce. Repeat the layers."
+    },
+    {
+     "text": "Finish with the last sauce and cheese. Cover with foil."
+    },
+    {
+     "text": "Bake covered 20 minutes, then uncover and bake until bubbly.",
+     "timer": 1200,
+     "timerLabel": "Bake covered"
+    },
+    {
+     "text": "Bake uncovered. Rest 5 minutes and serve with sour cream.",
+     "timer": 600,
+     "timerLabel": "Bake uncovered"
+    }
+   ]
+  },
+  {
+   "id": "mexican-smothered-beef-burritos",
+   "title": "Smothered beef burritos",
+   "blurb": "Stuffed with beef and rice, topped with sauce and cheese",
+   "type": "enchiladas",
+   "serves": 6,
+   "prep": 20,
+   "cook": 25,
+   "tags": [
+    "kid-friendly"
+   ],
+   "ingredients": [
+    {
+     "q": 1,
+     "u": "lb",
+     "item": "ground beef",
+     "aisle": "meat"
+    },
+    {
+     "q": 1,
+     "u": "pkg",
+     "item": "taco seasoning (1 oz)",
+     "aisle": "spices"
+    },
+    {
+     "q": 0.67,
+     "u": "cup",
+     "item": "water",
+     "aisle": "pantry"
+    },
+    {
+     "q": 1,
+     "u": "can",
+     "item": "refried beans (16 oz)",
+     "aisle": "canned"
+    },
+    {
+     "q": 2,
+     "u": "cup",
+     "item": "cooked rice",
+     "aisle": "pantry"
+    },
+    {
+     "q": 6,
+     "u": "",
+     "item": "large flour tortillas (burrito size)",
+     "aisle": "bakery"
+    },
+    {
+     "q": 1,
+     "u": "can",
+     "item": "red enchilada sauce (10 oz)",
+     "aisle": "canned"
+    },
+    {
+     "q": 2,
+     "u": "cup",
+     "item": "shredded cheddar",
+     "note": "divided",
+     "aisle": "dairy"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Heat the oven to 375°F."
+    },
+    {
+     "text": "Brown the beef in a skillet until no pink is left. Drain. Add the seasoning and water and simmer until thick.",
+     "timer": 300,
+     "timerLabel": "Simmer"
+    },
+    {
+     "text": "Warm the tortillas in the microwave so they fold without cracking."
+    },
+    {
+     "text": "Spread beans on each tortilla. Add beef, rice and a little cheese. Fold in the sides and roll up."
+    },
+    {
+     "text": "Set the burritos seam side down in a baking dish. Cover with enchilada sauce and the remaining cheese."
+    },
+    {
+     "text": "Bake until the cheese melts and the sauce bubbles.",
+     "timer": 1200,
+     "timerLabel": "Bake"
+    }
+   ]
+  },
+  {
+   "id": "mexican-bean-rice-burritos",
+   "title": "Bean and rice burritos",
+   "blurb": "Freezer-friendly vegetarian burritos",
+   "type": "enchiladas",
+   "serves": 8,
+   "prep": 20,
+   "cook": 10,
+   "tags": [
+    "vegetarian",
+    "make ahead",
+    "kid-friendly"
+   ],
+   "ingredients": [
+    {
+     "q": 2,
+     "u": "can",
+     "item": "black beans (15 oz)",
+     "note": "drained and rinsed",
+     "aisle": "canned"
+    },
+    {
+     "q": 3,
+     "u": "cup",
+     "item": "cooked rice",
+     "aisle": "pantry"
+    },
+    {
+     "q": 1,
+     "u": "cup",
+     "item": "salsa",
+     "aisle": "pantry"
+    },
+    {
+     "q": 2,
+     "u": "cup",
+     "item": "shredded Monterey Jack cheese",
+     "aisle": "dairy"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "ground cumin",
+     "aisle": "spices"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "chili powder",
+     "aisle": "spices"
+    },
+    {
+     "q": 8,
+     "u": "",
+     "item": "large flour tortillas (burrito size)",
+     "aisle": "bakery"
+    },
+    {
+     "q": 1,
+     "u": "",
+     "item": "avocado",
+     "note": "sliced",
+     "aisle": "produce"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Warm the beans with the cumin and chili powder, mashing about half of them."
+    },
+    {
+     "text": "Stir the salsa into the cooked rice."
+    },
+    {
+     "text": "Warm the tortillas in the microwave until soft."
+    },
+    {
+     "text": "Fill each with rice, beans, cheese and avocado."
+    },
+    {
+     "text": "Fold in the sides, roll tightly, and set seam side down."
+    },
+    {
+     "text": "Toast the burritos in a dry skillet until golden on each side.",
+     "timer": 240,
+     "timerLabel": "Toast the burritos"
+    }
+   ]
+  },
+  {
+   "id": "mexican-baked-chicken-chimichangas",
+   "title": "Baked chicken chimichangas",
+   "blurb": "Crisp oven-baked burritos filled with cheesy chicken",
+   "type": "enchiladas",
+   "serves": 6,
+   "prep": 20,
+   "cook": 25,
+   "tags": [],
+   "ingredients": [
+    {
+     "q": 3,
+     "u": "cup",
+     "item": "cooked shredded chicken",
+     "aisle": "meat"
+    },
+    {
+     "q": 1,
+     "u": "cup",
+     "item": "salsa",
+     "aisle": "pantry"
+    },
+    {
+     "q": 1,
+     "u": "can",
+     "item": "refried beans (16 oz)",
+     "aisle": "canned"
+    },
+    {
+     "q": 2,
+     "u": "cup",
+     "item": "shredded Mexican cheese",
+     "aisle": "dairy"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "ground cumin",
+     "aisle": "spices"
+    },
+    {
+     "q": 6,
+     "u": "",
+     "item": "large flour tortillas (burrito size)",
+     "aisle": "bakery"
+    },
+    {
+     "q": 2,
+     "u": "tbsp",
+     "item": "vegetable oil",
+     "aisle": "pantry"
+    },
+    {
+     "q": 0.5,
+     "u": "cup",
+     "item": "sour cream",
+     "aisle": "dairy"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Heat the oven to 425°F. Line a sheet pan with parchment."
+    },
+    {
+     "text": "Mix the chicken, salsa, beans, cheese and cumin."
+    },
+    {
+     "text": "Warm the tortillas until soft. Spoon filling in the center of each."
+    },
+    {
+     "text": "Fold in the sides and roll up tightly. Place seam side down on the pan."
+    },
+    {
+     "text": "Brush all over with the oil."
+    },
+    {
+     "text": "Bake until golden and crisp, turning once.",
+     "timer": 1500,
+     "timerLabel": "Bake"
+    },
+    {
+     "text": "Serve with sour cream."
+    }
+   ]
+  },
+  {
+   "id": "bean-quesadillas",
+   "title": "Black bean and cheese quesadillas",
+   "blurb": "Crispy skillet quesadillas with corn and green onion",
+   "type": "bowls",
+   "serves": 4,
+   "prep": 10,
+   "cook": 20,
+   "tags": [
+    "vegetarian",
+    "kid-friendly"
+   ],
+   "ingredients": [
+    {
+     "q": 8,
+     "u": "",
+     "item": "flour tortillas (8 inch)",
+     "aisle": "bakery"
+    },
+    {
+     "q": 1,
+     "u": "can",
+     "item": "black beans (15 oz)",
+     "note": "drained and rinsed",
+     "aisle": "canned"
+    },
+    {
+     "q": 2,
+     "u": "cup",
+     "item": "shredded Mexican cheese",
+     "aisle": "dairy"
+    },
+    {
+     "q": 1,
+     "u": "cup",
+     "item": "frozen corn",
+     "note": "thawed",
+     "aisle": "frozen"
+    },
+    {
+     "q": 2,
+     "u": "",
+     "item": "green onions",
+     "note": "sliced",
+     "aisle": "produce"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "ground cumin",
+     "aisle": "spices"
+    },
+    {
+     "q": 0.5,
+     "u": "tsp",
+     "item": "chili powder",
+     "aisle": "spices"
+    },
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "vegetable oil",
+     "aisle": "pantry"
+    },
+    {
+     "q": 0.5,
+     "u": "cup",
+     "item": "salsa",
+     "aisle": "pantry"
+    },
+    {
+     "q": 0.5,
+     "u": "cup",
+     "item": "sour cream",
+     "aisle": "dairy"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Lightly mash the black beans with a fork. Stir in the corn, green onions, cumin and chili powder."
+    },
+    {
+     "text": "Spread the beans over 4 tortillas. Top with the cheese, then the other 4 tortillas."
+    },
+    {
+     "text": "Heat a large skillet over medium heat with a little of the oil."
+    },
+    {
+     "text": "Cook one quesadilla until golden underneath and the cheese starts to melt.",
+     "timer": 180,
+     "timerLabel": "First side"
+    },
+    {
+     "text": "Flip it carefully with a wide spatula and cook the other side.",
+     "timer": 120,
+     "timerLabel": "Second side"
+    },
+    {
+     "text": "Repeat with the rest. Cut into wedges and serve with salsa and sour cream."
+    }
+   ]
+  },
+  {
+   "id": "mexican-chicken-quesadillas",
+   "title": "Chicken quesadillas",
+   "blurb": "Melty cheese and seasoned chicken in a crisp tortilla",
+   "type": "bowls",
+   "serves": 4,
+   "prep": 10,
+   "cook": 20,
+   "tags": [
+    "quick",
+    "kid-friendly"
+   ],
+   "ingredients": [
+    {
+     "q": 1,
+     "u": "lb",
+     "item": "boneless skinless chicken breasts",
+     "note": "cut in thin strips",
+     "aisle": "meat"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "chili powder",
+     "aisle": "spices"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "ground cumin",
+     "aisle": "spices"
+    },
+    {
+     "q": 0.5,
+     "u": "tsp",
+     "item": "salt",
+     "aisle": "spices"
+    },
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "vegetable oil",
+     "aisle": "pantry"
+    },
+    {
+     "q": 1,
+     "u": "",
+     "item": "red bell pepper",
+     "note": "thinly sliced",
+     "aisle": "produce"
+    },
+    {
+     "q": 8,
+     "u": "",
+     "item": "flour tortillas (10 inch)",
+     "aisle": "bakery"
+    },
+    {
+     "q": 2.5,
+     "u": "cup",
+     "item": "shredded Mexican cheese",
+     "aisle": "dairy"
+    },
+    {
+     "q": 0.5,
+     "u": "cup",
+     "item": "salsa",
+     "aisle": "pantry"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Toss the chicken with chili powder, cumin and salt."
+    },
+    {
+     "text": "Cook the chicken and pepper in the oil over medium-high heat until the chicken reaches 165°F.",
+     "timer": 480,
+     "timerLabel": "Cook chicken"
+    },
+    {
+     "text": "Wipe out the skillet. Place a tortilla in it and cover half with cheese and a quarter of the chicken."
+    },
+    {
+     "text": "Fold over and cook until golden, then flip and cook the other side.",
+     "timer": 240,
+     "timerLabel": "Cook both sides"
+    },
+    {
+     "text": "Repeat with the remaining tortillas."
+    },
+    {
+     "text": "Cut into wedges and serve with salsa."
+    }
+   ]
+  },
+  {
+   "id": "mexican-chicken-burrito-bowls",
+   "title": "Chicken burrito bowls",
+   "blurb": "Cilantro-lime rice, black beans and grilled chili-lime chicken",
+   "type": "bowls",
+   "serves": 4,
+   "prep": 20,
+   "cook": 25,
+   "tags": [
+    "healthy",
+    "gluten-free"
+   ],
+   "ingredients": [
+    {
+     "q": 1.5,
+     "u": "lb",
+     "item": "boneless skinless chicken thighs",
+     "aisle": "meat"
+    },
+    {
+     "q": 2,
+     "u": "tbsp",
+     "item": "olive oil",
+     "note": "divided",
+     "aisle": "pantry"
+    },
+    {
+     "q": 2,
+     "u": "tsp",
+     "item": "chili powder",
+     "aisle": "spices"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "ground cumin",
+     "aisle": "spices"
+    },
+    {
+     "q": 3,
+     "u": "",
+     "item": "limes",
+     "note": "juiced, divided",
+     "aisle": "produce"
+    },
+    {
+     "q": 1,
+     "u": "cup",
+     "item": "long-grain white rice",
+     "aisle": "pantry"
+    },
+    {
+     "q": 2,
+     "u": "cup",
+     "item": "water",
+     "aisle": "pantry"
+    },
+    {
+     "q": 0.25,
+     "u": "cup",
+     "item": "chopped fresh cilantro",
+     "aisle": "produce"
+    },
+    {
+     "q": 1,
+     "u": "can",
+     "item": "black beans (15 oz)",
+     "note": "drained and rinsed",
+     "aisle": "canned"
+    },
+    {
+     "q": 1,
+     "u": "cup",
+     "item": "frozen corn",
+     "note": "thawed",
+     "aisle": "frozen"
+    },
+    {
+     "q": 1,
+     "u": "",
+     "item": "avocado",
+     "note": "sliced",
+     "aisle": "produce"
+    },
+    {
+     "q": 0.5,
+     "u": "cup",
+     "item": "salsa",
+     "aisle": "pantry"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "salt",
+     "aisle": "spices"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Toss the chicken with 1 tbsp oil, chili powder, cumin, salt and juice of 1 lime. Let it sit while the rice cooks."
+    },
+    {
+     "text": "Bring the rice, water and a pinch of salt to a boil, cover, and cook on low until tender.",
+     "timer": 1080,
+     "timerLabel": "Cook rice"
+    },
+    {
+     "text": "Cook the chicken in a hot skillet with the remaining oil until 165°F inside.",
+     "timer": 720,
+     "timerLabel": "Cook chicken"
+    },
+    {
+     "text": "Rest the chicken, then slice. Stir the cilantro and the juice of 2 limes into the rice."
+    },
+    {
+     "text": "Warm the beans and corn together."
+    },
+    {
+     "text": "Fill bowls with rice, chicken, beans, corn, avocado and salsa."
+    }
+   ]
+  },
+  {
+   "id": "mexican-steak-burrito-bowls",
+   "title": "Steak burrito bowls",
+   "blurb": "Seared sirloin over rice with peppers and onions",
+   "type": "bowls",
+   "serves": 4,
+   "prep": 15,
+   "cook": 25,
+   "tags": [
+    "gluten-free"
+   ],
+   "ingredients": [
+    {
+     "q": 1.25,
+     "u": "lb",
+     "item": "sirloin steak",
+     "aisle": "meat"
+    },
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "chili powder",
+     "aisle": "spices"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "ground cumin",
+     "aisle": "spices"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "salt",
+     "aisle": "spices"
+    },
+    {
+     "q": 2,
+     "u": "tbsp",
+     "item": "vegetable oil",
+     "note": "divided",
+     "aisle": "pantry"
+    },
+    {
+     "q": 2,
+     "u": "",
+     "item": "bell peppers",
+     "note": "sliced",
+     "aisle": "produce"
+    },
+    {
+     "q": 1,
+     "u": "",
+     "item": "yellow onion",
+     "note": "sliced",
+     "aisle": "produce"
+    },
+    {
+     "q": 3,
+     "u": "cup",
+     "item": "cooked rice",
+     "aisle": "pantry"
+    },
+    {
+     "q": 1,
+     "u": "can",
+     "item": "pinto beans (15 oz)",
+     "note": "drained and rinsed",
+     "aisle": "canned"
+    },
+    {
+     "q": 1,
+     "u": "",
+     "item": "lime",
+     "note": "juiced",
+     "aisle": "produce"
+    },
+    {
+     "q": 1,
+     "u": "cup",
+     "item": "shredded Monterey Jack cheese",
+     "aisle": "dairy"
+    },
+    {
+     "q": 0.5,
+     "u": "cup",
+     "item": "salsa",
+     "aisle": "pantry"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Rub the steak with chili powder, cumin and salt."
+    },
+    {
+     "text": "Sear the steak in 1 tbsp oil over high heat, 4 minutes per side for medium (130°F).",
+     "timer": 480,
+     "timerLabel": "Sear the steak"
+    },
+    {
+     "text": "Rest the steak, then slice thinly across the grain.",
+     "timer": 300,
+     "timerLabel": "Rest the steak"
+    },
+    {
+     "text": "Cook the peppers and onion in the remaining oil until soft and charred at the edges.",
+     "timer": 420,
+     "timerLabel": "Cook vegetables"
+    },
+    {
+     "text": "Warm the beans and rice together with the lime juice."
+    },
+    {
+     "text": "Build bowls with rice and beans, steak and vegetables, cheese and salsa."
+    }
+   ]
+  },
+  {
+   "id": "mexican-sweet-potato-burrito-bowls",
+   "title": "Sweet potato burrito bowls",
+   "blurb": "Roasted sweet potato, black beans, rice and avocado",
+   "type": "bowls",
+   "serves": 4,
+   "prep": 15,
+   "cook": 30,
+   "tags": [
+    "vegetarian",
+    "healthy",
+    "gluten-free"
+   ],
+   "ingredients": [
+    {
+     "q": 2,
+     "u": "",
+     "item": "sweet potatoes",
+     "note": "cut in half-inch cubes",
+     "aisle": "produce"
+    },
+    {
+     "q": 2,
+     "u": "tbsp",
+     "item": "olive oil",
+     "aisle": "pantry"
+    },
+    {
+     "q": 2,
+     "u": "tsp",
+     "item": "chili powder",
+     "aisle": "spices"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "ground cumin",
+     "aisle": "spices"
+    },
+    {
+     "q": 0.5,
+     "u": "tsp",
+     "item": "salt",
+     "aisle": "spices"
+    },
+    {
+     "q": 1,
+     "u": "can",
+     "item": "black beans (15 oz)",
+     "note": "drained and rinsed",
+     "aisle": "canned"
+    },
+    {
+     "q": 3,
+     "u": "cup",
+     "item": "cooked rice",
+     "aisle": "pantry"
+    },
+    {
+     "q": 1,
+     "u": "",
+     "item": "avocado",
+     "note": "sliced",
+     "aisle": "produce"
+    },
+    {
+     "q": 1,
+     "u": "",
+     "item": "lime",
+     "note": "juiced",
+     "aisle": "produce"
+    },
+    {
+     "q": 0.5,
+     "u": "cup",
+     "item": "salsa",
+     "aisle": "pantry"
+    },
+    {
+     "q": 0.25,
+     "u": "cup",
+     "item": "chopped fresh cilantro",
+     "aisle": "produce"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Heat the oven to 425°F."
+    },
+    {
+     "text": "Toss the sweet potatoes with oil, chili powder, cumin and salt on a sheet pan."
+    },
+    {
+     "text": "Roast, stirring once, until tender and browned.",
+     "timer": 1500,
+     "timerLabel": "Roast"
+    },
+    {
+     "text": "Warm the beans with a splash of water."
+    },
+    {
+     "text": "Stir the lime juice and cilantro into the rice."
+    },
+    {
+     "text": "Fill bowls with rice, potatoes, beans, avocado and salsa."
+    }
+   ]
+  },
+  {
+   "id": "mexican-taco-salad",
+   "title": "Taco salad bowls",
+   "blurb": "Seasoned beef over romaine with chips, cheese and salsa",
+   "type": "bowls",
+   "serves": 4,
+   "prep": 15,
+   "cook": 15,
+   "tags": [
+    "quick",
+    "kid-friendly"
+   ],
+   "ingredients": [
+    {
+     "q": 1,
+     "u": "lb",
+     "item": "ground beef",
+     "aisle": "meat"
+    },
+    {
+     "q": 1,
+     "u": "pkg",
+     "item": "taco seasoning (1 oz)",
+     "aisle": "spices"
+    },
+    {
+     "q": 0.67,
+     "u": "cup",
+     "item": "water",
+     "aisle": "pantry"
+    },
+    {
+     "q": 1,
+     "u": "head",
+     "item": "romaine lettuce",
+     "note": "chopped",
+     "aisle": "produce"
+    },
+    {
+     "q": 1,
+     "u": "cup",
+     "item": "cherry tomatoes",
+     "note": "halved",
+     "aisle": "produce"
+    },
+    {
+     "q": 1,
+     "u": "can",
+     "item": "black beans (15 oz)",
+     "note": "drained and rinsed",
+     "aisle": "canned"
+    },
+    {
+     "q": 1.5,
+     "u": "cup",
+     "item": "shredded cheddar",
+     "aisle": "dairy"
+    },
+    {
+     "q": 2,
+     "u": "cup",
+     "item": "crushed tortilla chips",
+     "aisle": "pantry"
+    },
+    {
+     "q": 0.5,
+     "u": "cup",
+     "item": "salsa",
+     "aisle": "pantry"
+    },
+    {
+     "q": 0.5,
+     "u": "cup",
+     "item": "sour cream",
+     "aisle": "dairy"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Brown the beef in a skillet until no pink is left (160°F). Drain the fat.",
+     "timer": 480,
+     "timerLabel": "Brown the beef"
+    },
+    {
+     "text": "Stir in the taco seasoning and water. Simmer until thick.",
+     "timer": 300,
+     "timerLabel": "Simmer"
+    },
+    {
+     "text": "Divide the lettuce, tomatoes and beans among four bowls."
+    },
+    {
+     "text": "Top with warm beef and cheese."
+    },
+    {
+     "text": "Add the tortilla chips, salsa and sour cream just before serving."
+    }
+   ]
+  },
+  {
+   "id": "mexican-sheet-pan-nachos",
+   "title": "Loaded sheet-pan nachos",
+   "blurb": "Chips, beans, melted cheese and all the toppings",
+   "type": "bowls",
+   "serves": 6,
+   "prep": 15,
+   "cook": 12,
+   "tags": [
+    "quick",
+    "sheet pan",
+    "crowd"
+   ],
+   "ingredients": [
+    {
+     "q": 12,
+     "u": "oz",
+     "item": "tortilla chips",
+     "aisle": "pantry"
+    },
+    {
+     "q": 1,
+     "u": "can",
+     "item": "black beans (15 oz)",
+     "note": "drained and rinsed",
+     "aisle": "canned"
+    },
+    {
+     "q": 3,
+     "u": "cup",
+     "item": "shredded Mexican cheese",
+     "aisle": "dairy"
+    },
+    {
+     "q": 1,
+     "u": "cup",
+     "item": "cooked seasoned ground beef or shredded chicken",
+     "aisle": "meat"
+    },
+    {
+     "q": 1,
+     "u": "",
+     "item": "jalapeño pepper",
+     "note": "sliced",
+     "aisle": "produce"
+    },
+    {
+     "q": 1,
+     "u": "cup",
+     "item": "cherry tomatoes",
+     "note": "quartered",
+     "aisle": "produce"
+    },
+    {
+     "q": 1,
+     "u": "",
+     "item": "avocado",
+     "note": "diced",
+     "aisle": "produce"
+    },
+    {
+     "q": 0.5,
+     "u": "cup",
+     "item": "sour cream",
+     "aisle": "dairy"
+    },
+    {
+     "q": 0.25,
+     "u": "cup",
+     "item": "chopped fresh cilantro",
+     "aisle": "produce"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Heat the oven to 400°F. Line a large sheet pan with parchment."
+    },
+    {
+     "text": "Spread half the chips on the pan. Top with half the beans, meat and cheese."
+    },
+    {
+     "text": "Add the rest of the chips and layer on the remaining beans, meat and cheese. Add the jalapeño."
+    },
+    {
+     "text": "Bake until the cheese is melted and bubbly.",
+     "timer": 720,
+     "timerLabel": "Bake"
+    },
+    {
+     "text": "Top with tomatoes, avocado, sour cream and cilantro. Serve right away."
+    }
+   ]
+  },
+  {
+   "id": "mexican-chilaquiles-verdes",
+   "title": "Chilaquiles verdes",
+   "blurb": "Crisp tortilla chips simmered in tangy salsa verde, with eggs",
+   "type": "bowls",
+   "serves": 4,
+   "prep": 10,
+   "cook": 15,
+   "tags": [
+    "quick",
+    "vegetarian"
+   ],
+   "ingredients": [
+    {
+     "q": 12,
+     "u": "oz",
+     "item": "tortilla chips",
+     "aisle": "pantry"
+    },
+    {
+     "q": 2,
+     "u": "cup",
+     "item": "salsa verde",
+     "aisle": "pantry"
+    },
+    {
+     "q": 0.5,
+     "u": "cup",
+     "item": "chicken broth or water",
+     "aisle": "canned"
+    },
+    {
+     "q": 4,
+     "u": "",
+     "item": "large eggs",
+     "aisle": "dairy"
+    },
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "vegetable oil",
+     "aisle": "pantry"
+    },
+    {
+     "q": 0.5,
+     "u": "cup",
+     "item": "crumbled cotija cheese",
+     "aisle": "dairy"
+    },
+    {
+     "q": 0.25,
+     "u": "cup",
+     "item": "sour cream",
+     "aisle": "dairy"
+    },
+    {
+     "q": 0.25,
+     "u": "",
+     "item": "white onion",
+     "note": "thinly sliced",
+     "aisle": "produce"
+    },
+    {
+     "q": 0.25,
+     "u": "cup",
+     "item": "chopped fresh cilantro",
+     "aisle": "produce"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Simmer the salsa verde and broth in a wide skillet for 3 minutes.",
+     "timer": 180,
+     "timerLabel": "Simmer salsa"
+    },
+    {
+     "text": "Fold in the chips until coated. Cook just until slightly softened but still with some bite.",
+     "timer": 120,
+     "timerLabel": "Soften chips"
+    },
+    {
+     "text": "Fry the eggs in the oil in another skillet, sunny side up."
+    },
+    {
+     "text": "Divide the chilaquiles onto plates and top with the eggs."
+    },
+    {
+     "text": "Finish with cotija, sour cream, onion and cilantro."
+    }
+   ]
+  },
+  {
+   "id": "mexican-black-bean-tostadas",
+   "title": "Black bean tostadas",
+   "blurb": "Crunchy tostada shells with beans, cabbage and avocado",
+   "type": "bowls",
+   "serves": 4,
+   "prep": 15,
+   "cook": 10,
+   "tags": [
+    "vegetarian",
+    "quick"
+   ],
+   "ingredients": [
+    {
+     "q": 8,
+     "u": "",
+     "item": "tostada shells",
+     "aisle": "bakery"
+    },
+    {
+     "q": 1,
+     "u": "can",
+     "item": "refried black beans (15 oz)",
+     "aisle": "canned"
+    },
+    {
+     "q": 1,
+     "u": "cup",
+     "item": "shredded Mexican cheese",
+     "aisle": "dairy"
+    },
+    {
+     "q": 2,
+     "u": "cup",
+     "item": "shredded cabbage",
+     "aisle": "produce"
+    },
+    {
+     "q": 1,
+     "u": "",
+     "item": "lime",
+     "note": "juiced",
+     "aisle": "produce"
+    },
+    {
+     "q": 1,
+     "u": "",
+     "item": "avocado",
+     "note": "sliced",
+     "aisle": "produce"
+    },
+    {
+     "q": 0.5,
+     "u": "cup",
+     "item": "salsa",
+     "aisle": "pantry"
+    },
+    {
+     "q": 0.25,
+     "u": "cup",
+     "item": "crumbled cotija cheese",
+     "aisle": "dairy"
+    },
+    {
+     "q": 0.25,
+     "u": "cup",
+     "item": "chopped fresh cilantro",
+     "aisle": "produce"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Heat the oven to 350°F. Set the tostada shells on a baking sheet."
+    },
+    {
+     "text": "Warm the beans in a small pot."
+    },
+    {
+     "text": "Spread beans on each shell and sprinkle with the Mexican cheese."
+    },
+    {
+     "text": "Bake until the cheese melts.",
+     "timer": 300,
+     "timerLabel": "Bake tostadas"
+    },
+    {
+     "text": "Toss the cabbage with the lime juice."
+    },
+    {
+     "text": "Top with cabbage, avocado, salsa, cotija and cilantro."
+    }
+   ]
+  },
+  {
+   "id": "mexican-chicken-tortilla-soup",
+   "title": "Chicken tortilla soup",
+   "blurb": "Tomato-chile broth with shredded chicken and crunchy tortilla strips",
+   "type": "soups",
+   "serves": 6,
+   "prep": 15,
+   "cook": 35,
+   "tags": [
+    "healthy"
+   ],
+   "ingredients": [
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "olive oil",
+     "aisle": "pantry"
+    },
+    {
+     "q": 1,
+     "u": "",
+     "item": "yellow onion",
+     "note": "diced",
+     "aisle": "produce"
+    },
+    {
+     "q": 3,
+     "u": "clove",
+     "item": "garlic",
+     "note": "minced",
+     "aisle": "produce"
+    },
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "chili powder",
+     "aisle": "spices"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "ground cumin",
+     "aisle": "spices"
+    },
+    {
+     "q": 1,
+     "u": "can",
+     "item": "diced tomatoes with green chiles (10 oz)",
+     "aisle": "canned"
+    },
+    {
+     "q": 6,
+     "u": "cup",
+     "item": "chicken broth",
+     "aisle": "canned"
+    },
+    {
+     "q": 1.5,
+     "u": "lb",
+     "item": "boneless skinless chicken breasts",
+     "aisle": "meat"
+    },
+    {
+     "q": 1,
+     "u": "can",
+     "item": "black beans (15 oz)",
+     "note": "drained and rinsed",
+     "aisle": "canned"
+    },
+    {
+     "q": 1,
+     "u": "cup",
+     "item": "frozen corn",
+     "aisle": "frozen"
+    },
+    {
+     "q": 2,
+     "u": "",
+     "item": "limes",
+     "note": "juiced",
+     "aisle": "produce"
+    },
+    {
+     "q": 2,
+     "u": "cup",
+     "item": "tortilla strips",
+     "aisle": "pantry"
+    },
+    {
+     "q": 1,
+     "u": "",
+     "item": "avocado",
+     "note": "diced",
+     "aisle": "produce"
+    },
+    {
+     "q": 0.25,
+     "u": "cup",
+     "item": "chopped fresh cilantro",
+     "aisle": "produce"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Cook the onion in the oil in a large pot until soft. Add the garlic, chili powder and cumin for 1 minute.",
+     "timer": 300,
+     "timerLabel": "Cook onion"
+    },
+    {
+     "text": "Add the tomatoes, broth and chicken breasts. Bring to a boil."
+    },
+    {
+     "text": "Reduce to a simmer until the chicken reaches 165°F.",
+     "timer": 1200,
+     "timerLabel": "Simmer"
+    },
+    {
+     "text": "Move the chicken to a board and shred it."
+    },
+    {
+     "text": "Return the chicken to the pot with the beans and corn. Heat through.",
+     "timer": 300,
+     "timerLabel": "Heat through"
+    },
+    {
+     "text": "Stir in the lime juice. Serve topped with tortilla strips, avocado and cilantro."
+    }
+   ]
+  },
+  {
+   "id": "mexican-taco-soup",
+   "title": "Easy taco soup",
+   "blurb": "Dump-and-simmer soup with beef, beans and corn",
+   "type": "soups",
+   "serves": 6,
+   "prep": 10,
+   "cook": 30,
+   "tags": [
+    "quick",
+    "kid-friendly",
+    "crowd"
+   ],
+   "ingredients": [
+    {
+     "q": 1,
+     "u": "lb",
+     "item": "ground beef",
+     "aisle": "meat"
+    },
+    {
+     "q": 1,
+     "u": "",
+     "item": "yellow onion",
+     "note": "diced",
+     "aisle": "produce"
+    },
+    {
+     "q": 1,
+     "u": "pkg",
+     "item": "taco seasoning (1 oz)",
+     "aisle": "spices"
+    },
+    {
+     "q": 1,
+     "u": "can",
+     "item": "diced tomatoes with green chiles (10 oz)",
+     "aisle": "canned"
+    },
+    {
+     "q": 1,
+     "u": "can",
+     "item": "black beans (15 oz)",
+     "note": "undrained",
+     "aisle": "canned"
+    },
+    {
+     "q": 1,
+     "u": "can",
+     "item": "kidney beans (15 oz)",
+     "note": "drained and rinsed",
+     "aisle": "canned"
+    },
+    {
+     "q": 1,
+     "u": "can",
+     "item": "corn (15 oz)",
+     "note": "drained",
+     "aisle": "canned"
+    },
+    {
+     "q": 3,
+     "u": "cup",
+     "item": "beef broth",
+     "aisle": "canned"
+    },
+    {
+     "q": 1,
+     "u": "cup",
+     "item": "shredded cheddar",
+     "aisle": "dairy"
+    },
+    {
+     "q": 0.5,
+     "u": "cup",
+     "item": "sour cream",
+     "aisle": "dairy"
+    },
+    {
+     "q": 1,
+     "u": "cup",
+     "item": "tortilla chips",
+     "note": "crushed",
+     "aisle": "pantry"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Brown the beef and onion in a large pot until no pink is left. Drain the fat.",
+     "timer": 480,
+     "timerLabel": "Brown the beef"
+    },
+    {
+     "text": "Stir in the taco seasoning."
+    },
+    {
+     "text": "Add the tomatoes, all the beans, corn and broth. Bring to a boil."
+    },
+    {
+     "text": "Reduce the heat and simmer, stirring now and then.",
+     "timer": 1200,
+     "timerLabel": "Simmer"
+    },
+    {
+     "text": "Ladle into bowls. Top with cheese, sour cream and chips."
+    }
+   ]
+  },
+  {
+   "id": "mexican-pozole-rojo",
+   "title": "Pozole rojo",
+   "blurb": "Hominy and pork in a rich red chile broth",
+   "type": "soups",
+   "serves": 8,
+   "prep": 30,
+   "cook": 120,
+   "tags": [
+    "crowd",
+    "spicy",
+    "make ahead"
+   ],
+   "ingredients": [
+    {
+     "q": 3,
+     "u": "lb",
+     "item": "pork shoulder",
+     "note": "cut in 2-inch chunks",
+     "aisle": "meat"
+    },
+    {
+     "q": 6,
+     "u": "",
+     "item": "dried guajillo chiles",
+     "note": "stemmed and seeded",
+     "aisle": "international"
+    },
+    {
+     "q": 2,
+     "u": "",
+     "item": "dried ancho chiles",
+     "note": "stemmed and seeded",
+     "aisle": "international"
+    },
+    {
+     "q": 1,
+     "u": "",
+     "item": "yellow onion",
+     "note": "halved",
+     "aisle": "produce"
+    },
+    {
+     "q": 6,
+     "u": "clove",
+     "item": "garlic",
+     "aisle": "produce"
+    },
+    {
+     "q": 2,
+     "u": "can",
+     "item": "white hominy (25 oz)",
+     "note": "drained and rinsed",
+     "aisle": "canned"
+    },
+    {
+     "q": 2,
+     "u": "tsp",
+     "item": "dried oregano",
+     "aisle": "spices"
+    },
+    {
+     "q": 2,
+     "u": "tsp",
+     "item": "salt",
+     "aisle": "spices"
+    },
+    {
+     "q": 8,
+     "u": "cup",
+     "item": "water",
+     "aisle": "pantry"
+    },
+    {
+     "q": 2,
+     "u": "cup",
+     "item": "shredded cabbage",
+     "aisle": "produce"
+    },
+    {
+     "q": 6,
+     "u": "",
+     "item": "radishes",
+     "note": "thinly sliced",
+     "aisle": "produce"
+    },
+    {
+     "q": 2,
+     "u": "",
+     "item": "limes",
+     "note": "cut in wedges",
+     "aisle": "produce"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Put the pork, half the onion, 3 garlic cloves, salt and water in a large pot. Bring to a boil, then simmer.",
+     "timer": 3600,
+     "timerLabel": "Simmer pork"
+    },
+    {
+     "text": "Meanwhile, soak the chiles in hot water until soft.",
+     "timer": 1200,
+     "timerLabel": "Soak chiles"
+    },
+    {
+     "text": "Blend the chiles with the remaining onion and garlic, oregano and 1 cup of the soaking water until smooth. Strain."
+    },
+    {
+     "text": "Stir the chile sauce into the pot with the hominy."
+    },
+    {
+     "text": "Simmer until the pork is tender, adding water if needed.",
+     "timer": 2400,
+     "timerLabel": "Simmer pozole"
+    },
+    {
+     "text": "Serve with cabbage, radishes and lime wedges."
+    }
+   ]
+  },
+  {
+   "id": "mexican-albondigas-soup",
+   "title": "Albondigas soup",
+   "blurb": "Mexican meatball soup with rice and vegetables",
+   "type": "soups",
+   "serves": 6,
+   "prep": 25,
+   "cook": 40,
+   "tags": [
+    "kid-friendly"
+   ],
+   "ingredients": [
+    {
+     "q": 1,
+     "u": "lb",
+     "item": "ground beef",
+     "aisle": "meat"
+    },
+    {
+     "q": 0.5,
+     "u": "lb",
+     "item": "ground pork",
+     "aisle": "meat"
+    },
+    {
+     "q": 0.5,
+     "u": "cup",
+     "item": "long-grain white rice",
+     "note": "uncooked, divided",
+     "aisle": "pantry"
+    },
+    {
+     "q": 1,
+     "u": "",
+     "item": "large egg",
+     "aisle": "dairy"
+    },
+    {
+     "q": 2,
+     "u": "tbsp",
+     "item": "chopped fresh mint or cilantro",
+     "aisle": "produce"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "salt",
+     "aisle": "spices"
+    },
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "olive oil",
+     "aisle": "pantry"
+    },
+    {
+     "q": 1,
+     "u": "",
+     "item": "yellow onion",
+     "note": "diced",
+     "aisle": "produce"
+    },
+    {
+     "q": 3,
+     "u": "",
+     "item": "carrots",
+     "note": "sliced",
+     "aisle": "produce"
+    },
+    {
+     "q": 2,
+     "u": "",
+     "item": "zucchini",
+     "note": "diced",
+     "aisle": "produce"
+    },
+    {
+     "q": 1,
+     "u": "can",
+     "item": "tomato sauce (15 oz)",
+     "aisle": "canned"
+    },
+    {
+     "q": 6,
+     "u": "cup",
+     "item": "beef broth",
+     "aisle": "canned"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "ground cumin",
+     "aisle": "spices"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Mix the beef, pork, 1/4 cup rice, egg, mint and salt. Roll into 1-inch meatballs."
+    },
+    {
+     "text": "Cook the onion and carrots in the oil in a large pot until softening.",
+     "timer": 300,
+     "timerLabel": "Cook vegetables"
+    },
+    {
+     "text": "Add the tomato sauce, broth and cumin. Bring to a boil."
+    },
+    {
+     "text": "Drop in the meatballs and the remaining rice. Simmer gently.",
+     "timer": 1500,
+     "timerLabel": "Simmer"
+    },
+    {
+     "text": "Add the zucchini and cook until tender. Meatballs should reach 160°F.",
+     "timer": 600,
+     "timerLabel": "Cook zucchini"
+    },
+    {
+     "text": "Taste for salt and serve hot."
+    }
+   ]
+  },
+  {
+   "id": "mexican-black-bean-soup",
+   "title": "Black bean soup",
+   "blurb": "Smoky, creamy soup from pantry staples",
+   "type": "soups",
+   "serves": 6,
+   "prep": 10,
+   "cook": 35,
+   "tags": [
+    "vegetarian",
+    "healthy",
+    "one pot"
+   ],
+   "ingredients": [
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "olive oil",
+     "aisle": "pantry"
+    },
+    {
+     "q": 1,
+     "u": "",
+     "item": "yellow onion",
+     "note": "diced",
+     "aisle": "produce"
+    },
+    {
+     "q": 1,
+     "u": "",
+     "item": "green bell pepper",
+     "note": "diced",
+     "aisle": "produce"
+    },
+    {
+     "q": 4,
+     "u": "clove",
+     "item": "garlic",
+     "note": "minced",
+     "aisle": "produce"
+    },
+    {
+     "q": 2,
+     "u": "tsp",
+     "item": "ground cumin",
+     "aisle": "spices"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "dried oregano",
+     "aisle": "spices"
+    },
+    {
+     "q": 3,
+     "u": "can",
+     "item": "black beans (15 oz)",
+     "note": "drained and rinsed, divided",
+     "aisle": "canned"
+    },
+    {
+     "q": 4,
+     "u": "cup",
+     "item": "vegetable broth",
+     "aisle": "canned"
+    },
+    {
+     "q": 1,
+     "u": "",
+     "item": "lime",
+     "note": "juiced",
+     "aisle": "produce"
+    },
+    {
+     "q": 0.5,
+     "u": "cup",
+     "item": "sour cream",
+     "aisle": "dairy"
+    },
+    {
+     "q": 0.25,
+     "u": "cup",
+     "item": "chopped fresh cilantro",
+     "aisle": "produce"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "salt",
+     "aisle": "spices"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Cook the onion and pepper in the oil until soft.",
+     "timer": 420,
+     "timerLabel": "Cook vegetables"
+    },
+    {
+     "text": "Add the garlic, cumin and oregano and stir for 1 minute."
+    },
+    {
+     "text": "Add 2 cans of beans and the broth. Bring to a boil, then simmer.",
+     "timer": 1200,
+     "timerLabel": "Simmer"
+    },
+    {
+     "text": "Blend with an immersion blender until mostly smooth."
+    },
+    {
+     "text": "Stir in the last can of beans, salt and lime juice. Heat through.",
+     "timer": 300,
+     "timerLabel": "Heat through"
+    },
+    {
+     "text": "Serve with sour cream and cilantro."
+    }
+   ]
+  },
+  {
+   "id": "mexican-chili-con-carne",
+   "title": "Texas chili con carne",
+   "blurb": "Hearty beef chili with chiles and a long, slow simmer",
+   "type": "soups",
+   "serves": 8,
+   "prep": 20,
+   "cook": 150,
+   "tags": [
+    "crowd",
+    "make ahead",
+    "spicy"
+   ],
+   "ingredients": [
+    {
+     "q": 3,
+     "u": "lb",
+     "item": "beef chuck roast",
+     "note": "cut in half-inch cubes",
+     "aisle": "meat"
+    },
+    {
+     "q": 2,
+     "u": "tbsp",
+     "item": "vegetable oil",
+     "note": "divided",
+     "aisle": "pantry"
+    },
+    {
+     "q": 2,
+     "u": "",
+     "item": "yellow onions",
+     "note": "diced",
+     "aisle": "produce"
+    },
+    {
+     "q": 5,
+     "u": "clove",
+     "item": "garlic",
+     "note": "minced",
+     "aisle": "produce"
+    },
+    {
+     "q": 3,
+     "u": "tbsp",
+     "item": "chili powder",
+     "aisle": "spices"
+    },
+    {
+     "q": 2,
+     "u": "tbsp",
+     "item": "ground cumin",
+     "aisle": "spices"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "dried oregano",
+     "aisle": "spices"
+    },
+    {
+     "q": 1,
+     "u": "can",
+     "item": "crushed tomatoes (28 oz)",
+     "aisle": "canned"
+    },
+    {
+     "q": 2,
+     "u": "cup",
+     "item": "beef broth",
+     "aisle": "canned"
+    },
+    {
+     "q": 2,
+     "u": "tbsp",
+     "item": "tomato paste",
+     "aisle": "canned"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "salt",
+     "aisle": "spices"
+    },
+    {
+     "q": 2,
+     "u": "tbsp",
+     "item": "masa harina",
+     "aisle": "international"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Brown the beef in batches in 1 tbsp oil in a large pot. Set aside.",
+     "timer": 900,
+     "timerLabel": "Brown the beef"
+    },
+    {
+     "text": "Cook the onions in the remaining oil until soft. Add the garlic, chili powder, cumin and oregano.",
+     "timer": 420,
+     "timerLabel": "Cook onions"
+    },
+    {
+     "text": "Add the tomato paste, tomatoes, broth, salt and the beef."
+    },
+    {
+     "text": "Bring to a boil, cover partly and simmer until the beef is very tender.",
+     "timer": 6600,
+     "timerLabel": "Simmer chili"
+    },
+    {
+     "text": "Stir the masa harina with a little water and stir it in to thicken.",
+     "timer": 600,
+     "timerLabel": "Simmer to thicken"
+    },
+    {
+     "text": "Taste and adjust salt. Serve with your favorite toppings."
+    }
+   ]
+  },
+  {
+   "id": "mexican-white-chicken-chili",
+   "title": "White chicken chili",
+   "blurb": "Creamy green chile and white bean chili",
+   "type": "soups",
+   "serves": 6,
+   "prep": 15,
+   "cook": 30,
+   "tags": [
+    "one pot"
+   ],
+   "ingredients": [
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "olive oil",
+     "aisle": "pantry"
+    },
+    {
+     "q": 1,
+     "u": "",
+     "item": "yellow onion",
+     "note": "diced",
+     "aisle": "produce"
+    },
+    {
+     "q": 3,
+     "u": "clove",
+     "item": "garlic",
+     "note": "minced",
+     "aisle": "produce"
+    },
+    {
+     "q": 2,
+     "u": "can",
+     "item": "diced green chiles (4 oz)",
+     "aisle": "canned"
+    },
+    {
+     "q": 2,
+     "u": "tsp",
+     "item": "ground cumin",
+     "aisle": "spices"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "dried oregano",
+     "aisle": "spices"
+    },
+    {
+     "q": 2,
+     "u": "can",
+     "item": "great northern beans (15 oz)",
+     "note": "undrained",
+     "aisle": "canned"
+    },
+    {
+     "q": 4,
+     "u": "cup",
+     "item": "chicken broth",
+     "aisle": "canned"
+    },
+    {
+     "q": 3,
+     "u": "cup",
+     "item": "cooked shredded chicken",
+     "aisle": "meat"
+    },
+    {
+     "q": 4,
+     "u": "oz",
+     "item": "cream cheese",
+     "note": "cubed",
+     "aisle": "dairy"
+    },
+    {
+     "q": 1,
+     "u": "cup",
+     "item": "frozen corn",
+     "aisle": "frozen"
+    },
+    {
+     "q": 1,
+     "u": "",
+     "item": "lime",
+     "note": "juiced",
+     "aisle": "produce"
+    },
+    {
+     "q": 0.25,
+     "u": "cup",
+     "item": "chopped fresh cilantro",
+     "aisle": "produce"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Cook the onion in the oil in a large pot until soft. Add the garlic, chiles, cumin and oregano.",
+     "timer": 360,
+     "timerLabel": "Cook onion"
+    },
+    {
+     "text": "Add the beans with their liquid and the broth. Bring to a boil."
+    },
+    {
+     "text": "Simmer for 15 minutes. Mash some of the beans against the pot to thicken.",
+     "timer": 900,
+     "timerLabel": "Simmer"
+    },
+    {
+     "text": "Stir in the chicken, cream cheese and corn until the cheese melts.",
+     "timer": 300,
+     "timerLabel": "Melt cream cheese"
+    },
+    {
+     "text": "Finish with lime juice and cilantro."
+    }
+   ]
+  },
+  {
+   "id": "mexican-sopa-de-fideo",
+   "title": "Sopa de fideo",
+   "blurb": "Toasted noodles in a mild tomato broth",
+   "type": "soups",
+   "serves": 4,
+   "prep": 10,
+   "cook": 20,
+   "tags": [
+    "quick",
+    "vegetarian",
+    "kid-friendly"
+   ],
+   "ingredients": [
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "vegetable oil",
+     "aisle": "pantry"
+    },
+    {
+     "q": 7,
+     "u": "oz",
+     "item": "fideo or broken angel hair pasta",
+     "aisle": "international"
+    },
+    {
+     "q": 0.5,
+     "u": "",
+     "item": "yellow onion",
+     "note": "diced",
+     "aisle": "produce"
+    },
+    {
+     "q": 2,
+     "u": "clove",
+     "item": "garlic",
+     "note": "minced",
+     "aisle": "produce"
+    },
+    {
+     "q": 1,
+     "u": "can",
+     "item": "tomato sauce (8 oz)",
+     "aisle": "canned"
+    },
+    {
+     "q": 4,
+     "u": "cup",
+     "item": "chicken broth",
+     "aisle": "canned"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "ground cumin",
+     "aisle": "spices"
+    },
+    {
+     "q": 0.5,
+     "u": "tsp",
+     "item": "salt",
+     "aisle": "spices"
+    },
+    {
+     "q": 0.25,
+     "u": "cup",
+     "item": "chopped fresh cilantro",
+     "aisle": "produce"
+    },
+    {
+     "q": 1,
+     "u": "",
+     "item": "lime",
+     "note": "cut in wedges",
+     "aisle": "produce"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Heat the oil in a pot and toast the noodles, stirring, until golden brown.",
+     "timer": 240,
+     "timerLabel": "Toast noodles"
+    },
+    {
+     "text": "Add the onion and garlic and cook 1 minute.",
+     "timer": 60,
+     "timerLabel": "Cook onion"
+    },
+    {
+     "text": "Stir in the tomato sauce, broth, cumin and salt."
+    },
+    {
+     "text": "Bring to a boil, then simmer until the noodles are tender.",
+     "timer": 480,
+     "timerLabel": "Simmer"
+    },
+    {
+     "text": "Serve with cilantro and lime wedges."
+    }
+   ]
+  },
+  {
+   "id": "mexican-caldo-de-pollo",
+   "title": "Caldo de pollo",
+   "blurb": "Mexican chicken soup with corn, potatoes and carrots",
+   "type": "soups",
+   "serves": 6,
+   "prep": 20,
+   "cook": 60,
+   "tags": [
+    "healthy",
+    "gluten-free"
+   ],
+   "ingredients": [
+    {
+     "q": 3,
+     "u": "lb",
+     "item": "bone-in chicken thighs and drumsticks",
+     "aisle": "meat"
+    },
+    {
+     "q": 10,
+     "u": "cup",
+     "item": "water",
+     "aisle": "pantry"
+    },
+    {
+     "q": 1,
+     "u": "",
+     "item": "yellow onion",
+     "note": "halved",
+     "aisle": "produce"
+    },
+    {
+     "q": 4,
+     "u": "clove",
+     "item": "garlic",
+     "aisle": "produce"
+    },
+    {
+     "q": 3,
+     "u": "",
+     "item": "carrots",
+     "note": "cut in chunks",
+     "aisle": "produce"
+    },
+    {
+     "q": 3,
+     "u": "",
+     "item": "Yukon gold potatoes",
+     "note": "cut in chunks",
+     "aisle": "produce"
+    },
+    {
+     "q": 2,
+     "u": "",
+     "item": "ears of corn",
+     "note": "cut in rounds",
+     "aisle": "produce"
+    },
+    {
+     "q": 2,
+     "u": "",
+     "item": "zucchini",
+     "note": "cut in chunks",
+     "aisle": "produce"
+    },
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "salt",
+     "aisle": "spices"
+    },
+    {
+     "q": 0.25,
+     "u": "cup",
+     "item": "chopped fresh cilantro",
+     "aisle": "produce"
+    },
+    {
+     "q": 2,
+     "u": "",
+     "item": "limes",
+     "note": "cut in wedges",
+     "aisle": "produce"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Put the chicken, water, onion, garlic and salt in a large pot. Bring to a boil and skim any foam."
+    },
+    {
+     "text": "Reduce the heat and simmer until the chicken is cooked (165°F).",
+     "timer": 1800,
+     "timerLabel": "Simmer chicken"
+    },
+    {
+     "text": "Add the carrots, potatoes and corn. Simmer until nearly tender.",
+     "timer": 900,
+     "timerLabel": "Simmer vegetables"
+    },
+    {
+     "text": "Add the zucchini and cook until tender.",
+     "timer": 420,
+     "timerLabel": "Cook zucchini"
+    },
+    {
+     "text": "Serve in big bowls with cilantro and lime wedges."
+    }
+   ]
+  },
+  {
+   "id": "mexican-birria-stew",
+   "title": "Beef birria stew",
+   "blurb": "Chile-braised beef for tacos or sipping broth",
+   "type": "soups",
+   "serves": 8,
+   "prep": 30,
+   "cook": 210,
+   "tags": [
+    "crowd",
+    "make ahead",
+    "spicy"
+   ],
+   "ingredients": [
+    {
+     "q": 3.5,
+     "u": "lb",
+     "item": "beef chuck roast",
+     "note": "cut in 3-inch chunks",
+     "aisle": "meat"
+    },
+    {
+     "q": 5,
+     "u": "",
+     "item": "dried guajillo chiles",
+     "note": "stemmed and seeded",
+     "aisle": "international"
+    },
+    {
+     "q": 3,
+     "u": "",
+     "item": "dried ancho chiles",
+     "note": "stemmed and seeded",
+     "aisle": "international"
+    },
+    {
+     "q": 1,
+     "u": "can",
+     "item": "chipotle peppers in adobo (7 oz)",
+     "aisle": "canned"
+    },
+    {
+     "q": 1,
+     "u": "",
+     "item": "yellow onion",
+     "note": "quartered",
+     "aisle": "produce"
+    },
+    {
+     "q": 6,
+     "u": "clove",
+     "item": "garlic",
+     "aisle": "produce"
+    },
+    {
+     "q": 0.25,
+     "u": "cup",
+     "item": "apple cider vinegar",
+     "aisle": "pantry"
+    },
+    {
+     "q": 2,
+     "u": "tsp",
+     "item": "dried oregano",
+     "aisle": "spices"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "ground cumin",
+     "aisle": "spices"
+    },
+    {
+     "q": 2,
+     "u": "",
+     "item": "bay leaves",
+     "aisle": "spices"
+    },
+    {
+     "q": 2,
+     "u": "tsp",
+     "item": "salt",
+     "aisle": "spices"
+    },
+    {
+     "q": 4,
+     "u": "cup",
+     "item": "beef broth",
+     "aisle": "canned"
+    },
+    {
+     "q": 1,
+     "u": "",
+     "item": "lime",
+     "note": "cut in wedges",
+     "aisle": "produce"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Heat the oven to 325°F. Toast the dried chiles in a dry pan for 30 seconds per side, then soak in hot water.",
+     "timer": 900,
+     "timerLabel": "Soak chiles"
+    },
+    {
+     "text": "Blend the chiles with the chipotle, onion, garlic, vinegar, oregano, cumin and 1 cup of broth until smooth."
+    },
+    {
+     "text": "Salt the beef and put it in a Dutch oven with the sauce, bay leaves and remaining broth."
+    },
+    {
+     "text": "Cover and braise in the oven until the beef falls apart.",
+     "timer": 12000,
+     "timerLabel": "Braise"
+    },
+    {
+     "text": "Shred the beef in the pot and discard the bay leaves."
+    },
+    {
+     "text": "Serve in bowls with lime, or on tortillas with the broth for dipping."
+    }
+   ]
+  },
+  {
+   "id": "sheet-pan-fajitas",
+   "title": "Sheet-pan chicken fajitas",
+   "blurb": "Everything roasts together on one pan",
+   "type": "chicken",
+   "serves": 4,
+   "prep": 15,
+   "cook": 20,
+   "tags": [
+    "sheet pan",
+    "kid-friendly"
+   ],
+   "ingredients": [
+    {
+     "q": 1.5,
+     "u": "lb",
+     "item": "boneless skinless chicken breasts",
+     "note": "sliced thin",
+     "aisle": "meat"
+    },
+    {
+     "q": 3,
+     "u": "",
+     "item": "bell peppers",
+     "note": "sliced",
+     "aisle": "produce"
+    },
+    {
+     "q": 1,
+     "u": "",
+     "item": "yellow onion",
+     "note": "sliced",
+     "aisle": "produce"
+    },
+    {
+     "q": 3,
+     "u": "tbsp",
+     "item": "olive oil",
+     "aisle": "pantry"
+    },
+    {
+     "q": 2,
+     "u": "tsp",
+     "item": "chili powder",
+     "aisle": "spices"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "ground cumin",
+     "aisle": "spices"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "garlic powder",
+     "aisle": "spices"
+    },
+    {
+     "q": 0.5,
+     "u": "tsp",
+     "item": "salt",
+     "aisle": "spices"
+    },
+    {
+     "q": 8,
+     "u": "",
+     "item": "small flour tortillas",
+     "aisle": "bakery"
+    },
+    {
+     "q": 1,
+     "u": "",
+     "item": "lime",
+     "note": "cut in wedges",
+     "aisle": "produce"
+    },
+    {
+     "q": 0.5,
+     "u": "cup",
+     "item": "sour cream",
+     "aisle": "dairy"
+    },
+    {
+     "q": 0.5,
+     "u": "cup",
+     "item": "salsa",
+     "aisle": "pantry"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Heat the oven to 425°F. Line a large sheet pan with foil."
+    },
+    {
+     "text": "Put the chicken, peppers and onion on the pan. Add the oil and all the spices and toss to coat."
+    },
+    {
+     "text": "Spread everything out in one layer so it roasts instead of steaming."
+    },
+    {
+     "text": "Roast for 20 minutes, stirring halfway. The chicken is done at 165°F inside.",
+     "timer": 1200,
+     "timerLabel": "Roast"
+    },
+    {
+     "text": "Wrap the tortillas in foil and warm them in the turned-off oven while you set the table.",
+     "timer": 300,
+     "timerLabel": "Warm the tortillas"
+    },
+    {
+     "text": "Squeeze lime over the pan. Fill the tortillas and add sour cream and salsa."
+    }
+   ]
+  },
+  {
+   "id": "mexican-steak-fajitas",
+   "title": "Skillet steak fajitas",
+   "blurb": "Sizzling flank steak with peppers and onions",
+   "type": "chicken",
+   "serves": 4,
+   "prep": 15,
+   "cook": 15,
+   "tags": [
+    "quick",
+    "gluten-free"
+   ],
+   "ingredients": [
+    {
+     "q": 1.5,
+     "u": "lb",
+     "item": "flank steak",
+     "aisle": "meat"
+    },
+    {
+     "q": 3,
+     "u": "tbsp",
+     "item": "vegetable oil",
+     "note": "divided",
+     "aisle": "pantry"
+    },
+    {
+     "q": 2,
+     "u": "",
+     "item": "limes",
+     "note": "juiced",
+     "aisle": "produce"
+    },
+    {
+     "q": 2,
+     "u": "tsp",
+     "item": "chili powder",
+     "aisle": "spices"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "ground cumin",
+     "aisle": "spices"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "garlic powder",
+     "aisle": "spices"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "salt",
+     "aisle": "spices"
+    },
+    {
+     "q": 3,
+     "u": "",
+     "item": "bell peppers",
+     "note": "sliced",
+     "aisle": "produce"
+    },
+    {
+     "q": 1,
+     "u": "",
+     "item": "yellow onion",
+     "note": "sliced",
+     "aisle": "produce"
+    },
+    {
+     "q": 8,
+     "u": "",
+     "item": "small flour tortillas",
+     "aisle": "bakery"
+    },
+    {
+     "q": 0.5,
+     "u": "cup",
+     "item": "guacamole",
+     "aisle": "produce"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Mix 1 tbsp oil, lime juice, chili powder, cumin, garlic powder and salt. Rub it on the steak and let it sit.",
+     "timer": 900,
+     "timerLabel": "Marinate steak"
+    },
+    {
+     "text": "Heat a large cast iron skillet over high heat with 1 tbsp oil."
+    },
+    {
+     "text": "Sear the steak 4 to 5 minutes per side for medium (130°F).",
+     "timer": 540,
+     "timerLabel": "Sear the steak"
+    },
+    {
+     "text": "Rest the steak on a board. Slice thinly across the grain.",
+     "timer": 300,
+     "timerLabel": "Rest the steak"
+    },
+    {
+     "text": "Cook the peppers and onion in the remaining oil until charred and tender.",
+     "timer": 360,
+     "timerLabel": "Cook vegetables"
+    },
+    {
+     "text": "Warm the tortillas. Serve the steak and vegetables with guacamole."
+    }
+   ]
+  },
+  {
+   "id": "mexican-arroz-con-pollo",
+   "title": "Arroz con pollo",
+   "blurb": "One-pot chicken and tomato rice",
+   "type": "chicken",
+   "serves": 6,
+   "prep": 15,
+   "cook": 45,
+   "tags": [
+    "one pot",
+    "kid-friendly"
+   ],
+   "ingredients": [
+    {
+     "q": 3,
+     "u": "lb",
+     "item": "bone-in chicken thighs",
+     "aisle": "meat"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "salt",
+     "aisle": "spices"
+    },
+    {
+     "q": 2,
+     "u": "tbsp",
+     "item": "olive oil",
+     "aisle": "pantry"
+    },
+    {
+     "q": 1,
+     "u": "",
+     "item": "yellow onion",
+     "note": "diced",
+     "aisle": "produce"
+    },
+    {
+     "q": 1,
+     "u": "",
+     "item": "green bell pepper",
+     "note": "diced",
+     "aisle": "produce"
+    },
+    {
+     "q": 3,
+     "u": "clove",
+     "item": "garlic",
+     "note": "minced",
+     "aisle": "produce"
+    },
+    {
+     "q": 1.5,
+     "u": "cup",
+     "item": "long-grain white rice",
+     "aisle": "pantry"
+    },
+    {
+     "q": 1,
+     "u": "can",
+     "item": "tomato sauce (8 oz)",
+     "aisle": "canned"
+    },
+    {
+     "q": 2.5,
+     "u": "cup",
+     "item": "chicken broth",
+     "aisle": "canned"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "ground cumin",
+     "aisle": "spices"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "paprika",
+     "aisle": "spices"
+    },
+    {
+     "q": 0.5,
+     "u": "cup",
+     "item": "frozen peas",
+     "aisle": "frozen"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Season the chicken with the salt. Brown it skin side down in the oil in a Dutch oven. Set aside.",
+     "timer": 600,
+     "timerLabel": "Brown chicken"
+    },
+    {
+     "text": "Cook the onion and pepper in the drippings until soft. Add the garlic.",
+     "timer": 300,
+     "timerLabel": "Cook vegetables"
+    },
+    {
+     "text": "Stir in the rice, cumin and paprika and toast for 1 minute."
+    },
+    {
+     "text": "Add the tomato sauce and broth. Nestle the chicken on top and bring to a boil."
+    },
+    {
+     "text": "Cover and cook on low until the rice is tender and the chicken is 165°F.",
+     "timer": 1800,
+     "timerLabel": "Cook covered"
+    },
+    {
+     "text": "Scatter the peas on top, cover, and let sit off the heat.",
+     "timer": 300,
+     "timerLabel": "Steam peas"
+    }
+   ]
+  },
+  {
+   "id": "mexican-pollo-asado",
+   "title": "Pollo asado",
+   "blurb": "Citrus-achiote grilled chicken",
+   "type": "chicken",
+   "serves": 6,
+   "prep": 15,
+   "cook": 40,
+   "tags": [
+    "grill",
+    "gluten-free"
+   ],
+   "ingredients": [
+    {
+     "q": 4,
+     "u": "lb",
+     "item": "bone-in chicken thighs and drumsticks",
+     "aisle": "meat"
+    },
+    {
+     "q": 0.5,
+     "u": "cup",
+     "item": "orange juice",
+     "aisle": "beverages"
+    },
+    {
+     "q": 0.25,
+     "u": "cup",
+     "item": "lime juice",
+     "aisle": "beverages"
+    },
+    {
+     "q": 4,
+     "u": "clove",
+     "item": "garlic",
+     "note": "minced",
+     "aisle": "produce"
+    },
+    {
+     "q": 2,
+     "u": "tbsp",
+     "item": "olive oil",
+     "aisle": "pantry"
+    },
+    {
+     "q": 2,
+     "u": "tbsp",
+     "item": "achiote paste",
+     "aisle": "international"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "ground cumin",
+     "aisle": "spices"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "dried oregano",
+     "aisle": "spices"
+    },
+    {
+     "q": 1.5,
+     "u": "tsp",
+     "item": "salt",
+     "aisle": "spices"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Whisk the juices, garlic, oil, achiote, cumin, oregano and salt until the achiote dissolves."
+    },
+    {
+     "text": "Add the chicken and turn to coat. Marinate in the fridge, 4 hours or overnight.",
+     "timer": 14400,
+     "timerLabel": "Marinate"
+    },
+    {
+     "text": "Heat the grill to medium and oil the grates."
+    },
+    {
+     "text": "Grill the chicken skin side down, then turn every 10 minutes.",
+     "timer": 2400,
+     "timerLabel": "Grill"
+    },
+    {
+     "text": "Check that the thickest part reaches 165°F. Rest before serving.",
+     "timer": 300,
+     "timerLabel": "Rest"
+    }
+   ]
+  },
+  {
+   "id": "mexican-chicken-mole",
+   "title": "Easy chicken mole",
+   "blurb": "Chocolate-chile sauce over tender chicken, simplified",
+   "type": "chicken",
+   "serves": 6,
+   "prep": 20,
+   "cook": 50,
+   "tags": [],
+   "ingredients": [
+    {
+     "q": 3,
+     "u": "lb",
+     "item": "bone-in chicken thighs",
+     "aisle": "meat"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "salt",
+     "aisle": "spices"
+    },
+    {
+     "q": 2,
+     "u": "tbsp",
+     "item": "vegetable oil",
+     "aisle": "pantry"
+    },
+    {
+     "q": 1,
+     "u": "",
+     "item": "yellow onion",
+     "note": "diced",
+     "aisle": "produce"
+    },
+    {
+     "q": 3,
+     "u": "clove",
+     "item": "garlic",
+     "note": "minced",
+     "aisle": "produce"
+    },
+    {
+     "q": 3,
+     "u": "tbsp",
+     "item": "chili powder",
+     "aisle": "spices"
+    },
+    {
+     "q": 0.25,
+     "u": "cup",
+     "item": "creamy peanut butter",
+     "aisle": "pantry"
+    },
+    {
+     "q": 1,
+     "u": "can",
+     "item": "diced tomatoes (14.5 oz)",
+     "aisle": "canned"
+    },
+    {
+     "q": 2,
+     "u": "cup",
+     "item": "chicken broth",
+     "aisle": "canned"
+    },
+    {
+     "q": 1.5,
+     "u": "oz",
+     "item": "Mexican chocolate",
+     "note": "chopped",
+     "aisle": "international"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "ground cinnamon",
+     "aisle": "spices"
+    },
+    {
+     "q": 2,
+     "u": "tbsp",
+     "item": "sesame seeds",
+     "aisle": "spices"
+    },
+    {
+     "q": 2,
+     "u": "cup",
+     "item": "cooked rice",
+     "aisle": "pantry"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Season the chicken with salt. Brown it in the oil in a Dutch oven and set aside.",
+     "timer": 600,
+     "timerLabel": "Brown chicken"
+    },
+    {
+     "text": "Cook the onion and garlic in the drippings until soft.",
+     "timer": 300,
+     "timerLabel": "Cook onion"
+    },
+    {
+     "text": "Blend the onion mixture with chili powder, peanut butter, tomatoes, broth and cinnamon until smooth."
+    },
+    {
+     "text": "Pour the sauce into the pot, add the chicken, and simmer covered until 165°F.",
+     "timer": 2400,
+     "timerLabel": "Simmer chicken"
+    },
+    {
+     "text": "Stir in the chocolate until melted."
+    },
+    {
+     "text": "Serve over rice, sprinkled with sesame seeds."
+    }
+   ]
+  },
+  {
+   "id": "mexican-pork-chile-verde",
+   "title": "Pork chile verde",
+   "blurb": "Tender pork in a bright tomatillo-poblano sauce",
+   "type": "chicken",
+   "serves": 6,
+   "prep": 25,
+   "cook": 120,
+   "tags": [
+    "gluten-free",
+    "make ahead"
+   ],
+   "ingredients": [
+    {
+     "q": 3,
+     "u": "lb",
+     "item": "pork shoulder",
+     "note": "cut in 1-inch cubes",
+     "aisle": "meat"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "salt",
+     "aisle": "spices"
+    },
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "vegetable oil",
+     "aisle": "pantry"
+    },
+    {
+     "q": 1.5,
+     "u": "lb",
+     "item": "tomatillos",
+     "note": "husked and rinsed",
+     "aisle": "produce"
+    },
+    {
+     "q": 3,
+     "u": "",
+     "item": "poblano peppers",
+     "note": "seeded",
+     "aisle": "produce"
+    },
+    {
+     "q": 2,
+     "u": "",
+     "item": "jalapeño peppers",
+     "note": "seeded",
+     "aisle": "produce"
+    },
+    {
+     "q": 1,
+     "u": "",
+     "item": "yellow onion",
+     "note": "quartered",
+     "aisle": "produce"
+    },
+    {
+     "q": 5,
+     "u": "clove",
+     "item": "garlic",
+     "aisle": "produce"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "ground cumin",
+     "aisle": "spices"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "dried oregano",
+     "aisle": "spices"
+    },
+    {
+     "q": 1,
+     "u": "cup",
+     "item": "chicken broth",
+     "aisle": "canned"
+    },
+    {
+     "q": 0.5,
+     "u": "cup",
+     "item": "chopped fresh cilantro",
+     "aisle": "produce"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Season the pork with salt and brown in the oil in a Dutch oven, in batches.",
+     "timer": 720,
+     "timerLabel": "Brown pork"
+    },
+    {
+     "text": "Broil the tomatillos, poblanos, jalapeños, onion and garlic until charred in spots.",
+     "timer": 480,
+     "timerLabel": "Broil vegetables"
+    },
+    {
+     "text": "Blend the vegetables with cumin, oregano, cilantro and broth until smooth."
+    },
+    {
+     "text": "Pour the sauce over the pork. Bring to a boil, then cover and simmer until very tender.",
+     "timer": 5400,
+     "timerLabel": "Simmer pork"
+    },
+    {
+     "text": "Serve with rice and warm tortillas."
+    }
+   ]
+  },
+  {
+   "id": "mexican-beef-barbacoa",
+   "title": "Slow cooker beef barbacoa",
+   "blurb": "Chipotle-spiced shredded beef for tacos and bowls",
+   "type": "chicken",
+   "serves": 8,
+   "prep": 15,
+   "cook": 480,
+   "tags": [
+    "slow cooker",
+    "crowd",
+    "make ahead"
+   ],
+   "ingredients": [
+    {
+     "q": 3.5,
+     "u": "lb",
+     "item": "beef chuck roast",
+     "note": "cut in 4 pieces",
+     "aisle": "meat"
+    },
+    {
+     "q": 1,
+     "u": "can",
+     "item": "chipotle peppers in adobo (7 oz)",
+     "aisle": "canned"
+    },
+    {
+     "q": 0.5,
+     "u": "cup",
+     "item": "beef broth",
+     "aisle": "canned"
+    },
+    {
+     "q": 0.25,
+     "u": "cup",
+     "item": "lime juice",
+     "aisle": "beverages"
+    },
+    {
+     "q": 5,
+     "u": "clove",
+     "item": "garlic",
+     "aisle": "produce"
+    },
+    {
+     "q": 2,
+     "u": "tbsp",
+     "item": "apple cider vinegar",
+     "aisle": "pantry"
+    },
+    {
+     "q": 2,
+     "u": "tsp",
+     "item": "ground cumin",
+     "aisle": "spices"
+    },
+    {
+     "q": 2,
+     "u": "tsp",
+     "item": "dried oregano",
+     "aisle": "spices"
+    },
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "salt",
+     "aisle": "spices"
+    },
+    {
+     "q": 2,
+     "u": "",
+     "item": "bay leaves",
+     "aisle": "spices"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Blend the chipotles, broth, lime juice, garlic, vinegar, cumin, oregano and salt until smooth."
+    },
+    {
+     "text": "Put the beef and bay leaves in the slow cooker and pour on the sauce."
+    },
+    {
+     "text": "Cook on low until the beef shreds easily.",
+     "timer": 28800,
+     "timerLabel": "Slow cook on low"
+    },
+    {
+     "text": "Remove the bay leaves. Shred the beef and stir into the juices."
+    },
+    {
+     "text": "Serve in tacos, burritos or bowls."
+    }
+   ]
+  },
+  {
+   "id": "mexican-carne-guisada",
+   "title": "Carne guisada",
+   "blurb": "Tex-Mex beef stew with potatoes in a rich gravy",
+   "type": "chicken",
+   "serves": 6,
+   "prep": 20,
+   "cook": 110,
+   "tags": [
+    "make ahead"
+   ],
+   "ingredients": [
+    {
+     "q": 2.5,
+     "u": "lb",
+     "item": "beef chuck roast",
+     "note": "cut in 1-inch cubes",
+     "aisle": "meat"
+    },
+    {
+     "q": 2,
+     "u": "tbsp",
+     "item": "all-purpose flour",
+     "aisle": "pantry"
+    },
+    {
+     "q": 2,
+     "u": "tbsp",
+     "item": "vegetable oil",
+     "aisle": "pantry"
+    },
+    {
+     "q": 1,
+     "u": "",
+     "item": "yellow onion",
+     "note": "diced",
+     "aisle": "produce"
+    },
+    {
+     "q": 1,
+     "u": "",
+     "item": "green bell pepper",
+     "note": "diced",
+     "aisle": "produce"
+    },
+    {
+     "q": 4,
+     "u": "clove",
+     "item": "garlic",
+     "note": "minced",
+     "aisle": "produce"
+    },
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "chili powder",
+     "aisle": "spices"
+    },
+    {
+     "q": 2,
+     "u": "tsp",
+     "item": "ground cumin",
+     "aisle": "spices"
+    },
+    {
+     "q": 1,
+     "u": "can",
+     "item": "diced tomatoes (14.5 oz)",
+     "aisle": "canned"
+    },
+    {
+     "q": 2,
+     "u": "cup",
+     "item": "beef broth",
+     "aisle": "canned"
+    },
+    {
+     "q": 2,
+     "u": "",
+     "item": "russet potatoes",
+     "note": "cubed",
+     "aisle": "produce"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "salt",
+     "aisle": "spices"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Toss the beef with the flour. Brown it in the oil in a Dutch oven, in batches.",
+     "timer": 720,
+     "timerLabel": "Brown beef"
+    },
+    {
+     "text": "Cook the onion and pepper in the pot until soft. Add the garlic, chili powder and cumin.",
+     "timer": 360,
+     "timerLabel": "Cook vegetables"
+    },
+    {
+     "text": "Return the beef. Add the tomatoes, broth and salt."
+    },
+    {
+     "text": "Cover and simmer on low until the beef is nearly tender.",
+     "timer": 4800,
+     "timerLabel": "Simmer beef"
+    },
+    {
+     "text": "Add the potatoes and cook until tender.",
+     "timer": 1200,
+     "timerLabel": "Cook potatoes"
+    },
+    {
+     "text": "Serve with warm flour tortillas or rice."
+    }
+   ]
+  },
+  {
+   "id": "mexican-picadillo",
+   "title": "Beef picadillo",
+   "blurb": "Savory-sweet ground beef with potatoes, olives and raisins",
+   "type": "chicken",
+   "serves": 6,
+   "prep": 15,
+   "cook": 35,
+   "tags": [
+    "one pot",
+    "gluten-free"
+   ],
+   "ingredients": [
+    {
+     "q": 1.5,
+     "u": "lb",
+     "item": "ground beef",
+     "aisle": "meat"
+    },
+    {
+     "q": 1,
+     "u": "",
+     "item": "yellow onion",
+     "note": "diced",
+     "aisle": "produce"
+    },
+    {
+     "q": 3,
+     "u": "clove",
+     "item": "garlic",
+     "note": "minced",
+     "aisle": "produce"
+    },
+    {
+     "q": 2,
+     "u": "",
+     "item": "Yukon gold potatoes",
+     "note": "small dice",
+     "aisle": "produce"
+    },
+    {
+     "q": 1,
+     "u": "can",
+     "item": "tomato sauce (15 oz)",
+     "aisle": "canned"
+    },
+    {
+     "q": 0.5,
+     "u": "cup",
+     "item": "green olives",
+     "note": "sliced",
+     "aisle": "canned"
+    },
+    {
+     "q": 0.25,
+     "u": "cup",
+     "item": "raisins",
+     "aisle": "pantry"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "ground cumin",
+     "aisle": "spices"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "dried oregano",
+     "aisle": "spices"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "salt",
+     "aisle": "spices"
+    },
+    {
+     "q": 0.5,
+     "u": "cup",
+     "item": "water",
+     "aisle": "pantry"
+    },
+    {
+     "q": 3,
+     "u": "cup",
+     "item": "cooked rice",
+     "aisle": "pantry"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Brown the beef and onion in a large skillet until no pink is left (160°F). Drain.",
+     "timer": 600,
+     "timerLabel": "Brown the beef"
+    },
+    {
+     "text": "Add the garlic, cumin, oregano and salt and stir for 1 minute."
+    },
+    {
+     "text": "Add the potatoes, tomato sauce and water. Bring to a simmer."
+    },
+    {
+     "text": "Cover and cook until the potatoes are tender.",
+     "timer": 1200,
+     "timerLabel": "Simmer"
+    },
+    {
+     "text": "Stir in the olives and raisins. Serve over rice."
+    }
+   ]
+  },
+  {
+   "id": "mexican-salsa-verde-chicken",
+   "title": "Slow cooker salsa verde chicken",
+   "blurb": "Two ingredients plus tortillas make an easy dinner",
+   "type": "chicken",
+   "serves": 6,
+   "prep": 5,
+   "cook": 360,
+   "tags": [
+    "slow cooker",
+    "gluten-free",
+    "kid-friendly"
+   ],
+   "ingredients": [
+    {
+     "q": 2.5,
+     "u": "lb",
+     "item": "boneless skinless chicken breasts",
+     "aisle": "meat"
+    },
+    {
+     "q": 16,
+     "u": "oz",
+     "item": "salsa verde",
+     "aisle": "pantry"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "ground cumin",
+     "aisle": "spices"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "garlic powder",
+     "aisle": "spices"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "salt",
+     "aisle": "spices"
+    },
+    {
+     "q": 12,
+     "u": "",
+     "item": "corn tortillas",
+     "aisle": "bakery"
+    },
+    {
+     "q": 1,
+     "u": "cup",
+     "item": "crumbled cotija cheese",
+     "aisle": "dairy"
+    },
+    {
+     "q": 0.25,
+     "u": "cup",
+     "item": "chopped fresh cilantro",
+     "aisle": "produce"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Put the chicken in the slow cooker and sprinkle with cumin, garlic powder and salt."
+    },
+    {
+     "text": "Pour the salsa verde over the top."
+    },
+    {
+     "text": "Cook on low until the chicken is tender and 165°F inside.",
+     "timer": 21600,
+     "timerLabel": "Slow cook on low"
+    },
+    {
+     "text": "Shred the chicken in the pot and stir it in the sauce."
+    },
+    {
+     "text": "Serve in warm tortillas with cotija and cilantro."
+    }
+   ]
+  },
+  {
+   "id": "mexican-red-rice",
+   "title": "Mexican red rice",
+   "blurb": "Fluffy tomato rice, the classic side",
+   "type": "sides",
+   "serves": 6,
+   "prep": 10,
+   "cook": 30,
+   "tags": [
+    "vegan",
+    "one pot",
+    "kid-friendly"
+   ],
+   "ingredients": [
+    {
+     "q": 2,
+     "u": "tbsp",
+     "item": "vegetable oil",
+     "aisle": "pantry"
+    },
+    {
+     "q": 1.5,
+     "u": "cup",
+     "item": "long-grain white rice",
+     "aisle": "pantry"
+    },
+    {
+     "q": 0.5,
+     "u": "",
+     "item": "yellow onion",
+     "note": "finely diced",
+     "aisle": "produce"
+    },
+    {
+     "q": 2,
+     "u": "clove",
+     "item": "garlic",
+     "note": "minced",
+     "aisle": "produce"
+    },
+    {
+     "q": 1,
+     "u": "can",
+     "item": "tomato sauce (8 oz)",
+     "aisle": "canned"
+    },
+    {
+     "q": 2.5,
+     "u": "cup",
+     "item": "chicken broth",
+     "aisle": "canned"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "ground cumin",
+     "aisle": "spices"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "salt",
+     "aisle": "spices"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Heat the oil in a saucepan over medium heat. Toast the rice, stirring, until light golden.",
+     "timer": 300,
+     "timerLabel": "Toast rice"
+    },
+    {
+     "text": "Add the onion and garlic and cook 1 minute.",
+     "timer": 60,
+     "timerLabel": "Cook onion"
+    },
+    {
+     "text": "Stir in the tomato sauce, broth, cumin and salt. Bring to a boil."
+    },
+    {
+     "text": "Cover and cook on very low heat until the liquid is absorbed.",
+     "timer": 1200,
+     "timerLabel": "Cook covered"
+    },
+    {
+     "text": "Rest covered off the heat, then fluff with a fork.",
+     "timer": 300,
+     "timerLabel": "Rest"
+    }
+   ]
+  },
+  {
+   "id": "mexican-cilantro-lime-rice",
+   "title": "Cilantro-lime rice",
+   "blurb": "Fresh, zesty rice for bowls and burritos",
+   "type": "sides",
+   "serves": 6,
+   "prep": 5,
+   "cook": 25,
+   "tags": [
+    "vegan",
+    "quick",
+    "gluten-free"
+   ],
+   "ingredients": [
+    {
+     "q": 1.5,
+     "u": "cup",
+     "item": "long-grain white rice",
+     "aisle": "pantry"
+    },
+    {
+     "q": 3,
+     "u": "cup",
+     "item": "water",
+     "aisle": "pantry"
+    },
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "vegetable oil",
+     "aisle": "pantry"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "salt",
+     "aisle": "spices"
+    },
+    {
+     "q": 0.5,
+     "u": "cup",
+     "item": "chopped fresh cilantro",
+     "aisle": "produce"
+    },
+    {
+     "q": 2,
+     "u": "",
+     "item": "limes",
+     "note": "juiced and zested",
+     "aisle": "produce"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Rinse the rice in a strainer until the water runs mostly clear."
+    },
+    {
+     "text": "Bring the rice, water, oil and salt to a boil. Cover and reduce the heat to low."
+    },
+    {
+     "text": "Cook until the water is absorbed.",
+     "timer": 1080,
+     "timerLabel": "Cook rice"
+    },
+    {
+     "text": "Rest covered off the heat.",
+     "timer": 300,
+     "timerLabel": "Rest"
+    },
+    {
+     "text": "Fluff with a fork and stir in the cilantro, lime juice and zest."
+    }
+   ]
+  },
+  {
+   "id": "mexican-refried-beans",
+   "title": "Homemade refried beans",
+   "blurb": "Creamy pinto beans mashed with onion and garlic",
+   "type": "sides",
+   "serves": 6,
+   "prep": 10,
+   "cook": 20,
+   "tags": [
+    "vegetarian",
+    "quick",
+    "gluten-free"
+   ],
+   "ingredients": [
+    {
+     "q": 2,
+     "u": "tbsp",
+     "item": "vegetable oil",
+     "aisle": "pantry"
+    },
+    {
+     "q": 0.5,
+     "u": "",
+     "item": "yellow onion",
+     "note": "finely diced",
+     "aisle": "produce"
+    },
+    {
+     "q": 2,
+     "u": "clove",
+     "item": "garlic",
+     "note": "minced",
+     "aisle": "produce"
+    },
+    {
+     "q": 2,
+     "u": "can",
+     "item": "pinto beans (15 oz)",
+     "note": "drained, liquid saved",
+     "aisle": "canned"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "ground cumin",
+     "aisle": "spices"
+    },
+    {
+     "q": 0.5,
+     "u": "tsp",
+     "item": "salt",
+     "aisle": "spices"
+    },
+    {
+     "q": 0.5,
+     "u": "cup",
+     "item": "shredded Monterey Jack cheese",
+     "aisle": "dairy"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Heat the oil in a skillet and cook the onion until soft. Add the garlic for 30 seconds.",
+     "timer": 300,
+     "timerLabel": "Cook onion"
+    },
+    {
+     "text": "Add the beans, cumin, salt and 1/2 cup of the bean liquid."
+    },
+    {
+     "text": "Simmer for 5 minutes, then mash with a potato masher until as smooth as you like.",
+     "timer": 300,
+     "timerLabel": "Simmer"
+    },
+    {
+     "text": "Add more bean liquid if too thick."
+    },
+    {
+     "text": "Top with the cheese and let it melt."
+    }
+   ]
+  },
+  {
+   "id": "mexican-charro-beans",
+   "title": "Charro beans",
+   "blurb": "Pinto beans simmered with bacon, tomato and jalapeño",
+   "type": "sides",
+   "serves": 8,
+   "prep": 15,
+   "cook": 120,
+   "tags": [
+    "crowd",
+    "make ahead",
+    "gluten-free"
+   ],
+   "ingredients": [
+    {
+     "q": 1,
+     "u": "lb",
+     "item": "dried pinto beans",
+     "note": "rinsed and sorted",
+     "aisle": "pantry"
+    },
+    {
+     "q": 6,
+     "u": "slice",
+     "item": "bacon",
+     "note": "chopped",
+     "aisle": "meat"
+    },
+    {
+     "q": 1,
+     "u": "",
+     "item": "yellow onion",
+     "note": "diced",
+     "aisle": "produce"
+    },
+    {
+     "q": 4,
+     "u": "clove",
+     "item": "garlic",
+     "note": "minced",
+     "aisle": "produce"
+    },
+    {
+     "q": 1,
+     "u": "",
+     "item": "jalapeño pepper",
+     "note": "diced",
+     "aisle": "produce"
+    },
+    {
+     "q": 2,
+     "u": "",
+     "item": "tomatoes",
+     "note": "diced",
+     "aisle": "produce"
+    },
+    {
+     "q": 8,
+     "u": "cup",
+     "item": "water",
+     "aisle": "pantry"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "ground cumin",
+     "aisle": "spices"
+    },
+    {
+     "q": 2,
+     "u": "tsp",
+     "item": "salt",
+     "aisle": "spices"
+    },
+    {
+     "q": 0.25,
+     "u": "cup",
+     "item": "chopped fresh cilantro",
+     "aisle": "produce"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Cook the bacon in a large pot until crisp.",
+     "timer": 420,
+     "timerLabel": "Cook bacon"
+    },
+    {
+     "text": "Add the onion, garlic and jalapeño and cook until soft.",
+     "timer": 300,
+     "timerLabel": "Cook onion"
+    },
+    {
+     "text": "Add the beans, water and cumin. Bring to a boil."
+    },
+    {
+     "text": "Reduce to a gentle simmer, partly covered, until the beans are almost tender.",
+     "timer": 5400,
+     "timerLabel": "Simmer beans"
+    },
+    {
+     "text": "Add the tomatoes and salt and cook until the beans are creamy.",
+     "timer": 1200,
+     "timerLabel": "Finish beans"
+    },
+    {
+     "text": "Stir in the cilantro and serve."
+    }
+   ]
+  },
+  {
+   "id": "mexican-guacamole",
+   "title": "Classic guacamole",
+   "blurb": "Chunky and bright with lime and cilantro",
+   "type": "sides",
+   "serves": 6,
+   "prep": 10,
+   "cook": 0,
+   "tags": [
+    "vegan",
+    "quick",
+    "gluten-free"
+   ],
+   "ingredients": [
+    {
+     "q": 4,
+     "u": "",
+     "item": "ripe avocados",
+     "aisle": "produce"
+    },
+    {
+     "q": 1,
+     "u": "",
+     "item": "lime",
+     "note": "juiced",
+     "aisle": "produce"
+    },
+    {
+     "q": 0.5,
+     "u": "tsp",
+     "item": "salt",
+     "aisle": "spices"
+    },
+    {
+     "q": 0.25,
+     "u": "",
+     "item": "white onion",
+     "note": "finely diced",
+     "aisle": "produce"
+    },
+    {
+     "q": 1,
+     "u": "",
+     "item": "jalapeño pepper",
+     "note": "seeded and minced",
+     "aisle": "produce"
+    },
+    {
+     "q": 0.25,
+     "u": "cup",
+     "item": "chopped fresh cilantro",
+     "aisle": "produce"
+    },
+    {
+     "q": 1,
+     "u": "",
+     "item": "tomato",
+     "note": "small dice",
+     "aisle": "produce"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Halve the avocados and scoop them into a bowl."
+    },
+    {
+     "text": "Add the lime juice and salt. Mash with a fork, leaving some chunks."
+    },
+    {
+     "text": "Fold in the onion, jalapeño, cilantro and tomato."
+    },
+    {
+     "text": "Taste and add more salt or lime. Serve right away."
+    }
+   ]
+  },
+  {
+   "id": "mexican-pico-de-gallo",
+   "title": "Pico de gallo",
+   "blurb": "Fresh tomato salsa that goes on everything",
+   "type": "sides",
+   "serves": 6,
+   "prep": 15,
+   "cook": 0,
+   "tags": [
+    "vegan",
+    "quick",
+    "healthy",
+    "gluten-free"
+   ],
+   "ingredients": [
+    {
+     "q": 5,
+     "u": "",
+     "item": "roma tomatoes",
+     "note": "diced",
+     "aisle": "produce"
+    },
+    {
+     "q": 0.5,
+     "u": "",
+     "item": "white onion",
+     "note": "finely diced",
+     "aisle": "produce"
+    },
+    {
+     "q": 1,
+     "u": "",
+     "item": "jalapeño pepper",
+     "note": "seeded and minced",
+     "aisle": "produce"
+    },
+    {
+     "q": 0.5,
+     "u": "cup",
+     "item": "chopped fresh cilantro",
+     "aisle": "produce"
+    },
+    {
+     "q": 2,
+     "u": "",
+     "item": "limes",
+     "note": "juiced",
+     "aisle": "produce"
+    },
+    {
+     "q": 0.5,
+     "u": "tsp",
+     "item": "salt",
+     "aisle": "spices"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Dice the tomatoes and put them in a bowl."
+    },
+    {
+     "text": "Add the onion, jalapeño and cilantro."
+    },
+    {
+     "text": "Stir in the lime juice and salt."
+    },
+    {
+     "text": "Let it sit so the flavors blend.",
+     "timer": 600,
+     "timerLabel": "Rest"
+    },
+    {
+     "text": "Taste and adjust the salt and lime."
+    }
+   ]
+  },
+  {
+   "id": "mexican-salsa-roja",
+   "title": "Restaurant-style salsa roja",
+   "blurb": "Blender salsa with canned tomatoes and a little heat",
+   "type": "sides",
+   "serves": 8,
+   "prep": 10,
+   "cook": 0,
+   "tags": [
+    "vegan",
+    "quick",
+    "gluten-free"
+   ],
+   "ingredients": [
+    {
+     "q": 1,
+     "u": "can",
+     "item": "whole peeled tomatoes (28 oz)",
+     "aisle": "canned"
+    },
+    {
+     "q": 0.25,
+     "u": "",
+     "item": "white onion",
+     "note": "roughly chopped",
+     "aisle": "produce"
+    },
+    {
+     "q": 1,
+     "u": "",
+     "item": "jalapeño pepper",
+     "note": "stemmed",
+     "aisle": "produce"
+    },
+    {
+     "q": 2,
+     "u": "clove",
+     "item": "garlic",
+     "aisle": "produce"
+    },
+    {
+     "q": 0.5,
+     "u": "cup",
+     "item": "chopped fresh cilantro",
+     "aisle": "produce"
+    },
+    {
+     "q": 1,
+     "u": "",
+     "item": "lime",
+     "note": "juiced",
+     "aisle": "produce"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "ground cumin",
+     "aisle": "spices"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "salt",
+     "aisle": "spices"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Put the tomatoes with their juice in a blender."
+    },
+    {
+     "text": "Add the onion, jalapeño, garlic, cilantro, lime juice, cumin and salt."
+    },
+    {
+     "text": "Pulse until it reaches the texture you like."
+    },
+    {
+     "text": "Chill before serving so the flavors blend.",
+     "timer": 1800,
+     "timerLabel": "Chill"
+    }
+   ]
+  },
+  {
+   "id": "mexican-salsa-verde",
+   "title": "Roasted salsa verde",
+   "blurb": "Tangy charred tomatillo salsa",
+   "type": "sides",
+   "serves": 8,
+   "prep": 10,
+   "cook": 15,
+   "tags": [
+    "vegan",
+    "gluten-free",
+    "make ahead"
+   ],
+   "ingredients": [
+    {
+     "q": 1.5,
+     "u": "lb",
+     "item": "tomatillos",
+     "note": "husked and rinsed",
+     "aisle": "produce"
+    },
+    {
+     "q": 2,
+     "u": "",
+     "item": "jalapeño peppers",
+     "note": "stemmed",
+     "aisle": "produce"
+    },
+    {
+     "q": 0.5,
+     "u": "",
+     "item": "white onion",
+     "note": "cut in wedges",
+     "aisle": "produce"
+    },
+    {
+     "q": 3,
+     "u": "clove",
+     "item": "garlic",
+     "note": "unpeeled",
+     "aisle": "produce"
+    },
+    {
+     "q": 0.5,
+     "u": "cup",
+     "item": "chopped fresh cilantro",
+     "aisle": "produce"
+    },
+    {
+     "q": 1,
+     "u": "",
+     "item": "lime",
+     "note": "juiced",
+     "aisle": "produce"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "salt",
+     "aisle": "spices"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Heat the broiler. Put the tomatillos, jalapeños, onion and garlic on a sheet pan."
+    },
+    {
+     "text": "Broil until charred in spots, then flip and broil the other side.",
+     "timer": 480,
+     "timerLabel": "Broil"
+    },
+    {
+     "text": "Peel the garlic."
+    },
+    {
+     "text": "Blend everything with the cilantro, lime juice and salt until smooth."
+    },
+    {
+     "text": "Taste, adjust the salt, and chill."
+    }
+   ]
+  },
+  {
+   "id": "mexican-elote-esquites",
+   "title": "Esquites (Mexican street corn cups)",
+   "blurb": "Charred corn with lime, mayo and cotija",
+   "type": "sides",
+   "serves": 6,
+   "prep": 10,
+   "cook": 10,
+   "tags": [
+    "vegetarian",
+    "quick",
+    "gluten-free"
+   ],
+   "ingredients": [
+    {
+     "q": 6,
+     "u": "cup",
+     "item": "frozen corn",
+     "note": "thawed",
+     "aisle": "frozen"
+    },
+    {
+     "q": 2,
+     "u": "tbsp",
+     "item": "unsalted butter",
+     "aisle": "dairy"
+    },
+    {
+     "q": 0.33,
+     "u": "cup",
+     "item": "mayonnaise",
+     "aisle": "pantry"
+    },
+    {
+     "q": 0.5,
+     "u": "cup",
+     "item": "crumbled cotija cheese",
+     "aisle": "dairy"
+    },
+    {
+     "q": 2,
+     "u": "",
+     "item": "limes",
+     "note": "juiced",
+     "aisle": "produce"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "chili powder",
+     "aisle": "spices"
+    },
+    {
+     "q": 0.25,
+     "u": "cup",
+     "item": "chopped fresh cilantro",
+     "aisle": "produce"
+    },
+    {
+     "q": 0.5,
+     "u": "tsp",
+     "item": "salt",
+     "aisle": "spices"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Melt the butter in a large skillet over high heat."
+    },
+    {
+     "text": "Add the corn in a single layer and cook without stirring until charred.",
+     "timer": 300,
+     "timerLabel": "Char corn"
+    },
+    {
+     "text": "Stir and cook a few more minutes until browned in spots.",
+     "timer": 180,
+     "timerLabel": "Brown corn"
+    },
+    {
+     "text": "Mix the corn with the mayonnaise, lime juice, chili powder and salt."
+    },
+    {
+     "text": "Top with cotija and cilantro. Serve warm in cups."
+    }
+   ]
+  },
+  {
+   "id": "mexican-chile-con-queso",
+   "title": "Chile con queso",
+   "blurb": "Smooth, creamy cheese dip with green chiles",
+   "type": "sides",
+   "serves": 8,
+   "prep": 5,
+   "cook": 15,
+   "tags": [
+    "vegetarian",
+    "quick",
+    "crowd"
+   ],
+   "ingredients": [
+    {
+     "q": 1,
+     "u": "lb",
+     "item": "white American cheese or Velveeta",
+     "note": "cubed",
+     "aisle": "dairy"
+    },
+    {
+     "q": 1,
+     "u": "can",
+     "item": "diced tomatoes with green chiles (10 oz)",
+     "aisle": "canned"
+    },
+    {
+     "q": 0.5,
+     "u": "cup",
+     "item": "whole milk",
+     "aisle": "dairy"
+    },
+    {
+     "q": 0.25,
+     "u": "cup",
+     "item": "chopped fresh cilantro",
+     "aisle": "produce"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "ground cumin",
+     "aisle": "spices"
+    },
+    {
+     "q": 1,
+     "u": "pkg",
+     "item": "tortilla chips (13 oz)",
+     "aisle": "pantry"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Put the cheese, tomatoes and green chiles, milk and cumin in a saucepan over low heat."
+    },
+    {
+     "text": "Stir often until the cheese melts and the dip is smooth.",
+     "timer": 600,
+     "timerLabel": "Melt the cheese"
+    },
+    {
+     "text": "Thin with a splash more milk if needed."
+    },
+    {
+     "text": "Stir in the cilantro. Serve warm with chips."
+    }
+   ]
+  }
+ ]
+}

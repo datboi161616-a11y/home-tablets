@@ -17,6 +17,7 @@ fit();
 const SCREENS = {
   // Family
   home: 'Home dashboard', launcher: 'Apps', photos: 'Photo frame', recipe: 'Cooking mode',
+  recipes: 'Recipes', dish: 'Recipe', plan: 'Week plan', shopping: 'Shopping list',
   addphotos: 'Add photos', apps: 'Apps', camera: 'Camera', calendar: 'Calendar', forecast: 'Weather', messages: 'Messages', night: 'Night clock',
   // Tom · Space & Flight
   bridge: 'Flight deck', flights: 'Planes overhead', departures: 'Departures', trivia: 'Trivia',
@@ -31,7 +32,10 @@ let navId = 0;
 
 async function navigate() {
   const id = ++navId;
-  const name = location.hash.replace(/^#\/?/, '') || homeRoute;
+  // "#/recipes/chinese/noodles" -> screen "recipes", args ['chinese', 'noodles']
+  const parts = location.hash.replace(/^#\/?/, '').split('/').map((x) => { try { return decodeURIComponent(x); } catch (e) { return x; } });
+  const name = parts[0] || homeRoute;
+  const args = parts.slice(1).filter(Boolean);
   let mod = placeholder;
   if (SCREENS[name]) {
     try { mod = await import(`./screens/${name}.js`); }
@@ -52,7 +56,7 @@ async function navigate() {
   host.style.cssText = 'position:absolute;top:0;right:0;bottom:0;left:0';
   screenEl.appendChild(host);
   current = mod;
-  try { mod.mount(host, { name, title: SCREENS[name], homeRoute }); }
+  try { mod.mount(host, { name, args, title: SCREENS[name], homeRoute }); }
   catch (err) {
     console.error(err);
     current = placeholder;
@@ -70,7 +74,7 @@ if ('serviceWorker' in navigator) navigator.serviceWorker.register('./sw.js');
 let lastTouch = Date.now();
 ['pointerdown', 'touchstart', 'keydown'].forEach((t) => addEventListener(t, () => { lastTouch = Date.now(); }, true));
 const idleFor = (ms) => Date.now() - lastTouch > ms;
-const screenName = () => location.hash.replace(/^#\/?/, '') || homeRoute;
+const screenName = () => location.hash.replace(/^#\/?/, '').split('/')[0] || homeRoute;
 const isGhost = (() => { try { return !!(window.TabletNative && window.TabletNative.isGhost && window.TabletNative.isGhost()); } catch { return false; } })();
 // Never yank someone out of these.
 const BUSY = ['camera', 'recipe'];

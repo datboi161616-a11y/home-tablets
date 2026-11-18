@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="theme-color" content="#ECEEF0">
-<title>Add photos to the tablet</title>
+<title>Your tablet</title>
 <style>
   :root { --ink:#1D2430; --ink2:#4A5363; --bg:#ECEEF0; --card:#fff; --accent:#C2491F; --line:#D9DDE2; }
   * { box-sizing: border-box; }
@@ -28,13 +28,43 @@
   .ph button { position:absolute; top:6px; right:6px; width:36px; height:36px; border-radius:18px; border:0; background:rgba(0,0,0,.6); color:#fff; font-size:18px; cursor:pointer; }
   .muted { color:var(--ink2); font-size:15px; }
   h2 { font-size:18px; margin:0 0 12px; display:flex; justify-content:space-between; align-items:baseline; }
+  .tabs { display:flex; gap:6px; background:#DDE1E6; padding:5px; border-radius:16px; margin:0 0 18px; position:sticky; top:8px; z-index:5; }
+  .tabs button { flex:1; border:0; background:transparent; font:inherit; font-weight:600; font-size:15px; padding:12px 6px; border-radius:12px; color:var(--ink2); cursor:pointer; min-height:44px; }
+  .tabs button.on { background:#fff; color:var(--ink); box-shadow:0 1px 3px rgba(0,0,0,.08); }
+  section[hidden] { display:none; }
+  textarea { width:100%; font:inherit; padding:14px; border:1px solid var(--line); border-radius:12px; margin-bottom:14px; background:#fff; min-height:110px; resize:vertical; }
+  select, input[type=number] { font:inherit; padding:12px 10px; border:1px solid var(--line); border-radius:12px; background:#fff; }
+  .btn { display:inline-flex; align-items:center; justify-content:center; min-height:44px; padding:10px 16px; border-radius:12px; border:1px solid var(--line); background:#fff; font:inherit; font-weight:600; cursor:pointer; }
+  .primary { background:var(--accent); color:#fff; border-color:var(--accent); width:100%; min-height:56px; font-size:18px; border-radius:16px; }
+  .chips { display:flex; flex-wrap:wrap; gap:8px; margin-bottom:12px; }
+  .chip { display:inline-flex; align-items:center; gap:6px; background:#EEF0F2; border-radius:999px; padding:6px 6px 6px 14px; font-weight:600; }
+  .chip button { width:30px; height:30px; border-radius:15px; border:0; background:#D9DDE2; cursor:pointer; font-size:16px; }
+  .row { display:flex; gap:8px; align-items:center; margin-bottom:10px; }
+  .row input[type=text] { margin:0; flex:1; min-width:0; }
+  .x { width:40px; height:40px; flex:none; border-radius:20px; border:0; background:#EEF0F2; font-size:18px; cursor:pointer; }
+  details { margin-top:8px; }
+  details summary { cursor:pointer; color:var(--accent); font-weight:600; padding:6px 0; }
+  details ol { margin:6px 0 0; padding-left:20px; color:var(--ink2); font-size:15px; }
+  .note { border-top:1px solid var(--line); padding:12px 0; display:flex; gap:10px; align-items:flex-start; }
+  .note:first-child { border-top:0; }
+  .note .t { flex:1; min-width:0; overflow-wrap:anywhere; }
+  .seg { display:inline-flex; background:#EEF0F2; border-radius:12px; padding:4px; }
+  .seg button { border:0; background:transparent; font:inherit; font-weight:600; padding:8px 16px; border-radius:9px; cursor:pointer; }
+  .seg button.on { background:#fff; }
 </style>
 </head>
 <body>
 <main>
-  <h1>Add photos to the tablet</h1>
-  <p class="sub">They go straight to this tablet over your Wi-Fi. Nothing is uploaded to the internet.</p>
+  <h1>Your tablet</h1>
+  <p class="sub">Everything here goes straight to the tablet over your Wi-Fi and stays on it.</p>
 
+  <div class="tabs">
+    <button data-tab="photos" class="on">Photos</button>
+    <button data-tab="note">Leave a note</button>
+    <button data-tab="settings">Tablet settings</button>
+  </div>
+
+  <section id="tab-photos">
   <div class="card">
     <label for="name">Your name</label>
     <input id="name" type="text" maxlength="40" placeholder="e.g. Grandma" autocomplete="given-name">
@@ -53,6 +83,81 @@
     <div class="grid" id="grid"></div>
     <p class="muted" id="empty">No photos yet.</p>
   </div>
+  </section>
+
+  <!-- ===================== Leave a note ===================== -->
+  <section id="tab-note" hidden>
+    <div class="card">
+      <label for="noteWho">From</label>
+      <input id="noteWho" type="text" maxlength="30" placeholder="Your name" autocomplete="given-name">
+      <label for="noteText">Note</label>
+      <textarea id="noteText" maxlength="500" placeholder="e.g. Dinner's in the fridge, back by 6"></textarea>
+      <label class="btn" style="width:100%;margin-bottom:12px">
+        <span id="notePhotoLabel">Add a photo (optional)</span>
+        <input id="notePhoto" type="file" accept="image/*" style="display:none">
+      </label>
+      <button class="btn primary" id="noteSend">Leave note on the tablet</button>
+      <div class="status" id="noteStatus"></div>
+    </div>
+    <div class="card">
+      <h2><span>On the message board</span></h2>
+      <div id="notes"></div>
+      <p class="muted" id="notesEmpty">No notes yet.</p>
+    </div>
+  </section>
+
+  <!-- ===================== Tablet settings ===================== -->
+  <section id="tab-settings" hidden>
+    <div class="card">
+      <label for="famName">Name on the home screen</label>
+      <input id="famName" type="text" maxlength="40" placeholder="e.g. The Smiths  (shows as “Good morning, The Smiths”)">
+      <label>Temperature</label>
+      <div class="seg" id="units"><button data-u="fahrenheit">°F</button><button data-u="celsius">°C</button></div>
+    </div>
+
+    <div class="card">
+      <h2><span>People</span></h2>
+      <p class="muted" style="margin:0 0 10px">Who leaves notes on the message board.</p>
+      <div class="chips" id="people"></div>
+      <div class="row"><input id="personName" type="text" maxlength="30" placeholder="Add a name"><button class="btn" id="personAdd">Add</button></div>
+    </div>
+
+    <div class="card">
+      <h2><span>Birthdays &amp; special dates</span></h2>
+      <p class="muted" style="margin:0 0 10px">Show on the calendar and in “Coming up” every year.</p>
+      <div id="dates"></div>
+      <button class="btn" id="dateAdd">+ Add a date</button>
+    </div>
+
+    <div class="card">
+      <h2><span>Calendars</span></h2>
+      <p class="muted" style="margin:0 0 10px">Show your phone’s calendar on the tablet. Paste its private link:</p>
+      <div id="cals"></div>
+      <button class="btn" id="calAdd">+ Add a calendar link</button>
+      <details>
+        <summary>iPhone: where’s the link?</summary>
+        <ol>
+          <li>Open the <b>Calendar</b> app and tap <b>Calendars</b> at the bottom.</li>
+          <li>Tap the <b>ⓘ</b> next to the calendar you want.</li>
+          <li>Turn on <b>Public Calendar</b>, then tap <b>Share Link…</b> → <b>Copy</b>.</li>
+          <li>Paste it here. (It starts with <i>webcal://</i>.)</li>
+        </ol>
+      </details>
+      <details>
+        <summary>Google Calendar: where’s the link?</summary>
+        <ol>
+          <li>On a computer, open <b>calendar.google.com</b> → ⚙ <b>Settings</b>.</li>
+          <li>On the left, click your calendar’s name.</li>
+          <li>Scroll to <b>Secret address in iCal format</b> and copy it.</li>
+          <li>Paste it here. (It ends in <i>basic.ics</i>.)</li>
+        </ol>
+      </details>
+      <p class="muted" style="margin:10px 0 0">The tablet reads the calendar; it can’t change it. Add events on your phone as usual.</p>
+    </div>
+
+    <button class="btn primary" id="settingsSave">Save settings</button>
+    <div class="status" id="settingsStatus"></div>
+  </section>
 </main>
 
 <script>
@@ -156,6 +261,180 @@
     }
   }
   loadList();
+
+  // ===================== tabs =====================
+  var tabs = document.querySelectorAll('[data-tab]');
+  function showTab(name) {
+    tabs.forEach(function (b) { b.classList.toggle('on', b.dataset.tab === name); });
+    ['photos', 'note', 'settings'].forEach(function (t) { $('tab-' + t).hidden = t !== name; });
+    if (name === 'note') loadNotes();
+    if (name === 'settings') loadSettings();
+    try { history.replaceState(null, '', location.pathname + location.search + '#' + name); } catch (e) {}
+  }
+  tabs.forEach(function (b) { b.onclick = function () { showTab(b.dataset.tab); }; });
+  if (/^#(note|settings)$/.test(location.hash)) showTab(location.hash.slice(1));
+
+  function esc(t) { return String(t == null ? '' : t).replace(/[&<>"']/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]; }); }
+  function api(path, body) {
+    return fetch(path + q(), body === undefined ? undefined : { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) })
+      .then(function (r) { return r.json(); });
+  }
+  function setMsg(el, text, cls) { el.textContent = text; el.className = 'status ' + (cls || ''); }
+
+  // ===================== leave a note =====================
+  var noteWho = $('noteWho'), noteText = $('noteText'), notePhoto = null;
+  noteWho.value = localStorage.getItem('tablet-photo-name') || '';
+  $('notePhoto').addEventListener('change', function (e) {
+    var f = e.target.files && e.target.files[0];
+    if (!f) return;
+    resize(f).then(function (blob) { notePhoto = blob; $('notePhotoLabel').textContent = 'Photo added \u2713 (tap to change)'; })
+      .catch(function (err) { setMsg($('noteStatus'), err.message, 'err'); });
+  });
+  $('noteSend').onclick = async function () {
+    var who = noteWho.value.trim(), text = noteText.value.trim();
+    if (!text) { setMsg($('noteStatus'), 'Write something first.', 'err'); return; }
+    localStorage.setItem('tablet-photo-name', who);
+    this.disabled = true;
+    try {
+      var photoId = null;
+      if (notePhoto) {
+        var up = await (await fetch('/api/upload' + q('&name=' + encodeURIComponent(who) + '&caption=' + encodeURIComponent('From the message board')),
+          { method: 'POST', body: notePhoto, headers: { 'Content-Type': 'image/jpeg' } })).json();
+        if (!up.ok) throw new Error(up.error || 'Photo didn\u2019t send');
+        photoId = up.id;
+      }
+      var r = await api('/api/notes', { who: who, text: text, photo: photoId });
+      if (!r.ok) throw new Error(r.error || 'Note didn\u2019t send');
+      noteText.value = ''; notePhoto = null; $('notePhotoLabel').textContent = 'Add a photo (optional)';
+      setMsg($('noteStatus'), 'Sent! It\u2019s on the tablet\u2019s message board.', 'ok');
+      loadNotes();
+    } catch (err) { setMsg($('noteStatus'), err.message, 'err'); }
+    this.disabled = false;
+  };
+  function loadNotes() {
+    api('/api/notes').then(function (d) {
+      var list = d.notes || [];
+      $('notesEmpty').style.display = list.length ? 'none' : 'block';
+      $('notes').innerHTML = list.slice(0, 30).map(function (n) {
+        return '<div class="note"><div class="t"><b>' + esc(n.who) + '</b> <span class="muted">' +
+          new Date(n.at).toLocaleString([], { month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit' }) +
+          (n.love ? ' \u00b7 \u2665' : '') + '</span><br>' + esc(n.text) + (n.photo ? ' <span class="muted">(photo)</span>' : '') +
+          '</div><button class="x" data-del-note="' + esc(n.id) + '" aria-label="Remove">\u00d7</button></div>';
+      }).join('');
+      document.querySelectorAll('[data-del-note]').forEach(function (b) {
+        b.onclick = function () {
+          if (!confirm('Remove this note from the tablet?')) return;
+          fetch('/api/notes/delete' + q('&id=' + b.dataset.delNote), { method: 'POST' }).then(loadNotes);
+        };
+      });
+    }).catch(function () { setMsg($('noteStatus'), 'Can\u2019t reach the tablet. Is your phone on the same Wi-Fi?', 'err'); });
+  }
+
+  // ===================== tablet settings =====================
+  var S = { familyName: '', people: [], dates: [], calendars: [], units: 'fahrenheit' };
+  var checks = {}; // calendar link -> last check result, kept across redraws
+  $('famName').addEventListener('input', function () { S.familyName = $('famName').value; });
+  var MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+
+  function loadSettings() {
+    api('/api/settings').then(function (d) {
+      S = { familyName: d.familyName || '', people: d.people || [], dates: d.dates || [], calendars: d.calendars || [], units: d.units || 'fahrenheit' };
+      drawSettings();
+    }).catch(function () { setMsg($('settingsStatus'), 'Can\u2019t reach the tablet. Is your phone on the same Wi-Fi?', 'err'); });
+  }
+
+  function drawSettings() {
+    $('famName').value = S.familyName;
+    document.querySelectorAll('[data-u]').forEach(function (b) {
+      b.classList.toggle('on', b.dataset.u === S.units);
+      b.onclick = function () { S.units = b.dataset.u; drawSettings(); };
+    });
+    $('people').innerHTML = S.people.map(function (p, i) {
+      return '<span class="chip">' + esc(p) + '<button data-del-person="' + i + '" aria-label="Remove">\u00d7</button></span>';
+    }).join('') || '<span class="muted">No one added yet.</span>';
+    document.querySelectorAll('[data-del-person]').forEach(function (b) {
+      b.onclick = function () { S.people.splice(+b.dataset.delPerson, 1); drawSettings(); };
+    });
+
+    $('dates').innerHTML = S.dates.map(function (d, i) {
+      var days = ''; for (var n = 1; n <= 31; n++) days += '<option' + (n === d.day ? ' selected' : '') + '>' + n + '</option>';
+      return '<div class="row" style="flex-wrap:wrap">' +
+        '<input type="text" data-dn="' + i + '" value="' + esc(d.name) + '" placeholder="e.g. Ava\u2019s birthday" style="flex:1 1 100%">' +
+        '<select data-dm="' + i + '">' + MONTHS.map(function (m, k) { return '<option value="' + (k + 1) + '"' + (k + 1 === d.month ? ' selected' : '') + '>' + m + '</option>'; }).join('') + '</select>' +
+        '<select data-dd="' + i + '">' + days + '</select>' +
+        '<select data-dk="' + i + '"><option value="birthday"' + (d.kind === 'birthday' ? ' selected' : '') + '>Birthday</option><option value="event"' + (d.kind !== 'birthday' ? ' selected' : '') + '>Special day</option></select>' +
+        '<button class="x" data-del-date="' + i + '" aria-label="Remove">\u00d7</button></div>';
+    }).join('');
+    bind('[data-dn]', 'dn', function (i, v) { S.dates[i].name = v; });
+    bind('[data-dm]', 'dm', function (i, v) { S.dates[i].month = +v; });
+    bind('[data-dd]', 'dd', function (i, v) { S.dates[i].day = +v; });
+    bind('[data-dk]', 'dk', function (i, v) { S.dates[i].kind = v; });
+    document.querySelectorAll('[data-del-date]').forEach(function (b) {
+      b.onclick = function () { S.dates.splice(+b.dataset.delDate, 1); drawSettings(); };
+    });
+
+    $('cals').innerHTML = S.calendars.map(function (c, i) {
+      return '<div style="margin-bottom:14px">' +
+        '<div class="row"><input type="text" data-cn="' + i + '" value="' + esc(c.name) + '" placeholder="Name, e.g. Our calendar">' +
+        '<button class="x" data-del-cal="' + i + '" aria-label="Remove">\u00d7</button></div>' +
+        '<div class="row"><input type="text" data-cu="' + i + '" value="' + esc(c.url) + '" placeholder="Paste the link here" autocapitalize="off" autocorrect="off">' +
+        '<button class="btn" data-check="' + i + '">Check</button></div>' +
+        '<div class="' + (checks[c.url] ? checks[c.url].cls : 'muted') + '" data-checked="' + i + '">' + (checks[c.url] ? esc(checks[c.url].text) : '') + '</div></div>';
+    }).join('');
+    bind('[data-cn]', 'cn', function (i, v) { S.calendars[i].name = v; });
+    bind('[data-cu]', 'cu', function (i, v) { S.calendars[i].url = v.trim(); });
+    document.querySelectorAll('[data-del-cal]').forEach(function (b) {
+      b.onclick = function () { S.calendars.splice(+b.dataset.delCal, 1); drawSettings(); };
+    });
+    document.querySelectorAll('[data-check]').forEach(function (b) {
+      b.onclick = function () {
+        var i = +b.dataset.check, out = document.querySelector('[data-checked="' + i + '"]');
+        out.textContent = 'Checking\u2026'; out.className = 'muted';
+        var url = S.calendars[i].url;
+        fetch('/api/calendar-check' + q('&url=' + encodeURIComponent(url))).then(function (r) { return r.json(); }).then(function (r) {
+          checks[url] = { text: r.ok ? '\u2713 Works \u2014 ' + r.events + ' events found' : (r.error || 'That link didn\u2019t work'), cls: r.ok ? 'ok' : 'err' };
+          var el = document.querySelector('[data-checked="' + i + '"]');
+          if (el) { el.textContent = checks[url].text; el.className = checks[url].cls; }
+        });
+      };
+    });
+  }
+
+  function bind(sel, key, set) {
+    document.querySelectorAll(sel).forEach(function (el) {
+      el.addEventListener(el.tagName === 'SELECT' ? 'change' : 'input', function () { set(+el.getAttribute('data-' + key), el.value); });
+    });
+  }
+
+  $('personAdd').onclick = function () {
+    var v = $('personName').value.trim();
+    if (!v || S.people.indexOf(v) >= 0) return;
+    S.people.push(v); $('personName').value = ''; drawSettings();
+  };
+  $('personName').addEventListener('keydown', function (e) { if (e.key === 'Enter') $('personAdd').click(); });
+  $('dateAdd').onclick = function () { S.dates.push({ name: '', month: new Date().getMonth() + 1, day: 1, kind: 'birthday' }); drawSettings(); };
+  $('calAdd').onclick = function () { S.calendars.push({ name: S.calendars.length ? 'Calendar ' + (S.calendars.length + 1) : 'Our calendar', url: '' }); drawSettings(); };
+
+  $('settingsSave').onclick = async function () {
+    S.familyName = $('famName').value.trim();
+    var failed = S.calendars.filter(function (c) { return checks[c.url] && checks[c.url].cls === 'err'; });
+    if (failed.length && !confirm('One calendar link didn\u2019t work when checked. Save anyway?')) return;
+    var clean = {
+      familyName: S.familyName, units: S.units, people: S.people,
+      dates: S.dates.filter(function (d) { return d.name.trim(); }),
+      calendars: S.calendars.filter(function (c) { return c.url.trim(); }),
+    };
+    var bad = clean.calendars.filter(function (c) { return !/^(https|webcal):\/\//i.test(c.url); });
+    if (bad.length) { setMsg($('settingsStatus'), 'A calendar link should start with https:// or webcal://', 'err'); return; }
+    this.disabled = true;
+    try {
+      var r = await api('/api/settings', clean);
+      if (!r.ok) throw new Error(r.error || 'Couldn\u2019t save');
+      S = r.settings; drawSettings();
+      setMsg($('settingsStatus'), 'Saved! The tablet updates right away.', 'ok');
+    } catch (err) { setMsg($('settingsStatus'), err.message, 'err'); }
+    this.disabled = false;
+  };
 })();
 </script>
 </body>

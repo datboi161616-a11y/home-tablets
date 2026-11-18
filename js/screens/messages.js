@@ -1,13 +1,14 @@
 // Family · Message board (Messages.dc.html in the design)
 // The newest note is featured on the left; tap an earlier note to feature it.
 // "Record a reply" / "+ New note" open a composer (typing or voice dictation,
-// optional photo). Posts are saved locally until the shared backend exists.
+// optional photo). Notes are kept on this tablet; phones on the home Wi-Fi can
+// leave notes too (Photos → Add photos → scan the QR code → "Leave a note").
 import { settings } from '../config.js';
 import {
-  MEMBERS, loadMessages, postMessage, updateMessage, when, shrinkPhoto,
+  members, loadMessages, postMessage, updateMessage, when, shrinkPhoto, onMessagesChanged,
 } from '../services/messages-data.js';
 
-let timer, recognizer, root, onClick, featuredId;
+let timer, recognizer, root, onClick, featuredId, offNotes;
 
 const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 const initial = (name) => (name || '?').trim().charAt(0).toUpperCase();
@@ -47,7 +48,7 @@ function renderBoard() {
       <div style="display:flex;align-items:center;gap:14px">
         <div style="width:56px;height:56px;flex:none;border-radius:50%;background:${settings.accent};color:#fff;display:flex;align-items:center;justify-content:center;font-family:Outfit,sans-serif;font-size:24px;font-weight:500">${initial(f.who)}</div>
         <div style="min-width:0">
-          <div style="font-size:20px;font-weight:600">${esc(f.who)} · ${esc(f.household)}${f.replyTo ? `<span class="muted" style="font-weight:500"> · reply to ${esc(f.replyTo)}</span>` : ''}</div>
+          <div style="font-size:20px;font-weight:600">${esc(f.who)}${f.replyTo ? `<span class="muted" style="font-weight:500"> · reply to ${esc(f.replyTo)}</span>` : ''}</div>
           <div class="muted" style="font-size:16px">${f.seen ? '' : 'New · '}${when(f.at)}</div>
         </div>
       </div>
@@ -90,7 +91,9 @@ function renderBoard() {
 
 // ---------- Composer ----------
 function openComposer(replyTo) {
-  const who = localStorage.getItem('messages.lastWho') || MEMBERS[0];
+  const people = members();
+  const saved = localStorage.getItem('messages.lastWho');
+  const who = people.includes(saved) ? saved : people[0];
   let photo = null;
   const box = root.querySelector('[data-composer]');
   box.style.display = 'flex';
@@ -103,7 +106,7 @@ function openComposer(replyTo) {
       <div style="display:flex;flex-direction:column;gap:10px">
         <div class="eyebrow muted">From</div>
         <div style="display:flex;flex-wrap:wrap;gap:10px">
-          ${MEMBERS.map((m) => `<button data-who="${esc(m)}" class="msg-chip${m === who ? ' on' : ''}">${esc(m)}</button>`).join('')}
+          ${people.map((m) => `<button data-who="${esc(m)}" class="msg-chip${m === who ? ' on' : ''}">${esc(m)}</button>`).join('')}
         </div>
       </div>
       <textarea data-c="text" class="msg-text" maxlength="400" placeholder="${Speech ? 'Tap Speak, or type your note…' : 'Type your note…'}"></textarea>
@@ -210,9 +213,9 @@ export function mount(el) {
     <div style="display:flex;align-items:center;justify-content:space-between">
       <div style="display:flex;align-items:center;gap:16px">
         <a href="#/launcher" class="pill" style="background:#fff">← Menu</a>
-        <div class="display" style="font-size:40px;font-weight:500">Family board</div>
+        <div class="display" style="font-size:40px;font-weight:500">Message board</div>
       </div>
-      <div class="muted" style="font-size:17px">Notes from every screen in the family</div>
+      <div class="muted" style="font-size:17px">Leave a note here, or from a phone on your Wi-Fi</div>
     </div>
     <div data-board style="flex-grow:1;display:grid;grid-template-columns:1.4fr 1fr;gap:24px;min-height:0"></div>
   </div>
@@ -230,7 +233,6 @@ export function mount(el) {
     const act = e.target.closest('[data-act]')?.dataset.act;
     const f = loadMessages().find((m) => m.id === featuredId);
     if (act === 'love' && f && !f.loved) {
-      // TODO(backend): notify the sender that love was sent.
       updateMessage(f.id, { loved: true });
       renderBoard();
     } else if (act === 'reply' && f) {
@@ -241,12 +243,14 @@ export function mount(el) {
   };
   el.addEventListener('click', onClick);
 
-  // Keep "20 min ago" style times fresh.
+  // Keep "20 min ago" style times fresh, and show notes sent from phones right away.
   timer = setInterval(() => { if (el.isConnected) renderBoard(); }, 60000);
+  offNotes = onMessagesChanged(() => { if (el.isConnected) { featuredId = undefined; renderBoard(); } });
 }
 
 export function unmount() {
   clearInterval(timer);
+  offNotes?.();
   closeComposer();
   // The featured note has now been read.
   if (featuredId) updateMessage(featuredId, { seen: true });

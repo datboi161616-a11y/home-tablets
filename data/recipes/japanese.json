@@ -1,0 +1,5428 @@
+{
+ "id": "japanese",
+ "name": "Japanese",
+ "types": [
+  {
+   "id": "noodles",
+   "name": "Ramen & noodles"
+  },
+  {
+   "id": "bowls",
+   "name": "Rice bowls (donburi)"
+  },
+  {
+   "id": "teriyaki",
+   "name": "Teriyaki & grill"
+  },
+  {
+   "id": "fried",
+   "name": "Katsu & tempura"
+  },
+  {
+   "id": "soups",
+   "name": "Soups & hot pot"
+  },
+  {
+   "id": "small",
+   "name": "Sushi & small plates"
+  }
+ ],
+ "recipes": [
+  {
+   "id": "japanese-shoyu-ramen",
+   "title": "Shoyu ramen with soft eggs",
+   "blurb": "Soy-ginger chicken broth, springy noodles, jammy eggs",
+   "type": "noodles",
+   "serves": 4,
+   "prep": 20,
+   "cook": 40,
+   "tags": [],
+   "ingredients": [
+    {
+     "q": 8,
+     "u": "cup",
+     "item": "low-sodium chicken broth",
+     "aisle": "canned"
+    },
+    {
+     "q": 0.33,
+     "u": "cup",
+     "item": "soy sauce",
+     "aisle": "international"
+    },
+    {
+     "q": 2,
+     "u": "tbsp",
+     "item": "mirin",
+     "aisle": "international"
+    },
+    {
+     "q": 4,
+     "u": "clove",
+     "item": "garlic",
+     "note": "smashed",
+     "aisle": "produce"
+    },
+    {
+     "q": 2,
+     "u": "inch",
+     "item": "fresh ginger",
+     "note": "sliced",
+     "aisle": "produce"
+    },
+    {
+     "q": 1,
+     "u": "lb",
+     "item": "boneless skinless chicken thighs",
+     "aisle": "meat"
+    },
+    {
+     "q": 4,
+     "u": "",
+     "item": "large eggs",
+     "aisle": "dairy"
+    },
+    {
+     "q": 4,
+     "u": "pkg",
+     "item": "fresh ramen noodles (5 oz)",
+     "aisle": "international"
+    },
+    {
+     "q": 4,
+     "u": "",
+     "item": "green onions",
+     "note": "sliced",
+     "aisle": "produce"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "toasted sesame oil",
+     "aisle": "international"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Bring the broth, soy sauce, mirin, garlic and ginger to a simmer in a large pot."
+    },
+    {
+     "text": "Add the chicken thighs and simmer gently until they reach 165°F.",
+     "timer": 900,
+     "timerLabel": "Poach the chicken"
+    },
+    {
+     "text": "Meanwhile, boil the eggs in a separate pot for 6 minutes 30 seconds, then chill in ice water.",
+     "timer": 390,
+     "timerLabel": "Jammy eggs"
+    },
+    {
+     "text": "Peel and halve the eggs. Lift out the chicken, rest it, then slice thinly."
+    },
+    {
+     "text": "Boil the noodles in plenty of water until just tender, then drain well.",
+     "timer": 180,
+     "timerLabel": "Boil the noodles"
+    },
+    {
+     "text": "Divide noodles into bowls and ladle hot strained broth over them."
+    },
+    {
+     "text": "Top with chicken, eggs, green onions and a drop of sesame oil."
+    }
+   ]
+  },
+  {
+   "id": "japanese-miso-ramen",
+   "title": "Miso ramen with pork and corn",
+   "blurb": "Rich miso broth, ground pork, sweet corn and butter",
+   "type": "noodles",
+   "serves": 4,
+   "prep": 15,
+   "cook": 25,
+   "tags": [
+    "quick"
+   ],
+   "ingredients": [
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "vegetable oil",
+     "aisle": "pantry"
+    },
+    {
+     "q": 1,
+     "u": "lb",
+     "item": "ground pork",
+     "aisle": "meat"
+    },
+    {
+     "q": 3,
+     "u": "clove",
+     "item": "garlic",
+     "note": "minced",
+     "aisle": "produce"
+    },
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "fresh ginger",
+     "note": "grated",
+     "aisle": "produce"
+    },
+    {
+     "q": 6,
+     "u": "cup",
+     "item": "low-sodium chicken broth",
+     "aisle": "canned"
+    },
+    {
+     "q": 3,
+     "u": "tbsp",
+     "item": "white miso paste",
+     "aisle": "international"
+    },
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "soy sauce",
+     "aisle": "international"
+    },
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "toasted sesame oil",
+     "aisle": "international"
+    },
+    {
+     "q": 4,
+     "u": "pkg",
+     "item": "fresh ramen noodles (5 oz)",
+     "aisle": "international"
+    },
+    {
+     "q": 1,
+     "u": "cup",
+     "item": "frozen corn",
+     "aisle": "frozen"
+    },
+    {
+     "q": 2,
+     "u": "",
+     "item": "green onions",
+     "note": "sliced",
+     "aisle": "produce"
+    },
+    {
+     "q": 2,
+     "u": "tbsp",
+     "item": "unsalted butter",
+     "aisle": "dairy"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Heat the vegetable oil in a large pot over medium-high heat. Brown the pork until cooked through (160°F).",
+     "timer": 420,
+     "timerLabel": "Brown the pork"
+    },
+    {
+     "text": "Stir in the garlic and ginger for 30 seconds."
+    },
+    {
+     "text": "Add the broth and bring to a simmer. Whisk the miso with a ladle of hot broth, then stir it back in."
+    },
+    {
+     "text": "Add the soy sauce and sesame oil. Keep the broth just below a boil."
+    },
+    {
+     "text": "Boil the noodles in a separate pot until tender, then drain.",
+     "timer": 180,
+     "timerLabel": "Boil the noodles"
+    },
+    {
+     "text": "Divide the noodles and corn into bowls. Ladle in the hot broth and pork."
+    },
+    {
+     "text": "Top each bowl with butter and green onions."
+    }
+   ]
+  },
+  {
+   "id": "japanese-yaki-udon",
+   "title": "Yaki udon",
+   "blurb": "Stir-fried udon with chicken, cabbage and a savory sauce",
+   "type": "noodles",
+   "serves": 4,
+   "prep": 15,
+   "cook": 15,
+   "tags": [
+    "quick",
+    "kid-friendly"
+   ],
+   "ingredients": [
+    {
+     "q": 4,
+     "u": "pkg",
+     "item": "fresh udon noodles (7 oz)",
+     "aisle": "international"
+    },
+    {
+     "q": 2,
+     "u": "tbsp",
+     "item": "vegetable oil",
+     "aisle": "pantry"
+    },
+    {
+     "q": 1,
+     "u": "lb",
+     "item": "boneless skinless chicken thighs",
+     "note": "thinly sliced",
+     "aisle": "meat"
+    },
+    {
+     "q": 3,
+     "u": "cup",
+     "item": "green cabbage",
+     "note": "shredded",
+     "aisle": "produce"
+    },
+    {
+     "q": 1,
+     "u": "",
+     "item": "carrots",
+     "note": "cut in matchsticks",
+     "aisle": "produce"
+    },
+    {
+     "q": 4,
+     "u": "",
+     "item": "green onions",
+     "note": "cut in 2-inch pieces",
+     "aisle": "produce"
+    },
+    {
+     "q": 3,
+     "u": "tbsp",
+     "item": "soy sauce",
+     "aisle": "international"
+    },
+    {
+     "q": 2,
+     "u": "tbsp",
+     "item": "mirin",
+     "aisle": "international"
+    },
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "sugar",
+     "aisle": "pantry"
+    },
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "oyster sauce",
+     "aisle": "international"
+    },
+    {
+     "q": 0.25,
+     "u": "cup",
+     "item": "bonito flakes",
+     "note": "optional, to serve",
+     "aisle": "international"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Loosen the udon in hot water for 1 minute, then drain.",
+     "timer": 60,
+     "timerLabel": "Loosen the noodles"
+    },
+    {
+     "text": "Stir the soy sauce, mirin, sugar and oyster sauce together in a small bowl."
+    },
+    {
+     "text": "Heat the oil in a large skillet or wok over high heat. Cook the chicken until browned and 165°F.",
+     "timer": 360,
+     "timerLabel": "Cook the chicken"
+    },
+    {
+     "text": "Add the carrot and cabbage and stir-fry until softened.",
+     "timer": 180,
+     "timerLabel": "Stir-fry the veg"
+    },
+    {
+     "text": "Add the noodles and sauce and toss until everything is hot and glossy."
+    },
+    {
+     "text": "Fold in the green onions and top with bonito flakes."
+    }
+   ]
+  },
+  {
+   "id": "japanese-yakisoba",
+   "title": "Yakisoba",
+   "blurb": "Street-food stir-fried noodles with pork and cabbage",
+   "type": "noodles",
+   "serves": 4,
+   "prep": 15,
+   "cook": 15,
+   "tags": [
+    "quick",
+    "kid-friendly"
+   ],
+   "ingredients": [
+    {
+     "q": 4,
+     "u": "pkg",
+     "item": "yakisoba noodles (5.5 oz)",
+     "aisle": "international"
+    },
+    {
+     "q": 2,
+     "u": "tbsp",
+     "item": "vegetable oil",
+     "aisle": "pantry"
+    },
+    {
+     "q": 0.75,
+     "u": "lb",
+     "item": "thinly sliced pork loin",
+     "aisle": "meat"
+    },
+    {
+     "q": 4,
+     "u": "cup",
+     "item": "green cabbage",
+     "note": "chopped",
+     "aisle": "produce"
+    },
+    {
+     "q": 1,
+     "u": "",
+     "item": "yellow onion",
+     "note": "sliced",
+     "aisle": "produce"
+    },
+    {
+     "q": 1,
+     "u": "",
+     "item": "carrots",
+     "note": "cut in matchsticks",
+     "aisle": "produce"
+    },
+    {
+     "q": 4,
+     "u": "tbsp",
+     "item": "Worcestershire sauce",
+     "aisle": "pantry"
+    },
+    {
+     "q": 2,
+     "u": "tbsp",
+     "item": "ketchup",
+     "aisle": "pantry"
+    },
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "soy sauce",
+     "aisle": "international"
+    },
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "sugar",
+     "aisle": "pantry"
+    },
+    {
+     "q": 2,
+     "u": "tbsp",
+     "item": "pickled red ginger",
+     "note": "optional, to serve",
+     "aisle": "international"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Stir the Worcestershire, ketchup, soy sauce and sugar together to make the sauce."
+    },
+    {
+     "text": "Microwave or steam the noodles 1 minute, then loosen them with your hands.",
+     "timer": 60,
+     "timerLabel": "Loosen the noodles"
+    },
+    {
+     "text": "Heat the oil in a large skillet over high heat. Cook the pork until browned and 145°F.",
+     "timer": 300,
+     "timerLabel": "Cook the pork"
+    },
+    {
+     "text": "Add the onion, carrot and cabbage and stir-fry until crisp-tender.",
+     "timer": 240,
+     "timerLabel": "Stir-fry the veg"
+    },
+    {
+     "text": "Add the noodles and sauce. Toss until coated and hot.",
+     "timer": 120,
+     "timerLabel": "Toss the noodles"
+    },
+    {
+     "text": "Serve topped with pickled red ginger."
+    }
+   ]
+  },
+  {
+   "id": "japanese-zaru-soba",
+   "title": "Zaru soba",
+   "blurb": "Chilled buckwheat noodles with a dipping sauce",
+   "type": "noodles",
+   "serves": 4,
+   "prep": 10,
+   "cook": 10,
+   "tags": [
+    "quick",
+    "healthy"
+   ],
+   "ingredients": [
+    {
+     "q": 10,
+     "u": "oz",
+     "item": "dried soba noodles",
+     "aisle": "international"
+    },
+    {
+     "q": 1,
+     "u": "cup",
+     "item": "water",
+     "aisle": "pantry"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "dashi powder",
+     "aisle": "international"
+    },
+    {
+     "q": 0.33,
+     "u": "cup",
+     "item": "soy sauce",
+     "aisle": "international"
+    },
+    {
+     "q": 0.33,
+     "u": "cup",
+     "item": "mirin",
+     "aisle": "international"
+    },
+    {
+     "q": 2,
+     "u": "",
+     "item": "green onions",
+     "note": "finely sliced",
+     "aisle": "produce"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "wasabi paste",
+     "aisle": "international"
+    },
+    {
+     "q": 1,
+     "u": "piece",
+     "item": "nori sheet",
+     "aisle": "international"
+    },
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "toasted sesame seeds",
+     "aisle": "international"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Simmer the water, dashi powder, soy sauce and mirin for 2 minutes, then chill until cold.",
+     "timer": 120,
+     "timerLabel": "Make the sauce"
+    },
+    {
+     "text": "Boil the soba in plenty of water until tender.",
+     "timer": 240,
+     "timerLabel": "Boil the soba"
+    },
+    {
+     "text": "Drain and rinse the noodles under cold running water, rubbing gently to remove starch."
+    },
+    {
+     "text": "Cut the nori into thin strips with scissors."
+    },
+    {
+     "text": "Pile the noodles on plates and top with nori and sesame seeds."
+    },
+    {
+     "text": "Serve with the dipping sauce, green onions and wasabi on the side."
+    }
+   ]
+  },
+  {
+   "id": "japanese-kitsune-udon",
+   "title": "Kitsune udon",
+   "blurb": "Udon in light dashi broth with sweet fried tofu",
+   "type": "noodles",
+   "serves": 4,
+   "prep": 10,
+   "cook": 20,
+   "tags": [
+    "quick"
+   ],
+   "ingredients": [
+    {
+     "q": 6,
+     "u": "cup",
+     "item": "water",
+     "aisle": "pantry"
+    },
+    {
+     "q": 2,
+     "u": "tsp",
+     "item": "dashi powder",
+     "aisle": "international"
+    },
+    {
+     "q": 0.25,
+     "u": "cup",
+     "item": "soy sauce",
+     "aisle": "international"
+    },
+    {
+     "q": 3,
+     "u": "tbsp",
+     "item": "mirin",
+     "aisle": "international"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "sugar",
+     "aisle": "pantry"
+    },
+    {
+     "q": 4,
+     "u": "pkg",
+     "item": "fresh udon noodles (7 oz)",
+     "aisle": "international"
+    },
+    {
+     "q": 8,
+     "u": "piece",
+     "item": "seasoned fried tofu pouches (inari age)",
+     "aisle": "international"
+    },
+    {
+     "q": 4,
+     "u": "",
+     "item": "green onions",
+     "note": "sliced",
+     "aisle": "produce"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Bring the water, dashi powder, soy sauce, mirin and sugar to a simmer.",
+     "timer": 300,
+     "timerLabel": "Simmer the broth"
+    },
+    {
+     "text": "Add the fried tofu and simmer gently so it soaks up the broth.",
+     "timer": 600,
+     "timerLabel": "Simmer the tofu"
+    },
+    {
+     "text": "Boil the udon in a separate pot until warmed through, then drain.",
+     "timer": 60,
+     "timerLabel": "Warm the udon"
+    },
+    {
+     "text": "Divide the noodles into four deep bowls."
+    },
+    {
+     "text": "Ladle the hot broth over the noodles and place 2 tofu pouches on each bowl."
+    },
+    {
+     "text": "Sprinkle with green onions."
+    }
+   ]
+  },
+  {
+   "id": "japanese-spicy-sesame-ramen",
+   "title": "Spicy sesame ramen",
+   "blurb": "Tantanmen-style bowl with sesame-chili broth",
+   "type": "noodles",
+   "serves": 4,
+   "prep": 15,
+   "cook": 25,
+   "tags": [
+    "spicy"
+   ],
+   "ingredients": [
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "vegetable oil",
+     "aisle": "pantry"
+    },
+    {
+     "q": 1,
+     "u": "lb",
+     "item": "ground pork",
+     "aisle": "meat"
+    },
+    {
+     "q": 3,
+     "u": "clove",
+     "item": "garlic",
+     "note": "minced",
+     "aisle": "produce"
+    },
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "fresh ginger",
+     "note": "grated",
+     "aisle": "produce"
+    },
+    {
+     "q": 5,
+     "u": "cup",
+     "item": "low-sodium chicken broth",
+     "aisle": "canned"
+    },
+    {
+     "q": 0.33,
+     "u": "cup",
+     "item": "tahini",
+     "aisle": "pantry"
+    },
+    {
+     "q": 2,
+     "u": "tbsp",
+     "item": "soy sauce",
+     "aisle": "international"
+    },
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "chili garlic sauce",
+     "aisle": "international"
+    },
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "rice vinegar",
+     "aisle": "international"
+    },
+    {
+     "q": 4,
+     "u": "pkg",
+     "item": "fresh ramen noodles (5 oz)",
+     "aisle": "international"
+    },
+    {
+     "q": 2,
+     "u": "",
+     "item": "baby bok choy",
+     "note": "halved",
+     "aisle": "produce"
+    },
+    {
+     "q": 2,
+     "u": "",
+     "item": "green onions",
+     "note": "sliced",
+     "aisle": "produce"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Brown the pork in the oil in a pot over medium-high heat until cooked through (160°F).",
+     "timer": 420,
+     "timerLabel": "Brown the pork"
+    },
+    {
+     "text": "Add the garlic, ginger and chili garlic sauce and stir for 30 seconds."
+    },
+    {
+     "text": "Pour in the broth, tahini, soy sauce and vinegar. Whisk and simmer until smooth.",
+     "timer": 600,
+     "timerLabel": "Simmer the broth"
+    },
+    {
+     "text": "Boil the noodles in a separate pot, adding the bok choy for the last minute. Drain.",
+     "timer": 180,
+     "timerLabel": "Boil noodles and bok choy"
+    },
+    {
+     "text": "Divide noodles and bok choy into bowls."
+    },
+    {
+     "text": "Ladle the broth and pork over the top and finish with green onions."
+    }
+   ]
+  },
+  {
+   "id": "japanese-hiyashi-chuka",
+   "title": "Hiyashi chuka",
+   "blurb": "Cold ramen salad with ham, egg and cucumber",
+   "type": "noodles",
+   "serves": 4,
+   "prep": 25,
+   "cook": 10,
+   "tags": [
+    "quick",
+    "make ahead"
+   ],
+   "ingredients": [
+    {
+     "q": 4,
+     "u": "pkg",
+     "item": "fresh ramen noodles (5 oz)",
+     "aisle": "international"
+    },
+    {
+     "q": 3,
+     "u": "tbsp",
+     "item": "soy sauce",
+     "aisle": "international"
+    },
+    {
+     "q": 3,
+     "u": "tbsp",
+     "item": "rice vinegar",
+     "aisle": "international"
+    },
+    {
+     "q": 2,
+     "u": "tbsp",
+     "item": "sugar",
+     "aisle": "pantry"
+    },
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "toasted sesame oil",
+     "aisle": "international"
+    },
+    {
+     "q": 0.25,
+     "u": "cup",
+     "item": "water",
+     "aisle": "pantry"
+    },
+    {
+     "q": 3,
+     "u": "",
+     "item": "large eggs",
+     "aisle": "dairy"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "vegetable oil",
+     "aisle": "pantry"
+    },
+    {
+     "q": 2,
+     "u": "",
+     "item": "cucumbers",
+     "note": "cut in matchsticks",
+     "aisle": "produce"
+    },
+    {
+     "q": 2,
+     "u": "",
+     "item": "tomatoes",
+     "note": "sliced",
+     "aisle": "produce"
+    },
+    {
+     "q": 6,
+     "u": "slice",
+     "item": "deli ham",
+     "note": "cut in strips",
+     "aisle": "meat"
+    },
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "toasted sesame seeds",
+     "aisle": "international"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Whisk the soy sauce, vinegar, sugar, sesame oil and water until the sugar dissolves. Chill."
+    },
+    {
+     "text": "Beat the eggs with a pinch of salt and cook thin omelets in the oil in a nonstick skillet.",
+     "timer": 240,
+     "timerLabel": "Cook the omelets"
+    },
+    {
+     "text": "Roll the omelets and slice into thin ribbons."
+    },
+    {
+     "text": "Boil the noodles until tender, then rinse under cold water and drain well.",
+     "timer": 180,
+     "timerLabel": "Boil the noodles"
+    },
+    {
+     "text": "Arrange the noodles on plates with cucumber, tomato, ham and egg in sections."
+    },
+    {
+     "text": "Pour the sauce over the top and sprinkle with sesame seeds."
+    }
+   ]
+  },
+  {
+   "id": "japanese-curry-udon",
+   "title": "Curry udon",
+   "blurb": "Thick Japanese curry broth over chewy udon",
+   "type": "noodles",
+   "serves": 4,
+   "prep": 15,
+   "cook": 25,
+   "tags": [
+    "kid-friendly"
+   ],
+   "ingredients": [
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "vegetable oil",
+     "aisle": "pantry"
+    },
+    {
+     "q": 0.5,
+     "u": "lb",
+     "item": "thinly sliced beef or pork",
+     "aisle": "meat"
+    },
+    {
+     "q": 1,
+     "u": "",
+     "item": "yellow onion",
+     "note": "sliced",
+     "aisle": "produce"
+    },
+    {
+     "q": 4,
+     "u": "cup",
+     "item": "water",
+     "aisle": "pantry"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "dashi powder",
+     "aisle": "international"
+    },
+    {
+     "q": 4,
+     "u": "piece",
+     "item": "Japanese curry roux blocks",
+     "note": "from a 3.5 oz box",
+     "aisle": "international"
+    },
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "soy sauce",
+     "aisle": "international"
+    },
+    {
+     "q": 4,
+     "u": "pkg",
+     "item": "fresh udon noodles (7 oz)",
+     "aisle": "international"
+    },
+    {
+     "q": 2,
+     "u": "",
+     "item": "green onions",
+     "note": "sliced",
+     "aisle": "produce"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Heat the oil in a pot over medium-high heat. Cook the onion until soft.",
+     "timer": 300,
+     "timerLabel": "Soften the onion"
+    },
+    {
+     "text": "Add the meat and cook until no longer pink (pork 145°F).",
+     "timer": 180,
+     "timerLabel": "Cook the meat"
+    },
+    {
+     "text": "Add the water and dashi powder and bring to a simmer.",
+     "timer": 300,
+     "timerLabel": "Simmer the broth"
+    },
+    {
+     "text": "Turn off the heat, add the roux blocks and stir until melted. Simmer until thick.",
+     "timer": 300,
+     "timerLabel": "Thicken the curry"
+    },
+    {
+     "text": "Stir in the soy sauce."
+    },
+    {
+     "text": "Boil the udon in a separate pot, then drain and divide into bowls.",
+     "timer": 60,
+     "timerLabel": "Warm the udon"
+    },
+    {
+     "text": "Pour the curry over the noodles and top with green onions."
+    }
+   ]
+  },
+  {
+   "id": "japanese-butter-corn-ramen",
+   "title": "Butter corn ramen",
+   "blurb": "Sapporo-style bowl with sweet corn and a pat of butter",
+   "type": "noodles",
+   "serves": 4,
+   "prep": 10,
+   "cook": 20,
+   "tags": [
+    "quick",
+    "kid-friendly"
+   ],
+   "ingredients": [
+    {
+     "q": 6,
+     "u": "cup",
+     "item": "low-sodium chicken broth",
+     "aisle": "canned"
+    },
+    {
+     "q": 3,
+     "u": "tbsp",
+     "item": "white miso paste",
+     "aisle": "international"
+    },
+    {
+     "q": 2,
+     "u": "tbsp",
+     "item": "soy sauce",
+     "aisle": "international"
+    },
+    {
+     "q": 2,
+     "u": "clove",
+     "item": "garlic",
+     "note": "minced",
+     "aisle": "produce"
+    },
+    {
+     "q": 4,
+     "u": "pkg",
+     "item": "fresh ramen noodles (5 oz)",
+     "aisle": "international"
+    },
+    {
+     "q": 1.5,
+     "u": "cup",
+     "item": "frozen corn",
+     "aisle": "frozen"
+    },
+    {
+     "q": 4,
+     "u": "tbsp",
+     "item": "unsalted butter",
+     "aisle": "dairy"
+    },
+    {
+     "q": 2,
+     "u": "",
+     "item": "green onions",
+     "note": "sliced",
+     "aisle": "produce"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Simmer the broth with the garlic and soy sauce for 10 minutes.",
+     "timer": 600,
+     "timerLabel": "Simmer the broth"
+    },
+    {
+     "text": "Whisk the miso with a ladle of hot broth, then stir it into the pot."
+    },
+    {
+     "text": "Boil the noodles in a separate pot until tender, then drain.",
+     "timer": 180,
+     "timerLabel": "Boil the noodles"
+    },
+    {
+     "text": "Warm the corn in the broth for the last 2 minutes.",
+     "timer": 120,
+     "timerLabel": "Warm the corn"
+    },
+    {
+     "text": "Divide the noodles into bowls and ladle in the broth and corn."
+    },
+    {
+     "text": "Top each bowl with 1 tbsp butter and green onions."
+    }
+   ]
+  },
+  {
+   "id": "japanese-gyudon",
+   "title": "Gyudon beef bowl",
+   "blurb": "Thin-sliced beef and onion simmered sweet-savory over rice",
+   "type": "bowls",
+   "serves": 4,
+   "prep": 10,
+   "cook": 20,
+   "tags": [
+    "quick",
+    "kid-friendly"
+   ],
+   "ingredients": [
+    {
+     "q": 2,
+     "u": "cup",
+     "item": "short-grain rice",
+     "aisle": "international"
+    },
+    {
+     "q": 1.5,
+     "u": "lb",
+     "item": "thinly sliced beef ribeye or sirloin",
+     "aisle": "meat"
+    },
+    {
+     "q": 2,
+     "u": "",
+     "item": "yellow onion",
+     "note": "thinly sliced",
+     "aisle": "produce"
+    },
+    {
+     "q": 1,
+     "u": "cup",
+     "item": "water",
+     "aisle": "pantry"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "dashi powder",
+     "aisle": "international"
+    },
+    {
+     "q": 0.33,
+     "u": "cup",
+     "item": "soy sauce",
+     "aisle": "international"
+    },
+    {
+     "q": 0.25,
+     "u": "cup",
+     "item": "mirin",
+     "aisle": "international"
+    },
+    {
+     "q": 2,
+     "u": "tbsp",
+     "item": "sugar",
+     "aisle": "pantry"
+    },
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "fresh ginger",
+     "note": "grated",
+     "aisle": "produce"
+    },
+    {
+     "q": 2,
+     "u": "tbsp",
+     "item": "pickled red ginger",
+     "note": "to serve",
+     "aisle": "international"
+    },
+    {
+     "q": 2,
+     "u": "",
+     "item": "green onions",
+     "note": "sliced",
+     "aisle": "produce"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Rinse the rice and cook it according to the package. Keep it warm.",
+     "timer": 1200,
+     "timerLabel": "Cook the rice"
+    },
+    {
+     "text": "Combine the water, dashi powder, soy sauce, mirin, sugar and ginger in a wide pan and bring to a simmer."
+    },
+    {
+     "text": "Add the onions and simmer until soft.",
+     "timer": 480,
+     "timerLabel": "Simmer the onions"
+    },
+    {
+     "text": "Add the beef, separating the slices, and simmer until no longer pink.",
+     "timer": 240,
+     "timerLabel": "Cook the beef"
+    },
+    {
+     "text": "Spoon rice into bowls and top with beef, onions and a little sauce."
+    },
+    {
+     "text": "Finish with pickled ginger and green onions."
+    }
+   ]
+  },
+  {
+   "id": "japanese-oyakodon",
+   "title": "Oyakodon",
+   "blurb": "Chicken and egg simmered in sweet dashi over rice",
+   "type": "bowls",
+   "serves": 4,
+   "prep": 10,
+   "cook": 20,
+   "tags": [
+    "quick",
+    "kid-friendly"
+   ],
+   "ingredients": [
+    {
+     "q": 2,
+     "u": "cup",
+     "item": "short-grain rice",
+     "aisle": "international"
+    },
+    {
+     "q": 1.25,
+     "u": "lb",
+     "item": "boneless skinless chicken thighs",
+     "note": "cut in bite-size pieces",
+     "aisle": "meat"
+    },
+    {
+     "q": 1,
+     "u": "",
+     "item": "yellow onion",
+     "note": "thinly sliced",
+     "aisle": "produce"
+    },
+    {
+     "q": 1,
+     "u": "cup",
+     "item": "water",
+     "aisle": "pantry"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "dashi powder",
+     "aisle": "international"
+    },
+    {
+     "q": 3,
+     "u": "tbsp",
+     "item": "soy sauce",
+     "aisle": "international"
+    },
+    {
+     "q": 3,
+     "u": "tbsp",
+     "item": "mirin",
+     "aisle": "international"
+    },
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "sugar",
+     "aisle": "pantry"
+    },
+    {
+     "q": 5,
+     "u": "",
+     "item": "large eggs",
+     "note": "lightly beaten",
+     "aisle": "dairy"
+    },
+    {
+     "q": 2,
+     "u": "",
+     "item": "green onions",
+     "note": "sliced",
+     "aisle": "produce"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Cook the rice according to the package and keep it warm.",
+     "timer": 1200,
+     "timerLabel": "Cook the rice"
+    },
+    {
+     "text": "Simmer the water, dashi powder, soy sauce, mirin and sugar in a wide skillet."
+    },
+    {
+     "text": "Add the onion and chicken and simmer until the chicken reaches 165°F.",
+     "timer": 600,
+     "timerLabel": "Cook the chicken"
+    },
+    {
+     "text": "Pour the eggs over the chicken in a circle. Cover and cook until just set but still soft.",
+     "timer": 60,
+     "timerLabel": "Set the eggs"
+    },
+    {
+     "text": "Scoop the rice into four bowls."
+    },
+    {
+     "text": "Slide the chicken and egg over the rice and top with green onions."
+    }
+   ]
+  },
+  {
+   "id": "japanese-katsudon",
+   "title": "Katsudon",
+   "blurb": "Crispy pork cutlet simmered with egg over rice",
+   "type": "bowls",
+   "serves": 4,
+   "prep": 20,
+   "cook": 35,
+   "tags": [],
+   "ingredients": [
+    {
+     "q": 2,
+     "u": "cup",
+     "item": "short-grain rice",
+     "aisle": "international"
+    },
+    {
+     "q": 4,
+     "u": "",
+     "item": "boneless pork loin chops (about 5 oz each)",
+     "aisle": "meat"
+    },
+    {
+     "q": 0.5,
+     "u": "cup",
+     "item": "all-purpose flour",
+     "aisle": "pantry"
+    },
+    {
+     "q": 2,
+     "u": "",
+     "item": "large eggs",
+     "note": "beaten, for coating",
+     "aisle": "dairy"
+    },
+    {
+     "q": 1.5,
+     "u": "cup",
+     "item": "panko breadcrumbs",
+     "aisle": "pantry"
+    },
+    {
+     "q": 1,
+     "u": "cup",
+     "item": "vegetable oil",
+     "note": "for frying",
+     "aisle": "pantry"
+    },
+    {
+     "q": 1,
+     "u": "",
+     "item": "yellow onion",
+     "note": "sliced",
+     "aisle": "produce"
+    },
+    {
+     "q": 1,
+     "u": "cup",
+     "item": "water",
+     "aisle": "pantry"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "dashi powder",
+     "aisle": "international"
+    },
+    {
+     "q": 3,
+     "u": "tbsp",
+     "item": "soy sauce",
+     "aisle": "international"
+    },
+    {
+     "q": 3,
+     "u": "tbsp",
+     "item": "mirin",
+     "aisle": "international"
+    },
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "sugar",
+     "aisle": "pantry"
+    },
+    {
+     "q": 4,
+     "u": "",
+     "item": "large eggs",
+     "note": "lightly beaten, for the topping",
+     "aisle": "dairy"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Cook the rice and keep it warm.",
+     "timer": 1200,
+     "timerLabel": "Cook the rice"
+    },
+    {
+     "text": "Pound the chops thin, season with salt and black pepper, then coat in flour, egg and panko."
+    },
+    {
+     "text": "Heat the oil in a skillet to 350°F. Fry the cutlets until golden and 145°F inside, about 3 minutes per side.",
+     "timer": 360,
+     "timerLabel": "Fry the cutlets"
+    },
+    {
+     "text": "Slice the cutlets into strips."
+    },
+    {
+     "text": "Simmer the onion with the water, dashi powder, soy sauce, mirin and sugar until soft.",
+     "timer": 300,
+     "timerLabel": "Simmer the onion"
+    },
+    {
+     "text": "Lay the cutlets on the onions, pour the beaten eggs over, cover and cook until just set.",
+     "timer": 60,
+     "timerLabel": "Set the eggs"
+    },
+    {
+     "text": "Slide the topping over bowls of hot rice."
+    }
+   ]
+  },
+  {
+   "id": "japanese-soboro-don",
+   "title": "Soboro don",
+   "blurb": "Three-color bowl of ground chicken, scrambled egg and greens",
+   "type": "bowls",
+   "serves": 4,
+   "prep": 15,
+   "cook": 20,
+   "tags": [
+    "kid-friendly"
+   ],
+   "ingredients": [
+    {
+     "q": 2,
+     "u": "cup",
+     "item": "short-grain rice",
+     "aisle": "international"
+    },
+    {
+     "q": 1,
+     "u": "lb",
+     "item": "ground chicken",
+     "aisle": "meat"
+    },
+    {
+     "q": 3,
+     "u": "tbsp",
+     "item": "soy sauce",
+     "aisle": "international"
+    },
+    {
+     "q": 2,
+     "u": "tbsp",
+     "item": "mirin",
+     "aisle": "international"
+    },
+    {
+     "q": 2,
+     "u": "tbsp",
+     "item": "sugar",
+     "aisle": "pantry"
+    },
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "fresh ginger",
+     "note": "grated",
+     "aisle": "produce"
+    },
+    {
+     "q": 4,
+     "u": "",
+     "item": "large eggs",
+     "aisle": "dairy"
+    },
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "sugar",
+     "aisle": "pantry"
+    },
+    {
+     "q": 1,
+     "u": "bunch",
+     "item": "spinach",
+     "note": "about 8 oz",
+     "aisle": "produce"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "toasted sesame oil",
+     "aisle": "international"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Cook the rice and keep it warm.",
+     "timer": 1200,
+     "timerLabel": "Cook the rice"
+    },
+    {
+     "text": "Combine the chicken, soy sauce, mirin, sugar and ginger in a pan. Cook over medium heat, stirring into fine crumbles, to 165°F.",
+     "timer": 480,
+     "timerLabel": "Cook the chicken"
+    },
+    {
+     "text": "Beat the eggs with 1 tbsp sugar and a pinch of salt. Scramble over low heat into small curds.",
+     "timer": 180,
+     "timerLabel": "Scramble the eggs"
+    },
+    {
+     "text": "Blanch the spinach in boiling water, squeeze dry and chop.",
+     "timer": 45,
+     "timerLabel": "Blanch the spinach"
+    },
+    {
+     "text": "Toss the spinach with the sesame oil and a pinch of salt."
+    },
+    {
+     "text": "Serve rice topped with rows of chicken, egg and spinach."
+    }
+   ]
+  },
+  {
+   "id": "japanese-chicken-katsu-curry",
+   "title": "Chicken katsu curry rice",
+   "blurb": "Crispy chicken cutlet with mild Japanese curry sauce",
+   "type": "bowls",
+   "serves": 4,
+   "prep": 20,
+   "cook": 40,
+   "tags": [
+    "kid-friendly"
+   ],
+   "ingredients": [
+    {
+     "q": 2,
+     "u": "cup",
+     "item": "short-grain rice",
+     "aisle": "international"
+    },
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "vegetable oil",
+     "aisle": "pantry"
+    },
+    {
+     "q": 1,
+     "u": "",
+     "item": "yellow onion",
+     "note": "diced",
+     "aisle": "produce"
+    },
+    {
+     "q": 2,
+     "u": "",
+     "item": "carrots",
+     "note": "cut in chunks",
+     "aisle": "produce"
+    },
+    {
+     "q": 2,
+     "u": "",
+     "item": "potatoes",
+     "note": "peeled, cut in chunks",
+     "aisle": "produce"
+    },
+    {
+     "q": 4,
+     "u": "cup",
+     "item": "water",
+     "aisle": "pantry"
+    },
+    {
+     "q": 4,
+     "u": "piece",
+     "item": "Japanese curry roux blocks",
+     "note": "from a 3.5 oz box",
+     "aisle": "international"
+    },
+    {
+     "q": 1.5,
+     "u": "lb",
+     "item": "boneless skinless chicken breasts",
+     "note": "sliced in half horizontally",
+     "aisle": "meat"
+    },
+    {
+     "q": 0.5,
+     "u": "cup",
+     "item": "all-purpose flour",
+     "aisle": "pantry"
+    },
+    {
+     "q": 2,
+     "u": "",
+     "item": "large eggs",
+     "note": "beaten",
+     "aisle": "dairy"
+    },
+    {
+     "q": 1.5,
+     "u": "cup",
+     "item": "panko breadcrumbs",
+     "aisle": "pantry"
+    },
+    {
+     "q": 1,
+     "u": "cup",
+     "item": "vegetable oil",
+     "note": "for frying",
+     "aisle": "pantry"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Cook the rice and keep it warm.",
+     "timer": 1200,
+     "timerLabel": "Cook the rice"
+    },
+    {
+     "text": "Cook the onion in 1 tbsp oil for 5 minutes. Add the carrots, potatoes and water and simmer until tender.",
+     "timer": 1200,
+     "timerLabel": "Simmer the vegetables"
+    },
+    {
+     "text": "Turn off the heat, stir in the roux until melted, then simmer until thick.",
+     "timer": 300,
+     "timerLabel": "Thicken the curry"
+    },
+    {
+     "text": "Season the chicken with salt, then coat in flour, egg and panko."
+    },
+    {
+     "text": "Fry the chicken in 350°F oil until golden and 165°F, about 3 minutes per side.",
+     "timer": 360,
+     "timerLabel": "Fry the chicken"
+    },
+    {
+     "text": "Slice the cutlets and serve over rice with the curry."
+    }
+   ]
+  },
+  {
+   "id": "japanese-butadon",
+   "title": "Butadon pork bowl",
+   "blurb": "Honey-soy glazed pork and onions over rice",
+   "type": "bowls",
+   "serves": 4,
+   "prep": 10,
+   "cook": 20,
+   "tags": [
+    "quick"
+   ],
+   "ingredients": [
+    {
+     "q": 2,
+     "u": "cup",
+     "item": "short-grain rice",
+     "aisle": "international"
+    },
+    {
+     "q": 1.5,
+     "u": "lb",
+     "item": "thinly sliced pork shoulder",
+     "aisle": "meat"
+    },
+    {
+     "q": 1,
+     "u": "",
+     "item": "yellow onion",
+     "note": "sliced",
+     "aisle": "produce"
+    },
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "vegetable oil",
+     "aisle": "pantry"
+    },
+    {
+     "q": 3,
+     "u": "tbsp",
+     "item": "soy sauce",
+     "aisle": "international"
+    },
+    {
+     "q": 3,
+     "u": "tbsp",
+     "item": "mirin",
+     "aisle": "international"
+    },
+    {
+     "q": 2,
+     "u": "tbsp",
+     "item": "sugar",
+     "aisle": "pantry"
+    },
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "fresh ginger",
+     "note": "grated",
+     "aisle": "produce"
+    },
+    {
+     "q": 2,
+     "u": "clove",
+     "item": "garlic",
+     "note": "grated",
+     "aisle": "produce"
+    },
+    {
+     "q": 2,
+     "u": "",
+     "item": "green onions",
+     "note": "sliced",
+     "aisle": "produce"
+    },
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "toasted sesame seeds",
+     "aisle": "international"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Cook the rice and keep it warm.",
+     "timer": 1200,
+     "timerLabel": "Cook the rice"
+    },
+    {
+     "text": "Stir the soy sauce, mirin, sugar, ginger and garlic together."
+    },
+    {
+     "text": "Heat the oil in a large skillet over medium-high heat and cook the onion until soft.",
+     "timer": 240,
+     "timerLabel": "Soften the onion"
+    },
+    {
+     "text": "Add the pork and cook until browned and 145°F.",
+     "timer": 300,
+     "timerLabel": "Cook the pork"
+    },
+    {
+     "text": "Pour in the sauce and cook until it thickens into a glaze.",
+     "timer": 120,
+     "timerLabel": "Glaze the pork"
+    },
+    {
+     "text": "Serve over rice with green onions and sesame seeds."
+    }
+   ]
+  },
+  {
+   "id": "japanese-salmon-avocado-don",
+   "title": "Salmon avocado donburi",
+   "blurb": "Pan-seared salmon, avocado and soy-sesame dressing on rice",
+   "type": "bowls",
+   "serves": 4,
+   "prep": 15,
+   "cook": 20,
+   "tags": [
+    "quick",
+    "healthy"
+   ],
+   "ingredients": [
+    {
+     "q": 2,
+     "u": "cup",
+     "item": "short-grain rice",
+     "aisle": "international"
+    },
+    {
+     "q": 1.5,
+     "u": "lb",
+     "item": "salmon fillets",
+     "note": "skin removed",
+     "aisle": "seafood"
+    },
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "vegetable oil",
+     "aisle": "pantry"
+    },
+    {
+     "q": 2,
+     "u": "",
+     "item": "avocados",
+     "note": "sliced",
+     "aisle": "produce"
+    },
+    {
+     "q": 1,
+     "u": "",
+     "item": "cucumbers",
+     "note": "thinly sliced",
+     "aisle": "produce"
+    },
+    {
+     "q": 3,
+     "u": "tbsp",
+     "item": "soy sauce",
+     "aisle": "international"
+    },
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "rice vinegar",
+     "aisle": "international"
+    },
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "toasted sesame oil",
+     "aisle": "international"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "sugar",
+     "aisle": "pantry"
+    },
+    {
+     "q": 1,
+     "u": "piece",
+     "item": "nori",
+     "note": "cut in strips",
+     "aisle": "international"
+    },
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "toasted sesame seeds",
+     "aisle": "international"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Cook the rice and keep it warm.",
+     "timer": 1200,
+     "timerLabel": "Cook the rice"
+    },
+    {
+     "text": "Whisk the soy sauce, vinegar, sesame oil and sugar for the dressing."
+    },
+    {
+     "text": "Pat the salmon dry and season with salt. Sear in the oil over medium-high heat, 3 to 4 minutes per side, to 145°F.",
+     "timer": 420,
+     "timerLabel": "Sear the salmon"
+    },
+    {
+     "text": "Flake the salmon into large pieces."
+    },
+    {
+     "text": "Divide the rice into bowls and add salmon, avocado and cucumber."
+    },
+    {
+     "text": "Drizzle with the dressing and top with nori and sesame seeds."
+    }
+   ]
+  },
+  {
+   "id": "japanese-vegetable-curry-rice",
+   "title": "Japanese vegetable curry rice",
+   "blurb": "Mild, thick curry with potato, carrot and onion",
+   "type": "bowls",
+   "serves": 4,
+   "prep": 15,
+   "cook": 40,
+   "tags": [
+    "vegetarian",
+    "kid-friendly",
+    "one pot"
+   ],
+   "ingredients": [
+    {
+     "q": 2,
+     "u": "cup",
+     "item": "short-grain rice",
+     "aisle": "international"
+    },
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "vegetable oil",
+     "aisle": "pantry"
+    },
+    {
+     "q": 2,
+     "u": "",
+     "item": "yellow onion",
+     "note": "sliced",
+     "aisle": "produce"
+    },
+    {
+     "q": 3,
+     "u": "",
+     "item": "carrots",
+     "note": "cut in chunks",
+     "aisle": "produce"
+    },
+    {
+     "q": 2,
+     "u": "",
+     "item": "potatoes",
+     "note": "peeled, cut in chunks",
+     "aisle": "produce"
+    },
+    {
+     "q": 8,
+     "u": "oz",
+     "item": "cremini mushrooms",
+     "note": "quartered",
+     "aisle": "produce"
+    },
+    {
+     "q": 4,
+     "u": "cup",
+     "item": "water",
+     "aisle": "pantry"
+    },
+    {
+     "q": 4,
+     "u": "piece",
+     "item": "Japanese curry roux blocks",
+     "note": "from a 3.5 oz box",
+     "aisle": "international"
+    },
+    {
+     "q": 1,
+     "u": "",
+     "item": "apples",
+     "note": "grated",
+     "aisle": "produce"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Cook the rice and keep it warm.",
+     "timer": 1200,
+     "timerLabel": "Cook the rice"
+    },
+    {
+     "text": "Cook the onions in the oil in a large pot until golden.",
+     "timer": 480,
+     "timerLabel": "Brown the onions"
+    },
+    {
+     "text": "Add the carrots, potatoes, mushrooms and water. Cover and simmer until tender.",
+     "timer": 1200,
+     "timerLabel": "Simmer the vegetables"
+    },
+    {
+     "text": "Turn off the heat, add the roux blocks and stir until melted."
+    },
+    {
+     "text": "Stir in the grated apple and simmer until thick.",
+     "timer": 300,
+     "timerLabel": "Thicken the curry"
+    },
+    {
+     "text": "Serve the curry over rice."
+    }
+   ]
+  },
+  {
+   "id": "japanese-hayashi-rice",
+   "title": "Hayashi rice",
+   "blurb": "Beef and mushroom stew in a rich tomato-demi sauce",
+   "type": "bowls",
+   "serves": 4,
+   "prep": 15,
+   "cook": 45,
+   "tags": [],
+   "ingredients": [
+    {
+     "q": 2,
+     "u": "cup",
+     "item": "short-grain rice",
+     "aisle": "international"
+    },
+    {
+     "q": 1,
+     "u": "lb",
+     "item": "thinly sliced beef",
+     "aisle": "meat"
+    },
+    {
+     "q": 2,
+     "u": "tbsp",
+     "item": "unsalted butter",
+     "aisle": "dairy"
+    },
+    {
+     "q": 2,
+     "u": "",
+     "item": "yellow onion",
+     "note": "sliced",
+     "aisle": "produce"
+    },
+    {
+     "q": 8,
+     "u": "oz",
+     "item": "cremini mushrooms",
+     "note": "sliced",
+     "aisle": "produce"
+    },
+    {
+     "q": 2,
+     "u": "tbsp",
+     "item": "all-purpose flour",
+     "aisle": "pantry"
+    },
+    {
+     "q": 1,
+     "u": "cup",
+     "item": "dry red wine",
+     "aisle": "beverages"
+    },
+    {
+     "q": 1,
+     "u": "cup",
+     "item": "beef broth",
+     "aisle": "canned"
+    },
+    {
+     "q": 0.5,
+     "u": "cup",
+     "item": "ketchup",
+     "aisle": "pantry"
+    },
+    {
+     "q": 2,
+     "u": "tbsp",
+     "item": "Worcestershire sauce",
+     "aisle": "pantry"
+    },
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "soy sauce",
+     "aisle": "international"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Cook the rice and keep it warm.",
+     "timer": 1200,
+     "timerLabel": "Cook the rice"
+    },
+    {
+     "text": "Melt the butter in a pot. Brown the onions and mushrooms over medium-high heat.",
+     "timer": 600,
+     "timerLabel": "Brown the onions"
+    },
+    {
+     "text": "Add the beef and cook until browned. Stir in the flour for 1 minute.",
+     "timer": 180,
+     "timerLabel": "Brown the beef"
+    },
+    {
+     "text": "Add the wine, broth, ketchup, Worcestershire and soy sauce."
+    },
+    {
+     "text": "Cover and simmer gently until the beef is tender and the sauce is thick.",
+     "timer": 1500,
+     "timerLabel": "Simmer the stew"
+    },
+    {
+     "text": "Serve over rice."
+    }
+   ]
+  },
+  {
+   "id": "japanese-chicken-teriyaki",
+   "title": "Chicken teriyaki",
+   "blurb": "Pan-seared thighs glazed in a glossy homemade teriyaki sauce",
+   "type": "teriyaki",
+   "serves": 4,
+   "prep": 10,
+   "cook": 20,
+   "tags": [
+    "quick",
+    "kid-friendly"
+   ],
+   "ingredients": [
+    {
+     "q": 1.5,
+     "u": "lb",
+     "item": "boneless skinless chicken thighs",
+     "aisle": "meat"
+    },
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "vegetable oil",
+     "aisle": "pantry"
+    },
+    {
+     "q": 0.25,
+     "u": "cup",
+     "item": "soy sauce",
+     "aisle": "international"
+    },
+    {
+     "q": 0.25,
+     "u": "cup",
+     "item": "mirin",
+     "aisle": "international"
+    },
+    {
+     "q": 2,
+     "u": "tbsp",
+     "item": "sugar",
+     "aisle": "pantry"
+    },
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "fresh ginger",
+     "note": "grated",
+     "aisle": "produce"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "cornstarch",
+     "aisle": "pantry"
+    },
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "water",
+     "aisle": "pantry"
+    },
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "toasted sesame seeds",
+     "aisle": "international"
+    },
+    {
+     "q": 2,
+     "u": "",
+     "item": "green onions",
+     "note": "sliced",
+     "aisle": "produce"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Stir the soy sauce, mirin, sugar and ginger together. Mix the cornstarch with the water."
+    },
+    {
+     "text": "Heat the oil in a skillet over medium-high heat. Cook the chicken skin side down until browned, about 6 minutes.",
+     "timer": 360,
+     "timerLabel": "Brown the chicken"
+    },
+    {
+     "text": "Flip and cook until the chicken reaches 165°F.",
+     "timer": 300,
+     "timerLabel": "Cook the second side"
+    },
+    {
+     "text": "Pour in the sauce and the cornstarch mix. Simmer, turning the chicken, until glossy.",
+     "timer": 120,
+     "timerLabel": "Glaze the chicken"
+    },
+    {
+     "text": "Slice the chicken and spoon the sauce over it."
+    },
+    {
+     "text": "Top with sesame seeds and green onions."
+    }
+   ]
+  },
+  {
+   "id": "japanese-salmon-teriyaki",
+   "title": "Salmon teriyaki",
+   "blurb": "Quick pan-seared salmon with a sticky teriyaki glaze",
+   "type": "teriyaki",
+   "serves": 4,
+   "prep": 10,
+   "cook": 15,
+   "tags": [
+    "quick",
+    "healthy"
+   ],
+   "ingredients": [
+    {
+     "q": 4,
+     "u": "",
+     "item": "salmon fillets (6 oz each)",
+     "aisle": "seafood"
+    },
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "vegetable oil",
+     "aisle": "pantry"
+    },
+    {
+     "q": 3,
+     "u": "tbsp",
+     "item": "soy sauce",
+     "aisle": "international"
+    },
+    {
+     "q": 3,
+     "u": "tbsp",
+     "item": "mirin",
+     "aisle": "international"
+    },
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "sugar",
+     "aisle": "pantry"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "fresh ginger",
+     "note": "grated",
+     "aisle": "produce"
+    },
+    {
+     "q": 2,
+     "u": "",
+     "item": "green onions",
+     "note": "sliced",
+     "aisle": "produce"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "toasted sesame seeds",
+     "aisle": "international"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Stir the soy sauce, mirin, sugar and ginger together."
+    },
+    {
+     "text": "Pat the salmon dry and season lightly with salt."
+    },
+    {
+     "text": "Heat the oil in a nonstick skillet over medium-high heat. Sear the salmon skin side up for 4 minutes.",
+     "timer": 240,
+     "timerLabel": "Sear the salmon"
+    },
+    {
+     "text": "Flip and cook 3 minutes more, to 145°F inside.",
+     "timer": 180,
+     "timerLabel": "Cook the second side"
+    },
+    {
+     "text": "Pour the sauce into the pan and simmer, spooning it over the salmon, until thick.",
+     "timer": 90,
+     "timerLabel": "Glaze the salmon"
+    },
+    {
+     "text": "Serve topped with green onions and sesame seeds."
+    }
+   ]
+  },
+  {
+   "id": "japanese-yakitori",
+   "title": "Chicken yakitori skewers",
+   "blurb": "Grilled chicken and green onion skewers with tare glaze",
+   "type": "teriyaki",
+   "serves": 4,
+   "prep": 25,
+   "cook": 15,
+   "tags": [
+    "grill",
+    "kid-friendly"
+   ],
+   "ingredients": [
+    {
+     "q": 2,
+     "u": "lb",
+     "item": "boneless skinless chicken thighs",
+     "note": "cut in 1-inch pieces",
+     "aisle": "meat"
+    },
+    {
+     "q": 8,
+     "u": "",
+     "item": "green onions",
+     "note": "cut in 1.5-inch pieces",
+     "aisle": "produce"
+    },
+    {
+     "q": 0.5,
+     "u": "cup",
+     "item": "soy sauce",
+     "aisle": "international"
+    },
+    {
+     "q": 0.5,
+     "u": "cup",
+     "item": "mirin",
+     "aisle": "international"
+    },
+    {
+     "q": 3,
+     "u": "tbsp",
+     "item": "sugar",
+     "aisle": "pantry"
+    },
+    {
+     "q": 2,
+     "u": "tbsp",
+     "item": "water",
+     "aisle": "pantry"
+    },
+    {
+     "q": 12,
+     "u": "",
+     "item": "bamboo skewers",
+     "note": "soaked 30 minutes",
+     "aisle": "pantry"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Simmer the soy sauce, mirin, sugar and water until reduced by one third to make the tare.",
+     "timer": 600,
+     "timerLabel": "Reduce the tare"
+    },
+    {
+     "text": "Thread chicken and green onion pieces alternately onto the soaked skewers."
+    },
+    {
+     "text": "Heat a grill or grill pan to medium-high. Grill the skewers, turning, for 6 minutes.",
+     "timer": 360,
+     "timerLabel": "Grill the skewers"
+    },
+    {
+     "text": "Brush with tare and grill, turning, until the chicken is glazed and 165°F.",
+     "timer": 180,
+     "timerLabel": "Glaze and finish"
+    },
+    {
+     "text": "Brush once more with tare before serving."
+    }
+   ]
+  },
+  {
+   "id": "japanese-tsukune",
+   "title": "Tsukune chicken meatballs",
+   "blurb": "Tender chicken meatballs glazed in sweet soy",
+   "type": "teriyaki",
+   "serves": 4,
+   "prep": 20,
+   "cook": 20,
+   "tags": [
+    "kid-friendly"
+   ],
+   "ingredients": [
+    {
+     "q": 1.25,
+     "u": "lb",
+     "item": "ground chicken",
+     "aisle": "meat"
+    },
+    {
+     "q": 2,
+     "u": "",
+     "item": "green onions",
+     "note": "finely minced",
+     "aisle": "produce"
+    },
+    {
+     "q": 0.5,
+     "u": "cup",
+     "item": "panko breadcrumbs",
+     "aisle": "pantry"
+    },
+    {
+     "q": 1,
+     "u": "",
+     "item": "large eggs",
+     "aisle": "dairy"
+    },
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "fresh ginger",
+     "note": "grated",
+     "aisle": "produce"
+    },
+    {
+     "q": 2,
+     "u": "tbsp",
+     "item": "soy sauce",
+     "aisle": "international"
+    },
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "vegetable oil",
+     "aisle": "pantry"
+    },
+    {
+     "q": 3,
+     "u": "tbsp",
+     "item": "mirin",
+     "aisle": "international"
+    },
+    {
+     "q": 2,
+     "u": "tbsp",
+     "item": "sugar",
+     "aisle": "pantry"
+    },
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "water",
+     "aisle": "pantry"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Mix the chicken, green onions, panko, egg, ginger and 1 tbsp soy sauce until sticky."
+    },
+    {
+     "text": "Wet your hands and shape into 16 small meatballs."
+    },
+    {
+     "text": "Heat the oil in a skillet over medium heat. Brown the meatballs all over, then cover and cook to 165°F.",
+     "timer": 600,
+     "timerLabel": "Cook the meatballs"
+    },
+    {
+     "text": "Stir the remaining soy sauce, mirin, sugar and water together."
+    },
+    {
+     "text": "Pour into the pan and roll the meatballs until glazed.",
+     "timer": 120,
+     "timerLabel": "Glaze the meatballs"
+    },
+    {
+     "text": "Serve warm, with rice or on skewers."
+    }
+   ]
+  },
+  {
+   "id": "japanese-pork-shogayaki",
+   "title": "Pork shogayaki",
+   "blurb": "Thin pork sautéed in a ginger-soy sauce",
+   "type": "teriyaki",
+   "serves": 4,
+   "prep": 10,
+   "cook": 10,
+   "tags": [
+    "quick"
+   ],
+   "ingredients": [
+    {
+     "q": 1.25,
+     "u": "lb",
+     "item": "thinly sliced pork loin",
+     "aisle": "meat"
+    },
+    {
+     "q": 2,
+     "u": "tbsp",
+     "item": "soy sauce",
+     "aisle": "international"
+    },
+    {
+     "q": 2,
+     "u": "tbsp",
+     "item": "mirin",
+     "aisle": "international"
+    },
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "sugar",
+     "aisle": "pantry"
+    },
+    {
+     "q": 2,
+     "u": "tbsp",
+     "item": "fresh ginger",
+     "note": "grated",
+     "aisle": "produce"
+    },
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "vegetable oil",
+     "aisle": "pantry"
+    },
+    {
+     "q": 1,
+     "u": "",
+     "item": "yellow onion",
+     "note": "sliced",
+     "aisle": "produce"
+    },
+    {
+     "q": 3,
+     "u": "cup",
+     "item": "green cabbage",
+     "note": "finely shredded",
+     "aisle": "produce"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Stir the soy sauce, mirin, sugar and ginger together in a bowl."
+    },
+    {
+     "text": "Heat the oil in a large skillet over medium-high heat. Cook the onion until soft.",
+     "timer": 180,
+     "timerLabel": "Soften the onion"
+    },
+    {
+     "text": "Add the pork and cook until browned and 145°F.",
+     "timer": 240,
+     "timerLabel": "Cook the pork"
+    },
+    {
+     "text": "Pour in the sauce and cook until it coats the pork.",
+     "timer": 60,
+     "timerLabel": "Glaze the pork"
+    },
+    {
+     "text": "Serve over the shredded cabbage."
+    }
+   ]
+  },
+  {
+   "id": "japanese-miso-salmon",
+   "title": "Miso-glazed salmon",
+   "blurb": "Sweet white miso glaze broiled until caramelized",
+   "type": "teriyaki",
+   "serves": 4,
+   "prep": 10,
+   "cook": 15,
+   "tags": [
+    "healthy",
+    "quick"
+   ],
+   "ingredients": [
+    {
+     "q": 4,
+     "u": "",
+     "item": "salmon fillets (6 oz each)",
+     "aisle": "seafood"
+    },
+    {
+     "q": 3,
+     "u": "tbsp",
+     "item": "white miso paste",
+     "aisle": "international"
+    },
+    {
+     "q": 2,
+     "u": "tbsp",
+     "item": "mirin",
+     "aisle": "international"
+    },
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "soy sauce",
+     "aisle": "international"
+    },
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "sugar",
+     "aisle": "pantry"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "fresh ginger",
+     "note": "grated",
+     "aisle": "produce"
+    },
+    {
+     "q": 2,
+     "u": "",
+     "item": "green onions",
+     "note": "sliced",
+     "aisle": "produce"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Heat the broiler with the rack 6 inches from the heat. Line a pan with foil."
+    },
+    {
+     "text": "Mix the miso, mirin, soy sauce, sugar and ginger into a paste."
+    },
+    {
+     "text": "Spread the paste over the salmon and place on the pan."
+    },
+    {
+     "text": "Broil until caramelized and the salmon reaches 145°F.",
+     "timer": 480,
+     "timerLabel": "Broil the salmon"
+    },
+    {
+     "text": "Rest for 2 minutes and top with green onions.",
+     "timer": 120,
+     "timerLabel": "Rest"
+    }
+   ]
+  },
+  {
+   "id": "japanese-yakiniku-beef",
+   "title": "Yakiniku beef",
+   "blurb": "Grilled marinated steak slices with a sweet-soy dip",
+   "type": "teriyaki",
+   "serves": 4,
+   "prep": 15,
+   "cook": 10,
+   "tags": [
+    "grill",
+    "quick"
+   ],
+   "ingredients": [
+    {
+     "q": 1.5,
+     "u": "lb",
+     "item": "flank steak",
+     "note": "thinly sliced across the grain",
+     "aisle": "meat"
+    },
+    {
+     "q": 0.25,
+     "u": "cup",
+     "item": "soy sauce",
+     "aisle": "international"
+    },
+    {
+     "q": 2,
+     "u": "tbsp",
+     "item": "mirin",
+     "aisle": "international"
+    },
+    {
+     "q": 2,
+     "u": "tbsp",
+     "item": "sugar",
+     "aisle": "pantry"
+    },
+    {
+     "q": 2,
+     "u": "tbsp",
+     "item": "toasted sesame oil",
+     "aisle": "international"
+    },
+    {
+     "q": 3,
+     "u": "clove",
+     "item": "garlic",
+     "note": "grated",
+     "aisle": "produce"
+    },
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "toasted sesame seeds",
+     "aisle": "international"
+    },
+    {
+     "q": 2,
+     "u": "",
+     "item": "green onions",
+     "note": "sliced",
+     "aisle": "produce"
+    },
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "vegetable oil",
+     "aisle": "pantry"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Mix the soy sauce, mirin, sugar, sesame oil, garlic and half the green onions."
+    },
+    {
+     "text": "Toss the beef with two thirds of the sauce and marinate for 15 minutes.",
+     "timer": 900,
+     "timerLabel": "Marinate the beef"
+    },
+    {
+     "text": "Heat a grill pan or skillet until very hot and brush with the oil."
+    },
+    {
+     "text": "Grill the beef in batches, about 1 minute per side, until browned.",
+     "timer": 120,
+     "timerLabel": "Grill the beef"
+    },
+    {
+     "text": "Serve with the remaining sauce for dipping, sesame seeds and green onions."
+    }
+   ]
+  },
+  {
+   "id": "japanese-hambagu",
+   "title": "Hambagu steak",
+   "blurb": "Juicy Japanese-style hamburger steak with a ketchup sauce",
+   "type": "teriyaki",
+   "serves": 4,
+   "prep": 20,
+   "cook": 25,
+   "tags": [
+    "kid-friendly"
+   ],
+   "ingredients": [
+    {
+     "q": 1.25,
+     "u": "lb",
+     "item": "ground beef",
+     "aisle": "meat"
+    },
+    {
+     "q": 0.5,
+     "u": "lb",
+     "item": "ground pork",
+     "aisle": "meat"
+    },
+    {
+     "q": 1,
+     "u": "",
+     "item": "yellow onion",
+     "note": "finely diced",
+     "aisle": "produce"
+    },
+    {
+     "q": 0.5,
+     "u": "cup",
+     "item": "panko breadcrumbs",
+     "aisle": "pantry"
+    },
+    {
+     "q": 0.25,
+     "u": "cup",
+     "item": "whole milk",
+     "aisle": "dairy"
+    },
+    {
+     "q": 1,
+     "u": "",
+     "item": "large eggs",
+     "aisle": "dairy"
+    },
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "vegetable oil",
+     "aisle": "pantry"
+    },
+    {
+     "q": 0.25,
+     "u": "cup",
+     "item": "ketchup",
+     "aisle": "pantry"
+    },
+    {
+     "q": 2,
+     "u": "tbsp",
+     "item": "Worcestershire sauce",
+     "aisle": "pantry"
+    },
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "soy sauce",
+     "aisle": "international"
+    },
+    {
+     "q": 2,
+     "u": "tbsp",
+     "item": "water",
+     "aisle": "pantry"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Soak the panko in the milk. Sauté the onion in a little oil until soft and let it cool.",
+     "timer": 300,
+     "timerLabel": "Cook the onion"
+    },
+    {
+     "text": "Mix the beef, pork, onion, panko, egg, salt and black pepper until sticky."
+    },
+    {
+     "text": "Form four oval patties and press a dimple into the center of each."
+    },
+    {
+     "text": "Cook in the oil over medium heat for 5 minutes per side, then cover for 5 minutes until 160°F.",
+     "timer": 900,
+     "timerLabel": "Cook the patties"
+    },
+    {
+     "text": "Remove the patties. Add the ketchup, Worcestershire, soy sauce and water to the pan and simmer 2 minutes.",
+     "timer": 120,
+     "timerLabel": "Make the sauce"
+    },
+    {
+     "text": "Spoon the sauce over the patties."
+    }
+   ]
+  },
+  {
+   "id": "japanese-teriyaki-tofu",
+   "title": "Teriyaki tofu steaks",
+   "blurb": "Crisp pan-seared tofu in a glossy teriyaki glaze",
+   "type": "teriyaki",
+   "serves": 4,
+   "prep": 15,
+   "cook": 20,
+   "tags": [
+    "vegetarian",
+    "vegan",
+    "healthy"
+   ],
+   "ingredients": [
+    {
+     "q": 2,
+     "u": "pkg",
+     "item": "extra-firm tofu (14 oz)",
+     "aisle": "dairy"
+    },
+    {
+     "q": 2,
+     "u": "tbsp",
+     "item": "cornstarch",
+     "aisle": "pantry"
+    },
+    {
+     "q": 2,
+     "u": "tbsp",
+     "item": "vegetable oil",
+     "aisle": "pantry"
+    },
+    {
+     "q": 0.25,
+     "u": "cup",
+     "item": "soy sauce",
+     "aisle": "international"
+    },
+    {
+     "q": 0.25,
+     "u": "cup",
+     "item": "mirin",
+     "aisle": "international"
+    },
+    {
+     "q": 2,
+     "u": "tbsp",
+     "item": "sugar",
+     "aisle": "pantry"
+    },
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "fresh ginger",
+     "note": "grated",
+     "aisle": "produce"
+    },
+    {
+     "q": 2,
+     "u": "clove",
+     "item": "garlic",
+     "note": "minced",
+     "aisle": "produce"
+    },
+    {
+     "q": 2,
+     "u": "",
+     "item": "green onions",
+     "note": "sliced",
+     "aisle": "produce"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Press the tofu with paper towels for 10 minutes, then cut each block into 4 slabs.",
+     "timer": 600,
+     "timerLabel": "Press the tofu"
+    },
+    {
+     "text": "Pat dry and dust the slabs with cornstarch."
+    },
+    {
+     "text": "Pan-fry in the oil over medium-high heat until golden, about 4 minutes per side.",
+     "timer": 480,
+     "timerLabel": "Fry the tofu"
+    },
+    {
+     "text": "Stir the soy sauce, mirin, sugar, ginger and garlic together and pour into the pan."
+    },
+    {
+     "text": "Simmer, turning the tofu, until the sauce thickens.",
+     "timer": 180,
+     "timerLabel": "Glaze the tofu"
+    },
+    {
+     "text": "Top with green onions."
+    }
+   ]
+  },
+  {
+   "id": "japanese-tonkatsu",
+   "title": "Tonkatsu",
+   "blurb": "Crisp panko pork cutlets with tangy tonkatsu sauce",
+   "type": "fried",
+   "serves": 4,
+   "prep": 20,
+   "cook": 15,
+   "tags": [
+    "kid-friendly"
+   ],
+   "ingredients": [
+    {
+     "q": 4,
+     "u": "",
+     "item": "boneless pork loin chops (about 5 oz each)",
+     "aisle": "meat"
+    },
+    {
+     "q": 0.5,
+     "u": "cup",
+     "item": "all-purpose flour",
+     "aisle": "pantry"
+    },
+    {
+     "q": 2,
+     "u": "",
+     "item": "large eggs",
+     "note": "beaten",
+     "aisle": "dairy"
+    },
+    {
+     "q": 1.5,
+     "u": "cup",
+     "item": "panko breadcrumbs",
+     "aisle": "pantry"
+    },
+    {
+     "q": 1,
+     "u": "cup",
+     "item": "vegetable oil",
+     "note": "for frying",
+     "aisle": "pantry"
+    },
+    {
+     "q": 4,
+     "u": "tbsp",
+     "item": "ketchup",
+     "aisle": "pantry"
+    },
+    {
+     "q": 3,
+     "u": "tbsp",
+     "item": "Worcestershire sauce",
+     "aisle": "pantry"
+    },
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "soy sauce",
+     "aisle": "international"
+    },
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "sugar",
+     "aisle": "pantry"
+    },
+    {
+     "q": 3,
+     "u": "cup",
+     "item": "green cabbage",
+     "note": "finely shredded",
+     "aisle": "produce"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Make the sauce by stirring the ketchup, Worcestershire, soy sauce and sugar together."
+    },
+    {
+     "text": "Pound the chops to 1/2 inch thick. Season with salt and black pepper."
+    },
+    {
+     "text": "Coat each chop in flour, then egg, then panko, pressing firmly."
+    },
+    {
+     "text": "Heat the oil to 350°F in a large skillet. Fry the chops until golden and 145°F inside.",
+     "timer": 420,
+     "timerLabel": "Fry the cutlets"
+    },
+    {
+     "text": "Drain on a rack and rest for 3 minutes, then slice into strips.",
+     "timer": 180,
+     "timerLabel": "Rest"
+    },
+    {
+     "text": "Serve over shredded cabbage with the sauce."
+    }
+   ]
+  },
+  {
+   "id": "japanese-chicken-katsu",
+   "title": "Chicken katsu",
+   "blurb": "Golden panko chicken breast cutlets",
+   "type": "fried",
+   "serves": 4,
+   "prep": 20,
+   "cook": 15,
+   "tags": [
+    "kid-friendly"
+   ],
+   "ingredients": [
+    {
+     "q": 1.5,
+     "u": "lb",
+     "item": "boneless skinless chicken breasts",
+     "note": "sliced in half horizontally",
+     "aisle": "meat"
+    },
+    {
+     "q": 0.5,
+     "u": "cup",
+     "item": "all-purpose flour",
+     "aisle": "pantry"
+    },
+    {
+     "q": 2,
+     "u": "",
+     "item": "large eggs",
+     "note": "beaten",
+     "aisle": "dairy"
+    },
+    {
+     "q": 1.5,
+     "u": "cup",
+     "item": "panko breadcrumbs",
+     "aisle": "pantry"
+    },
+    {
+     "q": 1,
+     "u": "cup",
+     "item": "vegetable oil",
+     "note": "for frying",
+     "aisle": "pantry"
+    },
+    {
+     "q": 3,
+     "u": "tbsp",
+     "item": "ketchup",
+     "aisle": "pantry"
+    },
+    {
+     "q": 2,
+     "u": "tbsp",
+     "item": "Worcestershire sauce",
+     "aisle": "pantry"
+    },
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "soy sauce",
+     "aisle": "international"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "sugar",
+     "aisle": "pantry"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Mix the ketchup, Worcestershire, soy sauce and sugar for the sauce."
+    },
+    {
+     "text": "Pound the chicken to an even 1/2 inch and season with salt and black pepper."
+    },
+    {
+     "text": "Coat the cutlets in flour, then egg, then panko."
+    },
+    {
+     "text": "Heat the oil to 350°F in a large skillet. Fry until golden and 165°F inside, about 3 minutes per side.",
+     "timer": 360,
+     "timerLabel": "Fry the chicken"
+    },
+    {
+     "text": "Drain on a rack, slice and serve with the sauce."
+    }
+   ]
+  },
+  {
+   "id": "japanese-karaage",
+   "title": "Chicken karaage",
+   "blurb": "Japanese fried chicken marinated in ginger and soy",
+   "type": "fried",
+   "serves": 4,
+   "prep": 15,
+   "cook": 15,
+   "tags": [
+    "crowd",
+    "kid-friendly"
+   ],
+   "ingredients": [
+    {
+     "q": 2,
+     "u": "lb",
+     "item": "boneless skinless chicken thighs",
+     "note": "cut in 2-inch pieces",
+     "aisle": "meat"
+    },
+    {
+     "q": 3,
+     "u": "tbsp",
+     "item": "soy sauce",
+     "aisle": "international"
+    },
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "mirin",
+     "aisle": "international"
+    },
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "fresh ginger",
+     "note": "grated",
+     "aisle": "produce"
+    },
+    {
+     "q": 3,
+     "u": "clove",
+     "item": "garlic",
+     "note": "grated",
+     "aisle": "produce"
+    },
+    {
+     "q": 0.5,
+     "u": "cup",
+     "item": "potato starch or cornstarch",
+     "aisle": "pantry"
+    },
+    {
+     "q": 3,
+     "u": "cup",
+     "item": "vegetable oil",
+     "note": "for frying",
+     "aisle": "pantry"
+    },
+    {
+     "q": 1,
+     "u": "",
+     "item": "lemons",
+     "note": "cut in wedges",
+     "aisle": "produce"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Toss the chicken with the soy sauce, mirin, ginger and garlic. Marinate for 30 minutes.",
+     "timer": 1800,
+     "timerLabel": "Marinate the chicken"
+    },
+    {
+     "text": "Heat the oil in a deep pot to 340°F."
+    },
+    {
+     "text": "Coat the chicken in the potato starch, shaking off extra."
+    },
+    {
+     "text": "Fry in batches until golden, about 5 minutes. Chicken must reach 165°F.",
+     "timer": 300,
+     "timerLabel": "Fry the chicken"
+    },
+    {
+     "text": "Drain on a rack and serve hot with lemon wedges."
+    }
+   ]
+  },
+  {
+   "id": "japanese-shrimp-tempura",
+   "title": "Shrimp tempura",
+   "blurb": "Light crisp shrimp with a dipping sauce",
+   "type": "fried",
+   "serves": 4,
+   "prep": 20,
+   "cook": 15,
+   "tags": [
+    "crowd"
+   ],
+   "ingredients": [
+    {
+     "q": 16,
+     "u": "",
+     "item": "large shrimp",
+     "note": "peeled, tails on",
+     "aisle": "seafood"
+    },
+    {
+     "q": 1,
+     "u": "cup",
+     "item": "all-purpose flour",
+     "aisle": "pantry"
+    },
+    {
+     "q": 0.25,
+     "u": "cup",
+     "item": "cornstarch",
+     "aisle": "pantry"
+    },
+    {
+     "q": 1,
+     "u": "cup",
+     "item": "ice-cold sparkling water",
+     "aisle": "beverages"
+    },
+    {
+     "q": 1,
+     "u": "",
+     "item": "large eggs",
+     "aisle": "dairy"
+    },
+    {
+     "q": 3,
+     "u": "cup",
+     "item": "vegetable oil",
+     "note": "for frying",
+     "aisle": "pantry"
+    },
+    {
+     "q": 0.5,
+     "u": "cup",
+     "item": "water",
+     "aisle": "pantry"
+    },
+    {
+     "q": 2,
+     "u": "tbsp",
+     "item": "soy sauce",
+     "aisle": "international"
+    },
+    {
+     "q": 2,
+     "u": "tbsp",
+     "item": "mirin",
+     "aisle": "international"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "fresh ginger",
+     "note": "grated",
+     "aisle": "produce"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Simmer the water, soy sauce and mirin for 1 minute, then add the ginger. Set aside.",
+     "timer": 60,
+     "timerLabel": "Make the dip"
+    },
+    {
+     "text": "Heat the oil in a deep pot to 350°F."
+    },
+    {
+     "text": "Score the shrimp bellies and straighten them. Pat dry."
+    },
+    {
+     "text": "Quickly whisk the flour, cornstarch, sparkling water and egg. Leave it lumpy."
+    },
+    {
+     "text": "Dip the shrimp in batter and fry until pale gold, about 2 minutes. Shrimp must reach 145°F.",
+     "timer": 120,
+     "timerLabel": "Fry the shrimp"
+    },
+    {
+     "text": "Drain on a rack and serve right away with the dip."
+    }
+   ]
+  },
+  {
+   "id": "japanese-vegetable-tempura",
+   "title": "Vegetable tempura",
+   "blurb": "Crisp sweet potato, green beans and mushrooms in light batter",
+   "type": "fried",
+   "serves": 4,
+   "prep": 20,
+   "cook": 20,
+   "tags": [
+    "vegetarian",
+    "crowd"
+   ],
+   "ingredients": [
+    {
+     "q": 1,
+     "u": "",
+     "item": "sweet potatoes",
+     "note": "sliced 1/4-inch thick",
+     "aisle": "produce"
+    },
+    {
+     "q": 8,
+     "u": "oz",
+     "item": "green beans",
+     "note": "trimmed",
+     "aisle": "produce"
+    },
+    {
+     "q": 8,
+     "u": "oz",
+     "item": "shiitake or cremini mushrooms",
+     "note": "halved",
+     "aisle": "produce"
+    },
+    {
+     "q": 1,
+     "u": "",
+     "item": "red bell pepper",
+     "note": "cut in strips",
+     "aisle": "produce"
+    },
+    {
+     "q": 1,
+     "u": "cup",
+     "item": "all-purpose flour",
+     "aisle": "pantry"
+    },
+    {
+     "q": 0.25,
+     "u": "cup",
+     "item": "cornstarch",
+     "aisle": "pantry"
+    },
+    {
+     "q": 1,
+     "u": "cup",
+     "item": "ice-cold sparkling water",
+     "aisle": "beverages"
+    },
+    {
+     "q": 3,
+     "u": "cup",
+     "item": "vegetable oil",
+     "note": "for frying",
+     "aisle": "pantry"
+    },
+    {
+     "q": 0.5,
+     "u": "cup",
+     "item": "water",
+     "aisle": "pantry"
+    },
+    {
+     "q": 2,
+     "u": "tbsp",
+     "item": "soy sauce",
+     "aisle": "international"
+    },
+    {
+     "q": 2,
+     "u": "tbsp",
+     "item": "mirin",
+     "aisle": "international"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Simmer the water, soy sauce and mirin for 1 minute for the dip.",
+     "timer": 60,
+     "timerLabel": "Make the dip"
+    },
+    {
+     "text": "Heat the oil in a deep pot to 350°F."
+    },
+    {
+     "text": "Whisk the flour, cornstarch and sparkling water just until mixed. Lumps are fine."
+    },
+    {
+     "text": "Dip the vegetables in batter and fry in small batches until crisp, 3 to 4 minutes.",
+     "timer": 210,
+     "timerLabel": "Fry the vegetables"
+    },
+    {
+     "text": "Drain on a rack and sprinkle with salt."
+    },
+    {
+     "text": "Serve at once with the dip."
+    }
+   ]
+  },
+  {
+   "id": "japanese-ebi-fry",
+   "title": "Ebi fry",
+   "blurb": "Panko-crusted fried shrimp with tartar-style sauce",
+   "type": "fried",
+   "serves": 4,
+   "prep": 20,
+   "cook": 10,
+   "tags": [
+    "kid-friendly"
+   ],
+   "ingredients": [
+    {
+     "q": 1.25,
+     "u": "lb",
+     "item": "large shrimp",
+     "note": "peeled, tails on",
+     "aisle": "seafood"
+    },
+    {
+     "q": 0.5,
+     "u": "cup",
+     "item": "all-purpose flour",
+     "aisle": "pantry"
+    },
+    {
+     "q": 2,
+     "u": "",
+     "item": "large eggs",
+     "note": "beaten",
+     "aisle": "dairy"
+    },
+    {
+     "q": 1.5,
+     "u": "cup",
+     "item": "panko breadcrumbs",
+     "aisle": "pantry"
+    },
+    {
+     "q": 3,
+     "u": "cup",
+     "item": "vegetable oil",
+     "note": "for frying",
+     "aisle": "pantry"
+    },
+    {
+     "q": 0.5,
+     "u": "cup",
+     "item": "mayonnaise",
+     "aisle": "pantry"
+    },
+    {
+     "q": 2,
+     "u": "tbsp",
+     "item": "dill pickles",
+     "note": "finely chopped",
+     "aisle": "produce"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "lemon juice",
+     "aisle": "produce"
+    },
+    {
+     "q": 1,
+     "u": "",
+     "item": "large eggs",
+     "note": "hard-boiled and chopped",
+     "aisle": "dairy"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Hard-boil the egg 10 minutes, cool, peel and chop.",
+     "timer": 600,
+     "timerLabel": "Boil the egg"
+    },
+    {
+     "text": "Mix the mayonnaise, pickles, lemon juice and chopped egg to make the sauce."
+    },
+    {
+     "text": "Pat the shrimp dry, season with salt, and coat in flour, egg and panko."
+    },
+    {
+     "text": "Heat the oil to 350°F. Fry the shrimp until golden, 2 to 3 minutes. Shrimp must reach 145°F.",
+     "timer": 150,
+     "timerLabel": "Fry the shrimp"
+    },
+    {
+     "text": "Drain on a rack and serve with the sauce."
+    }
+   ]
+  },
+  {
+   "id": "japanese-korokke",
+   "title": "Korokke potato croquettes",
+   "blurb": "Crunchy croquettes filled with potato and beef",
+   "type": "fried",
+   "serves": 4,
+   "prep": 30,
+   "cook": 35,
+   "tags": [
+    "make ahead",
+    "kid-friendly"
+   ],
+   "ingredients": [
+    {
+     "q": 1.5,
+     "u": "lb",
+     "item": "russet potatoes",
+     "note": "peeled, cut in chunks",
+     "aisle": "produce"
+    },
+    {
+     "q": 0.5,
+     "u": "lb",
+     "item": "ground beef",
+     "aisle": "meat"
+    },
+    {
+     "q": 1,
+     "u": "",
+     "item": "yellow onion",
+     "note": "finely diced",
+     "aisle": "produce"
+    },
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "vegetable oil",
+     "aisle": "pantry"
+    },
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "soy sauce",
+     "aisle": "international"
+    },
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "sugar",
+     "aisle": "pantry"
+    },
+    {
+     "q": 0.5,
+     "u": "cup",
+     "item": "all-purpose flour",
+     "aisle": "pantry"
+    },
+    {
+     "q": 2,
+     "u": "",
+     "item": "large eggs",
+     "note": "beaten",
+     "aisle": "dairy"
+    },
+    {
+     "q": 1.5,
+     "u": "cup",
+     "item": "panko breadcrumbs",
+     "aisle": "pantry"
+    },
+    {
+     "q": 3,
+     "u": "cup",
+     "item": "vegetable oil",
+     "note": "for frying",
+     "aisle": "pantry"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Boil the potatoes in salted water until very tender, then drain and mash.",
+     "timer": 1080,
+     "timerLabel": "Boil the potatoes"
+    },
+    {
+     "text": "Cook the onion in 1 tbsp oil, then add the beef, soy sauce and sugar. Cook to 160°F.",
+     "timer": 420,
+     "timerLabel": "Cook the filling"
+    },
+    {
+     "text": "Fold the filling into the mash and cool until easy to handle."
+    },
+    {
+     "text": "Shape into 12 ovals. Coat in flour, egg, then panko."
+    },
+    {
+     "text": "Heat the oil to 350°F. Fry the croquettes until deep golden, about 3 minutes.",
+     "timer": 180,
+     "timerLabel": "Fry the croquettes"
+    },
+    {
+     "text": "Drain on a rack and serve warm."
+    }
+   ]
+  },
+  {
+   "id": "japanese-agedashi-tofu",
+   "title": "Agedashi tofu",
+   "blurb": "Crispy tofu cubes in warm savory dashi",
+   "type": "fried",
+   "serves": 4,
+   "prep": 15,
+   "cook": 20,
+   "tags": [
+    "quick"
+   ],
+   "ingredients": [
+    {
+     "q": 2,
+     "u": "pkg",
+     "item": "firm tofu (14 oz)",
+     "aisle": "dairy"
+    },
+    {
+     "q": 0.5,
+     "u": "cup",
+     "item": "potato starch or cornstarch",
+     "aisle": "pantry"
+    },
+    {
+     "q": 2,
+     "u": "cup",
+     "item": "vegetable oil",
+     "note": "for frying",
+     "aisle": "pantry"
+    },
+    {
+     "q": 1.5,
+     "u": "cup",
+     "item": "water",
+     "aisle": "pantry"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "dashi powder",
+     "aisle": "international"
+    },
+    {
+     "q": 3,
+     "u": "tbsp",
+     "item": "soy sauce",
+     "aisle": "international"
+    },
+    {
+     "q": 3,
+     "u": "tbsp",
+     "item": "mirin",
+     "aisle": "international"
+    },
+    {
+     "q": 2,
+     "u": "",
+     "item": "green onions",
+     "note": "sliced",
+     "aisle": "produce"
+    },
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "fresh ginger",
+     "note": "grated",
+     "aisle": "produce"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Press the tofu with paper towels for 10 minutes and cut into 8 cubes.",
+     "timer": 600,
+     "timerLabel": "Press the tofu"
+    },
+    {
+     "text": "Simmer the water, dashi powder, soy sauce and mirin for 3 minutes.",
+     "timer": 180,
+     "timerLabel": "Make the broth"
+    },
+    {
+     "text": "Pat the tofu dry and coat lightly in starch."
+    },
+    {
+     "text": "Fry in 350°F oil until golden and crisp, about 4 minutes.",
+     "timer": 240,
+     "timerLabel": "Fry the tofu"
+    },
+    {
+     "text": "Place the tofu in shallow bowls and pour the hot broth around it."
+    },
+    {
+     "text": "Top with green onions and ginger."
+    }
+   ]
+  },
+  {
+   "id": "japanese-chicken-nanban",
+   "title": "Chicken nanban",
+   "blurb": "Fried chicken in sweet-sour sauce with tartar sauce",
+   "type": "fried",
+   "serves": 4,
+   "prep": 25,
+   "cook": 25,
+   "tags": [],
+   "ingredients": [
+    {
+     "q": 1.5,
+     "u": "lb",
+     "item": "boneless skinless chicken thighs",
+     "aisle": "meat"
+    },
+    {
+     "q": 0.5,
+     "u": "cup",
+     "item": "all-purpose flour",
+     "aisle": "pantry"
+    },
+    {
+     "q": 2,
+     "u": "",
+     "item": "large eggs",
+     "note": "beaten, divided",
+     "aisle": "dairy"
+    },
+    {
+     "q": 3,
+     "u": "cup",
+     "item": "vegetable oil",
+     "note": "for frying",
+     "aisle": "pantry"
+    },
+    {
+     "q": 0.25,
+     "u": "cup",
+     "item": "soy sauce",
+     "aisle": "international"
+    },
+    {
+     "q": 0.25,
+     "u": "cup",
+     "item": "rice vinegar",
+     "aisle": "international"
+    },
+    {
+     "q": 3,
+     "u": "tbsp",
+     "item": "sugar",
+     "aisle": "pantry"
+    },
+    {
+     "q": 0.5,
+     "u": "cup",
+     "item": "mayonnaise",
+     "aisle": "pantry"
+    },
+    {
+     "q": 2,
+     "u": "tbsp",
+     "item": "dill pickles",
+     "note": "finely chopped",
+     "aisle": "produce"
+    },
+    {
+     "q": 1,
+     "u": "",
+     "item": "large eggs",
+     "note": "hard-boiled and chopped",
+     "aisle": "dairy"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Hard-boil an egg for 10 minutes, cool, peel and chop. Mix with the mayonnaise and pickles for tartar sauce.",
+     "timer": 600,
+     "timerLabel": "Boil the egg"
+    },
+    {
+     "text": "Simmer the soy sauce, vinegar and sugar for 2 minutes. Pour into a shallow dish.",
+     "timer": 120,
+     "timerLabel": "Make the sauce"
+    },
+    {
+     "text": "Season the chicken with salt, dust with flour and dip in beaten egg."
+    },
+    {
+     "text": "Fry in 350°F oil until golden and 165°F inside, about 6 minutes.",
+     "timer": 360,
+     "timerLabel": "Fry the chicken"
+    },
+    {
+     "text": "Roll the hot chicken in the sauce, then slice."
+    },
+    {
+     "text": "Serve with the tartar sauce."
+    }
+   ]
+  },
+  {
+   "id": "japanese-miso-soup",
+   "title": "Miso soup with tofu and wakame",
+   "blurb": "Classic everyday soup in 15 minutes",
+   "type": "soups",
+   "serves": 4,
+   "prep": 5,
+   "cook": 10,
+   "tags": [
+    "quick",
+    "healthy"
+   ],
+   "ingredients": [
+    {
+     "q": 4,
+     "u": "cup",
+     "item": "water",
+     "aisle": "pantry"
+    },
+    {
+     "q": 2,
+     "u": "tsp",
+     "item": "dashi powder",
+     "aisle": "international"
+    },
+    {
+     "q": 3,
+     "u": "tbsp",
+     "item": "white miso paste",
+     "aisle": "international"
+    },
+    {
+     "q": 7,
+     "u": "oz",
+     "item": "soft tofu",
+     "note": "cut in small cubes",
+     "aisle": "dairy"
+    },
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "dried wakame",
+     "aisle": "international"
+    },
+    {
+     "q": 2,
+     "u": "",
+     "item": "green onions",
+     "note": "sliced",
+     "aisle": "produce"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Soak the wakame in cold water for 5 minutes, then drain.",
+     "timer": 300,
+     "timerLabel": "Soak the wakame"
+    },
+    {
+     "text": "Bring the water and dashi powder to a gentle simmer."
+    },
+    {
+     "text": "Add the tofu and wakame and warm for 2 minutes.",
+     "timer": 120,
+     "timerLabel": "Warm the tofu"
+    },
+    {
+     "text": "Turn the heat to low. Whisk the miso with a ladle of broth, then stir it in."
+    },
+    {
+     "text": "Do not let it boil. Serve topped with green onions."
+    }
+   ]
+  },
+  {
+   "id": "japanese-tonjiru",
+   "title": "Tonjiru pork miso soup",
+   "blurb": "Hearty miso soup with pork, root vegetables and tofu",
+   "type": "soups",
+   "serves": 4,
+   "prep": 15,
+   "cook": 25,
+   "tags": [],
+   "ingredients": [
+    {
+     "q": 0.5,
+     "u": "lb",
+     "item": "thinly sliced pork belly or shoulder",
+     "aisle": "meat"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "toasted sesame oil",
+     "aisle": "international"
+    },
+    {
+     "q": 1,
+     "u": "",
+     "item": "carrots",
+     "note": "cut in half-moons",
+     "aisle": "produce"
+    },
+    {
+     "q": 1,
+     "u": "",
+     "item": "daikon radish or turnip",
+     "note": "cut in half-moons",
+     "aisle": "produce"
+    },
+    {
+     "q": 1,
+     "u": "",
+     "item": "potatoes",
+     "note": "cut in chunks",
+     "aisle": "produce"
+    },
+    {
+     "q": 4,
+     "u": "cup",
+     "item": "water",
+     "aisle": "pantry"
+    },
+    {
+     "q": 2,
+     "u": "tsp",
+     "item": "dashi powder",
+     "aisle": "international"
+    },
+    {
+     "q": 4,
+     "u": "tbsp",
+     "item": "white miso paste",
+     "aisle": "international"
+    },
+    {
+     "q": 7,
+     "u": "oz",
+     "item": "firm tofu",
+     "note": "cubed",
+     "aisle": "dairy"
+    },
+    {
+     "q": 2,
+     "u": "",
+     "item": "green onions",
+     "note": "sliced",
+     "aisle": "produce"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Cook the pork in the sesame oil in a pot until it loses its pink color.",
+     "timer": 180,
+     "timerLabel": "Cook the pork"
+    },
+    {
+     "text": "Add the carrot, daikon, potato, water and dashi powder. Simmer until tender.",
+     "timer": 900,
+     "timerLabel": "Simmer the vegetables"
+    },
+    {
+     "text": "Add the tofu and heat through."
+    },
+    {
+     "text": "Whisk the miso with a ladle of broth and stir it in. Do not boil."
+    },
+    {
+     "text": "Serve topped with green onions."
+    }
+   ]
+  },
+  {
+   "id": "japanese-mushroom-suimono",
+   "title": "Clear mushroom soup",
+   "blurb": "Light soy-dashi broth with mushrooms and spinach",
+   "type": "soups",
+   "serves": 4,
+   "prep": 10,
+   "cook": 15,
+   "tags": [
+    "quick",
+    "healthy"
+   ],
+   "ingredients": [
+    {
+     "q": 4,
+     "u": "cup",
+     "item": "water",
+     "aisle": "pantry"
+    },
+    {
+     "q": 2,
+     "u": "tsp",
+     "item": "dashi powder",
+     "aisle": "international"
+    },
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "soy sauce",
+     "aisle": "international"
+    },
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "mirin",
+     "aisle": "international"
+    },
+    {
+     "q": 8,
+     "u": "oz",
+     "item": "shiitake or white mushrooms",
+     "note": "sliced",
+     "aisle": "produce"
+    },
+    {
+     "q": 2,
+     "u": "cup",
+     "item": "baby spinach",
+     "aisle": "produce"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "fresh ginger",
+     "note": "grated",
+     "aisle": "produce"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Bring the water and dashi powder to a simmer."
+    },
+    {
+     "text": "Add the soy sauce, mirin and mushrooms. Simmer until tender.",
+     "timer": 360,
+     "timerLabel": "Simmer the mushrooms"
+    },
+    {
+     "text": "Add the spinach and cook 30 seconds until wilted.",
+     "timer": 30,
+     "timerLabel": "Wilt the spinach"
+    },
+    {
+     "text": "Taste and add a pinch of salt if needed."
+    },
+    {
+     "text": "Serve with a little grated ginger on top."
+    }
+   ]
+  },
+  {
+   "id": "japanese-kakitamajiru",
+   "title": "Egg drop soup (kakitamajiru)",
+   "blurb": "Silky eggs ribboned through hot savory dashi",
+   "type": "soups",
+   "serves": 4,
+   "prep": 5,
+   "cook": 10,
+   "tags": [
+    "quick",
+    "kid-friendly"
+   ],
+   "ingredients": [
+    {
+     "q": 4,
+     "u": "cup",
+     "item": "water",
+     "aisle": "pantry"
+    },
+    {
+     "q": 2,
+     "u": "tsp",
+     "item": "dashi powder",
+     "aisle": "international"
+    },
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "soy sauce",
+     "aisle": "international"
+    },
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "mirin",
+     "aisle": "international"
+    },
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "cornstarch",
+     "aisle": "pantry"
+    },
+    {
+     "q": 2,
+     "u": "tbsp",
+     "item": "water",
+     "aisle": "pantry"
+    },
+    {
+     "q": 3,
+     "u": "",
+     "item": "large eggs",
+     "note": "beaten",
+     "aisle": "dairy"
+    },
+    {
+     "q": 2,
+     "u": "",
+     "item": "green onions",
+     "note": "sliced",
+     "aisle": "produce"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Bring the water, dashi powder, soy sauce and mirin to a simmer."
+    },
+    {
+     "text": "Mix the cornstarch with 2 tbsp water and stir it in until the soup thickens slightly.",
+     "timer": 60,
+     "timerLabel": "Thicken the soup"
+    },
+    {
+     "text": "Slowly pour in the beaten eggs in a thin stream while stirring gently."
+    },
+    {
+     "text": "Turn off the heat once ribbons form."
+    },
+    {
+     "text": "Add a pinch of salt and serve with green onions."
+    }
+   ]
+  },
+  {
+   "id": "japanese-corn-soup",
+   "title": "Japanese sweet corn soup",
+   "blurb": "Creamy, sweet corn potage like a Japanese bakery",
+   "type": "soups",
+   "serves": 4,
+   "prep": 10,
+   "cook": 20,
+   "tags": [
+    "vegetarian",
+    "kid-friendly"
+   ],
+   "ingredients": [
+    {
+     "q": 2,
+     "u": "tbsp",
+     "item": "unsalted butter",
+     "aisle": "dairy"
+    },
+    {
+     "q": 0.5,
+     "u": "",
+     "item": "yellow onion",
+     "note": "diced",
+     "aisle": "produce"
+    },
+    {
+     "q": 1,
+     "u": "can",
+     "item": "cream-style corn (14.75 oz)",
+     "aisle": "canned"
+    },
+    {
+     "q": 2,
+     "u": "cup",
+     "item": "whole milk",
+     "aisle": "dairy"
+    },
+    {
+     "q": 1,
+     "u": "cup",
+     "item": "water",
+     "aisle": "pantry"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "chicken bouillon granules",
+     "aisle": "canned"
+    },
+    {
+     "q": 1,
+     "u": "cup",
+     "item": "frozen corn",
+     "aisle": "frozen"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "sugar",
+     "aisle": "pantry"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Melt the butter in a pot and cook the onion until soft.",
+     "timer": 240,
+     "timerLabel": "Soften the onion"
+    },
+    {
+     "text": "Add the cream-style corn, frozen corn, water and bouillon. Simmer.",
+     "timer": 600,
+     "timerLabel": "Simmer the corn"
+    },
+    {
+     "text": "Blend until smooth with an immersion blender or in batches."
+    },
+    {
+     "text": "Stir in the milk and sugar and warm gently.",
+     "timer": 180,
+     "timerLabel": "Warm the soup"
+    },
+    {
+     "text": "Season with salt and black pepper."
+    }
+   ]
+  },
+  {
+   "id": "japanese-shabu-shabu",
+   "title": "Shabu-shabu",
+   "blurb": "Swish paper-thin beef and vegetables in simmering broth",
+   "type": "soups",
+   "serves": 4,
+   "prep": 25,
+   "cook": 20,
+   "tags": [
+    "crowd"
+   ],
+   "ingredients": [
+    {
+     "q": 1.25,
+     "u": "lb",
+     "item": "paper-thin sliced beef ribeye",
+     "aisle": "meat"
+    },
+    {
+     "q": 8,
+     "u": "cup",
+     "item": "water",
+     "aisle": "pantry"
+    },
+    {
+     "q": 1,
+     "u": "piece",
+     "item": "dried kombu",
+     "aisle": "international"
+    },
+    {
+     "q": 1,
+     "u": "",
+     "item": "napa cabbage",
+     "note": "cut in pieces",
+     "aisle": "produce"
+    },
+    {
+     "q": 8,
+     "u": "oz",
+     "item": "shiitake mushrooms",
+     "note": "stems removed",
+     "aisle": "produce"
+    },
+    {
+     "q": 1,
+     "u": "pkg",
+     "item": "firm tofu (14 oz)",
+     "note": "cubed",
+     "aisle": "dairy"
+    },
+    {
+     "q": 1,
+     "u": "bunch",
+     "item": "green onions",
+     "note": "cut in 2-inch pieces",
+     "aisle": "produce"
+    },
+    {
+     "q": 0.5,
+     "u": "cup",
+     "item": "ponzu sauce",
+     "aisle": "international"
+    },
+    {
+     "q": 0.33,
+     "u": "cup",
+     "item": "sesame sauce (goma dare)",
+     "aisle": "international"
+    },
+    {
+     "q": 1,
+     "u": "cup",
+     "item": "short-grain rice",
+     "aisle": "international"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Cook the rice and keep it warm.",
+     "timer": 1200,
+     "timerLabel": "Cook the rice"
+    },
+    {
+     "text": "Put the water and kombu in a pot on the table. Bring to a simmer and remove the kombu.",
+     "timer": 600,
+     "timerLabel": "Heat the broth"
+    },
+    {
+     "text": "Arrange the beef and vegetables on platters."
+    },
+    {
+     "text": "Add the hard vegetables and tofu first and simmer until tender.",
+     "timer": 300,
+     "timerLabel": "Cook the vegetables"
+    },
+    {
+     "text": "Swish each beef slice in the broth until just gray, about 10 seconds. Beef must be cooked through."
+    },
+    {
+     "text": "Dip in ponzu or sesame sauce and eat with rice."
+    }
+   ]
+  },
+  {
+   "id": "japanese-sukiyaki",
+   "title": "Sukiyaki",
+   "blurb": "Sweet soy beef hot pot with tofu, noodles and vegetables",
+   "type": "soups",
+   "serves": 4,
+   "prep": 20,
+   "cook": 25,
+   "tags": [
+    "crowd"
+   ],
+   "ingredients": [
+    {
+     "q": 1.25,
+     "u": "lb",
+     "item": "thinly sliced beef ribeye",
+     "aisle": "meat"
+    },
+    {
+     "q": 0.5,
+     "u": "cup",
+     "item": "soy sauce",
+     "aisle": "international"
+    },
+    {
+     "q": 0.5,
+     "u": "cup",
+     "item": "mirin",
+     "aisle": "international"
+    },
+    {
+     "q": 0.33,
+     "u": "cup",
+     "item": "sugar",
+     "aisle": "pantry"
+    },
+    {
+     "q": 1,
+     "u": "cup",
+     "item": "water",
+     "aisle": "pantry"
+    },
+    {
+     "q": 1,
+     "u": "",
+     "item": "napa cabbage",
+     "note": "cut in pieces",
+     "aisle": "produce"
+    },
+    {
+     "q": 1,
+     "u": "pkg",
+     "item": "firm tofu (14 oz)",
+     "note": "cubed",
+     "aisle": "dairy"
+    },
+    {
+     "q": 8,
+     "u": "oz",
+     "item": "shiitake mushrooms",
+     "note": "stems removed",
+     "aisle": "produce"
+    },
+    {
+     "q": 1,
+     "u": "bunch",
+     "item": "green onions",
+     "note": "cut in 2-inch pieces",
+     "aisle": "produce"
+    },
+    {
+     "q": 1,
+     "u": "pkg",
+     "item": "shirataki noodles (8 oz)",
+     "aisle": "international"
+    },
+    {
+     "q": 4,
+     "u": "",
+     "item": "large eggs",
+     "note": "pasteurized, for dipping",
+     "aisle": "dairy"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Stir the soy sauce, mirin, sugar and water together to make the warishita."
+    },
+    {
+     "text": "Rinse and drain the shirataki noodles."
+    },
+    {
+     "text": "Heat a wide pan on the table and pour in half the sauce."
+    },
+    {
+     "text": "Add the beef, tofu, mushrooms, noodles and vegetables in sections and simmer until cooked.",
+     "timer": 600,
+     "timerLabel": "Simmer the hot pot"
+    },
+    {
+     "text": "Add more sauce as needed."
+    },
+    {
+     "text": "Dip the hot beef into a bowl of beaten egg and eat."
+    }
+   ]
+  },
+  {
+   "id": "japanese-chicken-mizutaki",
+   "title": "Chicken mizutaki hot pot",
+   "blurb": "Gentle chicken and vegetable nabe with ponzu",
+   "type": "soups",
+   "serves": 4,
+   "prep": 20,
+   "cook": 35,
+   "tags": [
+    "healthy",
+    "one pot"
+   ],
+   "ingredients": [
+    {
+     "q": 1.5,
+     "u": "lb",
+     "item": "bone-in chicken thighs",
+     "aisle": "meat"
+    },
+    {
+     "q": 8,
+     "u": "cup",
+     "item": "water",
+     "aisle": "pantry"
+    },
+    {
+     "q": 1,
+     "u": "piece",
+     "item": "dried kombu",
+     "aisle": "international"
+    },
+    {
+     "q": 1,
+     "u": "",
+     "item": "napa cabbage",
+     "note": "cut in pieces",
+     "aisle": "produce"
+    },
+    {
+     "q": 2,
+     "u": "",
+     "item": "carrots",
+     "note": "sliced",
+     "aisle": "produce"
+    },
+    {
+     "q": 8,
+     "u": "oz",
+     "item": "mushrooms",
+     "note": "sliced",
+     "aisle": "produce"
+    },
+    {
+     "q": 1,
+     "u": "pkg",
+     "item": "firm tofu (14 oz)",
+     "note": "cubed",
+     "aisle": "dairy"
+    },
+    {
+     "q": 1,
+     "u": "bunch",
+     "item": "green onions",
+     "note": "cut in 2-inch pieces",
+     "aisle": "produce"
+    },
+    {
+     "q": 0.5,
+     "u": "cup",
+     "item": "ponzu sauce",
+     "aisle": "international"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Put the chicken, water and kombu in a large pot. Bring to a gentle simmer, removing the kombu when bubbles form.",
+     "timer": 300,
+     "timerLabel": "Start the broth"
+    },
+    {
+     "text": "Skim the foam and simmer the chicken until it reaches 165°F.",
+     "timer": 1500,
+     "timerLabel": "Simmer the chicken"
+    },
+    {
+     "text": "Add the carrots and cabbage stems and simmer.",
+     "timer": 300,
+     "timerLabel": "Cook the carrots"
+    },
+    {
+     "text": "Add the mushrooms, tofu, cabbage leaves and green onions. Cook until tender.",
+     "timer": 300,
+     "timerLabel": "Cook the vegetables"
+    },
+    {
+     "text": "Serve from the pot with ponzu for dipping."
+    }
+   ]
+  },
+  {
+   "id": "japanese-oden",
+   "title": "Simple oden",
+   "blurb": "Daikon, eggs and fish cakes simmered in light dashi",
+   "type": "soups",
+   "serves": 4,
+   "prep": 20,
+   "cook": 60,
+   "tags": [
+    "make ahead"
+   ],
+   "ingredients": [
+    {
+     "q": 8,
+     "u": "cup",
+     "item": "water",
+     "aisle": "pantry"
+    },
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "dashi powder",
+     "aisle": "international"
+    },
+    {
+     "q": 0.25,
+     "u": "cup",
+     "item": "soy sauce",
+     "aisle": "international"
+    },
+    {
+     "q": 0.25,
+     "u": "cup",
+     "item": "mirin",
+     "aisle": "international"
+    },
+    {
+     "q": 1,
+     "u": "",
+     "item": "daikon radish",
+     "note": "peeled, cut in 1-inch rounds",
+     "aisle": "produce"
+    },
+    {
+     "q": 6,
+     "u": "",
+     "item": "large eggs",
+     "note": "hard-boiled and peeled",
+     "aisle": "dairy"
+    },
+    {
+     "q": 1,
+     "u": "pkg",
+     "item": "fish cake (kamaboko or satsuma-age)",
+     "aisle": "international"
+    },
+    {
+     "q": 1,
+     "u": "pkg",
+     "item": "konnyaku",
+     "aisle": "international"
+    },
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "Dijon mustard",
+     "aisle": "pantry"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Hard-boil the eggs 10 minutes, cool and peel.",
+     "timer": 600,
+     "timerLabel": "Boil the eggs"
+    },
+    {
+     "text": "Bring the water, dashi powder, soy sauce and mirin to a simmer in a wide pot."
+    },
+    {
+     "text": "Add the daikon and simmer until tender.",
+     "timer": 2400,
+     "timerLabel": "Simmer the daikon"
+    },
+    {
+     "text": "Add the eggs, fish cake and konnyaku and simmer gently.",
+     "timer": 900,
+     "timerLabel": "Simmer everything"
+    },
+    {
+     "text": "Let it stand 10 minutes so flavors soak in.",
+     "timer": 600,
+     "timerLabel": "Rest"
+    },
+    {
+     "text": "Serve with a dab of mustard."
+    }
+   ]
+  },
+  {
+   "id": "japanese-gyoza",
+   "title": "Pan-fried gyoza",
+   "blurb": "Crisp-bottomed pork and cabbage dumplings",
+   "type": "small",
+   "serves": 4,
+   "prep": 40,
+   "cook": 15,
+   "tags": [
+    "make ahead",
+    "kid-friendly"
+   ],
+   "ingredients": [
+    {
+     "q": 1,
+     "u": "pkg",
+     "item": "round gyoza wrappers (about 40)",
+     "aisle": "international"
+    },
+    {
+     "q": 0.75,
+     "u": "lb",
+     "item": "ground pork",
+     "aisle": "meat"
+    },
+    {
+     "q": 2,
+     "u": "cup",
+     "item": "napa or green cabbage",
+     "note": "finely chopped",
+     "aisle": "produce"
+    },
+    {
+     "q": 3,
+     "u": "",
+     "item": "green onions",
+     "note": "minced",
+     "aisle": "produce"
+    },
+    {
+     "q": 2,
+     "u": "clove",
+     "item": "garlic",
+     "note": "minced",
+     "aisle": "produce"
+    },
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "fresh ginger",
+     "note": "grated",
+     "aisle": "produce"
+    },
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "soy sauce",
+     "aisle": "international"
+    },
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "toasted sesame oil",
+     "aisle": "international"
+    },
+    {
+     "q": 2,
+     "u": "tbsp",
+     "item": "vegetable oil",
+     "aisle": "pantry"
+    },
+    {
+     "q": 0.5,
+     "u": "cup",
+     "item": "water",
+     "aisle": "pantry"
+    },
+    {
+     "q": 3,
+     "u": "tbsp",
+     "item": "soy sauce",
+     "aisle": "international"
+    },
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "rice vinegar",
+     "aisle": "international"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Mix the pork, cabbage, green onions, garlic, ginger, 1 tbsp soy sauce and sesame oil."
+    },
+    {
+     "text": "Put 1 tsp filling in each wrapper, wet the edge, fold and pleat to seal."
+    },
+    {
+     "text": "Heat the vegetable oil in a nonstick skillet. Arrange gyoza flat side down and brown 2 minutes.",
+     "timer": 120,
+     "timerLabel": "Brown the bottoms"
+    },
+    {
+     "text": "Add the water, cover and steam until the pork reaches 160°F.",
+     "timer": 360,
+     "timerLabel": "Steam the gyoza"
+    },
+    {
+     "text": "Uncover and cook until the water is gone and the bottoms are crisp.",
+     "timer": 60,
+     "timerLabel": "Crisp the bottoms"
+    },
+    {
+     "text": "Mix 3 tbsp soy sauce with the vinegar for dipping."
+    }
+   ]
+  },
+  {
+   "id": "japanese-edamame",
+   "title": "Salted edamame",
+   "blurb": "The easiest snack: steamed pods with flaky salt",
+   "type": "small",
+   "serves": 4,
+   "prep": 2,
+   "cook": 5,
+   "tags": [
+    "quick",
+    "vegan",
+    "healthy",
+    "gluten-free"
+   ],
+   "ingredients": [
+    {
+     "q": 1,
+     "u": "pkg",
+     "item": "frozen edamame in pods (16 oz)",
+     "aisle": "frozen"
+    },
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "salt",
+     "aisle": "spices"
+    },
+    {
+     "q": 2,
+     "u": "tsp",
+     "item": "flaky sea salt",
+     "aisle": "spices"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "toasted sesame oil",
+     "aisle": "international"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Bring a pot of water to a boil with 1 tbsp salt."
+    },
+    {
+     "text": "Add the frozen edamame and cook until bright green and tender.",
+     "timer": 300,
+     "timerLabel": "Boil the edamame"
+    },
+    {
+     "text": "Drain well and shake dry."
+    },
+    {
+     "text": "Toss with the sesame oil and sea salt."
+    },
+    {
+     "text": "Serve warm and squeeze the beans out of the pods."
+    }
+   ]
+  },
+  {
+   "id": "japanese-tamagoyaki",
+   "title": "Tamagoyaki rolled omelet",
+   "blurb": "Layered sweet egg roll for bento or breakfast",
+   "type": "small",
+   "serves": 4,
+   "prep": 10,
+   "cook": 10,
+   "tags": [
+    "quick",
+    "vegetarian",
+    "kid-friendly"
+   ],
+   "ingredients": [
+    {
+     "q": 6,
+     "u": "",
+     "item": "large eggs",
+     "aisle": "dairy"
+    },
+    {
+     "q": 2,
+     "u": "tbsp",
+     "item": "sugar",
+     "aisle": "pantry"
+    },
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "mirin",
+     "aisle": "international"
+    },
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "soy sauce",
+     "aisle": "international"
+    },
+    {
+     "q": 2,
+     "u": "tbsp",
+     "item": "water",
+     "aisle": "pantry"
+    },
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "vegetable oil",
+     "aisle": "pantry"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Whisk the eggs with the sugar, mirin, soy sauce and water until even."
+    },
+    {
+     "text": "Heat a small nonstick skillet over medium-low heat and oil it lightly with a paper towel."
+    },
+    {
+     "text": "Pour in a thin layer of egg. When nearly set, roll it up to one end.",
+     "timer": 45,
+     "timerLabel": "Cook the first layer"
+    },
+    {
+     "text": "Oil the pan, pour in more egg under the roll, and roll again. Repeat until all the egg is used.",
+     "timer": 240,
+     "timerLabel": "Build the layers"
+    },
+    {
+     "text": "Rest the omelet 2 minutes, then slice into pieces.",
+     "timer": 120,
+     "timerLabel": "Rest"
+    }
+   ]
+  },
+  {
+   "id": "japanese-onigiri",
+   "title": "Onigiri rice balls",
+   "blurb": "Salted rice triangles with a salmon filling",
+   "type": "small",
+   "serves": 4,
+   "prep": 25,
+   "cook": 25,
+   "tags": [
+    "make ahead",
+    "kid-friendly"
+   ],
+   "ingredients": [
+    {
+     "q": 2,
+     "u": "cup",
+     "item": "short-grain rice",
+     "aisle": "international"
+    },
+    {
+     "q": 1,
+     "u": "can",
+     "item": "salmon (6 oz)",
+     "note": "drained, flaked",
+     "aisle": "canned"
+    },
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "mayonnaise",
+     "aisle": "pantry"
+    },
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "soy sauce",
+     "aisle": "international"
+    },
+    {
+     "q": 3,
+     "u": "piece",
+     "item": "nori sheets",
+     "note": "cut in strips",
+     "aisle": "international"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "salt",
+     "aisle": "spices"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Cook the rice and let it cool until warm enough to handle.",
+     "timer": 1200,
+     "timerLabel": "Cook the rice"
+    },
+    {
+     "text": "Mix the salmon with the mayonnaise and soy sauce."
+    },
+    {
+     "text": "Wet your hands and rub them with salt."
+    },
+    {
+     "text": "Press a small handful of rice flat, add 1 tbsp filling and shape into a triangle."
+    },
+    {
+     "text": "Wrap each rice ball with a strip of nori."
+    }
+   ]
+  },
+  {
+   "id": "japanese-california-roll",
+   "title": "California rolls",
+   "blurb": "Crab, avocado and cucumber rolls with rice outside",
+   "type": "small",
+   "serves": 4,
+   "prep": 40,
+   "cook": 25,
+   "tags": [
+    "kid-friendly"
+   ],
+   "ingredients": [
+    {
+     "q": 2,
+     "u": "cup",
+     "item": "sushi rice",
+     "aisle": "international"
+    },
+    {
+     "q": 2.5,
+     "u": "cup",
+     "item": "water",
+     "aisle": "pantry"
+    },
+    {
+     "q": 0.25,
+     "u": "cup",
+     "item": "rice vinegar",
+     "aisle": "international"
+    },
+    {
+     "q": 2,
+     "u": "tbsp",
+     "item": "sugar",
+     "aisle": "pantry"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "salt",
+     "aisle": "spices"
+    },
+    {
+     "q": 4,
+     "u": "piece",
+     "item": "nori sheets",
+     "aisle": "international"
+    },
+    {
+     "q": 8,
+     "u": "oz",
+     "item": "imitation crab",
+     "aisle": "seafood"
+    },
+    {
+     "q": 1,
+     "u": "",
+     "item": "avocados",
+     "note": "sliced",
+     "aisle": "produce"
+    },
+    {
+     "q": 1,
+     "u": "",
+     "item": "cucumbers",
+     "note": "cut in strips",
+     "aisle": "produce"
+    },
+    {
+     "q": 2,
+     "u": "tbsp",
+     "item": "toasted sesame seeds",
+     "aisle": "international"
+    },
+    {
+     "q": 0.25,
+     "u": "cup",
+     "item": "soy sauce",
+     "aisle": "international"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Rinse the rice, cook with the water, then rest covered 10 minutes.",
+     "timer": 1500,
+     "timerLabel": "Cook the rice"
+    },
+    {
+     "text": "Warm the vinegar, sugar and salt until dissolved. Fold into the rice and cool."
+    },
+    {
+     "text": "Cover a bamboo mat in plastic wrap. Spread rice on half a nori sheet, sprinkle with sesame and flip."
+    },
+    {
+     "text": "Lay crab, avocado and cucumber along the nori edge."
+    },
+    {
+     "text": "Roll tightly with the mat and press to seal."
+    },
+    {
+     "text": "Cut each roll into 8 pieces with a wet knife and serve with soy sauce."
+    }
+   ]
+  },
+  {
+   "id": "japanese-sunomono",
+   "title": "Cucumber sunomono",
+   "blurb": "Cool, tangy cucumber salad with sesame",
+   "type": "small",
+   "serves": 4,
+   "prep": 15,
+   "cook": 0,
+   "tags": [
+    "quick",
+    "vegan",
+    "healthy"
+   ],
+   "ingredients": [
+    {
+     "q": 2,
+     "u": "",
+     "item": "cucumbers",
+     "note": "thinly sliced",
+     "aisle": "produce"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "salt",
+     "aisle": "spices"
+    },
+    {
+     "q": 3,
+     "u": "tbsp",
+     "item": "rice vinegar",
+     "aisle": "international"
+    },
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "sugar",
+     "aisle": "pantry"
+    },
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "soy sauce",
+     "aisle": "international"
+    },
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "toasted sesame seeds",
+     "aisle": "international"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Toss the sliced cucumbers with the salt and let sit for 10 minutes.",
+     "timer": 600,
+     "timerLabel": "Salt the cucumbers"
+    },
+    {
+     "text": "Whisk the vinegar, sugar and soy sauce until the sugar dissolves."
+    },
+    {
+     "text": "Squeeze the cucumbers firmly to remove water."
+    },
+    {
+     "text": "Toss with the dressing and chill until ready."
+    },
+    {
+     "text": "Top with sesame seeds."
+    }
+   ]
+  },
+  {
+   "id": "japanese-spinach-gomae",
+   "title": "Spinach gomae",
+   "blurb": "Blanched spinach in sweet sesame dressing",
+   "type": "small",
+   "serves": 4,
+   "prep": 10,
+   "cook": 5,
+   "tags": [
+    "quick",
+    "vegetarian",
+    "healthy"
+   ],
+   "ingredients": [
+    {
+     "q": 1,
+     "u": "lb",
+     "item": "fresh spinach",
+     "aisle": "produce"
+    },
+    {
+     "q": 3,
+     "u": "tbsp",
+     "item": "toasted sesame seeds",
+     "aisle": "international"
+    },
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "sugar",
+     "aisle": "pantry"
+    },
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "soy sauce",
+     "aisle": "international"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "mirin",
+     "aisle": "international"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Boil a large pot of water and blanch the spinach until wilted.",
+     "timer": 45,
+     "timerLabel": "Blanch the spinach"
+    },
+    {
+     "text": "Plunge into ice water, then squeeze dry and cut in 2-inch pieces."
+    },
+    {
+     "text": "Grind the sesame seeds in a mortar or spice grinder until crushed."
+    },
+    {
+     "text": "Stir the sugar, soy sauce and mirin into the sesame."
+    },
+    {
+     "text": "Toss with the spinach and serve cool."
+    }
+   ]
+  },
+  {
+   "id": "japanese-chirashi-bowl",
+   "title": "Chirashi sushi bowl",
+   "blurb": "Seasoned rice topped with salmon, egg and vegetables",
+   "type": "small",
+   "serves": 4,
+   "prep": 30,
+   "cook": 25,
+   "tags": [
+    "healthy"
+   ],
+   "ingredients": [
+    {
+     "q": 2,
+     "u": "cup",
+     "item": "sushi rice",
+     "aisle": "international"
+    },
+    {
+     "q": 2.5,
+     "u": "cup",
+     "item": "water",
+     "aisle": "pantry"
+    },
+    {
+     "q": 0.25,
+     "u": "cup",
+     "item": "rice vinegar",
+     "aisle": "international"
+    },
+    {
+     "q": 2,
+     "u": "tbsp",
+     "item": "sugar",
+     "aisle": "pantry"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "salt",
+     "aisle": "spices"
+    },
+    {
+     "q": 12,
+     "u": "oz",
+     "item": "sushi-grade salmon or cooked shrimp",
+     "aisle": "seafood"
+    },
+    {
+     "q": 2,
+     "u": "",
+     "item": "large eggs",
+     "aisle": "dairy"
+    },
+    {
+     "q": 1,
+     "u": "",
+     "item": "cucumbers",
+     "note": "thinly sliced",
+     "aisle": "produce"
+    },
+    {
+     "q": 1,
+     "u": "",
+     "item": "avocados",
+     "note": "sliced",
+     "aisle": "produce"
+    },
+    {
+     "q": 0.25,
+     "u": "cup",
+     "item": "soy sauce",
+     "aisle": "international"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "wasabi paste",
+     "aisle": "international"
+    },
+    {
+     "q": 1,
+     "u": "piece",
+     "item": "nori sheet",
+     "note": "cut in strips",
+     "aisle": "international"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Rinse the rice, cook with the water, then rest covered 10 minutes.",
+     "timer": 1500,
+     "timerLabel": "Cook the rice"
+    },
+    {
+     "text": "Warm the vinegar, sugar and salt until dissolved, fold into the rice and let cool."
+    },
+    {
+     "text": "Beat the eggs and cook in a thin layer in a nonstick pan. Slice into ribbons."
+    },
+    {
+     "text": "Cut the fish into thin pieces. If using shrimp, boil until pink and 145°F."
+    },
+    {
+     "text": "Divide the rice into bowls and arrange the toppings on top."
+    },
+    {
+     "text": "Garnish with nori and serve with soy sauce and wasabi."
+    }
+   ]
+  },
+  {
+   "id": "japanese-okonomiyaki",
+   "title": "Okonomiyaki",
+   "blurb": "Savory cabbage pancakes with sauce and mayo",
+   "type": "small",
+   "serves": 4,
+   "prep": 15,
+   "cook": 20,
+   "tags": [
+    "kid-friendly"
+   ],
+   "ingredients": [
+    {
+     "q": 1,
+     "u": "cup",
+     "item": "all-purpose flour",
+     "aisle": "pantry"
+    },
+    {
+     "q": 0.75,
+     "u": "cup",
+     "item": "water",
+     "aisle": "pantry"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "dashi powder",
+     "aisle": "international"
+    },
+    {
+     "q": 3,
+     "u": "",
+     "item": "large eggs",
+     "aisle": "dairy"
+    },
+    {
+     "q": 4,
+     "u": "cup",
+     "item": "green cabbage",
+     "note": "finely shredded",
+     "aisle": "produce"
+    },
+    {
+     "q": 4,
+     "u": "",
+     "item": "green onions",
+     "note": "sliced",
+     "aisle": "produce"
+    },
+    {
+     "q": 6,
+     "u": "slice",
+     "item": "bacon",
+     "aisle": "meat"
+    },
+    {
+     "q": 2,
+     "u": "tbsp",
+     "item": "vegetable oil",
+     "aisle": "pantry"
+    },
+    {
+     "q": 4,
+     "u": "tbsp",
+     "item": "Worcestershire sauce",
+     "aisle": "pantry"
+    },
+    {
+     "q": 3,
+     "u": "tbsp",
+     "item": "ketchup",
+     "aisle": "pantry"
+    },
+    {
+     "q": 0.25,
+     "u": "cup",
+     "item": "mayonnaise",
+     "aisle": "pantry"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Whisk the flour, water, dashi powder and eggs into a batter. Fold in the cabbage and green onions."
+    },
+    {
+     "text": "Mix the Worcestershire and ketchup for the sauce."
+    },
+    {
+     "text": "Heat 1 tbsp oil in a skillet over medium heat. Pour in half the batter and top with bacon."
+    },
+    {
+     "text": "Cook until the bottom is golden, then flip and cook until the bacon is crisp and the center is set.",
+     "timer": 480,
+     "timerLabel": "Cook the pancake"
+    },
+    {
+     "text": "Repeat with the rest of the oil and batter."
+    },
+    {
+     "text": "Brush with the sauce and drizzle with mayonnaise."
+    }
+   ]
+  }
+ ]
+}

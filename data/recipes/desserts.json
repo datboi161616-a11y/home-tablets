@@ -1,0 +1,5346 @@
+{
+ "id": "desserts",
+ "name": "Desserts & baking",
+ "types": [
+  {
+   "id": "cookies",
+   "name": "Cookies"
+  },
+  {
+   "id": "bars",
+   "name": "Brownies & bars"
+  },
+  {
+   "id": "cakes",
+   "name": "Cakes & cupcakes"
+  },
+  {
+   "id": "pies",
+   "name": "Pies, cobblers & crisps"
+  },
+  {
+   "id": "nobake",
+   "name": "No-bake & frozen"
+  },
+  {
+   "id": "holiday",
+   "name": "Holiday baking"
+  }
+ ],
+ "recipes": [
+  {
+   "id": "desserts-chocolate-chip-cookies",
+   "title": "Chocolate chip cookies",
+   "blurb": "Crisp edges, soft centers, melty chips",
+   "type": "cookies",
+   "serves": 36,
+   "prep": 15,
+   "cook": 25,
+   "tags": [
+    "kid-friendly",
+    "make ahead"
+   ],
+   "ingredients": [
+    {
+     "q": 2.25,
+     "u": "cup",
+     "item": "all-purpose flour",
+     "aisle": "pantry"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "baking soda",
+     "aisle": "pantry"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "salt",
+     "aisle": "spices"
+    },
+    {
+     "q": 1,
+     "u": "cup",
+     "item": "unsalted butter",
+     "note": "softened",
+     "aisle": "dairy"
+    },
+    {
+     "q": 0.75,
+     "u": "cup",
+     "item": "sugar",
+     "aisle": "pantry"
+    },
+    {
+     "q": 0.75,
+     "u": "cup",
+     "item": "brown sugar",
+     "note": "packed",
+     "aisle": "pantry"
+    },
+    {
+     "q": 2,
+     "u": "",
+     "item": "large eggs",
+     "aisle": "dairy"
+    },
+    {
+     "q": 2,
+     "u": "tsp",
+     "item": "vanilla extract",
+     "aisle": "pantry"
+    },
+    {
+     "q": 2,
+     "u": "cup",
+     "item": "semisweet chocolate chips",
+     "aisle": "pantry"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Heat the oven to 375°F. Line two baking sheets with parchment."
+    },
+    {
+     "text": "Whisk the flour, baking soda and salt in a bowl."
+    },
+    {
+     "text": "Beat the butter, sugar and brown sugar until fluffy, about 2 minutes."
+    },
+    {
+     "text": "Beat in the eggs one at a time, then the vanilla."
+    },
+    {
+     "text": "Stir in the flour mixture just until combined, then fold in the chocolate chips."
+    },
+    {
+     "text": "Scoop rounded tablespoons of dough onto the sheets, 2 inches apart."
+    },
+    {
+     "text": "Bake one sheet at a time until the edges are golden but centers look soft.",
+     "timer": 600,
+     "timerLabel": "Bake cookies"
+    },
+    {
+     "text": "Cool on the sheet for 5 minutes, then move to a rack."
+    }
+   ]
+  },
+  {
+   "id": "desserts-oatmeal-raisin-cookies",
+   "title": "Oatmeal raisin cookies",
+   "blurb": "Chewy, cinnamon-spiced and loaded with raisins",
+   "type": "cookies",
+   "serves": 36,
+   "prep": 15,
+   "cook": 25,
+   "tags": [
+    "kid-friendly",
+    "make ahead"
+   ],
+   "ingredients": [
+    {
+     "q": 1.5,
+     "u": "cup",
+     "item": "all-purpose flour",
+     "aisle": "pantry"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "baking soda",
+     "aisle": "pantry"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "ground cinnamon",
+     "aisle": "spices"
+    },
+    {
+     "q": 0.5,
+     "u": "tsp",
+     "item": "salt",
+     "aisle": "spices"
+    },
+    {
+     "q": 1,
+     "u": "cup",
+     "item": "unsalted butter",
+     "note": "softened",
+     "aisle": "dairy"
+    },
+    {
+     "q": 0.75,
+     "u": "cup",
+     "item": "brown sugar",
+     "note": "packed",
+     "aisle": "pantry"
+    },
+    {
+     "q": 0.5,
+     "u": "cup",
+     "item": "sugar",
+     "aisle": "pantry"
+    },
+    {
+     "q": 2,
+     "u": "",
+     "item": "large eggs",
+     "aisle": "dairy"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "vanilla extract",
+     "aisle": "pantry"
+    },
+    {
+     "q": 3,
+     "u": "cup",
+     "item": "old-fashioned rolled oats",
+     "aisle": "pantry"
+    },
+    {
+     "q": 1,
+     "u": "cup",
+     "item": "raisins",
+     "aisle": "pantry"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Heat the oven to 350°F. Line two baking sheets with parchment."
+    },
+    {
+     "text": "Whisk the flour, baking soda, cinnamon and salt together."
+    },
+    {
+     "text": "Beat the butter with both sugars until fluffy, about 2 minutes."
+    },
+    {
+     "text": "Beat in the eggs and vanilla."
+    },
+    {
+     "text": "Stir in the flour mixture, then the oats and raisins."
+    },
+    {
+     "text": "Scoop heaping tablespoons onto the sheets, 2 inches apart, and flatten slightly."
+    },
+    {
+     "text": "Bake until golden at the edges and just set in the middle.",
+     "timer": 660,
+     "timerLabel": "Bake cookies"
+    },
+    {
+     "text": "Cool on the sheet for 5 minutes, then move to a rack."
+    }
+   ]
+  },
+  {
+   "id": "desserts-peanut-butter-cookies",
+   "title": "Peanut butter cookies",
+   "blurb": "Classic fork-marked cookies, soft and nutty",
+   "type": "cookies",
+   "serves": 30,
+   "prep": 15,
+   "cook": 20,
+   "tags": [
+    "kid-friendly"
+   ],
+   "ingredients": [
+    {
+     "q": 0.5,
+     "u": "cup",
+     "item": "unsalted butter",
+     "note": "softened",
+     "aisle": "dairy"
+    },
+    {
+     "q": 0.5,
+     "u": "cup",
+     "item": "creamy peanut butter",
+     "aisle": "pantry"
+    },
+    {
+     "q": 0.5,
+     "u": "cup",
+     "item": "sugar",
+     "aisle": "pantry"
+    },
+    {
+     "q": 0.5,
+     "u": "cup",
+     "item": "brown sugar",
+     "note": "packed",
+     "aisle": "pantry"
+    },
+    {
+     "q": 1,
+     "u": "",
+     "item": "large eggs",
+     "aisle": "dairy"
+    },
+    {
+     "q": 1.25,
+     "u": "cup",
+     "item": "all-purpose flour",
+     "aisle": "pantry"
+    },
+    {
+     "q": 0.75,
+     "u": "tsp",
+     "item": "baking soda",
+     "aisle": "pantry"
+    },
+    {
+     "q": 0.5,
+     "u": "tsp",
+     "item": "baking powder",
+     "aisle": "pantry"
+    },
+    {
+     "q": 0.25,
+     "u": "tsp",
+     "item": "salt",
+     "aisle": "spices"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Heat the oven to 375°F. Line two baking sheets with parchment."
+    },
+    {
+     "text": "Beat the butter, peanut butter and both sugars until creamy, then beat in the egg."
+    },
+    {
+     "text": "Stir in the flour, baking soda, baking powder and salt until a soft dough forms."
+    },
+    {
+     "text": "Roll into 1-inch balls and set them 2 inches apart on the sheets."
+    },
+    {
+     "text": "Press each ball with a fork in a crisscross pattern."
+    },
+    {
+     "text": "Bake until the edges are lightly golden.",
+     "timer": 570,
+     "timerLabel": "Bake cookies"
+    },
+    {
+     "text": "Cool on the sheet for 5 minutes; they firm up as they cool."
+    }
+   ]
+  },
+  {
+   "id": "desserts-snickerdoodles",
+   "title": "Snickerdoodles",
+   "blurb": "Soft, tangy cinnamon-sugar cookies",
+   "type": "cookies",
+   "serves": 36,
+   "prep": 20,
+   "cook": 25,
+   "tags": [
+    "kid-friendly",
+    "vegetarian"
+   ],
+   "ingredients": [
+    {
+     "q": 2.75,
+     "u": "cup",
+     "item": "all-purpose flour",
+     "aisle": "pantry"
+    },
+    {
+     "q": 2,
+     "u": "tsp",
+     "item": "cream of tartar",
+     "aisle": "spices"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "baking soda",
+     "aisle": "pantry"
+    },
+    {
+     "q": 0.5,
+     "u": "tsp",
+     "item": "salt",
+     "aisle": "spices"
+    },
+    {
+     "q": 1,
+     "u": "cup",
+     "item": "unsalted butter",
+     "note": "softened",
+     "aisle": "dairy"
+    },
+    {
+     "q": 1.5,
+     "u": "cup",
+     "item": "sugar",
+     "aisle": "pantry"
+    },
+    {
+     "q": 2,
+     "u": "",
+     "item": "large eggs",
+     "aisle": "dairy"
+    },
+    {
+     "q": 2,
+     "u": "tsp",
+     "item": "vanilla extract",
+     "aisle": "pantry"
+    },
+    {
+     "q": 3,
+     "u": "tbsp",
+     "item": "sugar",
+     "note": "for rolling",
+     "aisle": "pantry"
+    },
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "ground cinnamon",
+     "note": "for rolling",
+     "aisle": "spices"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Heat the oven to 375°F. Line two baking sheets with parchment."
+    },
+    {
+     "text": "Whisk the flour, cream of tartar, baking soda and salt together."
+    },
+    {
+     "text": "Beat the butter and 1.5 cups sugar until fluffy, then beat in the eggs and vanilla."
+    },
+    {
+     "text": "Stir in the flour mixture to make a soft dough."
+    },
+    {
+     "text": "Mix the rolling sugar and cinnamon in a small bowl."
+    },
+    {
+     "text": "Roll the dough into 1.5-inch balls, coat in cinnamon sugar and place 2 inches apart."
+    },
+    {
+     "text": "Bake until the edges are set; centers will look slightly underdone.",
+     "timer": 540,
+     "timerLabel": "Bake cookies"
+    },
+    {
+     "text": "Cool 5 minutes on the sheet, then move to a rack."
+    }
+   ]
+  },
+  {
+   "id": "desserts-classic-shortbread",
+   "title": "Classic shortbread wedges",
+   "blurb": "Buttery, crumbly three-ingredient style cookies",
+   "type": "cookies",
+   "serves": 16,
+   "prep": 15,
+   "cook": 35,
+   "tags": [
+    "vegetarian",
+    "make ahead"
+   ],
+   "ingredients": [
+    {
+     "q": 1,
+     "u": "cup",
+     "item": "unsalted butter",
+     "note": "softened",
+     "aisle": "dairy"
+    },
+    {
+     "q": 0.5,
+     "u": "cup",
+     "item": "powdered sugar",
+     "aisle": "pantry"
+    },
+    {
+     "q": 0.25,
+     "u": "tsp",
+     "item": "salt",
+     "aisle": "spices"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "vanilla extract",
+     "aisle": "pantry"
+    },
+    {
+     "q": 2,
+     "u": "cup",
+     "item": "all-purpose flour",
+     "aisle": "pantry"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Heat the oven to 325°F. Have a 9-inch round or square pan ready."
+    },
+    {
+     "text": "Beat the butter, powdered sugar, salt and vanilla until smooth and creamy."
+    },
+    {
+     "text": "Mix in the flour on low until a crumbly dough forms."
+    },
+    {
+     "text": "Press the dough evenly into the pan and prick all over with a fork."
+    },
+    {
+     "text": "Bake until pale golden at the edges.",
+     "timer": 1800,
+     "timerLabel": "Bake shortbread"
+    },
+    {
+     "text": "While still warm, cut into 16 wedges or bars, then let cool completely in the pan."
+    }
+   ]
+  },
+  {
+   "id": "desserts-molasses-crinkles",
+   "title": "Molasses crinkle cookies",
+   "blurb": "Chewy ginger-spice cookies with sugar crackle",
+   "type": "cookies",
+   "serves": 30,
+   "prep": 20,
+   "cook": 30,
+   "tags": [
+    "holiday",
+    "make ahead"
+   ],
+   "ingredients": [
+    {
+     "q": 2.25,
+     "u": "cup",
+     "item": "all-purpose flour",
+     "aisle": "pantry"
+    },
+    {
+     "q": 2,
+     "u": "tsp",
+     "item": "baking soda",
+     "aisle": "pantry"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "ground cinnamon",
+     "aisle": "spices"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "ground ginger",
+     "aisle": "spices"
+    },
+    {
+     "q": 0.5,
+     "u": "tsp",
+     "item": "ground cloves",
+     "aisle": "spices"
+    },
+    {
+     "q": 0.5,
+     "u": "tsp",
+     "item": "salt",
+     "aisle": "spices"
+    },
+    {
+     "q": 0.75,
+     "u": "cup",
+     "item": "unsalted butter",
+     "note": "softened",
+     "aisle": "dairy"
+    },
+    {
+     "q": 1,
+     "u": "cup",
+     "item": "brown sugar",
+     "note": "packed",
+     "aisle": "pantry"
+    },
+    {
+     "q": 1,
+     "u": "",
+     "item": "large eggs",
+     "aisle": "dairy"
+    },
+    {
+     "q": 0.25,
+     "u": "cup",
+     "item": "molasses",
+     "aisle": "pantry"
+    },
+    {
+     "q": 0.33,
+     "u": "cup",
+     "item": "sugar",
+     "note": "for rolling",
+     "aisle": "pantry"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Whisk the flour, baking soda, cinnamon, ginger, cloves and salt together."
+    },
+    {
+     "text": "Beat the butter and brown sugar until fluffy, then beat in the egg and molasses."
+    },
+    {
+     "text": "Stir in the flour mixture. Chill the dough until firm.",
+     "timer": 1800,
+     "timerLabel": "Chill dough"
+    },
+    {
+     "text": "Heat the oven to 350°F and line two baking sheets with parchment."
+    },
+    {
+     "text": "Roll the dough into 1.5-inch balls and coat generously in sugar."
+    },
+    {
+     "text": "Bake until the tops crack and the edges are set.",
+     "timer": 600,
+     "timerLabel": "Bake cookies"
+    },
+    {
+     "text": "Cool 5 minutes on the sheet, then move to a rack."
+    }
+   ]
+  },
+  {
+   "id": "desserts-double-chocolate-cookies",
+   "title": "Double chocolate cookies",
+   "blurb": "Fudgy cocoa cookies packed with chocolate chips",
+   "type": "cookies",
+   "serves": 30,
+   "prep": 15,
+   "cook": 25,
+   "tags": [
+    "kid-friendly"
+   ],
+   "ingredients": [
+    {
+     "q": 1.5,
+     "u": "cup",
+     "item": "all-purpose flour",
+     "aisle": "pantry"
+    },
+    {
+     "q": 0.5,
+     "u": "cup",
+     "item": "cocoa powder",
+     "aisle": "pantry"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "baking soda",
+     "aisle": "pantry"
+    },
+    {
+     "q": 0.5,
+     "u": "tsp",
+     "item": "salt",
+     "aisle": "spices"
+    },
+    {
+     "q": 0.75,
+     "u": "cup",
+     "item": "unsalted butter",
+     "note": "softened",
+     "aisle": "dairy"
+    },
+    {
+     "q": 1,
+     "u": "cup",
+     "item": "brown sugar",
+     "note": "packed",
+     "aisle": "pantry"
+    },
+    {
+     "q": 0.5,
+     "u": "cup",
+     "item": "sugar",
+     "aisle": "pantry"
+    },
+    {
+     "q": 2,
+     "u": "",
+     "item": "large eggs",
+     "aisle": "dairy"
+    },
+    {
+     "q": 2,
+     "u": "tsp",
+     "item": "vanilla extract",
+     "aisle": "pantry"
+    },
+    {
+     "q": 1.5,
+     "u": "cup",
+     "item": "semisweet chocolate chips",
+     "aisle": "pantry"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Heat the oven to 350°F. Line two baking sheets with parchment."
+    },
+    {
+     "text": "Whisk the flour, cocoa, baking soda and salt together."
+    },
+    {
+     "text": "Beat the butter with both sugars until fluffy, then beat in the eggs and vanilla."
+    },
+    {
+     "text": "Stir in the dry ingredients, then the chocolate chips."
+    },
+    {
+     "text": "Scoop heaping tablespoons onto the sheets, 2 inches apart."
+    },
+    {
+     "text": "Bake until the edges are set; the centers will look soft.",
+     "timer": 630,
+     "timerLabel": "Bake cookies"
+    },
+    {
+     "text": "Cool on the sheet for 5 minutes, then move to a rack."
+    }
+   ]
+  },
+  {
+   "id": "desserts-lemon-crinkle-cookies",
+   "title": "Lemon crinkle cookies",
+   "blurb": "Soft, bright lemon cookies rolled in powdered sugar",
+   "type": "cookies",
+   "serves": 30,
+   "prep": 20,
+   "cook": 30,
+   "tags": [
+    "vegetarian",
+    "make ahead"
+   ],
+   "ingredients": [
+    {
+     "q": 2,
+     "u": "cup",
+     "item": "all-purpose flour",
+     "aisle": "pantry"
+    },
+    {
+     "q": 2,
+     "u": "tsp",
+     "item": "baking powder",
+     "aisle": "pantry"
+    },
+    {
+     "q": 0.5,
+     "u": "tsp",
+     "item": "salt",
+     "aisle": "spices"
+    },
+    {
+     "q": 0.5,
+     "u": "cup",
+     "item": "unsalted butter",
+     "note": "softened",
+     "aisle": "dairy"
+    },
+    {
+     "q": 1,
+     "u": "cup",
+     "item": "sugar",
+     "aisle": "pantry"
+    },
+    {
+     "q": 2,
+     "u": "",
+     "item": "large eggs",
+     "aisle": "dairy"
+    },
+    {
+     "q": 2,
+     "u": "tbsp",
+     "item": "lemon zest",
+     "note": "about 2 lemons",
+     "aisle": "produce"
+    },
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "lemon juice",
+     "aisle": "produce"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "vanilla extract",
+     "aisle": "pantry"
+    },
+    {
+     "q": 1,
+     "u": "cup",
+     "item": "powdered sugar",
+     "note": "for rolling",
+     "aisle": "pantry"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Whisk the flour, baking powder and salt together."
+    },
+    {
+     "text": "Beat the butter, sugar and lemon zest until fluffy. Beat in the eggs, lemon juice and vanilla."
+    },
+    {
+     "text": "Stir in the flour mixture. Cover and chill until firm enough to roll.",
+     "timer": 3600,
+     "timerLabel": "Chill dough"
+    },
+    {
+     "text": "Heat the oven to 350°F and line two baking sheets with parchment."
+    },
+    {
+     "text": "Roll the dough into 1-inch balls and coat very thickly in powdered sugar."
+    },
+    {
+     "text": "Place 2 inches apart and bake until the edges are just set.",
+     "timer": 660,
+     "timerLabel": "Bake cookies"
+    },
+    {
+     "text": "Cool 5 minutes on the sheet, then move to a rack."
+    }
+   ]
+  },
+  {
+   "id": "desserts-chewy-sugar-cookies",
+   "title": "Chewy sugar cookies",
+   "blurb": "Soft bakery-style cookies with sparkly sugar tops",
+   "type": "cookies",
+   "serves": 24,
+   "prep": 15,
+   "cook": 25,
+   "tags": [
+    "kid-friendly",
+    "vegetarian"
+   ],
+   "ingredients": [
+    {
+     "q": 2.25,
+     "u": "cup",
+     "item": "all-purpose flour",
+     "aisle": "pantry"
+    },
+    {
+     "q": 0.5,
+     "u": "tsp",
+     "item": "baking soda",
+     "aisle": "pantry"
+    },
+    {
+     "q": 0.5,
+     "u": "tsp",
+     "item": "baking powder",
+     "aisle": "pantry"
+    },
+    {
+     "q": 0.5,
+     "u": "tsp",
+     "item": "salt",
+     "aisle": "spices"
+    },
+    {
+     "q": 0.75,
+     "u": "cup",
+     "item": "unsalted butter",
+     "note": "melted and cooled slightly",
+     "aisle": "dairy"
+    },
+    {
+     "q": 1,
+     "u": "cup",
+     "item": "sugar",
+     "aisle": "pantry"
+    },
+    {
+     "q": 1,
+     "u": "",
+     "item": "large eggs",
+     "aisle": "dairy"
+    },
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "whole milk",
+     "aisle": "dairy"
+    },
+    {
+     "q": 2,
+     "u": "tsp",
+     "item": "vanilla extract",
+     "aisle": "pantry"
+    },
+    {
+     "q": 0.25,
+     "u": "cup",
+     "item": "sugar",
+     "note": "for rolling",
+     "aisle": "pantry"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Heat the oven to 350°F. Line two baking sheets with parchment."
+    },
+    {
+     "text": "Whisk the flour, baking soda, baking powder and salt together."
+    },
+    {
+     "text": "Whisk the melted butter and 1 cup sugar, then whisk in the egg, milk and vanilla."
+    },
+    {
+     "text": "Stir in the flour mixture until a soft dough forms."
+    },
+    {
+     "text": "Roll into 1.5-inch balls, coat in the rolling sugar and place 2 inches apart."
+    },
+    {
+     "text": "Bake until the edges are set and the tops look a little puffy.",
+     "timer": 600,
+     "timerLabel": "Bake cookies"
+    },
+    {
+     "text": "Cool 5 minutes on the sheet; they will settle and stay chewy."
+    }
+   ]
+  },
+  {
+   "id": "desserts-fudgy-brownies",
+   "title": "Fudgy cocoa brownies",
+   "blurb": "Dense, chewy brownies from pantry staples",
+   "type": "bars",
+   "serves": 16,
+   "prep": 15,
+   "cook": 30,
+   "tags": [
+    "kid-friendly",
+    "vegetarian"
+   ],
+   "ingredients": [
+    {
+     "q": 0.5,
+     "u": "cup",
+     "item": "unsalted butter",
+     "note": "melted",
+     "aisle": "dairy"
+    },
+    {
+     "q": 1,
+     "u": "cup",
+     "item": "sugar",
+     "aisle": "pantry"
+    },
+    {
+     "q": 2,
+     "u": "",
+     "item": "large eggs",
+     "aisle": "dairy"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "vanilla extract",
+     "aisle": "pantry"
+    },
+    {
+     "q": 0.33,
+     "u": "cup",
+     "item": "cocoa powder",
+     "aisle": "pantry"
+    },
+    {
+     "q": 0.5,
+     "u": "cup",
+     "item": "all-purpose flour",
+     "aisle": "pantry"
+    },
+    {
+     "q": 0.25,
+     "u": "tsp",
+     "item": "salt",
+     "aisle": "spices"
+    },
+    {
+     "q": 0.25,
+     "u": "tsp",
+     "item": "baking powder",
+     "aisle": "pantry"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Heat the oven to 350°F. Line an 8-inch square pan with parchment, leaving an overhang."
+    },
+    {
+     "text": "Stir the melted butter and sugar together in a bowl."
+    },
+    {
+     "text": "Beat in the eggs and vanilla until smooth."
+    },
+    {
+     "text": "Stir in the cocoa, flour, salt and baking powder until just combined."
+    },
+    {
+     "text": "Spread the batter in the pan."
+    },
+    {
+     "text": "Bake until a toothpick comes out with a few moist crumbs.",
+     "timer": 1500,
+     "timerLabel": "Bake brownies"
+    },
+    {
+     "text": "Cool completely in the pan, then lift out and cut into 16 squares."
+    }
+   ]
+  },
+  {
+   "id": "desserts-cream-cheese-brownies",
+   "title": "Cream cheese swirl brownies",
+   "blurb": "Fudgy brownies with a tangy cheesecake ribbon",
+   "type": "bars",
+   "serves": 24,
+   "prep": 25,
+   "cook": 40,
+   "tags": [
+    "crowd",
+    "vegetarian"
+   ],
+   "ingredients": [
+    {
+     "q": 1,
+     "u": "cup",
+     "item": "unsalted butter",
+     "note": "melted",
+     "aisle": "dairy"
+    },
+    {
+     "q": 2,
+     "u": "cup",
+     "item": "sugar",
+     "aisle": "pantry"
+    },
+    {
+     "q": 4,
+     "u": "",
+     "item": "large eggs",
+     "aisle": "dairy"
+    },
+    {
+     "q": 2,
+     "u": "tsp",
+     "item": "vanilla extract",
+     "aisle": "pantry"
+    },
+    {
+     "q": 0.75,
+     "u": "cup",
+     "item": "cocoa powder",
+     "aisle": "pantry"
+    },
+    {
+     "q": 1,
+     "u": "cup",
+     "item": "all-purpose flour",
+     "aisle": "pantry"
+    },
+    {
+     "q": 0.5,
+     "u": "tsp",
+     "item": "salt",
+     "aisle": "spices"
+    },
+    {
+     "q": 0.5,
+     "u": "tsp",
+     "item": "baking powder",
+     "aisle": "pantry"
+    },
+    {
+     "q": 8,
+     "u": "oz",
+     "item": "cream cheese",
+     "note": "softened",
+     "aisle": "dairy"
+    },
+    {
+     "q": 0.25,
+     "u": "cup",
+     "item": "sugar",
+     "note": "for the cream cheese layer",
+     "aisle": "pantry"
+    },
+    {
+     "q": 1,
+     "u": "",
+     "item": "large eggs",
+     "note": "for the cream cheese layer",
+     "aisle": "dairy"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Heat the oven to 350°F. Line a 9x13-inch pan with parchment."
+    },
+    {
+     "text": "Whisk the butter and 2 cups sugar, then beat in 4 eggs and 1 tsp vanilla."
+    },
+    {
+     "text": "Stir in the cocoa, flour, salt and baking powder. Spread two-thirds of the batter in the pan."
+    },
+    {
+     "text": "Beat the cream cheese, 1/4 cup sugar, the last egg and vanilla until smooth."
+    },
+    {
+     "text": "Spread the cream cheese over the batter, dollop the remaining batter on top and swirl with a knife."
+    },
+    {
+     "text": "Bake until the edges pull away and the center is just set.",
+     "timer": 2100,
+     "timerLabel": "Bake brownies"
+    },
+    {
+     "text": "Cool completely, then chill 1 hour before cutting into 24 bars. Keep refrigerated."
+    }
+   ]
+  },
+  {
+   "id": "desserts-chocolate-chip-blondies",
+   "title": "Chocolate chip blondies",
+   "blurb": "Butterscotchy brown sugar bars with chips",
+   "type": "bars",
+   "serves": 24,
+   "prep": 15,
+   "cook": 30,
+   "tags": [
+    "kid-friendly",
+    "vegetarian"
+   ],
+   "ingredients": [
+    {
+     "q": 0.75,
+     "u": "cup",
+     "item": "unsalted butter",
+     "note": "melted",
+     "aisle": "dairy"
+    },
+    {
+     "q": 1.5,
+     "u": "cup",
+     "item": "brown sugar",
+     "note": "packed",
+     "aisle": "pantry"
+    },
+    {
+     "q": 2,
+     "u": "",
+     "item": "large eggs",
+     "aisle": "dairy"
+    },
+    {
+     "q": 2,
+     "u": "tsp",
+     "item": "vanilla extract",
+     "aisle": "pantry"
+    },
+    {
+     "q": 2,
+     "u": "cup",
+     "item": "all-purpose flour",
+     "aisle": "pantry"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "baking powder",
+     "aisle": "pantry"
+    },
+    {
+     "q": 0.5,
+     "u": "tsp",
+     "item": "salt",
+     "aisle": "spices"
+    },
+    {
+     "q": 1,
+     "u": "cup",
+     "item": "semisweet chocolate chips",
+     "aisle": "pantry"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Heat the oven to 350°F. Line a 9x13-inch pan with parchment."
+    },
+    {
+     "text": "Whisk the melted butter and brown sugar until smooth."
+    },
+    {
+     "text": "Whisk in the eggs and vanilla."
+    },
+    {
+     "text": "Stir in the flour, baking powder and salt, then fold in the chocolate chips."
+    },
+    {
+     "text": "Spread the thick batter evenly in the pan."
+    },
+    {
+     "text": "Bake until golden and a toothpick has a few moist crumbs.",
+     "timer": 1620,
+     "timerLabel": "Bake blondies"
+    },
+    {
+     "text": "Cool completely in the pan, then cut into 24 bars."
+    }
+   ]
+  },
+  {
+   "id": "desserts-lemon-bars",
+   "title": "Lemon bars",
+   "blurb": "Shortbread crust with a silky, tart lemon filling",
+   "type": "bars",
+   "serves": 24,
+   "prep": 20,
+   "cook": 45,
+   "tags": [
+    "vegetarian",
+    "make ahead"
+   ],
+   "ingredients": [
+    {
+     "q": 2,
+     "u": "cup",
+     "item": "all-purpose flour",
+     "note": "divided",
+     "aisle": "pantry"
+    },
+    {
+     "q": 0.75,
+     "u": "cup",
+     "item": "powdered sugar",
+     "note": "divided, plus extra to dust",
+     "aisle": "pantry"
+    },
+    {
+     "q": 1,
+     "u": "cup",
+     "item": "unsalted butter",
+     "note": "cold, cubed",
+     "aisle": "dairy"
+    },
+    {
+     "q": 4,
+     "u": "",
+     "item": "large eggs",
+     "aisle": "dairy"
+    },
+    {
+     "q": 1.5,
+     "u": "cup",
+     "item": "sugar",
+     "aisle": "pantry"
+    },
+    {
+     "q": 0.5,
+     "u": "cup",
+     "item": "lemon juice",
+     "note": "about 3 lemons",
+     "aisle": "produce"
+    },
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "lemon zest",
+     "aisle": "produce"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Heat the oven to 350°F. Line a 9x13-inch pan with parchment."
+    },
+    {
+     "text": "Pulse or mix 1 3/4 cups flour, 1/2 cup powdered sugar and the butter until crumbly. Press into the pan."
+    },
+    {
+     "text": "Bake the crust until lightly golden.",
+     "timer": 1200,
+     "timerLabel": "Bake crust"
+    },
+    {
+     "text": "Whisk the eggs, sugar, remaining 1/4 cup flour, lemon juice and zest until smooth."
+    },
+    {
+     "text": "Pour the filling over the hot crust."
+    },
+    {
+     "text": "Bake until the filling is set and no longer jiggles in the center.",
+     "timer": 1200,
+     "timerLabel": "Bake filling"
+    },
+    {
+     "text": "Cool completely, chill 1 hour, then dust with powdered sugar and cut into 24 bars."
+    }
+   ]
+  },
+  {
+   "id": "desserts-magic-bars",
+   "title": "Seven layer magic bars",
+   "blurb": "Graham, chocolate, coconut, pecans and condensed milk",
+   "type": "bars",
+   "serves": 24,
+   "prep": 15,
+   "cook": 30,
+   "tags": [
+    "kid-friendly",
+    "vegetarian"
+   ],
+   "ingredients": [
+    {
+     "q": 1.5,
+     "u": "cup",
+     "item": "graham cracker crumbs",
+     "aisle": "pantry"
+    },
+    {
+     "q": 0.5,
+     "u": "cup",
+     "item": "unsalted butter",
+     "note": "melted",
+     "aisle": "dairy"
+    },
+    {
+     "q": 1,
+     "u": "cup",
+     "item": "semisweet chocolate chips",
+     "aisle": "pantry"
+    },
+    {
+     "q": 1,
+     "u": "cup",
+     "item": "butterscotch chips",
+     "aisle": "pantry"
+    },
+    {
+     "q": 1,
+     "u": "cup",
+     "item": "sweetened shredded coconut",
+     "aisle": "pantry"
+    },
+    {
+     "q": 1,
+     "u": "cup",
+     "item": "chopped pecans",
+     "aisle": "pantry"
+    },
+    {
+     "q": 14,
+     "u": "oz",
+     "item": "sweetened condensed milk",
+     "note": "1 can",
+     "aisle": "canned"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Heat the oven to 350°F. Line a 9x13-inch pan with parchment."
+    },
+    {
+     "text": "Mix the graham crumbs and melted butter, then press firmly into the pan."
+    },
+    {
+     "text": "Sprinkle the chocolate chips, then butterscotch chips, coconut and pecans over the crust."
+    },
+    {
+     "text": "Pour the condensed milk evenly over the top."
+    },
+    {
+     "text": "Bake until the coconut is golden and the edges bubble.",
+     "timer": 1500,
+     "timerLabel": "Bake bars"
+    },
+    {
+     "text": "Cool completely in the pan before cutting into 24 bars."
+    }
+   ]
+  },
+  {
+   "id": "desserts-raspberry-oatmeal-bars",
+   "title": "Raspberry oatmeal bars",
+   "blurb": "Buttery oat crumble layered with jam",
+   "type": "bars",
+   "serves": 24,
+   "prep": 15,
+   "cook": 35,
+   "tags": [
+    "vegetarian",
+    "make ahead"
+   ],
+   "ingredients": [
+    {
+     "q": 1.5,
+     "u": "cup",
+     "item": "all-purpose flour",
+     "aisle": "pantry"
+    },
+    {
+     "q": 1.5,
+     "u": "cup",
+     "item": "old-fashioned rolled oats",
+     "aisle": "pantry"
+    },
+    {
+     "q": 1,
+     "u": "cup",
+     "item": "brown sugar",
+     "note": "packed",
+     "aisle": "pantry"
+    },
+    {
+     "q": 0.5,
+     "u": "tsp",
+     "item": "baking soda",
+     "aisle": "pantry"
+    },
+    {
+     "q": 0.5,
+     "u": "tsp",
+     "item": "salt",
+     "aisle": "spices"
+    },
+    {
+     "q": 1,
+     "u": "cup",
+     "item": "unsalted butter",
+     "note": "melted",
+     "aisle": "dairy"
+    },
+    {
+     "q": 1,
+     "u": "jar",
+     "item": "raspberry jam (12 oz)",
+     "aisle": "pantry"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Heat the oven to 350°F. Line a 9x13-inch pan with parchment."
+    },
+    {
+     "text": "Stir the flour, oats, brown sugar, baking soda and salt together."
+    },
+    {
+     "text": "Stir in the melted butter until the mixture is crumbly and clumps."
+    },
+    {
+     "text": "Press about three-quarters of the crumbs firmly into the pan."
+    },
+    {
+     "text": "Spread the jam over the crust, then scatter the rest of the crumbs on top."
+    },
+    {
+     "text": "Bake until the top is golden and the jam bubbles at the edges.",
+     "timer": 1920,
+     "timerLabel": "Bake bars"
+    },
+    {
+     "text": "Cool completely before cutting into 24 bars."
+    }
+   ]
+  },
+  {
+   "id": "desserts-pumpkin-bars",
+   "title": "Pumpkin bars with cream cheese frosting",
+   "blurb": "Moist spiced pumpkin sheet bars for a crowd",
+   "type": "bars",
+   "serves": 24,
+   "prep": 20,
+   "cook": 30,
+   "tags": [
+    "crowd",
+    "sheet pan",
+    "holiday"
+   ],
+   "ingredients": [
+    {
+     "q": 4,
+     "u": "",
+     "item": "large eggs",
+     "aisle": "dairy"
+    },
+    {
+     "q": 1,
+     "u": "cup",
+     "item": "vegetable oil",
+     "aisle": "pantry"
+    },
+    {
+     "q": 2,
+     "u": "cup",
+     "item": "sugar",
+     "aisle": "pantry"
+    },
+    {
+     "q": 15,
+     "u": "oz",
+     "item": "pumpkin puree",
+     "note": "1 can",
+     "aisle": "canned"
+    },
+    {
+     "q": 2,
+     "u": "cup",
+     "item": "all-purpose flour",
+     "aisle": "pantry"
+    },
+    {
+     "q": 2,
+     "u": "tsp",
+     "item": "baking powder",
+     "aisle": "pantry"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "baking soda",
+     "aisle": "pantry"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "salt",
+     "aisle": "spices"
+    },
+    {
+     "q": 2,
+     "u": "tsp",
+     "item": "ground cinnamon",
+     "aisle": "spices"
+    },
+    {
+     "q": 8,
+     "u": "oz",
+     "item": "cream cheese",
+     "note": "softened",
+     "aisle": "dairy"
+    },
+    {
+     "q": 0.5,
+     "u": "cup",
+     "item": "unsalted butter",
+     "note": "softened",
+     "aisle": "dairy"
+    },
+    {
+     "q": 2,
+     "u": "cup",
+     "item": "powdered sugar",
+     "aisle": "pantry"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "vanilla extract",
+     "aisle": "pantry"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Heat the oven to 350°F. Grease a 10x15-inch rimmed pan."
+    },
+    {
+     "text": "Whisk the eggs, oil, sugar and pumpkin until smooth."
+    },
+    {
+     "text": "Stir in the flour, baking powder, baking soda, salt and cinnamon until just combined."
+    },
+    {
+     "text": "Spread the batter in the pan."
+    },
+    {
+     "text": "Bake until a toothpick comes out clean.",
+     "timer": 1500,
+     "timerLabel": "Bake bars"
+    },
+    {
+     "text": "Cool completely in the pan."
+    },
+    {
+     "text": "Beat the cream cheese, butter, powdered sugar and vanilla until smooth. Spread over the bars and cut into 24."
+    }
+   ]
+  },
+  {
+   "id": "desserts-cheesecake-bars",
+   "title": "Graham cracker cheesecake bars",
+   "blurb": "Creamy cheesecake squares on a buttery crust",
+   "type": "bars",
+   "serves": 18,
+   "prep": 20,
+   "cook": 50,
+   "tags": [
+    "make ahead",
+    "vegetarian"
+   ],
+   "ingredients": [
+    {
+     "q": 2,
+     "u": "cup",
+     "item": "graham cracker crumbs",
+     "aisle": "pantry"
+    },
+    {
+     "q": 0.5,
+     "u": "cup",
+     "item": "unsalted butter",
+     "note": "melted",
+     "aisle": "dairy"
+    },
+    {
+     "q": 0.25,
+     "u": "cup",
+     "item": "sugar",
+     "note": "for the crust",
+     "aisle": "pantry"
+    },
+    {
+     "q": 24,
+     "u": "oz",
+     "item": "cream cheese",
+     "note": "3 packages, softened",
+     "aisle": "dairy"
+    },
+    {
+     "q": 0.75,
+     "u": "cup",
+     "item": "sugar",
+     "note": "for the filling",
+     "aisle": "pantry"
+    },
+    {
+     "q": 3,
+     "u": "",
+     "item": "large eggs",
+     "aisle": "dairy"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "vanilla extract",
+     "aisle": "pantry"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Heat the oven to 350°F. Line a 9x13-inch pan with parchment."
+    },
+    {
+     "text": "Mix the graham crumbs, butter and 1/4 cup sugar. Press firmly into the pan."
+    },
+    {
+     "text": "Bake the crust until set.",
+     "timer": 600,
+     "timerLabel": "Bake crust"
+    },
+    {
+     "text": "Beat the cream cheese and 3/4 cup sugar until smooth. Beat in the eggs one at a time, then the vanilla."
+    },
+    {
+     "text": "Pour the filling over the warm crust."
+    },
+    {
+     "text": "Bake until the edges are set and the center barely jiggles.",
+     "timer": 1800,
+     "timerLabel": "Bake filling"
+    },
+    {
+     "text": "Cool 1 hour, then chill at least 4 hours before cutting into 18 bars."
+    }
+   ]
+  },
+  {
+   "id": "desserts-peanut-butter-swirl-brownies",
+   "title": "Peanut butter swirl brownies",
+   "blurb": "Chewy chocolate brownies with ribbons of peanut butter",
+   "type": "bars",
+   "serves": 16,
+   "prep": 15,
+   "cook": 30,
+   "tags": [
+    "kid-friendly",
+    "vegetarian"
+   ],
+   "ingredients": [
+    {
+     "q": 0.5,
+     "u": "cup",
+     "item": "unsalted butter",
+     "note": "melted",
+     "aisle": "dairy"
+    },
+    {
+     "q": 1,
+     "u": "cup",
+     "item": "sugar",
+     "aisle": "pantry"
+    },
+    {
+     "q": 2,
+     "u": "",
+     "item": "large eggs",
+     "aisle": "dairy"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "vanilla extract",
+     "aisle": "pantry"
+    },
+    {
+     "q": 0.33,
+     "u": "cup",
+     "item": "cocoa powder",
+     "aisle": "pantry"
+    },
+    {
+     "q": 0.5,
+     "u": "cup",
+     "item": "all-purpose flour",
+     "aisle": "pantry"
+    },
+    {
+     "q": 0.25,
+     "u": "tsp",
+     "item": "salt",
+     "aisle": "spices"
+    },
+    {
+     "q": 0.25,
+     "u": "tsp",
+     "item": "baking powder",
+     "aisle": "pantry"
+    },
+    {
+     "q": 0.33,
+     "u": "cup",
+     "item": "creamy peanut butter",
+     "aisle": "pantry"
+    },
+    {
+     "q": 2,
+     "u": "tbsp",
+     "item": "powdered sugar",
+     "aisle": "pantry"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Heat the oven to 350°F. Line an 8-inch square pan with parchment, leaving an overhang."
+    },
+    {
+     "text": "Stir the melted butter and sugar, then beat in the eggs and vanilla."
+    },
+    {
+     "text": "Stir in the cocoa, flour, salt and baking powder until just combined. Spread in the pan."
+    },
+    {
+     "text": "Warm the peanut butter and powdered sugar in the microwave for 15 seconds and stir until smooth."
+    },
+    {
+     "text": "Drop spoonfuls of peanut butter over the batter and swirl with a knife."
+    },
+    {
+     "text": "Bake until a toothpick has a few moist crumbs; the edges will be set.",
+     "timer": 1620,
+     "timerLabel": "Bake brownies"
+    },
+    {
+     "text": "Cool completely in the pan, then lift out and cut into 16 squares."
+    }
+   ]
+  },
+  {
+   "id": "desserts-vanilla-cupcakes",
+   "title": "Vanilla cupcakes with buttercream",
+   "blurb": "Tender birthday-party cupcakes, swirled with frosting",
+   "type": "cakes",
+   "serves": 12,
+   "prep": 25,
+   "cook": 22,
+   "tags": [
+    "kid-friendly",
+    "vegetarian"
+   ],
+   "ingredients": [
+    {
+     "q": 1.5,
+     "u": "cup",
+     "item": "all-purpose flour",
+     "aisle": "pantry"
+    },
+    {
+     "q": 1.75,
+     "u": "tsp",
+     "item": "baking powder",
+     "aisle": "pantry"
+    },
+    {
+     "q": 0.25,
+     "u": "tsp",
+     "item": "salt",
+     "aisle": "spices"
+    },
+    {
+     "q": 0.5,
+     "u": "cup",
+     "item": "unsalted butter",
+     "note": "softened, for the cupcakes",
+     "aisle": "dairy"
+    },
+    {
+     "q": 1,
+     "u": "cup",
+     "item": "sugar",
+     "aisle": "pantry"
+    },
+    {
+     "q": 2,
+     "u": "",
+     "item": "large eggs",
+     "aisle": "dairy"
+    },
+    {
+     "q": 2,
+     "u": "tsp",
+     "item": "vanilla extract",
+     "aisle": "pantry"
+    },
+    {
+     "q": 0.75,
+     "u": "cup",
+     "item": "whole milk",
+     "aisle": "dairy"
+    },
+    {
+     "q": 1,
+     "u": "cup",
+     "item": "unsalted butter",
+     "note": "softened, for the frosting",
+     "aisle": "dairy"
+    },
+    {
+     "q": 3,
+     "u": "cup",
+     "item": "powdered sugar",
+     "aisle": "pantry"
+    },
+    {
+     "q": 2,
+     "u": "tbsp",
+     "item": "whole milk",
+     "note": "for the frosting",
+     "aisle": "dairy"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "vanilla extract",
+     "note": "for the frosting",
+     "aisle": "pantry"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Heat the oven to 350°F. Line a 12-cup muffin pan with paper liners."
+    },
+    {
+     "text": "Whisk the flour, baking powder and salt together."
+    },
+    {
+     "text": "Beat 1/2 cup butter and the sugar until fluffy. Beat in the eggs and 2 tsp vanilla."
+    },
+    {
+     "text": "Add the flour mixture in thirds, alternating with the 3/4 cup milk, mixing just until smooth."
+    },
+    {
+     "text": "Fill the liners two-thirds full."
+    },
+    {
+     "text": "Bake until a toothpick comes out clean and the tops spring back.",
+     "timer": 1200,
+     "timerLabel": "Bake cupcakes"
+    },
+    {
+     "text": "Cool completely. Beat 1 cup butter until creamy, then beat in the powdered sugar, 2 tbsp milk and 1 tsp vanilla for 3 minutes."
+    },
+    {
+     "text": "Frost the cooled cupcakes."
+    }
+   ]
+  },
+  {
+   "id": "desserts-texas-sheet-cake",
+   "title": "Chocolate sheet cake",
+   "blurb": "Thin, fudgy cake with warm cocoa icing",
+   "type": "cakes",
+   "serves": 24,
+   "prep": 25,
+   "cook": 40,
+   "tags": [
+    "crowd",
+    "sheet pan",
+    "make ahead"
+   ],
+   "ingredients": [
+    {
+     "q": 2,
+     "u": "cup",
+     "item": "all-purpose flour",
+     "aisle": "pantry"
+    },
+    {
+     "q": 2,
+     "u": "cup",
+     "item": "sugar",
+     "aisle": "pantry"
+    },
+    {
+     "q": 0.5,
+     "u": "tsp",
+     "item": "salt",
+     "aisle": "spices"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "baking soda",
+     "aisle": "pantry"
+    },
+    {
+     "q": 1,
+     "u": "cup",
+     "item": "unsalted butter",
+     "note": "for the cake",
+     "aisle": "dairy"
+    },
+    {
+     "q": 1,
+     "u": "cup",
+     "item": "water",
+     "aisle": "pantry"
+    },
+    {
+     "q": 0.25,
+     "u": "cup",
+     "item": "cocoa powder",
+     "note": "for the cake",
+     "aisle": "pantry"
+    },
+    {
+     "q": 0.5,
+     "u": "cup",
+     "item": "buttermilk",
+     "aisle": "dairy"
+    },
+    {
+     "q": 2,
+     "u": "",
+     "item": "large eggs",
+     "aisle": "dairy"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "vanilla extract",
+     "aisle": "pantry"
+    },
+    {
+     "q": 0.5,
+     "u": "cup",
+     "item": "unsalted butter",
+     "note": "for the icing",
+     "aisle": "dairy"
+    },
+    {
+     "q": 0.25,
+     "u": "cup",
+     "item": "cocoa powder",
+     "note": "for the icing",
+     "aisle": "pantry"
+    },
+    {
+     "q": 6,
+     "u": "tbsp",
+     "item": "whole milk",
+     "aisle": "dairy"
+    },
+    {
+     "q": 3.5,
+     "u": "cup",
+     "item": "powdered sugar",
+     "aisle": "pantry"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Heat the oven to 350°F. Grease an 18x13-inch rimmed baking sheet."
+    },
+    {
+     "text": "Whisk the flour, sugar, salt and baking soda in a large bowl."
+    },
+    {
+     "text": "Boil 1 cup butter, the water and 1/4 cup cocoa in a saucepan, then pour over the dry mix and stir."
+    },
+    {
+     "text": "Whisk in the buttermilk, eggs and vanilla. Pour the thin batter into the pan."
+    },
+    {
+     "text": "Bake until a toothpick comes out clean.",
+     "timer": 1200,
+     "timerLabel": "Bake cake"
+    },
+    {
+     "text": "Five minutes before it is done, boil 1/2 cup butter, 1/4 cup cocoa and the milk, then whisk in the powdered sugar."
+    },
+    {
+     "text": "Pour the warm icing over the warm cake, spread and cool before cutting."
+    }
+   ]
+  },
+  {
+   "id": "desserts-carrot-cake",
+   "title": "Carrot cake with cream cheese frosting",
+   "blurb": "Spiced two-layer cake with walnuts",
+   "type": "cakes",
+   "serves": 12,
+   "prep": 35,
+   "cook": 35,
+   "tags": [
+    "holiday",
+    "make ahead"
+   ],
+   "ingredients": [
+    {
+     "q": 2,
+     "u": "cup",
+     "item": "all-purpose flour",
+     "aisle": "pantry"
+    },
+    {
+     "q": 2,
+     "u": "tsp",
+     "item": "baking powder",
+     "aisle": "pantry"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "baking soda",
+     "aisle": "pantry"
+    },
+    {
+     "q": 0.5,
+     "u": "tsp",
+     "item": "salt",
+     "aisle": "spices"
+    },
+    {
+     "q": 2,
+     "u": "tsp",
+     "item": "ground cinnamon",
+     "aisle": "spices"
+    },
+    {
+     "q": 1.5,
+     "u": "cup",
+     "item": "sugar",
+     "aisle": "pantry"
+    },
+    {
+     "q": 1,
+     "u": "cup",
+     "item": "vegetable oil",
+     "aisle": "pantry"
+    },
+    {
+     "q": 4,
+     "u": "",
+     "item": "large eggs",
+     "aisle": "dairy"
+    },
+    {
+     "q": 1,
+     "u": "lb",
+     "item": "carrots",
+     "note": "peeled and finely grated, about 3 cups",
+     "aisle": "produce"
+    },
+    {
+     "q": 1,
+     "u": "cup",
+     "item": "chopped walnuts",
+     "aisle": "pantry"
+    },
+    {
+     "q": 8,
+     "u": "oz",
+     "item": "cream cheese",
+     "note": "softened",
+     "aisle": "dairy"
+    },
+    {
+     "q": 0.5,
+     "u": "cup",
+     "item": "unsalted butter",
+     "note": "softened",
+     "aisle": "dairy"
+    },
+    {
+     "q": 3,
+     "u": "cup",
+     "item": "powdered sugar",
+     "aisle": "pantry"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "vanilla extract",
+     "aisle": "pantry"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Heat the oven to 350°F. Grease and line two 9-inch round pans with parchment."
+    },
+    {
+     "text": "Whisk the flour, baking powder, baking soda, salt and cinnamon together."
+    },
+    {
+     "text": "Whisk the sugar, oil and eggs until smooth."
+    },
+    {
+     "text": "Stir in the flour mixture, then the carrots and walnuts. Divide between the pans."
+    },
+    {
+     "text": "Bake until a toothpick comes out clean.",
+     "timer": 1920,
+     "timerLabel": "Bake layers"
+    },
+    {
+     "text": "Cool 10 minutes, turn out and cool completely."
+    },
+    {
+     "text": "Beat the cream cheese and butter smooth, then beat in the powdered sugar and vanilla."
+    },
+    {
+     "text": "Frost between the layers and over the top."
+    }
+   ]
+  },
+  {
+   "id": "desserts-sour-cream-pound-cake",
+   "title": "Sour cream pound cake",
+   "blurb": "Dense, moist, golden bundt cake",
+   "type": "cakes",
+   "serves": 16,
+   "prep": 20,
+   "cook": 70,
+   "tags": [
+    "make ahead",
+    "vegetarian"
+   ],
+   "ingredients": [
+    {
+     "q": 3,
+     "u": "cup",
+     "item": "all-purpose flour",
+     "aisle": "pantry"
+    },
+    {
+     "q": 0.25,
+     "u": "tsp",
+     "item": "baking soda",
+     "aisle": "pantry"
+    },
+    {
+     "q": 0.5,
+     "u": "tsp",
+     "item": "salt",
+     "aisle": "spices"
+    },
+    {
+     "q": 1,
+     "u": "cup",
+     "item": "unsalted butter",
+     "note": "softened",
+     "aisle": "dairy"
+    },
+    {
+     "q": 2,
+     "u": "cup",
+     "item": "sugar",
+     "aisle": "pantry"
+    },
+    {
+     "q": 4,
+     "u": "",
+     "item": "large eggs",
+     "aisle": "dairy"
+    },
+    {
+     "q": 1,
+     "u": "cup",
+     "item": "sour cream",
+     "aisle": "dairy"
+    },
+    {
+     "q": 2,
+     "u": "tsp",
+     "item": "vanilla extract",
+     "aisle": "pantry"
+    },
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "powdered sugar",
+     "note": "to dust",
+     "aisle": "pantry"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Heat the oven to 325°F. Grease and flour a 10-cup bundt pan."
+    },
+    {
+     "text": "Whisk the flour, baking soda and salt together."
+    },
+    {
+     "text": "Beat the butter and sugar until pale and fluffy, about 4 minutes."
+    },
+    {
+     "text": "Beat in the eggs one at a time, then the vanilla."
+    },
+    {
+     "text": "Add the flour mixture in thirds, alternating with the sour cream, mixing just until smooth."
+    },
+    {
+     "text": "Scrape the batter into the pan and smooth the top."
+    },
+    {
+     "text": "Bake until a toothpick comes out clean.",
+     "timer": 3900,
+     "timerLabel": "Bake cake"
+    },
+    {
+     "text": "Cool 15 minutes, turn out onto a rack, cool and dust with powdered sugar."
+    }
+   ]
+  },
+  {
+   "id": "desserts-lemon-blueberry-loaf",
+   "title": "Lemon blueberry loaf cake",
+   "blurb": "Bright, tender loaf with a lemon glaze",
+   "type": "cakes",
+   "serves": 10,
+   "prep": 20,
+   "cook": 55,
+   "tags": [
+    "make ahead",
+    "vegetarian"
+   ],
+   "ingredients": [
+    {
+     "q": 2,
+     "u": "cup",
+     "item": "all-purpose flour",
+     "note": "divided",
+     "aisle": "pantry"
+    },
+    {
+     "q": 2,
+     "u": "tsp",
+     "item": "baking powder",
+     "aisle": "pantry"
+    },
+    {
+     "q": 0.5,
+     "u": "tsp",
+     "item": "salt",
+     "aisle": "spices"
+    },
+    {
+     "q": 0.5,
+     "u": "cup",
+     "item": "unsalted butter",
+     "note": "softened",
+     "aisle": "dairy"
+    },
+    {
+     "q": 1,
+     "u": "cup",
+     "item": "sugar",
+     "aisle": "pantry"
+    },
+    {
+     "q": 2,
+     "u": "",
+     "item": "large eggs",
+     "aisle": "dairy"
+    },
+    {
+     "q": 0.5,
+     "u": "cup",
+     "item": "whole milk",
+     "aisle": "dairy"
+    },
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "lemon zest",
+     "aisle": "produce"
+    },
+    {
+     "q": 2,
+     "u": "tbsp",
+     "item": "lemon juice",
+     "note": "for the cake",
+     "aisle": "produce"
+    },
+    {
+     "q": 1.5,
+     "u": "cup",
+     "item": "blueberries",
+     "aisle": "produce"
+    },
+    {
+     "q": 1,
+     "u": "cup",
+     "item": "powdered sugar",
+     "aisle": "pantry"
+    },
+    {
+     "q": 2,
+     "u": "tbsp",
+     "item": "lemon juice",
+     "note": "for the glaze",
+     "aisle": "produce"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Heat the oven to 350°F. Grease and line a 9x5-inch loaf pan."
+    },
+    {
+     "text": "Toss the blueberries with 1 tablespoon of the flour. Whisk the rest of the flour, baking powder and salt."
+    },
+    {
+     "text": "Beat the butter, sugar and lemon zest until fluffy. Beat in the eggs one at a time."
+    },
+    {
+     "text": "Stir in the flour mixture, milk and 2 tbsp lemon juice just until combined. Fold in the berries."
+    },
+    {
+     "text": "Spread in the pan and bake until a toothpick comes out clean.",
+     "timer": 3300,
+     "timerLabel": "Bake loaf"
+    },
+    {
+     "text": "Cool 15 minutes, then lift out onto a rack to cool completely."
+    },
+    {
+     "text": "Whisk the powdered sugar and 2 tbsp lemon juice. Drizzle over the loaf."
+    }
+   ]
+  },
+  {
+   "id": "desserts-banana-snack-cake",
+   "title": "Banana snack cake",
+   "blurb": "Moist one-pan cake for overripe bananas",
+   "type": "cakes",
+   "serves": 15,
+   "prep": 15,
+   "cook": 30,
+   "tags": [
+    "kid-friendly",
+    "vegetarian"
+   ],
+   "ingredients": [
+    {
+     "q": 2,
+     "u": "cup",
+     "item": "all-purpose flour",
+     "aisle": "pantry"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "baking soda",
+     "aisle": "pantry"
+    },
+    {
+     "q": 0.5,
+     "u": "tsp",
+     "item": "salt",
+     "aisle": "spices"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "ground cinnamon",
+     "aisle": "spices"
+    },
+    {
+     "q": 0.5,
+     "u": "cup",
+     "item": "unsalted butter",
+     "note": "softened",
+     "aisle": "dairy"
+    },
+    {
+     "q": 1,
+     "u": "cup",
+     "item": "brown sugar",
+     "note": "packed",
+     "aisle": "pantry"
+    },
+    {
+     "q": 2,
+     "u": "",
+     "item": "large eggs",
+     "aisle": "dairy"
+    },
+    {
+     "q": 1.5,
+     "u": "cup",
+     "item": "ripe bananas",
+     "note": "mashed, about 3 to 4",
+     "aisle": "produce"
+    },
+    {
+     "q": 0.5,
+     "u": "cup",
+     "item": "sour cream",
+     "aisle": "dairy"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "vanilla extract",
+     "aisle": "pantry"
+    },
+    {
+     "q": 2,
+     "u": "tbsp",
+     "item": "powdered sugar",
+     "note": "to dust",
+     "aisle": "pantry"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Heat the oven to 350°F. Grease a 9x13-inch pan."
+    },
+    {
+     "text": "Whisk the flour, baking soda, salt and cinnamon together."
+    },
+    {
+     "text": "Beat the butter and brown sugar until fluffy, then beat in the eggs."
+    },
+    {
+     "text": "Mix in the mashed bananas, sour cream and vanilla."
+    },
+    {
+     "text": "Stir in the flour mixture just until combined and spread in the pan."
+    },
+    {
+     "text": "Bake until a toothpick comes out clean.",
+     "timer": 1800,
+     "timerLabel": "Bake cake"
+    },
+    {
+     "text": "Cool in the pan, dust with powdered sugar and cut into 15 squares."
+    }
+   ]
+  },
+  {
+   "id": "desserts-wacky-chocolate-cake",
+   "title": "Wacky chocolate cake",
+   "blurb": "Egg-free, dairy-free, one-pan chocolate cake",
+   "type": "cakes",
+   "serves": 15,
+   "prep": 10,
+   "cook": 40,
+   "tags": [
+    "vegan",
+    "kid-friendly"
+   ],
+   "ingredients": [
+    {
+     "q": 3,
+     "u": "cup",
+     "item": "all-purpose flour",
+     "aisle": "pantry"
+    },
+    {
+     "q": 2,
+     "u": "cup",
+     "item": "sugar",
+     "aisle": "pantry"
+    },
+    {
+     "q": 0.375,
+     "u": "cup",
+     "item": "cocoa powder",
+     "aisle": "pantry"
+    },
+    {
+     "q": 2,
+     "u": "tsp",
+     "item": "baking soda",
+     "aisle": "pantry"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "salt",
+     "aisle": "spices"
+    },
+    {
+     "q": 2,
+     "u": "tbsp",
+     "item": "white vinegar",
+     "aisle": "pantry"
+    },
+    {
+     "q": 2,
+     "u": "tsp",
+     "item": "vanilla extract",
+     "aisle": "pantry"
+    },
+    {
+     "q": 0.75,
+     "u": "cup",
+     "item": "vegetable oil",
+     "aisle": "pantry"
+    },
+    {
+     "q": 2,
+     "u": "cup",
+     "item": "water",
+     "note": "cold",
+     "aisle": "pantry"
+    },
+    {
+     "q": 2,
+     "u": "tbsp",
+     "item": "powdered sugar",
+     "note": "to dust",
+     "aisle": "pantry"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Heat the oven to 350°F. Have a 9x13-inch pan ready (no need to grease)."
+    },
+    {
+     "text": "Whisk the flour, sugar, cocoa, baking soda and salt in the pan."
+    },
+    {
+     "text": "Make three wells in the dry mix. Pour the vinegar, vanilla and oil into the wells."
+    },
+    {
+     "text": "Pour the cold water over everything."
+    },
+    {
+     "text": "Stir with a fork until smooth, scraping the corners."
+    },
+    {
+     "text": "Bake until a toothpick comes out clean.",
+     "timer": 2100,
+     "timerLabel": "Bake cake"
+    },
+    {
+     "text": "Cool in the pan and dust with powdered sugar."
+    }
+   ]
+  },
+  {
+   "id": "desserts-pineapple-upside-down-cake",
+   "title": "Pineapple upside-down cake",
+   "blurb": "Caramelized pineapple rings on a buttery cake",
+   "type": "cakes",
+   "serves": 8,
+   "prep": 20,
+   "cook": 45,
+   "tags": [
+    "make ahead",
+    "vegetarian"
+   ],
+   "ingredients": [
+    {
+     "q": 0.25,
+     "u": "cup",
+     "item": "unsalted butter",
+     "note": "melted, for the topping",
+     "aisle": "dairy"
+    },
+    {
+     "q": 0.5,
+     "u": "cup",
+     "item": "brown sugar",
+     "note": "packed",
+     "aisle": "pantry"
+    },
+    {
+     "q": 20,
+     "u": "oz",
+     "item": "pineapple rings",
+     "note": "1 can, drained",
+     "aisle": "canned"
+    },
+    {
+     "q": 1.5,
+     "u": "cup",
+     "item": "all-purpose flour",
+     "aisle": "pantry"
+    },
+    {
+     "q": 1.5,
+     "u": "tsp",
+     "item": "baking powder",
+     "aisle": "pantry"
+    },
+    {
+     "q": 0.25,
+     "u": "tsp",
+     "item": "salt",
+     "aisle": "spices"
+    },
+    {
+     "q": 0.5,
+     "u": "cup",
+     "item": "unsalted butter",
+     "note": "softened, for the cake",
+     "aisle": "dairy"
+    },
+    {
+     "q": 0.75,
+     "u": "cup",
+     "item": "sugar",
+     "aisle": "pantry"
+    },
+    {
+     "q": 2,
+     "u": "",
+     "item": "large eggs",
+     "aisle": "dairy"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "vanilla extract",
+     "aisle": "pantry"
+    },
+    {
+     "q": 0.5,
+     "u": "cup",
+     "item": "whole milk",
+     "aisle": "dairy"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Heat the oven to 350°F. Pour the melted butter into a 9-inch round cake pan or cast iron skillet."
+    },
+    {
+     "text": "Sprinkle the brown sugar over the butter and arrange the pineapple rings on top."
+    },
+    {
+     "text": "Whisk the flour, baking powder and salt together."
+    },
+    {
+     "text": "Beat the softened butter and sugar until fluffy, then the eggs and vanilla."
+    },
+    {
+     "text": "Mix in the flour in thirds, alternating with the milk. Spread over the pineapple."
+    },
+    {
+     "text": "Bake until golden and a toothpick comes out clean.",
+     "timer": 2700,
+     "timerLabel": "Bake cake"
+    },
+    {
+     "text": "Cool 10 minutes, run a knife around the edge and flip onto a plate."
+    }
+   ]
+  },
+  {
+   "id": "desserts-classic-apple-pie",
+   "title": "Classic double-crust apple pie",
+   "blurb": "Flaky all-butter crust and cinnamon apples",
+   "type": "pies",
+   "serves": 8,
+   "prep": 60,
+   "cook": 65,
+   "tags": [
+    "holiday",
+    "make ahead"
+   ],
+   "ingredients": [
+    {
+     "q": 2.5,
+     "u": "cup",
+     "item": "all-purpose flour",
+     "aisle": "pantry"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "salt",
+     "aisle": "spices"
+    },
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "sugar",
+     "note": "for the crust",
+     "aisle": "pantry"
+    },
+    {
+     "q": 1,
+     "u": "cup",
+     "item": "unsalted butter",
+     "note": "very cold, cubed",
+     "aisle": "dairy"
+    },
+    {
+     "q": 6,
+     "u": "tbsp",
+     "item": "water",
+     "note": "ice cold",
+     "aisle": "pantry"
+    },
+    {
+     "q": 3,
+     "u": "lb",
+     "item": "baking apples",
+     "note": "Granny Smith or Honeycrisp, peeled and sliced",
+     "aisle": "produce"
+    },
+    {
+     "q": 0.75,
+     "u": "cup",
+     "item": "sugar",
+     "note": "for the filling",
+     "aisle": "pantry"
+    },
+    {
+     "q": 2,
+     "u": "tbsp",
+     "item": "all-purpose flour",
+     "note": "for the filling",
+     "aisle": "pantry"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "ground cinnamon",
+     "aisle": "spices"
+    },
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "lemon juice",
+     "aisle": "produce"
+    },
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "unsalted butter",
+     "note": "cut in bits",
+     "aisle": "dairy"
+    },
+    {
+     "q": 1,
+     "u": "",
+     "item": "large eggs",
+     "note": "beaten, for brushing",
+     "aisle": "dairy"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Mix 2.5 cups flour, salt and 1 tbsp sugar. Cut in the cold butter until pea-sized pieces remain."
+    },
+    {
+     "text": "Sprinkle in the ice water, 1 tbsp at a time, until the dough just holds together."
+    },
+    {
+     "text": "Divide into two discs, wrap and chill until firm.",
+     "timer": 3600,
+     "timerLabel": "Chill dough"
+    },
+    {
+     "text": "Heat the oven to 425°F. Toss the apples with 3/4 cup sugar, 2 tbsp flour, cinnamon and lemon juice."
+    },
+    {
+     "text": "Roll one disc to fit a 9-inch pie plate. Fill with apples and dot with butter."
+    },
+    {
+     "text": "Roll the second disc, cover the pie, crimp the edges and cut 4 steam vents. Brush with egg."
+    },
+    {
+     "text": "Bake at 425°F, then lower to 375°F.",
+     "timer": 1200,
+     "timerLabel": "Bake at 425°F for 20 min"
+    },
+    {
+     "text": "Bake at 375°F until golden and the juices bubble.",
+     "timer": 2700,
+     "timerLabel": "Bake at 375°F"
+    },
+    {
+     "text": "Cool at least 3 hours so the filling sets."
+    }
+   ]
+  },
+  {
+   "id": "desserts-apple-crisp",
+   "title": "Apple crisp",
+   "blurb": "Warm cinnamon apples under a buttery oat topping",
+   "type": "pies",
+   "serves": 8,
+   "prep": 20,
+   "cook": 50,
+   "tags": [
+    "vegetarian",
+    "make ahead"
+   ],
+   "ingredients": [
+    {
+     "q": 2.5,
+     "u": "lb",
+     "item": "baking apples",
+     "note": "peeled and sliced",
+     "aisle": "produce"
+    },
+    {
+     "q": 0.25,
+     "u": "cup",
+     "item": "sugar",
+     "aisle": "pantry"
+    },
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "lemon juice",
+     "aisle": "produce"
+    },
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "all-purpose flour",
+     "aisle": "pantry"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "ground cinnamon",
+     "aisle": "spices"
+    },
+    {
+     "q": 1,
+     "u": "cup",
+     "item": "old-fashioned rolled oats",
+     "aisle": "pantry"
+    },
+    {
+     "q": 0.75,
+     "u": "cup",
+     "item": "all-purpose flour",
+     "aisle": "pantry"
+    },
+    {
+     "q": 0.5,
+     "u": "cup",
+     "item": "brown sugar",
+     "note": "packed",
+     "aisle": "pantry"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "ground cinnamon",
+     "aisle": "spices"
+    },
+    {
+     "q": 0.25,
+     "u": "tsp",
+     "item": "salt",
+     "aisle": "spices"
+    },
+    {
+     "q": 0.5,
+     "u": "cup",
+     "item": "unsalted butter",
+     "note": "cold, cubed",
+     "aisle": "dairy"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Heat the oven to 350°F. Grease a 9-inch square baking dish."
+    },
+    {
+     "text": "Toss the apples with the sugar, lemon juice, 1 tbsp flour and 1 tsp cinnamon. Spread in the dish."
+    },
+    {
+     "text": "Mix the oats, 3/4 cup flour, brown sugar, 1 tsp cinnamon and salt."
+    },
+    {
+     "text": "Rub in the cold butter until the topping is crumbly and clumpy."
+    },
+    {
+     "text": "Scatter the topping over the apples."
+    },
+    {
+     "text": "Bake until the topping is golden and the apples are tender and bubbling.",
+     "timer": 2700,
+     "timerLabel": "Bake crisp"
+    },
+    {
+     "text": "Cool 15 minutes. Serve warm with vanilla ice cream."
+    }
+   ]
+  },
+  {
+   "id": "desserts-peach-cobbler",
+   "title": "Southern peach cobbler",
+   "blurb": "Peaches baked up through a golden, buttery batter",
+   "type": "pies",
+   "serves": 8,
+   "prep": 15,
+   "cook": 50,
+   "tags": [
+    "vegetarian"
+   ],
+   "ingredients": [
+    {
+     "q": 0.5,
+     "u": "cup",
+     "item": "unsalted butter",
+     "aisle": "dairy"
+    },
+    {
+     "q": 1,
+     "u": "cup",
+     "item": "all-purpose flour",
+     "aisle": "pantry"
+    },
+    {
+     "q": 1,
+     "u": "cup",
+     "item": "sugar",
+     "note": "for the batter",
+     "aisle": "pantry"
+    },
+    {
+     "q": 2,
+     "u": "tsp",
+     "item": "baking powder",
+     "aisle": "pantry"
+    },
+    {
+     "q": 0.25,
+     "u": "tsp",
+     "item": "salt",
+     "aisle": "spices"
+    },
+    {
+     "q": 1,
+     "u": "cup",
+     "item": "whole milk",
+     "aisle": "dairy"
+    },
+    {
+     "q": 2,
+     "u": "lb",
+     "item": "frozen sliced peaches",
+     "note": "thawed",
+     "aisle": "frozen"
+    },
+    {
+     "q": 0.25,
+     "u": "cup",
+     "item": "sugar",
+     "note": "for the peaches",
+     "aisle": "pantry"
+    },
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "lemon juice",
+     "aisle": "produce"
+    },
+    {
+     "q": 0.5,
+     "u": "tsp",
+     "item": "ground cinnamon",
+     "aisle": "spices"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Heat the oven to 350°F. Put the butter in a 9x13-inch dish and melt it in the oven, about 5 minutes."
+    },
+    {
+     "text": "Whisk the flour, 1 cup sugar, baking powder and salt. Stir in the milk to make a smooth batter."
+    },
+    {
+     "text": "Pour the batter over the melted butter. Do not stir."
+    },
+    {
+     "text": "Toss the peaches with 1/4 cup sugar, lemon juice and cinnamon."
+    },
+    {
+     "text": "Spoon the peaches and their juices evenly over the batter."
+    },
+    {
+     "text": "Bake until the batter rises around the fruit and is deep golden.",
+     "timer": 2700,
+     "timerLabel": "Bake cobbler"
+    },
+    {
+     "text": "Cool 10 minutes and serve warm."
+    }
+   ]
+  },
+  {
+   "id": "desserts-blueberry-crisp",
+   "title": "Blueberry crisp",
+   "blurb": "Jammy blueberries under crunchy oat crumble",
+   "type": "pies",
+   "serves": 8,
+   "prep": 15,
+   "cook": 45,
+   "tags": [
+    "vegetarian",
+    "make ahead"
+   ],
+   "ingredients": [
+    {
+     "q": 1.5,
+     "u": "lb",
+     "item": "blueberries",
+     "note": "fresh or frozen",
+     "aisle": "produce"
+    },
+    {
+     "q": 0.33,
+     "u": "cup",
+     "item": "sugar",
+     "aisle": "pantry"
+    },
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "cornstarch",
+     "aisle": "pantry"
+    },
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "lemon juice",
+     "aisle": "produce"
+    },
+    {
+     "q": 1,
+     "u": "cup",
+     "item": "old-fashioned rolled oats",
+     "aisle": "pantry"
+    },
+    {
+     "q": 0.75,
+     "u": "cup",
+     "item": "all-purpose flour",
+     "aisle": "pantry"
+    },
+    {
+     "q": 0.5,
+     "u": "cup",
+     "item": "brown sugar",
+     "note": "packed",
+     "aisle": "pantry"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "ground cinnamon",
+     "aisle": "spices"
+    },
+    {
+     "q": 0.25,
+     "u": "tsp",
+     "item": "salt",
+     "aisle": "spices"
+    },
+    {
+     "q": 0.5,
+     "u": "cup",
+     "item": "unsalted butter",
+     "note": "cold, cubed",
+     "aisle": "dairy"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Heat the oven to 350°F. Grease a 9-inch square baking dish."
+    },
+    {
+     "text": "Toss the blueberries with the sugar, cornstarch and lemon juice. Spread in the dish."
+    },
+    {
+     "text": "Mix the oats, flour, brown sugar, cinnamon and salt."
+    },
+    {
+     "text": "Rub in the cold butter until crumbly."
+    },
+    {
+     "text": "Scatter the topping over the berries."
+    },
+    {
+     "text": "Bake until the topping is golden and the berries bubble.",
+     "timer": 2400,
+     "timerLabel": "Bake crisp"
+    },
+    {
+     "text": "Cool 15 minutes before serving."
+    }
+   ]
+  },
+  {
+   "id": "desserts-cherry-pie",
+   "title": "Cherry pie",
+   "blurb": "Sweet-tart cherries in a lattice-top crust",
+   "type": "pies",
+   "serves": 8,
+   "prep": 30,
+   "cook": 60,
+   "tags": [
+    "holiday",
+    "make ahead"
+   ],
+   "ingredients": [
+    {
+     "q": 1,
+     "u": "pkg",
+     "item": "refrigerated pie crusts (2 crusts)",
+     "aisle": "dairy"
+    },
+    {
+     "q": 2,
+     "u": "lb",
+     "item": "frozen pitted cherries",
+     "note": "thawed",
+     "aisle": "frozen"
+    },
+    {
+     "q": 0.75,
+     "u": "cup",
+     "item": "sugar",
+     "aisle": "pantry"
+    },
+    {
+     "q": 3,
+     "u": "tbsp",
+     "item": "cornstarch",
+     "aisle": "pantry"
+    },
+    {
+     "q": 0.25,
+     "u": "tsp",
+     "item": "almond extract",
+     "aisle": "pantry"
+    },
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "lemon juice",
+     "aisle": "produce"
+    },
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "unsalted butter",
+     "note": "cut in bits",
+     "aisle": "dairy"
+    },
+    {
+     "q": 1,
+     "u": "",
+     "item": "large eggs",
+     "note": "beaten, for brushing",
+     "aisle": "dairy"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Heat the oven to 425°F with a baking sheet on the lower rack. Fit one crust into a 9-inch pie plate."
+    },
+    {
+     "text": "Mix the cherries with their juices, sugar, cornstarch, almond extract and lemon juice."
+    },
+    {
+     "text": "Pour the filling into the crust and dot with butter."
+    },
+    {
+     "text": "Cut the second crust into strips and weave a lattice over the top. Crimp the edges and brush with egg."
+    },
+    {
+     "text": "Bake on the baking sheet at 425°F.",
+     "timer": 1200,
+     "timerLabel": "Bake at 425°F"
+    },
+    {
+     "text": "Lower to 375°F and bake until golden and bubbling. Cover edges if browning too fast.",
+     "timer": 2100,
+     "timerLabel": "Bake at 375°F"
+    },
+    {
+     "text": "Cool at least 3 hours before slicing."
+    }
+   ]
+  },
+  {
+   "id": "desserts-blackberry-cobbler",
+   "title": "Blackberry cobbler",
+   "blurb": "Bubbling berries under tender drop biscuits",
+   "type": "pies",
+   "serves": 8,
+   "prep": 20,
+   "cook": 40,
+   "tags": [
+    "vegetarian"
+   ],
+   "ingredients": [
+    {
+     "q": 1.5,
+     "u": "lb",
+     "item": "blackberries",
+     "note": "fresh or frozen",
+     "aisle": "produce"
+    },
+    {
+     "q": 0.5,
+     "u": "cup",
+     "item": "sugar",
+     "aisle": "pantry"
+    },
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "cornstarch",
+     "aisle": "pantry"
+    },
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "lemon juice",
+     "aisle": "produce"
+    },
+    {
+     "q": 1.5,
+     "u": "cup",
+     "item": "all-purpose flour",
+     "aisle": "pantry"
+    },
+    {
+     "q": 0.25,
+     "u": "cup",
+     "item": "sugar",
+     "note": "for the biscuits",
+     "aisle": "pantry"
+    },
+    {
+     "q": 2,
+     "u": "tsp",
+     "item": "baking powder",
+     "aisle": "pantry"
+    },
+    {
+     "q": 0.5,
+     "u": "tsp",
+     "item": "salt",
+     "aisle": "spices"
+    },
+    {
+     "q": 6,
+     "u": "tbsp",
+     "item": "unsalted butter",
+     "note": "cold, cubed",
+     "aisle": "dairy"
+    },
+    {
+     "q": 0.75,
+     "u": "cup",
+     "item": "whole milk",
+     "aisle": "dairy"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Heat the oven to 375°F. Have an 8-inch square baking dish ready."
+    },
+    {
+     "text": "Toss the berries with 1/2 cup sugar, cornstarch and lemon juice. Spread in the dish."
+    },
+    {
+     "text": "Whisk the flour, 1/4 cup sugar, baking powder and salt. Cut in the cold butter until crumbly."
+    },
+    {
+     "text": "Stir in the milk just until a soft dough forms."
+    },
+    {
+     "text": "Drop spoonfuls of dough over the berries, leaving gaps."
+    },
+    {
+     "text": "Bake until the biscuits are golden and the berries bubble.",
+     "timer": 2400,
+     "timerLabel": "Bake cobbler"
+    },
+    {
+     "text": "Cool 10 minutes and serve warm."
+    }
+   ]
+  },
+  {
+   "id": "desserts-banana-cream-pie",
+   "title": "Banana cream pie",
+   "blurb": "Vanilla custard and bananas in a graham crust",
+   "type": "pies",
+   "serves": 8,
+   "prep": 40,
+   "cook": 20,
+   "tags": [
+    "make ahead",
+    "vegetarian"
+   ],
+   "ingredients": [
+    {
+     "q": 1.5,
+     "u": "cup",
+     "item": "graham cracker crumbs",
+     "aisle": "pantry"
+    },
+    {
+     "q": 6,
+     "u": "tbsp",
+     "item": "unsalted butter",
+     "note": "melted",
+     "aisle": "dairy"
+    },
+    {
+     "q": 0.25,
+     "u": "cup",
+     "item": "sugar",
+     "note": "for the crust",
+     "aisle": "pantry"
+    },
+    {
+     "q": 0.67,
+     "u": "cup",
+     "item": "sugar",
+     "note": "for the custard",
+     "aisle": "pantry"
+    },
+    {
+     "q": 0.25,
+     "u": "cup",
+     "item": "cornstarch",
+     "aisle": "pantry"
+    },
+    {
+     "q": 0.25,
+     "u": "tsp",
+     "item": "salt",
+     "aisle": "spices"
+    },
+    {
+     "q": 3,
+     "u": "cup",
+     "item": "whole milk",
+     "aisle": "dairy"
+    },
+    {
+     "q": 4,
+     "u": "",
+     "item": "large eggs",
+     "note": "yolks only",
+     "aisle": "dairy"
+    },
+    {
+     "q": 2,
+     "u": "tbsp",
+     "item": "unsalted butter",
+     "aisle": "dairy"
+    },
+    {
+     "q": 1.5,
+     "u": "tsp",
+     "item": "vanilla extract",
+     "aisle": "pantry"
+    },
+    {
+     "q": 3,
+     "u": "",
+     "item": "ripe bananas",
+     "note": "sliced",
+     "aisle": "produce"
+    },
+    {
+     "q": 1,
+     "u": "cup",
+     "item": "heavy cream",
+     "aisle": "dairy"
+    },
+    {
+     "q": 2,
+     "u": "tbsp",
+     "item": "powdered sugar",
+     "aisle": "pantry"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Heat the oven to 350°F. Mix the crumbs, 6 tbsp melted butter and 1/4 cup sugar. Press into a 9-inch pie plate."
+    },
+    {
+     "text": "Bake the crust, then cool.",
+     "timer": 600,
+     "timerLabel": "Bake crust"
+    },
+    {
+     "text": "Whisk the custard sugar, cornstarch and salt in a saucepan. Whisk in the milk and yolks."
+    },
+    {
+     "text": "Cook over medium heat, whisking constantly, until thick and bubbling.",
+     "timer": 300,
+     "timerLabel": "Cook custard"
+    },
+    {
+     "text": "Off the heat, stir in 2 tbsp butter and the vanilla."
+    },
+    {
+     "text": "Layer half the bananas in the crust, pour in the hot custard, press plastic wrap on top and chill 4 hours."
+    },
+    {
+     "text": "Whip the cream with the powdered sugar. Top the pie with the cream and the remaining bananas."
+    }
+   ]
+  },
+  {
+   "id": "desserts-lemon-meringue-pie",
+   "title": "Lemon meringue pie",
+   "blurb": "Tart lemon curd under a toasted meringue",
+   "type": "pies",
+   "serves": 8,
+   "prep": 45,
+   "cook": 45,
+   "tags": [
+    "make ahead",
+    "vegetarian"
+   ],
+   "ingredients": [
+    {
+     "q": 1,
+     "u": "",
+     "item": "refrigerated pie crust",
+     "note": "9-inch",
+     "aisle": "dairy"
+    },
+    {
+     "q": 1.5,
+     "u": "cup",
+     "item": "sugar",
+     "note": "for the filling",
+     "aisle": "pantry"
+    },
+    {
+     "q": 0.33,
+     "u": "cup",
+     "item": "cornstarch",
+     "aisle": "pantry"
+    },
+    {
+     "q": 1.5,
+     "u": "cup",
+     "item": "water",
+     "aisle": "pantry"
+    },
+    {
+     "q": 4,
+     "u": "",
+     "item": "large eggs",
+     "note": "separated",
+     "aisle": "dairy"
+    },
+    {
+     "q": 0.5,
+     "u": "cup",
+     "item": "lemon juice",
+     "note": "about 3 lemons",
+     "aisle": "produce"
+    },
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "lemon zest",
+     "aisle": "produce"
+    },
+    {
+     "q": 2,
+     "u": "tbsp",
+     "item": "unsalted butter",
+     "aisle": "dairy"
+    },
+    {
+     "q": 0.25,
+     "u": "tsp",
+     "item": "cream of tartar",
+     "aisle": "spices"
+    },
+    {
+     "q": 0.5,
+     "u": "cup",
+     "item": "sugar",
+     "note": "for the meringue",
+     "aisle": "pantry"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Heat the oven to 400°F. Fit the crust in a 9-inch plate, prick it, line with parchment and weights."
+    },
+    {
+     "text": "Bake the crust, then remove the weights and bake 5 minutes more.",
+     "timer": 1200,
+     "timerLabel": "Blind bake"
+    },
+    {
+     "text": "Whisk 1.5 cups sugar and the cornstarch in a saucepan. Whisk in the water and 4 yolks."
+    },
+    {
+     "text": "Cook, whisking, until thick and bubbling.",
+     "timer": 300,
+     "timerLabel": "Cook filling"
+    },
+    {
+     "text": "Off the heat, stir in the lemon juice, zest and butter. Pour into the warm crust."
+    },
+    {
+     "text": "Lower the oven to 350°F. Whip the 4 whites with cream of tartar, adding 1/2 cup sugar slowly, to stiff peaks."
+    },
+    {
+     "text": "Spread the meringue to the crust edges, sealing it, and swirl the top."
+    },
+    {
+     "text": "Bake until the meringue is golden. Cool 2 hours, then chill.",
+     "timer": 780,
+     "timerLabel": "Bake meringue"
+    }
+   ]
+  },
+  {
+   "id": "desserts-chocolate-cream-pie",
+   "title": "Chocolate cream pie",
+   "blurb": "Rich chocolate pudding in a graham crust, topped with cream",
+   "type": "pies",
+   "serves": 8,
+   "prep": 40,
+   "cook": 20,
+   "tags": [
+    "make ahead",
+    "vegetarian"
+   ],
+   "ingredients": [
+    {
+     "q": 1.5,
+     "u": "cup",
+     "item": "graham cracker crumbs",
+     "aisle": "pantry"
+    },
+    {
+     "q": 6,
+     "u": "tbsp",
+     "item": "unsalted butter",
+     "note": "melted",
+     "aisle": "dairy"
+    },
+    {
+     "q": 0.25,
+     "u": "cup",
+     "item": "sugar",
+     "note": "for the crust",
+     "aisle": "pantry"
+    },
+    {
+     "q": 0.67,
+     "u": "cup",
+     "item": "sugar",
+     "note": "for the filling",
+     "aisle": "pantry"
+    },
+    {
+     "q": 0.25,
+     "u": "cup",
+     "item": "cornstarch",
+     "aisle": "pantry"
+    },
+    {
+     "q": 0.25,
+     "u": "cup",
+     "item": "cocoa powder",
+     "aisle": "pantry"
+    },
+    {
+     "q": 0.25,
+     "u": "tsp",
+     "item": "salt",
+     "aisle": "spices"
+    },
+    {
+     "q": 3,
+     "u": "cup",
+     "item": "whole milk",
+     "aisle": "dairy"
+    },
+    {
+     "q": 4,
+     "u": "",
+     "item": "large eggs",
+     "note": "yolks only",
+     "aisle": "dairy"
+    },
+    {
+     "q": 0.5,
+     "u": "cup",
+     "item": "semisweet chocolate chips",
+     "aisle": "pantry"
+    },
+    {
+     "q": 2,
+     "u": "tbsp",
+     "item": "unsalted butter",
+     "aisle": "dairy"
+    },
+    {
+     "q": 1.5,
+     "u": "tsp",
+     "item": "vanilla extract",
+     "aisle": "pantry"
+    },
+    {
+     "q": 1,
+     "u": "cup",
+     "item": "heavy cream",
+     "aisle": "dairy"
+    },
+    {
+     "q": 2,
+     "u": "tbsp",
+     "item": "powdered sugar",
+     "aisle": "pantry"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Heat the oven to 350°F. Mix the crumbs, 6 tbsp melted butter and 1/4 cup sugar. Press into a 9-inch pie plate."
+    },
+    {
+     "text": "Bake the crust, then cool.",
+     "timer": 600,
+     "timerLabel": "Bake crust"
+    },
+    {
+     "text": "Whisk 2/3 cup sugar, cornstarch, cocoa and salt in a saucepan. Whisk in the milk and yolks."
+    },
+    {
+     "text": "Cook over medium heat, whisking constantly, until thick and bubbling.",
+     "timer": 300,
+     "timerLabel": "Cook filling"
+    },
+    {
+     "text": "Off the heat, stir in the chocolate chips, 2 tbsp butter and vanilla until smooth."
+    },
+    {
+     "text": "Pour into the crust, press plastic wrap on top and chill at least 4 hours."
+    },
+    {
+     "text": "Whip the cream with the powdered sugar and spoon it over the pie."
+    }
+   ]
+  },
+  {
+   "id": "desserts-no-bake-cheesecake",
+   "title": "No-bake cheesecake",
+   "blurb": "Creamy, light and set in the fridge",
+   "type": "nobake",
+   "serves": 10,
+   "prep": 30,
+   "cook": 360,
+   "tags": [
+    "make ahead",
+    "vegetarian"
+   ],
+   "ingredients": [
+    {
+     "q": 1.5,
+     "u": "cup",
+     "item": "graham cracker crumbs",
+     "aisle": "pantry"
+    },
+    {
+     "q": 6,
+     "u": "tbsp",
+     "item": "unsalted butter",
+     "note": "melted",
+     "aisle": "dairy"
+    },
+    {
+     "q": 0.25,
+     "u": "cup",
+     "item": "sugar",
+     "aisle": "pantry"
+    },
+    {
+     "q": 16,
+     "u": "oz",
+     "item": "cream cheese",
+     "note": "2 packages, softened",
+     "aisle": "dairy"
+    },
+    {
+     "q": 1,
+     "u": "cup",
+     "item": "powdered sugar",
+     "aisle": "pantry"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "vanilla extract",
+     "aisle": "pantry"
+    },
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "lemon juice",
+     "aisle": "produce"
+    },
+    {
+     "q": 1.5,
+     "u": "cup",
+     "item": "heavy cream",
+     "note": "cold",
+     "aisle": "dairy"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Mix the graham crumbs, melted butter and sugar. Press firmly into a 9-inch springform pan or pie plate."
+    },
+    {
+     "text": "Chill the crust while you make the filling.",
+     "timer": 600,
+     "timerLabel": "Chill crust"
+    },
+    {
+     "text": "Beat the cream cheese, powdered sugar, vanilla and lemon juice until completely smooth."
+    },
+    {
+     "text": "In another bowl, whip the cold cream to stiff peaks."
+    },
+    {
+     "text": "Fold the whipped cream into the cream cheese in two additions."
+    },
+    {
+     "text": "Spread the filling over the crust and smooth the top."
+    },
+    {
+     "text": "Cover and chill until firm.",
+     "timer": 21600,
+     "timerLabel": "Chill cheesecake"
+    },
+    {
+     "text": "Run a knife around the edge before releasing the pan. Slice and serve cold."
+    }
+   ]
+  },
+  {
+   "id": "desserts-rice-krispie-treats",
+   "title": "Rice crispy treats",
+   "blurb": "Gooey marshmallow cereal bars",
+   "type": "nobake",
+   "serves": 16,
+   "prep": 10,
+   "cook": 10,
+   "tags": [
+    "quick",
+    "kid-friendly",
+    "vegetarian",
+    "one pot"
+   ],
+   "ingredients": [
+    {
+     "q": 3,
+     "u": "tbsp",
+     "item": "unsalted butter",
+     "aisle": "dairy"
+    },
+    {
+     "q": 10,
+     "u": "oz",
+     "item": "marshmallows",
+     "note": "1 bag, about 40 regular",
+     "aisle": "pantry"
+    },
+    {
+     "q": 6,
+     "u": "cup",
+     "item": "crispy rice cereal",
+     "aisle": "pantry"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Butter a 9x13-inch pan."
+    },
+    {
+     "text": "Melt the butter in a large pot over low heat."
+    },
+    {
+     "text": "Add the marshmallows and stir until completely melted and smooth."
+    },
+    {
+     "text": "Remove from the heat and quickly stir in the cereal until coated."
+    },
+    {
+     "text": "Press into the pan with buttered hands or wax paper. Do not pack too hard."
+    },
+    {
+     "text": "Let set until firm, then cut into 16 squares.",
+     "timer": 1800,
+     "timerLabel": "Set bars"
+    }
+   ]
+  },
+  {
+   "id": "desserts-no-bake-chocolate-oatmeal-cookies",
+   "title": "No-bake chocolate oatmeal cookies",
+   "blurb": "Fudgy stovetop cookies with peanut butter",
+   "type": "nobake",
+   "serves": 24,
+   "prep": 10,
+   "cook": 40,
+   "tags": [
+    "kid-friendly",
+    "vegetarian"
+   ],
+   "ingredients": [
+    {
+     "q": 2,
+     "u": "cup",
+     "item": "sugar",
+     "aisle": "pantry"
+    },
+    {
+     "q": 0.5,
+     "u": "cup",
+     "item": "unsalted butter",
+     "aisle": "dairy"
+    },
+    {
+     "q": 0.5,
+     "u": "cup",
+     "item": "whole milk",
+     "aisle": "dairy"
+    },
+    {
+     "q": 0.25,
+     "u": "cup",
+     "item": "cocoa powder",
+     "aisle": "pantry"
+    },
+    {
+     "q": 0.5,
+     "u": "cup",
+     "item": "creamy peanut butter",
+     "aisle": "pantry"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "vanilla extract",
+     "aisle": "pantry"
+    },
+    {
+     "q": 3,
+     "u": "cup",
+     "item": "quick-cooking oats",
+     "aisle": "pantry"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Line two baking sheets with wax paper. Measure everything before you start."
+    },
+    {
+     "text": "Bring the sugar, butter, milk and cocoa to a full boil in a saucepan, stirring."
+    },
+    {
+     "text": "Boil for exactly 1 minute, stirring constantly. This sets the cookies.",
+     "timer": 60,
+     "timerLabel": "Boil"
+    },
+    {
+     "text": "Off the heat, stir in the peanut butter and vanilla until smooth."
+    },
+    {
+     "text": "Stir in the oats quickly."
+    },
+    {
+     "text": "Drop heaping tablespoons onto the wax paper."
+    },
+    {
+     "text": "Let stand until set.",
+     "timer": 1800,
+     "timerLabel": "Set cookies"
+    }
+   ]
+  },
+  {
+   "id": "desserts-classic-banana-pudding",
+   "title": "Banana pudding",
+   "blurb": "Layers of vanilla pudding, wafers and bananas",
+   "type": "nobake",
+   "serves": 10,
+   "prep": 30,
+   "cook": 240,
+   "tags": [
+    "make ahead",
+    "crowd",
+    "vegetarian"
+   ],
+   "ingredients": [
+    {
+     "q": 5.1,
+     "u": "oz",
+     "item": "instant vanilla pudding mix",
+     "note": "1 box",
+     "aisle": "pantry"
+    },
+    {
+     "q": 3,
+     "u": "cup",
+     "item": "whole milk",
+     "note": "cold",
+     "aisle": "dairy"
+    },
+    {
+     "q": 14,
+     "u": "oz",
+     "item": "sweetened condensed milk",
+     "note": "1 can",
+     "aisle": "canned"
+    },
+    {
+     "q": 1.5,
+     "u": "cup",
+     "item": "heavy cream",
+     "aisle": "dairy"
+    },
+    {
+     "q": 11,
+     "u": "oz",
+     "item": "vanilla wafers",
+     "note": "1 box",
+     "aisle": "pantry"
+    },
+    {
+     "q": 4,
+     "u": "",
+     "item": "ripe bananas",
+     "note": "sliced",
+     "aisle": "produce"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Whisk the pudding mix, cold milk and condensed milk for 2 minutes. Chill 5 minutes to thicken."
+    },
+    {
+     "text": "Whip the cream to stiff peaks and fold it into the pudding."
+    },
+    {
+     "text": "Layer vanilla wafers in the bottom of a 9x13-inch dish or trifle bowl."
+    },
+    {
+     "text": "Add a layer of banana slices, then a layer of pudding. Repeat the layers."
+    },
+    {
+     "text": "Finish with pudding and crush a few wafers on top."
+    },
+    {
+     "text": "Cover and chill so the wafers soften.",
+     "timer": 14400,
+     "timerLabel": "Chill pudding"
+    }
+   ]
+  },
+  {
+   "id": "desserts-easy-chocolate-mousse",
+   "title": "Easy chocolate mousse",
+   "blurb": "Silky mousse from just chocolate and cream",
+   "type": "nobake",
+   "serves": 6,
+   "prep": 20,
+   "cook": 120,
+   "tags": [
+    "gluten-free",
+    "make ahead",
+    "vegetarian"
+   ],
+   "ingredients": [
+    {
+     "q": 8,
+     "u": "oz",
+     "item": "semisweet chocolate",
+     "note": "finely chopped",
+     "aisle": "pantry"
+    },
+    {
+     "q": 2,
+     "u": "cup",
+     "item": "heavy cream",
+     "note": "divided",
+     "aisle": "dairy"
+    },
+    {
+     "q": 2,
+     "u": "tbsp",
+     "item": "sugar",
+     "aisle": "pantry"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "vanilla extract",
+     "aisle": "pantry"
+    },
+    {
+     "q": 1,
+     "u": "pinch",
+     "item": "salt",
+     "aisle": "spices"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Put the chocolate in a large bowl."
+    },
+    {
+     "text": "Heat 1/2 cup cream until steaming, pour over the chocolate and let sit 2 minutes."
+    },
+    {
+     "text": "Stir until smooth, then stir in the vanilla and salt. Cool to room temperature."
+    },
+    {
+     "text": "Whip the remaining 1.5 cups cream with the sugar to soft peaks."
+    },
+    {
+     "text": "Fold a third of the cream into the chocolate, then fold in the rest gently."
+    },
+    {
+     "text": "Spoon into 6 glasses."
+    },
+    {
+     "text": "Chill until set.",
+     "timer": 7200,
+     "timerLabel": "Chill mousse"
+    }
+   ]
+  },
+  {
+   "id": "desserts-easy-chocolate-fudge",
+   "title": "Easy chocolate fudge",
+   "blurb": "Three-ingredient fudge, no candy thermometer",
+   "type": "nobake",
+   "serves": 36,
+   "prep": 10,
+   "cook": 130,
+   "tags": [
+    "make ahead",
+    "gluten-free",
+    "vegetarian"
+   ],
+   "ingredients": [
+    {
+     "q": 3,
+     "u": "cup",
+     "item": "semisweet chocolate chips",
+     "aisle": "pantry"
+    },
+    {
+     "q": 14,
+     "u": "oz",
+     "item": "sweetened condensed milk",
+     "note": "1 can",
+     "aisle": "canned"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "vanilla extract",
+     "aisle": "pantry"
+    },
+    {
+     "q": 1,
+     "u": "pinch",
+     "item": "salt",
+     "aisle": "spices"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Line an 8-inch square pan with parchment, leaving an overhang."
+    },
+    {
+     "text": "Combine the chips and condensed milk in a saucepan over low heat."
+    },
+    {
+     "text": "Stir constantly until the chips are melted and the mixture is smooth."
+    },
+    {
+     "text": "Remove from the heat and stir in the vanilla and salt."
+    },
+    {
+     "text": "Spread into the pan and smooth the top."
+    },
+    {
+     "text": "Chill until firm.",
+     "timer": 7200,
+     "timerLabel": "Chill fudge"
+    },
+    {
+     "text": "Lift out and cut into 36 squares with a warm knife."
+    }
+   ]
+  },
+  {
+   "id": "desserts-strawberry-icebox-cake",
+   "title": "Strawberry icebox cake",
+   "blurb": "Graham crackers soften into cake under whipped cream",
+   "type": "nobake",
+   "serves": 12,
+   "prep": 25,
+   "cook": 360,
+   "tags": [
+    "make ahead",
+    "kid-friendly",
+    "vegetarian"
+   ],
+   "ingredients": [
+    {
+     "q": 3,
+     "u": "cup",
+     "item": "heavy cream",
+     "note": "cold",
+     "aisle": "dairy"
+    },
+    {
+     "q": 0.5,
+     "u": "cup",
+     "item": "powdered sugar",
+     "aisle": "pantry"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "vanilla extract",
+     "aisle": "pantry"
+    },
+    {
+     "q": 1,
+     "u": "lb",
+     "item": "strawberries",
+     "note": "hulled and sliced",
+     "aisle": "produce"
+    },
+    {
+     "q": 14.4,
+     "u": "oz",
+     "item": "graham crackers",
+     "note": "1 box",
+     "aisle": "pantry"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Whip the cream, powdered sugar and vanilla to stiff peaks."
+    },
+    {
+     "text": "Spread a thin layer of cream in a 9x13-inch dish."
+    },
+    {
+     "text": "Cover with a layer of graham crackers, breaking them to fit."
+    },
+    {
+     "text": "Top with a third of the cream and a third of the strawberries."
+    },
+    {
+     "text": "Repeat the layers twice more, ending with cream and berries."
+    },
+    {
+     "text": "Cover and chill so the crackers turn soft and cakey.",
+     "timer": 21600,
+     "timerLabel": "Chill cake"
+    },
+    {
+     "text": "Cut into squares and serve cold."
+    }
+   ]
+  },
+  {
+   "id": "desserts-peanut-butter-pie",
+   "title": "Peanut butter pie",
+   "blurb": "Fluffy peanut butter filling with a chocolate drizzle",
+   "type": "nobake",
+   "serves": 8,
+   "prep": 25,
+   "cook": 240,
+   "tags": [
+    "make ahead",
+    "kid-friendly",
+    "vegetarian"
+   ],
+   "ingredients": [
+    {
+     "q": 1,
+     "u": "",
+     "item": "prepared graham cracker crust",
+     "note": "9-inch",
+     "aisle": "pantry"
+    },
+    {
+     "q": 8,
+     "u": "oz",
+     "item": "cream cheese",
+     "note": "softened",
+     "aisle": "dairy"
+    },
+    {
+     "q": 1,
+     "u": "cup",
+     "item": "creamy peanut butter",
+     "aisle": "pantry"
+    },
+    {
+     "q": 1,
+     "u": "cup",
+     "item": "powdered sugar",
+     "aisle": "pantry"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "vanilla extract",
+     "aisle": "pantry"
+    },
+    {
+     "q": 1.5,
+     "u": "cup",
+     "item": "heavy cream",
+     "note": "cold",
+     "aisle": "dairy"
+    },
+    {
+     "q": 0.5,
+     "u": "cup",
+     "item": "semisweet chocolate chips",
+     "aisle": "pantry"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "vegetable oil",
+     "aisle": "pantry"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Beat the cream cheese, peanut butter, powdered sugar and vanilla until smooth."
+    },
+    {
+     "text": "Whip the cold cream to stiff peaks."
+    },
+    {
+     "text": "Fold a third of the cream into the peanut butter mixture, then fold in the rest."
+    },
+    {
+     "text": "Spoon the filling into the crust and smooth the top."
+    },
+    {
+     "text": "Melt the chocolate chips with the oil in the microwave in 20-second bursts, stirring each time."
+    },
+    {
+     "text": "Drizzle the chocolate over the pie."
+    },
+    {
+     "text": "Chill until firm before slicing.",
+     "timer": 14400,
+     "timerLabel": "Chill pie"
+    }
+   ]
+  },
+  {
+   "id": "desserts-frozen-yogurt-bark",
+   "title": "Frozen yogurt bark",
+   "blurb": "Berry-studded Greek yogurt, frozen in a sheet",
+   "type": "nobake",
+   "serves": 12,
+   "prep": 10,
+   "cook": 180,
+   "tags": [
+    "healthy",
+    "gluten-free",
+    "kid-friendly",
+    "vegetarian",
+    "make ahead"
+   ],
+   "ingredients": [
+    {
+     "q": 3,
+     "u": "cup",
+     "item": "plain Greek yogurt",
+     "aisle": "dairy"
+    },
+    {
+     "q": 3,
+     "u": "tbsp",
+     "item": "honey",
+     "aisle": "pantry"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "vanilla extract",
+     "aisle": "pantry"
+    },
+    {
+     "q": 0.5,
+     "u": "cup",
+     "item": "blueberries",
+     "aisle": "produce"
+    },
+    {
+     "q": 0.5,
+     "u": "cup",
+     "item": "strawberries",
+     "note": "diced",
+     "aisle": "produce"
+    },
+    {
+     "q": 0.25,
+     "u": "cup",
+     "item": "mini chocolate chips",
+     "aisle": "pantry"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Line a rimmed baking sheet with parchment."
+    },
+    {
+     "text": "Stir the yogurt, honey and vanilla until smooth."
+    },
+    {
+     "text": "Spread the yogurt about 1/4 inch thick on the parchment."
+    },
+    {
+     "text": "Scatter the blueberries, strawberries and chocolate chips over the top and press in lightly."
+    },
+    {
+     "text": "Freeze until completely solid.",
+     "timer": 10800,
+     "timerLabel": "Freeze bark"
+    },
+    {
+     "text": "Break into 12 pieces and store in the freezer."
+    }
+   ]
+  },
+  {
+   "id": "desserts-cut-out-sugar-cookies",
+   "title": "Cut-out sugar cookies with icing",
+   "blurb": "Holds its shape for cookie cutters",
+   "type": "holiday",
+   "serves": 24,
+   "prep": 40,
+   "cook": 30,
+   "tags": [
+    "holiday",
+    "kid-friendly",
+    "make ahead"
+   ],
+   "ingredients": [
+    {
+     "q": 3,
+     "u": "cup",
+     "item": "all-purpose flour",
+     "aisle": "pantry"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "baking powder",
+     "aisle": "pantry"
+    },
+    {
+     "q": 0.5,
+     "u": "tsp",
+     "item": "salt",
+     "aisle": "spices"
+    },
+    {
+     "q": 1,
+     "u": "cup",
+     "item": "unsalted butter",
+     "note": "softened",
+     "aisle": "dairy"
+    },
+    {
+     "q": 1,
+     "u": "cup",
+     "item": "sugar",
+     "aisle": "pantry"
+    },
+    {
+     "q": 1,
+     "u": "",
+     "item": "large eggs",
+     "aisle": "dairy"
+    },
+    {
+     "q": 2,
+     "u": "tsp",
+     "item": "vanilla extract",
+     "aisle": "pantry"
+    },
+    {
+     "q": 2,
+     "u": "cup",
+     "item": "powdered sugar",
+     "note": "for the icing",
+     "aisle": "pantry"
+    },
+    {
+     "q": 2,
+     "u": "tbsp",
+     "item": "whole milk",
+     "note": "for the icing",
+     "aisle": "dairy"
+    },
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "light corn syrup",
+     "aisle": "pantry"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Whisk the flour, baking powder and salt together."
+    },
+    {
+     "text": "Beat the butter and sugar until fluffy. Beat in the egg and vanilla."
+    },
+    {
+     "text": "Mix in the flour mixture to make a dough. Divide in two and flatten into discs."
+    },
+    {
+     "text": "Wrap the discs and chill until firm.",
+     "timer": 3600,
+     "timerLabel": "Chill dough"
+    },
+    {
+     "text": "Heat the oven to 350°F. Roll the dough 1/4 inch thick on a floured surface and cut shapes."
+    },
+    {
+     "text": "Bake on parchment-lined sheets until the edges are just golden.",
+     "timer": 540,
+     "timerLabel": "Bake cookies"
+    },
+    {
+     "text": "Cool completely. Whisk the powdered sugar, milk and corn syrup into an icing, then decorate."
+    }
+   ]
+  },
+  {
+   "id": "desserts-gingerbread-cookies",
+   "title": "Gingerbread cookies",
+   "blurb": "Spicy, molasses-rich cookies for cutting",
+   "type": "holiday",
+   "serves": 24,
+   "prep": 30,
+   "cook": 30,
+   "tags": [
+    "holiday",
+    "kid-friendly",
+    "make ahead"
+   ],
+   "ingredients": [
+    {
+     "q": 3,
+     "u": "cup",
+     "item": "all-purpose flour",
+     "aisle": "pantry"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "baking soda",
+     "aisle": "pantry"
+    },
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "ground ginger",
+     "aisle": "spices"
+    },
+    {
+     "q": 1.5,
+     "u": "tsp",
+     "item": "ground cinnamon",
+     "aisle": "spices"
+    },
+    {
+     "q": 0.5,
+     "u": "tsp",
+     "item": "ground cloves",
+     "aisle": "spices"
+    },
+    {
+     "q": 0.5,
+     "u": "tsp",
+     "item": "salt",
+     "aisle": "spices"
+    },
+    {
+     "q": 0.5,
+     "u": "cup",
+     "item": "unsalted butter",
+     "note": "softened",
+     "aisle": "dairy"
+    },
+    {
+     "q": 0.5,
+     "u": "cup",
+     "item": "brown sugar",
+     "note": "packed",
+     "aisle": "pantry"
+    },
+    {
+     "q": 0.5,
+     "u": "cup",
+     "item": "molasses",
+     "aisle": "pantry"
+    },
+    {
+     "q": 1,
+     "u": "",
+     "item": "large eggs",
+     "aisle": "dairy"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Whisk the flour, baking soda, ginger, cinnamon, cloves and salt together."
+    },
+    {
+     "text": "Beat the butter and brown sugar until fluffy, then beat in the molasses and egg."
+    },
+    {
+     "text": "Mix in the flour mixture. Divide the dough in two and flatten into discs."
+    },
+    {
+     "text": "Wrap and chill until firm.",
+     "timer": 7200,
+     "timerLabel": "Chill dough"
+    },
+    {
+     "text": "Heat the oven to 350°F. Roll the dough 1/4 inch thick and cut shapes."
+    },
+    {
+     "text": "Bake on parchment-lined sheets until the edges look set.",
+     "timer": 540,
+     "timerLabel": "Bake cookies"
+    },
+    {
+     "text": "Cool on the sheet for 5 minutes, then move to a rack."
+    }
+   ]
+  },
+  {
+   "id": "desserts-pumpkin-pie",
+   "title": "Pumpkin pie",
+   "blurb": "The Thanksgiving classic with a smooth spiced filling",
+   "type": "holiday",
+   "serves": 8,
+   "prep": 15,
+   "cook": 65,
+   "tags": [
+    "holiday",
+    "make ahead",
+    "vegetarian"
+   ],
+   "ingredients": [
+    {
+     "q": 1,
+     "u": "",
+     "item": "refrigerated pie crust",
+     "note": "9-inch",
+     "aisle": "dairy"
+    },
+    {
+     "q": 15,
+     "u": "oz",
+     "item": "pumpkin puree",
+     "note": "1 can",
+     "aisle": "canned"
+    },
+    {
+     "q": 12,
+     "u": "oz",
+     "item": "evaporated milk",
+     "note": "1 can",
+     "aisle": "canned"
+    },
+    {
+     "q": 2,
+     "u": "",
+     "item": "large eggs",
+     "aisle": "dairy"
+    },
+    {
+     "q": 0.75,
+     "u": "cup",
+     "item": "sugar",
+     "aisle": "pantry"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "ground cinnamon",
+     "aisle": "spices"
+    },
+    {
+     "q": 0.5,
+     "u": "tsp",
+     "item": "ground ginger",
+     "aisle": "spices"
+    },
+    {
+     "q": 0.25,
+     "u": "tsp",
+     "item": "ground cloves",
+     "aisle": "spices"
+    },
+    {
+     "q": 0.5,
+     "u": "tsp",
+     "item": "salt",
+     "aisle": "spices"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Heat the oven to 425°F. Fit the crust into a 9-inch deep-dish pie plate and crimp the edge."
+    },
+    {
+     "text": "Whisk the sugar, cinnamon, ginger, cloves and salt in a bowl."
+    },
+    {
+     "text": "Whisk in the eggs, then the pumpkin, then the evaporated milk."
+    },
+    {
+     "text": "Pour the filling into the crust."
+    },
+    {
+     "text": "Bake at 425°F.",
+     "timer": 900,
+     "timerLabel": "Bake at 425°F"
+    },
+    {
+     "text": "Lower to 350°F and bake until a knife in the center comes out clean.",
+     "timer": 2700,
+     "timerLabel": "Bake at 350°F"
+    },
+    {
+     "text": "Cool at least 2 hours. Chill if keeping overnight."
+    }
+   ]
+  },
+  {
+   "id": "desserts-pecan-pie",
+   "title": "Pecan pie",
+   "blurb": "Gooey caramel-like filling under toasty pecans",
+   "type": "holiday",
+   "serves": 8,
+   "prep": 15,
+   "cook": 60,
+   "tags": [
+    "holiday",
+    "make ahead",
+    "vegetarian"
+   ],
+   "ingredients": [
+    {
+     "q": 1,
+     "u": "",
+     "item": "refrigerated pie crust",
+     "note": "9-inch",
+     "aisle": "dairy"
+    },
+    {
+     "q": 3,
+     "u": "",
+     "item": "large eggs",
+     "aisle": "dairy"
+    },
+    {
+     "q": 1,
+     "u": "cup",
+     "item": "light corn syrup",
+     "aisle": "pantry"
+    },
+    {
+     "q": 1,
+     "u": "cup",
+     "item": "sugar",
+     "aisle": "pantry"
+    },
+    {
+     "q": 2,
+     "u": "tbsp",
+     "item": "unsalted butter",
+     "note": "melted",
+     "aisle": "dairy"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "vanilla extract",
+     "aisle": "pantry"
+    },
+    {
+     "q": 1,
+     "u": "pinch",
+     "item": "salt",
+     "aisle": "spices"
+    },
+    {
+     "q": 1.5,
+     "u": "cup",
+     "item": "pecan halves",
+     "aisle": "pantry"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Heat the oven to 350°F. Fit the crust into a 9-inch pie plate and crimp the edge."
+    },
+    {
+     "text": "Whisk the eggs, corn syrup, sugar, melted butter, vanilla and salt until smooth."
+    },
+    {
+     "text": "Spread the pecans in the crust and pour the filling over them."
+    },
+    {
+     "text": "Bake until the center is puffed and only slightly jiggly. Cover the edge if it browns fast.",
+     "timer": 3300,
+     "timerLabel": "Bake pie"
+    },
+    {
+     "text": "Cool at least 2 hours so the filling sets."
+    }
+   ]
+  },
+  {
+   "id": "desserts-peppermint-bark",
+   "title": "Peppermint bark",
+   "blurb": "Dark and white chocolate layers with candy cane crunch",
+   "type": "holiday",
+   "serves": 24,
+   "prep": 20,
+   "cook": 30,
+   "tags": [
+    "holiday",
+    "quick",
+    "make ahead",
+    "vegetarian"
+   ],
+   "ingredients": [
+    {
+     "q": 12,
+     "u": "oz",
+     "item": "semisweet chocolate chips",
+     "aisle": "pantry"
+    },
+    {
+     "q": 12,
+     "u": "oz",
+     "item": "white chocolate chips",
+     "aisle": "pantry"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "peppermint extract",
+     "note": "divided",
+     "aisle": "pantry"
+    },
+    {
+     "q": 6,
+     "u": "",
+     "item": "candy canes",
+     "note": "crushed",
+     "aisle": "pantry"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Line a 9x13-inch pan or baking sheet with parchment."
+    },
+    {
+     "text": "Melt the semisweet chips in the microwave in 30-second bursts, stirring each time, until smooth. Stir in 1/2 tsp extract."
+    },
+    {
+     "text": "Spread the dark chocolate evenly into a rectangle."
+    },
+    {
+     "text": "Chill until firm.",
+     "timer": 900,
+     "timerLabel": "Chill dark layer"
+    },
+    {
+     "text": "Melt the white chocolate the same way and stir in the remaining 1/2 tsp extract."
+    },
+    {
+     "text": "Spread over the dark layer and sprinkle with crushed candy canes, pressing lightly."
+    },
+    {
+     "text": "Chill until firm, then break into pieces.",
+     "timer": 1800,
+     "timerLabel": "Chill bark"
+    }
+   ]
+  },
+  {
+   "id": "desserts-buckeyes",
+   "title": "Peanut butter buckeyes",
+   "blurb": "Peanut butter fudge balls dipped in chocolate",
+   "type": "holiday",
+   "serves": 40,
+   "prep": 40,
+   "cook": 30,
+   "tags": [
+    "holiday",
+    "kid-friendly",
+    "make ahead",
+    "vegetarian"
+   ],
+   "ingredients": [
+    {
+     "q": 1.5,
+     "u": "cup",
+     "item": "creamy peanut butter",
+     "aisle": "pantry"
+    },
+    {
+     "q": 0.5,
+     "u": "cup",
+     "item": "unsalted butter",
+     "note": "softened",
+     "aisle": "dairy"
+    },
+    {
+     "q": 3,
+     "u": "cup",
+     "item": "powdered sugar",
+     "aisle": "pantry"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "vanilla extract",
+     "aisle": "pantry"
+    },
+    {
+     "q": 12,
+     "u": "oz",
+     "item": "semisweet chocolate chips",
+     "aisle": "pantry"
+    },
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "vegetable oil",
+     "aisle": "pantry"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Line a baking sheet with parchment."
+    },
+    {
+     "text": "Beat the peanut butter, butter and vanilla until smooth, then mix in the powdered sugar."
+    },
+    {
+     "text": "Roll into 1-inch balls and set on the sheet."
+    },
+    {
+     "text": "Chill the balls until firm.",
+     "timer": 1800,
+     "timerLabel": "Chill balls"
+    },
+    {
+     "text": "Melt the chocolate chips and oil in the microwave in 30-second bursts, stirring."
+    },
+    {
+     "text": "Hold a ball on a toothpick, dip into the chocolate leaving a circle of peanut butter showing."
+    },
+    {
+     "text": "Set on parchment and chill until the chocolate is firm.",
+     "timer": 900,
+     "timerLabel": "Set chocolate"
+    }
+   ]
+  },
+  {
+   "id": "desserts-jam-thumbprint-cookies",
+   "title": "Jam thumbprint cookies",
+   "blurb": "Buttery shortbread cookies with a jewel of jam",
+   "type": "holiday",
+   "serves": 30,
+   "prep": 25,
+   "cook": 40,
+   "tags": [
+    "holiday",
+    "make ahead",
+    "vegetarian"
+   ],
+   "ingredients": [
+    {
+     "q": 1,
+     "u": "cup",
+     "item": "unsalted butter",
+     "note": "softened",
+     "aisle": "dairy"
+    },
+    {
+     "q": 0.5,
+     "u": "cup",
+     "item": "sugar",
+     "aisle": "pantry"
+    },
+    {
+     "q": 2,
+     "u": "",
+     "item": "large eggs",
+     "note": "yolks only",
+     "aisle": "dairy"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "vanilla extract",
+     "aisle": "pantry"
+    },
+    {
+     "q": 2,
+     "u": "cup",
+     "item": "all-purpose flour",
+     "aisle": "pantry"
+    },
+    {
+     "q": 0.25,
+     "u": "tsp",
+     "item": "salt",
+     "aisle": "spices"
+    },
+    {
+     "q": 0.5,
+     "u": "cup",
+     "item": "raspberry jam",
+     "aisle": "pantry"
+    },
+    {
+     "q": 2,
+     "u": "tbsp",
+     "item": "powdered sugar",
+     "note": "to dust",
+     "aisle": "pantry"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Heat the oven to 350°F. Line two baking sheets with parchment."
+    },
+    {
+     "text": "Beat the butter and sugar until fluffy, then beat in the yolks and vanilla."
+    },
+    {
+     "text": "Mix in the flour and salt to make a soft dough."
+    },
+    {
+     "text": "Roll into 1-inch balls and place 2 inches apart. Press a deep thumbprint into each."
+    },
+    {
+     "text": "Spoon about 1/2 teaspoon jam into each well."
+    },
+    {
+     "text": "Bake until the edges are lightly golden.",
+     "timer": 780,
+     "timerLabel": "Bake cookies"
+    },
+    {
+     "text": "Cool on a rack and dust with powdered sugar."
+    }
+   ]
+  },
+  {
+   "id": "desserts-chocolate-crinkle-cookies",
+   "title": "Chocolate crinkle cookies",
+   "blurb": "Fudgy cocoa cookies cracked with powdered sugar",
+   "type": "holiday",
+   "serves": 36,
+   "prep": 20,
+   "cook": 35,
+   "tags": [
+    "holiday",
+    "kid-friendly",
+    "make ahead",
+    "vegetarian"
+   ],
+   "ingredients": [
+    {
+     "q": 0.5,
+     "u": "cup",
+     "item": "cocoa powder",
+     "aisle": "pantry"
+    },
+    {
+     "q": 1,
+     "u": "cup",
+     "item": "sugar",
+     "aisle": "pantry"
+    },
+    {
+     "q": 0.5,
+     "u": "cup",
+     "item": "vegetable oil",
+     "aisle": "pantry"
+    },
+    {
+     "q": 2,
+     "u": "tsp",
+     "item": "vanilla extract",
+     "aisle": "pantry"
+    },
+    {
+     "q": 4,
+     "u": "",
+     "item": "large eggs",
+     "aisle": "dairy"
+    },
+    {
+     "q": 2,
+     "u": "cup",
+     "item": "all-purpose flour",
+     "aisle": "pantry"
+    },
+    {
+     "q": 2,
+     "u": "tsp",
+     "item": "baking powder",
+     "aisle": "pantry"
+    },
+    {
+     "q": 0.5,
+     "u": "tsp",
+     "item": "salt",
+     "aisle": "spices"
+    },
+    {
+     "q": 1,
+     "u": "cup",
+     "item": "powdered sugar",
+     "note": "for rolling",
+     "aisle": "pantry"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Whisk the cocoa, sugar and oil until smooth. Whisk in the vanilla and eggs one at a time."
+    },
+    {
+     "text": "Stir in the flour, baking powder and salt to make a soft dough."
+    },
+    {
+     "text": "Cover and chill until firm enough to roll.",
+     "timer": 10800,
+     "timerLabel": "Chill dough"
+    },
+    {
+     "text": "Heat the oven to 350°F and line two baking sheets with parchment."
+    },
+    {
+     "text": "Roll the dough into 1-inch balls and coat very thickly in powdered sugar."
+    },
+    {
+     "text": "Place 2 inches apart and bake until the cracks are set. Do not overbake.",
+     "timer": 660,
+     "timerLabel": "Bake cookies"
+    },
+    {
+     "text": "Cool 5 minutes on the sheet, then move to a rack."
+    }
+   ]
+  },
+  {
+   "id": "desserts-cranberry-orange-loaf",
+   "title": "Cranberry orange loaf",
+   "blurb": "Tart cranberries and bright orange in a tender loaf",
+   "type": "holiday",
+   "serves": 12,
+   "prep": 15,
+   "cook": 60,
+   "tags": [
+    "holiday",
+    "make ahead",
+    "vegetarian"
+   ],
+   "ingredients": [
+    {
+     "q": 2,
+     "u": "cup",
+     "item": "all-purpose flour",
+     "aisle": "pantry"
+    },
+    {
+     "q": 1,
+     "u": "cup",
+     "item": "sugar",
+     "aisle": "pantry"
+    },
+    {
+     "q": 1.5,
+     "u": "tsp",
+     "item": "baking powder",
+     "aisle": "pantry"
+    },
+    {
+     "q": 0.5,
+     "u": "tsp",
+     "item": "baking soda",
+     "aisle": "pantry"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "salt",
+     "aisle": "spices"
+    },
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "orange zest",
+     "aisle": "produce"
+    },
+    {
+     "q": 0.75,
+     "u": "cup",
+     "item": "orange juice",
+     "aisle": "beverages"
+    },
+    {
+     "q": 4,
+     "u": "tbsp",
+     "item": "unsalted butter",
+     "note": "melted",
+     "aisle": "dairy"
+    },
+    {
+     "q": 1,
+     "u": "",
+     "item": "large eggs",
+     "aisle": "dairy"
+    },
+    {
+     "q": 1.5,
+     "u": "cup",
+     "item": "fresh cranberries",
+     "note": "roughly chopped",
+     "aisle": "produce"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Heat the oven to 350°F. Grease and line a 9x5-inch loaf pan."
+    },
+    {
+     "text": "Whisk the flour, sugar, baking powder, baking soda and salt together."
+    },
+    {
+     "text": "Whisk the orange zest, juice, melted butter and egg in another bowl."
+    },
+    {
+     "text": "Stir the wet ingredients into the dry just until combined, then fold in the cranberries."
+    },
+    {
+     "text": "Scrape the batter into the pan."
+    },
+    {
+     "text": "Bake until a toothpick comes out clean.",
+     "timer": 3300,
+     "timerLabel": "Bake loaf"
+    },
+    {
+     "text": "Cool 15 minutes, lift out and cool completely before slicing."
+    }
+   ]
+  },
+  {
+   "id": "desserts-pumpkin-bread",
+   "title": "Pumpkin bread",
+   "blurb": "Two moist, spiced loaves for gifting or freezing",
+   "type": "holiday",
+   "serves": 24,
+   "prep": 20,
+   "cook": 70,
+   "tags": [
+    "holiday",
+    "make ahead",
+    "vegetarian",
+    "crowd"
+   ],
+   "ingredients": [
+    {
+     "q": 3.5,
+     "u": "cup",
+     "item": "all-purpose flour",
+     "aisle": "pantry"
+    },
+    {
+     "q": 2,
+     "u": "tsp",
+     "item": "baking soda",
+     "aisle": "pantry"
+    },
+    {
+     "q": 1.5,
+     "u": "tsp",
+     "item": "salt",
+     "aisle": "spices"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "ground cinnamon",
+     "aisle": "spices"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "ground nutmeg",
+     "aisle": "spices"
+    },
+    {
+     "q": 3,
+     "u": "cup",
+     "item": "sugar",
+     "aisle": "pantry"
+    },
+    {
+     "q": 1,
+     "u": "cup",
+     "item": "vegetable oil",
+     "aisle": "pantry"
+    },
+    {
+     "q": 4,
+     "u": "",
+     "item": "large eggs",
+     "aisle": "dairy"
+    },
+    {
+     "q": 2,
+     "u": "cup",
+     "item": "pumpkin puree",
+     "aisle": "canned"
+    },
+    {
+     "q": 0.67,
+     "u": "cup",
+     "item": "water",
+     "aisle": "pantry"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Heat the oven to 350°F. Grease and flour two 9x5-inch loaf pans."
+    },
+    {
+     "text": "Whisk the flour, baking soda, salt, cinnamon and nutmeg together."
+    },
+    {
+     "text": "Whisk the sugar, oil, eggs, pumpkin and water until smooth."
+    },
+    {
+     "text": "Stir the flour mixture into the wet ingredients just until combined."
+    },
+    {
+     "text": "Divide the batter between the pans."
+    },
+    {
+     "text": "Bake until a toothpick comes out clean.",
+     "timer": 3900,
+     "timerLabel": "Bake loaves"
+    },
+    {
+     "text": "Cool 10 minutes, turn out and cool completely before slicing."
+    }
+   ]
+  }
+ ]
+}

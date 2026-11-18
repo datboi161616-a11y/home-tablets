@@ -1,0 +1,5748 @@
+{
+ "id": "chinese",
+ "name": "Chinese",
+ "types": [
+  {
+   "id": "noodles",
+   "name": "Noodles"
+  },
+  {
+   "id": "rice",
+   "name": "Rice & fried rice"
+  },
+  {
+   "id": "stir-fry",
+   "name": "Stir-fry"
+  },
+  {
+   "id": "dumplings",
+   "name": "Dumplings & buns"
+  },
+  {
+   "id": "soups",
+   "name": "Soups"
+  },
+  {
+   "id": "takeout",
+   "name": "Takeout favorites"
+  }
+ ],
+ "recipes": [
+  {
+   "id": "chinese-dan-dan-noodles",
+   "title": "Dan dan noodles",
+   "blurb": "Spicy sesame-peanut sauce, crispy pork and greens",
+   "type": "noodles",
+   "serves": 4,
+   "prep": 15,
+   "cook": 15,
+   "tags": [
+    "spicy",
+    "quick"
+   ],
+   "ingredients": [
+    {
+     "q": 12,
+     "u": "oz",
+     "item": "dried wheat noodles",
+     "aisle": "international"
+    },
+    {
+     "q": 0.5,
+     "u": "lb",
+     "item": "ground pork",
+     "aisle": "meat"
+    },
+    {
+     "q": 2,
+     "u": "tbsp",
+     "item": "vegetable oil",
+     "aisle": "pantry"
+    },
+    {
+     "q": 3,
+     "u": "clove",
+     "item": "garlic",
+     "note": "minced",
+     "aisle": "produce"
+    },
+    {
+     "q": 3,
+     "u": "tbsp",
+     "item": "creamy peanut butter",
+     "aisle": "pantry"
+    },
+    {
+     "q": 3,
+     "u": "tbsp",
+     "item": "soy sauce",
+     "aisle": "international"
+    },
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "rice vinegar",
+     "aisle": "international"
+    },
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "chili crisp",
+     "aisle": "international"
+    },
+    {
+     "q": 2,
+     "u": "tsp",
+     "item": "toasted sesame oil",
+     "aisle": "international"
+    },
+    {
+     "q": 1,
+     "u": "bunch",
+     "item": "baby bok choy",
+     "note": "halved",
+     "aisle": "produce"
+    },
+    {
+     "q": 2,
+     "u": "tbsp",
+     "item": "scallions",
+     "note": "sliced",
+     "aisle": "produce"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Whisk peanut butter, 2 tbsp soy sauce, vinegar, chili crisp, sesame oil and 1/3 cup hot water in a big bowl."
+    },
+    {
+     "text": "Bring a large pot of water to a boil for the noodles."
+    },
+    {
+     "text": "Heat the oil in a skillet over medium-high. Cook the pork until crisp and no pink is left (160°F), breaking it up.",
+     "timer": 420,
+     "timerLabel": "Crisp the pork"
+    },
+    {
+     "text": "Add the garlic and 1 tbsp soy sauce and stir 30 seconds."
+    },
+    {
+     "text": "Boil the noodles until tender, adding the bok choy for the last minute. Drain.",
+     "timer": 300,
+     "timerLabel": "Boil the noodles"
+    },
+    {
+     "text": "Toss the noodles and bok choy in the sauce, then top with pork and scallions."
+    }
+   ]
+  },
+  {
+   "id": "chinese-chicken-lo-mein",
+   "title": "Chicken lo mein",
+   "blurb": "Soft egg noodles, chicken and crisp veggies in savory sauce",
+   "type": "noodles",
+   "serves": 4,
+   "prep": 15,
+   "cook": 15,
+   "tags": [
+    "quick",
+    "kid-friendly"
+   ],
+   "ingredients": [
+    {
+     "q": 12,
+     "u": "oz",
+     "item": "fresh lo mein egg noodles",
+     "aisle": "international"
+    },
+    {
+     "q": 1,
+     "u": "lb",
+     "item": "boneless skinless chicken breasts",
+     "note": "sliced thin",
+     "aisle": "meat"
+    },
+    {
+     "q": 3,
+     "u": "tbsp",
+     "item": "soy sauce",
+     "aisle": "international"
+    },
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "oyster sauce",
+     "aisle": "international"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "toasted sesame oil",
+     "aisle": "international"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "sugar",
+     "aisle": "pantry"
+    },
+    {
+     "q": 2,
+     "u": "tbsp",
+     "item": "vegetable oil",
+     "aisle": "pantry"
+    },
+    {
+     "q": 2,
+     "u": "clove",
+     "item": "garlic",
+     "note": "minced",
+     "aisle": "produce"
+    },
+    {
+     "q": 2,
+     "u": "",
+     "item": "carrots",
+     "note": "cut in matchsticks",
+     "aisle": "produce"
+    },
+    {
+     "q": 2,
+     "u": "cup",
+     "item": "napa cabbage",
+     "note": "shredded",
+     "aisle": "produce"
+    },
+    {
+     "q": 4,
+     "u": "",
+     "item": "scallions",
+     "note": "cut in 2-inch pieces",
+     "aisle": "produce"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Boil the noodles 2 minutes or as the package says, then drain and rinse.",
+     "timer": 120,
+     "timerLabel": "Boil the noodles"
+    },
+    {
+     "text": "Mix the soy sauce, oyster sauce, sesame oil and sugar in a cup."
+    },
+    {
+     "text": "Heat 1 tbsp oil in a wok over high heat. Cook the chicken until browned and 165°F inside. Move to a plate.",
+     "timer": 240,
+     "timerLabel": "Cook the chicken"
+    },
+    {
+     "text": "Add the remaining oil, garlic, carrots and cabbage. Stir-fry until just tender.",
+     "timer": 180,
+     "timerLabel": "Stir-fry the veg"
+    },
+    {
+     "text": "Add the noodles, chicken, scallions and sauce. Toss until hot and coated.",
+     "timer": 60,
+     "timerLabel": "Toss together"
+    }
+   ]
+  },
+  {
+   "id": "chinese-vegetable-chow-mein",
+   "title": "Vegetable chow mein",
+   "blurb": "Crispy-edged noodles with cabbage, carrots and mushrooms",
+   "type": "noodles",
+   "serves": 4,
+   "prep": 15,
+   "cook": 15,
+   "tags": [
+    "vegetarian",
+    "quick"
+   ],
+   "ingredients": [
+    {
+     "q": 12,
+     "u": "oz",
+     "item": "chow mein noodles",
+     "aisle": "international"
+    },
+    {
+     "q": 3,
+     "u": "tbsp",
+     "item": "vegetable oil",
+     "aisle": "pantry"
+    },
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "garlic",
+     "note": "minced",
+     "aisle": "produce"
+    },
+    {
+     "q": 1,
+     "u": "cup",
+     "item": "shiitake mushrooms",
+     "note": "sliced",
+     "aisle": "produce"
+    },
+    {
+     "q": 2,
+     "u": "",
+     "item": "carrots",
+     "note": "cut in matchsticks",
+     "aisle": "produce"
+    },
+    {
+     "q": 3,
+     "u": "cup",
+     "item": "green cabbage",
+     "note": "shredded",
+     "aisle": "produce"
+    },
+    {
+     "q": 3,
+     "u": "tbsp",
+     "item": "soy sauce",
+     "aisle": "international"
+    },
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "vegetarian oyster sauce",
+     "aisle": "international"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "toasted sesame oil",
+     "aisle": "international"
+    },
+    {
+     "q": 4,
+     "u": "",
+     "item": "scallions",
+     "note": "sliced",
+     "aisle": "produce"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Cook the noodles in boiling water 2 minutes, drain, and pat dry.",
+     "timer": 120,
+     "timerLabel": "Boil the noodles"
+    },
+    {
+     "text": "Heat 1 tbsp oil in a large skillet over high heat. Fry the noodles until golden in spots. Remove.",
+     "timer": 180,
+     "timerLabel": "Crisp the noodles"
+    },
+    {
+     "text": "Add 1 tbsp oil, mushrooms and carrots. Stir-fry until soft.",
+     "timer": 180,
+     "timerLabel": "Stir-fry mushrooms"
+    },
+    {
+     "text": "Add the cabbage and garlic and stir-fry for 2 minutes.",
+     "timer": 120,
+     "timerLabel": "Cook the cabbage"
+    },
+    {
+     "text": "Stir in soy sauce, oyster sauce and sesame oil. Return the noodles and toss."
+    },
+    {
+     "text": "Top with the scallions."
+    }
+   ]
+  },
+  {
+   "id": "chinese-cold-sesame-noodles",
+   "title": "Cold sesame noodles",
+   "blurb": "Chilled noodles in nutty sesame sauce, great make-ahead lunch",
+   "type": "noodles",
+   "serves": 4,
+   "prep": 15,
+   "cook": 10,
+   "tags": [
+    "vegetarian",
+    "make ahead",
+    "quick"
+   ],
+   "ingredients": [
+    {
+     "q": 12,
+     "u": "oz",
+     "item": "dried spaghetti or Chinese noodles",
+     "aisle": "pantry"
+    },
+    {
+     "q": 0.33,
+     "u": "cup",
+     "item": "tahini",
+     "aisle": "pantry"
+    },
+    {
+     "q": 2,
+     "u": "tbsp",
+     "item": "creamy peanut butter",
+     "aisle": "pantry"
+    },
+    {
+     "q": 3,
+     "u": "tbsp",
+     "item": "soy sauce",
+     "aisle": "international"
+    },
+    {
+     "q": 2,
+     "u": "tbsp",
+     "item": "rice vinegar",
+     "aisle": "international"
+    },
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "sugar",
+     "aisle": "pantry"
+    },
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "toasted sesame oil",
+     "aisle": "international"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "chili crisp",
+     "aisle": "international"
+    },
+    {
+     "q": 1,
+     "u": "clove",
+     "item": "garlic",
+     "note": "grated",
+     "aisle": "produce"
+    },
+    {
+     "q": 1,
+     "u": "",
+     "item": "cucumber",
+     "note": "cut in matchsticks",
+     "aisle": "produce"
+    },
+    {
+     "q": 3,
+     "u": "",
+     "item": "scallions",
+     "note": "sliced",
+     "aisle": "produce"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Boil the noodles until tender, drain, and rinse under cold water.",
+     "timer": 420,
+     "timerLabel": "Boil the noodles"
+    },
+    {
+     "text": "Whisk the tahini, peanut butter, soy sauce, vinegar, sugar, sesame oil, chili crisp and garlic."
+    },
+    {
+     "text": "Whisk in 1/4 cup warm water until the sauce is smooth and pourable."
+    },
+    {
+     "text": "Toss the cold noodles with the sauce."
+    },
+    {
+     "text": "Top with cucumber and scallions. Serve cold or at room temperature."
+    }
+   ]
+  },
+  {
+   "id": "chinese-scallion-oil-noodles",
+   "title": "Scallion oil noodles",
+   "blurb": "Shanghai-style noodles in fragrant fried scallion oil",
+   "type": "noodles",
+   "serves": 4,
+   "prep": 10,
+   "cook": 15,
+   "tags": [
+    "vegetarian",
+    "quick"
+   ],
+   "ingredients": [
+    {
+     "q": 12,
+     "u": "oz",
+     "item": "dried thin wheat noodles",
+     "aisle": "international"
+    },
+    {
+     "q": 8,
+     "u": "",
+     "item": "scallions",
+     "note": "cut in 2-inch pieces",
+     "aisle": "produce"
+    },
+    {
+     "q": 0.5,
+     "u": "cup",
+     "item": "vegetable oil",
+     "aisle": "pantry"
+    },
+    {
+     "q": 3,
+     "u": "tbsp",
+     "item": "soy sauce",
+     "aisle": "international"
+    },
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "dark soy sauce",
+     "aisle": "international"
+    },
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "sugar",
+     "aisle": "pantry"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Bring a pot of water to a boil for the noodles."
+    },
+    {
+     "text": "Heat the oil in a small pot over medium-low. Add scallions and fry slowly until deep golden and crisp.",
+     "timer": 600,
+     "timerLabel": "Fry the scallions"
+    },
+    {
+     "text": "Remove the scallions. Stir the soy sauces and sugar into the hot oil; it will sizzle."
+    },
+    {
+     "text": "Boil the noodles until tender, then drain.",
+     "timer": 240,
+     "timerLabel": "Boil the noodles"
+    },
+    {
+     "text": "Toss the noodles with the sauce and scallions."
+    }
+   ]
+  },
+  {
+   "id": "chinese-beef-chow-fun",
+   "title": "Beef chow fun",
+   "blurb": "Wide rice noodles, tender beef and bean sprouts, smoky and savory",
+   "type": "noodles",
+   "serves": 4,
+   "prep": 20,
+   "cook": 10,
+   "tags": [
+    "quick"
+   ],
+   "ingredients": [
+    {
+     "q": 1,
+     "u": "lb",
+     "item": "fresh wide rice noodles",
+     "aisle": "international"
+    },
+    {
+     "q": 0.75,
+     "u": "lb",
+     "item": "flank steak",
+     "note": "sliced thin",
+     "aisle": "meat"
+    },
+    {
+     "q": 3,
+     "u": "tbsp",
+     "item": "soy sauce",
+     "aisle": "international"
+    },
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "dark soy sauce",
+     "aisle": "international"
+    },
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "oyster sauce",
+     "aisle": "international"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "cornstarch",
+     "aisle": "pantry"
+    },
+    {
+     "q": 3,
+     "u": "tbsp",
+     "item": "vegetable oil",
+     "aisle": "pantry"
+    },
+    {
+     "q": 3,
+     "u": "cup",
+     "item": "bean sprouts",
+     "aisle": "produce"
+    },
+    {
+     "q": 4,
+     "u": "",
+     "item": "scallions",
+     "note": "cut in 2-inch pieces",
+     "aisle": "produce"
+    },
+    {
+     "q": 2,
+     "u": "clove",
+     "item": "garlic",
+     "note": "minced",
+     "aisle": "produce"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Toss the beef with 1 tbsp soy sauce and the cornstarch. Separate the noodles gently."
+    },
+    {
+     "text": "Mix the remaining soy sauce, dark soy and oyster sauce."
+    },
+    {
+     "text": "Heat 1 tbsp oil in a wok on high. Sear the beef 1 minute, then remove.",
+     "timer": 60,
+     "timerLabel": "Sear the beef"
+    },
+    {
+     "text": "Add 2 tbsp oil and the garlic, then the noodles. Toss gently until hot.",
+     "timer": 120,
+     "timerLabel": "Heat the noodles"
+    },
+    {
+     "text": "Add sprouts, scallions, beef and sauce. Toss 1 minute until glossy.",
+     "timer": 60,
+     "timerLabel": "Toss together"
+    }
+   ]
+  },
+  {
+   "id": "chinese-zhajiangmian",
+   "title": "Zhajiang noodles",
+   "blurb": "Noodles with savory fermented bean and pork sauce",
+   "type": "noodles",
+   "serves": 4,
+   "prep": 15,
+   "cook": 20,
+   "tags": [],
+   "ingredients": [
+    {
+     "q": 12,
+     "u": "oz",
+     "item": "dried wheat noodles",
+     "aisle": "international"
+    },
+    {
+     "q": 1,
+     "u": "lb",
+     "item": "ground pork",
+     "aisle": "meat"
+    },
+    {
+     "q": 2,
+     "u": "tbsp",
+     "item": "vegetable oil",
+     "aisle": "pantry"
+    },
+    {
+     "q": 3,
+     "u": "tbsp",
+     "item": "sweet bean sauce",
+     "aisle": "international"
+    },
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "soy sauce",
+     "aisle": "international"
+    },
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "sugar",
+     "aisle": "pantry"
+    },
+    {
+     "q": 3,
+     "u": "clove",
+     "item": "garlic",
+     "note": "minced",
+     "aisle": "produce"
+    },
+    {
+     "q": 0.5,
+     "u": "cup",
+     "item": "water",
+     "aisle": "pantry"
+    },
+    {
+     "q": 1,
+     "u": "",
+     "item": "cucumber",
+     "note": "cut in matchsticks",
+     "aisle": "produce"
+    },
+    {
+     "q": 1,
+     "u": "cup",
+     "item": "bean sprouts",
+     "aisle": "produce"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Heat the oil in a skillet over medium. Cook the pork until browned and no pink is left (160°F).",
+     "timer": 480,
+     "timerLabel": "Brown the pork"
+    },
+    {
+     "text": "Add the garlic, bean sauce, soy sauce and sugar. Stir 1 minute."
+    },
+    {
+     "text": "Pour in the water and simmer until thick.",
+     "timer": 420,
+     "timerLabel": "Simmer the sauce"
+    },
+    {
+     "text": "Boil the noodles until tender and drain.",
+     "timer": 300,
+     "timerLabel": "Boil the noodles"
+    },
+    {
+     "text": "Top the noodles with sauce, cucumber and sprouts."
+    }
+   ]
+  },
+  {
+   "id": "chinese-singapore-noodles",
+   "title": "Singapore noodles",
+   "blurb": "Curry rice vermicelli with shrimp, egg and peppers",
+   "type": "noodles",
+   "serves": 4,
+   "prep": 20,
+   "cook": 15,
+   "tags": [
+    "quick",
+    "spicy"
+   ],
+   "ingredients": [
+    {
+     "q": 8,
+     "u": "oz",
+     "item": "thin rice vermicelli",
+     "aisle": "international"
+    },
+    {
+     "q": 3,
+     "u": "tbsp",
+     "item": "vegetable oil",
+     "aisle": "pantry"
+    },
+    {
+     "q": 2,
+     "u": "tbsp",
+     "item": "curry powder",
+     "aisle": "spices"
+    },
+    {
+     "q": 0.5,
+     "u": "lb",
+     "item": "medium shrimp",
+     "note": "peeled",
+     "aisle": "seafood"
+    },
+    {
+     "q": 3,
+     "u": "",
+     "item": "large eggs",
+     "note": "beaten",
+     "aisle": "dairy"
+    },
+    {
+     "q": 1,
+     "u": "",
+     "item": "red bell pepper",
+     "note": "sliced",
+     "aisle": "produce"
+    },
+    {
+     "q": 2,
+     "u": "cup",
+     "item": "napa cabbage",
+     "note": "shredded",
+     "aisle": "produce"
+    },
+    {
+     "q": 3,
+     "u": "tbsp",
+     "item": "soy sauce",
+     "aisle": "international"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "sugar",
+     "aisle": "pantry"
+    },
+    {
+     "q": 4,
+     "u": "",
+     "item": "scallions",
+     "note": "sliced",
+     "aisle": "produce"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Soak the noodles in hot water until pliable, then drain.",
+     "timer": 300,
+     "timerLabel": "Soak the noodles"
+    },
+    {
+     "text": "Scramble the eggs in 1 tbsp oil. Remove."
+    },
+    {
+     "text": "Heat 1 tbsp oil. Cook the shrimp until pink. Remove.",
+     "timer": 120,
+     "timerLabel": "Cook the shrimp"
+    },
+    {
+     "text": "Add the last oil, pepper and cabbage. Stir-fry, then add the curry powder.",
+     "timer": 120,
+     "timerLabel": "Stir-fry the veg"
+    },
+    {
+     "text": "Add the noodles, soy sauce and sugar. Toss, then return the egg and shrimp with scallions."
+    }
+   ]
+  },
+  {
+   "id": "chinese-tomato-egg-noodles",
+   "title": "Tomato egg noodles",
+   "blurb": "Comforting homestyle noodles in tomato and egg sauce",
+   "type": "noodles",
+   "serves": 4,
+   "prep": 10,
+   "cook": 20,
+   "tags": [
+    "vegetarian",
+    "kid-friendly",
+    "quick"
+   ],
+   "ingredients": [
+    {
+     "q": 12,
+     "u": "oz",
+     "item": "dried wheat noodles",
+     "aisle": "international"
+    },
+    {
+     "q": 4,
+     "u": "",
+     "item": "large eggs",
+     "note": "beaten",
+     "aisle": "dairy"
+    },
+    {
+     "q": 1.5,
+     "u": "lb",
+     "item": "ripe tomatoes",
+     "note": "chopped",
+     "aisle": "produce"
+    },
+    {
+     "q": 2,
+     "u": "tbsp",
+     "item": "vegetable oil",
+     "aisle": "pantry"
+    },
+    {
+     "q": 2,
+     "u": "tbsp",
+     "item": "ketchup",
+     "aisle": "pantry"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "sugar",
+     "aisle": "pantry"
+    },
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "soy sauce",
+     "aisle": "international"
+    },
+    {
+     "q": 0.5,
+     "u": "tsp",
+     "item": "salt",
+     "aisle": "spices"
+    },
+    {
+     "q": 3,
+     "u": "",
+     "item": "scallions",
+     "note": "sliced",
+     "aisle": "produce"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Scramble the eggs in 1 tbsp hot oil until barely set. Remove."
+    },
+    {
+     "text": "Add 1 tbsp oil and the tomatoes. Cook until they break down.",
+     "timer": 420,
+     "timerLabel": "Cook the tomatoes"
+    },
+    {
+     "text": "Stir in ketchup, sugar, soy sauce, salt and 1/2 cup water. Simmer.",
+     "timer": 240,
+     "timerLabel": "Simmer the sauce"
+    },
+    {
+     "text": "Boil the noodles until tender, then drain.",
+     "timer": 300,
+     "timerLabel": "Boil the noodles"
+    },
+    {
+     "text": "Fold the eggs into the sauce, pour over noodles and add scallions."
+    }
+   ]
+  },
+  {
+   "id": "chinese-garlic-butter-noodles",
+   "title": "Garlic butter noodles",
+   "blurb": "Buttery garlic noodles with oyster sauce and parmesan",
+   "type": "noodles",
+   "serves": 4,
+   "prep": 10,
+   "cook": 15,
+   "tags": [
+    "quick",
+    "kid-friendly",
+    "vegetarian"
+   ],
+   "ingredients": [
+    {
+     "q": 12,
+     "u": "oz",
+     "item": "dried spaghetti",
+     "aisle": "pantry"
+    },
+    {
+     "q": 4,
+     "u": "tbsp",
+     "item": "unsalted butter",
+     "aisle": "dairy"
+    },
+    {
+     "q": 8,
+     "u": "clove",
+     "item": "garlic",
+     "note": "minced",
+     "aisle": "produce"
+    },
+    {
+     "q": 2,
+     "u": "tbsp",
+     "item": "oyster sauce",
+     "aisle": "international"
+    },
+    {
+     "q": 2,
+     "u": "tbsp",
+     "item": "soy sauce",
+     "aisle": "international"
+    },
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "sugar",
+     "aisle": "pantry"
+    },
+    {
+     "q": 0.5,
+     "u": "cup",
+     "item": "grated parmesan",
+     "aisle": "dairy"
+    },
+    {
+     "q": 2,
+     "u": "",
+     "item": "scallions",
+     "note": "sliced",
+     "aisle": "produce"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Boil the spaghetti until al dente. Save 1/2 cup of the water, then drain.",
+     "timer": 540,
+     "timerLabel": "Boil the pasta"
+    },
+    {
+     "text": "Melt the butter in a large skillet over medium-low. Cook the garlic until fragrant.",
+     "timer": 120,
+     "timerLabel": "Cook the garlic"
+    },
+    {
+     "text": "Stir in oyster sauce, soy sauce and sugar."
+    },
+    {
+     "text": "Add the noodles and a splash of pasta water. Toss until glossy."
+    },
+    {
+     "text": "Toss in the parmesan and scallions."
+    }
+   ]
+  },
+  {
+   "id": "chinese-yangzhou-fried-rice",
+   "title": "Yangzhou fried rice",
+   "blurb": "Classic fried rice with shrimp, ham, egg and peas",
+   "type": "rice",
+   "serves": 4,
+   "prep": 15,
+   "cook": 15,
+   "tags": [
+    "quick"
+   ],
+   "ingredients": [
+    {
+     "q": 4,
+     "u": "cup",
+     "item": "cold cooked jasmine rice",
+     "aisle": "pantry"
+    },
+    {
+     "q": 3,
+     "u": "tbsp",
+     "item": "vegetable oil",
+     "aisle": "pantry"
+    },
+    {
+     "q": 3,
+     "u": "",
+     "item": "large eggs",
+     "note": "beaten",
+     "aisle": "dairy"
+    },
+    {
+     "q": 0.5,
+     "u": "lb",
+     "item": "medium shrimp",
+     "note": "peeled",
+     "aisle": "seafood"
+    },
+    {
+     "q": 0.5,
+     "u": "cup",
+     "item": "diced ham",
+     "aisle": "meat"
+    },
+    {
+     "q": 0.5,
+     "u": "cup",
+     "item": "frozen peas",
+     "aisle": "frozen"
+    },
+    {
+     "q": 3,
+     "u": "",
+     "item": "scallions",
+     "note": "sliced",
+     "aisle": "produce"
+    },
+    {
+     "q": 2,
+     "u": "tbsp",
+     "item": "soy sauce",
+     "aisle": "international"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "toasted sesame oil",
+     "aisle": "international"
+    },
+    {
+     "q": 0.5,
+     "u": "tsp",
+     "item": "salt",
+     "aisle": "spices"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Break up any clumps in the cold rice."
+    },
+    {
+     "text": "Heat 1 tbsp oil in a wok on high. Scramble the eggs until just set, then remove."
+    },
+    {
+     "text": "Add 1 tbsp oil and the shrimp. Cook until pink. Remove.",
+     "timer": 120,
+     "timerLabel": "Cook the shrimp"
+    },
+    {
+     "text": "Add the last oil and the rice. Fry, pressing, until hot and a little crisp.",
+     "timer": 240,
+     "timerLabel": "Fry the rice"
+    },
+    {
+     "text": "Add ham, peas, soy sauce and salt. Return eggs and shrimp. Finish with sesame oil and scallions."
+    }
+   ]
+  },
+  {
+   "id": "chinese-egg-fried-rice",
+   "title": "Simple egg fried rice",
+   "blurb": "The side-dish classic with eggs, scallions and soy",
+   "type": "rice",
+   "serves": 4,
+   "prep": 5,
+   "cook": 10,
+   "tags": [
+    "quick",
+    "kid-friendly",
+    "vegetarian"
+   ],
+   "ingredients": [
+    {
+     "q": 4,
+     "u": "cup",
+     "item": "cold cooked white rice",
+     "aisle": "pantry"
+    },
+    {
+     "q": 3,
+     "u": "tbsp",
+     "item": "vegetable oil",
+     "aisle": "pantry"
+    },
+    {
+     "q": 3,
+     "u": "",
+     "item": "large eggs",
+     "note": "beaten",
+     "aisle": "dairy"
+    },
+    {
+     "q": 4,
+     "u": "",
+     "item": "scallions",
+     "note": "sliced, whites and greens separate",
+     "aisle": "produce"
+    },
+    {
+     "q": 2,
+     "u": "tbsp",
+     "item": "soy sauce",
+     "aisle": "international"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "toasted sesame oil",
+     "aisle": "international"
+    },
+    {
+     "q": 0.5,
+     "u": "tsp",
+     "item": "salt",
+     "aisle": "spices"
+    },
+    {
+     "q": null,
+     "u": "",
+     "item": "black pepper",
+     "aisle": "spices"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Break up the cold rice with your fingers."
+    },
+    {
+     "text": "Heat 1 tbsp oil in a large skillet on high. Add the eggs and scramble until just set.",
+     "timer": 60,
+     "timerLabel": "Scramble eggs"
+    },
+    {
+     "text": "Add the rest of the oil and scallion whites. Stir 30 seconds.",
+     "timer": 30,
+     "timerLabel": "Fry scallion whites"
+    },
+    {
+     "text": "Add the rice and fry until hot and starting to crisp.",
+     "timer": 240,
+     "timerLabel": "Fry the rice"
+    },
+    {
+     "text": "Stir in soy sauce, salt, pepper, sesame oil and scallion greens."
+    }
+   ]
+  },
+  {
+   "id": "chinese-chicken-fried-rice",
+   "title": "Chicken fried rice",
+   "blurb": "Takeout-style rice with chicken, egg, peas and carrots",
+   "type": "rice",
+   "serves": 4,
+   "prep": 15,
+   "cook": 15,
+   "tags": [
+    "quick",
+    "kid-friendly"
+   ],
+   "ingredients": [
+    {
+     "q": 4,
+     "u": "cup",
+     "item": "cold cooked white rice",
+     "aisle": "pantry"
+    },
+    {
+     "q": 0.75,
+     "u": "lb",
+     "item": "boneless skinless chicken thighs",
+     "note": "diced small",
+     "aisle": "meat"
+    },
+    {
+     "q": 3,
+     "u": "tbsp",
+     "item": "vegetable oil",
+     "aisle": "pantry"
+    },
+    {
+     "q": 2,
+     "u": "",
+     "item": "large eggs",
+     "note": "beaten",
+     "aisle": "dairy"
+    },
+    {
+     "q": 1,
+     "u": "cup",
+     "item": "frozen peas and carrots",
+     "aisle": "frozen"
+    },
+    {
+     "q": 2,
+     "u": "clove",
+     "item": "garlic",
+     "note": "minced",
+     "aisle": "produce"
+    },
+    {
+     "q": 3,
+     "u": "tbsp",
+     "item": "soy sauce",
+     "aisle": "international"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "toasted sesame oil",
+     "aisle": "international"
+    },
+    {
+     "q": 3,
+     "u": "",
+     "item": "scallions",
+     "note": "sliced",
+     "aisle": "produce"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Heat 1 tbsp oil in a wok on high. Cook the chicken until browned and 165°F inside. Remove.",
+     "timer": 300,
+     "timerLabel": "Cook the chicken"
+    },
+    {
+     "text": "Scramble the eggs in 1 tbsp oil and remove."
+    },
+    {
+     "text": "Add 1 tbsp oil, garlic and the peas and carrots. Stir 1 minute.",
+     "timer": 60,
+     "timerLabel": "Stir-fry veg"
+    },
+    {
+     "text": "Add the rice and fry until hot, pressing it against the pan.",
+     "timer": 240,
+     "timerLabel": "Fry the rice"
+    },
+    {
+     "text": "Return chicken and eggs. Add soy sauce, sesame oil and scallions and toss."
+    }
+   ]
+  },
+  {
+   "id": "chinese-shrimp-fried-rice",
+   "title": "Shrimp fried rice",
+   "blurb": "Juicy shrimp and garlicky rice, ready in 20 minutes",
+   "type": "rice",
+   "serves": 4,
+   "prep": 10,
+   "cook": 10,
+   "tags": [
+    "quick"
+   ],
+   "ingredients": [
+    {
+     "q": 4,
+     "u": "cup",
+     "item": "cold cooked white rice",
+     "aisle": "pantry"
+    },
+    {
+     "q": 0.75,
+     "u": "lb",
+     "item": "medium shrimp",
+     "note": "peeled, deveined",
+     "aisle": "seafood"
+    },
+    {
+     "q": 3,
+     "u": "tbsp",
+     "item": "vegetable oil",
+     "aisle": "pantry"
+    },
+    {
+     "q": 2,
+     "u": "",
+     "item": "large eggs",
+     "note": "beaten",
+     "aisle": "dairy"
+    },
+    {
+     "q": 3,
+     "u": "clove",
+     "item": "garlic",
+     "note": "minced",
+     "aisle": "produce"
+    },
+    {
+     "q": 1,
+     "u": "cup",
+     "item": "frozen peas",
+     "aisle": "frozen"
+    },
+    {
+     "q": 2,
+     "u": "tbsp",
+     "item": "soy sauce",
+     "aisle": "international"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "toasted sesame oil",
+     "aisle": "international"
+    },
+    {
+     "q": 3,
+     "u": "",
+     "item": "scallions",
+     "note": "sliced",
+     "aisle": "produce"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Cook the shrimp in 1 tbsp hot oil until pink and 145°F. Remove.",
+     "timer": 120,
+     "timerLabel": "Cook the shrimp"
+    },
+    {
+     "text": "Scramble the eggs in a little oil and remove."
+    },
+    {
+     "text": "Add the remaining oil and garlic. Stir 20 seconds."
+    },
+    {
+     "text": "Add rice and peas and fry until hot.",
+     "timer": 240,
+     "timerLabel": "Fry the rice"
+    },
+    {
+     "text": "Return shrimp and eggs, add soy sauce, sesame oil and scallions, and toss."
+    }
+   ]
+  },
+  {
+   "id": "chinese-chicken-congee",
+   "title": "Chicken congee",
+   "blurb": "Silky rice porridge with ginger, scallions and shredded chicken",
+   "type": "rice",
+   "serves": 6,
+   "prep": 10,
+   "cook": 90,
+   "tags": [
+    "make ahead",
+    "healthy",
+    "kid-friendly"
+   ],
+   "ingredients": [
+    {
+     "q": 1,
+     "u": "cup",
+     "item": "jasmine rice",
+     "aisle": "pantry"
+    },
+    {
+     "q": 8,
+     "u": "cup",
+     "item": "chicken broth",
+     "aisle": "canned"
+    },
+    {
+     "q": 1,
+     "u": "lb",
+     "item": "bone-in chicken thighs",
+     "note": "skin removed",
+     "aisle": "meat"
+    },
+    {
+     "q": 2,
+     "u": "inch",
+     "item": "fresh ginger",
+     "note": "sliced",
+     "aisle": "produce"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "salt",
+     "aisle": "spices"
+    },
+    {
+     "q": 2,
+     "u": "tbsp",
+     "item": "soy sauce",
+     "aisle": "international"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "toasted sesame oil",
+     "aisle": "international"
+    },
+    {
+     "q": 4,
+     "u": "",
+     "item": "scallions",
+     "note": "sliced",
+     "aisle": "produce"
+    },
+    {
+     "q": null,
+     "u": "",
+     "item": "white pepper",
+     "aisle": "spices"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Rinse the rice until the water runs mostly clear."
+    },
+    {
+     "text": "Combine rice, broth, chicken and ginger in a large pot. Bring to a boil."
+    },
+    {
+     "text": "Reduce to a low simmer, partly covered. Stir often so it does not stick.",
+     "timer": 4800,
+     "timerLabel": "Simmer the congee"
+    },
+    {
+     "text": "Lift out the chicken (165°F inside) and shred it, discarding bones."
+    },
+    {
+     "text": "Return the chicken, season with salt, and thin with water if needed."
+    },
+    {
+     "text": "Serve with soy sauce, sesame oil, scallions and white pepper."
+    }
+   ]
+  },
+  {
+   "id": "chinese-lap-cheong-rice",
+   "title": "Chinese sausage rice",
+   "blurb": "Rice-cooker style rice with sweet lap cheong and greens",
+   "type": "rice",
+   "serves": 4,
+   "prep": 10,
+   "cook": 30,
+   "tags": [
+    "one pot",
+    "quick"
+   ],
+   "ingredients": [
+    {
+     "q": 1.5,
+     "u": "cup",
+     "item": "jasmine rice",
+     "aisle": "pantry"
+    },
+    {
+     "q": 2,
+     "u": "cup",
+     "item": "water",
+     "aisle": "pantry"
+    },
+    {
+     "q": 4,
+     "u": "",
+     "item": "Chinese sausage links (lap cheong)",
+     "note": "sliced thin",
+     "aisle": "international"
+    },
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "soy sauce",
+     "aisle": "international"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "sugar",
+     "aisle": "pantry"
+    },
+    {
+     "q": 1,
+     "u": "bunch",
+     "item": "baby bok choy",
+     "note": "halved",
+     "aisle": "produce"
+    },
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "vegetable oil",
+     "aisle": "pantry"
+    },
+    {
+     "q": 2,
+     "u": "",
+     "item": "scallions",
+     "note": "sliced",
+     "aisle": "produce"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Rinse the rice and put it in a pot with the water."
+    },
+    {
+     "text": "Bring to a boil, then lay the sausage on top. Cover and cook on the lowest heat.",
+     "timer": 900,
+     "timerLabel": "Cook the rice"
+    },
+    {
+     "text": "Mix the soy sauce, sugar and 1 tbsp water."
+    },
+    {
+     "text": "Rest the rice off heat, covered.",
+     "timer": 600,
+     "timerLabel": "Rest the rice"
+    },
+    {
+     "text": "Pan-sear the bok choy in the oil until tender.",
+     "timer": 180,
+     "timerLabel": "Cook the bok choy"
+    },
+    {
+     "text": "Fluff the rice and sausage, drizzle with sauce, top with scallions and serve with the greens."
+    }
+   ]
+  },
+  {
+   "id": "chinese-hainanese-chicken-rice",
+   "title": "Hainanese chicken and rice",
+   "blurb": "Poached chicken with ginger-scallion sauce and fragrant rice",
+   "type": "rice",
+   "serves": 4,
+   "prep": 20,
+   "cook": 60,
+   "tags": [
+    "healthy"
+   ],
+   "ingredients": [
+    {
+     "q": 3,
+     "u": "lb",
+     "item": "whole chicken",
+     "aisle": "meat"
+    },
+    {
+     "q": 3,
+     "u": "inch",
+     "item": "fresh ginger",
+     "note": "sliced",
+     "aisle": "produce"
+    },
+    {
+     "q": 6,
+     "u": "",
+     "item": "scallions",
+     "note": "divided",
+     "aisle": "produce"
+    },
+    {
+     "q": 1.5,
+     "u": "cup",
+     "item": "jasmine rice",
+     "aisle": "pantry"
+    },
+    {
+     "q": 2,
+     "u": "tbsp",
+     "item": "vegetable oil",
+     "aisle": "pantry"
+    },
+    {
+     "q": 3,
+     "u": "clove",
+     "item": "garlic",
+     "note": "minced",
+     "aisle": "produce"
+    },
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "soy sauce",
+     "aisle": "international"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "toasted sesame oil",
+     "aisle": "international"
+    },
+    {
+     "q": 1,
+     "u": "",
+     "item": "cucumber",
+     "note": "sliced",
+     "aisle": "produce"
+    },
+    {
+     "q": 2,
+     "u": "tsp",
+     "item": "salt",
+     "note": "divided",
+     "aisle": "spices"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Cover the chicken with water in a pot with half the ginger and scallions and 1 tsp salt. Bring to a gentle simmer."
+    },
+    {
+     "text": "Cover and poach on low until a thigh reaches 165°F. Do not boil hard.",
+     "timer": 2400,
+     "timerLabel": "Poach the chicken"
+    },
+    {
+     "text": "Move the chicken to ice water, then rest. Save 2.5 cups broth.",
+     "timer": 300,
+     "timerLabel": "Ice bath"
+    },
+    {
+     "text": "Fry the garlic in 1 tbsp oil, add the rice, then 2.5 cups broth. Cook covered on low.",
+     "timer": 900,
+     "timerLabel": "Cook the rice"
+    },
+    {
+     "text": "Mince remaining ginger and scallions with 1 tsp salt, 1 tbsp oil and sesame oil for the sauce."
+    },
+    {
+     "text": "Carve the chicken. Serve over rice with sauce, soy sauce and cucumber."
+    }
+   ]
+  },
+  {
+   "id": "chinese-beef-fried-rice",
+   "title": "Beef fried rice",
+   "blurb": "Savory rice with sliced steak, onion and egg",
+   "type": "rice",
+   "serves": 4,
+   "prep": 15,
+   "cook": 15,
+   "tags": [
+    "quick"
+   ],
+   "ingredients": [
+    {
+     "q": 4,
+     "u": "cup",
+     "item": "cold cooked white rice",
+     "aisle": "pantry"
+    },
+    {
+     "q": 0.75,
+     "u": "lb",
+     "item": "sirloin steak",
+     "note": "sliced thin",
+     "aisle": "meat"
+    },
+    {
+     "q": 3,
+     "u": "tbsp",
+     "item": "vegetable oil",
+     "aisle": "pantry"
+    },
+    {
+     "q": 2,
+     "u": "",
+     "item": "large eggs",
+     "note": "beaten",
+     "aisle": "dairy"
+    },
+    {
+     "q": 1,
+     "u": "",
+     "item": "yellow onion",
+     "note": "diced",
+     "aisle": "produce"
+    },
+    {
+     "q": 2,
+     "u": "clove",
+     "item": "garlic",
+     "note": "minced",
+     "aisle": "produce"
+    },
+    {
+     "q": 3,
+     "u": "tbsp",
+     "item": "soy sauce",
+     "aisle": "international"
+    },
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "oyster sauce",
+     "aisle": "international"
+    },
+    {
+     "q": 3,
+     "u": "",
+     "item": "scallions",
+     "note": "sliced",
+     "aisle": "produce"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Toss the beef with 1 tbsp soy sauce."
+    },
+    {
+     "text": "Heat 1 tbsp oil on high. Sear the beef 2 minutes. Remove.",
+     "timer": 120,
+     "timerLabel": "Sear the beef"
+    },
+    {
+     "text": "Scramble the eggs in a little oil and remove."
+    },
+    {
+     "text": "Add the remaining oil, onion and garlic. Cook until soft.",
+     "timer": 120,
+     "timerLabel": "Cook the onion"
+    },
+    {
+     "text": "Add the rice and fry until hot.",
+     "timer": 240,
+     "timerLabel": "Fry the rice"
+    },
+    {
+     "text": "Return beef and eggs. Add remaining soy sauce, oyster sauce and scallions."
+    }
+   ]
+  },
+  {
+   "id": "chinese-vegetable-fried-rice",
+   "title": "Vegetable fried rice",
+   "blurb": "Colorful, kid-friendly fried rice loaded with veggies",
+   "type": "rice",
+   "serves": 4,
+   "prep": 15,
+   "cook": 10,
+   "tags": [
+    "vegetarian",
+    "quick",
+    "kid-friendly"
+   ],
+   "ingredients": [
+    {
+     "q": 4,
+     "u": "cup",
+     "item": "cold cooked white rice",
+     "aisle": "pantry"
+    },
+    {
+     "q": 3,
+     "u": "tbsp",
+     "item": "vegetable oil",
+     "aisle": "pantry"
+    },
+    {
+     "q": 3,
+     "u": "",
+     "item": "large eggs",
+     "note": "beaten",
+     "aisle": "dairy"
+    },
+    {
+     "q": 1,
+     "u": "cup",
+     "item": "frozen peas and carrots",
+     "aisle": "frozen"
+    },
+    {
+     "q": 1,
+     "u": "cup",
+     "item": "broccoli florets",
+     "note": "chopped small",
+     "aisle": "produce"
+    },
+    {
+     "q": 2,
+     "u": "clove",
+     "item": "garlic",
+     "note": "minced",
+     "aisle": "produce"
+    },
+    {
+     "q": 3,
+     "u": "tbsp",
+     "item": "soy sauce",
+     "aisle": "international"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "toasted sesame oil",
+     "aisle": "international"
+    },
+    {
+     "q": 3,
+     "u": "",
+     "item": "scallions",
+     "note": "sliced",
+     "aisle": "produce"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Scramble the eggs in 1 tbsp hot oil. Remove."
+    },
+    {
+     "text": "Add 1 tbsp oil, garlic, peas and carrots and broccoli. Stir-fry until bright and tender.",
+     "timer": 180,
+     "timerLabel": "Stir-fry veg"
+    },
+    {
+     "text": "Add the last oil and the rice. Fry until hot.",
+     "timer": 240,
+     "timerLabel": "Fry the rice"
+    },
+    {
+     "text": "Add soy sauce and sesame oil. Return eggs."
+    },
+    {
+     "text": "Top with scallions."
+    }
+   ]
+  },
+  {
+   "id": "chinese-ginger-chicken-rice-bowl",
+   "title": "Steamed ginger chicken rice bowl",
+   "blurb": "Steamed ginger-soy chicken over rice with greens",
+   "type": "rice",
+   "serves": 4,
+   "prep": 15,
+   "cook": 25,
+   "tags": [
+    "healthy",
+    "quick"
+   ],
+   "ingredients": [
+    {
+     "q": 1.5,
+     "u": "lb",
+     "item": "boneless skinless chicken thighs",
+     "note": "cut in bite-size pieces",
+     "aisle": "meat"
+    },
+    {
+     "q": 2,
+     "u": "tbsp",
+     "item": "soy sauce",
+     "aisle": "international"
+    },
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "Shaoxing wine",
+     "aisle": "international"
+    },
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "cornstarch",
+     "aisle": "pantry"
+    },
+    {
+     "q": 2,
+     "u": "inch",
+     "item": "fresh ginger",
+     "note": "shredded",
+     "aisle": "produce"
+    },
+    {
+     "q": 3,
+     "u": "cup",
+     "item": "cooked jasmine rice",
+     "aisle": "pantry"
+    },
+    {
+     "q": 1,
+     "u": "bunch",
+     "item": "baby bok choy",
+     "note": "halved",
+     "aisle": "produce"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "toasted sesame oil",
+     "aisle": "international"
+    },
+    {
+     "q": 2,
+     "u": "",
+     "item": "scallions",
+     "note": "sliced",
+     "aisle": "produce"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Mix the chicken with soy sauce, wine, cornstarch and ginger. Marinate.",
+     "timer": 900,
+     "timerLabel": "Marinate the chicken"
+    },
+    {
+     "text": "Spread the chicken in a heatproof dish. Set in a steamer over simmering water."
+    },
+    {
+     "text": "Cover and steam until 165°F inside.",
+     "timer": 1080,
+     "timerLabel": "Steam the chicken"
+    },
+    {
+     "text": "Steam the bok choy in the same pot for the last 3 minutes."
+    },
+    {
+     "text": "Serve over rice with pan juices, sesame oil and scallions."
+    }
+   ]
+  },
+  {
+   "id": "beef-broccoli",
+   "title": "Beef and broccoli",
+   "blurb": "Tender flank steak and broccoli in glossy garlic-soy sauce",
+   "type": "stir-fry",
+   "serves": 4,
+   "prep": 15,
+   "cook": 15,
+   "tags": [
+    "quick",
+    "kid-friendly"
+   ],
+   "ingredients": [
+    {
+     "q": 1,
+     "u": "lb",
+     "item": "flank steak",
+     "note": "sliced thin against the grain",
+     "aisle": "meat"
+    },
+    {
+     "q": 4,
+     "u": "tsp",
+     "item": "cornstarch",
+     "note": "divided",
+     "aisle": "pantry"
+    },
+    {
+     "q": 4,
+     "u": "cup",
+     "item": "broccoli florets",
+     "aisle": "produce"
+    },
+    {
+     "q": 2,
+     "u": "tbsp",
+     "item": "vegetable oil",
+     "note": "divided",
+     "aisle": "pantry"
+    },
+    {
+     "q": 2,
+     "u": "clove",
+     "item": "garlic",
+     "note": "minced",
+     "aisle": "produce"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "fresh ginger",
+     "note": "grated",
+     "aisle": "produce"
+    },
+    {
+     "q": 0.33,
+     "u": "cup",
+     "item": "soy sauce",
+     "note": "low-sodium",
+     "aisle": "international"
+    },
+    {
+     "q": 2,
+     "u": "tbsp",
+     "item": "brown sugar",
+     "aisle": "pantry"
+    },
+    {
+     "q": 0.33,
+     "u": "cup",
+     "item": "water",
+     "aisle": "pantry"
+    },
+    {
+     "q": 3,
+     "u": "cup",
+     "item": "cooked white rice",
+     "note": "to serve",
+     "aisle": "pantry"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Start the rice following the package so it is ready at the end."
+    },
+    {
+     "text": "Toss the beef with 1 tbsp cornstarch. In a cup, stir the soy sauce, sugar, water and 1 tsp cornstarch."
+    },
+    {
+     "text": "Heat 1 tbsp oil in a large skillet over high heat. Brown the beef in one layer, then move it to a plate.",
+     "timer": 180,
+     "timerLabel": "Brown the beef"
+    },
+    {
+     "text": "Add the rest of the oil, the broccoli and 2 tbsp water. Cover and cook until bright green.",
+     "timer": 240,
+     "timerLabel": "Steam the broccoli"
+    },
+    {
+     "text": "Add the garlic and ginger and stir for 30 seconds.",
+     "timer": 30,
+     "timerLabel": "Stir garlic and ginger"
+    },
+    {
+     "text": "Put the beef back, pour in the sauce, and stir until thick and glossy, about 2 minutes.",
+     "timer": 120,
+     "timerLabel": "Thicken the sauce"
+    },
+    {
+     "text": "Serve over the rice."
+    }
+   ]
+  },
+  {
+   "id": "chinese-kung-pao-chicken",
+   "title": "Kung pao chicken",
+   "blurb": "Spicy-sweet chicken with peanuts and dried chiles",
+   "type": "stir-fry",
+   "serves": 4,
+   "prep": 20,
+   "cook": 12,
+   "tags": [
+    "spicy",
+    "quick"
+   ],
+   "ingredients": [
+    {
+     "q": 1.25,
+     "u": "lb",
+     "item": "boneless skinless chicken thighs",
+     "note": "cut in 3/4-inch pieces",
+     "aisle": "meat"
+    },
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "cornstarch",
+     "aisle": "pantry"
+    },
+    {
+     "q": 3,
+     "u": "tbsp",
+     "item": "soy sauce",
+     "aisle": "international"
+    },
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "Shaoxing wine",
+     "aisle": "international"
+    },
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "black Chinese vinegar",
+     "aisle": "international"
+    },
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "sugar",
+     "aisle": "pantry"
+    },
+    {
+     "q": 2,
+     "u": "tbsp",
+     "item": "vegetable oil",
+     "aisle": "pantry"
+    },
+    {
+     "q": 8,
+     "u": "",
+     "item": "dried red chiles",
+     "aisle": "international"
+    },
+    {
+     "q": 3,
+     "u": "clove",
+     "item": "garlic",
+     "note": "sliced",
+     "aisle": "produce"
+    },
+    {
+     "q": 1,
+     "u": "inch",
+     "item": "fresh ginger",
+     "note": "minced",
+     "aisle": "produce"
+    },
+    {
+     "q": 0.5,
+     "u": "cup",
+     "item": "roasted peanuts",
+     "aisle": "pantry"
+    },
+    {
+     "q": 4,
+     "u": "",
+     "item": "scallions",
+     "note": "cut in 1-inch pieces",
+     "aisle": "produce"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Toss the chicken with the cornstarch and 1 tbsp soy sauce. Mix the remaining soy sauce, wine, vinegar and sugar."
+    },
+    {
+     "text": "Heat the oil in a wok over high. Toast the chiles 30 seconds.",
+     "timer": 30,
+     "timerLabel": "Toast the chiles"
+    },
+    {
+     "text": "Add the chicken in one layer and cook until browned and 165°F inside.",
+     "timer": 300,
+     "timerLabel": "Cook the chicken"
+    },
+    {
+     "text": "Add garlic, ginger and scallions and stir 30 seconds.",
+     "timer": 30,
+     "timerLabel": "Stir aromatics"
+    },
+    {
+     "text": "Pour in the sauce and toss until glossy.",
+     "timer": 60,
+     "timerLabel": "Glaze the chicken"
+    },
+    {
+     "text": "Fold in the peanuts and serve with rice."
+    }
+   ]
+  },
+  {
+   "id": "chinese-mapo-tofu",
+   "title": "Mapo tofu",
+   "blurb": "Silky tofu in a tingly, spicy chili-bean sauce with pork",
+   "type": "stir-fry",
+   "serves": 4,
+   "prep": 10,
+   "cook": 20,
+   "tags": [
+    "spicy"
+   ],
+   "ingredients": [
+    {
+     "q": 1,
+     "u": "lb",
+     "item": "soft or medium-firm tofu",
+     "note": "cut in 3/4-inch cubes",
+     "aisle": "dairy"
+    },
+    {
+     "q": 0.33,
+     "u": "lb",
+     "item": "ground pork",
+     "aisle": "meat"
+    },
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "vegetable oil",
+     "aisle": "pantry"
+    },
+    {
+     "q": 2,
+     "u": "tbsp",
+     "item": "doubanjiang (chili bean paste)",
+     "aisle": "international"
+    },
+    {
+     "q": 3,
+     "u": "clove",
+     "item": "garlic",
+     "note": "minced",
+     "aisle": "produce"
+    },
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "fresh ginger",
+     "note": "minced",
+     "aisle": "produce"
+    },
+    {
+     "q": 1,
+     "u": "cup",
+     "item": "chicken broth",
+     "aisle": "canned"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "soy sauce",
+     "aisle": "international"
+    },
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "cornstarch",
+     "aisle": "pantry"
+    },
+    {
+     "q": 0.5,
+     "u": "tsp",
+     "item": "ground Sichuan peppercorns",
+     "aisle": "spices"
+    },
+    {
+     "q": 3,
+     "u": "",
+     "item": "scallions",
+     "note": "sliced",
+     "aisle": "produce"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Simmer the tofu in salted water to firm it up, then drain.",
+     "timer": 180,
+     "timerLabel": "Blanch the tofu"
+    },
+    {
+     "text": "Cook the pork in the oil over medium-high until browned and no pink is left (160°F).",
+     "timer": 240,
+     "timerLabel": "Brown the pork"
+    },
+    {
+     "text": "Add the doubanjiang, garlic and ginger. Stir until the oil turns red.",
+     "timer": 60,
+     "timerLabel": "Fry the paste"
+    },
+    {
+     "text": "Pour in the broth and soy sauce. Add the tofu and simmer gently.",
+     "timer": 300,
+     "timerLabel": "Simmer the tofu"
+    },
+    {
+     "text": "Stir the cornstarch with 2 tbsp water and add. Cook until thick.",
+     "timer": 60,
+     "timerLabel": "Thicken the sauce"
+    },
+    {
+     "text": "Top with Sichuan pepper and scallions. Serve with rice."
+    }
+   ]
+  },
+  {
+   "id": "chinese-tomato-egg-stir-fry",
+   "title": "Tomato and egg stir-fry",
+   "blurb": "Soft eggs and juicy tomatoes, the ultimate home-style dish",
+   "type": "stir-fry",
+   "serves": 4,
+   "prep": 10,
+   "cook": 10,
+   "tags": [
+    "vegetarian",
+    "quick",
+    "kid-friendly"
+   ],
+   "ingredients": [
+    {
+     "q": 5,
+     "u": "",
+     "item": "large eggs",
+     "note": "beaten",
+     "aisle": "dairy"
+    },
+    {
+     "q": 1.5,
+     "u": "lb",
+     "item": "ripe tomatoes",
+     "note": "cut in wedges",
+     "aisle": "produce"
+    },
+    {
+     "q": 2,
+     "u": "tbsp",
+     "item": "vegetable oil",
+     "aisle": "pantry"
+    },
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "sugar",
+     "aisle": "pantry"
+    },
+    {
+     "q": 0.75,
+     "u": "tsp",
+     "item": "salt",
+     "aisle": "spices"
+    },
+    {
+     "q": 2,
+     "u": "",
+     "item": "scallions",
+     "note": "sliced",
+     "aisle": "produce"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "toasted sesame oil",
+     "aisle": "international"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Beat the eggs with a pinch of salt."
+    },
+    {
+     "text": "Heat 1 tbsp oil in a wok on medium-high. Scramble the eggs until just set. Remove.",
+     "timer": 60,
+     "timerLabel": "Scramble eggs"
+    },
+    {
+     "text": "Add 1 tbsp oil and the tomatoes. Stir-fry until they release juice.",
+     "timer": 240,
+     "timerLabel": "Cook the tomatoes"
+    },
+    {
+     "text": "Stir in sugar and salt."
+    },
+    {
+     "text": "Return the eggs and fold gently for 30 seconds.",
+     "timer": 30,
+     "timerLabel": "Fold in eggs"
+    },
+    {
+     "text": "Finish with scallions and sesame oil. Serve over rice."
+    }
+   ]
+  },
+  {
+   "id": "chinese-dry-fried-green-beans",
+   "title": "Dry-fried green beans",
+   "blurb": "Blistered green beans with garlic, pork and chili",
+   "type": "stir-fry",
+   "serves": 4,
+   "prep": 10,
+   "cook": 15,
+   "tags": [
+    "spicy",
+    "quick"
+   ],
+   "ingredients": [
+    {
+     "q": 1,
+     "u": "lb",
+     "item": "green beans",
+     "note": "trimmed",
+     "aisle": "produce"
+    },
+    {
+     "q": 3,
+     "u": "tbsp",
+     "item": "vegetable oil",
+     "aisle": "pantry"
+    },
+    {
+     "q": 0.25,
+     "u": "lb",
+     "item": "ground pork",
+     "aisle": "meat"
+    },
+    {
+     "q": 3,
+     "u": "clove",
+     "item": "garlic",
+     "note": "minced",
+     "aisle": "produce"
+    },
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "fresh ginger",
+     "note": "minced",
+     "aisle": "produce"
+    },
+    {
+     "q": 2,
+     "u": "tsp",
+     "item": "chili bean paste",
+     "aisle": "international"
+    },
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "soy sauce",
+     "aisle": "international"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "sugar",
+     "aisle": "pantry"
+    },
+    {
+     "q": 3,
+     "u": "",
+     "item": "dried red chiles",
+     "aisle": "international"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Heat 2 tbsp oil in a wok on high. Fry the beans, tossing, until blistered and wrinkled. Remove.",
+     "timer": 420,
+     "timerLabel": "Blister the beans"
+    },
+    {
+     "text": "Add 1 tbsp oil and the pork. Cook until browned and no pink is left (160°F).",
+     "timer": 180,
+     "timerLabel": "Brown the pork"
+    },
+    {
+     "text": "Add garlic, ginger, chiles and chili bean paste. Stir 30 seconds.",
+     "timer": 30,
+     "timerLabel": "Stir aromatics"
+    },
+    {
+     "text": "Return the beans with soy sauce and sugar. Toss 1 minute.",
+     "timer": 60,
+     "timerLabel": "Toss together"
+    }
+   ]
+  },
+  {
+   "id": "chinese-cashew-chicken",
+   "title": "Cashew chicken",
+   "blurb": "Chicken, peppers and crunchy cashews in a light brown sauce",
+   "type": "stir-fry",
+   "serves": 4,
+   "prep": 15,
+   "cook": 12,
+   "tags": [
+    "quick",
+    "kid-friendly"
+   ],
+   "ingredients": [
+    {
+     "q": 1.25,
+     "u": "lb",
+     "item": "boneless skinless chicken breasts",
+     "note": "cut in 1-inch pieces",
+     "aisle": "meat"
+    },
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "cornstarch",
+     "aisle": "pantry"
+    },
+    {
+     "q": 3,
+     "u": "tbsp",
+     "item": "soy sauce",
+     "aisle": "international"
+    },
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "oyster sauce",
+     "aisle": "international"
+    },
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "rice vinegar",
+     "aisle": "international"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "sugar",
+     "aisle": "pantry"
+    },
+    {
+     "q": 2,
+     "u": "tbsp",
+     "item": "vegetable oil",
+     "aisle": "pantry"
+    },
+    {
+     "q": 1,
+     "u": "",
+     "item": "green bell pepper",
+     "note": "diced",
+     "aisle": "produce"
+    },
+    {
+     "q": 1,
+     "u": "",
+     "item": "red bell pepper",
+     "note": "diced",
+     "aisle": "produce"
+    },
+    {
+     "q": 2,
+     "u": "clove",
+     "item": "garlic",
+     "note": "minced",
+     "aisle": "produce"
+    },
+    {
+     "q": 0.75,
+     "u": "cup",
+     "item": "roasted cashews",
+     "aisle": "pantry"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Toss the chicken with the cornstarch and 1 tbsp soy sauce. Mix the remaining soy, oyster sauce, vinegar, sugar and 1/4 cup water."
+    },
+    {
+     "text": "Heat 1 tbsp oil on high. Cook the chicken until browned and 165°F inside. Remove.",
+     "timer": 300,
+     "timerLabel": "Cook the chicken"
+    },
+    {
+     "text": "Add the last oil, peppers and garlic. Stir-fry until crisp-tender.",
+     "timer": 120,
+     "timerLabel": "Stir-fry peppers"
+    },
+    {
+     "text": "Return the chicken, add the sauce and bubble until glossy.",
+     "timer": 90,
+     "timerLabel": "Thicken the sauce"
+    },
+    {
+     "text": "Stir in the cashews. Serve with rice."
+    }
+   ]
+  },
+  {
+   "id": "chinese-pepper-steak",
+   "title": "Pepper steak with onions",
+   "blurb": "Tender beef with bell peppers and onion in savory sauce",
+   "type": "stir-fry",
+   "serves": 4,
+   "prep": 15,
+   "cook": 12,
+   "tags": [
+    "quick"
+   ],
+   "ingredients": [
+    {
+     "q": 1,
+     "u": "lb",
+     "item": "flank steak",
+     "note": "sliced thin",
+     "aisle": "meat"
+    },
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "cornstarch",
+     "aisle": "pantry"
+    },
+    {
+     "q": 3,
+     "u": "tbsp",
+     "item": "soy sauce",
+     "aisle": "international"
+    },
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "oyster sauce",
+     "aisle": "international"
+    },
+    {
+     "q": 0.5,
+     "u": "cup",
+     "item": "beef broth",
+     "aisle": "canned"
+    },
+    {
+     "q": 2,
+     "u": "tbsp",
+     "item": "vegetable oil",
+     "aisle": "pantry"
+    },
+    {
+     "q": 1,
+     "u": "",
+     "item": "green bell pepper",
+     "note": "sliced",
+     "aisle": "produce"
+    },
+    {
+     "q": 1,
+     "u": "",
+     "item": "red bell pepper",
+     "note": "sliced",
+     "aisle": "produce"
+    },
+    {
+     "q": 1,
+     "u": "",
+     "item": "yellow onion",
+     "note": "sliced",
+     "aisle": "produce"
+    },
+    {
+     "q": 2,
+     "u": "clove",
+     "item": "garlic",
+     "note": "minced",
+     "aisle": "produce"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Toss the beef with the cornstarch and 1 tbsp soy sauce. Mix the rest of the soy, oyster sauce and broth."
+    },
+    {
+     "text": "Heat 1 tbsp oil on high. Sear the beef in one layer, then remove.",
+     "timer": 120,
+     "timerLabel": "Sear the beef"
+    },
+    {
+     "text": "Add the last oil, peppers, onion and garlic. Stir-fry until crisp-tender.",
+     "timer": 180,
+     "timerLabel": "Stir-fry veg"
+    },
+    {
+     "text": "Return the beef, pour in the sauce and simmer until thick.",
+     "timer": 90,
+     "timerLabel": "Thicken the sauce"
+    },
+    {
+     "text": "Serve over rice."
+    }
+   ]
+  },
+  {
+   "id": "chinese-shrimp-snow-peas",
+   "title": "Shrimp with snow peas",
+   "blurb": "Quick garlicky shrimp and crisp snow peas",
+   "type": "stir-fry",
+   "serves": 4,
+   "prep": 10,
+   "cook": 10,
+   "tags": [
+    "quick",
+    "healthy"
+   ],
+   "ingredients": [
+    {
+     "q": 1,
+     "u": "lb",
+     "item": "large shrimp",
+     "note": "peeled, deveined",
+     "aisle": "seafood"
+    },
+    {
+     "q": 2,
+     "u": "tbsp",
+     "item": "vegetable oil",
+     "aisle": "pantry"
+    },
+    {
+     "q": 3,
+     "u": "clove",
+     "item": "garlic",
+     "note": "minced",
+     "aisle": "produce"
+    },
+    {
+     "q": 1,
+     "u": "inch",
+     "item": "fresh ginger",
+     "note": "minced",
+     "aisle": "produce"
+    },
+    {
+     "q": 0.5,
+     "u": "lb",
+     "item": "snow peas",
+     "note": "trimmed",
+     "aisle": "produce"
+    },
+    {
+     "q": 2,
+     "u": "tbsp",
+     "item": "soy sauce",
+     "aisle": "international"
+    },
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "Shaoxing wine",
+     "aisle": "international"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "cornstarch",
+     "aisle": "pantry"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "toasted sesame oil",
+     "aisle": "international"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Stir the soy sauce, wine, cornstarch and 2 tbsp water together."
+    },
+    {
+     "text": "Heat 1 tbsp oil in a wok on high. Cook the shrimp until pink and 145°F. Remove.",
+     "timer": 120,
+     "timerLabel": "Cook the shrimp"
+    },
+    {
+     "text": "Add 1 tbsp oil, garlic, ginger and the snow peas. Stir-fry until bright.",
+     "timer": 120,
+     "timerLabel": "Stir-fry snow peas"
+    },
+    {
+     "text": "Return the shrimp, add the sauce and toss until glossy.",
+     "timer": 60,
+     "timerLabel": "Glaze the shrimp"
+    },
+    {
+     "text": "Finish with sesame oil and serve with rice."
+    }
+   ]
+  },
+  {
+   "id": "chinese-yu-xiang-eggplant",
+   "title": "Fish-fragrant eggplant",
+   "blurb": "Tender eggplant in sweet, sour and spicy garlic sauce",
+   "type": "stir-fry",
+   "serves": 4,
+   "prep": 15,
+   "cook": 20,
+   "tags": [
+    "vegan",
+    "spicy"
+   ],
+   "ingredients": [
+    {
+     "q": 1.5,
+     "u": "lb",
+     "item": "Chinese or Japanese eggplant",
+     "note": "cut in 3-inch sticks",
+     "aisle": "produce"
+    },
+    {
+     "q": 4,
+     "u": "tbsp",
+     "item": "vegetable oil",
+     "aisle": "pantry"
+    },
+    {
+     "q": 4,
+     "u": "clove",
+     "item": "garlic",
+     "note": "minced",
+     "aisle": "produce"
+    },
+    {
+     "q": 1,
+     "u": "inch",
+     "item": "fresh ginger",
+     "note": "minced",
+     "aisle": "produce"
+    },
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "chili bean paste",
+     "aisle": "international"
+    },
+    {
+     "q": 3,
+     "u": "tbsp",
+     "item": "soy sauce",
+     "aisle": "international"
+    },
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "black Chinese vinegar",
+     "aisle": "international"
+    },
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "sugar",
+     "aisle": "pantry"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "cornstarch",
+     "aisle": "pantry"
+    },
+    {
+     "q": 3,
+     "u": "",
+     "item": "scallions",
+     "note": "sliced",
+     "aisle": "produce"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Mix the soy sauce, vinegar, sugar, cornstarch and 1/3 cup water."
+    },
+    {
+     "text": "Heat 3 tbsp oil in a wok on medium-high. Fry the eggplant, tossing, until soft and browned.",
+     "timer": 480,
+     "timerLabel": "Fry the eggplant"
+    },
+    {
+     "text": "Push aside. Add 1 tbsp oil, garlic, ginger and chili bean paste. Stir 30 seconds.",
+     "timer": 30,
+     "timerLabel": "Stir aromatics"
+    },
+    {
+     "text": "Pour in the sauce and toss until the eggplant is glazed.",
+     "timer": 120,
+     "timerLabel": "Glaze the eggplant"
+    },
+    {
+     "text": "Top with scallions and serve with rice."
+    }
+   ]
+  },
+  {
+   "id": "chinese-cumin-lamb",
+   "title": "Cumin lamb",
+   "blurb": "Xinjiang-style lamb with toasted cumin, chiles and onion",
+   "type": "stir-fry",
+   "serves": 4,
+   "prep": 15,
+   "cook": 10,
+   "tags": [
+    "spicy",
+    "quick"
+   ],
+   "ingredients": [
+    {
+     "q": 1,
+     "u": "lb",
+     "item": "lamb leg or shoulder",
+     "note": "sliced thin",
+     "aisle": "meat"
+    },
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "soy sauce",
+     "aisle": "international"
+    },
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "cornstarch",
+     "aisle": "pantry"
+    },
+    {
+     "q": 2,
+     "u": "tbsp",
+     "item": "cumin seeds",
+     "aisle": "spices"
+    },
+    {
+     "q": 3,
+     "u": "tbsp",
+     "item": "vegetable oil",
+     "aisle": "pantry"
+    },
+    {
+     "q": 1,
+     "u": "",
+     "item": "yellow onion",
+     "note": "sliced",
+     "aisle": "produce"
+    },
+    {
+     "q": 4,
+     "u": "clove",
+     "item": "garlic",
+     "note": "sliced",
+     "aisle": "produce"
+    },
+    {
+     "q": 2,
+     "u": "tsp",
+     "item": "red pepper flakes",
+     "aisle": "spices"
+    },
+    {
+     "q": 3,
+     "u": "",
+     "item": "scallions",
+     "note": "cut in 1-inch pieces",
+     "aisle": "produce"
+    },
+    {
+     "q": 0.5,
+     "u": "tsp",
+     "item": "salt",
+     "aisle": "spices"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Toss the lamb with soy sauce and cornstarch."
+    },
+    {
+     "text": "Toast the cumin in a dry wok until fragrant, then grind coarsely.",
+     "timer": 60,
+     "timerLabel": "Toast the cumin"
+    },
+    {
+     "text": "Heat the oil on high. Sear the lamb in one layer until browned (145°F).",
+     "timer": 180,
+     "timerLabel": "Sear the lamb"
+    },
+    {
+     "text": "Add the onion, garlic and pepper flakes. Stir-fry until the onion softens.",
+     "timer": 120,
+     "timerLabel": "Stir-fry onion"
+    },
+    {
+     "text": "Add the cumin, salt and scallions. Toss 30 seconds and serve with rice.",
+     "timer": 30,
+     "timerLabel": "Toss together"
+    }
+   ]
+  },
+  {
+   "id": "chinese-pork-potstickers",
+   "title": "Pork potstickers",
+   "blurb": "Pan-fried dumplings with crisp bottoms and juicy pork filling",
+   "type": "dumplings",
+   "serves": 6,
+   "prep": 40,
+   "cook": 15,
+   "tags": [
+    "make ahead",
+    "kid-friendly"
+   ],
+   "ingredients": [
+    {
+     "q": 1,
+     "u": "lb",
+     "item": "ground pork",
+     "aisle": "meat"
+    },
+    {
+     "q": 2,
+     "u": "cup",
+     "item": "napa cabbage",
+     "note": "finely chopped",
+     "aisle": "produce"
+    },
+    {
+     "q": 3,
+     "u": "",
+     "item": "scallions",
+     "note": "minced",
+     "aisle": "produce"
+    },
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "fresh ginger",
+     "note": "minced",
+     "aisle": "produce"
+    },
+    {
+     "q": 2,
+     "u": "tbsp",
+     "item": "soy sauce",
+     "aisle": "international"
+    },
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "toasted sesame oil",
+     "aisle": "international"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "salt",
+     "aisle": "spices"
+    },
+    {
+     "q": 40,
+     "u": "",
+     "item": "round dumpling wrappers",
+     "aisle": "international"
+    },
+    {
+     "q": 2,
+     "u": "tbsp",
+     "item": "vegetable oil",
+     "aisle": "pantry"
+    },
+    {
+     "q": 0.5,
+     "u": "cup",
+     "item": "water",
+     "aisle": "pantry"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Toss the cabbage with the salt, wait, then squeeze out the water.",
+     "timer": 600,
+     "timerLabel": "Salt the cabbage"
+    },
+    {
+     "text": "Mix pork, cabbage, scallions, ginger, soy sauce and sesame oil until sticky."
+    },
+    {
+     "text": "Put 1 tbsp filling on each wrapper, wet the edge, fold and pleat to seal."
+    },
+    {
+     "text": "Heat 1 tbsp oil in a nonstick skillet. Place dumplings flat side down and brown.",
+     "timer": 180,
+     "timerLabel": "Brown the bottoms"
+    },
+    {
+     "text": "Add 1/4 cup water and cover. Steam until the filling reaches 165°F.",
+     "timer": 420,
+     "timerLabel": "Steam the dumplings"
+    },
+    {
+     "text": "Uncover and cook until the water is gone and bottoms are crisp.",
+     "timer": 60,
+     "timerLabel": "Re-crisp the bottoms"
+    }
+   ]
+  },
+  {
+   "id": "chinese-pork-chive-dumplings",
+   "title": "Boiled pork and chive dumplings",
+   "blurb": "Northern-style jiaozi with a juicy pork and chive filling",
+   "type": "dumplings",
+   "serves": 6,
+   "prep": 45,
+   "cook": 10,
+   "tags": [
+    "make ahead",
+    "crowd"
+   ],
+   "ingredients": [
+    {
+     "q": 1,
+     "u": "lb",
+     "item": "ground pork",
+     "aisle": "meat"
+    },
+    {
+     "q": 1,
+     "u": "bunch",
+     "item": "garlic chives or regular chives",
+     "note": "chopped",
+     "aisle": "produce"
+    },
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "fresh ginger",
+     "note": "minced",
+     "aisle": "produce"
+    },
+    {
+     "q": 2,
+     "u": "tbsp",
+     "item": "soy sauce",
+     "aisle": "international"
+    },
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "Shaoxing wine",
+     "aisle": "international"
+    },
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "toasted sesame oil",
+     "aisle": "international"
+    },
+    {
+     "q": 0.5,
+     "u": "tsp",
+     "item": "salt",
+     "aisle": "spices"
+    },
+    {
+     "q": 40,
+     "u": "",
+     "item": "round dumpling wrappers",
+     "aisle": "international"
+    },
+    {
+     "q": 3,
+     "u": "tbsp",
+     "item": "rice vinegar",
+     "aisle": "international"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Mix pork, chives, ginger, soy sauce, wine, sesame oil and salt in one direction until sticky."
+    },
+    {
+     "text": "Fill each wrapper with 1 tbsp filling, wet the edge, and pinch shut."
+    },
+    {
+     "text": "Bring a large pot of water to a boil."
+    },
+    {
+     "text": "Boil in batches. Add a cup of cold water when they float. Repeat twice.",
+     "timer": 480,
+     "timerLabel": "Boil the dumplings"
+    },
+    {
+     "text": "Check one dumpling reads 165°F inside."
+    },
+    {
+     "text": "Serve with vinegar and soy sauce for dipping."
+    }
+   ]
+  },
+  {
+   "id": "chinese-chicken-cabbage-dumplings",
+   "title": "Chicken and cabbage dumplings",
+   "blurb": "Light dumplings with chicken, cabbage and ginger",
+   "type": "dumplings",
+   "serves": 6,
+   "prep": 45,
+   "cook": 15,
+   "tags": [
+    "make ahead",
+    "kid-friendly"
+   ],
+   "ingredients": [
+    {
+     "q": 1,
+     "u": "lb",
+     "item": "ground chicken",
+     "aisle": "meat"
+    },
+    {
+     "q": 2,
+     "u": "cup",
+     "item": "napa cabbage",
+     "note": "finely chopped",
+     "aisle": "produce"
+    },
+    {
+     "q": 3,
+     "u": "",
+     "item": "scallions",
+     "note": "minced",
+     "aisle": "produce"
+    },
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "fresh ginger",
+     "note": "minced",
+     "aisle": "produce"
+    },
+    {
+     "q": 2,
+     "u": "tbsp",
+     "item": "soy sauce",
+     "aisle": "international"
+    },
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "toasted sesame oil",
+     "aisle": "international"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "cornstarch",
+     "aisle": "pantry"
+    },
+    {
+     "q": 40,
+     "u": "",
+     "item": "round dumpling wrappers",
+     "aisle": "international"
+    },
+    {
+     "q": 2,
+     "u": "tbsp",
+     "item": "vegetable oil",
+     "aisle": "pantry"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Salt and squeeze the cabbage dry."
+    },
+    {
+     "text": "Mix chicken, cabbage, scallions, ginger, soy sauce, sesame oil and cornstarch."
+    },
+    {
+     "text": "Fill and fold the wrappers, sealing the edges with water."
+    },
+    {
+     "text": "Brown the dumplings in oil over medium-high, flat side down.",
+     "timer": 180,
+     "timerLabel": "Brown the bottoms"
+    },
+    {
+     "text": "Add 1/3 cup water, cover, and steam until 165°F inside.",
+     "timer": 420,
+     "timerLabel": "Steam the dumplings"
+    }
+   ]
+  },
+  {
+   "id": "chinese-vegetable-dumplings",
+   "title": "Vegetable dumplings",
+   "blurb": "Mushroom, cabbage and tofu dumplings, fully vegetarian",
+   "type": "dumplings",
+   "serves": 6,
+   "prep": 45,
+   "cook": 15,
+   "tags": [
+    "vegetarian",
+    "make ahead"
+   ],
+   "ingredients": [
+    {
+     "q": 1,
+     "u": "cup",
+     "item": "shiitake mushrooms",
+     "note": "finely chopped",
+     "aisle": "produce"
+    },
+    {
+     "q": 2,
+     "u": "cup",
+     "item": "napa cabbage",
+     "note": "finely chopped",
+     "aisle": "produce"
+    },
+    {
+     "q": 0.5,
+     "u": "lb",
+     "item": "firm tofu",
+     "note": "crumbled",
+     "aisle": "dairy"
+    },
+    {
+     "q": 2,
+     "u": "",
+     "item": "carrots",
+     "note": "grated",
+     "aisle": "produce"
+    },
+    {
+     "q": 3,
+     "u": "",
+     "item": "scallions",
+     "note": "minced",
+     "aisle": "produce"
+    },
+    {
+     "q": 2,
+     "u": "tbsp",
+     "item": "soy sauce",
+     "aisle": "international"
+    },
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "toasted sesame oil",
+     "aisle": "international"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "fresh ginger",
+     "note": "grated",
+     "aisle": "produce"
+    },
+    {
+     "q": 40,
+     "u": "",
+     "item": "round dumpling wrappers",
+     "aisle": "international"
+    },
+    {
+     "q": 2,
+     "u": "tbsp",
+     "item": "vegetable oil",
+     "aisle": "pantry"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Salt the cabbage, then squeeze out the water."
+    },
+    {
+     "text": "Mix cabbage, mushrooms, tofu, carrots, scallions, soy sauce, sesame oil and ginger."
+    },
+    {
+     "text": "Fill and pleat the dumplings."
+    },
+    {
+     "text": "Brown in oil over medium-high.",
+     "timer": 180,
+     "timerLabel": "Brown the bottoms"
+    },
+    {
+     "text": "Add 1/3 cup water, cover, and steam until the wrappers are tender.",
+     "timer": 360,
+     "timerLabel": "Steam the dumplings"
+    }
+   ]
+  },
+  {
+   "id": "chinese-wontons-chili-oil",
+   "title": "Wontons in chili oil",
+   "blurb": "Silky pork wontons in sweet, tangy, spicy sauce",
+   "type": "dumplings",
+   "serves": 4,
+   "prep": 40,
+   "cook": 10,
+   "tags": [
+    "spicy",
+    "make ahead"
+   ],
+   "ingredients": [
+    {
+     "q": 0.75,
+     "u": "lb",
+     "item": "ground pork",
+     "aisle": "meat"
+    },
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "fresh ginger",
+     "note": "minced",
+     "aisle": "produce"
+    },
+    {
+     "q": 3,
+     "u": "",
+     "item": "scallions",
+     "note": "minced",
+     "aisle": "produce"
+    },
+    {
+     "q": 3,
+     "u": "tbsp",
+     "item": "soy sauce",
+     "aisle": "international"
+    },
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "toasted sesame oil",
+     "aisle": "international"
+    },
+    {
+     "q": 30,
+     "u": "",
+     "item": "square wonton wrappers",
+     "aisle": "international"
+    },
+    {
+     "q": 2,
+     "u": "tbsp",
+     "item": "chili crisp",
+     "aisle": "international"
+    },
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "black Chinese vinegar",
+     "aisle": "international"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "sugar",
+     "aisle": "pantry"
+    },
+    {
+     "q": 1,
+     "u": "clove",
+     "item": "garlic",
+     "note": "grated",
+     "aisle": "produce"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Mix the pork, ginger, scallions, 1 tbsp soy sauce and the sesame oil."
+    },
+    {
+     "text": "Put a teaspoon of filling on each wrapper, fold into triangles, and seal."
+    },
+    {
+     "text": "Stir the chili crisp, 2 tbsp soy sauce, vinegar, sugar and garlic in bowls."
+    },
+    {
+     "text": "Boil the wontons until floating and cooked through (165°F).",
+     "timer": 240,
+     "timerLabel": "Boil the wontons"
+    },
+    {
+     "text": "Lift into the sauce, toss, and serve."
+    }
+   ]
+  },
+  {
+   "id": "chinese-baozi-pork-buns",
+   "title": "Steamed pork buns",
+   "blurb": "Fluffy yeast buns filled with savory pork",
+   "type": "dumplings",
+   "serves": 8,
+   "prep": 150,
+   "cook": 25,
+   "tags": [
+    "make ahead",
+    "crowd"
+   ],
+   "ingredients": [
+    {
+     "q": 3,
+     "u": "cup",
+     "item": "all-purpose flour",
+     "aisle": "pantry"
+    },
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "instant yeast",
+     "aisle": "pantry"
+    },
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "sugar",
+     "aisle": "pantry"
+    },
+    {
+     "q": 1,
+     "u": "cup",
+     "item": "water",
+     "note": "warm",
+     "aisle": "pantry"
+    },
+    {
+     "q": 0.75,
+     "u": "lb",
+     "item": "ground pork",
+     "aisle": "meat"
+    },
+    {
+     "q": 2,
+     "u": "tbsp",
+     "item": "soy sauce",
+     "aisle": "international"
+    },
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "toasted sesame oil",
+     "aisle": "international"
+    },
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "oyster sauce",
+     "aisle": "international"
+    },
+    {
+     "q": 3,
+     "u": "",
+     "item": "scallions",
+     "note": "minced",
+     "aisle": "produce"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "fresh ginger",
+     "note": "minced",
+     "aisle": "produce"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Mix flour, yeast, sugar and warm water into a dough. Knead until smooth. Cover and let rise.",
+     "timer": 3600,
+     "timerLabel": "Rise the dough"
+    },
+    {
+     "text": "Mix pork, soy sauce, sesame oil, oyster sauce, scallions and ginger."
+    },
+    {
+     "text": "Divide the dough into 8 balls. Roll flat, fill, and pleat shut."
+    },
+    {
+     "text": "Set buns on parchment squares in a steamer. Rest.",
+     "timer": 1200,
+     "timerLabel": "Rest the buns"
+    },
+    {
+     "text": "Steam over boiling water until puffed and pork is 165°F.",
+     "timer": 900,
+     "timerLabel": "Steam the buns"
+    }
+   ]
+  },
+  {
+   "id": "chinese-scallion-pancakes",
+   "title": "Scallion pancakes",
+   "blurb": "Flaky, crisp pan-fried flatbread layered with scallions",
+   "type": "dumplings",
+   "serves": 4,
+   "prep": 45,
+   "cook": 15,
+   "tags": [
+    "vegetarian",
+    "kid-friendly"
+   ],
+   "ingredients": [
+    {
+     "q": 2,
+     "u": "cup",
+     "item": "all-purpose flour",
+     "aisle": "pantry"
+    },
+    {
+     "q": 0.75,
+     "u": "cup",
+     "item": "water",
+     "note": "boiling",
+     "aisle": "pantry"
+    },
+    {
+     "q": 0.25,
+     "u": "cup",
+     "item": "vegetable oil",
+     "note": "plus more for pan",
+     "aisle": "pantry"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "salt",
+     "aisle": "spices"
+    },
+    {
+     "q": 5,
+     "u": "",
+     "item": "scallions",
+     "note": "chopped",
+     "aisle": "produce"
+    },
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "soy sauce",
+     "aisle": "international"
+    },
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "rice vinegar",
+     "aisle": "international"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Stir the boiling water into the flour. Knead into a smooth dough. Rest.",
+     "timer": 1800,
+     "timerLabel": "Rest the dough"
+    },
+    {
+     "text": "Divide into 4 pieces. Roll each thin, brush with oil, and sprinkle salt and scallions."
+    },
+    {
+     "text": "Roll up into a log, coil into a spiral, and flatten with a rolling pin."
+    },
+    {
+     "text": "Fry each pancake in a hot oiled skillet until golden and crisp on both sides.",
+     "timer": 240,
+     "timerLabel": "Fry the pancake"
+    },
+    {
+     "text": "Cut into wedges. Dip in soy sauce and vinegar."
+    }
+   ]
+  },
+  {
+   "id": "chinese-crab-rangoon",
+   "title": "Crab rangoon",
+   "blurb": "Crispy wonton cups with creamy crab and cream cheese",
+   "type": "dumplings",
+   "serves": 6,
+   "prep": 25,
+   "cook": 15,
+   "tags": [
+    "kid-friendly"
+   ],
+   "ingredients": [
+    {
+     "q": 8,
+     "u": "oz",
+     "item": "cream cheese",
+     "note": "softened",
+     "aisle": "dairy"
+    },
+    {
+     "q": 6,
+     "u": "oz",
+     "item": "lump crab meat",
+     "aisle": "seafood"
+    },
+    {
+     "q": 2,
+     "u": "",
+     "item": "scallions",
+     "note": "minced",
+     "aisle": "produce"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "Worcestershire sauce",
+     "aisle": "pantry"
+    },
+    {
+     "q": 1,
+     "u": "clove",
+     "item": "garlic",
+     "note": "minced",
+     "aisle": "produce"
+    },
+    {
+     "q": 24,
+     "u": "",
+     "item": "square wonton wrappers",
+     "aisle": "international"
+    },
+    {
+     "q": 1,
+     "u": "cup",
+     "item": "vegetable oil",
+     "note": "for frying",
+     "aisle": "pantry"
+    },
+    {
+     "q": 0.25,
+     "u": "cup",
+     "item": "sweet chili sauce",
+     "aisle": "international"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Mix the cream cheese, crab, scallions, Worcestershire and garlic."
+    },
+    {
+     "text": "Put 1 tsp filling in each wrapper. Wet the edges, fold into triangles, and seal."
+    },
+    {
+     "text": "Heat the oil to 350°F in a skillet."
+    },
+    {
+     "text": "Fry in batches until golden and crisp.",
+     "timer": 120,
+     "timerLabel": "Fry the rangoon"
+    },
+    {
+     "text": "Drain on paper towels. Serve with sweet chili sauce."
+    }
+   ]
+  },
+  {
+   "id": "chinese-egg-rolls",
+   "title": "Pork egg rolls",
+   "blurb": "Crunchy fried rolls with pork, cabbage and carrots",
+   "type": "dumplings",
+   "serves": 6,
+   "prep": 35,
+   "cook": 20,
+   "tags": [
+    "crowd"
+   ],
+   "ingredients": [
+    {
+     "q": 0.5,
+     "u": "lb",
+     "item": "ground pork",
+     "aisle": "meat"
+    },
+    {
+     "q": 3,
+     "u": "cup",
+     "item": "green cabbage",
+     "note": "shredded",
+     "aisle": "produce"
+    },
+    {
+     "q": 1,
+     "u": "",
+     "item": "carrots",
+     "note": "shredded",
+     "aisle": "produce"
+    },
+    {
+     "q": 2,
+     "u": "clove",
+     "item": "garlic",
+     "note": "minced",
+     "aisle": "produce"
+    },
+    {
+     "q": 2,
+     "u": "tbsp",
+     "item": "soy sauce",
+     "aisle": "international"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "toasted sesame oil",
+     "aisle": "international"
+    },
+    {
+     "q": 10,
+     "u": "",
+     "item": "egg roll wrappers",
+     "aisle": "international"
+    },
+    {
+     "q": 1,
+     "u": "",
+     "item": "large eggs",
+     "note": "beaten",
+     "aisle": "dairy"
+    },
+    {
+     "q": 2,
+     "u": "cup",
+     "item": "vegetable oil",
+     "note": "for frying",
+     "aisle": "pantry"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Cook the pork in a skillet until no pink is left (160°F), then add the cabbage, carrots and garlic.",
+     "timer": 420,
+     "timerLabel": "Cook the filling"
+    },
+    {
+     "text": "Stir in soy sauce and sesame oil. Cool completely.",
+     "timer": 900,
+     "timerLabel": "Cool the filling"
+    },
+    {
+     "text": "Place filling on each wrapper, roll tightly, and seal with beaten egg."
+    },
+    {
+     "text": "Heat the oil to 350°F in a heavy pot."
+    },
+    {
+     "text": "Fry the rolls in batches until deep golden.",
+     "timer": 240,
+     "timerLabel": "Fry the egg rolls"
+    },
+    {
+     "text": "Drain on a rack and serve hot."
+    }
+   ]
+  },
+  {
+   "id": "chinese-wonton-soup",
+   "title": "Wonton soup",
+   "blurb": "Pork wontons in clear ginger chicken broth",
+   "type": "soups",
+   "serves": 4,
+   "prep": 40,
+   "cook": 25,
+   "tags": [
+    "kid-friendly"
+   ],
+   "ingredients": [
+    {
+     "q": 0.5,
+     "u": "lb",
+     "item": "ground pork",
+     "aisle": "meat"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "fresh ginger",
+     "note": "grated",
+     "aisle": "produce"
+    },
+    {
+     "q": 2,
+     "u": "",
+     "item": "scallions",
+     "note": "minced",
+     "aisle": "produce"
+    },
+    {
+     "q": 2,
+     "u": "tbsp",
+     "item": "soy sauce",
+     "aisle": "international"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "toasted sesame oil",
+     "aisle": "international"
+    },
+    {
+     "q": 24,
+     "u": "",
+     "item": "square wonton wrappers",
+     "aisle": "international"
+    },
+    {
+     "q": 6,
+     "u": "cup",
+     "item": "chicken broth",
+     "aisle": "canned"
+    },
+    {
+     "q": 1,
+     "u": "bunch",
+     "item": "baby bok choy",
+     "note": "chopped",
+     "aisle": "produce"
+    },
+    {
+     "q": null,
+     "u": "",
+     "item": "white pepper",
+     "aisle": "spices"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Mix the pork, ginger, scallions, 1 tbsp soy sauce and sesame oil."
+    },
+    {
+     "text": "Fill each wrapper with 1 tsp filling, fold, and seal with water."
+    },
+    {
+     "text": "Simmer the broth with the remaining soy sauce.",
+     "timer": 300,
+     "timerLabel": "Simmer the broth"
+    },
+    {
+     "text": "Add the wontons and bok choy. Cook until they float and reach 165°F.",
+     "timer": 240,
+     "timerLabel": "Cook the wontons"
+    },
+    {
+     "text": "Season with white pepper and serve."
+    }
+   ]
+  },
+  {
+   "id": "chinese-hot-and-sour-soup",
+   "title": "Hot and sour soup",
+   "blurb": "Peppery, tangy soup with tofu, mushrooms and egg ribbons",
+   "type": "soups",
+   "serves": 6,
+   "prep": 15,
+   "cook": 25,
+   "tags": [
+    "spicy"
+   ],
+   "ingredients": [
+    {
+     "q": 6,
+     "u": "cup",
+     "item": "chicken broth",
+     "aisle": "canned"
+    },
+    {
+     "q": 0.5,
+     "u": "lb",
+     "item": "pork loin",
+     "note": "cut in thin strips",
+     "aisle": "meat"
+    },
+    {
+     "q": 1,
+     "u": "cup",
+     "item": "shiitake mushrooms",
+     "note": "sliced",
+     "aisle": "produce"
+    },
+    {
+     "q": 0.5,
+     "u": "lb",
+     "item": "firm tofu",
+     "note": "cut in strips",
+     "aisle": "dairy"
+    },
+    {
+     "q": 3,
+     "u": "tbsp",
+     "item": "rice vinegar",
+     "aisle": "international"
+    },
+    {
+     "q": 2,
+     "u": "tbsp",
+     "item": "soy sauce",
+     "aisle": "international"
+    },
+    {
+     "q": 0.5,
+     "u": "tsp",
+     "item": "white pepper",
+     "aisle": "spices"
+    },
+    {
+     "q": 3,
+     "u": "tbsp",
+     "item": "cornstarch",
+     "aisle": "pantry"
+    },
+    {
+     "q": 2,
+     "u": "",
+     "item": "large eggs",
+     "note": "beaten",
+     "aisle": "dairy"
+    },
+    {
+     "q": 3,
+     "u": "",
+     "item": "scallions",
+     "note": "sliced",
+     "aisle": "produce"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Bring the broth, pork and mushrooms to a simmer.",
+     "timer": 600,
+     "timerLabel": "Simmer the soup"
+    },
+    {
+     "text": "Add the tofu, vinegar, soy sauce and white pepper. Simmer.",
+     "timer": 300,
+     "timerLabel": "Simmer the tofu"
+    },
+    {
+     "text": "Stir the cornstarch with 1/4 cup cold water and stir in until thick.",
+     "timer": 120,
+     "timerLabel": "Thicken the soup"
+    },
+    {
+     "text": "Slowly drizzle in the eggs while stirring."
+    },
+    {
+     "text": "Check the pork is cooked through. Top with scallions."
+    }
+   ]
+  },
+  {
+   "id": "chinese-egg-drop-soup",
+   "title": "Egg drop soup",
+   "blurb": "Silky egg ribbons in savory ginger broth, ready in 10 minutes",
+   "type": "soups",
+   "serves": 4,
+   "prep": 5,
+   "cook": 10,
+   "tags": [
+    "quick",
+    "kid-friendly",
+    "gluten-free"
+   ],
+   "ingredients": [
+    {
+     "q": 4,
+     "u": "cup",
+     "item": "chicken broth",
+     "aisle": "canned"
+    },
+    {
+     "q": 1,
+     "u": "inch",
+     "item": "fresh ginger",
+     "note": "sliced",
+     "aisle": "produce"
+    },
+    {
+     "q": 2,
+     "u": "tbsp",
+     "item": "cornstarch",
+     "aisle": "pantry"
+    },
+    {
+     "q": 2,
+     "u": "",
+     "item": "large eggs",
+     "note": "beaten",
+     "aisle": "dairy"
+    },
+    {
+     "q": 2,
+     "u": "",
+     "item": "scallions",
+     "note": "sliced",
+     "aisle": "produce"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "toasted sesame oil",
+     "aisle": "international"
+    },
+    {
+     "q": 0.5,
+     "u": "tsp",
+     "item": "salt",
+     "aisle": "spices"
+    },
+    {
+     "q": null,
+     "u": "",
+     "item": "white pepper",
+     "aisle": "spices"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Simmer the broth with the ginger.",
+     "timer": 300,
+     "timerLabel": "Simmer the broth"
+    },
+    {
+     "text": "Stir the cornstarch with 3 tbsp cold water. Stir into the broth until lightly thick.",
+     "timer": 60,
+     "timerLabel": "Thicken the broth"
+    },
+    {
+     "text": "Slowly pour in the eggs in a thin stream while stirring."
+    },
+    {
+     "text": "Add salt and white pepper."
+    },
+    {
+     "text": "Top with scallions and sesame oil."
+    }
+   ]
+  },
+  {
+   "id": "chinese-chicken-corn-soup",
+   "title": "Chicken and sweet corn soup",
+   "blurb": "Creamy-style soup with corn, chicken and egg ribbons",
+   "type": "soups",
+   "serves": 4,
+   "prep": 10,
+   "cook": 20,
+   "tags": [
+    "kid-friendly",
+    "quick"
+   ],
+   "ingredients": [
+    {
+     "q": 4,
+     "u": "cup",
+     "item": "chicken broth",
+     "aisle": "canned"
+    },
+    {
+     "q": 1,
+     "u": "can",
+     "item": "cream-style corn (14.75 oz)",
+     "aisle": "canned"
+    },
+    {
+     "q": 1,
+     "u": "cup",
+     "item": "cooked shredded chicken",
+     "aisle": "meat"
+    },
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "soy sauce",
+     "aisle": "international"
+    },
+    {
+     "q": 2,
+     "u": "tbsp",
+     "item": "cornstarch",
+     "aisle": "pantry"
+    },
+    {
+     "q": 2,
+     "u": "",
+     "item": "large eggs",
+     "note": "beaten",
+     "aisle": "dairy"
+    },
+    {
+     "q": 2,
+     "u": "",
+     "item": "scallions",
+     "note": "sliced",
+     "aisle": "produce"
+    },
+    {
+     "q": null,
+     "u": "",
+     "item": "white pepper",
+     "aisle": "spices"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Bring the broth and corn to a simmer.",
+     "timer": 420,
+     "timerLabel": "Simmer the soup"
+    },
+    {
+     "text": "Add the chicken and soy sauce."
+    },
+    {
+     "text": "Stir the cornstarch with 3 tbsp cold water, then stir in until thick.",
+     "timer": 120,
+     "timerLabel": "Thicken the soup"
+    },
+    {
+     "text": "Pour in the egg slowly while stirring."
+    },
+    {
+     "text": "Top with scallions and white pepper."
+    }
+   ]
+  },
+  {
+   "id": "chinese-beef-noodle-soup",
+   "title": "Braised beef noodle soup",
+   "blurb": "Rich star anise beef broth with tender beef and noodles",
+   "type": "soups",
+   "serves": 6,
+   "prep": 25,
+   "cook": 180,
+   "tags": [
+    "crowd",
+    "make ahead"
+   ],
+   "ingredients": [
+    {
+     "q": 2,
+     "u": "lb",
+     "item": "beef shank or chuck",
+     "note": "cut in 2-inch cubes",
+     "aisle": "meat"
+    },
+    {
+     "q": 2,
+     "u": "tbsp",
+     "item": "vegetable oil",
+     "aisle": "pantry"
+    },
+    {
+     "q": 4,
+     "u": "clove",
+     "item": "garlic",
+     "note": "smashed",
+     "aisle": "produce"
+    },
+    {
+     "q": 3,
+     "u": "inch",
+     "item": "fresh ginger",
+     "note": "sliced",
+     "aisle": "produce"
+    },
+    {
+     "q": 3,
+     "u": "tbsp",
+     "item": "doubanjiang (chili bean paste)",
+     "aisle": "international"
+    },
+    {
+     "q": 0.25,
+     "u": "cup",
+     "item": "soy sauce",
+     "aisle": "international"
+    },
+    {
+     "q": 2,
+     "u": "",
+     "item": "whole star anise",
+     "aisle": "spices"
+    },
+    {
+     "q": 8,
+     "u": "cup",
+     "item": "water",
+     "aisle": "pantry"
+    },
+    {
+     "q": 12,
+     "u": "oz",
+     "item": "dried wheat noodles",
+     "aisle": "international"
+    },
+    {
+     "q": 1,
+     "u": "bunch",
+     "item": "baby bok choy",
+     "note": "halved",
+     "aisle": "produce"
+    },
+    {
+     "q": 3,
+     "u": "",
+     "item": "scallions",
+     "note": "sliced",
+     "aisle": "produce"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Brown the beef in oil in a Dutch oven, then remove.",
+     "timer": 300,
+     "timerLabel": "Brown the beef"
+    },
+    {
+     "text": "Add garlic, ginger and doubanjiang. Stir 1 minute.",
+     "timer": 60,
+     "timerLabel": "Fry the paste"
+    },
+    {
+     "text": "Return the beef with soy sauce, star anise and water. Bring to a boil."
+    },
+    {
+     "text": "Cover and simmer gently until the beef is very tender.",
+     "timer": 9000,
+     "timerLabel": "Braise the beef"
+    },
+    {
+     "text": "Boil the noodles and bok choy separately and drain.",
+     "timer": 300,
+     "timerLabel": "Boil the noodles"
+    },
+    {
+     "text": "Ladle beef and broth over noodles. Top with scallions."
+    }
+   ]
+  },
+  {
+   "id": "chinese-daikon-pork-rib-soup",
+   "title": "Pork rib and daikon soup",
+   "blurb": "Clear, soothing Cantonese soup with tender ribs and radish",
+   "type": "soups",
+   "serves": 6,
+   "prep": 15,
+   "cook": 120,
+   "tags": [
+    "healthy",
+    "make ahead"
+   ],
+   "ingredients": [
+    {
+     "q": 1.5,
+     "u": "lb",
+     "item": "pork spare ribs",
+     "note": "cut in 2-inch pieces",
+     "aisle": "meat"
+    },
+    {
+     "q": 1.5,
+     "u": "lb",
+     "item": "daikon radish",
+     "note": "cut in chunks",
+     "aisle": "produce"
+    },
+    {
+     "q": 3,
+     "u": "inch",
+     "item": "fresh ginger",
+     "note": "sliced",
+     "aisle": "produce"
+    },
+    {
+     "q": 8,
+     "u": "cup",
+     "item": "water",
+     "aisle": "pantry"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "salt",
+     "aisle": "spices"
+    },
+    {
+     "q": 3,
+     "u": "",
+     "item": "scallions",
+     "note": "sliced",
+     "aisle": "produce"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Cover the ribs with cold water, boil 5 minutes, then drain and rinse.",
+     "timer": 300,
+     "timerLabel": "Blanch the ribs"
+    },
+    {
+     "text": "Put ribs, ginger and 8 cups water in a pot. Bring to a boil, then lower."
+    },
+    {
+     "text": "Simmer partly covered until the ribs are tender.",
+     "timer": 4800,
+     "timerLabel": "Simmer the ribs"
+    },
+    {
+     "text": "Add the daikon and simmer until translucent.",
+     "timer": 1500,
+     "timerLabel": "Simmer the daikon"
+    },
+    {
+     "text": "Season with salt, then serve with scallions."
+    }
+   ]
+  },
+  {
+   "id": "chinese-tofu-mushroom-soup",
+   "title": "Tofu and mushroom soup",
+   "blurb": "Light, savory vegetarian soup with ginger and greens",
+   "type": "soups",
+   "serves": 4,
+   "prep": 10,
+   "cook": 20,
+   "tags": [
+    "vegetarian",
+    "healthy",
+    "quick"
+   ],
+   "ingredients": [
+    {
+     "q": 4,
+     "u": "cup",
+     "item": "vegetable broth",
+     "aisle": "canned"
+    },
+    {
+     "q": 1,
+     "u": "cup",
+     "item": "shiitake mushrooms",
+     "note": "sliced",
+     "aisle": "produce"
+    },
+    {
+     "q": 0.5,
+     "u": "lb",
+     "item": "soft tofu",
+     "note": "cubed",
+     "aisle": "dairy"
+    },
+    {
+     "q": 2,
+     "u": "cup",
+     "item": "baby spinach",
+     "aisle": "produce"
+    },
+    {
+     "q": 1,
+     "u": "inch",
+     "item": "fresh ginger",
+     "note": "sliced",
+     "aisle": "produce"
+    },
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "soy sauce",
+     "aisle": "international"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "toasted sesame oil",
+     "aisle": "international"
+    },
+    {
+     "q": 2,
+     "u": "",
+     "item": "scallions",
+     "note": "sliced",
+     "aisle": "produce"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Simmer the broth with the ginger and mushrooms.",
+     "timer": 600,
+     "timerLabel": "Simmer the broth"
+    },
+    {
+     "text": "Add the tofu and soy sauce. Simmer gently.",
+     "timer": 300,
+     "timerLabel": "Simmer the tofu"
+    },
+    {
+     "text": "Stir in the spinach until wilted."
+    },
+    {
+     "text": "Finish with sesame oil and scallions."
+    }
+   ]
+  },
+  {
+   "id": "chinese-ginger-chicken-soup",
+   "title": "Ginger chicken soup",
+   "blurb": "Comforting clear soup with chicken, ginger and goji berries",
+   "type": "soups",
+   "serves": 4,
+   "prep": 10,
+   "cook": 60,
+   "tags": [
+    "healthy",
+    "gluten-free"
+   ],
+   "ingredients": [
+    {
+     "q": 2,
+     "u": "lb",
+     "item": "bone-in chicken thighs and drumsticks",
+     "note": "skin removed",
+     "aisle": "meat"
+    },
+    {
+     "q": 4,
+     "u": "inch",
+     "item": "fresh ginger",
+     "note": "sliced",
+     "aisle": "produce"
+    },
+    {
+     "q": 6,
+     "u": "cup",
+     "item": "water",
+     "aisle": "pantry"
+    },
+    {
+     "q": 2,
+     "u": "tbsp",
+     "item": "goji berries",
+     "aisle": "international"
+    },
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "Shaoxing wine",
+     "aisle": "international"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "salt",
+     "aisle": "spices"
+    },
+    {
+     "q": 3,
+     "u": "",
+     "item": "scallions",
+     "note": "sliced",
+     "aisle": "produce"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Boil the chicken in water 3 minutes, drain and rinse.",
+     "timer": 180,
+     "timerLabel": "Blanch the chicken"
+    },
+    {
+     "text": "Put the chicken, ginger, 6 cups water and wine in a pot. Bring to a boil."
+    },
+    {
+     "text": "Simmer gently until the chicken reaches 165°F.",
+     "timer": 2700,
+     "timerLabel": "Simmer the soup"
+    },
+    {
+     "text": "Add goji berries and simmer.",
+     "timer": 600,
+     "timerLabel": "Simmer goji"
+    },
+    {
+     "text": "Season with salt and top with scallions."
+    }
+   ]
+  },
+  {
+   "id": "chinese-seaweed-egg-soup",
+   "title": "Seaweed egg drop soup",
+   "blurb": "Quick soup with nori, egg ribbons and sesame",
+   "type": "soups",
+   "serves": 4,
+   "prep": 5,
+   "cook": 10,
+   "tags": [
+    "quick",
+    "vegetarian",
+    "kid-friendly"
+   ],
+   "ingredients": [
+    {
+     "q": 4,
+     "u": "cup",
+     "item": "vegetable broth",
+     "aisle": "canned"
+    },
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "soy sauce",
+     "aisle": "international"
+    },
+    {
+     "q": 2,
+     "u": "piece",
+     "item": "roasted nori",
+     "note": "torn",
+     "aisle": "international"
+    },
+    {
+     "q": 2,
+     "u": "",
+     "item": "large eggs",
+     "note": "beaten",
+     "aisle": "dairy"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "toasted sesame oil",
+     "aisle": "international"
+    },
+    {
+     "q": 2,
+     "u": "",
+     "item": "scallions",
+     "note": "sliced",
+     "aisle": "produce"
+    },
+    {
+     "q": null,
+     "u": "",
+     "item": "white pepper",
+     "aisle": "spices"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Bring the broth and soy sauce to a simmer.",
+     "timer": 180,
+     "timerLabel": "Simmer the broth"
+    },
+    {
+     "text": "Add the nori and simmer until soft.",
+     "timer": 60,
+     "timerLabel": "Soften the nori"
+    },
+    {
+     "text": "Stir the soup in a circle and pour in the eggs in a thin stream."
+    },
+    {
+     "text": "Finish with sesame oil, pepper and scallions."
+    }
+   ]
+  },
+  {
+   "id": "chinese-napa-pork-soup",
+   "title": "Pork and napa cabbage soup",
+   "blurb": "Meatball soup with soft napa cabbage and glass noodles",
+   "type": "soups",
+   "serves": 6,
+   "prep": 25,
+   "cook": 25,
+   "tags": [
+    "kid-friendly"
+   ],
+   "ingredients": [
+    {
+     "q": 1,
+     "u": "lb",
+     "item": "ground pork",
+     "aisle": "meat"
+    },
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "fresh ginger",
+     "note": "grated",
+     "aisle": "produce"
+    },
+    {
+     "q": 2,
+     "u": "tbsp",
+     "item": "soy sauce",
+     "aisle": "international"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "cornstarch",
+     "aisle": "pantry"
+    },
+    {
+     "q": 6,
+     "u": "cup",
+     "item": "chicken broth",
+     "aisle": "canned"
+    },
+    {
+     "q": 0.5,
+     "u": "head",
+     "item": "napa cabbage",
+     "note": "cut in pieces",
+     "aisle": "produce"
+    },
+    {
+     "q": 3,
+     "u": "oz",
+     "item": "glass noodles",
+     "aisle": "international"
+    },
+    {
+     "q": 3,
+     "u": "",
+     "item": "scallions",
+     "note": "sliced",
+     "aisle": "produce"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Mix the pork, ginger, 1 tbsp soy sauce and cornstarch. Roll into small balls."
+    },
+    {
+     "text": "Bring the broth to a simmer and add the meatballs.",
+     "timer": 420,
+     "timerLabel": "Cook the meatballs"
+    },
+    {
+     "text": "Add the cabbage and noodles. Simmer until tender; meatballs must reach 160°F.",
+     "timer": 600,
+     "timerLabel": "Simmer the cabbage"
+    },
+    {
+     "text": "Season with the remaining soy sauce."
+    },
+    {
+     "text": "Top with scallions."
+    }
+   ]
+  },
+  {
+   "id": "chinese-general-tsos-chicken",
+   "title": "General Tso's chicken",
+   "blurb": "Crispy chicken in sweet, tangy, lightly spicy sauce",
+   "type": "takeout",
+   "serves": 4,
+   "prep": 25,
+   "cook": 25,
+   "tags": [
+    "spicy",
+    "kid-friendly"
+   ],
+   "ingredients": [
+    {
+     "q": 1.5,
+     "u": "lb",
+     "item": "boneless skinless chicken thighs",
+     "note": "cut in 1-inch pieces",
+     "aisle": "meat"
+    },
+    {
+     "q": 0.5,
+     "u": "cup",
+     "item": "cornstarch",
+     "aisle": "pantry"
+    },
+    {
+     "q": 1,
+     "u": "cup",
+     "item": "vegetable oil",
+     "note": "for frying",
+     "aisle": "pantry"
+    },
+    {
+     "q": 3,
+     "u": "tbsp",
+     "item": "soy sauce",
+     "aisle": "international"
+    },
+    {
+     "q": 2,
+     "u": "tbsp",
+     "item": "rice vinegar",
+     "aisle": "international"
+    },
+    {
+     "q": 3,
+     "u": "tbsp",
+     "item": "sugar",
+     "aisle": "pantry"
+    },
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "hoisin sauce",
+     "aisle": "international"
+    },
+    {
+     "q": 4,
+     "u": "clove",
+     "item": "garlic",
+     "note": "minced",
+     "aisle": "produce"
+    },
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "fresh ginger",
+     "note": "minced",
+     "aisle": "produce"
+    },
+    {
+     "q": 6,
+     "u": "",
+     "item": "dried red chiles",
+     "aisle": "international"
+    },
+    {
+     "q": 1,
+     "u": "bunch",
+     "item": "broccoli florets",
+     "note": "steamed",
+     "aisle": "produce"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Whisk the soy sauce, vinegar, sugar, hoisin and 1/2 cup water for the sauce."
+    },
+    {
+     "text": "Toss the chicken in the cornstarch to coat."
+    },
+    {
+     "text": "Heat the oil to 350°F. Fry the chicken in batches until golden and 165°F inside.",
+     "timer": 480,
+     "timerLabel": "Fry the chicken"
+    },
+    {
+     "text": "Drain the oil, leaving 1 tbsp. Add garlic, ginger and chiles for 30 seconds.",
+     "timer": 30,
+     "timerLabel": "Stir aromatics"
+    },
+    {
+     "text": "Pour in the sauce and simmer until syrupy.",
+     "timer": 120,
+     "timerLabel": "Thicken the sauce"
+    },
+    {
+     "text": "Toss the chicken in the sauce and serve with broccoli and rice."
+    }
+   ]
+  },
+  {
+   "id": "chinese-orange-chicken",
+   "title": "Orange chicken",
+   "blurb": "Crispy chicken coated in sticky orange sauce",
+   "type": "takeout",
+   "serves": 4,
+   "prep": 25,
+   "cook": 25,
+   "tags": [
+    "kid-friendly"
+   ],
+   "ingredients": [
+    {
+     "q": 1.5,
+     "u": "lb",
+     "item": "boneless skinless chicken thighs",
+     "note": "cut in 1-inch pieces",
+     "aisle": "meat"
+    },
+    {
+     "q": 0.5,
+     "u": "cup",
+     "item": "cornstarch",
+     "aisle": "pantry"
+    },
+    {
+     "q": 2,
+     "u": "",
+     "item": "large eggs",
+     "note": "beaten",
+     "aisle": "dairy"
+    },
+    {
+     "q": 1,
+     "u": "cup",
+     "item": "vegetable oil",
+     "note": "for frying",
+     "aisle": "pantry"
+    },
+    {
+     "q": 0.75,
+     "u": "cup",
+     "item": "orange juice",
+     "aisle": "beverages"
+    },
+    {
+     "q": 0.25,
+     "u": "cup",
+     "item": "soy sauce",
+     "aisle": "international"
+    },
+    {
+     "q": 0.33,
+     "u": "cup",
+     "item": "sugar",
+     "aisle": "pantry"
+    },
+    {
+     "q": 2,
+     "u": "tbsp",
+     "item": "rice vinegar",
+     "aisle": "international"
+    },
+    {
+     "q": 3,
+     "u": "clove",
+     "item": "garlic",
+     "note": "minced",
+     "aisle": "produce"
+    },
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "orange zest",
+     "aisle": "produce"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Dip the chicken in egg, then cornstarch."
+    },
+    {
+     "text": "Heat the oil to 350°F and fry the chicken in batches until golden and 165°F inside.",
+     "timer": 480,
+     "timerLabel": "Fry the chicken"
+    },
+    {
+     "text": "Simmer juice, soy sauce, sugar, vinegar, garlic and zest in a pan.",
+     "timer": 300,
+     "timerLabel": "Simmer the sauce"
+    },
+    {
+     "text": "Stir 1 tbsp cornstarch with 2 tbsp water and add until thick.",
+     "timer": 60,
+     "timerLabel": "Thicken the sauce"
+    },
+    {
+     "text": "Toss the chicken in the sauce."
+    }
+   ]
+  },
+  {
+   "id": "chinese-sesame-chicken",
+   "title": "Sesame chicken",
+   "blurb": "Crisp chicken in sweet-savory glaze with toasted sesame seeds",
+   "type": "takeout",
+   "serves": 4,
+   "prep": 25,
+   "cook": 25,
+   "tags": [
+    "kid-friendly"
+   ],
+   "ingredients": [
+    {
+     "q": 1.5,
+     "u": "lb",
+     "item": "boneless skinless chicken thighs",
+     "note": "cut in 1-inch pieces",
+     "aisle": "meat"
+    },
+    {
+     "q": 0.5,
+     "u": "cup",
+     "item": "cornstarch",
+     "aisle": "pantry"
+    },
+    {
+     "q": 2,
+     "u": "",
+     "item": "large eggs",
+     "note": "beaten",
+     "aisle": "dairy"
+    },
+    {
+     "q": 1,
+     "u": "cup",
+     "item": "vegetable oil",
+     "note": "for frying",
+     "aisle": "pantry"
+    },
+    {
+     "q": 0.25,
+     "u": "cup",
+     "item": "honey",
+     "aisle": "pantry"
+    },
+    {
+     "q": 3,
+     "u": "tbsp",
+     "item": "soy sauce",
+     "aisle": "international"
+    },
+    {
+     "q": 2,
+     "u": "tbsp",
+     "item": "rice vinegar",
+     "aisle": "international"
+    },
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "toasted sesame oil",
+     "aisle": "international"
+    },
+    {
+     "q": 2,
+     "u": "tbsp",
+     "item": "sesame seeds",
+     "aisle": "spices"
+    },
+    {
+     "q": 1,
+     "u": "clove",
+     "item": "garlic",
+     "note": "minced",
+     "aisle": "produce"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Dip the chicken in egg, then cornstarch."
+    },
+    {
+     "text": "Fry in 350°F oil until golden and 165°F inside.",
+     "timer": 480,
+     "timerLabel": "Fry the chicken"
+    },
+    {
+     "text": "Stir honey, soy sauce, vinegar, sesame oil and garlic in a pan."
+    },
+    {
+     "text": "Simmer the sauce until syrupy.",
+     "timer": 120,
+     "timerLabel": "Simmer the sauce"
+    },
+    {
+     "text": "Toss the chicken in the sauce and sprinkle with sesame seeds."
+    }
+   ]
+  },
+  {
+   "id": "chinese-sweet-sour-chicken",
+   "title": "Sweet and sour chicken",
+   "blurb": "Crispy chicken with pineapple, peppers and tangy red sauce",
+   "type": "takeout",
+   "serves": 4,
+   "prep": 25,
+   "cook": 25,
+   "tags": [
+    "kid-friendly"
+   ],
+   "ingredients": [
+    {
+     "q": 1.5,
+     "u": "lb",
+     "item": "boneless skinless chicken thighs",
+     "note": "cut in 1-inch pieces",
+     "aisle": "meat"
+    },
+    {
+     "q": 0.5,
+     "u": "cup",
+     "item": "cornstarch",
+     "aisle": "pantry"
+    },
+    {
+     "q": 2,
+     "u": "",
+     "item": "large eggs",
+     "note": "beaten",
+     "aisle": "dairy"
+    },
+    {
+     "q": 1,
+     "u": "cup",
+     "item": "vegetable oil",
+     "note": "for frying",
+     "aisle": "pantry"
+    },
+    {
+     "q": 0.5,
+     "u": "cup",
+     "item": "ketchup",
+     "aisle": "pantry"
+    },
+    {
+     "q": 0.33,
+     "u": "cup",
+     "item": "rice vinegar",
+     "aisle": "international"
+    },
+    {
+     "q": 0.33,
+     "u": "cup",
+     "item": "sugar",
+     "aisle": "pantry"
+    },
+    {
+     "q": 1,
+     "u": "can",
+     "item": "pineapple chunks (8 oz)",
+     "note": "drained",
+     "aisle": "canned"
+    },
+    {
+     "q": 1,
+     "u": "",
+     "item": "green bell pepper",
+     "note": "cut in chunks",
+     "aisle": "produce"
+    },
+    {
+     "q": 1,
+     "u": "",
+     "item": "red bell pepper",
+     "note": "cut in chunks",
+     "aisle": "produce"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Dip the chicken in egg, then cornstarch."
+    },
+    {
+     "text": "Fry in 350°F oil until golden and 165°F inside.",
+     "timer": 480,
+     "timerLabel": "Fry the chicken"
+    },
+    {
+     "text": "Whisk ketchup, vinegar, sugar and 1/4 cup water."
+    },
+    {
+     "text": "Simmer the sauce with the peppers and pineapple.",
+     "timer": 300,
+     "timerLabel": "Simmer the sauce"
+    },
+    {
+     "text": "Toss in the chicken and serve over rice."
+    }
+   ]
+  },
+  {
+   "id": "chinese-mongolian-beef",
+   "title": "Mongolian beef",
+   "blurb": "Crisp-edged beef in savory sweet sauce with scallions",
+   "type": "takeout",
+   "serves": 4,
+   "prep": 15,
+   "cook": 15,
+   "tags": [
+    "quick"
+   ],
+   "ingredients": [
+    {
+     "q": 1.25,
+     "u": "lb",
+     "item": "flank steak",
+     "note": "sliced thin",
+     "aisle": "meat"
+    },
+    {
+     "q": 0.25,
+     "u": "cup",
+     "item": "cornstarch",
+     "aisle": "pantry"
+    },
+    {
+     "q": 1,
+     "u": "cup",
+     "item": "vegetable oil",
+     "note": "for frying",
+     "aisle": "pantry"
+    },
+    {
+     "q": 4,
+     "u": "clove",
+     "item": "garlic",
+     "note": "minced",
+     "aisle": "produce"
+    },
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "fresh ginger",
+     "note": "minced",
+     "aisle": "produce"
+    },
+    {
+     "q": 0.5,
+     "u": "cup",
+     "item": "soy sauce",
+     "aisle": "international"
+    },
+    {
+     "q": 0.5,
+     "u": "cup",
+     "item": "water",
+     "aisle": "pantry"
+    },
+    {
+     "q": 0.5,
+     "u": "cup",
+     "item": "brown sugar",
+     "aisle": "pantry"
+    },
+    {
+     "q": 6,
+     "u": "",
+     "item": "scallions",
+     "note": "cut in 2-inch pieces",
+     "aisle": "produce"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Toss the beef in the cornstarch."
+    },
+    {
+     "text": "Heat the oil in a wok to 350°F. Fry the beef 1 minute, then drain.",
+     "timer": 60,
+     "timerLabel": "Fry the beef"
+    },
+    {
+     "text": "Pour off all but 1 tbsp oil. Fry the garlic and ginger.",
+     "timer": 30,
+     "timerLabel": "Fry aromatics"
+    },
+    {
+     "text": "Add the soy sauce, water and sugar. Simmer until syrupy.",
+     "timer": 240,
+     "timerLabel": "Simmer the sauce"
+    },
+    {
+     "text": "Return the beef and scallions and toss. Serve with rice.",
+     "timer": 60,
+     "timerLabel": "Toss together"
+    }
+   ]
+  },
+  {
+   "id": "chinese-egg-foo-young",
+   "title": "Egg foo young",
+   "blurb": "Fluffy savory omelet patties in brown gravy",
+   "type": "takeout",
+   "serves": 4,
+   "prep": 15,
+   "cook": 20,
+   "tags": [
+    "quick"
+   ],
+   "ingredients": [
+    {
+     "q": 6,
+     "u": "",
+     "item": "large eggs",
+     "note": "beaten",
+     "aisle": "dairy"
+    },
+    {
+     "q": 2,
+     "u": "cup",
+     "item": "bean sprouts",
+     "aisle": "produce"
+    },
+    {
+     "q": 0.5,
+     "u": "cup",
+     "item": "cooked shrimp or ham",
+     "note": "chopped",
+     "aisle": "seafood"
+    },
+    {
+     "q": 3,
+     "u": "",
+     "item": "scallions",
+     "note": "sliced",
+     "aisle": "produce"
+    },
+    {
+     "q": 2,
+     "u": "tbsp",
+     "item": "vegetable oil",
+     "aisle": "pantry"
+    },
+    {
+     "q": 1,
+     "u": "cup",
+     "item": "chicken broth",
+     "aisle": "canned"
+    },
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "soy sauce",
+     "aisle": "international"
+    },
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "oyster sauce",
+     "aisle": "international"
+    },
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "cornstarch",
+     "aisle": "pantry"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Mix the eggs with the sprouts, shrimp or ham, and scallions."
+    },
+    {
+     "text": "Whisk the broth, soy sauce, oyster sauce and cornstarch in a pan. Simmer until thick.",
+     "timer": 180,
+     "timerLabel": "Make the gravy"
+    },
+    {
+     "text": "Heat oil in a skillet. Pour in 1/3 cup batter per patty and cook.",
+     "timer": 120,
+     "timerLabel": "Cook the first side"
+    },
+    {
+     "text": "Flip and cook until set.",
+     "timer": 90,
+     "timerLabel": "Cook the second side"
+    },
+    {
+     "text": "Serve with gravy over rice."
+    }
+   ]
+  },
+  {
+   "id": "chinese-moo-shu-pork",
+   "title": "Moo shu pork",
+   "blurb": "Pork, cabbage and egg stir-fry in warm tortillas with hoisin",
+   "type": "takeout",
+   "serves": 4,
+   "prep": 20,
+   "cook": 15,
+   "tags": [
+    "quick"
+   ],
+   "ingredients": [
+    {
+     "q": 1,
+     "u": "lb",
+     "item": "pork loin",
+     "note": "cut in thin strips",
+     "aisle": "meat"
+    },
+    {
+     "q": 2,
+     "u": "tbsp",
+     "item": "soy sauce",
+     "aisle": "international"
+    },
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "cornstarch",
+     "aisle": "pantry"
+    },
+    {
+     "q": 3,
+     "u": "tbsp",
+     "item": "vegetable oil",
+     "aisle": "pantry"
+    },
+    {
+     "q": 3,
+     "u": "",
+     "item": "large eggs",
+     "note": "beaten",
+     "aisle": "dairy"
+    },
+    {
+     "q": 4,
+     "u": "cup",
+     "item": "green cabbage",
+     "note": "shredded",
+     "aisle": "produce"
+    },
+    {
+     "q": 1,
+     "u": "cup",
+     "item": "shiitake mushrooms",
+     "note": "sliced",
+     "aisle": "produce"
+    },
+    {
+     "q": 3,
+     "u": "",
+     "item": "scallions",
+     "note": "cut in 2-inch pieces",
+     "aisle": "produce"
+    },
+    {
+     "q": 8,
+     "u": "",
+     "item": "small flour tortillas",
+     "note": "warmed",
+     "aisle": "bakery"
+    },
+    {
+     "q": 0.25,
+     "u": "cup",
+     "item": "hoisin sauce",
+     "aisle": "international"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Toss the pork with soy sauce and cornstarch."
+    },
+    {
+     "text": "Scramble the eggs in 1 tbsp oil. Remove."
+    },
+    {
+     "text": "Stir-fry the pork in 1 tbsp oil until 145°F inside. Remove.",
+     "timer": 180,
+     "timerLabel": "Cook the pork"
+    },
+    {
+     "text": "Add 1 tbsp oil, cabbage, mushrooms and scallions. Stir-fry.",
+     "timer": 240,
+     "timerLabel": "Stir-fry the veg"
+    },
+    {
+     "text": "Return pork and eggs and toss."
+    },
+    {
+     "text": "Spread each tortilla with hoisin, fill and fold."
+    }
+   ]
+  },
+  {
+   "id": "chinese-honey-walnut-shrimp",
+   "title": "Honey walnut shrimp",
+   "blurb": "Crispy shrimp in creamy honey sauce with candied walnuts",
+   "type": "takeout",
+   "serves": 4,
+   "prep": 30,
+   "cook": 20,
+   "tags": [],
+   "ingredients": [
+    {
+     "q": 1,
+     "u": "lb",
+     "item": "large shrimp",
+     "note": "peeled, deveined",
+     "aisle": "seafood"
+    },
+    {
+     "q": 0.5,
+     "u": "cup",
+     "item": "cornstarch",
+     "aisle": "pantry"
+    },
+    {
+     "q": 1,
+     "u": "cup",
+     "item": "vegetable oil",
+     "note": "for frying",
+     "aisle": "pantry"
+    },
+    {
+     "q": 0.25,
+     "u": "cup",
+     "item": "mayonnaise",
+     "aisle": "pantry"
+    },
+    {
+     "q": 2,
+     "u": "tbsp",
+     "item": "honey",
+     "aisle": "pantry"
+    },
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "sweetened condensed milk",
+     "aisle": "canned"
+    },
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "lemon juice",
+     "aisle": "produce"
+    },
+    {
+     "q": 0.5,
+     "u": "cup",
+     "item": "walnut halves",
+     "aisle": "pantry"
+    },
+    {
+     "q": 2,
+     "u": "tbsp",
+     "item": "sugar",
+     "aisle": "pantry"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Boil the walnuts 2 minutes, drain, and toss with sugar. Toast in a dry pan until golden.",
+     "timer": 240,
+     "timerLabel": "Candy the walnuts"
+    },
+    {
+     "text": "Whisk the mayo, honey, condensed milk and lemon juice."
+    },
+    {
+     "text": "Toss the shrimp in cornstarch."
+    },
+    {
+     "text": "Fry in 350°F oil until golden and 145°F inside.",
+     "timer": 180,
+     "timerLabel": "Fry the shrimp"
+    },
+    {
+     "text": "Toss the shrimp in the sauce and top with walnuts."
+    }
+   ]
+  },
+  {
+   "id": "chinese-lemon-chicken",
+   "title": "Lemon chicken",
+   "blurb": "Crispy chicken cutlets with sweet lemon sauce",
+   "type": "takeout",
+   "serves": 4,
+   "prep": 20,
+   "cook": 20,
+   "tags": [
+    "kid-friendly"
+   ],
+   "ingredients": [
+    {
+     "q": 1.5,
+     "u": "lb",
+     "item": "boneless skinless chicken breasts",
+     "note": "sliced into cutlets",
+     "aisle": "meat"
+    },
+    {
+     "q": 0.5,
+     "u": "cup",
+     "item": "cornstarch",
+     "aisle": "pantry"
+    },
+    {
+     "q": 2,
+     "u": "",
+     "item": "large eggs",
+     "note": "beaten",
+     "aisle": "dairy"
+    },
+    {
+     "q": 0.5,
+     "u": "cup",
+     "item": "vegetable oil",
+     "note": "for frying",
+     "aisle": "pantry"
+    },
+    {
+     "q": 0.5,
+     "u": "cup",
+     "item": "lemon juice",
+     "aisle": "produce"
+    },
+    {
+     "q": 0.5,
+     "u": "cup",
+     "item": "sugar",
+     "aisle": "pantry"
+    },
+    {
+     "q": 1,
+     "u": "cup",
+     "item": "chicken broth",
+     "aisle": "canned"
+    },
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "cornstarch",
+     "aisle": "pantry"
+    },
+    {
+     "q": 1,
+     "u": "",
+     "item": "lemon",
+     "note": "sliced",
+     "aisle": "produce"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Dip the chicken in egg, then cornstarch."
+    },
+    {
+     "text": "Fry in oil until golden and 165°F inside.",
+     "timer": 420,
+     "timerLabel": "Fry the chicken"
+    },
+    {
+     "text": "Simmer lemon juice, sugar and broth.",
+     "timer": 180,
+     "timerLabel": "Simmer the sauce"
+    },
+    {
+     "text": "Stir 1 tbsp cornstarch with 2 tbsp water and add until thick.",
+     "timer": 60,
+     "timerLabel": "Thicken the sauce"
+    },
+    {
+     "text": "Slice the chicken and spoon on sauce with lemon slices."
+    }
+   ]
+  },
+  {
+   "id": "chinese-char-siu-pork",
+   "title": "Char siu BBQ pork",
+   "blurb": "Sticky roasted pork with sweet red glaze",
+   "type": "takeout",
+   "serves": 6,
+   "prep": 20,
+   "cook": 60,
+   "tags": [
+    "make ahead",
+    "crowd"
+   ],
+   "ingredients": [
+    {
+     "q": 2.5,
+     "u": "lb",
+     "item": "pork shoulder",
+     "note": "cut in long strips",
+     "aisle": "meat"
+    },
+    {
+     "q": 0.25,
+     "u": "cup",
+     "item": "hoisin sauce",
+     "aisle": "international"
+    },
+    {
+     "q": 0.25,
+     "u": "cup",
+     "item": "honey",
+     "aisle": "pantry"
+    },
+    {
+     "q": 3,
+     "u": "tbsp",
+     "item": "soy sauce",
+     "aisle": "international"
+    },
+    {
+     "q": 2,
+     "u": "tbsp",
+     "item": "Shaoxing wine",
+     "aisle": "international"
+    },
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "brown sugar",
+     "aisle": "pantry"
+    },
+    {
+     "q": 3,
+     "u": "clove",
+     "item": "garlic",
+     "note": "minced",
+     "aisle": "produce"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "Chinese five-spice",
+     "aisle": "spices"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Mix hoisin, honey, soy sauce, wine, sugar, garlic and five-spice. Marinate the pork overnight.",
+     "timer": 43200,
+     "timerLabel": "Marinate the pork"
+    },
+    {
+     "text": "Heat the oven to 400°F and set the pork on a rack over a foil-lined pan."
+    },
+    {
+     "text": "Roast, brushing with marinade every 15 minutes.",
+     "timer": 2700,
+     "timerLabel": "Roast the pork"
+    },
+    {
+     "text": "Raise the heat to 450°F and cook until charred at the edges. Pork should read 145°F.",
+     "timer": 480,
+     "timerLabel": "Char the pork"
+    },
+    {
+     "text": "Rest, then slice and serve with rice.",
+     "timer": 600,
+     "timerLabel": "Rest the pork"
+    }
+   ]
+  }
+ ]
+}

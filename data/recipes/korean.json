@@ -1,0 +1,5259 @@
+{
+ "id": "korean",
+ "name": "Korean",
+ "types": [
+  {
+   "id": "bbq",
+   "name": "BBQ & grill"
+  },
+  {
+   "id": "bowls",
+   "name": "Rice bowls"
+  },
+  {
+   "id": "noodles",
+   "name": "Noodles"
+  },
+  {
+   "id": "stews",
+   "name": "Stews & soups"
+  },
+  {
+   "id": "fried",
+   "name": "Fried chicken & pancakes"
+  },
+  {
+   "id": "sides",
+   "name": "Banchan & sides"
+  }
+ ],
+ "recipes": [
+  {
+   "id": "korean-bulgogi",
+   "title": "Beef bulgogi",
+   "blurb": "Sweet-savory marinated ribeye, seared hot and fast",
+   "type": "bbq",
+   "serves": 4,
+   "prep": 20,
+   "cook": 10,
+   "tags": [
+    "kid-friendly",
+    "grill"
+   ],
+   "ingredients": [
+    {
+     "q": 1.5,
+     "u": "lb",
+     "item": "thinly sliced ribeye",
+     "aisle": "meat"
+    },
+    {
+     "q": 0.25,
+     "u": "cup",
+     "item": "soy sauce",
+     "aisle": "international"
+    },
+    {
+     "q": 2,
+     "u": "tbsp",
+     "item": "sugar",
+     "aisle": "pantry"
+    },
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "toasted sesame oil",
+     "aisle": "international"
+    },
+    {
+     "q": 4,
+     "u": "clove",
+     "item": "garlic",
+     "note": "minced",
+     "aisle": "produce"
+    },
+    {
+     "q": 1,
+     "u": "",
+     "item": "Asian pear",
+     "note": "grated, or 0.25 cup pear juice",
+     "aisle": "produce"
+    },
+    {
+     "q": 0.5,
+     "u": "",
+     "item": "yellow onion",
+     "note": "thinly sliced",
+     "aisle": "produce"
+    },
+    {
+     "q": 2,
+     "u": "",
+     "item": "green onions",
+     "note": "sliced",
+     "aisle": "produce"
+    },
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "toasted sesame seeds",
+     "aisle": "international"
+    },
+    {
+     "q": 0.5,
+     "u": "tsp",
+     "item": "black pepper",
+     "aisle": "spices"
+    },
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "vegetable oil",
+     "aisle": "pantry"
+    },
+    {
+     "q": null,
+     "u": "",
+     "item": "steamed rice",
+     "note": "to serve",
+     "aisle": "pantry"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Stir the soy sauce, sugar, sesame oil, garlic, grated pear and pepper in a large bowl until the sugar dissolves."
+    },
+    {
+     "text": "Add the beef, onion and half the green onions. Toss well to coat."
+    },
+    {
+     "text": "Cover and marinate in the fridge, at least 30 minutes and up to 8 hours.",
+     "timer": 1800,
+     "timerLabel": "Marinate beef"
+    },
+    {
+     "text": "Heat a large skillet or cast iron pan over high heat with the oil."
+    },
+    {
+     "text": "Cook the beef in two batches, 2 to 3 minutes each, until browned at the edges. Do not crowd the pan."
+    },
+    {
+     "text": "Top with sesame seeds and remaining green onions. Serve over rice."
+    }
+   ]
+  },
+  {
+   "id": "korean-la-galbi",
+   "title": "LA galbi (grilled short ribs)",
+   "blurb": "Flanken-cut short ribs with a sweet soy-pear marinade",
+   "type": "bbq",
+   "serves": 4,
+   "prep": 20,
+   "cook": 12,
+   "tags": [
+    "grill",
+    "crowd"
+   ],
+   "ingredients": [
+    {
+     "q": 3,
+     "u": "lb",
+     "item": "flanken-cut beef short ribs (0.5 inch thick)",
+     "aisle": "meat"
+    },
+    {
+     "q": 0.5,
+     "u": "cup",
+     "item": "soy sauce",
+     "aisle": "international"
+    },
+    {
+     "q": 0.33,
+     "u": "cup",
+     "item": "sugar",
+     "aisle": "pantry"
+    },
+    {
+     "q": 0.25,
+     "u": "cup",
+     "item": "water",
+     "aisle": "pantry"
+    },
+    {
+     "q": 2,
+     "u": "tbsp",
+     "item": "toasted sesame oil",
+     "aisle": "international"
+    },
+    {
+     "q": 1,
+     "u": "",
+     "item": "Asian pear",
+     "note": "grated",
+     "aisle": "produce"
+    },
+    {
+     "q": 6,
+     "u": "clove",
+     "item": "garlic",
+     "note": "minced",
+     "aisle": "produce"
+    },
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "fresh ginger",
+     "note": "grated",
+     "aisle": "produce"
+    },
+    {
+     "q": 4,
+     "u": "",
+     "item": "green onions",
+     "note": "chopped",
+     "aisle": "produce"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "black pepper",
+     "aisle": "spices"
+    },
+    {
+     "q": 2,
+     "u": "tbsp",
+     "item": "toasted sesame seeds",
+     "aisle": "international"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Whisk soy sauce, sugar, water, sesame oil, pear, garlic, ginger, green onions and pepper until the sugar dissolves."
+    },
+    {
+     "text": "Place the ribs in a large zip bag or dish and pour the marinade over. Turn to coat."
+    },
+    {
+     "text": "Marinate in the fridge, at least 4 hours or overnight.",
+     "timer": 14400,
+     "timerLabel": "Marinate ribs"
+    },
+    {
+     "text": "Heat a grill or grill pan to high. Lift ribs out and let extra marinade drip off."
+    },
+    {
+     "text": "Grill 3 to 4 minutes per side until charred at the edges and cooked through."
+    },
+    {
+     "text": "Rest the ribs, then snip between the bones with scissors. Sprinkle with sesame seeds.",
+     "timer": 180,
+     "timerLabel": "Rest ribs"
+    }
+   ]
+  },
+  {
+   "id": "korean-dwaeji-bulgogi",
+   "title": "Spicy pork bulgogi",
+   "blurb": "Gochujang-marinated pork shoulder with a sticky char",
+   "type": "bbq",
+   "serves": 4,
+   "prep": 15,
+   "cook": 12,
+   "tags": [
+    "spicy",
+    "grill"
+   ],
+   "ingredients": [
+    {
+     "q": 1.5,
+     "u": "lb",
+     "item": "thinly sliced pork shoulder",
+     "aisle": "meat"
+    },
+    {
+     "q": 3,
+     "u": "tbsp",
+     "item": "gochujang",
+     "aisle": "international"
+    },
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "gochugaru (Korean red pepper flakes)",
+     "aisle": "international"
+    },
+    {
+     "q": 2,
+     "u": "tbsp",
+     "item": "soy sauce",
+     "aisle": "international"
+    },
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "sugar",
+     "aisle": "pantry"
+    },
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "toasted sesame oil",
+     "aisle": "international"
+    },
+    {
+     "q": 4,
+     "u": "clove",
+     "item": "garlic",
+     "note": "minced",
+     "aisle": "produce"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "fresh ginger",
+     "note": "grated",
+     "aisle": "produce"
+    },
+    {
+     "q": 1,
+     "u": "",
+     "item": "yellow onion",
+     "note": "sliced",
+     "aisle": "produce"
+    },
+    {
+     "q": 3,
+     "u": "",
+     "item": "green onions",
+     "note": "cut in 2-inch pieces",
+     "aisle": "produce"
+    },
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "vegetable oil",
+     "aisle": "pantry"
+    },
+    {
+     "q": 1,
+     "u": "head",
+     "item": "butter lettuce",
+     "note": "leaves separated",
+     "aisle": "produce"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Mix gochujang, gochugaru, soy sauce, sugar, sesame oil, garlic and ginger into a paste."
+    },
+    {
+     "text": "Toss the pork with the paste, onion and green onions until evenly coated."
+    },
+    {
+     "text": "Marinate in the fridge for at least 30 minutes.",
+     "timer": 1800,
+     "timerLabel": "Marinate pork"
+    },
+    {
+     "text": "Heat the oil in a large skillet over medium-high heat."
+    },
+    {
+     "text": "Cook the pork in batches, 4 to 5 minutes, until browned and cooked through to 145°F."
+    },
+    {
+     "text": "Serve with lettuce leaves and rice for wrapping."
+    }
+   ]
+  },
+  {
+   "id": "korean-samgyeopsal",
+   "title": "Samgyeopsal lettuce wraps",
+   "blurb": "Crispy pork belly with ssamjang in lettuce leaves",
+   "type": "bbq",
+   "serves": 4,
+   "prep": 15,
+   "cook": 15,
+   "tags": [
+    "grill",
+    "crowd"
+   ],
+   "ingredients": [
+    {
+     "q": 1.5,
+     "u": "lb",
+     "item": "sliced pork belly (0.25 inch thick, skinless)",
+     "aisle": "meat"
+    },
+    {
+     "q": null,
+     "u": "",
+     "item": "salt",
+     "aisle": "spices"
+    },
+    {
+     "q": null,
+     "u": "",
+     "item": "black pepper",
+     "aisle": "spices"
+    },
+    {
+     "q": 0.25,
+     "u": "cup",
+     "item": "doenjang (Korean soybean paste)",
+     "aisle": "international"
+    },
+    {
+     "q": 2,
+     "u": "tbsp",
+     "item": "gochujang",
+     "aisle": "international"
+    },
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "toasted sesame oil",
+     "aisle": "international"
+    },
+    {
+     "q": 2,
+     "u": "clove",
+     "item": "garlic",
+     "note": "minced",
+     "aisle": "produce"
+    },
+    {
+     "q": 2,
+     "u": "",
+     "item": "green onions",
+     "note": "minced",
+     "aisle": "produce"
+    },
+    {
+     "q": 2,
+     "u": "head",
+     "item": "butter lettuce",
+     "note": "leaves separated",
+     "aisle": "produce"
+    },
+    {
+     "q": 1,
+     "u": "bunch",
+     "item": "perilla or shiso leaves",
+     "note": "optional",
+     "aisle": "international"
+    },
+    {
+     "q": 8,
+     "u": "clove",
+     "item": "garlic",
+     "note": "thinly sliced, to grill",
+     "aisle": "produce"
+    },
+    {
+     "q": null,
+     "u": "",
+     "item": "steamed rice",
+     "note": "to serve",
+     "aisle": "pantry"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Mix doenjang, gochujang, sesame oil, minced garlic and green onions in a small bowl. This is the ssamjang."
+    },
+    {
+     "text": "Pat the pork belly dry and season both sides with salt and pepper."
+    },
+    {
+     "text": "Heat a large skillet or grill pan over medium-high heat. Add the pork in one layer, working in batches."
+    },
+    {
+     "text": "Cook 3 to 4 minutes per side until golden and crisp at the edges.",
+     "timer": 420,
+     "timerLabel": "Sear pork belly"
+    },
+    {
+     "text": "Add the sliced garlic to the pan during the last 2 minutes to soften and brown."
+    },
+    {
+     "text": "Cut the pork into bite-size pieces. Wrap in lettuce with rice, garlic and a dab of ssamjang."
+    }
+   ]
+  },
+  {
+   "id": "korean-dak-bulgogi",
+   "title": "Soy-garlic chicken bulgogi",
+   "blurb": "Mild, sweet and fast. A big hit with kids",
+   "type": "bbq",
+   "serves": 4,
+   "prep": 15,
+   "cook": 12,
+   "tags": [
+    "kid-friendly",
+    "quick"
+   ],
+   "ingredients": [
+    {
+     "q": 1.5,
+     "u": "lb",
+     "item": "boneless skinless chicken thighs",
+     "note": "thinly sliced",
+     "aisle": "meat"
+    },
+    {
+     "q": 3,
+     "u": "tbsp",
+     "item": "soy sauce",
+     "aisle": "international"
+    },
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "sugar",
+     "aisle": "pantry"
+    },
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "honey",
+     "aisle": "pantry"
+    },
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "toasted sesame oil",
+     "aisle": "international"
+    },
+    {
+     "q": 4,
+     "u": "clove",
+     "item": "garlic",
+     "note": "minced",
+     "aisle": "produce"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "fresh ginger",
+     "note": "grated",
+     "aisle": "produce"
+    },
+    {
+     "q": 1,
+     "u": "",
+     "item": "yellow onion",
+     "note": "sliced",
+     "aisle": "produce"
+    },
+    {
+     "q": 1,
+     "u": "",
+     "item": "carrot",
+     "note": "thinly sliced",
+     "aisle": "produce"
+    },
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "vegetable oil",
+     "aisle": "pantry"
+    },
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "toasted sesame seeds",
+     "aisle": "international"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Mix soy sauce, sugar, honey, sesame oil, garlic and ginger in a bowl. Add the chicken and toss to coat."
+    },
+    {
+     "text": "Marinate for 15 minutes while you slice the vegetables.",
+     "timer": 900,
+     "timerLabel": "Marinate chicken"
+    },
+    {
+     "text": "Heat the oil in a large skillet over medium-high heat. Add the onion and carrot and cook 3 minutes."
+    },
+    {
+     "text": "Push the vegetables aside, add the chicken and cook 6 to 7 minutes until browned and cooked to 165°F."
+    },
+    {
+     "text": "Toss everything together, sprinkle with sesame seeds and serve over rice."
+    }
+   ]
+  },
+  {
+   "id": "korean-dak-kkochi",
+   "title": "Korean chicken skewers (dak kkochi)",
+   "blurb": "Glazed gochujang-soy chicken on sticks, grilled or broiled",
+   "type": "bbq",
+   "serves": 4,
+   "prep": 20,
+   "cook": 14,
+   "tags": [
+    "grill",
+    "kid-friendly"
+   ],
+   "ingredients": [
+    {
+     "q": 1.5,
+     "u": "lb",
+     "item": "boneless skinless chicken thighs",
+     "note": "cut in 1-inch pieces",
+     "aisle": "meat"
+    },
+    {
+     "q": 3,
+     "u": "",
+     "item": "green onions",
+     "note": "white parts, cut in 1-inch pieces",
+     "aisle": "produce"
+    },
+    {
+     "q": 2,
+     "u": "tbsp",
+     "item": "gochujang",
+     "aisle": "international"
+    },
+    {
+     "q": 2,
+     "u": "tbsp",
+     "item": "soy sauce",
+     "aisle": "international"
+    },
+    {
+     "q": 2,
+     "u": "tbsp",
+     "item": "honey",
+     "aisle": "pantry"
+    },
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "toasted sesame oil",
+     "aisle": "international"
+    },
+    {
+     "q": 3,
+     "u": "clove",
+     "item": "garlic",
+     "note": "minced",
+     "aisle": "produce"
+    },
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "vegetable oil",
+     "aisle": "pantry"
+    },
+    {
+     "q": 8,
+     "u": "",
+     "item": "bamboo skewers",
+     "note": "soaked in water 20 minutes",
+     "aisle": "pantry"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Whisk gochujang, soy sauce, honey, sesame oil and garlic. Save a few tablespoons in a small bowl for glazing."
+    },
+    {
+     "text": "Toss the chicken in the remaining sauce and thread onto skewers, alternating with green onion."
+    },
+    {
+     "text": "Let the skewers sit in the fridge for 20 minutes.",
+     "timer": 1200,
+     "timerLabel": "Marinate skewers"
+    },
+    {
+     "text": "Heat a grill or grill pan to medium-high and brush with oil."
+    },
+    {
+     "text": "Grill 12 to 14 minutes, turning every 3 minutes, until the chicken reaches 165°F.",
+     "timer": 720,
+     "timerLabel": "Grill skewers"
+    },
+    {
+     "text": "Brush with the saved sauce in the last 2 minutes. Serve hot."
+    }
+   ]
+  },
+  {
+   "id": "korean-dak-galbi",
+   "title": "Dak galbi (spicy stir-fried chicken)",
+   "blurb": "Chicken, cabbage and rice cakes in a fiery gochujang sauce",
+   "type": "bbq",
+   "serves": 4,
+   "prep": 20,
+   "cook": 20,
+   "tags": [
+    "spicy",
+    "one pot"
+   ],
+   "ingredients": [
+    {
+     "q": 1.5,
+     "u": "lb",
+     "item": "boneless skinless chicken thighs",
+     "note": "cut in bite-size pieces",
+     "aisle": "meat"
+    },
+    {
+     "q": 3,
+     "u": "tbsp",
+     "item": "gochujang",
+     "aisle": "international"
+    },
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "gochugaru (Korean red pepper flakes)",
+     "aisle": "international"
+    },
+    {
+     "q": 2,
+     "u": "tbsp",
+     "item": "soy sauce",
+     "aisle": "international"
+    },
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "sugar",
+     "aisle": "pantry"
+    },
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "toasted sesame oil",
+     "aisle": "international"
+    },
+    {
+     "q": 4,
+     "u": "clove",
+     "item": "garlic",
+     "note": "minced",
+     "aisle": "produce"
+    },
+    {
+     "q": 2,
+     "u": "cup",
+     "item": "napa cabbage",
+     "note": "chopped",
+     "aisle": "produce"
+    },
+    {
+     "q": 1,
+     "u": "",
+     "item": "sweet potato",
+     "note": "peeled, cut in half-moons",
+     "aisle": "produce"
+    },
+    {
+     "q": 1,
+     "u": "",
+     "item": "yellow onion",
+     "note": "sliced",
+     "aisle": "produce"
+    },
+    {
+     "q": 1,
+     "u": "cup",
+     "item": "cylinder rice cakes (tteok)",
+     "aisle": "international"
+    },
+    {
+     "q": 2,
+     "u": "tbsp",
+     "item": "vegetable oil",
+     "aisle": "pantry"
+    },
+    {
+     "q": 1,
+     "u": "cup",
+     "item": "perilla leaves",
+     "note": "optional",
+     "aisle": "international"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Mix gochujang, gochugaru, soy sauce, sugar, sesame oil and garlic. Toss with the chicken."
+    },
+    {
+     "text": "Marinate for 20 minutes.",
+     "timer": 1200,
+     "timerLabel": "Marinate chicken"
+    },
+    {
+     "text": "Heat the oil in a large deep skillet over medium heat. Add the sweet potato and rice cakes and cook 5 minutes."
+    },
+    {
+     "text": "Add the chicken, onion and cabbage. Stir often and cook 12 to 15 minutes until chicken reaches 165°F and the sweet potato is soft."
+    },
+    {
+     "text": "Fold in the perilla leaves for the last minute. Serve from the pan with rice."
+    }
+   ]
+  },
+  {
+   "id": "korean-ojingeo-bokkeum",
+   "title": "Spicy stir-fried squid",
+   "blurb": "Tender squid and vegetables in a hot, glossy sauce",
+   "type": "bbq",
+   "serves": 4,
+   "prep": 20,
+   "cook": 10,
+   "tags": [
+    "spicy",
+    "quick"
+   ],
+   "ingredients": [
+    {
+     "q": 1.5,
+     "u": "lb",
+     "item": "cleaned squid",
+     "note": "tubes scored, cut in rings",
+     "aisle": "seafood"
+    },
+    {
+     "q": 3,
+     "u": "tbsp",
+     "item": "gochujang",
+     "aisle": "international"
+    },
+    {
+     "q": 2,
+     "u": "tbsp",
+     "item": "gochugaru (Korean red pepper flakes)",
+     "aisle": "international"
+    },
+    {
+     "q": 2,
+     "u": "tbsp",
+     "item": "soy sauce",
+     "aisle": "international"
+    },
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "sugar",
+     "aisle": "pantry"
+    },
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "toasted sesame oil",
+     "aisle": "international"
+    },
+    {
+     "q": 4,
+     "u": "clove",
+     "item": "garlic",
+     "note": "minced",
+     "aisle": "produce"
+    },
+    {
+     "q": 1,
+     "u": "",
+     "item": "yellow onion",
+     "note": "sliced",
+     "aisle": "produce"
+    },
+    {
+     "q": 1,
+     "u": "",
+     "item": "carrot",
+     "note": "cut in thin sticks",
+     "aisle": "produce"
+    },
+    {
+     "q": 1,
+     "u": "",
+     "item": "green bell pepper",
+     "note": "sliced",
+     "aisle": "produce"
+    },
+    {
+     "q": 2,
+     "u": "",
+     "item": "green onions",
+     "note": "cut in 2-inch pieces",
+     "aisle": "produce"
+    },
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "vegetable oil",
+     "aisle": "pantry"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Mix gochujang, gochugaru, soy sauce, sugar, sesame oil and garlic in a bowl."
+    },
+    {
+     "text": "Heat the oil in a large skillet or wok over high heat. Cook the onion, carrot and pepper 2 minutes."
+    },
+    {
+     "text": "Add the squid and sauce. Stir-fry 2 to 3 minutes only, until the squid is opaque and curled."
+    },
+    {
+     "text": "Add the green onions and toss 30 seconds. Serve right away with rice. Overcooked squid turns rubbery."
+    }
+   ]
+  },
+  {
+   "id": "korean-bibimbap",
+   "title": "Bibimbap",
+   "blurb": "Rice topped with seasoned vegetables, beef and a fried egg",
+   "type": "bowls",
+   "serves": 4,
+   "prep": 30,
+   "cook": 25,
+   "tags": [
+    "healthy"
+   ],
+   "ingredients": [
+    {
+     "q": 3,
+     "u": "cup",
+     "item": "cooked short-grain rice",
+     "note": "warm",
+     "aisle": "pantry"
+    },
+    {
+     "q": 0.5,
+     "u": "lb",
+     "item": "ground beef",
+     "aisle": "meat"
+    },
+    {
+     "q": 2,
+     "u": "tbsp",
+     "item": "soy sauce",
+     "note": "divided",
+     "aisle": "international"
+    },
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "sugar",
+     "aisle": "pantry"
+    },
+    {
+     "q": 3,
+     "u": "tbsp",
+     "item": "toasted sesame oil",
+     "note": "divided",
+     "aisle": "international"
+    },
+    {
+     "q": 1,
+     "u": "",
+     "item": "zucchini",
+     "note": "cut in matchsticks",
+     "aisle": "produce"
+    },
+    {
+     "q": 1,
+     "u": "",
+     "item": "carrot",
+     "note": "cut in matchsticks",
+     "aisle": "produce"
+    },
+    {
+     "q": 5,
+     "u": "oz",
+     "item": "baby spinach",
+     "aisle": "produce"
+    },
+    {
+     "q": 2,
+     "u": "cup",
+     "item": "soybean sprouts",
+     "aisle": "produce"
+    },
+    {
+     "q": 4,
+     "u": "clove",
+     "item": "garlic",
+     "note": "minced, divided",
+     "aisle": "produce"
+    },
+    {
+     "q": 4,
+     "u": "",
+     "item": "large eggs",
+     "aisle": "dairy"
+    },
+    {
+     "q": 4,
+     "u": "tbsp",
+     "item": "gochujang",
+     "aisle": "international"
+    },
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "vegetable oil",
+     "aisle": "pantry"
+    },
+    {
+     "q": null,
+     "u": "",
+     "item": "salt",
+     "aisle": "spices"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Season the beef with 1 tbsp soy sauce, sugar, 1 tsp sesame oil and half the garlic. Cook in a skillet to 160°F, then set aside."
+    },
+    {
+     "text": "Boil the sprouts in water for 5 minutes, drain, and toss with 1 tsp sesame oil and a pinch of salt.",
+     "timer": 300,
+     "timerLabel": "Boil sprouts"
+    },
+    {
+     "text": "Blanch the spinach 30 seconds, squeeze dry, and toss with the remaining garlic, 1 tsp sesame oil and a pinch of salt."
+    },
+    {
+     "text": "Saute the zucchini and carrot separately in the vegetable oil, 2 to 3 minutes each, with a pinch of salt."
+    },
+    {
+     "text": "Fry the eggs sunny-side up in a little oil."
+    },
+    {
+     "text": "Divide rice among bowls. Arrange the toppings, add an egg and 1 tbsp gochujang each. Drizzle with sesame oil and mix well to eat."
+    }
+   ]
+  },
+  {
+   "id": "korean-bulgogi-bowl",
+   "title": "Bulgogi rice bowl",
+   "blurb": "Quick marinated beef over rice with cucumber and carrot",
+   "type": "bowls",
+   "serves": 4,
+   "prep": 15,
+   "cook": 10,
+   "tags": [
+    "quick",
+    "kid-friendly"
+   ],
+   "ingredients": [
+    {
+     "q": 1.25,
+     "u": "lb",
+     "item": "thinly sliced sirloin or ribeye",
+     "aisle": "meat"
+    },
+    {
+     "q": 3,
+     "u": "tbsp",
+     "item": "soy sauce",
+     "aisle": "international"
+    },
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "brown sugar",
+     "aisle": "pantry"
+    },
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "toasted sesame oil",
+     "aisle": "international"
+    },
+    {
+     "q": 3,
+     "u": "clove",
+     "item": "garlic",
+     "note": "minced",
+     "aisle": "produce"
+    },
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "vegetable oil",
+     "aisle": "pantry"
+    },
+    {
+     "q": 3,
+     "u": "cup",
+     "item": "cooked short-grain rice",
+     "aisle": "pantry"
+    },
+    {
+     "q": 1,
+     "u": "",
+     "item": "cucumber",
+     "note": "sliced",
+     "aisle": "produce"
+    },
+    {
+     "q": 1,
+     "u": "",
+     "item": "carrot",
+     "note": "shredded",
+     "aisle": "produce"
+    },
+    {
+     "q": 2,
+     "u": "",
+     "item": "green onions",
+     "note": "sliced",
+     "aisle": "produce"
+    },
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "toasted sesame seeds",
+     "aisle": "international"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Toss the beef with soy sauce, brown sugar, sesame oil and garlic. Let it sit 10 minutes."
+    },
+    {
+     "text": "Let the beef marinate while the rice warms.",
+     "timer": 600,
+     "timerLabel": "Marinate beef"
+    },
+    {
+     "text": "Heat the oil in a large skillet over high heat."
+    },
+    {
+     "text": "Cook the beef in two batches, 2 minutes each, until browned."
+    },
+    {
+     "text": "Spoon rice into bowls. Top with beef, cucumber, carrot, green onions and sesame seeds."
+    }
+   ]
+  },
+  {
+   "id": "korean-kimchi-bokkeumbap",
+   "title": "Kimchi fried rice",
+   "blurb": "Day-old rice, tangy kimchi and a runny fried egg",
+   "type": "bowls",
+   "serves": 4,
+   "prep": 10,
+   "cook": 12,
+   "tags": [
+    "quick",
+    "spicy",
+    "one pot"
+   ],
+   "ingredients": [
+    {
+     "q": 3,
+     "u": "cup",
+     "item": "cooked short-grain rice",
+     "note": "cold, day-old",
+     "aisle": "pantry"
+    },
+    {
+     "q": 1.5,
+     "u": "cup",
+     "item": "kimchi",
+     "note": "chopped, plus 2 tbsp juice",
+     "aisle": "produce"
+    },
+    {
+     "q": 4,
+     "u": "oz",
+     "item": "bacon or spam",
+     "note": "diced",
+     "aisle": "meat"
+    },
+    {
+     "q": 2,
+     "u": "tbsp",
+     "item": "vegetable oil",
+     "aisle": "pantry"
+    },
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "gochujang",
+     "aisle": "international"
+    },
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "soy sauce",
+     "aisle": "international"
+    },
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "toasted sesame oil",
+     "aisle": "international"
+    },
+    {
+     "q": 3,
+     "u": "",
+     "item": "green onions",
+     "note": "sliced",
+     "aisle": "produce"
+    },
+    {
+     "q": 4,
+     "u": "",
+     "item": "large eggs",
+     "aisle": "dairy"
+    },
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "toasted sesame seeds",
+     "aisle": "international"
+    },
+    {
+     "q": 1,
+     "u": "piece",
+     "item": "roasted seaweed (gim)",
+     "note": "crumbled, optional",
+     "aisle": "international"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Heat 1 tbsp oil in a large nonstick skillet or wok over medium-high heat. Cook the bacon or spam until browned, about 4 minutes."
+    },
+    {
+     "text": "Add the kimchi and juice. Cook 3 minutes until it softens and smells tangy."
+    },
+    {
+     "text": "Stir in the gochujang and soy sauce, then add the rice, breaking up clumps."
+    },
+    {
+     "text": "Stir-fry 4 minutes until hot and lightly crisp. Mix in the sesame oil and green onions."
+    },
+    {
+     "text": "In a second pan, fry the eggs in the remaining oil until the whites are set and the yolks runny."
+    },
+    {
+     "text": "Top each bowl of rice with an egg, sesame seeds and seaweed."
+    }
+   ]
+  },
+  {
+   "id": "korean-kimbap",
+   "title": "Kimbap (Korean seaweed rice rolls)",
+   "blurb": "Rolls of rice, egg, carrot, spinach and beef, sliced in rounds",
+   "type": "bowls",
+   "serves": 4,
+   "prep": 45,
+   "cook": 15,
+   "tags": [
+    "make ahead",
+    "kid-friendly"
+   ],
+   "ingredients": [
+    {
+     "q": 4,
+     "u": "piece",
+     "item": "roasted seaweed sheets (gim)",
+     "aisle": "international"
+    },
+    {
+     "q": 3,
+     "u": "cup",
+     "item": "cooked short-grain rice",
+     "note": "warm",
+     "aisle": "pantry"
+    },
+    {
+     "q": 2,
+     "u": "tbsp",
+     "item": "toasted sesame oil",
+     "note": "divided",
+     "aisle": "international"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "salt",
+     "note": "divided",
+     "aisle": "spices"
+    },
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "toasted sesame seeds",
+     "aisle": "international"
+    },
+    {
+     "q": 4,
+     "u": "",
+     "item": "large eggs",
+     "note": "beaten",
+     "aisle": "dairy"
+    },
+    {
+     "q": 1,
+     "u": "",
+     "item": "carrot",
+     "note": "cut in thin sticks",
+     "aisle": "produce"
+    },
+    {
+     "q": 1,
+     "u": "",
+     "item": "cucumber",
+     "note": "cut in thin sticks",
+     "aisle": "produce"
+    },
+    {
+     "q": 5,
+     "u": "oz",
+     "item": "baby spinach",
+     "aisle": "produce"
+    },
+    {
+     "q": 4,
+     "u": "piece",
+     "item": "pickled yellow radish (danmuji)",
+     "aisle": "international"
+    },
+    {
+     "q": 0.5,
+     "u": "lb",
+     "item": "bulgogi beef or ham",
+     "note": "cooked, cut in strips",
+     "aisle": "meat"
+    },
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "vegetable oil",
+     "aisle": "pantry"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Season the warm rice with 1 tbsp sesame oil, half the salt and the sesame seeds. Let cool a few minutes."
+    },
+    {
+     "text": "Cook the beaten eggs as a thin omelet in the vegetable oil, then slice into strips."
+    },
+    {
+     "text": "Saute the carrot 2 minutes with a pinch of salt. Blanch the spinach 30 seconds, squeeze dry and toss with a little sesame oil and salt."
+    },
+    {
+     "text": "Lay a seaweed sheet shiny-side down. Spread a thin layer of rice, leaving 1 inch bare at the top edge."
+    },
+    {
+     "text": "Arrange egg, carrot, cucumber, spinach, radish and beef in a line along the bottom third. Roll tightly and seal with a dab of water."
+    },
+    {
+     "text": "Brush the roll with sesame oil and slice into 1-inch rounds with a sharp, wet knife."
+    }
+   ]
+  },
+  {
+   "id": "korean-jeyuk-deopbap",
+   "title": "Spicy pork rice bowl (jeyuk deopbap)",
+   "blurb": "Gochujang pork stir-fry over rice with a fried egg",
+   "type": "bowls",
+   "serves": 4,
+   "prep": 15,
+   "cook": 15,
+   "tags": [
+    "spicy",
+    "quick"
+   ],
+   "ingredients": [
+    {
+     "q": 1.5,
+     "u": "lb",
+     "item": "thinly sliced pork shoulder",
+     "aisle": "meat"
+    },
+    {
+     "q": 3,
+     "u": "tbsp",
+     "item": "gochujang",
+     "aisle": "international"
+    },
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "gochugaru (Korean red pepper flakes)",
+     "aisle": "international"
+    },
+    {
+     "q": 2,
+     "u": "tbsp",
+     "item": "soy sauce",
+     "aisle": "international"
+    },
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "sugar",
+     "aisle": "pantry"
+    },
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "toasted sesame oil",
+     "aisle": "international"
+    },
+    {
+     "q": 3,
+     "u": "clove",
+     "item": "garlic",
+     "note": "minced",
+     "aisle": "produce"
+    },
+    {
+     "q": 1,
+     "u": "",
+     "item": "yellow onion",
+     "note": "sliced",
+     "aisle": "produce"
+    },
+    {
+     "q": 3,
+     "u": "",
+     "item": "green onions",
+     "note": "cut in 2-inch pieces",
+     "aisle": "produce"
+    },
+    {
+     "q": 2,
+     "u": "tbsp",
+     "item": "vegetable oil",
+     "note": "divided",
+     "aisle": "pantry"
+    },
+    {
+     "q": 4,
+     "u": "",
+     "item": "large eggs",
+     "aisle": "dairy"
+    },
+    {
+     "q": 3,
+     "u": "cup",
+     "item": "cooked short-grain rice",
+     "aisle": "pantry"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Mix gochujang, gochugaru, soy sauce, sugar, sesame oil and garlic. Toss with the pork."
+    },
+    {
+     "text": "Marinate at least 15 minutes.",
+     "timer": 900,
+     "timerLabel": "Marinate pork"
+    },
+    {
+     "text": "Heat 1 tbsp oil in a large skillet over medium-high heat. Cook the onion 2 minutes."
+    },
+    {
+     "text": "Add the pork and cook 6 to 8 minutes until browned and cooked to 145°F. Stir in the green onions."
+    },
+    {
+     "text": "Fry the eggs in the remaining oil."
+    },
+    {
+     "text": "Serve the pork over rice, topped with an egg."
+    }
+   ]
+  },
+  {
+   "id": "korean-chamchi-mayo-deopbap",
+   "title": "Tuna mayo rice bowl",
+   "blurb": "Pantry tuna, mayo and soy over rice. Ready in 10 minutes",
+   "type": "bowls",
+   "serves": 4,
+   "prep": 10,
+   "cook": 5,
+   "tags": [
+    "quick",
+    "kid-friendly"
+   ],
+   "ingredients": [
+    {
+     "q": 3,
+     "u": "can",
+     "item": "chunk light tuna in water (5 oz)",
+     "note": "drained",
+     "aisle": "canned"
+    },
+    {
+     "q": 0.33,
+     "u": "cup",
+     "item": "mayonnaise",
+     "aisle": "pantry"
+    },
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "soy sauce",
+     "aisle": "international"
+    },
+    {
+     "q": 2,
+     "u": "tsp",
+     "item": "sugar",
+     "aisle": "pantry"
+    },
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "toasted sesame oil",
+     "aisle": "international"
+    },
+    {
+     "q": 2,
+     "u": "",
+     "item": "green onions",
+     "note": "sliced",
+     "aisle": "produce"
+    },
+    {
+     "q": 3,
+     "u": "cup",
+     "item": "cooked short-grain rice",
+     "note": "warm",
+     "aisle": "pantry"
+    },
+    {
+     "q": 1,
+     "u": "",
+     "item": "cucumber",
+     "note": "sliced",
+     "aisle": "produce"
+    },
+    {
+     "q": 2,
+     "u": "piece",
+     "item": "roasted seaweed sheets (gim)",
+     "note": "crumbled",
+     "aisle": "international"
+    },
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "toasted sesame seeds",
+     "aisle": "international"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Mix the tuna, mayonnaise, 1 tsp soy sauce, sugar and green onions in a bowl."
+    },
+    {
+     "text": "Toss the warm rice with the sesame oil and remaining soy sauce."
+    },
+    {
+     "text": "Divide the rice into bowls and top with the tuna mixture and cucumber."
+    },
+    {
+     "text": "Sprinkle with seaweed and sesame seeds. Serve right away."
+    }
+   ]
+  },
+  {
+   "id": "korean-gyeran-bap",
+   "title": "Butter soy egg rice (gyeran bap)",
+   "blurb": "Fried eggs, butter and soy over hot rice. Comfort in 5 minutes",
+   "type": "bowls",
+   "serves": 2,
+   "prep": 3,
+   "cook": 5,
+   "tags": [
+    "quick",
+    "kid-friendly",
+    "vegetarian"
+   ],
+   "ingredients": [
+    {
+     "q": 2,
+     "u": "cup",
+     "item": "cooked short-grain rice",
+     "note": "hot",
+     "aisle": "pantry"
+    },
+    {
+     "q": 2,
+     "u": "tbsp",
+     "item": "unsalted butter",
+     "note": "divided",
+     "aisle": "dairy"
+    },
+    {
+     "q": 4,
+     "u": "",
+     "item": "large eggs",
+     "aisle": "dairy"
+    },
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "soy sauce",
+     "aisle": "international"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "toasted sesame oil",
+     "aisle": "international"
+    },
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "toasted sesame seeds",
+     "aisle": "international"
+    },
+    {
+     "q": 1,
+     "u": "piece",
+     "item": "roasted seaweed sheet (gim)",
+     "note": "crumbled",
+     "aisle": "international"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Put the hot rice into two bowls and add 1 tbsp butter to each. Let it melt."
+    },
+    {
+     "text": "Fry the eggs in a nonstick skillet over medium heat, 2 to 3 minutes, until the whites are set and the yolks still runny."
+    },
+    {
+     "text": "Top each bowl with two eggs."
+    },
+    {
+     "text": "Drizzle with soy sauce and sesame oil. Sprinkle with sesame seeds and seaweed, then stir everything together to eat."
+    }
+   ]
+  },
+  {
+   "id": "korean-beoseot-deopbap",
+   "title": "Mushroom rice bowl (beoseot deopbap)",
+   "blurb": "Garlicky soy-glazed mushrooms over rice, fully vegan",
+   "type": "bowls",
+   "serves": 4,
+   "prep": 10,
+   "cook": 12,
+   "tags": [
+    "vegan",
+    "quick",
+    "healthy"
+   ],
+   "ingredients": [
+    {
+     "q": 1.5,
+     "u": "lb",
+     "item": "mixed mushrooms (shiitake, cremini, oyster)",
+     "note": "sliced",
+     "aisle": "produce"
+    },
+    {
+     "q": 2,
+     "u": "tbsp",
+     "item": "vegetable oil",
+     "aisle": "pantry"
+    },
+    {
+     "q": 4,
+     "u": "clove",
+     "item": "garlic",
+     "note": "minced",
+     "aisle": "produce"
+    },
+    {
+     "q": 3,
+     "u": "tbsp",
+     "item": "soy sauce",
+     "aisle": "international"
+    },
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "maple syrup",
+     "aisle": "pantry"
+    },
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "toasted sesame oil",
+     "aisle": "international"
+    },
+    {
+     "q": 1,
+     "u": "",
+     "item": "yellow onion",
+     "note": "sliced",
+     "aisle": "produce"
+    },
+    {
+     "q": 3,
+     "u": "cup",
+     "item": "cooked short-grain rice",
+     "aisle": "pantry"
+    },
+    {
+     "q": 2,
+     "u": "",
+     "item": "green onions",
+     "note": "sliced",
+     "aisle": "produce"
+    },
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "toasted sesame seeds",
+     "aisle": "international"
+    },
+    {
+     "q": 1,
+     "u": "",
+     "item": "carrot",
+     "note": "shredded",
+     "aisle": "produce"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Heat the vegetable oil in a large skillet over medium-high heat. Add the onion and cook 3 minutes."
+    },
+    {
+     "text": "Add the mushrooms in a single layer. Cook 6 to 8 minutes without stirring too much, until browned."
+    },
+    {
+     "text": "Add the garlic and cook 30 seconds."
+    },
+    {
+     "text": "Stir in the soy sauce and maple syrup and cook 1 minute until glossy. Turn off the heat and add the sesame oil."
+    },
+    {
+     "text": "Serve over rice with the carrot, green onions and sesame seeds."
+    }
+   ]
+  },
+  {
+   "id": "korean-japchae",
+   "title": "Japchae (glass noodle stir-fry)",
+   "blurb": "Chewy sweet potato noodles with beef and colorful vegetables",
+   "type": "noodles",
+   "serves": 6,
+   "prep": 30,
+   "cook": 20,
+   "tags": [
+    "make ahead",
+    "crowd"
+   ],
+   "ingredients": [
+    {
+     "q": 8,
+     "u": "oz",
+     "item": "dangmyeon (Korean sweet potato starch noodles)",
+     "aisle": "international"
+    },
+    {
+     "q": 0.5,
+     "u": "lb",
+     "item": "thinly sliced beef sirloin",
+     "aisle": "meat"
+    },
+    {
+     "q": 5,
+     "u": "oz",
+     "item": "baby spinach",
+     "aisle": "produce"
+    },
+    {
+     "q": 1,
+     "u": "",
+     "item": "carrot",
+     "note": "cut in matchsticks",
+     "aisle": "produce"
+    },
+    {
+     "q": 1,
+     "u": "",
+     "item": "yellow onion",
+     "note": "thinly sliced",
+     "aisle": "produce"
+    },
+    {
+     "q": 4,
+     "u": "oz",
+     "item": "shiitake mushrooms",
+     "note": "sliced",
+     "aisle": "produce"
+    },
+    {
+     "q": 1,
+     "u": "",
+     "item": "red bell pepper",
+     "note": "thinly sliced",
+     "aisle": "produce"
+    },
+    {
+     "q": 5,
+     "u": "tbsp",
+     "item": "soy sauce",
+     "note": "divided",
+     "aisle": "international"
+    },
+    {
+     "q": 3,
+     "u": "tbsp",
+     "item": "sugar",
+     "note": "divided",
+     "aisle": "pantry"
+    },
+    {
+     "q": 3,
+     "u": "tbsp",
+     "item": "toasted sesame oil",
+     "note": "divided",
+     "aisle": "international"
+    },
+    {
+     "q": 4,
+     "u": "clove",
+     "item": "garlic",
+     "note": "minced, divided",
+     "aisle": "produce"
+    },
+    {
+     "q": 3,
+     "u": "tbsp",
+     "item": "vegetable oil",
+     "note": "divided",
+     "aisle": "pantry"
+    },
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "toasted sesame seeds",
+     "aisle": "international"
+    },
+    {
+     "q": null,
+     "u": "",
+     "item": "black pepper",
+     "aisle": "spices"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Toss the beef with 1 tbsp soy sauce, 1 tsp sugar, 1 tsp sesame oil, half the garlic and pepper."
+    },
+    {
+     "text": "Boil the noodles until soft and chewy, then drain, rinse and cut a few times with scissors.",
+     "timer": 420,
+     "timerLabel": "Boil noodles"
+    },
+    {
+     "text": "Blanch the spinach 30 seconds, squeeze dry and toss with a little soy sauce and sesame oil."
+    },
+    {
+     "text": "Stir-fry the onion, carrot, mushrooms and pepper in 2 tbsp vegetable oil with a pinch of salt, one at a time, 2 minutes each."
+    },
+    {
+     "text": "Cook the beef in the remaining oil until browned, about 3 minutes, to 160°F."
+    },
+    {
+     "text": "Toss the noodles in the pan with the remaining soy sauce, sugar, sesame oil and garlic for 2 minutes."
+    },
+    {
+     "text": "Mix in the vegetables, beef and spinach. Top with sesame seeds and serve warm or room temperature."
+    }
+   ]
+  },
+  {
+   "id": "korean-jajangmyeon",
+   "title": "Jajangmyeon (black bean noodles)",
+   "blurb": "Thick noodles in a savory-sweet black bean sauce with pork",
+   "type": "noodles",
+   "serves": 4,
+   "prep": 15,
+   "cook": 25,
+   "tags": [
+    "kid-friendly"
+   ],
+   "ingredients": [
+    {
+     "q": 12,
+     "u": "oz",
+     "item": "fresh or dried udon or jajangmyeon noodles",
+     "aisle": "international"
+    },
+    {
+     "q": 0.5,
+     "u": "lb",
+     "item": "pork belly or ground pork",
+     "note": "diced",
+     "aisle": "meat"
+    },
+    {
+     "q": 0.33,
+     "u": "cup",
+     "item": "chunjang (Korean black bean paste)",
+     "aisle": "international"
+    },
+    {
+     "q": 2,
+     "u": "tbsp",
+     "item": "vegetable oil",
+     "aisle": "pantry"
+    },
+    {
+     "q": 1,
+     "u": "",
+     "item": "yellow onion",
+     "note": "diced",
+     "aisle": "produce"
+    },
+    {
+     "q": 1,
+     "u": "",
+     "item": "zucchini",
+     "note": "diced",
+     "aisle": "produce"
+    },
+    {
+     "q": 1,
+     "u": "cup",
+     "item": "potato",
+     "note": "peeled and diced",
+     "aisle": "produce"
+    },
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "sugar",
+     "aisle": "pantry"
+    },
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "soy sauce",
+     "aisle": "international"
+    },
+    {
+     "q": 1.5,
+     "u": "cup",
+     "item": "water",
+     "aisle": "pantry"
+    },
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "cornstarch",
+     "aisle": "pantry"
+    },
+    {
+     "q": 1,
+     "u": "",
+     "item": "cucumber",
+     "note": "cut in matchsticks, to serve",
+     "aisle": "produce"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Fry the chunjang in the oil in a skillet over medium heat for 2 to 3 minutes, stirring, to remove bitterness. Scoop it out."
+    },
+    {
+     "text": "In the same pan, cook the pork 4 minutes until browned and cooked to 160°F."
+    },
+    {
+     "text": "Add the onion, zucchini and potato. Stir-fry 3 minutes."
+    },
+    {
+     "text": "Return the black bean paste, add sugar, soy sauce and 1.5 cups water. Simmer until the potato is tender."
+    },
+    {
+     "text": "Simmer the sauce.",
+     "timer": 720,
+     "timerLabel": "Simmer sauce"
+    },
+    {
+     "text": "Stir the cornstarch with 2 tbsp water and add it. Cook 1 minute until glossy."
+    },
+    {
+     "text": "Boil the noodles per the package, drain, and top with the sauce and cucumber."
+    }
+   ]
+  },
+  {
+   "id": "korean-bibim-guksu",
+   "title": "Bibim guksu (spicy chilled noodles)",
+   "blurb": "Tangy, sweet and spicy somen noodles with cucumber and egg",
+   "type": "noodles",
+   "serves": 4,
+   "prep": 20,
+   "cook": 10,
+   "tags": [
+    "spicy",
+    "quick"
+   ],
+   "ingredients": [
+    {
+     "q": 12,
+     "u": "oz",
+     "item": "somen noodles",
+     "aisle": "international"
+    },
+    {
+     "q": 4,
+     "u": "tbsp",
+     "item": "gochujang",
+     "aisle": "international"
+    },
+    {
+     "q": 2,
+     "u": "tbsp",
+     "item": "gochugaru (Korean red pepper flakes)",
+     "aisle": "international"
+    },
+    {
+     "q": 3,
+     "u": "tbsp",
+     "item": "rice vinegar",
+     "aisle": "international"
+    },
+    {
+     "q": 2,
+     "u": "tbsp",
+     "item": "sugar",
+     "aisle": "pantry"
+    },
+    {
+     "q": 2,
+     "u": "tbsp",
+     "item": "soy sauce",
+     "aisle": "international"
+    },
+    {
+     "q": 2,
+     "u": "tbsp",
+     "item": "toasted sesame oil",
+     "aisle": "international"
+    },
+    {
+     "q": 3,
+     "u": "clove",
+     "item": "garlic",
+     "note": "minced",
+     "aisle": "produce"
+    },
+    {
+     "q": 1,
+     "u": "",
+     "item": "cucumber",
+     "note": "cut in matchsticks",
+     "aisle": "produce"
+    },
+    {
+     "q": 1,
+     "u": "cup",
+     "item": "kimchi",
+     "note": "chopped",
+     "aisle": "produce"
+    },
+    {
+     "q": 4,
+     "u": "",
+     "item": "large eggs",
+     "note": "hard-boiled, halved",
+     "aisle": "dairy"
+    },
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "toasted sesame seeds",
+     "aisle": "international"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Whisk gochujang, gochugaru, vinegar, sugar, soy sauce, sesame oil and garlic into a sauce."
+    },
+    {
+     "text": "Boil the noodles until tender.",
+     "timer": 180,
+     "timerLabel": "Boil noodles"
+    },
+    {
+     "text": "Drain and rinse the noodles under cold water, rubbing gently, until cold. Drain well."
+    },
+    {
+     "text": "Toss the noodles with the sauce until coated."
+    },
+    {
+     "text": "Top with cucumber, kimchi, egg halves and sesame seeds."
+    }
+   ]
+  },
+  {
+   "id": "korean-dak-kalguksu",
+   "title": "Chicken kalguksu (noodle soup)",
+   "blurb": "Hand-cut-style noodles in a clean chicken broth",
+   "type": "noodles",
+   "serves": 4,
+   "prep": 15,
+   "cook": 35,
+   "tags": [
+    "kid-friendly"
+   ],
+   "ingredients": [
+    {
+     "q": 1.5,
+     "u": "lb",
+     "item": "boneless skinless chicken breasts",
+     "aisle": "meat"
+    },
+    {
+     "q": 8,
+     "u": "cup",
+     "item": "water",
+     "aisle": "pantry"
+    },
+    {
+     "q": 1,
+     "u": "",
+     "item": "yellow onion",
+     "note": "halved",
+     "aisle": "produce"
+    },
+    {
+     "q": 6,
+     "u": "clove",
+     "item": "garlic",
+     "note": "smashed",
+     "aisle": "produce"
+    },
+    {
+     "q": 1,
+     "u": "inch",
+     "item": "fresh ginger",
+     "note": "sliced",
+     "aisle": "produce"
+    },
+    {
+     "q": 12,
+     "u": "oz",
+     "item": "fresh kalguksu or udon noodles",
+     "aisle": "international"
+    },
+    {
+     "q": 1,
+     "u": "",
+     "item": "zucchini",
+     "note": "cut in matchsticks",
+     "aisle": "produce"
+    },
+    {
+     "q": 1,
+     "u": "",
+     "item": "carrot",
+     "note": "cut in matchsticks",
+     "aisle": "produce"
+    },
+    {
+     "q": 3,
+     "u": "tbsp",
+     "item": "soy sauce",
+     "aisle": "international"
+    },
+    {
+     "q": 2,
+     "u": "tsp",
+     "item": "salt",
+     "aisle": "spices"
+    },
+    {
+     "q": 2,
+     "u": "",
+     "item": "green onions",
+     "note": "sliced",
+     "aisle": "produce"
+    },
+    {
+     "q": 1,
+     "u": "",
+     "item": "large eggs",
+     "note": "beaten",
+     "aisle": "dairy"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Put the chicken, water, onion, garlic and ginger in a large pot. Bring to a boil, then lower to a simmer."
+    },
+    {
+     "text": "Simmer until the chicken is 165°F.",
+     "timer": 1200,
+     "timerLabel": "Simmer chicken"
+    },
+    {
+     "text": "Lift out the chicken and shred it. Strain the broth and return it to the pot, discarding the solids."
+    },
+    {
+     "text": "Season the broth with soy sauce and salt. Bring to a boil and add the carrot and noodles."
+    },
+    {
+     "text": "Cook the noodles until tender, adding the zucchini for the last minute.",
+     "timer": 300,
+     "timerLabel": "Cook noodles"
+    },
+    {
+     "text": "Slowly drizzle in the egg while stirring. Serve topped with chicken and green onions."
+    }
+   ]
+  },
+  {
+   "id": "korean-janchi-guksu",
+   "title": "Janchi guksu (banquet noodles)",
+   "blurb": "Light anchovy broth with thin noodles, zucchini and egg ribbons",
+   "type": "noodles",
+   "serves": 4,
+   "prep": 20,
+   "cook": 30,
+   "tags": [
+    "healthy",
+    "kid-friendly"
+   ],
+   "ingredients": [
+    {
+     "q": 8,
+     "u": "cup",
+     "item": "water",
+     "aisle": "pantry"
+    },
+    {
+     "q": 12,
+     "u": "",
+     "item": "dried large anchovies",
+     "note": "heads and guts removed",
+     "aisle": "international"
+    },
+    {
+     "q": 1,
+     "u": "piece",
+     "item": "dried kelp (dashima), 4x4 inch",
+     "aisle": "international"
+    },
+    {
+     "q": 8,
+     "u": "oz",
+     "item": "somen noodles",
+     "aisle": "international"
+    },
+    {
+     "q": 1,
+     "u": "",
+     "item": "zucchini",
+     "note": "cut in matchsticks",
+     "aisle": "produce"
+    },
+    {
+     "q": 1,
+     "u": "",
+     "item": "carrot",
+     "note": "cut in matchsticks",
+     "aisle": "produce"
+    },
+    {
+     "q": 2,
+     "u": "",
+     "item": "large eggs",
+     "note": "beaten, cooked as a thin omelet and sliced",
+     "aisle": "dairy"
+    },
+    {
+     "q": 2,
+     "u": "tbsp",
+     "item": "soy sauce",
+     "aisle": "international"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "salt",
+     "aisle": "spices"
+    },
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "toasted sesame oil",
+     "aisle": "international"
+    },
+    {
+     "q": 2,
+     "u": "",
+     "item": "green onions",
+     "note": "sliced",
+     "aisle": "produce"
+    },
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "toasted sesame seeds",
+     "aisle": "international"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Bring water, anchovies and kelp to a boil. Remove the kelp after 5 minutes."
+    },
+    {
+     "text": "Simmer the broth 15 minutes, then strain and return to the pot.",
+     "timer": 900,
+     "timerLabel": "Simmer broth"
+    },
+    {
+     "text": "Season the broth with soy sauce and salt. Keep it warm."
+    },
+    {
+     "text": "Saute the zucchini and carrot separately in a little oil for 2 minutes each."
+    },
+    {
+     "text": "Boil the noodles in a separate pot, then rinse in cold water and drain.",
+     "timer": 180,
+     "timerLabel": "Boil noodles"
+    },
+    {
+     "text": "Place noodles in bowls and ladle hot broth over. Top with vegetables, egg strips, green onions, sesame seeds and a drizzle of sesame oil."
+    }
+   ]
+  },
+  {
+   "id": "korean-kongguksu",
+   "title": "Kongguksu (cold soy milk noodles)",
+   "blurb": "Silky, nutty soybean broth over chilled noodles. A summer classic",
+   "type": "noodles",
+   "serves": 4,
+   "prep": 15,
+   "cook": 10,
+   "tags": [
+    "quick",
+    "vegan",
+    "healthy"
+   ],
+   "ingredients": [
+    {
+     "q": 1,
+     "u": "quart",
+     "item": "unsweetened plain soy milk",
+     "aisle": "beverages"
+    },
+    {
+     "q": 0.25,
+     "u": "cup",
+     "item": "raw peanuts or toasted pine nuts",
+     "aisle": "pantry"
+    },
+    {
+     "q": 2,
+     "u": "tbsp",
+     "item": "toasted sesame seeds",
+     "aisle": "international"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "salt",
+     "aisle": "spices"
+    },
+    {
+     "q": 8,
+     "u": "oz",
+     "item": "somen noodles",
+     "aisle": "international"
+    },
+    {
+     "q": 1,
+     "u": "",
+     "item": "cucumber",
+     "note": "cut in matchsticks",
+     "aisle": "produce"
+    },
+    {
+     "q": 1,
+     "u": "",
+     "item": "tomato",
+     "note": "cut in wedges",
+     "aisle": "produce"
+    },
+    {
+     "q": null,
+     "u": "",
+     "item": "water",
+     "note": "ice water as needed",
+     "aisle": "pantry"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Blend the soy milk, peanuts, sesame seeds and salt until very smooth."
+    },
+    {
+     "text": "Chill the broth in the freezer 15 minutes while you cook the noodles."
+    },
+    {
+     "text": "Boil the somen until tender.",
+     "timer": 180,
+     "timerLabel": "Boil noodles"
+    },
+    {
+     "text": "Drain and rinse the noodles in cold water, then drain very well."
+    },
+    {
+     "text": "Divide noodles among bowls and pour the cold broth over. Add a few ice cubes if you like."
+    },
+    {
+     "text": "Top with cucumber and tomato. Add salt to taste at the table."
+    }
+   ]
+  },
+  {
+   "id": "korean-kimchi-ramyeon",
+   "title": "Kimchi ramyeon with egg",
+   "blurb": "Instant noodles dressed up with kimchi, tofu and green onion",
+   "type": "noodles",
+   "serves": 2,
+   "prep": 5,
+   "cook": 10,
+   "tags": [
+    "quick",
+    "spicy",
+    "one pot"
+   ],
+   "ingredients": [
+    {
+     "q": 2,
+     "u": "pkg",
+     "item": "Korean instant ramyeon (3 oz)",
+     "aisle": "international"
+    },
+    {
+     "q": 1,
+     "u": "cup",
+     "item": "kimchi",
+     "note": "chopped",
+     "aisle": "produce"
+    },
+    {
+     "q": 2,
+     "u": "tbsp",
+     "item": "kimchi juice",
+     "aisle": "produce"
+    },
+    {
+     "q": 2.5,
+     "u": "cup",
+     "item": "water",
+     "aisle": "pantry"
+    },
+    {
+     "q": 2,
+     "u": "",
+     "item": "large eggs",
+     "aisle": "dairy"
+    },
+    {
+     "q": 4,
+     "u": "oz",
+     "item": "firm tofu",
+     "note": "cubed",
+     "aisle": "dairy"
+    },
+    {
+     "q": 2,
+     "u": "",
+     "item": "green onions",
+     "note": "sliced",
+     "aisle": "produce"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "toasted sesame oil",
+     "aisle": "international"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Bring the water to a boil in a medium pot. Add the kimchi, kimchi juice, tofu and soup base from the packets."
+    },
+    {
+     "text": "Simmer the kimchi 3 minutes.",
+     "timer": 180,
+     "timerLabel": "Simmer kimchi"
+    },
+    {
+     "text": "Add the noodles. Use chopsticks to loosen them."
+    },
+    {
+     "text": "Cook the noodles until tender.",
+     "timer": 180,
+     "timerLabel": "Cook noodles"
+    },
+    {
+     "text": "Crack in the eggs during the last minute and let them set to your liking."
+    },
+    {
+     "text": "Finish with green onions and sesame oil. Eat right away."
+    }
+   ]
+  },
+  {
+   "id": "korean-rabokki",
+   "title": "Rabokki (ramyeon with spicy rice cakes)",
+   "blurb": "Chewy rice cakes and noodles in a bubbly red sauce",
+   "type": "noodles",
+   "serves": 4,
+   "prep": 10,
+   "cook": 20,
+   "tags": [
+    "spicy",
+    "one pot",
+    "kid-friendly"
+   ],
+   "ingredients": [
+    {
+     "q": 2,
+     "u": "pkg",
+     "item": "Korean instant ramyeon (3 oz), noodles only",
+     "aisle": "international"
+    },
+    {
+     "q": 1,
+     "u": "lb",
+     "item": "cylinder rice cakes (tteok)",
+     "aisle": "international"
+    },
+    {
+     "q": 3,
+     "u": "cup",
+     "item": "water",
+     "aisle": "pantry"
+    },
+    {
+     "q": 3,
+     "u": "tbsp",
+     "item": "gochujang",
+     "aisle": "international"
+    },
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "gochugaru (Korean red pepper flakes)",
+     "aisle": "international"
+    },
+    {
+     "q": 2,
+     "u": "tbsp",
+     "item": "soy sauce",
+     "aisle": "international"
+    },
+    {
+     "q": 2,
+     "u": "tbsp",
+     "item": "sugar",
+     "aisle": "pantry"
+    },
+    {
+     "q": 4,
+     "u": "",
+     "item": "fish cakes (eomuk)",
+     "note": "cut in strips",
+     "aisle": "frozen"
+    },
+    {
+     "q": 3,
+     "u": "",
+     "item": "green onions",
+     "note": "cut in 2-inch pieces",
+     "aisle": "produce"
+    },
+    {
+     "q": 2,
+     "u": "",
+     "item": "large eggs",
+     "note": "hard-boiled",
+     "aisle": "dairy"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Soak the rice cakes in warm water 10 minutes if hard or refrigerated."
+    },
+    {
+     "text": "Stir the water, gochujang, gochugaru, soy sauce and sugar together in a wide pan and bring to a boil."
+    },
+    {
+     "text": "Add the rice cakes, fish cakes and eggs."
+    },
+    {
+     "text": "Simmer until the rice cakes are soft and the sauce thickens, stirring often.",
+     "timer": 600,
+     "timerLabel": "Simmer rice cakes"
+    },
+    {
+     "text": "Add the ramyeon noodles and green onions."
+    },
+    {
+     "text": "Cook until the noodles are tender and the sauce coats everything.",
+     "timer": 210,
+     "timerLabel": "Cook noodles"
+    }
+   ]
+  },
+  {
+   "id": "korean-kimchi-jjigae",
+   "title": "Kimchi jjigae (kimchi stew)",
+   "blurb": "Sour, spicy stew with pork belly and tofu. The everyday favorite",
+   "type": "stews",
+   "serves": 4,
+   "prep": 10,
+   "cook": 30,
+   "tags": [
+    "spicy",
+    "one pot"
+   ],
+   "ingredients": [
+    {
+     "q": 2,
+     "u": "cup",
+     "item": "aged sour kimchi",
+     "note": "chopped",
+     "aisle": "produce"
+    },
+    {
+     "q": 0.5,
+     "u": "cup",
+     "item": "kimchi juice",
+     "aisle": "produce"
+    },
+    {
+     "q": 0.5,
+     "u": "lb",
+     "item": "pork belly or pork shoulder",
+     "note": "sliced",
+     "aisle": "meat"
+    },
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "vegetable oil",
+     "aisle": "pantry"
+    },
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "gochugaru (Korean red pepper flakes)",
+     "aisle": "international"
+    },
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "gochujang",
+     "aisle": "international"
+    },
+    {
+     "q": 4,
+     "u": "clove",
+     "item": "garlic",
+     "note": "minced",
+     "aisle": "produce"
+    },
+    {
+     "q": 3,
+     "u": "cup",
+     "item": "water",
+     "aisle": "pantry"
+    },
+    {
+     "q": 14,
+     "u": "oz",
+     "item": "firm tofu",
+     "note": "sliced",
+     "aisle": "dairy"
+    },
+    {
+     "q": 0.5,
+     "u": "",
+     "item": "yellow onion",
+     "note": "sliced",
+     "aisle": "produce"
+    },
+    {
+     "q": 2,
+     "u": "",
+     "item": "green onions",
+     "note": "sliced",
+     "aisle": "produce"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "toasted sesame oil",
+     "aisle": "international"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Heat the oil in a pot over medium-high heat. Cook the pork until it just turns pale, about 3 minutes."
+    },
+    {
+     "text": "Add the kimchi, garlic and gochugaru and stir 3 minutes."
+    },
+    {
+     "text": "Add the kimchi juice, gochujang and water. Bring to a boil."
+    },
+    {
+     "text": "Reduce to a simmer, cover partly and cook until the kimchi is soft and the pork is 145°F or higher.",
+     "timer": 1200,
+     "timerLabel": "Simmer stew"
+    },
+    {
+     "text": "Add the tofu and onion and simmer 5 more minutes."
+    },
+    {
+     "text": "Finish with green onions and sesame oil. Serve with rice."
+    }
+   ]
+  },
+  {
+   "id": "korean-doenjang-jjigae",
+   "title": "Doenjang jjigae (soybean paste stew)",
+   "blurb": "Earthy, savory stew with tofu, zucchini and potato",
+   "type": "stews",
+   "serves": 4,
+   "prep": 15,
+   "cook": 25,
+   "tags": [
+    "one pot",
+    "healthy"
+   ],
+   "ingredients": [
+    {
+     "q": 4,
+     "u": "cup",
+     "item": "water",
+     "aisle": "pantry"
+    },
+    {
+     "q": 3,
+     "u": "tbsp",
+     "item": "doenjang (Korean soybean paste)",
+     "aisle": "international"
+    },
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "gochugaru (Korean red pepper flakes)",
+     "aisle": "international"
+    },
+    {
+     "q": 1,
+     "u": "",
+     "item": "potato",
+     "note": "peeled and cubed",
+     "aisle": "produce"
+    },
+    {
+     "q": 1,
+     "u": "",
+     "item": "zucchini",
+     "note": "cubed",
+     "aisle": "produce"
+    },
+    {
+     "q": 0.5,
+     "u": "",
+     "item": "yellow onion",
+     "note": "diced",
+     "aisle": "produce"
+    },
+    {
+     "q": 14,
+     "u": "oz",
+     "item": "firm tofu",
+     "note": "cubed",
+     "aisle": "dairy"
+    },
+    {
+     "q": 4,
+     "u": "oz",
+     "item": "mushrooms",
+     "note": "sliced",
+     "aisle": "produce"
+    },
+    {
+     "q": 3,
+     "u": "clove",
+     "item": "garlic",
+     "note": "minced",
+     "aisle": "produce"
+    },
+    {
+     "q": 2,
+     "u": "",
+     "item": "green onions",
+     "note": "sliced",
+     "aisle": "produce"
+    },
+    {
+     "q": 1,
+     "u": "",
+     "item": "Korean green chili or jalapeno",
+     "note": "sliced",
+     "aisle": "produce"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Bring the water to a boil in a pot. Whisk in the doenjang and gochugaru until dissolved."
+    },
+    {
+     "text": "Add the potato and onion and simmer until the potato is nearly tender."
+    },
+    {
+     "text": "Simmer the potato and onion.",
+     "timer": 600,
+     "timerLabel": "Simmer potato"
+    },
+    {
+     "text": "Add the zucchini, mushrooms and garlic. Simmer 5 minutes."
+    },
+    {
+     "text": "Add the tofu and chili and simmer 3 more minutes."
+    },
+    {
+     "text": "Top with green onions and serve with rice."
+    }
+   ]
+  },
+  {
+   "id": "korean-sundubu-jjigae",
+   "title": "Sundubu jjigae (soft tofu stew)",
+   "blurb": "Bubbling, spicy silken tofu stew with an egg cracked in",
+   "type": "stews",
+   "serves": 2,
+   "prep": 10,
+   "cook": 15,
+   "tags": [
+    "spicy",
+    "quick",
+    "one pot"
+   ],
+   "ingredients": [
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "vegetable oil",
+     "aisle": "pantry"
+    },
+    {
+     "q": 0.25,
+     "u": "lb",
+     "item": "ground pork or beef",
+     "aisle": "meat"
+    },
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "gochugaru (Korean red pepper flakes)",
+     "aisle": "international"
+    },
+    {
+     "q": 2,
+     "u": "clove",
+     "item": "garlic",
+     "note": "minced",
+     "aisle": "produce"
+    },
+    {
+     "q": 1.5,
+     "u": "cup",
+     "item": "water",
+     "aisle": "pantry"
+    },
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "soy sauce",
+     "aisle": "international"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "toasted sesame oil",
+     "aisle": "international"
+    },
+    {
+     "q": 1,
+     "u": "pkg",
+     "item": "sundubu (extra-soft tofu), about 12 oz",
+     "aisle": "dairy"
+    },
+    {
+     "q": 4,
+     "u": "oz",
+     "item": "clams or shrimp",
+     "note": "optional",
+     "aisle": "seafood"
+    },
+    {
+     "q": 1,
+     "u": "",
+     "item": "large eggs",
+     "aisle": "dairy"
+    },
+    {
+     "q": 1,
+     "u": "",
+     "item": "green onions",
+     "note": "sliced",
+     "aisle": "produce"
+    },
+    {
+     "q": null,
+     "u": "",
+     "item": "salt",
+     "aisle": "spices"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Heat the oil and sesame oil in a small pot over medium heat. Cook the meat and garlic 3 minutes."
+    },
+    {
+     "text": "Stir in the gochugaru for 30 seconds, being careful not to burn it."
+    },
+    {
+     "text": "Add the water and soy sauce and bring to a boil."
+    },
+    {
+     "text": "Spoon in the tofu in large chunks. Add the seafood if using."
+    },
+    {
+     "text": "Simmer until the stew bubbles hard and the meat is cooked through.",
+     "timer": 420,
+     "timerLabel": "Simmer stew"
+    },
+    {
+     "text": "Crack in the egg and add the green onions. Cover for 1 minute. Season with salt and serve with rice."
+    }
+   ]
+  },
+  {
+   "id": "korean-budae-jjigae",
+   "title": "Budae jjigae (army stew)",
+   "blurb": "Spam, sausage, kimchi, noodles and cheese in a spicy broth",
+   "type": "stews",
+   "serves": 6,
+   "prep": 15,
+   "cook": 25,
+   "tags": [
+    "spicy",
+    "crowd",
+    "one pot"
+   ],
+   "ingredients": [
+    {
+     "q": 6,
+     "u": "cup",
+     "item": "water",
+     "aisle": "pantry"
+    },
+    {
+     "q": 2,
+     "u": "tbsp",
+     "item": "gochujang",
+     "aisle": "international"
+    },
+    {
+     "q": 2,
+     "u": "tbsp",
+     "item": "gochugaru (Korean red pepper flakes)",
+     "aisle": "international"
+    },
+    {
+     "q": 2,
+     "u": "tbsp",
+     "item": "soy sauce",
+     "aisle": "international"
+    },
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "sugar",
+     "aisle": "pantry"
+    },
+    {
+     "q": 4,
+     "u": "clove",
+     "item": "garlic",
+     "note": "minced",
+     "aisle": "produce"
+    },
+    {
+     "q": 1,
+     "u": "cup",
+     "item": "kimchi",
+     "note": "chopped",
+     "aisle": "produce"
+    },
+    {
+     "q": 0.5,
+     "u": "can",
+     "item": "spam (12 oz)",
+     "note": "sliced",
+     "aisle": "canned"
+    },
+    {
+     "q": 4,
+     "u": "",
+     "item": "hot dogs or sausages",
+     "note": "sliced",
+     "aisle": "meat"
+    },
+    {
+     "q": 0.5,
+     "u": "lb",
+     "item": "firm tofu",
+     "note": "sliced",
+     "aisle": "dairy"
+    },
+    {
+     "q": 1,
+     "u": "cup",
+     "item": "baked beans",
+     "aisle": "canned"
+    },
+    {
+     "q": 1,
+     "u": "pkg",
+     "item": "Korean instant ramyeon (3 oz)",
+     "aisle": "international"
+    },
+    {
+     "q": 2,
+     "u": "slice",
+     "item": "American cheese",
+     "aisle": "dairy"
+    },
+    {
+     "q": 3,
+     "u": "",
+     "item": "green onions",
+     "note": "sliced",
+     "aisle": "produce"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Whisk the gochujang, gochugaru, soy sauce, sugar and garlic with the water in a wide pot."
+    },
+    {
+     "text": "Arrange the kimchi, spam, sausages, tofu and beans in sections around the pot."
+    },
+    {
+     "text": "Bring to a boil, then simmer.",
+     "timer": 600,
+     "timerLabel": "Simmer stew"
+    },
+    {
+     "text": "Add the ramyeon noodles and the soup base if you like it extra salty."
+    },
+    {
+     "text": "Cook until the noodles are tender.",
+     "timer": 210,
+     "timerLabel": "Cook noodles"
+    },
+    {
+     "text": "Lay on the cheese slices and green onions. Serve right away from the pot."
+    }
+   ]
+  },
+  {
+   "id": "korean-yukgaejang",
+   "title": "Yukgaejang (spicy beef and vegetable soup)",
+   "blurb": "Shredded beef, scallions and bracken in a fiery red broth",
+   "type": "stews",
+   "serves": 6,
+   "prep": 20,
+   "cook": 90,
+   "tags": [
+    "spicy",
+    "make ahead"
+   ],
+   "ingredients": [
+    {
+     "q": 1.5,
+     "u": "lb",
+     "item": "beef brisket or flank steak",
+     "aisle": "meat"
+    },
+    {
+     "q": 10,
+     "u": "cup",
+     "item": "water",
+     "aisle": "pantry"
+    },
+    {
+     "q": 1,
+     "u": "",
+     "item": "yellow onion",
+     "note": "halved",
+     "aisle": "produce"
+    },
+    {
+     "q": 1,
+     "u": "bunch",
+     "item": "green onions",
+     "note": "cut in 3-inch pieces",
+     "aisle": "produce"
+    },
+    {
+     "q": 8,
+     "u": "oz",
+     "item": "bean sprouts",
+     "aisle": "produce"
+    },
+    {
+     "q": 8,
+     "u": "oz",
+     "item": "fernbrake (gosari), rehydrated",
+     "aisle": "international"
+    },
+    {
+     "q": 4,
+     "u": "clove",
+     "item": "garlic",
+     "note": "minced",
+     "aisle": "produce"
+    },
+    {
+     "q": 3,
+     "u": "tbsp",
+     "item": "gochugaru (Korean red pepper flakes)",
+     "aisle": "international"
+    },
+    {
+     "q": 3,
+     "u": "tbsp",
+     "item": "soy sauce",
+     "aisle": "international"
+    },
+    {
+     "q": 2,
+     "u": "tbsp",
+     "item": "toasted sesame oil",
+     "aisle": "international"
+    },
+    {
+     "q": 2,
+     "u": "",
+     "item": "large eggs",
+     "note": "beaten",
+     "aisle": "dairy"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "salt",
+     "aisle": "spices"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Simmer the beef, water and onion in a large pot, skimming off foam."
+    },
+    {
+     "text": "Cook the beef until very tender.",
+     "timer": 3600,
+     "timerLabel": "Simmer beef"
+    },
+    {
+     "text": "Lift out the beef. Shred it into strands and discard the onion."
+    },
+    {
+     "text": "Mix the beef with garlic, gochugaru, soy sauce and sesame oil."
+    },
+    {
+     "text": "Return it to the broth with the green onions, sprouts and fernbrake."
+    },
+    {
+     "text": "Simmer the soup.",
+     "timer": 900,
+     "timerLabel": "Simmer soup"
+    },
+    {
+     "text": "Stir in the beaten egg in a thin stream. Season with salt and serve with rice."
+    }
+   ]
+  },
+  {
+   "id": "korean-tteokguk",
+   "title": "Tteokguk (rice cake soup)",
+   "blurb": "Clear beef broth with chewy rice cake coins, a New Year tradition",
+   "type": "stews",
+   "serves": 4,
+   "prep": 15,
+   "cook": 30,
+   "tags": [
+    "holiday",
+    "kid-friendly"
+   ],
+   "ingredients": [
+    {
+     "q": 1,
+     "u": "lb",
+     "item": "sliced rice cakes (tteok)",
+     "aisle": "international"
+    },
+    {
+     "q": 0.5,
+     "u": "lb",
+     "item": "beef brisket or sirloin",
+     "note": "sliced",
+     "aisle": "meat"
+    },
+    {
+     "q": 8,
+     "u": "cup",
+     "item": "water",
+     "aisle": "pantry"
+    },
+    {
+     "q": 4,
+     "u": "clove",
+     "item": "garlic",
+     "note": "minced, divided",
+     "aisle": "produce"
+    },
+    {
+     "q": 3,
+     "u": "tbsp",
+     "item": "soy sauce",
+     "note": "divided",
+     "aisle": "international"
+    },
+    {
+     "q": 2,
+     "u": "tbsp",
+     "item": "toasted sesame oil",
+     "note": "divided",
+     "aisle": "international"
+    },
+    {
+     "q": 2,
+     "u": "tsp",
+     "item": "salt",
+     "aisle": "spices"
+    },
+    {
+     "q": 2,
+     "u": "",
+     "item": "large eggs",
+     "aisle": "dairy"
+    },
+    {
+     "q": 3,
+     "u": "",
+     "item": "green onions",
+     "note": "sliced",
+     "aisle": "produce"
+    },
+    {
+     "q": 1,
+     "u": "piece",
+     "item": "roasted seaweed sheet (gim)",
+     "note": "cut in thin strips",
+     "aisle": "international"
+    },
+    {
+     "q": null,
+     "u": "",
+     "item": "black pepper",
+     "aisle": "spices"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Soak the rice cakes in cold water 20 minutes, then drain."
+    },
+    {
+     "text": "Cook the beef in 1 tbsp sesame oil in a pot for 2 minutes. Add half the garlic and 1 tbsp soy sauce."
+    },
+    {
+     "text": "Add the water, bring to a boil, then simmer 15 minutes. Skim the foam."
+    },
+    {
+     "text": "Simmer the broth.",
+     "timer": 900,
+     "timerLabel": "Simmer broth"
+    },
+    {
+     "text": "Add the rice cakes, remaining soy sauce, garlic and salt."
+    },
+    {
+     "text": "Cook until the rice cakes float and are soft.",
+     "timer": 420,
+     "timerLabel": "Cook rice cakes"
+    },
+    {
+     "text": "Beat and scramble the eggs into a thin sheet, slice into ribbons. Top bowls with egg, green onions, seaweed and pepper."
+    }
+   ]
+  },
+  {
+   "id": "korean-miyeok-guk",
+   "title": "Miyeok guk (seaweed soup)",
+   "blurb": "Mild, comforting seaweed and beef soup, the classic birthday soup",
+   "type": "stews",
+   "serves": 4,
+   "prep": 20,
+   "cook": 40,
+   "tags": [
+    "healthy",
+    "holiday"
+   ],
+   "ingredients": [
+    {
+     "q": 0.5,
+     "u": "oz",
+     "item": "dried miyeok (wakame seaweed)",
+     "aisle": "international"
+    },
+    {
+     "q": 0.5,
+     "u": "lb",
+     "item": "beef brisket or sirloin",
+     "note": "thinly sliced",
+     "aisle": "meat"
+    },
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "toasted sesame oil",
+     "aisle": "international"
+    },
+    {
+     "q": 4,
+     "u": "clove",
+     "item": "garlic",
+     "note": "minced",
+     "aisle": "produce"
+    },
+    {
+     "q": 2,
+     "u": "tbsp",
+     "item": "soy sauce",
+     "aisle": "international"
+    },
+    {
+     "q": 7,
+     "u": "cup",
+     "item": "water",
+     "aisle": "pantry"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "salt",
+     "aisle": "spices"
+    },
+    {
+     "q": null,
+     "u": "",
+     "item": "black pepper",
+     "aisle": "spices"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Soak the seaweed in cold water until fully expanded.",
+     "timer": 1200,
+     "timerLabel": "Soak seaweed"
+    },
+    {
+     "text": "Drain, rinse and squeeze out the water. Cut into 2-inch pieces."
+    },
+    {
+     "text": "Heat the sesame oil in a pot. Cook the beef 3 minutes, then add the seaweed, garlic and soy sauce and stir 3 minutes."
+    },
+    {
+     "text": "Add the water and bring to a boil."
+    },
+    {
+     "text": "Simmer until the seaweed is silky and the beef tender.",
+     "timer": 1800,
+     "timerLabel": "Simmer soup"
+    },
+    {
+     "text": "Season with salt and pepper. Serve with rice."
+    }
+   ]
+  },
+  {
+   "id": "korean-tteokbokki",
+   "title": "Tteokbokki (spicy rice cakes)",
+   "blurb": "Chewy rice cakes and fish cakes in a sweet, spicy gochujang sauce",
+   "type": "stews",
+   "serves": 4,
+   "prep": 10,
+   "cook": 20,
+   "tags": [
+    "spicy",
+    "quick",
+    "kid-friendly"
+   ],
+   "ingredients": [
+    {
+     "q": 1,
+     "u": "lb",
+     "item": "cylinder rice cakes (tteok)",
+     "aisle": "international"
+    },
+    {
+     "q": 2,
+     "u": "cup",
+     "item": "water",
+     "aisle": "pantry"
+    },
+    {
+     "q": 3,
+     "u": "tbsp",
+     "item": "gochujang",
+     "aisle": "international"
+    },
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "gochugaru (Korean red pepper flakes)",
+     "aisle": "international"
+    },
+    {
+     "q": 2,
+     "u": "tbsp",
+     "item": "soy sauce",
+     "aisle": "international"
+    },
+    {
+     "q": 2,
+     "u": "tbsp",
+     "item": "sugar",
+     "aisle": "pantry"
+    },
+    {
+     "q": 4,
+     "u": "",
+     "item": "fish cakes (eomuk)",
+     "note": "cut in triangles",
+     "aisle": "frozen"
+    },
+    {
+     "q": 3,
+     "u": "",
+     "item": "green onions",
+     "note": "cut in 2-inch pieces",
+     "aisle": "produce"
+    },
+    {
+     "q": 3,
+     "u": "",
+     "item": "large eggs",
+     "note": "hard-boiled, peeled",
+     "aisle": "dairy"
+    },
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "toasted sesame seeds",
+     "aisle": "international"
+    }
+   ],
+   "steps": [
+    {
+     "text": "If the rice cakes are hard, soak them in warm water for 10 minutes and drain."
+    },
+    {
+     "text": "Whisk the water, gochujang, gochugaru, soy sauce and sugar in a wide pan and bring to a boil."
+    },
+    {
+     "text": "Add the rice cakes and fish cakes."
+    },
+    {
+     "text": "Simmer, stirring often, until the rice cakes are soft and the sauce is thick and glossy.",
+     "timer": 720,
+     "timerLabel": "Simmer tteokbokki"
+    },
+    {
+     "text": "Add the eggs and green onions and cook 2 minutes."
+    },
+    {
+     "text": "Top with sesame seeds and serve hot."
+    }
+   ]
+  },
+  {
+   "id": "korean-samgyetang",
+   "title": "Samgyetang (ginseng chicken soup)",
+   "blurb": "Whole small chicken stuffed with rice, simmered until falling-apart tender",
+   "type": "stews",
+   "serves": 2,
+   "prep": 20,
+   "cook": 75,
+   "tags": [
+    "healthy",
+    "holiday"
+   ],
+   "ingredients": [
+    {
+     "q": 2,
+     "u": "",
+     "item": "Cornish game hens (about 1.25 lb each)",
+     "aisle": "meat"
+    },
+    {
+     "q": 0.5,
+     "u": "cup",
+     "item": "sweet (glutinous) rice",
+     "note": "soaked 30 minutes",
+     "aisle": "international"
+    },
+    {
+     "q": 6,
+     "u": "clove",
+     "item": "garlic",
+     "note": "peeled, divided",
+     "aisle": "produce"
+    },
+    {
+     "q": 4,
+     "u": "",
+     "item": "jujubes (dried Korean dates)",
+     "aisle": "international"
+    },
+    {
+     "q": 1,
+     "u": "inch",
+     "item": "fresh ginger",
+     "note": "sliced",
+     "aisle": "produce"
+    },
+    {
+     "q": 1,
+     "u": "",
+     "item": "ginseng root, fresh or dried",
+     "note": "optional",
+     "aisle": "international"
+    },
+    {
+     "q": 8,
+     "u": "cup",
+     "item": "water",
+     "aisle": "pantry"
+    },
+    {
+     "q": 2,
+     "u": "",
+     "item": "green onions",
+     "note": "sliced",
+     "aisle": "produce"
+    },
+    {
+     "q": 2,
+     "u": "tsp",
+     "item": "salt",
+     "aisle": "spices"
+    },
+    {
+     "q": null,
+     "u": "",
+     "item": "black pepper",
+     "aisle": "spices"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Drain the rice. Fill each hen cavity with rice, 3 garlic cloves and 2 jujubes."
+    },
+    {
+     "text": "Tie the legs together with kitchen twine and cross them to hold the stuffing in."
+    },
+    {
+     "text": "Place the hens in a pot with the ginger, ginseng if using, and the water."
+    },
+    {
+     "text": "Bring to a boil, cover, then simmer on low until the rice is cooked and the chicken is 165°F.",
+     "timer": 3600,
+     "timerLabel": "Simmer hens"
+    },
+    {
+     "text": "Skim off foam. Season with salt and pepper."
+    },
+    {
+     "text": "Serve each hen in a bowl with broth, green onions and a small dish of salt and pepper."
+    }
+   ]
+  },
+  {
+   "id": "korean-yangnyeom-chicken",
+   "title": "Yangnyeom chicken (sweet-spicy fried chicken)",
+   "blurb": "Double-fried crunchy chicken tossed in a sticky gochujang glaze",
+   "type": "fried",
+   "serves": 4,
+   "prep": 20,
+   "cook": 40,
+   "tags": [
+    "spicy",
+    "crowd"
+   ],
+   "ingredients": [
+    {
+     "q": 3,
+     "u": "lb",
+     "item": "chicken wings or drumettes",
+     "aisle": "meat"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "salt",
+     "aisle": "spices"
+    },
+    {
+     "q": 0.5,
+     "u": "tsp",
+     "item": "black pepper",
+     "aisle": "spices"
+    },
+    {
+     "q": 0.5,
+     "u": "cup",
+     "item": "cornstarch",
+     "aisle": "pantry"
+    },
+    {
+     "q": 0.5,
+     "u": "cup",
+     "item": "all-purpose flour",
+     "aisle": "pantry"
+    },
+    {
+     "q": 1,
+     "u": "",
+     "item": "large eggs",
+     "aisle": "dairy"
+    },
+    {
+     "q": 0.5,
+     "u": "cup",
+     "item": "water",
+     "aisle": "pantry"
+    },
+    {
+     "q": null,
+     "u": "",
+     "item": "vegetable oil",
+     "note": "for frying, about 6 cups",
+     "aisle": "pantry"
+    },
+    {
+     "q": 4,
+     "u": "tbsp",
+     "item": "gochujang",
+     "aisle": "international"
+    },
+    {
+     "q": 3,
+     "u": "tbsp",
+     "item": "ketchup",
+     "aisle": "pantry"
+    },
+    {
+     "q": 3,
+     "u": "tbsp",
+     "item": "honey",
+     "aisle": "pantry"
+    },
+    {
+     "q": 2,
+     "u": "tbsp",
+     "item": "soy sauce",
+     "aisle": "international"
+    },
+    {
+     "q": 4,
+     "u": "clove",
+     "item": "garlic",
+     "note": "minced",
+     "aisle": "produce"
+    },
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "toasted sesame seeds",
+     "aisle": "international"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Pat the chicken dry. Season with salt and pepper. Mix cornstarch, flour, egg and water into a thin batter and coat the chicken."
+    },
+    {
+     "text": "Heat 2 inches of oil in a heavy pot to 340°F."
+    },
+    {
+     "text": "Fry the chicken in batches until light golden. Rest on a rack.",
+     "timer": 480,
+     "timerLabel": "First fry"
+    },
+    {
+     "text": "Raise the oil to 375°F."
+    },
+    {
+     "text": "Fry again until deep golden and very crisp. Chicken must reach 165°F.",
+     "timer": 210,
+     "timerLabel": "Second fry"
+    },
+    {
+     "text": "Simmer gochujang, ketchup, honey, soy sauce and garlic in a pan 2 minutes until sticky."
+    },
+    {
+     "text": "Toss the chicken in the sauce and sprinkle with sesame seeds."
+    }
+   ]
+  },
+  {
+   "id": "korean-soy-garlic-wings",
+   "title": "Soy-garlic chicken wings",
+   "blurb": "Crisp air-fried wings in a sweet soy and garlic glaze",
+   "type": "fried",
+   "serves": 4,
+   "prep": 10,
+   "cook": 30,
+   "tags": [
+    "air fryer",
+    "kid-friendly"
+   ],
+   "ingredients": [
+    {
+     "q": 3,
+     "u": "lb",
+     "item": "chicken wings",
+     "note": "split into flats and drumettes",
+     "aisle": "meat"
+    },
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "baking powder",
+     "aisle": "pantry"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "salt",
+     "aisle": "spices"
+    },
+    {
+     "q": 0.25,
+     "u": "cup",
+     "item": "soy sauce",
+     "aisle": "international"
+    },
+    {
+     "q": 0.25,
+     "u": "cup",
+     "item": "honey",
+     "aisle": "pantry"
+    },
+    {
+     "q": 2,
+     "u": "tbsp",
+     "item": "rice vinegar",
+     "aisle": "international"
+    },
+    {
+     "q": 6,
+     "u": "clove",
+     "item": "garlic",
+     "note": "minced",
+     "aisle": "produce"
+    },
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "vegetable oil",
+     "aisle": "pantry"
+    },
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "toasted sesame seeds",
+     "aisle": "international"
+    },
+    {
+     "q": 2,
+     "u": "",
+     "item": "green onions",
+     "note": "sliced",
+     "aisle": "produce"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Pat the wings dry. Toss with baking powder and salt."
+    },
+    {
+     "text": "Preheat the air fryer to 400°F. Arrange the wings in a single layer, in batches."
+    },
+    {
+     "text": "Air fry, flipping halfway, until crisp and 165°F inside.",
+     "timer": 1500,
+     "timerLabel": "Air fry wings"
+    },
+    {
+     "text": "Heat the oil in a small pan. Cook the garlic 30 seconds, then add soy sauce, honey and vinegar."
+    },
+    {
+     "text": "Simmer the glaze until syrupy.",
+     "timer": 300,
+     "timerLabel": "Reduce glaze"
+    },
+    {
+     "text": "Toss the wings in the glaze. Top with sesame seeds and green onions."
+    }
+   ]
+  },
+  {
+   "id": "korean-dakgangjeong",
+   "title": "Dakgangjeong (crunchy sweet chicken bites)",
+   "blurb": "Crispy chicken pieces in a sticky sweet soy glaze",
+   "type": "fried",
+   "serves": 4,
+   "prep": 20,
+   "cook": 25,
+   "tags": [
+    "kid-friendly"
+   ],
+   "ingredients": [
+    {
+     "q": 1.5,
+     "u": "lb",
+     "item": "boneless skinless chicken thighs",
+     "note": "cut in 1-inch pieces",
+     "aisle": "meat"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "salt",
+     "aisle": "spices"
+    },
+    {
+     "q": 0.5,
+     "u": "tsp",
+     "item": "black pepper",
+     "aisle": "spices"
+    },
+    {
+     "q": 0.75,
+     "u": "cup",
+     "item": "potato starch or cornstarch",
+     "aisle": "pantry"
+    },
+    {
+     "q": null,
+     "u": "",
+     "item": "vegetable oil",
+     "note": "for frying",
+     "aisle": "pantry"
+    },
+    {
+     "q": 3,
+     "u": "tbsp",
+     "item": "soy sauce",
+     "aisle": "international"
+    },
+    {
+     "q": 3,
+     "u": "tbsp",
+     "item": "sugar",
+     "aisle": "pantry"
+    },
+    {
+     "q": 3,
+     "u": "tbsp",
+     "item": "rice syrup or honey",
+     "aisle": "pantry"
+    },
+    {
+     "q": 3,
+     "u": "tbsp",
+     "item": "water",
+     "aisle": "pantry"
+    },
+    {
+     "q": 4,
+     "u": "clove",
+     "item": "garlic",
+     "note": "minced",
+     "aisle": "produce"
+    },
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "toasted sesame seeds",
+     "aisle": "international"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Season the chicken with salt and pepper. Toss in starch until coated."
+    },
+    {
+     "text": "Heat 1.5 inches of oil in a pot to 350°F."
+    },
+    {
+     "text": "Fry the chicken in batches until golden and 165°F inside.",
+     "timer": 360,
+     "timerLabel": "Fry chicken"
+    },
+    {
+     "text": "Cook the soy sauce, sugar, syrup, water and garlic in a pan over medium heat."
+    },
+    {
+     "text": "Simmer the sauce until it thickens and bubbles.",
+     "timer": 180,
+     "timerLabel": "Reduce sauce"
+    },
+    {
+     "text": "Toss the hot chicken in the sauce and sprinkle with sesame seeds."
+    }
+   ]
+  },
+  {
+   "id": "korean-kimchijeon",
+   "title": "Kimchijeon (kimchi pancake)",
+   "blurb": "Crispy-edged savory pancake with sour kimchi",
+   "type": "fried",
+   "serves": 4,
+   "prep": 10,
+   "cook": 15,
+   "tags": [
+    "quick",
+    "vegetarian"
+   ],
+   "ingredients": [
+    {
+     "q": 1.5,
+     "u": "cup",
+     "item": "kimchi",
+     "note": "chopped",
+     "aisle": "produce"
+    },
+    {
+     "q": 2,
+     "u": "tbsp",
+     "item": "kimchi juice",
+     "aisle": "produce"
+    },
+    {
+     "q": 1,
+     "u": "cup",
+     "item": "all-purpose flour",
+     "aisle": "pantry"
+    },
+    {
+     "q": 0.25,
+     "u": "cup",
+     "item": "cornstarch",
+     "aisle": "pantry"
+    },
+    {
+     "q": 1,
+     "u": "cup",
+     "item": "cold water",
+     "aisle": "pantry"
+    },
+    {
+     "q": 1,
+     "u": "",
+     "item": "large eggs",
+     "aisle": "dairy"
+    },
+    {
+     "q": 2,
+     "u": "",
+     "item": "green onions",
+     "note": "sliced",
+     "aisle": "produce"
+    },
+    {
+     "q": 0.5,
+     "u": "tsp",
+     "item": "sugar",
+     "aisle": "pantry"
+    },
+    {
+     "q": 3,
+     "u": "tbsp",
+     "item": "vegetable oil",
+     "note": "divided",
+     "aisle": "pantry"
+    },
+    {
+     "q": 2,
+     "u": "tbsp",
+     "item": "soy sauce",
+     "aisle": "international"
+    },
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "rice vinegar",
+     "aisle": "international"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Whisk flour, cornstarch, water, egg, kimchi juice and sugar until just smooth."
+    },
+    {
+     "text": "Fold in the kimchi and green onions."
+    },
+    {
+     "text": "Heat 1 tbsp oil in a nonstick skillet over medium-high heat. Spread half the batter thin."
+    },
+    {
+     "text": "Cook until the underside is deeply golden and crisp.",
+     "timer": 240,
+     "timerLabel": "Cook first side"
+    },
+    {
+     "text": "Flip, press down, and cook the other side 3 more minutes. Repeat with the rest."
+    },
+    {
+     "text": "Cut into squares. Mix soy sauce and vinegar for dipping."
+    }
+   ]
+  },
+  {
+   "id": "korean-pajeon",
+   "title": "Pajeon (green onion pancake)",
+   "blurb": "Chewy-crisp pancake loaded with green onions",
+   "type": "fried",
+   "serves": 4,
+   "prep": 10,
+   "cook": 15,
+   "tags": [
+    "quick",
+    "vegetarian"
+   ],
+   "ingredients": [
+    {
+     "q": 1,
+     "u": "cup",
+     "item": "all-purpose flour",
+     "aisle": "pantry"
+    },
+    {
+     "q": 0.5,
+     "u": "cup",
+     "item": "cornstarch",
+     "aisle": "pantry"
+    },
+    {
+     "q": 1.25,
+     "u": "cup",
+     "item": "cold water",
+     "aisle": "pantry"
+    },
+    {
+     "q": 1,
+     "u": "",
+     "item": "large eggs",
+     "aisle": "dairy"
+    },
+    {
+     "q": 0.5,
+     "u": "tsp",
+     "item": "salt",
+     "aisle": "spices"
+    },
+    {
+     "q": 1,
+     "u": "bunch",
+     "item": "green onions",
+     "note": "cut in 3-inch lengths",
+     "aisle": "produce"
+    },
+    {
+     "q": 3,
+     "u": "tbsp",
+     "item": "vegetable oil",
+     "note": "divided",
+     "aisle": "pantry"
+    },
+    {
+     "q": 3,
+     "u": "tbsp",
+     "item": "soy sauce",
+     "aisle": "international"
+    },
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "rice vinegar",
+     "aisle": "international"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "gochugaru (Korean red pepper flakes)",
+     "aisle": "international"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Whisk flour, cornstarch, water, egg and salt into a smooth batter, thin like crepe batter."
+    },
+    {
+     "text": "Heat 1 tbsp oil in a large nonstick skillet over medium-high heat. Lay half the green onions in the pan."
+    },
+    {
+     "text": "Pour half the batter over the onions to cover."
+    },
+    {
+     "text": "Cook until the bottom is golden and crisp.",
+     "timer": 240,
+     "timerLabel": "Cook first side"
+    },
+    {
+     "text": "Flip and cook 3 more minutes, pressing with a spatula. Repeat with the rest."
+    },
+    {
+     "text": "Mix soy sauce, vinegar and gochugaru as a dip. Cut the pancakes into squares."
+    }
+   ]
+  },
+  {
+   "id": "korean-haemul-pajeon",
+   "title": "Haemul pajeon (seafood scallion pancake)",
+   "blurb": "Shrimp and squid in a crisp scallion pancake",
+   "type": "fried",
+   "serves": 4,
+   "prep": 15,
+   "cook": 15,
+   "tags": [
+    "quick"
+   ],
+   "ingredients": [
+    {
+     "q": 1,
+     "u": "cup",
+     "item": "all-purpose flour",
+     "aisle": "pantry"
+    },
+    {
+     "q": 0.5,
+     "u": "cup",
+     "item": "cornstarch",
+     "aisle": "pantry"
+    },
+    {
+     "q": 1.25,
+     "u": "cup",
+     "item": "cold water",
+     "aisle": "pantry"
+    },
+    {
+     "q": 1,
+     "u": "",
+     "item": "large eggs",
+     "aisle": "dairy"
+    },
+    {
+     "q": 0.5,
+     "u": "tsp",
+     "item": "salt",
+     "aisle": "spices"
+    },
+    {
+     "q": 1,
+     "u": "bunch",
+     "item": "green onions",
+     "note": "cut in 3-inch lengths",
+     "aisle": "produce"
+    },
+    {
+     "q": 6,
+     "u": "oz",
+     "item": "small shrimp",
+     "note": "peeled, chopped",
+     "aisle": "seafood"
+    },
+    {
+     "q": 4,
+     "u": "oz",
+     "item": "cleaned squid",
+     "note": "chopped",
+     "aisle": "seafood"
+    },
+    {
+     "q": 3,
+     "u": "tbsp",
+     "item": "vegetable oil",
+     "note": "divided",
+     "aisle": "pantry"
+    },
+    {
+     "q": 3,
+     "u": "tbsp",
+     "item": "soy sauce",
+     "aisle": "international"
+    },
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "rice vinegar",
+     "aisle": "international"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "gochugaru (Korean red pepper flakes)",
+     "aisle": "international"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Whisk flour, cornstarch, water, egg and salt into a thin batter. Stir in the shrimp and squid."
+    },
+    {
+     "text": "Heat 1 tbsp oil in a large nonstick skillet over medium-high heat. Lay half the green onions in the pan."
+    },
+    {
+     "text": "Pour on half the batter and seafood, spreading to cover."
+    },
+    {
+     "text": "Cook until the bottom is crisp and golden.",
+     "timer": 240,
+     "timerLabel": "Cook first side"
+    },
+    {
+     "text": "Flip and cook 3 more minutes until the seafood is opaque. Repeat with the rest."
+    },
+    {
+     "text": "Mix soy sauce, vinegar and gochugaru. Serve with the pancake cut in squares."
+    }
+   ]
+  },
+  {
+   "id": "korean-gamjajeon",
+   "title": "Gamjajeon (potato pancakes)",
+   "blurb": "Grated potato pancakes, crisp outside and chewy inside",
+   "type": "fried",
+   "serves": 4,
+   "prep": 15,
+   "cook": 15,
+   "tags": [
+    "vegetarian",
+    "gluten-free"
+   ],
+   "ingredients": [
+    {
+     "q": 1.5,
+     "u": "lb",
+     "item": "russet potatoes",
+     "note": "peeled",
+     "aisle": "produce"
+    },
+    {
+     "q": 0.5,
+     "u": "",
+     "item": "yellow onion",
+     "note": "grated",
+     "aisle": "produce"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "salt",
+     "aisle": "spices"
+    },
+    {
+     "q": 1,
+     "u": "",
+     "item": "green onions",
+     "note": "minced",
+     "aisle": "produce"
+    },
+    {
+     "q": 0.25,
+     "u": "cup",
+     "item": "vegetable oil",
+     "note": "divided",
+     "aisle": "pantry"
+    },
+    {
+     "q": 2,
+     "u": "tbsp",
+     "item": "soy sauce",
+     "aisle": "international"
+    },
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "rice vinegar",
+     "aisle": "international"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Grate the potatoes on the small holes of a box grater into a bowl. Let them sit 5 minutes."
+    },
+    {
+     "text": "Pour off the thin liquid on top but keep the white starch at the bottom. Mix the starch back into the potato."
+    },
+    {
+     "text": "Stir in the onion, salt and green onions."
+    },
+    {
+     "text": "Heat 2 tbsp oil in a nonstick skillet over medium heat. Spoon in the batter and press into thin pancakes."
+    },
+    {
+     "text": "Cook until deep golden and crisp.",
+     "timer": 300,
+     "timerLabel": "Cook first side"
+    },
+    {
+     "text": "Flip, add a little oil, and cook 3 minutes more. Serve with soy-vinegar dip."
+    }
+   ]
+  },
+  {
+   "id": "korean-gun-mandu",
+   "title": "Gun-mandu (pan-fried dumplings)",
+   "blurb": "Crisp-bottomed pork and vegetable dumplings",
+   "type": "fried",
+   "serves": 4,
+   "prep": 40,
+   "cook": 15,
+   "tags": [
+    "make ahead",
+    "kid-friendly"
+   ],
+   "ingredients": [
+    {
+     "q": 24,
+     "u": "",
+     "item": "round dumpling wrappers",
+     "aisle": "international"
+    },
+    {
+     "q": 0.5,
+     "u": "lb",
+     "item": "ground pork",
+     "aisle": "meat"
+    },
+    {
+     "q": 1,
+     "u": "cup",
+     "item": "napa cabbage",
+     "note": "finely chopped, salted and squeezed dry",
+     "aisle": "produce"
+    },
+    {
+     "q": 4,
+     "u": "oz",
+     "item": "firm tofu",
+     "note": "crumbled and squeezed dry",
+     "aisle": "dairy"
+    },
+    {
+     "q": 2,
+     "u": "",
+     "item": "green onions",
+     "note": "minced",
+     "aisle": "produce"
+    },
+    {
+     "q": 2,
+     "u": "clove",
+     "item": "garlic",
+     "note": "minced",
+     "aisle": "produce"
+    },
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "soy sauce",
+     "note": "plus 3 tbsp for dipping",
+     "aisle": "international"
+    },
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "toasted sesame oil",
+     "aisle": "international"
+    },
+    {
+     "q": 2,
+     "u": "tbsp",
+     "item": "vegetable oil",
+     "aisle": "pantry"
+    },
+    {
+     "q": 0.25,
+     "u": "cup",
+     "item": "water",
+     "aisle": "pantry"
+    },
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "rice vinegar",
+     "aisle": "international"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Mix the pork, cabbage, tofu, green onions, garlic, 1 tbsp soy sauce and sesame oil until well combined."
+    },
+    {
+     "text": "Place 1 tbsp filling in the center of each wrapper. Wet the edge, fold in half and pinch tight."
+    },
+    {
+     "text": "Heat the oil in a large nonstick skillet over medium-high heat. Add dumplings flat-side down."
+    },
+    {
+     "text": "Cook until the bottoms are golden.",
+     "timer": 150,
+     "timerLabel": "Brown bottoms"
+    },
+    {
+     "text": "Add the water, cover quickly and steam until the water is gone."
+    },
+    {
+     "text": "Steam the dumplings.",
+     "timer": 240,
+     "timerLabel": "Steam dumplings"
+    },
+    {
+     "text": "Uncover and crisp 1 minute more. Pork must reach 160°F. Serve with soy sauce and vinegar to dip."
+    }
+   ]
+  },
+  {
+   "id": "korean-kongnamul-muchim",
+   "title": "Kongnamul muchim (seasoned soybean sprouts)",
+   "blurb": "Crunchy, nutty sprouts with garlic and sesame",
+   "type": "sides",
+   "serves": 6,
+   "prep": 5,
+   "cook": 10,
+   "tags": [
+    "quick",
+    "vegan",
+    "healthy"
+   ],
+   "ingredients": [
+    {
+     "q": 1,
+     "u": "lb",
+     "item": "soybean sprouts",
+     "aisle": "produce"
+    },
+    {
+     "q": 0.5,
+     "u": "cup",
+     "item": "water",
+     "aisle": "pantry"
+    },
+    {
+     "q": 2,
+     "u": "clove",
+     "item": "garlic",
+     "note": "minced",
+     "aisle": "produce"
+    },
+    {
+     "q": 2,
+     "u": "",
+     "item": "green onions",
+     "note": "minced",
+     "aisle": "produce"
+    },
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "toasted sesame oil",
+     "aisle": "international"
+    },
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "toasted sesame seeds",
+     "aisle": "international"
+    },
+    {
+     "q": 0.5,
+     "u": "tsp",
+     "item": "salt",
+     "aisle": "spices"
+    },
+    {
+     "q": 0.5,
+     "u": "tsp",
+     "item": "gochugaru (Korean red pepper flakes)",
+     "aisle": "international"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Rinse the sprouts and discard any loose bean hulls."
+    },
+    {
+     "text": "Put the sprouts and water in a pot, cover and bring to a boil."
+    },
+    {
+     "text": "Steam covered without lifting the lid, then drain and cool.",
+     "timer": 420,
+     "timerLabel": "Cook sprouts"
+    },
+    {
+     "text": "Toss the warm sprouts with garlic, green onions, sesame oil, seeds, salt and gochugaru."
+    },
+    {
+     "text": "Serve at room temperature or chilled."
+    }
+   ]
+  },
+  {
+   "id": "korean-sigeumchi-namul",
+   "title": "Sigeumchi namul (seasoned spinach)",
+   "blurb": "Quick-blanched spinach with sesame and garlic",
+   "type": "sides",
+   "serves": 4,
+   "prep": 5,
+   "cook": 5,
+   "tags": [
+    "quick",
+    "vegan",
+    "healthy"
+   ],
+   "ingredients": [
+    {
+     "q": 1,
+     "u": "lb",
+     "item": "fresh spinach",
+     "aisle": "produce"
+    },
+    {
+     "q": 1,
+     "u": "clove",
+     "item": "garlic",
+     "note": "minced",
+     "aisle": "produce"
+    },
+    {
+     "q": 1,
+     "u": "",
+     "item": "green onions",
+     "note": "minced",
+     "aisle": "produce"
+    },
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "soy sauce",
+     "aisle": "international"
+    },
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "toasted sesame oil",
+     "aisle": "international"
+    },
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "toasted sesame seeds",
+     "aisle": "international"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Bring a large pot of water to a boil."
+    },
+    {
+     "text": "Blanch the spinach until just wilted.",
+     "timer": 40,
+     "timerLabel": "Blanch spinach"
+    },
+    {
+     "text": "Plunge into ice water, then squeeze out as much water as you can."
+    },
+    {
+     "text": "Loosen the spinach and toss with garlic, green onions, soy sauce and sesame oil."
+    },
+    {
+     "text": "Sprinkle with sesame seeds and serve."
+    }
+   ]
+  },
+  {
+   "id": "korean-oi-muchim",
+   "title": "Oi muchim (spicy cucumber salad)",
+   "blurb": "Crisp, tangy cucumber in gochugaru dressing",
+   "type": "sides",
+   "serves": 4,
+   "prep": 10,
+   "cook": 10,
+   "tags": [
+    "quick",
+    "vegan",
+    "spicy"
+   ],
+   "ingredients": [
+    {
+     "q": 4,
+     "u": "",
+     "item": "Persian or Kirby cucumbers",
+     "note": "sliced 0.25 inch thick",
+     "aisle": "produce"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "salt",
+     "aisle": "spices"
+    },
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "gochugaru (Korean red pepper flakes)",
+     "aisle": "international"
+    },
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "rice vinegar",
+     "aisle": "international"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "sugar",
+     "aisle": "pantry"
+    },
+    {
+     "q": 2,
+     "u": "clove",
+     "item": "garlic",
+     "note": "minced",
+     "aisle": "produce"
+    },
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "toasted sesame oil",
+     "aisle": "international"
+    },
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "toasted sesame seeds",
+     "aisle": "international"
+    },
+    {
+     "q": 1,
+     "u": "",
+     "item": "green onions",
+     "note": "sliced",
+     "aisle": "produce"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Toss the cucumbers with the salt in a bowl."
+    },
+    {
+     "text": "Let sit, then squeeze out the liquid with your hands.",
+     "timer": 600,
+     "timerLabel": "Salt cucumbers"
+    },
+    {
+     "text": "Mix gochugaru, vinegar, sugar, garlic and sesame oil."
+    },
+    {
+     "text": "Toss the cucumbers with the dressing and green onions."
+    },
+    {
+     "text": "Top with sesame seeds. Eat within a day."
+    }
+   ]
+  },
+  {
+   "id": "korean-quick-kimchi",
+   "title": "Quick napa cabbage kimchi (geotjeori)",
+   "blurb": "Fresh kimchi you can eat the same day",
+   "type": "sides",
+   "serves": 8,
+   "prep": 25,
+   "cook": 60,
+   "tags": [
+    "vegan",
+    "make ahead",
+    "spicy"
+   ],
+   "ingredients": [
+    {
+     "q": 1,
+     "u": "head",
+     "item": "napa cabbage (about 2 lb)",
+     "note": "cut in 2-inch pieces",
+     "aisle": "produce"
+    },
+    {
+     "q": 0.25,
+     "u": "cup",
+     "item": "salt",
+     "aisle": "spices"
+    },
+    {
+     "q": 0.25,
+     "u": "cup",
+     "item": "gochugaru (Korean red pepper flakes)",
+     "aisle": "international"
+    },
+    {
+     "q": 2,
+     "u": "tbsp",
+     "item": "soy sauce",
+     "aisle": "international"
+    },
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "sugar",
+     "aisle": "pantry"
+    },
+    {
+     "q": 6,
+     "u": "clove",
+     "item": "garlic",
+     "note": "minced",
+     "aisle": "produce"
+    },
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "fresh ginger",
+     "note": "grated",
+     "aisle": "produce"
+    },
+    {
+     "q": 4,
+     "u": "",
+     "item": "green onions",
+     "note": "cut in 1-inch pieces",
+     "aisle": "produce"
+    },
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "toasted sesame seeds",
+     "aisle": "international"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Toss the cabbage with the salt in a large bowl. Let it sit, tossing every 15 minutes."
+    },
+    {
+     "text": "Salt the cabbage until bendy and wilted.",
+     "timer": 3600,
+     "timerLabel": "Salt cabbage"
+    },
+    {
+     "text": "Rinse the cabbage well 2 or 3 times under cold water, then squeeze dry."
+    },
+    {
+     "text": "Mix gochugaru, soy sauce, sugar, garlic and ginger into a paste."
+    },
+    {
+     "text": "Toss the cabbage with the paste and green onions, using gloves, until evenly coated."
+    },
+    {
+     "text": "Sprinkle with sesame seeds. Eat fresh, or pack into a jar and refrigerate up to 2 weeks."
+    }
+   ]
+  },
+  {
+   "id": "korean-gyeran-jjim",
+   "title": "Gyeran jjim (fluffy steamed egg)",
+   "blurb": "Bubbling, souffle-like savory egg in a pot",
+   "type": "sides",
+   "serves": 4,
+   "prep": 5,
+   "cook": 12,
+   "tags": [
+    "quick",
+    "kid-friendly",
+    "gluten-free"
+   ],
+   "ingredients": [
+    {
+     "q": 4,
+     "u": "",
+     "item": "large eggs",
+     "aisle": "dairy"
+    },
+    {
+     "q": 1,
+     "u": "cup",
+     "item": "water",
+     "aisle": "pantry"
+    },
+    {
+     "q": 0.75,
+     "u": "tsp",
+     "item": "salt",
+     "aisle": "spices"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "soy sauce",
+     "aisle": "international"
+    },
+    {
+     "q": 2,
+     "u": "",
+     "item": "green onions",
+     "note": "finely chopped",
+     "aisle": "produce"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "toasted sesame oil",
+     "aisle": "international"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "toasted sesame seeds",
+     "aisle": "international"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Beat the eggs with the salt until no streaks remain."
+    },
+    {
+     "text": "Whisk in the water and soy sauce, then pour through a sieve into a small heavy pot."
+    },
+    {
+     "text": "Cook over medium-low heat, stirring gently with a spoon, until the egg starts to set."
+    },
+    {
+     "text": "Stop stirring, cover and cook on low until puffed and set.",
+     "timer": 360,
+     "timerLabel": "Steam egg"
+    },
+    {
+     "text": "Top with green onions, sesame oil and sesame seeds. Serve in the pot."
+    }
+   ]
+  },
+  {
+   "id": "korean-gamja-jorim",
+   "title": "Gamja jorim (soy-braised potatoes)",
+   "blurb": "Tender potatoes in a sweet soy glaze",
+   "type": "sides",
+   "serves": 6,
+   "prep": 10,
+   "cook": 25,
+   "tags": [
+    "vegan",
+    "make ahead"
+   ],
+   "ingredients": [
+    {
+     "q": 1.5,
+     "u": "lb",
+     "item": "baby potatoes",
+     "note": "halved",
+     "aisle": "produce"
+    },
+    {
+     "q": 2,
+     "u": "tbsp",
+     "item": "vegetable oil",
+     "aisle": "pantry"
+    },
+    {
+     "q": 3,
+     "u": "tbsp",
+     "item": "soy sauce",
+     "aisle": "international"
+    },
+    {
+     "q": 2,
+     "u": "tbsp",
+     "item": "sugar",
+     "aisle": "pantry"
+    },
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "rice syrup or honey",
+     "aisle": "pantry"
+    },
+    {
+     "q": 0.75,
+     "u": "cup",
+     "item": "water",
+     "aisle": "pantry"
+    },
+    {
+     "q": 3,
+     "u": "clove",
+     "item": "garlic",
+     "note": "minced",
+     "aisle": "produce"
+    },
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "toasted sesame oil",
+     "aisle": "international"
+    },
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "toasted sesame seeds",
+     "aisle": "international"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Heat the vegetable oil in a wide pan over medium heat and brown the potatoes lightly, 4 minutes."
+    },
+    {
+     "text": "Add the soy sauce, sugar, water and garlic. Bring to a boil."
+    },
+    {
+     "text": "Cover and simmer until a knife slides in easily, stirring once or twice.",
+     "timer": 900,
+     "timerLabel": "Simmer potatoes"
+    },
+    {
+     "text": "Uncover and boil down until the glaze is thick and shiny."
+    },
+    {
+     "text": "Stir in the syrup and sesame oil. Top with sesame seeds."
+    }
+   ]
+  },
+  {
+   "id": "korean-dubu-jorim",
+   "title": "Dubu jorim (spicy braised tofu)",
+   "blurb": "Pan-seared tofu simmered in a savory-spicy sauce",
+   "type": "sides",
+   "serves": 4,
+   "prep": 10,
+   "cook": 20,
+   "tags": [
+    "vegan",
+    "spicy"
+   ],
+   "ingredients": [
+    {
+     "q": 14,
+     "u": "oz",
+     "item": "firm tofu",
+     "note": "sliced 0.5 inch thick",
+     "aisle": "dairy"
+    },
+    {
+     "q": 2,
+     "u": "tbsp",
+     "item": "vegetable oil",
+     "aisle": "pantry"
+    },
+    {
+     "q": 3,
+     "u": "tbsp",
+     "item": "soy sauce",
+     "aisle": "international"
+    },
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "gochugaru (Korean red pepper flakes)",
+     "aisle": "international"
+    },
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "sugar",
+     "aisle": "pantry"
+    },
+    {
+     "q": 2,
+     "u": "tbsp",
+     "item": "water",
+     "aisle": "pantry"
+    },
+    {
+     "q": 2,
+     "u": "clove",
+     "item": "garlic",
+     "note": "minced",
+     "aisle": "produce"
+    },
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "toasted sesame oil",
+     "aisle": "international"
+    },
+    {
+     "q": 2,
+     "u": "",
+     "item": "green onions",
+     "note": "sliced",
+     "aisle": "produce"
+    },
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "toasted sesame seeds",
+     "aisle": "international"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Pat the tofu very dry. Heat the oil in a nonstick skillet over medium-high heat."
+    },
+    {
+     "text": "Brown the tofu until golden on both sides, working in batches if needed.",
+     "timer": 480,
+     "timerLabel": "Brown tofu"
+    },
+    {
+     "text": "Mix soy sauce, gochugaru, sugar, water, garlic and sesame oil."
+    },
+    {
+     "text": "Return the tofu to the pan in one layer. Spoon the sauce over it."
+    },
+    {
+     "text": "Simmer on low, basting, until the sauce is thick.",
+     "timer": 360,
+     "timerLabel": "Simmer tofu"
+    },
+    {
+     "text": "Top with green onions and sesame seeds."
+    }
+   ]
+  },
+  {
+   "id": "korean-myeolchi-bokkeum",
+   "title": "Myeolchi bokkeum (sweet-salty anchovies)",
+   "blurb": "Crisp little anchovies in a sticky glaze, a classic lunchbox side",
+   "type": "sides",
+   "serves": 8,
+   "prep": 5,
+   "cook": 10,
+   "tags": [
+    "make ahead",
+    "kid-friendly"
+   ],
+   "ingredients": [
+    {
+     "q": 2,
+     "u": "cup",
+     "item": "dried small anchovies (jhan myeolchi)",
+     "aisle": "international"
+    },
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "vegetable oil",
+     "aisle": "pantry"
+    },
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "soy sauce",
+     "aisle": "international"
+    },
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "water",
+     "aisle": "pantry"
+    },
+    {
+     "q": 2,
+     "u": "tbsp",
+     "item": "honey",
+     "aisle": "pantry"
+    },
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "sugar",
+     "aisle": "pantry"
+    },
+    {
+     "q": 2,
+     "u": "clove",
+     "item": "garlic",
+     "note": "minced",
+     "aisle": "produce"
+    },
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "toasted sesame oil",
+     "aisle": "international"
+    },
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "toasted sesame seeds",
+     "aisle": "international"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Toast the anchovies in a dry nonstick skillet over medium heat until crisp, 3 minutes. Set aside."
+    },
+    {
+     "text": "Wipe out the pan. Add the oil, soy sauce, water, sugar and garlic."
+    },
+    {
+     "text": "Simmer the sauce until bubbly and a little thick.",
+     "timer": 90,
+     "timerLabel": "Simmer sauce"
+    },
+    {
+     "text": "Stir in the honey, then turn off the heat."
+    },
+    {
+     "text": "Add the anchovies and toss to coat. Mix in sesame oil and seeds."
+    },
+    {
+     "text": "Spread on parchment to cool so they do not stick."
+    }
+   ]
+  },
+  {
+   "id": "korean-gaji-namul",
+   "title": "Gaji namul (seasoned eggplant)",
+   "blurb": "Silky steamed eggplant strips with soy-garlic dressing",
+   "type": "sides",
+   "serves": 4,
+   "prep": 10,
+   "cook": 10,
+   "tags": [
+    "vegan",
+    "quick"
+   ],
+   "ingredients": [
+    {
+     "q": 1.5,
+     "u": "lb",
+     "item": "Asian eggplants",
+     "note": "halved lengthwise, cut in 3-inch pieces",
+     "aisle": "produce"
+    },
+    {
+     "q": 2,
+     "u": "tbsp",
+     "item": "soy sauce",
+     "aisle": "international"
+    },
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "toasted sesame oil",
+     "aisle": "international"
+    },
+    {
+     "q": 2,
+     "u": "clove",
+     "item": "garlic",
+     "note": "minced",
+     "aisle": "produce"
+    },
+    {
+     "q": 2,
+     "u": "",
+     "item": "green onions",
+     "note": "sliced",
+     "aisle": "produce"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "sugar",
+     "aisle": "pantry"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "gochugaru (Korean red pepper flakes)",
+     "aisle": "international"
+    },
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "toasted sesame seeds",
+     "aisle": "international"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Set a steamer over boiling water."
+    },
+    {
+     "text": "Steam the eggplant until very tender.",
+     "timer": 420,
+     "timerLabel": "Steam eggplant"
+    },
+    {
+     "text": "Let it cool, then tear into thick strips and gently squeeze out extra liquid."
+    },
+    {
+     "text": "Mix soy sauce, sesame oil, garlic, green onions, sugar and gochugaru."
+    },
+    {
+     "text": "Toss with the eggplant and sprinkle with sesame seeds."
+    }
+   ]
+  }
+ ]
+}

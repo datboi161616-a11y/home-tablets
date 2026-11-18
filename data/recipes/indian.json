@@ -1,0 +1,6459 @@
+{
+ "id": "indian",
+ "name": "Indian",
+ "types": [
+  {
+   "id": "chicken",
+   "name": "Chicken curries"
+  },
+  {
+   "id": "veg",
+   "name": "Vegetable curries"
+  },
+  {
+   "id": "dal",
+   "name": "Lentils & beans"
+  },
+  {
+   "id": "rice",
+   "name": "Rice & biryani"
+  },
+  {
+   "id": "grill",
+   "name": "Tandoori & grill"
+  },
+  {
+   "id": "sides",
+   "name": "Breads, chutneys & sides"
+  }
+ ],
+ "recipes": [
+  {
+   "id": "indian-butter-chicken",
+   "title": "Butter chicken",
+   "blurb": "Tender chicken in a silky tomato-cream sauce",
+   "type": "chicken",
+   "serves": 4,
+   "prep": 25,
+   "cook": 45,
+   "tags": [
+    "kid-friendly",
+    "gluten-free"
+   ],
+   "ingredients": [
+    {
+     "q": 2,
+     "u": "lb",
+     "item": "boneless skinless chicken thighs",
+     "aisle": "meat",
+     "note": "cut in 1-inch pieces"
+    },
+    {
+     "q": 0.5,
+     "u": "cup",
+     "item": "plain whole milk yogurt",
+     "aisle": "dairy"
+    },
+    {
+     "q": 1,
+     "u": "",
+     "item": "lemon",
+     "aisle": "produce",
+     "note": "juiced"
+    },
+    {
+     "q": 2,
+     "u": "tsp",
+     "item": "garam masala",
+     "aisle": "spices",
+     "note": "divided"
+    },
+    {
+     "q": 2,
+     "u": "tsp",
+     "item": "paprika",
+     "aisle": "spices"
+    },
+    {
+     "q": 4,
+     "u": "clove",
+     "item": "garlic",
+     "aisle": "produce",
+     "note": "minced"
+    },
+    {
+     "q": 2,
+     "u": "inch",
+     "item": "fresh ginger",
+     "aisle": "produce",
+     "note": "grated"
+    },
+    {
+     "q": 3,
+     "u": "tbsp",
+     "item": "unsalted butter",
+     "aisle": "dairy",
+     "note": "divided"
+    },
+    {
+     "q": 1,
+     "u": "",
+     "item": "yellow onion",
+     "aisle": "produce",
+     "note": "finely diced"
+    },
+    {
+     "q": 1,
+     "u": "can",
+     "item": "crushed tomatoes (14.5 oz)",
+     "aisle": "canned"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "ground cumin",
+     "aisle": "spices"
+    },
+    {
+     "q": 0.5,
+     "u": "cup",
+     "item": "water",
+     "aisle": "pantry"
+    },
+    {
+     "q": 0.75,
+     "u": "cup",
+     "item": "heavy cream",
+     "aisle": "dairy"
+    },
+    {
+     "q": 1.5,
+     "u": "tsp",
+     "item": "salt",
+     "aisle": "spices"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Mix the chicken with yogurt, lemon juice, 1 tsp garam masala, paprika, half the garlic and ginger, and 1 tsp salt.",
+     "timer": 1800,
+     "timerLabel": "Marinate"
+    },
+    {
+     "text": "Melt 1 tbsp butter in a large skillet over medium-high heat. Brown the chicken in two batches, about 4 minutes each, and set aside."
+    },
+    {
+     "text": "Melt the remaining butter in the same pan. Cook the onion until soft and golden.",
+     "timer": 420,
+     "timerLabel": "Cook the onion"
+    },
+    {
+     "text": "Stir in the rest of the garlic, ginger, cumin and garam masala for 1 minute."
+    },
+    {
+     "text": "Add the tomatoes, water and 0.5 tsp salt. Simmer until thick.",
+     "timer": 900,
+     "timerLabel": "Simmer the sauce"
+    },
+    {
+     "text": "Return the chicken and stir in the cream. Simmer until the chicken reaches 165°F.",
+     "timer": 600,
+     "timerLabel": "Finish the chicken"
+    },
+    {
+     "text": "Taste for salt and serve with basmati rice or naan."
+    }
+   ]
+  },
+  {
+   "id": "indian-chicken-tikka-masala",
+   "title": "Chicken tikka masala",
+   "blurb": "Charred marinated chicken in a spiced tomato sauce",
+   "type": "chicken",
+   "serves": 4,
+   "prep": 25,
+   "cook": 45,
+   "tags": [
+    "gluten-free"
+   ],
+   "ingredients": [
+    {
+     "q": 2,
+     "u": "lb",
+     "item": "boneless skinless chicken breasts",
+     "aisle": "meat",
+     "note": "cut in 1.5-inch pieces"
+    },
+    {
+     "q": 0.75,
+     "u": "cup",
+     "item": "plain whole milk yogurt",
+     "aisle": "dairy",
+     "note": "divided"
+    },
+    {
+     "q": 2,
+     "u": "tbsp",
+     "item": "garam masala",
+     "aisle": "spices",
+     "note": "divided"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "ground turmeric",
+     "aisle": "spices"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "cayenne pepper",
+     "aisle": "spices"
+    },
+    {
+     "q": 5,
+     "u": "clove",
+     "item": "garlic",
+     "aisle": "produce",
+     "note": "minced"
+    },
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "fresh ginger",
+     "aisle": "produce",
+     "note": "grated"
+    },
+    {
+     "q": 2,
+     "u": "tbsp",
+     "item": "vegetable oil",
+     "aisle": "pantry",
+     "note": "divided"
+    },
+    {
+     "q": 1,
+     "u": "",
+     "item": "yellow onion",
+     "aisle": "produce",
+     "note": "diced"
+    },
+    {
+     "q": 1,
+     "u": "can",
+     "item": "tomato sauce (15 oz)",
+     "aisle": "canned"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "ground cumin",
+     "aisle": "spices"
+    },
+    {
+     "q": 0.5,
+     "u": "cup",
+     "item": "heavy cream",
+     "aisle": "dairy"
+    },
+    {
+     "q": 2,
+     "u": "tsp",
+     "item": "salt",
+     "aisle": "spices"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Toss the chicken with half the yogurt, 1 tbsp garam masala, turmeric, cayenne, half the garlic and 1 tsp salt.",
+     "timer": 1800,
+     "timerLabel": "Marinate"
+    },
+    {
+     "text": "Heat 1 tbsp oil in a large skillet over high heat. Sear the chicken until charred in spots, about 3 minutes per side. Set aside."
+    },
+    {
+     "text": "Add 1 tbsp oil and the onion. Cook until soft.",
+     "timer": 360,
+     "timerLabel": "Cook the onion"
+    },
+    {
+     "text": "Stir in the remaining garlic, ginger, cumin and 1 tbsp garam masala for 1 minute."
+    },
+    {
+     "text": "Add the tomato sauce and 1 tsp salt. Simmer until thickened.",
+     "timer": 600,
+     "timerLabel": "Simmer the sauce"
+    },
+    {
+     "text": "Stir in the cream and remaining yogurt off the heat, then add the chicken."
+    },
+    {
+     "text": "Simmer gently until the chicken reaches 165°F. Serve with rice.",
+     "timer": 480,
+     "timerLabel": "Finish the chicken"
+    }
+   ]
+  },
+  {
+   "id": "indian-chicken-korma",
+   "title": "Chicken korma",
+   "blurb": "Mild, creamy cashew and yogurt curry",
+   "type": "chicken",
+   "serves": 4,
+   "prep": 20,
+   "cook": 40,
+   "tags": [
+    "kid-friendly",
+    "gluten-free"
+   ],
+   "ingredients": [
+    {
+     "q": 2,
+     "u": "lb",
+     "item": "boneless skinless chicken thighs",
+     "aisle": "meat",
+     "note": "cut in 1.5-inch pieces"
+    },
+    {
+     "q": 0.5,
+     "u": "cup",
+     "item": "raw cashews",
+     "aisle": "pantry"
+    },
+    {
+     "q": 0.5,
+     "u": "cup",
+     "item": "water",
+     "aisle": "pantry",
+     "note": "hot"
+    },
+    {
+     "q": 2,
+     "u": "tbsp",
+     "item": "ghee",
+     "aisle": "international"
+    },
+    {
+     "q": 1,
+     "u": "",
+     "item": "yellow onion",
+     "aisle": "produce",
+     "note": "thinly sliced"
+    },
+    {
+     "q": 4,
+     "u": "clove",
+     "item": "garlic",
+     "aisle": "produce",
+     "note": "minced"
+    },
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "fresh ginger",
+     "aisle": "produce",
+     "note": "grated"
+    },
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "ground coriander",
+     "aisle": "spices"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "ground cumin",
+     "aisle": "spices"
+    },
+    {
+     "q": 0.5,
+     "u": "tsp",
+     "item": "ground turmeric",
+     "aisle": "spices"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "garam masala",
+     "aisle": "spices"
+    },
+    {
+     "q": 0.5,
+     "u": "cup",
+     "item": "plain whole milk yogurt",
+     "aisle": "dairy"
+    },
+    {
+     "q": 0.5,
+     "u": "cup",
+     "item": "heavy cream",
+     "aisle": "dairy"
+    },
+    {
+     "q": 1,
+     "u": "cup",
+     "item": "water",
+     "aisle": "pantry"
+    },
+    {
+     "q": 1.5,
+     "u": "tsp",
+     "item": "salt",
+     "aisle": "spices"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Soak the cashews in the hot water, then blend into a smooth paste."
+    },
+    {
+     "text": "Heat ghee in a Dutch oven over medium heat. Cook the onion until golden.",
+     "timer": 600,
+     "timerLabel": "Brown the onion"
+    },
+    {
+     "text": "Add garlic, ginger, coriander, cumin and turmeric. Stir for 1 minute."
+    },
+    {
+     "text": "Add the chicken and salt. Stir for 3 minutes to coat."
+    },
+    {
+     "text": "Stir in the cashew paste, yogurt and water. Cover and simmer until the chicken reaches 165°F.",
+     "timer": 1200,
+     "timerLabel": "Simmer covered"
+    },
+    {
+     "text": "Stir in the cream and garam masala. Simmer uncovered until silky.",
+     "timer": 300,
+     "timerLabel": "Finish the sauce"
+    }
+   ]
+  },
+  {
+   "id": "indian-home-style-chicken-curry",
+   "title": "Home-style chicken curry",
+   "blurb": "Everyday bone-in chicken curry with onion and tomato",
+   "type": "chicken",
+   "serves": 6,
+   "prep": 20,
+   "cook": 50,
+   "tags": [
+    "gluten-free"
+   ],
+   "ingredients": [
+    {
+     "q": 3,
+     "u": "lb",
+     "item": "bone-in skin-on chicken thighs",
+     "aisle": "meat",
+     "note": "skin removed"
+    },
+    {
+     "q": 3,
+     "u": "tbsp",
+     "item": "vegetable oil",
+     "aisle": "pantry"
+    },
+    {
+     "q": 2,
+     "u": "",
+     "item": "yellow onion",
+     "aisle": "produce",
+     "note": "finely chopped"
+    },
+    {
+     "q": 5,
+     "u": "clove",
+     "item": "garlic",
+     "aisle": "produce",
+     "note": "minced"
+    },
+    {
+     "q": 2,
+     "u": "inch",
+     "item": "fresh ginger",
+     "aisle": "produce",
+     "note": "grated"
+    },
+    {
+     "q": 2,
+     "u": "",
+     "item": "roma tomatoes",
+     "aisle": "produce",
+     "note": "chopped"
+    },
+    {
+     "q": 2,
+     "u": "tsp",
+     "item": "ground coriander",
+     "aisle": "spices"
+    },
+    {
+     "q": 2,
+     "u": "tsp",
+     "item": "ground cumin",
+     "aisle": "spices"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "ground turmeric",
+     "aisle": "spices"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "cayenne pepper",
+     "aisle": "spices"
+    },
+    {
+     "q": 1,
+     "u": "cup",
+     "item": "water",
+     "aisle": "pantry"
+    },
+    {
+     "q": 2,
+     "u": "tsp",
+     "item": "garam masala",
+     "aisle": "spices"
+    },
+    {
+     "q": 2,
+     "u": "tsp",
+     "item": "salt",
+     "aisle": "spices"
+    },
+    {
+     "q": 0.25,
+     "u": "bunch",
+     "item": "fresh cilantro",
+     "aisle": "produce",
+     "note": "chopped"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Heat the oil in a Dutch oven over medium heat. Cook the onions until deep golden brown.",
+     "timer": 900,
+     "timerLabel": "Brown the onions"
+    },
+    {
+     "text": "Add garlic and ginger. Stir for 1 minute."
+    },
+    {
+     "text": "Add tomatoes, coriander, cumin, turmeric, cayenne and salt. Cook until the tomatoes break down into a paste.",
+     "timer": 480,
+     "timerLabel": "Cook the masala"
+    },
+    {
+     "text": "Add the chicken and stir to coat in the masala for 3 minutes."
+    },
+    {
+     "text": "Pour in the water, cover and simmer until the chicken reaches 175°F at the bone.",
+     "timer": 1800,
+     "timerLabel": "Simmer covered"
+    },
+    {
+     "text": "Stir in the garam masala and cilantro. Serve with rice or roti."
+    }
+   ]
+  },
+  {
+   "id": "indian-chicken-vindaloo",
+   "title": "Chicken vindaloo",
+   "blurb": "Tangy, fiery Goan curry with vinegar and chiles",
+   "type": "chicken",
+   "serves": 4,
+   "prep": 20,
+   "cook": 45,
+   "tags": [
+    "spicy",
+    "make ahead"
+   ],
+   "ingredients": [
+    {
+     "q": 2,
+     "u": "lb",
+     "item": "boneless skinless chicken thighs",
+     "aisle": "meat",
+     "note": "cut in 1.5-inch pieces"
+    },
+    {
+     "q": 4,
+     "u": "tbsp",
+     "item": "red wine vinegar",
+     "aisle": "pantry",
+     "note": "divided"
+    },
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "paprika",
+     "aisle": "spices"
+    },
+    {
+     "q": 2,
+     "u": "tsp",
+     "item": "cayenne pepper",
+     "aisle": "spices"
+    },
+    {
+     "q": 2,
+     "u": "tsp",
+     "item": "ground cumin",
+     "aisle": "spices"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "ground turmeric",
+     "aisle": "spices"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "black pepper",
+     "aisle": "spices"
+    },
+    {
+     "q": 6,
+     "u": "clove",
+     "item": "garlic",
+     "aisle": "produce",
+     "note": "minced"
+    },
+    {
+     "q": 2,
+     "u": "inch",
+     "item": "fresh ginger",
+     "aisle": "produce",
+     "note": "grated"
+    },
+    {
+     "q": 3,
+     "u": "tbsp",
+     "item": "vegetable oil",
+     "aisle": "pantry"
+    },
+    {
+     "q": 2,
+     "u": "",
+     "item": "yellow onion",
+     "aisle": "produce",
+     "note": "finely chopped"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "sugar",
+     "aisle": "pantry"
+    },
+    {
+     "q": 1,
+     "u": "cup",
+     "item": "water",
+     "aisle": "pantry"
+    },
+    {
+     "q": 2,
+     "u": "tsp",
+     "item": "salt",
+     "aisle": "spices"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Mix the chicken with 2 tbsp vinegar, paprika, cayenne, cumin, turmeric, pepper, garlic, ginger and 1 tsp salt.",
+     "timer": 1800,
+     "timerLabel": "Marinate"
+    },
+    {
+     "text": "Heat the oil in a Dutch oven over medium heat. Cook the onions until golden brown.",
+     "timer": 600,
+     "timerLabel": "Brown the onions"
+    },
+    {
+     "text": "Add the chicken with all its marinade. Stir for 5 minutes."
+    },
+    {
+     "text": "Add the remaining vinegar, sugar, 1 tsp salt and the water."
+    },
+    {
+     "text": "Cover and simmer until the chicken reaches 165°F and the sauce is thick.",
+     "timer": 1500,
+     "timerLabel": "Simmer covered"
+    },
+    {
+     "text": "Serve with basmati rice and a cool cucumber raita."
+    }
+   ]
+  },
+  {
+   "id": "indian-palak-chicken",
+   "title": "Palak chicken",
+   "blurb": "Chicken simmered in a spiced spinach sauce",
+   "type": "chicken",
+   "serves": 4,
+   "prep": 20,
+   "cook": 35,
+   "tags": [
+    "healthy",
+    "gluten-free"
+   ],
+   "ingredients": [
+    {
+     "q": 1.5,
+     "u": "lb",
+     "item": "boneless skinless chicken thighs",
+     "aisle": "meat",
+     "note": "cut in 1.5-inch pieces"
+    },
+    {
+     "q": 1,
+     "u": "lb",
+     "item": "fresh baby spinach",
+     "aisle": "produce"
+    },
+    {
+     "q": 2,
+     "u": "tbsp",
+     "item": "vegetable oil",
+     "aisle": "pantry"
+    },
+    {
+     "q": 1,
+     "u": "",
+     "item": "yellow onion",
+     "aisle": "produce",
+     "note": "chopped"
+    },
+    {
+     "q": 4,
+     "u": "clove",
+     "item": "garlic",
+     "aisle": "produce",
+     "note": "minced"
+    },
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "fresh ginger",
+     "aisle": "produce",
+     "note": "grated"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "ground cumin",
+     "aisle": "spices"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "ground coriander",
+     "aisle": "spices"
+    },
+    {
+     "q": 0.5,
+     "u": "tsp",
+     "item": "ground turmeric",
+     "aisle": "spices"
+    },
+    {
+     "q": 1,
+     "u": "",
+     "item": "serrano chile",
+     "aisle": "produce",
+     "note": "minced"
+    },
+    {
+     "q": 0.5,
+     "u": "cup",
+     "item": "water",
+     "aisle": "pantry"
+    },
+    {
+     "q": 0.25,
+     "u": "cup",
+     "item": "heavy cream",
+     "aisle": "dairy"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "garam masala",
+     "aisle": "spices"
+    },
+    {
+     "q": 1.5,
+     "u": "tsp",
+     "item": "salt",
+     "aisle": "spices"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Wilt the spinach in a large pot with a splash of water. Cool, then blend until smooth.",
+     "timer": 180,
+     "timerLabel": "Wilt the spinach"
+    },
+    {
+     "text": "Heat the oil in a large pan over medium heat. Cook the onion until golden.",
+     "timer": 480,
+     "timerLabel": "Cook the onion"
+    },
+    {
+     "text": "Add garlic, ginger, chile, cumin, coriander, turmeric and salt. Stir for 1 minute."
+    },
+    {
+     "text": "Add the chicken. Cook, stirring, until no longer pink outside, about 5 minutes."
+    },
+    {
+     "text": "Stir in the spinach puree and water. Cover and simmer until the chicken reaches 165°F.",
+     "timer": 1200,
+     "timerLabel": "Simmer covered"
+    },
+    {
+     "text": "Stir in the cream and garam masala. Serve with rice."
+    }
+   ]
+  },
+  {
+   "id": "indian-kadai-chicken",
+   "title": "Kadai chicken",
+   "blurb": "Peppers and chicken in a bold, freshly toasted spice masala",
+   "type": "chicken",
+   "serves": 4,
+   "prep": 20,
+   "cook": 35,
+   "tags": [
+    "gluten-free"
+   ],
+   "ingredients": [
+    {
+     "q": 1.5,
+     "u": "lb",
+     "item": "boneless skinless chicken thighs",
+     "aisle": "meat",
+     "note": "cut in 1.5-inch pieces"
+    },
+    {
+     "q": 2,
+     "u": "tbsp",
+     "item": "vegetable oil",
+     "aisle": "pantry"
+    },
+    {
+     "q": 1,
+     "u": "",
+     "item": "yellow onion",
+     "aisle": "produce",
+     "note": "sliced"
+    },
+    {
+     "q": 1,
+     "u": "",
+     "item": "green bell pepper",
+     "aisle": "produce",
+     "note": "cut in strips"
+    },
+    {
+     "q": 4,
+     "u": "clove",
+     "item": "garlic",
+     "aisle": "produce",
+     "note": "minced"
+    },
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "fresh ginger",
+     "aisle": "produce",
+     "note": "grated"
+    },
+    {
+     "q": 2,
+     "u": "",
+     "item": "roma tomatoes",
+     "aisle": "produce",
+     "note": "chopped"
+    },
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "ground coriander",
+     "aisle": "spices"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "cumin seeds",
+     "aisle": "spices"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "cayenne pepper",
+     "aisle": "spices"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "garam masala",
+     "aisle": "spices"
+    },
+    {
+     "q": 0.5,
+     "u": "cup",
+     "item": "water",
+     "aisle": "pantry"
+    },
+    {
+     "q": 1.5,
+     "u": "tsp",
+     "item": "salt",
+     "aisle": "spices"
+    },
+    {
+     "q": 0.25,
+     "u": "bunch",
+     "item": "fresh cilantro",
+     "aisle": "produce",
+     "note": "chopped"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Toast the cumin seeds and coriander in a dry pan for 1 minute until fragrant. Set aside."
+    },
+    {
+     "text": "Heat the oil in a large skillet over medium-high heat. Brown the chicken, about 5 minutes. Set aside."
+    },
+    {
+     "text": "Cook the onion in the same pan until soft. Add garlic and ginger for 1 minute.",
+     "timer": 300,
+     "timerLabel": "Cook the onion"
+    },
+    {
+     "text": "Add tomatoes, cayenne, salt and the toasted spices. Cook until jammy.",
+     "timer": 420,
+     "timerLabel": "Cook the masala"
+    },
+    {
+     "text": "Return the chicken, add the water and bell pepper. Cover and simmer until the chicken reaches 165°F.",
+     "timer": 900,
+     "timerLabel": "Simmer covered"
+    },
+    {
+     "text": "Stir in garam masala and cilantro. Serve with naan."
+    }
+   ]
+  },
+  {
+   "id": "indian-chicken-jalfrezi",
+   "title": "Chicken jalfrezi",
+   "blurb": "Quick stir-fried curry with peppers and onions",
+   "type": "chicken",
+   "serves": 4,
+   "prep": 15,
+   "cook": 25,
+   "tags": [
+    "quick",
+    "spicy",
+    "gluten-free"
+   ],
+   "ingredients": [
+    {
+     "q": 1.5,
+     "u": "lb",
+     "item": "boneless skinless chicken breasts",
+     "aisle": "meat",
+     "note": "cut in 1-inch strips"
+    },
+    {
+     "q": 2,
+     "u": "tbsp",
+     "item": "vegetable oil",
+     "aisle": "pantry"
+    },
+    {
+     "q": 1,
+     "u": "",
+     "item": "yellow onion",
+     "aisle": "produce",
+     "note": "cut in wedges"
+    },
+    {
+     "q": 1,
+     "u": "",
+     "item": "red bell pepper",
+     "aisle": "produce",
+     "note": "cut in strips"
+    },
+    {
+     "q": 1,
+     "u": "",
+     "item": "green bell pepper",
+     "aisle": "produce",
+     "note": "cut in strips"
+    },
+    {
+     "q": 3,
+     "u": "clove",
+     "item": "garlic",
+     "aisle": "produce",
+     "note": "minced"
+    },
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "fresh ginger",
+     "aisle": "produce",
+     "note": "grated"
+    },
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "ground cumin",
+     "aisle": "spices"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "ground turmeric",
+     "aisle": "spices"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "cayenne pepper",
+     "aisle": "spices"
+    },
+    {
+     "q": 1,
+     "u": "can",
+     "item": "crushed tomatoes (14.5 oz)",
+     "aisle": "canned"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "garam masala",
+     "aisle": "spices"
+    },
+    {
+     "q": 1.5,
+     "u": "tsp",
+     "item": "salt",
+     "aisle": "spices"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Heat the oil in a large skillet over high heat. Sear the chicken strips until browned, about 4 minutes. Set aside.",
+     "timer": 240,
+     "timerLabel": "Sear the chicken"
+    },
+    {
+     "text": "Add the onion and peppers. Stir-fry until just crisp-tender.",
+     "timer": 240,
+     "timerLabel": "Stir-fry the vegetables"
+    },
+    {
+     "text": "Add garlic, ginger, cumin, turmeric, cayenne and salt. Stir for 1 minute."
+    },
+    {
+     "text": "Pour in the tomatoes and simmer until thick.",
+     "timer": 480,
+     "timerLabel": "Simmer the sauce"
+    },
+    {
+     "text": "Return the chicken. Cook until it reaches 165°F, about 4 minutes.",
+     "timer": 240,
+     "timerLabel": "Finish the chicken"
+    },
+    {
+     "text": "Stir in garam masala. Serve with rice or roti."
+    }
+   ]
+  },
+  {
+   "id": "indian-kerala-coconut-chicken-curry",
+   "title": "Kerala coconut chicken curry",
+   "blurb": "Southern curry with coconut milk and black pepper",
+   "type": "chicken",
+   "serves": 4,
+   "prep": 15,
+   "cook": 40,
+   "tags": [
+    "gluten-free"
+   ],
+   "ingredients": [
+    {
+     "q": 2,
+     "u": "lb",
+     "item": "boneless skinless chicken thighs",
+     "aisle": "meat",
+     "note": "cut in 1.5-inch pieces"
+    },
+    {
+     "q": 2,
+     "u": "tbsp",
+     "item": "vegetable oil",
+     "aisle": "pantry"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "mustard seeds",
+     "aisle": "spices"
+    },
+    {
+     "q": 1,
+     "u": "",
+     "item": "yellow onion",
+     "aisle": "produce",
+     "note": "sliced"
+    },
+    {
+     "q": 4,
+     "u": "clove",
+     "item": "garlic",
+     "aisle": "produce",
+     "note": "minced"
+    },
+    {
+     "q": 2,
+     "u": "inch",
+     "item": "fresh ginger",
+     "aisle": "produce",
+     "note": "grated"
+    },
+    {
+     "q": 1,
+     "u": "",
+     "item": "serrano chile",
+     "aisle": "produce",
+     "note": "slit lengthwise"
+    },
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "ground coriander",
+     "aisle": "spices"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "ground turmeric",
+     "aisle": "spices"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "black pepper",
+     "aisle": "spices"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "cayenne pepper",
+     "aisle": "spices"
+    },
+    {
+     "q": 1,
+     "u": "",
+     "item": "yellow potato",
+     "aisle": "produce",
+     "note": "cut in 1-inch cubes"
+    },
+    {
+     "q": 1,
+     "u": "can",
+     "item": "coconut milk (13.5 oz)",
+     "aisle": "canned"
+    },
+    {
+     "q": 0.5,
+     "u": "cup",
+     "item": "water",
+     "aisle": "pantry"
+    },
+    {
+     "q": 2,
+     "u": "tsp",
+     "item": "salt",
+     "aisle": "spices"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Heat the oil in a Dutch oven over medium heat. Add the mustard seeds until they pop, about 30 seconds.",
+     "timer": 30,
+     "timerLabel": "Pop the seeds"
+    },
+    {
+     "text": "Add the onion, garlic, ginger and chile. Cook until soft.",
+     "timer": 420,
+     "timerLabel": "Cook the onion"
+    },
+    {
+     "text": "Stir in coriander, turmeric, black pepper, cayenne and salt for 1 minute."
+    },
+    {
+     "text": "Add the chicken, potato, coconut milk and water. Bring to a simmer."
+    },
+    {
+     "text": "Cover and cook until the chicken reaches 165°F and the potato is tender.",
+     "timer": 1500,
+     "timerLabel": "Simmer covered"
+    },
+    {
+     "text": "Serve with rice or flatbread."
+    }
+   ]
+  },
+  {
+   "id": "indian-veg-chana-masala",
+   "title": "Chana masala",
+   "blurb": "Hearty chickpeas in a tangy tomato-onion gravy",
+   "type": "veg",
+   "serves": 4,
+   "prep": 10,
+   "cook": 30,
+   "tags": [
+    "vegan",
+    "vegetarian",
+    "one pot",
+    "gluten-free",
+    "healthy"
+   ],
+   "ingredients": [
+    {
+     "q": 2,
+     "u": "tbsp",
+     "item": "vegetable oil",
+     "aisle": "pantry"
+    },
+    {
+     "q": 1,
+     "u": "",
+     "item": "yellow onion",
+     "aisle": "produce",
+     "note": "finely chopped"
+    },
+    {
+     "q": 4,
+     "u": "clove",
+     "item": "garlic",
+     "aisle": "produce",
+     "note": "minced"
+    },
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "fresh ginger",
+     "aisle": "produce",
+     "note": "grated"
+    },
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "ground coriander",
+     "aisle": "spices"
+    },
+    {
+     "q": 2,
+     "u": "tsp",
+     "item": "ground cumin",
+     "aisle": "spices"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "ground turmeric",
+     "aisle": "spices"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "cayenne pepper",
+     "aisle": "spices"
+    },
+    {
+     "q": 1,
+     "u": "can",
+     "item": "crushed tomatoes (14.5 oz)",
+     "aisle": "canned"
+    },
+    {
+     "q": 2,
+     "u": "can",
+     "item": "chickpeas (15 oz)",
+     "aisle": "canned",
+     "note": "drained"
+    },
+    {
+     "q": 1,
+     "u": "cup",
+     "item": "water",
+     "aisle": "pantry"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "garam masala",
+     "aisle": "spices"
+    },
+    {
+     "q": 1,
+     "u": "",
+     "item": "lemon",
+     "aisle": "produce",
+     "note": "juiced"
+    },
+    {
+     "q": 1.5,
+     "u": "tsp",
+     "item": "salt",
+     "aisle": "spices"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Heat the oil in a large pot over medium heat. Cook the onion until golden.",
+     "timer": 480,
+     "timerLabel": "Cook the onion"
+    },
+    {
+     "text": "Add garlic and ginger. Stir for 1 minute."
+    },
+    {
+     "text": "Stir in coriander, cumin, turmeric, cayenne and salt for 30 seconds."
+    },
+    {
+     "text": "Add the tomatoes. Cook, stirring, until thick and the oil separates.",
+     "timer": 420,
+     "timerLabel": "Cook the tomatoes"
+    },
+    {
+     "text": "Add chickpeas and water. Simmer, mashing a few chickpeas to thicken.",
+     "timer": 900,
+     "timerLabel": "Simmer"
+    },
+    {
+     "text": "Stir in garam masala and lemon juice. Serve with rice or naan."
+    }
+   ]
+  },
+  {
+   "id": "indian-palak-paneer",
+   "title": "Palak paneer",
+   "blurb": "Paneer cubes in a creamy spiced spinach sauce",
+   "type": "veg",
+   "serves": 4,
+   "prep": 15,
+   "cook": 25,
+   "tags": [
+    "vegetarian",
+    "gluten-free"
+   ],
+   "ingredients": [
+    {
+     "q": 1,
+     "u": "lb",
+     "item": "fresh baby spinach",
+     "aisle": "produce"
+    },
+    {
+     "q": 14,
+     "u": "oz",
+     "item": "paneer",
+     "aisle": "dairy",
+     "note": "cut in 1-inch cubes"
+    },
+    {
+     "q": 2,
+     "u": "tbsp",
+     "item": "ghee",
+     "aisle": "international",
+     "note": "divided"
+    },
+    {
+     "q": 1,
+     "u": "",
+     "item": "yellow onion",
+     "aisle": "produce",
+     "note": "chopped"
+    },
+    {
+     "q": 4,
+     "u": "clove",
+     "item": "garlic",
+     "aisle": "produce",
+     "note": "minced"
+    },
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "fresh ginger",
+     "aisle": "produce",
+     "note": "grated"
+    },
+    {
+     "q": 1,
+     "u": "",
+     "item": "serrano chile",
+     "aisle": "produce",
+     "note": "minced"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "ground cumin",
+     "aisle": "spices"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "ground coriander",
+     "aisle": "spices"
+    },
+    {
+     "q": 0.5,
+     "u": "tsp",
+     "item": "ground turmeric",
+     "aisle": "spices"
+    },
+    {
+     "q": 0.5,
+     "u": "tsp",
+     "item": "garam masala",
+     "aisle": "spices"
+    },
+    {
+     "q": 0.25,
+     "u": "cup",
+     "item": "heavy cream",
+     "aisle": "dairy"
+    },
+    {
+     "q": 0.5,
+     "u": "cup",
+     "item": "water",
+     "aisle": "pantry"
+    },
+    {
+     "q": 1.5,
+     "u": "tsp",
+     "item": "salt",
+     "aisle": "spices"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Boil water, add the spinach and cook 1 minute. Drain, rinse cold, then blend smooth.",
+     "timer": 60,
+     "timerLabel": "Blanch the spinach"
+    },
+    {
+     "text": "Heat 1 tbsp ghee in a skillet over medium. Brown the paneer on two sides, then set aside.",
+     "timer": 240,
+     "timerLabel": "Brown the paneer"
+    },
+    {
+     "text": "Add 1 tbsp ghee and the onion. Cook until golden.",
+     "timer": 420,
+     "timerLabel": "Cook the onion"
+    },
+    {
+     "text": "Add garlic, ginger, chile, cumin, coriander, turmeric and salt. Stir for 1 minute."
+    },
+    {
+     "text": "Pour in the spinach puree and water. Simmer until thick.",
+     "timer": 480,
+     "timerLabel": "Simmer"
+    },
+    {
+     "text": "Stir in the paneer, cream and garam masala. Warm through and serve."
+    }
+   ]
+  },
+  {
+   "id": "indian-paneer-butter-masala",
+   "title": "Paneer butter masala",
+   "blurb": "Soft paneer in a rich, mildly sweet tomato sauce",
+   "type": "veg",
+   "serves": 4,
+   "prep": 15,
+   "cook": 30,
+   "tags": [
+    "vegetarian",
+    "kid-friendly",
+    "gluten-free"
+   ],
+   "ingredients": [
+    {
+     "q": 14,
+     "u": "oz",
+     "item": "paneer",
+     "aisle": "dairy",
+     "note": "cut in 1-inch cubes"
+    },
+    {
+     "q": 3,
+     "u": "tbsp",
+     "item": "unsalted butter",
+     "aisle": "dairy",
+     "note": "divided"
+    },
+    {
+     "q": 1,
+     "u": "",
+     "item": "yellow onion",
+     "aisle": "produce",
+     "note": "chopped"
+    },
+    {
+     "q": 4,
+     "u": "clove",
+     "item": "garlic",
+     "aisle": "produce",
+     "note": "minced"
+    },
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "fresh ginger",
+     "aisle": "produce",
+     "note": "grated"
+    },
+    {
+     "q": 1,
+     "u": "can",
+     "item": "crushed tomatoes (14.5 oz)",
+     "aisle": "canned"
+    },
+    {
+     "q": 2,
+     "u": "tsp",
+     "item": "paprika",
+     "aisle": "spices"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "ground cumin",
+     "aisle": "spices"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "garam masala",
+     "aisle": "spices"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "sugar",
+     "aisle": "pantry"
+    },
+    {
+     "q": 0.5,
+     "u": "cup",
+     "item": "water",
+     "aisle": "pantry"
+    },
+    {
+     "q": 0.5,
+     "u": "cup",
+     "item": "heavy cream",
+     "aisle": "dairy"
+    },
+    {
+     "q": 1.5,
+     "u": "tsp",
+     "item": "salt",
+     "aisle": "spices"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Melt 1 tbsp butter in a saucepan over medium heat. Cook the onion until soft.",
+     "timer": 360,
+     "timerLabel": "Cook the onion"
+    },
+    {
+     "text": "Add garlic, ginger, paprika and cumin. Stir for 1 minute."
+    },
+    {
+     "text": "Add the tomatoes, sugar, salt and water. Simmer until thick.",
+     "timer": 900,
+     "timerLabel": "Simmer the sauce"
+    },
+    {
+     "text": "Blend the sauce smooth with an immersion blender, then return to low heat."
+    },
+    {
+     "text": "Stir in the remaining butter, cream, garam masala and the paneer."
+    },
+    {
+     "text": "Simmer gently until the paneer is hot. Serve with naan.",
+     "timer": 300,
+     "timerLabel": "Warm the paneer"
+    }
+   ]
+  },
+  {
+   "id": "indian-aloo-gobi",
+   "title": "Aloo gobi",
+   "blurb": "Dry-style potato and cauliflower with turmeric and cumin",
+   "type": "veg",
+   "serves": 4,
+   "prep": 15,
+   "cook": 30,
+   "tags": [
+    "vegan",
+    "vegetarian",
+    "gluten-free"
+   ],
+   "ingredients": [
+    {
+     "q": 3,
+     "u": "tbsp",
+     "item": "vegetable oil",
+     "aisle": "pantry"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "cumin seeds",
+     "aisle": "spices"
+    },
+    {
+     "q": 1,
+     "u": "",
+     "item": "yellow onion",
+     "aisle": "produce",
+     "note": "diced"
+    },
+    {
+     "q": 3,
+     "u": "clove",
+     "item": "garlic",
+     "aisle": "produce",
+     "note": "minced"
+    },
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "fresh ginger",
+     "aisle": "produce",
+     "note": "grated"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "ground turmeric",
+     "aisle": "spices"
+    },
+    {
+     "q": 2,
+     "u": "tsp",
+     "item": "ground coriander",
+     "aisle": "spices"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "cayenne pepper",
+     "aisle": "spices"
+    },
+    {
+     "q": 1,
+     "u": "lb",
+     "item": "yellow potato",
+     "aisle": "produce",
+     "note": "cut in 3/4-inch cubes"
+    },
+    {
+     "q": 1,
+     "u": "head",
+     "item": "cauliflower",
+     "aisle": "produce",
+     "note": "cut in florets"
+    },
+    {
+     "q": 2,
+     "u": "",
+     "item": "roma tomatoes",
+     "aisle": "produce",
+     "note": "chopped"
+    },
+    {
+     "q": 0.25,
+     "u": "cup",
+     "item": "water",
+     "aisle": "pantry"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "garam masala",
+     "aisle": "spices"
+    },
+    {
+     "q": 1.5,
+     "u": "tsp",
+     "item": "salt",
+     "aisle": "spices"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Heat the oil in a large skillet over medium heat. Add cumin seeds until they sizzle, 30 seconds.",
+     "timer": 30,
+     "timerLabel": "Toast the cumin"
+    },
+    {
+     "text": "Add the onion and cook until golden. Add garlic and ginger for 1 minute.",
+     "timer": 420,
+     "timerLabel": "Cook the onion"
+    },
+    {
+     "text": "Stir in turmeric, coriander, cayenne and salt. Add the tomatoes and cook 3 minutes."
+    },
+    {
+     "text": "Add the potatoes and water. Cover and cook, stirring now and then.",
+     "timer": 600,
+     "timerLabel": "Cook the potatoes"
+    },
+    {
+     "text": "Add the cauliflower. Cover and cook until both are fork-tender.",
+     "timer": 900,
+     "timerLabel": "Cook the cauliflower"
+    },
+    {
+     "text": "Stir in garam masala and serve with roti."
+    }
+   ]
+  },
+  {
+   "id": "indian-baingan-bharta",
+   "title": "Baingan bharta",
+   "blurb": "Smoky roasted eggplant mash with onion and tomato",
+   "type": "veg",
+   "serves": 4,
+   "prep": 15,
+   "cook": 50,
+   "tags": [
+    "vegan",
+    "vegetarian",
+    "gluten-free",
+    "healthy"
+   ],
+   "ingredients": [
+    {
+     "q": 2,
+     "u": "",
+     "item": "large eggplants (about 2 lb total)",
+     "aisle": "produce"
+    },
+    {
+     "q": 3,
+     "u": "tbsp",
+     "item": "vegetable oil",
+     "aisle": "pantry",
+     "note": "divided"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "cumin seeds",
+     "aisle": "spices"
+    },
+    {
+     "q": 1,
+     "u": "",
+     "item": "yellow onion",
+     "aisle": "produce",
+     "note": "finely chopped"
+    },
+    {
+     "q": 4,
+     "u": "clove",
+     "item": "garlic",
+     "aisle": "produce",
+     "note": "minced"
+    },
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "fresh ginger",
+     "aisle": "produce",
+     "note": "grated"
+    },
+    {
+     "q": 2,
+     "u": "",
+     "item": "roma tomatoes",
+     "aisle": "produce",
+     "note": "chopped"
+    },
+    {
+     "q": 0.5,
+     "u": "tsp",
+     "item": "ground turmeric",
+     "aisle": "spices"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "ground coriander",
+     "aisle": "spices"
+    },
+    {
+     "q": 0.5,
+     "u": "tsp",
+     "item": "cayenne pepper",
+     "aisle": "spices"
+    },
+    {
+     "q": 1,
+     "u": "cup",
+     "item": "frozen peas",
+     "aisle": "frozen"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "salt",
+     "aisle": "spices"
+    },
+    {
+     "q": 0.25,
+     "u": "bunch",
+     "item": "fresh cilantro",
+     "aisle": "produce",
+     "note": "chopped"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Heat the oven to 450°F. Prick the eggplants, rub with 1 tbsp oil and roast on a foil-lined pan until collapsed.",
+     "timer": 2400,
+     "timerLabel": "Roast the eggplant"
+    },
+    {
+     "text": "Cool slightly, peel off the skins and chop the flesh coarsely."
+    },
+    {
+     "text": "Heat 2 tbsp oil in a large skillet. Add cumin seeds for 30 seconds, then the onion. Cook until golden.",
+     "timer": 420,
+     "timerLabel": "Cook the onion"
+    },
+    {
+     "text": "Add garlic, ginger, tomatoes, turmeric, coriander, cayenne and salt. Cook until soft.",
+     "timer": 300,
+     "timerLabel": "Cook the tomatoes"
+    },
+    {
+     "text": "Add the eggplant and peas. Mash and stir until heated through.",
+     "timer": 480,
+     "timerLabel": "Cook together"
+    },
+    {
+     "text": "Top with cilantro and serve with roti."
+    }
+   ]
+  },
+  {
+   "id": "indian-bhindi-masala",
+   "title": "Bhindi masala",
+   "blurb": "Crisp-tender okra stir-fried with onion and spices",
+   "type": "veg",
+   "serves": 4,
+   "prep": 15,
+   "cook": 25,
+   "tags": [
+    "vegan",
+    "vegetarian",
+    "gluten-free"
+   ],
+   "ingredients": [
+    {
+     "q": 1.5,
+     "u": "lb",
+     "item": "fresh okra",
+     "aisle": "produce",
+     "note": "washed, dried, sliced in 1/2-inch rounds"
+    },
+    {
+     "q": 3,
+     "u": "tbsp",
+     "item": "vegetable oil",
+     "aisle": "pantry"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "cumin seeds",
+     "aisle": "spices"
+    },
+    {
+     "q": 1,
+     "u": "",
+     "item": "yellow onion",
+     "aisle": "produce",
+     "note": "sliced"
+    },
+    {
+     "q": 3,
+     "u": "clove",
+     "item": "garlic",
+     "aisle": "produce",
+     "note": "minced"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "ground turmeric",
+     "aisle": "spices"
+    },
+    {
+     "q": 2,
+     "u": "tsp",
+     "item": "ground coriander",
+     "aisle": "spices"
+    },
+    {
+     "q": 0.5,
+     "u": "tsp",
+     "item": "cayenne pepper",
+     "aisle": "spices"
+    },
+    {
+     "q": 1,
+     "u": "",
+     "item": "roma tomatoes",
+     "aisle": "produce",
+     "note": "chopped"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "salt",
+     "aisle": "spices"
+    },
+    {
+     "q": 1,
+     "u": "",
+     "item": "lemon",
+     "aisle": "produce",
+     "note": "juiced"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Heat 2 tbsp oil in a wide skillet over medium-high. Cook the okra without crowding until browned and no longer slimy.",
+     "timer": 600,
+     "timerLabel": "Fry the okra"
+    },
+    {
+     "text": "Move the okra to a plate."
+    },
+    {
+     "text": "Add 1 tbsp oil and the cumin seeds. Add onion and cook until golden.",
+     "timer": 420,
+     "timerLabel": "Cook the onion"
+    },
+    {
+     "text": "Add garlic, turmeric, coriander, cayenne and salt. Stir for 1 minute."
+    },
+    {
+     "text": "Add the tomato and cook until soft, 3 minutes. Return the okra and toss.",
+     "timer": 180,
+     "timerLabel": "Cook the tomato"
+    },
+    {
+     "text": "Finish with lemon juice and serve with roti."
+    }
+   ]
+  },
+  {
+   "id": "indian-aloo-matar",
+   "title": "Aloo matar",
+   "blurb": "Potatoes and peas in a gently spiced tomato gravy",
+   "type": "veg",
+   "serves": 4,
+   "prep": 10,
+   "cook": 35,
+   "tags": [
+    "vegan",
+    "vegetarian",
+    "kid-friendly",
+    "gluten-free"
+   ],
+   "ingredients": [
+    {
+     "q": 2,
+     "u": "tbsp",
+     "item": "vegetable oil",
+     "aisle": "pantry"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "cumin seeds",
+     "aisle": "spices"
+    },
+    {
+     "q": 1,
+     "u": "",
+     "item": "yellow onion",
+     "aisle": "produce",
+     "note": "chopped"
+    },
+    {
+     "q": 3,
+     "u": "clove",
+     "item": "garlic",
+     "aisle": "produce",
+     "note": "minced"
+    },
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "fresh ginger",
+     "aisle": "produce",
+     "note": "grated"
+    },
+    {
+     "q": 1,
+     "u": "can",
+     "item": "crushed tomatoes (14.5 oz)",
+     "aisle": "canned"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "ground turmeric",
+     "aisle": "spices"
+    },
+    {
+     "q": 2,
+     "u": "tsp",
+     "item": "ground coriander",
+     "aisle": "spices"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "cayenne pepper",
+     "aisle": "spices"
+    },
+    {
+     "q": 1.5,
+     "u": "lb",
+     "item": "yellow potato",
+     "aisle": "produce",
+     "note": "cut in 1-inch cubes"
+    },
+    {
+     "q": 1.5,
+     "u": "cup",
+     "item": "water",
+     "aisle": "pantry"
+    },
+    {
+     "q": 1.5,
+     "u": "cup",
+     "item": "frozen peas",
+     "aisle": "frozen"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "garam masala",
+     "aisle": "spices"
+    },
+    {
+     "q": 1.5,
+     "u": "tsp",
+     "item": "salt",
+     "aisle": "spices"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Heat the oil in a large pot over medium. Add cumin seeds for 30 seconds, then the onion. Cook until golden.",
+     "timer": 420,
+     "timerLabel": "Cook the onion"
+    },
+    {
+     "text": "Add garlic and ginger for 1 minute."
+    },
+    {
+     "text": "Stir in the tomatoes, turmeric, coriander, cayenne and salt. Cook until thick.",
+     "timer": 420,
+     "timerLabel": "Cook the masala"
+    },
+    {
+     "text": "Add the potatoes and water. Cover and simmer until nearly tender.",
+     "timer": 1200,
+     "timerLabel": "Simmer the potatoes"
+    },
+    {
+     "text": "Add the peas and cook until hot. Stir in garam masala.",
+     "timer": 300,
+     "timerLabel": "Cook the peas"
+    },
+    {
+     "text": "Serve with rice or roti."
+    }
+   ]
+  },
+  {
+   "id": "indian-vegetable-korma",
+   "title": "Vegetable korma",
+   "blurb": "Mixed vegetables in a creamy cashew-coconut sauce",
+   "type": "veg",
+   "serves": 4,
+   "prep": 20,
+   "cook": 35,
+   "tags": [
+    "vegetarian",
+    "kid-friendly",
+    "gluten-free"
+   ],
+   "ingredients": [
+    {
+     "q": 0.5,
+     "u": "cup",
+     "item": "raw cashews",
+     "aisle": "pantry"
+    },
+    {
+     "q": 0.5,
+     "u": "cup",
+     "item": "water",
+     "aisle": "pantry",
+     "note": "hot"
+    },
+    {
+     "q": 2,
+     "u": "tbsp",
+     "item": "vegetable oil",
+     "aisle": "pantry"
+    },
+    {
+     "q": 1,
+     "u": "",
+     "item": "yellow onion",
+     "aisle": "produce",
+     "note": "chopped"
+    },
+    {
+     "q": 4,
+     "u": "clove",
+     "item": "garlic",
+     "aisle": "produce",
+     "note": "minced"
+    },
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "fresh ginger",
+     "aisle": "produce",
+     "note": "grated"
+    },
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "ground coriander",
+     "aisle": "spices"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "ground cumin",
+     "aisle": "spices"
+    },
+    {
+     "q": 0.5,
+     "u": "tsp",
+     "item": "ground turmeric",
+     "aisle": "spices"
+    },
+    {
+     "q": 2,
+     "u": "",
+     "item": "carrots",
+     "aisle": "produce",
+     "note": "sliced"
+    },
+    {
+     "q": 1,
+     "u": "",
+     "item": "yellow potato",
+     "aisle": "produce",
+     "note": "cut in 1/2-inch cubes"
+    },
+    {
+     "q": 1,
+     "u": "head",
+     "item": "cauliflower",
+     "aisle": "produce",
+     "note": "cut in small florets"
+    },
+    {
+     "q": 1,
+     "u": "can",
+     "item": "coconut milk (13.5 oz)",
+     "aisle": "canned"
+    },
+    {
+     "q": 1,
+     "u": "cup",
+     "item": "frozen peas",
+     "aisle": "frozen"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "garam masala",
+     "aisle": "spices"
+    },
+    {
+     "q": 1.5,
+     "u": "tsp",
+     "item": "salt",
+     "aisle": "spices"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Soak the cashews in hot water for 15 minutes, then blend into a smooth paste.",
+     "timer": 900,
+     "timerLabel": "Soak the cashews"
+    },
+    {
+     "text": "Heat the oil in a large pot over medium. Cook the onion until soft.",
+     "timer": 420,
+     "timerLabel": "Cook the onion"
+    },
+    {
+     "text": "Add garlic, ginger, coriander, cumin, turmeric and salt. Stir for 1 minute."
+    },
+    {
+     "text": "Add carrots, potato, cauliflower, coconut milk and cashew paste."
+    },
+    {
+     "text": "Cover and simmer until the vegetables are tender.",
+     "timer": 1200,
+     "timerLabel": "Simmer covered"
+    },
+    {
+     "text": "Stir in the peas and garam masala. Cook 3 minutes. Serve with rice.",
+     "timer": 180,
+     "timerLabel": "Heat the peas"
+    }
+   ]
+  },
+  {
+   "id": "indian-matar-paneer",
+   "title": "Matar paneer",
+   "blurb": "Paneer and green peas in a spiced tomato gravy",
+   "type": "veg",
+   "serves": 4,
+   "prep": 10,
+   "cook": 30,
+   "tags": [
+    "vegetarian",
+    "kid-friendly",
+    "gluten-free"
+   ],
+   "ingredients": [
+    {
+     "q": 14,
+     "u": "oz",
+     "item": "paneer",
+     "aisle": "dairy",
+     "note": "cut in 1-inch cubes"
+    },
+    {
+     "q": 2,
+     "u": "tbsp",
+     "item": "ghee",
+     "aisle": "international",
+     "note": "divided"
+    },
+    {
+     "q": 1,
+     "u": "",
+     "item": "yellow onion",
+     "aisle": "produce",
+     "note": "finely chopped"
+    },
+    {
+     "q": 3,
+     "u": "clove",
+     "item": "garlic",
+     "aisle": "produce",
+     "note": "minced"
+    },
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "fresh ginger",
+     "aisle": "produce",
+     "note": "grated"
+    },
+    {
+     "q": 1,
+     "u": "can",
+     "item": "crushed tomatoes (14.5 oz)",
+     "aisle": "canned"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "ground cumin",
+     "aisle": "spices"
+    },
+    {
+     "q": 2,
+     "u": "tsp",
+     "item": "ground coriander",
+     "aisle": "spices"
+    },
+    {
+     "q": 0.5,
+     "u": "tsp",
+     "item": "ground turmeric",
+     "aisle": "spices"
+    },
+    {
+     "q": 0.5,
+     "u": "tsp",
+     "item": "cayenne pepper",
+     "aisle": "spices"
+    },
+    {
+     "q": 1.5,
+     "u": "cup",
+     "item": "frozen peas",
+     "aisle": "frozen"
+    },
+    {
+     "q": 0.75,
+     "u": "cup",
+     "item": "water",
+     "aisle": "pantry"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "garam masala",
+     "aisle": "spices"
+    },
+    {
+     "q": 1.5,
+     "u": "tsp",
+     "item": "salt",
+     "aisle": "spices"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Heat 1 tbsp ghee in a skillet over medium. Brown the paneer lightly on two sides, then set aside.",
+     "timer": 240,
+     "timerLabel": "Brown the paneer"
+    },
+    {
+     "text": "Add 1 tbsp ghee and the onion. Cook until golden.",
+     "timer": 420,
+     "timerLabel": "Cook the onion"
+    },
+    {
+     "text": "Add garlic and ginger for 1 minute."
+    },
+    {
+     "text": "Stir in cumin, coriander, turmeric, cayenne and salt. Add the tomatoes and cook until thick.",
+     "timer": 480,
+     "timerLabel": "Cook the masala"
+    },
+    {
+     "text": "Add the water, peas and paneer. Simmer gently.",
+     "timer": 480,
+     "timerLabel": "Simmer"
+    },
+    {
+     "text": "Stir in garam masala. Serve with naan or rice."
+    }
+   ]
+  },
+  {
+   "id": "indian-tadka-dal",
+   "title": "Tadka dal",
+   "blurb": "Yellow lentils topped with sizzling garlic and cumin",
+   "type": "dal",
+   "serves": 4,
+   "prep": 10,
+   "cook": 40,
+   "tags": [
+    "vegan",
+    "vegetarian",
+    "healthy",
+    "gluten-free",
+    "one pot"
+   ],
+   "ingredients": [
+    {
+     "q": 1,
+     "u": "cup",
+     "item": "toor dal (split pigeon peas)",
+     "aisle": "international",
+     "note": "rinsed"
+    },
+    {
+     "q": 4,
+     "u": "cup",
+     "item": "water",
+     "aisle": "pantry"
+    },
+    {
+     "q": 0.5,
+     "u": "tsp",
+     "item": "ground turmeric",
+     "aisle": "spices"
+    },
+    {
+     "q": 1,
+     "u": "",
+     "item": "roma tomatoes",
+     "aisle": "produce",
+     "note": "chopped"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "salt",
+     "aisle": "spices"
+    },
+    {
+     "q": 2,
+     "u": "tbsp",
+     "item": "ghee",
+     "aisle": "international"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "cumin seeds",
+     "aisle": "spices"
+    },
+    {
+     "q": 4,
+     "u": "clove",
+     "item": "garlic",
+     "aisle": "produce",
+     "note": "sliced"
+    },
+    {
+     "q": 2,
+     "u": "",
+     "item": "dried red chiles",
+     "aisle": "international"
+    },
+    {
+     "q": 0.25,
+     "u": "tsp",
+     "item": "cayenne pepper",
+     "aisle": "spices"
+    },
+    {
+     "q": 0.25,
+     "u": "bunch",
+     "item": "fresh cilantro",
+     "aisle": "produce",
+     "note": "chopped"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Combine dal, water, turmeric and tomato in a pot. Bring to a boil and skim off the foam."
+    },
+    {
+     "text": "Simmer partly covered until the dal is completely soft.",
+     "timer": 1800,
+     "timerLabel": "Simmer the dal"
+    },
+    {
+     "text": "Whisk the dal smooth. Stir in the salt and add water if too thick."
+    },
+    {
+     "text": "Heat the ghee in a small pan. Add cumin seeds until they sizzle.",
+     "timer": 30,
+     "timerLabel": "Sizzle the cumin"
+    },
+    {
+     "text": "Add garlic, chiles and cayenne. Cook until the garlic is golden, about 1 minute."
+    },
+    {
+     "text": "Pour the hot tadka over the dal. Top with cilantro and serve with rice."
+    }
+   ]
+  },
+  {
+   "id": "indian-dal-makhani",
+   "title": "Dal makhani",
+   "blurb": "Slow-simmered black lentils with butter and cream",
+   "type": "dal",
+   "serves": 6,
+   "prep": 15,
+   "cook": 150,
+   "tags": [
+    "vegetarian",
+    "make ahead",
+    "gluten-free"
+   ],
+   "ingredients": [
+    {
+     "q": 1,
+     "u": "cup",
+     "item": "whole black lentils (urad dal)",
+     "aisle": "international",
+     "note": "rinsed"
+    },
+    {
+     "q": 0.25,
+     "u": "cup",
+     "item": "dried kidney beans",
+     "aisle": "pantry",
+     "note": "rinsed"
+    },
+    {
+     "q": 6,
+     "u": "cup",
+     "item": "water",
+     "aisle": "pantry",
+     "note": "divided"
+    },
+    {
+     "q": 2,
+     "u": "tbsp",
+     "item": "unsalted butter",
+     "aisle": "dairy"
+    },
+    {
+     "q": 1,
+     "u": "",
+     "item": "yellow onion",
+     "aisle": "produce",
+     "note": "finely chopped"
+    },
+    {
+     "q": 4,
+     "u": "clove",
+     "item": "garlic",
+     "aisle": "produce",
+     "note": "minced"
+    },
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "fresh ginger",
+     "aisle": "produce",
+     "note": "grated"
+    },
+    {
+     "q": 1,
+     "u": "can",
+     "item": "tomato sauce (15 oz)",
+     "aisle": "canned"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "cayenne pepper",
+     "aisle": "spices"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "garam masala",
+     "aisle": "spices"
+    },
+    {
+     "q": 0.5,
+     "u": "cup",
+     "item": "heavy cream",
+     "aisle": "dairy"
+    },
+    {
+     "q": 2,
+     "u": "tsp",
+     "item": "salt",
+     "aisle": "spices"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Soak the lentils and beans in water for at least 6 hours or overnight. Drain."
+    },
+    {
+     "text": "Cook them in 4 cups water until completely soft, stirring now and then.",
+     "timer": 5400,
+     "timerLabel": "Boil the lentils"
+    },
+    {
+     "text": "Melt the butter in a pan. Cook the onion until golden. Add garlic and ginger for 1 minute.",
+     "timer": 480,
+     "timerLabel": "Cook the onion"
+    },
+    {
+     "text": "Add the tomato sauce, cayenne and salt. Cook until thick.",
+     "timer": 600,
+     "timerLabel": "Cook the tomatoes"
+    },
+    {
+     "text": "Stir this into the lentils with 2 cups water. Simmer, mashing some lentils.",
+     "timer": 1800,
+     "timerLabel": "Simmer together"
+    },
+    {
+     "text": "Stir in cream and garam masala. Serve with naan."
+    }
+   ]
+  },
+  {
+   "id": "indian-masoor-dal",
+   "title": "Red lentil dal",
+   "blurb": "Fast, golden dal that needs no soaking",
+   "type": "dal",
+   "serves": 4,
+   "prep": 10,
+   "cook": 30,
+   "tags": [
+    "quick",
+    "vegan",
+    "vegetarian",
+    "healthy",
+    "gluten-free",
+    "kid-friendly"
+   ],
+   "ingredients": [
+    {
+     "q": 1.5,
+     "u": "cup",
+     "item": "red lentils (masoor dal)",
+     "aisle": "international",
+     "note": "rinsed"
+    },
+    {
+     "q": 4,
+     "u": "cup",
+     "item": "water",
+     "aisle": "pantry"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "ground turmeric",
+     "aisle": "spices"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "salt",
+     "aisle": "spices"
+    },
+    {
+     "q": 2,
+     "u": "tbsp",
+     "item": "vegetable oil",
+     "aisle": "pantry"
+    },
+    {
+     "q": 1,
+     "u": "",
+     "item": "yellow onion",
+     "aisle": "produce",
+     "note": "finely chopped"
+    },
+    {
+     "q": 3,
+     "u": "clove",
+     "item": "garlic",
+     "aisle": "produce",
+     "note": "minced"
+    },
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "fresh ginger",
+     "aisle": "produce",
+     "note": "grated"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "cumin seeds",
+     "aisle": "spices"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "ground coriander",
+     "aisle": "spices"
+    },
+    {
+     "q": 1,
+     "u": "",
+     "item": "lemon",
+     "aisle": "produce",
+     "note": "juiced"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Bring the lentils, water, turmeric and salt to a boil. Skim off the foam."
+    },
+    {
+     "text": "Simmer partly covered until the lentils fall apart.",
+     "timer": 1200,
+     "timerLabel": "Simmer the lentils"
+    },
+    {
+     "text": "Heat the oil in a skillet. Cook the onion until browned.",
+     "timer": 480,
+     "timerLabel": "Brown the onion"
+    },
+    {
+     "text": "Add garlic, ginger, cumin seeds and coriander. Stir for 1 minute."
+    },
+    {
+     "text": "Stir the onion mixture into the lentils and simmer 3 minutes.",
+     "timer": 180,
+     "timerLabel": "Blend flavors"
+    },
+    {
+     "text": "Finish with lemon juice. Serve with rice."
+    }
+   ]
+  },
+  {
+   "id": "indian-rajma-masala",
+   "title": "Rajma masala",
+   "blurb": "Kidney beans in a thick tomato gravy, a Punjabi favorite",
+   "type": "dal",
+   "serves": 4,
+   "prep": 10,
+   "cook": 40,
+   "tags": [
+    "vegan",
+    "vegetarian",
+    "gluten-free",
+    "healthy"
+   ],
+   "ingredients": [
+    {
+     "q": 2,
+     "u": "tbsp",
+     "item": "vegetable oil",
+     "aisle": "pantry"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "cumin seeds",
+     "aisle": "spices"
+    },
+    {
+     "q": 1,
+     "u": "",
+     "item": "yellow onion",
+     "aisle": "produce",
+     "note": "finely chopped"
+    },
+    {
+     "q": 4,
+     "u": "clove",
+     "item": "garlic",
+     "aisle": "produce",
+     "note": "minced"
+    },
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "fresh ginger",
+     "aisle": "produce",
+     "note": "grated"
+    },
+    {
+     "q": 1,
+     "u": "can",
+     "item": "crushed tomatoes (14.5 oz)",
+     "aisle": "canned"
+    },
+    {
+     "q": 2,
+     "u": "tsp",
+     "item": "ground coriander",
+     "aisle": "spices"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "ground cumin",
+     "aisle": "spices"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "paprika",
+     "aisle": "spices"
+    },
+    {
+     "q": 0.5,
+     "u": "tsp",
+     "item": "cayenne pepper",
+     "aisle": "spices"
+    },
+    {
+     "q": 2,
+     "u": "can",
+     "item": "kidney beans (15 oz)",
+     "aisle": "canned",
+     "note": "drained"
+    },
+    {
+     "q": 1.5,
+     "u": "cup",
+     "item": "water",
+     "aisle": "pantry"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "garam masala",
+     "aisle": "spices"
+    },
+    {
+     "q": 1.5,
+     "u": "tsp",
+     "item": "salt",
+     "aisle": "spices"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Heat the oil in a pot over medium. Add cumin seeds for 30 seconds, then the onion. Cook until golden.",
+     "timer": 480,
+     "timerLabel": "Cook the onion"
+    },
+    {
+     "text": "Add garlic and ginger for 1 minute."
+    },
+    {
+     "text": "Add the tomatoes, coriander, cumin, paprika, cayenne and salt. Cook until thick.",
+     "timer": 480,
+     "timerLabel": "Cook the masala"
+    },
+    {
+     "text": "Add the beans and water. Simmer, mashing some beans against the pot.",
+     "timer": 1500,
+     "timerLabel": "Simmer the beans"
+    },
+    {
+     "text": "Stir in garam masala. Serve with rice."
+    }
+   ]
+  },
+  {
+   "id": "indian-sambar",
+   "title": "Sambar",
+   "blurb": "South Indian lentil stew with vegetables and tamarind",
+   "type": "dal",
+   "serves": 6,
+   "prep": 20,
+   "cook": 50,
+   "tags": [
+    "vegan",
+    "vegetarian",
+    "healthy",
+    "gluten-free"
+   ],
+   "ingredients": [
+    {
+     "q": 1,
+     "u": "cup",
+     "item": "toor dal (split pigeon peas)",
+     "aisle": "international",
+     "note": "rinsed"
+    },
+    {
+     "q": 5,
+     "u": "cup",
+     "item": "water",
+     "aisle": "pantry",
+     "note": "divided"
+    },
+    {
+     "q": 0.5,
+     "u": "tsp",
+     "item": "ground turmeric",
+     "aisle": "spices"
+    },
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "tamarind paste",
+     "aisle": "international"
+    },
+    {
+     "q": 2,
+     "u": "tbsp",
+     "item": "sambar powder",
+     "aisle": "international"
+    },
+    {
+     "q": 2,
+     "u": "",
+     "item": "carrots",
+     "aisle": "produce",
+     "note": "sliced"
+    },
+    {
+     "q": 1,
+     "u": "",
+     "item": "yellow potato",
+     "aisle": "produce",
+     "note": "cut in 3/4-inch cubes"
+    },
+    {
+     "q": 1,
+     "u": "",
+     "item": "roma tomatoes",
+     "aisle": "produce",
+     "note": "chopped"
+    },
+    {
+     "q": 1,
+     "u": "",
+     "item": "yellow onion",
+     "aisle": "produce",
+     "note": "cut in wedges"
+    },
+    {
+     "q": 2,
+     "u": "tbsp",
+     "item": "vegetable oil",
+     "aisle": "pantry"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "mustard seeds",
+     "aisle": "spices"
+    },
+    {
+     "q": 8,
+     "u": "",
+     "item": "curry leaves",
+     "aisle": "international"
+    },
+    {
+     "q": 1,
+     "u": "",
+     "item": "dried red chiles",
+     "aisle": "international"
+    },
+    {
+     "q": 1.5,
+     "u": "tsp",
+     "item": "salt",
+     "aisle": "spices"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Simmer the dal with 3 cups water and the turmeric until soft, then mash.",
+     "timer": 1800,
+     "timerLabel": "Cook the dal"
+    },
+    {
+     "text": "In another pot, combine 2 cups water, tamarind, sambar powder, carrots, potato, tomato, onion and salt."
+    },
+    {
+     "text": "Simmer until the vegetables are tender.",
+     "timer": 1200,
+     "timerLabel": "Cook the vegetables"
+    },
+    {
+     "text": "Stir in the mashed dal and simmer to blend. Add water if too thick.",
+     "timer": 480,
+     "timerLabel": "Simmer together"
+    },
+    {
+     "text": "Heat the oil. Add mustard seeds until they pop, then curry leaves and the chile.",
+     "timer": 45,
+     "timerLabel": "Make the tadka"
+    },
+    {
+     "text": "Pour the tadka into the sambar. Serve with rice."
+    }
+   ]
+  },
+  {
+   "id": "indian-dal-palak",
+   "title": "Dal palak",
+   "blurb": "Lentils and spinach with garlic and cumin",
+   "type": "dal",
+   "serves": 4,
+   "prep": 10,
+   "cook": 35,
+   "tags": [
+    "vegan",
+    "vegetarian",
+    "healthy",
+    "gluten-free"
+   ],
+   "ingredients": [
+    {
+     "q": 1,
+     "u": "cup",
+     "item": "toor dal (split pigeon peas)",
+     "aisle": "international",
+     "note": "rinsed"
+    },
+    {
+     "q": 4,
+     "u": "cup",
+     "item": "water",
+     "aisle": "pantry"
+    },
+    {
+     "q": 0.5,
+     "u": "tsp",
+     "item": "ground turmeric",
+     "aisle": "spices"
+    },
+    {
+     "q": 5,
+     "u": "oz",
+     "item": "fresh baby spinach",
+     "aisle": "produce"
+    },
+    {
+     "q": 1.5,
+     "u": "tsp",
+     "item": "salt",
+     "aisle": "spices"
+    },
+    {
+     "q": 2,
+     "u": "tbsp",
+     "item": "vegetable oil",
+     "aisle": "pantry"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "cumin seeds",
+     "aisle": "spices"
+    },
+    {
+     "q": 4,
+     "u": "clove",
+     "item": "garlic",
+     "aisle": "produce",
+     "note": "minced"
+    },
+    {
+     "q": 1,
+     "u": "",
+     "item": "yellow onion",
+     "aisle": "produce",
+     "note": "chopped"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "ground coriander",
+     "aisle": "spices"
+    },
+    {
+     "q": 0.5,
+     "u": "tsp",
+     "item": "cayenne pepper",
+     "aisle": "spices"
+    },
+    {
+     "q": 1,
+     "u": "",
+     "item": "lemon",
+     "aisle": "produce",
+     "note": "juiced"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Simmer the dal with water and turmeric until soft.",
+     "timer": 1800,
+     "timerLabel": "Cook the dal"
+    },
+    {
+     "text": "Add the spinach and salt. Stir until wilted, 2 minutes.",
+     "timer": 120,
+     "timerLabel": "Wilt the spinach"
+    },
+    {
+     "text": "Mash the dal roughly with a whisk or spoon."
+    },
+    {
+     "text": "Heat the oil in a pan. Add cumin seeds, then onion. Cook until golden.",
+     "timer": 420,
+     "timerLabel": "Cook the onion"
+    },
+    {
+     "text": "Add garlic, coriander and cayenne. Stir for 1 minute."
+    },
+    {
+     "text": "Stir into the dal with lemon juice. Serve with rice or roti."
+    }
+   ]
+  },
+  {
+   "id": "indian-chana-dal",
+   "title": "Chana dal",
+   "blurb": "Nutty split chickpeas with ginger, tomato and spice",
+   "type": "dal",
+   "serves": 4,
+   "prep": 10,
+   "cook": 60,
+   "tags": [
+    "vegan",
+    "vegetarian",
+    "healthy",
+    "gluten-free"
+   ],
+   "ingredients": [
+    {
+     "q": 1,
+     "u": "cup",
+     "item": "chana dal (split chickpeas)",
+     "aisle": "international",
+     "note": "rinsed"
+    },
+    {
+     "q": 4,
+     "u": "cup",
+     "item": "water",
+     "aisle": "pantry"
+    },
+    {
+     "q": 0.5,
+     "u": "tsp",
+     "item": "ground turmeric",
+     "aisle": "spices"
+    },
+    {
+     "q": 2,
+     "u": "tbsp",
+     "item": "ghee",
+     "aisle": "international"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "cumin seeds",
+     "aisle": "spices"
+    },
+    {
+     "q": 1,
+     "u": "",
+     "item": "yellow onion",
+     "aisle": "produce",
+     "note": "chopped"
+    },
+    {
+     "q": 3,
+     "u": "clove",
+     "item": "garlic",
+     "aisle": "produce",
+     "note": "minced"
+    },
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "fresh ginger",
+     "aisle": "produce",
+     "note": "grated"
+    },
+    {
+     "q": 1,
+     "u": "",
+     "item": "roma tomatoes",
+     "aisle": "produce",
+     "note": "chopped"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "ground coriander",
+     "aisle": "spices"
+    },
+    {
+     "q": 0.5,
+     "u": "tsp",
+     "item": "cayenne pepper",
+     "aisle": "spices"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "garam masala",
+     "aisle": "spices"
+    },
+    {
+     "q": 1.5,
+     "u": "tsp",
+     "item": "salt",
+     "aisle": "spices"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Soak the chana dal in warm water for 30 minutes, then drain.",
+     "timer": 1800,
+     "timerLabel": "Soak the dal"
+    },
+    {
+     "text": "Boil the dal with 4 cups water and turmeric. Simmer partly covered until tender.",
+     "timer": 2400,
+     "timerLabel": "Simmer the dal"
+    },
+    {
+     "text": "Heat the ghee. Add cumin seeds, then onion. Cook until golden.",
+     "timer": 420,
+     "timerLabel": "Cook the onion"
+    },
+    {
+     "text": "Add garlic, ginger, tomato, coriander, cayenne and salt. Cook until soft.",
+     "timer": 300,
+     "timerLabel": "Cook the tomato"
+    },
+    {
+     "text": "Stir this into the dal and simmer. Add garam masala and serve.",
+     "timer": 300,
+     "timerLabel": "Simmer together"
+    }
+   ]
+  },
+  {
+   "id": "indian-lobia-masala",
+   "title": "Lobia masala",
+   "blurb": "Black-eyed peas in a spiced onion-tomato gravy",
+   "type": "dal",
+   "serves": 4,
+   "prep": 10,
+   "cook": 30,
+   "tags": [
+    "vegan",
+    "vegetarian",
+    "healthy",
+    "gluten-free"
+   ],
+   "ingredients": [
+    {
+     "q": 2,
+     "u": "tbsp",
+     "item": "vegetable oil",
+     "aisle": "pantry"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "cumin seeds",
+     "aisle": "spices"
+    },
+    {
+     "q": 1,
+     "u": "",
+     "item": "yellow onion",
+     "aisle": "produce",
+     "note": "chopped"
+    },
+    {
+     "q": 3,
+     "u": "clove",
+     "item": "garlic",
+     "aisle": "produce",
+     "note": "minced"
+    },
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "fresh ginger",
+     "aisle": "produce",
+     "note": "grated"
+    },
+    {
+     "q": 1,
+     "u": "",
+     "item": "roma tomatoes",
+     "aisle": "produce",
+     "note": "chopped"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "ground coriander",
+     "aisle": "spices"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "ground turmeric",
+     "aisle": "spices"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "cayenne pepper",
+     "aisle": "spices"
+    },
+    {
+     "q": 2,
+     "u": "can",
+     "item": "black-eyed peas (15 oz)",
+     "aisle": "canned",
+     "note": "drained"
+    },
+    {
+     "q": 1,
+     "u": "cup",
+     "item": "water",
+     "aisle": "pantry"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "garam masala",
+     "aisle": "spices"
+    },
+    {
+     "q": 1.5,
+     "u": "tsp",
+     "item": "salt",
+     "aisle": "spices"
+    },
+    {
+     "q": 0.25,
+     "u": "bunch",
+     "item": "fresh cilantro",
+     "aisle": "produce",
+     "note": "chopped"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Heat the oil in a pot. Add cumin seeds and onion. Cook until golden.",
+     "timer": 480,
+     "timerLabel": "Cook the onion"
+    },
+    {
+     "text": "Add garlic and ginger for 1 minute."
+    },
+    {
+     "text": "Add tomato, coriander, turmeric, cayenne and salt. Cook until soft.",
+     "timer": 300,
+     "timerLabel": "Cook the tomato"
+    },
+    {
+     "text": "Add the peas and water. Simmer, mashing a few peas to thicken.",
+     "timer": 1200,
+     "timerLabel": "Simmer"
+    },
+    {
+     "text": "Stir in garam masala and cilantro. Serve with rice or roti."
+    }
+   ]
+  },
+  {
+   "id": "indian-yellow-moong-dal",
+   "title": "Yellow moong dal",
+   "blurb": "Light, soothing split mung beans with garlic tadka",
+   "type": "dal",
+   "serves": 4,
+   "prep": 5,
+   "cook": 30,
+   "tags": [
+    "quick",
+    "vegan",
+    "vegetarian",
+    "healthy",
+    "gluten-free",
+    "kid-friendly"
+   ],
+   "ingredients": [
+    {
+     "q": 1,
+     "u": "cup",
+     "item": "yellow moong dal (split mung beans)",
+     "aisle": "international",
+     "note": "rinsed"
+    },
+    {
+     "q": 3.5,
+     "u": "cup",
+     "item": "water",
+     "aisle": "pantry"
+    },
+    {
+     "q": 0.5,
+     "u": "tsp",
+     "item": "ground turmeric",
+     "aisle": "spices"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "salt",
+     "aisle": "spices"
+    },
+    {
+     "q": 1,
+     "u": "",
+     "item": "roma tomatoes",
+     "aisle": "produce",
+     "note": "chopped"
+    },
+    {
+     "q": 2,
+     "u": "tbsp",
+     "item": "ghee",
+     "aisle": "international"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "cumin seeds",
+     "aisle": "spices"
+    },
+    {
+     "q": 3,
+     "u": "clove",
+     "item": "garlic",
+     "aisle": "produce",
+     "note": "sliced"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "fresh ginger",
+     "aisle": "produce",
+     "note": "grated"
+    },
+    {
+     "q": 0.25,
+     "u": "tsp",
+     "item": "cayenne pepper",
+     "aisle": "spices"
+    },
+    {
+     "q": 1,
+     "u": "",
+     "item": "lemon",
+     "aisle": "produce",
+     "note": "juiced"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Combine dal, water, turmeric, salt and tomato in a pot. Bring to a boil and skim the foam."
+    },
+    {
+     "text": "Simmer partly covered until the dal is soft and creamy.",
+     "timer": 1500,
+     "timerLabel": "Simmer the dal"
+    },
+    {
+     "text": "Whisk smooth. Add water if it is too thick."
+    },
+    {
+     "text": "Heat the ghee. Add cumin seeds, garlic, ginger and cayenne. Cook until golden.",
+     "timer": 90,
+     "timerLabel": "Make the tadka"
+    },
+    {
+     "text": "Pour the tadka over the dal and add lemon juice. Serve with rice."
+    }
+   ]
+  },
+  {
+   "id": "indian-chicken-biryani",
+   "title": "Chicken biryani",
+   "blurb": "Fragrant layered basmati rice and spiced chicken",
+   "type": "rice",
+   "serves": 6,
+   "prep": 40,
+   "cook": 70,
+   "tags": [
+    "crowd",
+    "make ahead",
+    "gluten-free"
+   ],
+   "ingredients": [
+    {
+     "q": 2,
+     "u": "cup",
+     "item": "basmati rice",
+     "aisle": "international",
+     "note": "rinsed"
+    },
+    {
+     "q": 2,
+     "u": "lb",
+     "item": "boneless skinless chicken thighs",
+     "aisle": "meat",
+     "note": "cut in 1.5-inch pieces"
+    },
+    {
+     "q": 1,
+     "u": "cup",
+     "item": "plain whole milk yogurt",
+     "aisle": "dairy"
+    },
+    {
+     "q": 2,
+     "u": "tbsp",
+     "item": "ginger-garlic paste",
+     "aisle": "international"
+    },
+    {
+     "q": 2,
+     "u": "tsp",
+     "item": "garam masala",
+     "aisle": "spices"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "ground turmeric",
+     "aisle": "spices"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "cayenne pepper",
+     "aisle": "spices"
+    },
+    {
+     "q": 3,
+     "u": "tbsp",
+     "item": "ghee",
+     "aisle": "international",
+     "note": "divided"
+    },
+    {
+     "q": 2,
+     "u": "",
+     "item": "yellow onion",
+     "aisle": "produce",
+     "note": "thinly sliced"
+    },
+    {
+     "q": 4,
+     "u": "",
+     "item": "whole cloves",
+     "aisle": "spices"
+    },
+    {
+     "q": 4,
+     "u": "",
+     "item": "green cardamom pods",
+     "aisle": "spices"
+    },
+    {
+     "q": 1,
+     "u": "",
+     "item": "cinnamon stick",
+     "aisle": "spices"
+    },
+    {
+     "q": 2,
+     "u": "",
+     "item": "bay leaves",
+     "aisle": "spices"
+    },
+    {
+     "q": 0.5,
+     "u": "bunch",
+     "item": "fresh mint",
+     "aisle": "produce",
+     "note": "chopped"
+    },
+    {
+     "q": 0.5,
+     "u": "bunch",
+     "item": "fresh cilantro",
+     "aisle": "produce",
+     "note": "chopped"
+    },
+    {
+     "q": 0.25,
+     "u": "cup",
+     "item": "whole milk",
+     "aisle": "dairy",
+     "note": "warmed with a pinch of saffron"
+    },
+    {
+     "q": 3,
+     "u": "tsp",
+     "item": "salt",
+     "aisle": "spices",
+     "note": "divided"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Mix chicken with yogurt, ginger-garlic paste, garam masala, turmeric, cayenne and 1 tsp salt.",
+     "timer": 1800,
+     "timerLabel": "Marinate"
+    },
+    {
+     "text": "Fry the onions in 2 tbsp ghee until deep brown and crisp. Set half aside for topping.",
+     "timer": 1200,
+     "timerLabel": "Brown the onions"
+    },
+    {
+     "text": "Boil rice in plenty of salted water with the whole spices until 70% cooked, then drain.",
+     "timer": 420,
+     "timerLabel": "Par-boil the rice"
+    },
+    {
+     "text": "Cook the chicken and marinade in a heavy pot 10 minutes, then spread flat."
+    },
+    {
+     "text": "Layer on the rice, mint, cilantro, reserved onions and saffron milk. Dot with 1 tbsp ghee."
+    },
+    {
+     "text": "Seal with foil and a lid. Cook over low heat until the chicken reaches 165°F.",
+     "timer": 1500,
+     "timerLabel": "Steam the biryani"
+    },
+    {
+     "text": "Rest, then fluff gently. Serve with raita.",
+     "timer": 300,
+     "timerLabel": "Rest"
+    }
+   ]
+  },
+  {
+   "id": "indian-vegetable-biryani",
+   "title": "Vegetable biryani",
+   "blurb": "Spiced vegetables layered with saffron basmati",
+   "type": "rice",
+   "serves": 6,
+   "prep": 35,
+   "cook": 60,
+   "tags": [
+    "vegetarian",
+    "make ahead",
+    "gluten-free"
+   ],
+   "ingredients": [
+    {
+     "q": 2,
+     "u": "cup",
+     "item": "basmati rice",
+     "aisle": "international",
+     "note": "rinsed"
+    },
+    {
+     "q": 3,
+     "u": "tbsp",
+     "item": "ghee",
+     "aisle": "international",
+     "note": "divided"
+    },
+    {
+     "q": 2,
+     "u": "",
+     "item": "yellow onion",
+     "aisle": "produce",
+     "note": "thinly sliced"
+    },
+    {
+     "q": 2,
+     "u": "",
+     "item": "carrots",
+     "aisle": "produce",
+     "note": "diced"
+    },
+    {
+     "q": 1,
+     "u": "cup",
+     "item": "green beans",
+     "aisle": "produce",
+     "note": "cut in 1-inch pieces"
+    },
+    {
+     "q": 1,
+     "u": "head",
+     "item": "cauliflower",
+     "aisle": "produce",
+     "note": "cut in small florets"
+    },
+    {
+     "q": 1,
+     "u": "cup",
+     "item": "frozen peas",
+     "aisle": "frozen"
+    },
+    {
+     "q": 0.75,
+     "u": "cup",
+     "item": "plain whole milk yogurt",
+     "aisle": "dairy"
+    },
+    {
+     "q": 2,
+     "u": "tbsp",
+     "item": "ginger-garlic paste",
+     "aisle": "international"
+    },
+    {
+     "q": 2,
+     "u": "tsp",
+     "item": "garam masala",
+     "aisle": "spices"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "ground turmeric",
+     "aisle": "spices"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "cayenne pepper",
+     "aisle": "spices"
+    },
+    {
+     "q": 4,
+     "u": "",
+     "item": "green cardamom pods",
+     "aisle": "spices"
+    },
+    {
+     "q": 1,
+     "u": "",
+     "item": "cinnamon stick",
+     "aisle": "spices"
+    },
+    {
+     "q": 0.25,
+     "u": "bunch",
+     "item": "fresh mint",
+     "aisle": "produce",
+     "note": "chopped"
+    },
+    {
+     "q": 0.25,
+     "u": "bunch",
+     "item": "fresh cilantro",
+     "aisle": "produce",
+     "note": "chopped"
+    },
+    {
+     "q": 0.25,
+     "u": "cup",
+     "item": "whole milk",
+     "aisle": "dairy",
+     "note": "warmed with a pinch of saffron"
+    },
+    {
+     "q": 3,
+     "u": "tsp",
+     "item": "salt",
+     "aisle": "spices",
+     "note": "divided"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Fry the onions in 2 tbsp ghee until deep brown. Set half aside for topping.",
+     "timer": 1200,
+     "timerLabel": "Brown the onions"
+    },
+    {
+     "text": "Add the vegetables, yogurt, ginger-garlic paste, spices and 1 tsp salt to the pot. Cook until just tender.",
+     "timer": 600,
+     "timerLabel": "Cook the vegetables"
+    },
+    {
+     "text": "Boil rice in salted water with the cardamom and cinnamon until 70% cooked, then drain.",
+     "timer": 420,
+     "timerLabel": "Par-boil the rice"
+    },
+    {
+     "text": "Spread the vegetables flat in the pot. Layer on the rice, herbs, reserved onions and saffron milk."
+    },
+    {
+     "text": "Dot with 1 tbsp ghee. Seal with foil and a lid. Cook on low heat.",
+     "timer": 1200,
+     "timerLabel": "Steam the biryani"
+    },
+    {
+     "text": "Rest, then fluff gently. Serve with raita.",
+     "timer": 300,
+     "timerLabel": "Rest"
+    }
+   ]
+  },
+  {
+   "id": "indian-lamb-biryani",
+   "title": "Lamb biryani",
+   "blurb": "Weekend biryani with tender spiced lamb",
+   "type": "rice",
+   "serves": 6,
+   "prep": 40,
+   "cook": 120,
+   "tags": [
+    "crowd",
+    "holiday",
+    "gluten-free"
+   ],
+   "ingredients": [
+    {
+     "q": 2,
+     "u": "cup",
+     "item": "basmati rice",
+     "aisle": "international",
+     "note": "rinsed"
+    },
+    {
+     "q": 2,
+     "u": "lb",
+     "item": "boneless lamb shoulder",
+     "aisle": "meat",
+     "note": "cut in 1.5-inch cubes"
+    },
+    {
+     "q": 1,
+     "u": "cup",
+     "item": "plain whole milk yogurt",
+     "aisle": "dairy"
+    },
+    {
+     "q": 2,
+     "u": "tbsp",
+     "item": "ginger-garlic paste",
+     "aisle": "international"
+    },
+    {
+     "q": 2,
+     "u": "tsp",
+     "item": "garam masala",
+     "aisle": "spices"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "ground turmeric",
+     "aisle": "spices"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "cayenne pepper",
+     "aisle": "spices"
+    },
+    {
+     "q": 3,
+     "u": "tbsp",
+     "item": "ghee",
+     "aisle": "international",
+     "note": "divided"
+    },
+    {
+     "q": 2,
+     "u": "",
+     "item": "yellow onion",
+     "aisle": "produce",
+     "note": "thinly sliced"
+    },
+    {
+     "q": 4,
+     "u": "",
+     "item": "green cardamom pods",
+     "aisle": "spices"
+    },
+    {
+     "q": 1,
+     "u": "",
+     "item": "cinnamon stick",
+     "aisle": "spices"
+    },
+    {
+     "q": 2,
+     "u": "",
+     "item": "bay leaves",
+     "aisle": "spices"
+    },
+    {
+     "q": 0.5,
+     "u": "bunch",
+     "item": "fresh mint",
+     "aisle": "produce",
+     "note": "chopped"
+    },
+    {
+     "q": 0.5,
+     "u": "bunch",
+     "item": "fresh cilantro",
+     "aisle": "produce",
+     "note": "chopped"
+    },
+    {
+     "q": 0.25,
+     "u": "cup",
+     "item": "whole milk",
+     "aisle": "dairy",
+     "note": "warmed with a pinch of saffron"
+    },
+    {
+     "q": 1,
+     "u": "cup",
+     "item": "water",
+     "aisle": "pantry"
+    },
+    {
+     "q": 3,
+     "u": "tsp",
+     "item": "salt",
+     "aisle": "spices",
+     "note": "divided"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Mix lamb with yogurt, ginger-garlic paste, garam masala, turmeric, cayenne and 1 tsp salt.",
+     "timer": 3600,
+     "timerLabel": "Marinate"
+    },
+    {
+     "text": "Fry the onions in 2 tbsp ghee until deep brown. Set half aside for topping.",
+     "timer": 1200,
+     "timerLabel": "Brown the onions"
+    },
+    {
+     "text": "Cook the lamb with its marinade and the water in a heavy pot, covered, until tender.",
+     "timer": 2700,
+     "timerLabel": "Cook the lamb"
+    },
+    {
+     "text": "Boil rice in salted water with cardamom, cinnamon and bay until 70% cooked, then drain.",
+     "timer": 420,
+     "timerLabel": "Par-boil the rice"
+    },
+    {
+     "text": "Layer rice over the lamb. Top with herbs, reserved onions, saffron milk and 1 tbsp ghee."
+    },
+    {
+     "text": "Seal tightly and cook on lowest heat.",
+     "timer": 1500,
+     "timerLabel": "Steam the biryani"
+    },
+    {
+     "text": "Rest, then fluff gently. Serve with raita.",
+     "timer": 300,
+     "timerLabel": "Rest"
+    }
+   ]
+  },
+  {
+   "id": "indian-jeera-rice",
+   "title": "Jeera rice",
+   "blurb": "Fluffy basmati scented with toasted cumin",
+   "type": "rice",
+   "serves": 4,
+   "prep": 5,
+   "cook": 25,
+   "tags": [
+    "quick",
+    "vegan",
+    "vegetarian",
+    "gluten-free",
+    "kid-friendly"
+   ],
+   "ingredients": [
+    {
+     "q": 1.5,
+     "u": "cup",
+     "item": "basmati rice",
+     "aisle": "international",
+     "note": "rinsed"
+    },
+    {
+     "q": 2,
+     "u": "tbsp",
+     "item": "ghee",
+     "aisle": "international"
+    },
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "cumin seeds",
+     "aisle": "spices"
+    },
+    {
+     "q": 1,
+     "u": "",
+     "item": "bay leaves",
+     "aisle": "spices"
+    },
+    {
+     "q": 2.25,
+     "u": "cup",
+     "item": "water",
+     "aisle": "pantry"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "salt",
+     "aisle": "spices"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Soak the rinsed rice in water for 15 minutes, then drain.",
+     "timer": 900,
+     "timerLabel": "Soak the rice"
+    },
+    {
+     "text": "Heat the ghee in a saucepan. Add cumin seeds and bay leaf until sizzling.",
+     "timer": 30,
+     "timerLabel": "Toast the cumin"
+    },
+    {
+     "text": "Add the rice and stir gently for 1 minute."
+    },
+    {
+     "text": "Add the water and salt. Bring to a boil, then cover and reduce to low."
+    },
+    {
+     "text": "Cook until the water is absorbed.",
+     "timer": 600,
+     "timerLabel": "Cook the rice"
+    },
+    {
+     "text": "Rest off the heat, then fluff with a fork.",
+     "timer": 300,
+     "timerLabel": "Rest"
+    }
+   ]
+  },
+  {
+   "id": "indian-matar-pulao",
+   "title": "Matar pulao",
+   "blurb": "Basmati rice with green peas and whole spices",
+   "type": "rice",
+   "serves": 4,
+   "prep": 10,
+   "cook": 30,
+   "tags": [
+    "vegetarian",
+    "one pot",
+    "kid-friendly",
+    "gluten-free"
+   ],
+   "ingredients": [
+    {
+     "q": 1.5,
+     "u": "cup",
+     "item": "basmati rice",
+     "aisle": "international",
+     "note": "rinsed"
+    },
+    {
+     "q": 2,
+     "u": "tbsp",
+     "item": "ghee",
+     "aisle": "international"
+    },
+    {
+     "q": 1,
+     "u": "",
+     "item": "cinnamon stick",
+     "aisle": "spices"
+    },
+    {
+     "q": 4,
+     "u": "",
+     "item": "whole cloves",
+     "aisle": "spices"
+    },
+    {
+     "q": 4,
+     "u": "",
+     "item": "green cardamom pods",
+     "aisle": "spices"
+    },
+    {
+     "q": 1,
+     "u": "",
+     "item": "bay leaves",
+     "aisle": "spices"
+    },
+    {
+     "q": 1,
+     "u": "",
+     "item": "yellow onion",
+     "aisle": "produce",
+     "note": "thinly sliced"
+    },
+    {
+     "q": 1.5,
+     "u": "cup",
+     "item": "frozen peas",
+     "aisle": "frozen"
+    },
+    {
+     "q": 2.25,
+     "u": "cup",
+     "item": "water",
+     "aisle": "pantry"
+    },
+    {
+     "q": 1.5,
+     "u": "tsp",
+     "item": "salt",
+     "aisle": "spices"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Soak the rinsed rice in water for 15 minutes, then drain.",
+     "timer": 900,
+     "timerLabel": "Soak the rice"
+    },
+    {
+     "text": "Heat the ghee in a pot. Add cinnamon, cloves, cardamom and bay for 30 seconds.",
+     "timer": 30,
+     "timerLabel": "Toast the spices"
+    },
+    {
+     "text": "Add the onion and cook until golden.",
+     "timer": 420,
+     "timerLabel": "Brown the onion"
+    },
+    {
+     "text": "Add the rice and stir gently for 1 minute. Add peas, water and salt."
+    },
+    {
+     "text": "Bring to a boil, cover and cook on low until the water is absorbed.",
+     "timer": 720,
+     "timerLabel": "Cook the rice"
+    },
+    {
+     "text": "Rest, then fluff with a fork.",
+     "timer": 300,
+     "timerLabel": "Rest"
+    }
+   ]
+  },
+  {
+   "id": "indian-lemon-rice",
+   "title": "Lemon rice",
+   "blurb": "Tangy South Indian rice with peanuts and curry leaves",
+   "type": "rice",
+   "serves": 4,
+   "prep": 10,
+   "cook": 20,
+   "tags": [
+    "quick",
+    "vegan",
+    "vegetarian",
+    "gluten-free"
+   ],
+   "ingredients": [
+    {
+     "q": 3,
+     "u": "cup",
+     "item": "cooked basmati rice",
+     "aisle": "international",
+     "note": "cooled"
+    },
+    {
+     "q": 3,
+     "u": "tbsp",
+     "item": "vegetable oil",
+     "aisle": "pantry"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "mustard seeds",
+     "aisle": "spices"
+    },
+    {
+     "q": 2,
+     "u": "tbsp",
+     "item": "raw peanuts",
+     "aisle": "pantry"
+    },
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "chana dal (split chickpeas)",
+     "aisle": "international"
+    },
+    {
+     "q": 8,
+     "u": "",
+     "item": "curry leaves",
+     "aisle": "international"
+    },
+    {
+     "q": 2,
+     "u": "",
+     "item": "dried red chiles",
+     "aisle": "international"
+    },
+    {
+     "q": 0.5,
+     "u": "tsp",
+     "item": "ground turmeric",
+     "aisle": "spices"
+    },
+    {
+     "q": 2,
+     "u": "",
+     "item": "lemons",
+     "aisle": "produce",
+     "note": "juiced"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "salt",
+     "aisle": "spices"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Heat the oil in a large skillet over medium heat. Add mustard seeds until they pop.",
+     "timer": 30,
+     "timerLabel": "Pop the seeds"
+    },
+    {
+     "text": "Add peanuts and chana dal. Cook until golden.",
+     "timer": 120,
+     "timerLabel": "Toast the nuts"
+    },
+    {
+     "text": "Add curry leaves, chiles and turmeric. Stir for 20 seconds."
+    },
+    {
+     "text": "Add the rice and salt. Toss gently until hot.",
+     "timer": 180,
+     "timerLabel": "Heat the rice"
+    },
+    {
+     "text": "Off the heat, stir in the lemon juice. Serve warm."
+    }
+   ]
+  },
+  {
+   "id": "indian-moong-dal-khichdi",
+   "title": "Moong dal khichdi",
+   "blurb": "Comforting one-pot rice and lentil porridge",
+   "type": "rice",
+   "serves": 4,
+   "prep": 10,
+   "cook": 30,
+   "tags": [
+    "one pot",
+    "vegetarian",
+    "healthy",
+    "gluten-free",
+    "kid-friendly"
+   ],
+   "ingredients": [
+    {
+     "q": 0.75,
+     "u": "cup",
+     "item": "basmati rice",
+     "aisle": "international",
+     "note": "rinsed"
+    },
+    {
+     "q": 0.75,
+     "u": "cup",
+     "item": "yellow moong dal (split mung beans)",
+     "aisle": "international",
+     "note": "rinsed"
+    },
+    {
+     "q": 5,
+     "u": "cup",
+     "item": "water",
+     "aisle": "pantry"
+    },
+    {
+     "q": 0.5,
+     "u": "tsp",
+     "item": "ground turmeric",
+     "aisle": "spices"
+    },
+    {
+     "q": 1.5,
+     "u": "tsp",
+     "item": "salt",
+     "aisle": "spices"
+    },
+    {
+     "q": 2,
+     "u": "tbsp",
+     "item": "ghee",
+     "aisle": "international"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "cumin seeds",
+     "aisle": "spices"
+    },
+    {
+     "q": 2,
+     "u": "tsp",
+     "item": "fresh ginger",
+     "aisle": "produce",
+     "note": "grated"
+    },
+    {
+     "q": 2,
+     "u": "clove",
+     "item": "garlic",
+     "aisle": "produce",
+     "note": "minced"
+    },
+    {
+     "q": 1,
+     "u": "",
+     "item": "roma tomatoes",
+     "aisle": "produce",
+     "note": "chopped"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Combine rice, dal, water, turmeric and salt in a pot. Bring to a boil."
+    },
+    {
+     "text": "Simmer partly covered, stirring now and then, until very soft and porridge-like.",
+     "timer": 1500,
+     "timerLabel": "Simmer the khichdi"
+    },
+    {
+     "text": "Heat the ghee. Add cumin seeds, ginger, garlic and tomato. Cook until soft.",
+     "timer": 180,
+     "timerLabel": "Make the tadka"
+    },
+    {
+     "text": "Stir the tadka into the khichdi. Add water if it is too thick."
+    },
+    {
+     "text": "Serve with yogurt and a pickle."
+    }
+   ]
+  },
+  {
+   "id": "indian-tomato-rice",
+   "title": "Tomato rice",
+   "blurb": "Quick spiced tomato pulao-style rice",
+   "type": "rice",
+   "serves": 4,
+   "prep": 10,
+   "cook": 25,
+   "tags": [
+    "quick",
+    "vegan",
+    "vegetarian",
+    "one pot",
+    "gluten-free"
+   ],
+   "ingredients": [
+    {
+     "q": 1.5,
+     "u": "cup",
+     "item": "basmati rice",
+     "aisle": "international",
+     "note": "rinsed"
+    },
+    {
+     "q": 2,
+     "u": "tbsp",
+     "item": "vegetable oil",
+     "aisle": "pantry"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "cumin seeds",
+     "aisle": "spices"
+    },
+    {
+     "q": 1,
+     "u": "",
+     "item": "yellow onion",
+     "aisle": "produce",
+     "note": "sliced"
+    },
+    {
+     "q": 3,
+     "u": "clove",
+     "item": "garlic",
+     "aisle": "produce",
+     "note": "minced"
+    },
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "fresh ginger",
+     "aisle": "produce",
+     "note": "grated"
+    },
+    {
+     "q": 3,
+     "u": "",
+     "item": "roma tomatoes",
+     "aisle": "produce",
+     "note": "chopped"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "ground coriander",
+     "aisle": "spices"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "cayenne pepper",
+     "aisle": "spices"
+    },
+    {
+     "q": 0.5,
+     "u": "tsp",
+     "item": "ground turmeric",
+     "aisle": "spices"
+    },
+    {
+     "q": 2,
+     "u": "cup",
+     "item": "water",
+     "aisle": "pantry"
+    },
+    {
+     "q": 1.5,
+     "u": "tsp",
+     "item": "salt",
+     "aisle": "spices"
+    },
+    {
+     "q": 0.25,
+     "u": "bunch",
+     "item": "fresh cilantro",
+     "aisle": "produce",
+     "note": "chopped"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Heat the oil in a pot. Add cumin seeds and onion. Cook until soft.",
+     "timer": 300,
+     "timerLabel": "Cook the onion"
+    },
+    {
+     "text": "Add garlic and ginger for 1 minute."
+    },
+    {
+     "text": "Add tomatoes, coriander, cayenne, turmeric and salt. Cook until mushy.",
+     "timer": 300,
+     "timerLabel": "Cook the tomatoes"
+    },
+    {
+     "text": "Add the rice and water. Bring to a boil."
+    },
+    {
+     "text": "Cover and cook on low until the water is absorbed.",
+     "timer": 720,
+     "timerLabel": "Cook the rice"
+    },
+    {
+     "text": "Rest, then fluff and top with cilantro.",
+     "timer": 300,
+     "timerLabel": "Rest"
+    }
+   ]
+  },
+  {
+   "id": "indian-coconut-rice",
+   "title": "Coconut rice",
+   "blurb": "Creamy South Indian-style rice with mustard seeds",
+   "type": "rice",
+   "serves": 4,
+   "prep": 5,
+   "cook": 25,
+   "tags": [
+    "vegan",
+    "vegetarian",
+    "gluten-free",
+    "kid-friendly"
+   ],
+   "ingredients": [
+    {
+     "q": 1.5,
+     "u": "cup",
+     "item": "basmati rice",
+     "aisle": "international",
+     "note": "rinsed"
+    },
+    {
+     "q": 1,
+     "u": "can",
+     "item": "coconut milk (13.5 oz)",
+     "aisle": "canned"
+    },
+    {
+     "q": 1,
+     "u": "cup",
+     "item": "water",
+     "aisle": "pantry"
+    },
+    {
+     "q": 2,
+     "u": "tbsp",
+     "item": "vegetable oil",
+     "aisle": "pantry"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "mustard seeds",
+     "aisle": "spices"
+    },
+    {
+     "q": 8,
+     "u": "",
+     "item": "curry leaves",
+     "aisle": "international"
+    },
+    {
+     "q": 2,
+     "u": "tbsp",
+     "item": "raw cashews",
+     "aisle": "pantry",
+     "note": "broken"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "salt",
+     "aisle": "spices"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Heat the oil in a pot. Add mustard seeds until they pop.",
+     "timer": 30,
+     "timerLabel": "Pop the seeds"
+    },
+    {
+     "text": "Add cashews and curry leaves. Cook until the cashews are golden, 1 minute."
+    },
+    {
+     "text": "Add the rice and stir gently for 1 minute."
+    },
+    {
+     "text": "Add coconut milk, water and salt. Bring to a boil."
+    },
+    {
+     "text": "Cover and cook on low until all liquid is absorbed.",
+     "timer": 720,
+     "timerLabel": "Cook the rice"
+    },
+    {
+     "text": "Rest, then fluff with a fork.",
+     "timer": 300,
+     "timerLabel": "Rest"
+    }
+   ]
+  },
+  {
+   "id": "indian-tandoori-chicken",
+   "title": "Tandoori chicken",
+   "blurb": "Yogurt-marinated chicken roasted until charred and juicy",
+   "type": "grill",
+   "serves": 4,
+   "prep": 20,
+   "cook": 45,
+   "tags": [
+    "grill",
+    "gluten-free",
+    "make ahead"
+   ],
+   "ingredients": [
+    {
+     "q": 3,
+     "u": "lb",
+     "item": "bone-in skin-on chicken legs and thighs",
+     "aisle": "meat",
+     "note": "skin removed, slashed to the bone"
+    },
+    {
+     "q": 1,
+     "u": "cup",
+     "item": "plain whole milk yogurt",
+     "aisle": "dairy"
+    },
+    {
+     "q": 2,
+     "u": "",
+     "item": "lemons",
+     "aisle": "produce",
+     "note": "juiced"
+    },
+    {
+     "q": 5,
+     "u": "clove",
+     "item": "garlic",
+     "aisle": "produce",
+     "note": "minced"
+    },
+    {
+     "q": 2,
+     "u": "tbsp",
+     "item": "fresh ginger",
+     "aisle": "produce",
+     "note": "grated"
+    },
+    {
+     "q": 2,
+     "u": "tbsp",
+     "item": "paprika",
+     "aisle": "spices"
+    },
+    {
+     "q": 2,
+     "u": "tsp",
+     "item": "garam masala",
+     "aisle": "spices"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "ground cumin",
+     "aisle": "spices"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "cayenne pepper",
+     "aisle": "spices"
+    },
+    {
+     "q": 2,
+     "u": "tbsp",
+     "item": "vegetable oil",
+     "aisle": "pantry"
+    },
+    {
+     "q": 2,
+     "u": "tsp",
+     "item": "salt",
+     "aisle": "spices"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Whisk yogurt, lemon juice, garlic, ginger, spices, oil and salt in a large bowl."
+    },
+    {
+     "text": "Coat the chicken well in the marinade. Cover and refrigerate at least 4 hours.",
+     "timer": 14400,
+     "timerLabel": "Marinate"
+    },
+    {
+     "text": "Heat the oven to 450°F. Set a rack over a foil-lined sheet pan and arrange the chicken."
+    },
+    {
+     "text": "Roast until the chicken reaches 175°F at the thickest part.",
+     "timer": 2400,
+     "timerLabel": "Roast the chicken"
+    },
+    {
+     "text": "Broil 2 to 3 minutes to char the edges.",
+     "timer": 150,
+     "timerLabel": "Broil"
+    },
+    {
+     "text": "Rest 5 minutes. Serve with lemon, onion and mint chutney.",
+     "timer": 300,
+     "timerLabel": "Rest"
+    }
+   ]
+  },
+  {
+   "id": "indian-chicken-tikka",
+   "title": "Chicken tikka",
+   "blurb": "Charred marinated chicken skewers, the classic starter",
+   "type": "grill",
+   "serves": 4,
+   "prep": 15,
+   "cook": 20,
+   "tags": [
+    "grill",
+    "quick",
+    "gluten-free",
+    "make ahead"
+   ],
+   "ingredients": [
+    {
+     "q": 1.5,
+     "u": "lb",
+     "item": "boneless skinless chicken thighs",
+     "aisle": "meat",
+     "note": "cut in 1.5-inch pieces"
+    },
+    {
+     "q": 0.75,
+     "u": "cup",
+     "item": "plain whole milk yogurt",
+     "aisle": "dairy"
+    },
+    {
+     "q": 1,
+     "u": "",
+     "item": "lemon",
+     "aisle": "produce",
+     "note": "juiced"
+    },
+    {
+     "q": 4,
+     "u": "clove",
+     "item": "garlic",
+     "aisle": "produce",
+     "note": "minced"
+    },
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "fresh ginger",
+     "aisle": "produce",
+     "note": "grated"
+    },
+    {
+     "q": 2,
+     "u": "tsp",
+     "item": "paprika",
+     "aisle": "spices"
+    },
+    {
+     "q": 2,
+     "u": "tsp",
+     "item": "garam masala",
+     "aisle": "spices"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "ground cumin",
+     "aisle": "spices"
+    },
+    {
+     "q": 0.5,
+     "u": "tsp",
+     "item": "cayenne pepper",
+     "aisle": "spices"
+    },
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "vegetable oil",
+     "aisle": "pantry"
+    },
+    {
+     "q": 1.5,
+     "u": "tsp",
+     "item": "salt",
+     "aisle": "spices"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Mix everything except the chicken in a bowl. Add the chicken and coat well."
+    },
+    {
+     "text": "Marinate in the fridge for at least 1 hour. Soak wooden skewers in water.",
+     "timer": 3600,
+     "timerLabel": "Marinate"
+    },
+    {
+     "text": "Heat a grill or broiler to high. Thread the chicken onto skewers."
+    },
+    {
+     "text": "Cook, turning, until charred and the chicken reaches 165°F.",
+     "timer": 720,
+     "timerLabel": "Cook the skewers"
+    },
+    {
+     "text": "Rest 3 minutes. Serve with lemon wedges and chutney.",
+     "timer": 180,
+     "timerLabel": "Rest"
+    }
+   ]
+  },
+  {
+   "id": "indian-hariyali-chicken-tikka",
+   "title": "Hariyali chicken tikka",
+   "blurb": "Green herb marinade with mint, cilantro and spinach",
+   "type": "grill",
+   "serves": 4,
+   "prep": 20,
+   "cook": 20,
+   "tags": [
+    "grill",
+    "gluten-free",
+    "healthy"
+   ],
+   "ingredients": [
+    {
+     "q": 1.5,
+     "u": "lb",
+     "item": "boneless skinless chicken thighs",
+     "aisle": "meat",
+     "note": "cut in 1.5-inch pieces"
+    },
+    {
+     "q": 1,
+     "u": "bunch",
+     "item": "fresh cilantro",
+     "aisle": "produce"
+    },
+    {
+     "q": 0.5,
+     "u": "bunch",
+     "item": "fresh mint",
+     "aisle": "produce",
+     "note": "leaves only"
+    },
+    {
+     "q": 1,
+     "u": "cup",
+     "item": "fresh baby spinach",
+     "aisle": "produce"
+    },
+    {
+     "q": 2,
+     "u": "",
+     "item": "serrano chile",
+     "aisle": "produce"
+    },
+    {
+     "q": 4,
+     "u": "clove",
+     "item": "garlic",
+     "aisle": "produce"
+    },
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "fresh ginger",
+     "aisle": "produce",
+     "note": "roughly chopped"
+    },
+    {
+     "q": 0.5,
+     "u": "cup",
+     "item": "plain whole milk yogurt",
+     "aisle": "dairy"
+    },
+    {
+     "q": 1,
+     "u": "",
+     "item": "lemon",
+     "aisle": "produce",
+     "note": "juiced"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "garam masala",
+     "aisle": "spices"
+    },
+    {
+     "q": 1.5,
+     "u": "tsp",
+     "item": "salt",
+     "aisle": "spices"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Blend cilantro, mint, spinach, chiles, garlic, ginger, yogurt, lemon, garam masala and salt into a green paste."
+    },
+    {
+     "text": "Coat the chicken in the paste. Marinate in the fridge.",
+     "timer": 3600,
+     "timerLabel": "Marinate"
+    },
+    {
+     "text": "Heat a grill or broiler to high. Thread chicken onto skewers."
+    },
+    {
+     "text": "Cook, turning, until lightly charred and 165°F inside.",
+     "timer": 720,
+     "timerLabel": "Cook the skewers"
+    },
+    {
+     "text": "Rest 3 minutes and serve with sliced onions and lemon.",
+     "timer": 180,
+     "timerLabel": "Rest"
+    }
+   ]
+  },
+  {
+   "id": "indian-paneer-tikka",
+   "title": "Paneer tikka",
+   "blurb": "Spiced paneer and peppers, grilled until charred",
+   "type": "grill",
+   "serves": 4,
+   "prep": 15,
+   "cook": 15,
+   "tags": [
+    "grill",
+    "quick",
+    "vegetarian",
+    "gluten-free"
+   ],
+   "ingredients": [
+    {
+     "q": 14,
+     "u": "oz",
+     "item": "paneer",
+     "aisle": "dairy",
+     "note": "cut in 1.5-inch cubes"
+    },
+    {
+     "q": 1,
+     "u": "",
+     "item": "green bell pepper",
+     "aisle": "produce",
+     "note": "cut in 1.5-inch pieces"
+    },
+    {
+     "q": 1,
+     "u": "",
+     "item": "red onion",
+     "aisle": "produce",
+     "note": "cut in 1.5-inch pieces"
+    },
+    {
+     "q": 0.5,
+     "u": "cup",
+     "item": "plain whole milk yogurt",
+     "aisle": "dairy"
+    },
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "fresh ginger",
+     "aisle": "produce",
+     "note": "grated"
+    },
+    {
+     "q": 3,
+     "u": "clove",
+     "item": "garlic",
+     "aisle": "produce",
+     "note": "minced"
+    },
+    {
+     "q": 2,
+     "u": "tsp",
+     "item": "paprika",
+     "aisle": "spices"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "garam masala",
+     "aisle": "spices"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "ground cumin",
+     "aisle": "spices"
+    },
+    {
+     "q": 1,
+     "u": "",
+     "item": "lemon",
+     "aisle": "produce",
+     "note": "juiced"
+    },
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "vegetable oil",
+     "aisle": "pantry"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "salt",
+     "aisle": "spices"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Whisk yogurt, ginger, garlic, spices, lemon juice, oil and salt."
+    },
+    {
+     "text": "Fold in the paneer, pepper and onion gently. Marinate in the fridge.",
+     "timer": 1800,
+     "timerLabel": "Marinate"
+    },
+    {
+     "text": "Heat a grill or broiler to high. Thread onto skewers."
+    },
+    {
+     "text": "Cook, turning once, until charred at the edges.",
+     "timer": 600,
+     "timerLabel": "Grill the skewers"
+    },
+    {
+     "text": "Serve hot with mint chutney and lemon."
+    }
+   ]
+  },
+  {
+   "id": "indian-seekh-kebab",
+   "title": "Seekh kebabs",
+   "blurb": "Spiced ground lamb kebabs, grilled or broiled",
+   "type": "grill",
+   "serves": 4,
+   "prep": 25,
+   "cook": 15,
+   "tags": [
+    "grill",
+    "gluten-free"
+   ],
+   "ingredients": [
+    {
+     "q": 1.5,
+     "u": "lb",
+     "item": "ground lamb",
+     "aisle": "meat"
+    },
+    {
+     "q": 1,
+     "u": "",
+     "item": "yellow onion",
+     "aisle": "produce",
+     "note": "grated, squeezed dry"
+    },
+    {
+     "q": 4,
+     "u": "clove",
+     "item": "garlic",
+     "aisle": "produce",
+     "note": "minced"
+    },
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "fresh ginger",
+     "aisle": "produce",
+     "note": "grated"
+    },
+    {
+     "q": 1,
+     "u": "",
+     "item": "serrano chile",
+     "aisle": "produce",
+     "note": "minced"
+    },
+    {
+     "q": 0.25,
+     "u": "bunch",
+     "item": "fresh cilantro",
+     "aisle": "produce",
+     "note": "finely chopped"
+    },
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "ground coriander",
+     "aisle": "spices"
+    },
+    {
+     "q": 2,
+     "u": "tsp",
+     "item": "ground cumin",
+     "aisle": "spices"
+    },
+    {
+     "q": 2,
+     "u": "tsp",
+     "item": "garam masala",
+     "aisle": "spices"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "cayenne pepper",
+     "aisle": "spices"
+    },
+    {
+     "q": 1.5,
+     "u": "tsp",
+     "item": "salt",
+     "aisle": "spices"
+    },
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "vegetable oil",
+     "aisle": "pantry"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Mix everything except the oil in a bowl with your hands until sticky. Chill the mixture.",
+     "timer": 1800,
+     "timerLabel": "Chill"
+    },
+    {
+     "text": "Wet your hands and mold about 1/3 cup of meat around each skewer into a log."
+    },
+    {
+     "text": "Heat a grill or broiler to high. Brush the kebabs lightly with oil."
+    },
+    {
+     "text": "Cook, turning, until browned and the lamb reaches 160°F.",
+     "timer": 720,
+     "timerLabel": "Cook the kebabs"
+    },
+    {
+     "text": "Rest 3 minutes. Serve with chutney and onions.",
+     "timer": 180,
+     "timerLabel": "Rest"
+    }
+   ]
+  },
+  {
+   "id": "indian-tandoori-shrimp",
+   "title": "Tandoori shrimp",
+   "blurb": "Fast, bright, spiced shrimp with lemon",
+   "type": "grill",
+   "serves": 4,
+   "prep": 10,
+   "cook": 8,
+   "tags": [
+    "quick",
+    "grill",
+    "gluten-free"
+   ],
+   "ingredients": [
+    {
+     "q": 1.5,
+     "u": "lb",
+     "item": "large raw shrimp",
+     "aisle": "seafood",
+     "note": "peeled and deveined"
+    },
+    {
+     "q": 0.5,
+     "u": "cup",
+     "item": "plain whole milk yogurt",
+     "aisle": "dairy"
+    },
+    {
+     "q": 1,
+     "u": "",
+     "item": "lemon",
+     "aisle": "produce",
+     "note": "juiced"
+    },
+    {
+     "q": 3,
+     "u": "clove",
+     "item": "garlic",
+     "aisle": "produce",
+     "note": "minced"
+    },
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "fresh ginger",
+     "aisle": "produce",
+     "note": "grated"
+    },
+    {
+     "q": 2,
+     "u": "tsp",
+     "item": "paprika",
+     "aisle": "spices"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "garam masala",
+     "aisle": "spices"
+    },
+    {
+     "q": 0.5,
+     "u": "tsp",
+     "item": "cayenne pepper",
+     "aisle": "spices"
+    },
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "vegetable oil",
+     "aisle": "pantry"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "salt",
+     "aisle": "spices"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Whisk yogurt, lemon juice, garlic, ginger, spices, oil and salt."
+    },
+    {
+     "text": "Toss in the shrimp. Marinate no longer than 30 minutes.",
+     "timer": 1200,
+     "timerLabel": "Marinate"
+    },
+    {
+     "text": "Heat a grill, grill pan or broiler to high. Thread shrimp onto skewers."
+    },
+    {
+     "text": "Cook until pink and opaque, about 2 minutes per side.",
+     "timer": 240,
+     "timerLabel": "Cook the shrimp"
+    },
+    {
+     "text": "Serve right away with lemon and rice."
+    }
+   ]
+  },
+  {
+   "id": "indian-tandoori-lamb-chops",
+   "title": "Tandoori lamb chops",
+   "blurb": "Marinated lamb chops with a spiced, charred crust",
+   "type": "grill",
+   "serves": 4,
+   "prep": 15,
+   "cook": 15,
+   "tags": [
+    "grill",
+    "gluten-free",
+    "holiday"
+   ],
+   "ingredients": [
+    {
+     "q": 8,
+     "u": "",
+     "item": "lamb rib chops (about 2 lb)",
+     "aisle": "meat"
+    },
+    {
+     "q": 0.75,
+     "u": "cup",
+     "item": "plain whole milk yogurt",
+     "aisle": "dairy"
+    },
+    {
+     "q": 1,
+     "u": "",
+     "item": "lemon",
+     "aisle": "produce",
+     "note": "juiced"
+    },
+    {
+     "q": 4,
+     "u": "clove",
+     "item": "garlic",
+     "aisle": "produce",
+     "note": "minced"
+    },
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "fresh ginger",
+     "aisle": "produce",
+     "note": "grated"
+    },
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "paprika",
+     "aisle": "spices"
+    },
+    {
+     "q": 2,
+     "u": "tsp",
+     "item": "garam masala",
+     "aisle": "spices"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "ground cumin",
+     "aisle": "spices"
+    },
+    {
+     "q": 0.5,
+     "u": "tsp",
+     "item": "cayenne pepper",
+     "aisle": "spices"
+    },
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "vegetable oil",
+     "aisle": "pantry"
+    },
+    {
+     "q": 2,
+     "u": "tsp",
+     "item": "salt",
+     "aisle": "spices"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Mix yogurt, lemon juice, garlic, ginger, spices, oil and salt."
+    },
+    {
+     "text": "Coat the chops. Marinate in the fridge at least 2 hours.",
+     "timer": 7200,
+     "timerLabel": "Marinate"
+    },
+    {
+     "text": "Heat a grill or cast-iron pan to high. Wipe off excess marinade."
+    },
+    {
+     "text": "Cook 4 to 5 minutes per side to 145°F for medium.",
+     "timer": 540,
+     "timerLabel": "Cook the chops"
+    },
+    {
+     "text": "Rest 5 minutes before serving.",
+     "timer": 300,
+     "timerLabel": "Rest"
+    }
+   ]
+  },
+  {
+   "id": "indian-tandoori-cauliflower",
+   "title": "Tandoori cauliflower",
+   "blurb": "Roasted spiced cauliflower, crisp and charred",
+   "type": "grill",
+   "serves": 4,
+   "prep": 15,
+   "cook": 30,
+   "tags": [
+    "vegetarian",
+    "sheet pan",
+    "gluten-free",
+    "healthy"
+   ],
+   "ingredients": [
+    {
+     "q": 1,
+     "u": "head",
+     "item": "cauliflower",
+     "aisle": "produce",
+     "note": "cut in large florets"
+    },
+    {
+     "q": 0.5,
+     "u": "cup",
+     "item": "plain whole milk yogurt",
+     "aisle": "dairy"
+    },
+    {
+     "q": 1,
+     "u": "",
+     "item": "lemon",
+     "aisle": "produce",
+     "note": "juiced"
+    },
+    {
+     "q": 3,
+     "u": "clove",
+     "item": "garlic",
+     "aisle": "produce",
+     "note": "minced"
+    },
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "fresh ginger",
+     "aisle": "produce",
+     "note": "grated"
+    },
+    {
+     "q": 2,
+     "u": "tsp",
+     "item": "paprika",
+     "aisle": "spices"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "garam masala",
+     "aisle": "spices"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "ground cumin",
+     "aisle": "spices"
+    },
+    {
+     "q": 0.5,
+     "u": "tsp",
+     "item": "cayenne pepper",
+     "aisle": "spices"
+    },
+    {
+     "q": 2,
+     "u": "tbsp",
+     "item": "vegetable oil",
+     "aisle": "pantry"
+    },
+    {
+     "q": 1.5,
+     "u": "tsp",
+     "item": "salt",
+     "aisle": "spices"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Heat the oven to 450°F and line a sheet pan with parchment."
+    },
+    {
+     "text": "Whisk yogurt, lemon juice, garlic, ginger, spices, oil and salt."
+    },
+    {
+     "text": "Toss the cauliflower in the marinade until coated."
+    },
+    {
+     "text": "Spread on the pan in one layer. Roast, flipping halfway, until charred and tender.",
+     "timer": 1500,
+     "timerLabel": "Roast"
+    },
+    {
+     "text": "Serve with mint chutney and lemon."
+    }
+   ]
+  },
+  {
+   "id": "indian-tandoori-salmon",
+   "title": "Tandoori salmon",
+   "blurb": "Spiced yogurt salmon roasted in 15 minutes",
+   "type": "grill",
+   "serves": 4,
+   "prep": 10,
+   "cook": 15,
+   "tags": [
+    "quick",
+    "sheet pan",
+    "gluten-free",
+    "healthy"
+   ],
+   "ingredients": [
+    {
+     "q": 4,
+     "u": "",
+     "item": "salmon fillets (6 oz each)",
+     "aisle": "seafood",
+     "note": "skin-on"
+    },
+    {
+     "q": 0.5,
+     "u": "cup",
+     "item": "plain whole milk yogurt",
+     "aisle": "dairy"
+    },
+    {
+     "q": 1,
+     "u": "",
+     "item": "lemon",
+     "aisle": "produce",
+     "note": "juiced"
+    },
+    {
+     "q": 2,
+     "u": "clove",
+     "item": "garlic",
+     "aisle": "produce",
+     "note": "minced"
+    },
+    {
+     "q": 2,
+     "u": "tsp",
+     "item": "fresh ginger",
+     "aisle": "produce",
+     "note": "grated"
+    },
+    {
+     "q": 2,
+     "u": "tsp",
+     "item": "paprika",
+     "aisle": "spices"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "garam masala",
+     "aisle": "spices"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "ground cumin",
+     "aisle": "spices"
+    },
+    {
+     "q": 0.25,
+     "u": "tsp",
+     "item": "cayenne pepper",
+     "aisle": "spices"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "salt",
+     "aisle": "spices"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Heat the oven to 425°F and line a sheet pan with foil."
+    },
+    {
+     "text": "Whisk yogurt, lemon juice, garlic, ginger, spices and salt."
+    },
+    {
+     "text": "Spread the mixture over the salmon. Marinate 15 minutes.",
+     "timer": 900,
+     "timerLabel": "Marinate"
+    },
+    {
+     "text": "Place skin-side down on the pan. Roast until the fish reaches 145°F.",
+     "timer": 720,
+     "timerLabel": "Roast the salmon"
+    },
+    {
+     "text": "Broil 1 to 2 minutes for a charred top. Serve with rice.",
+     "timer": 90,
+     "timerLabel": "Broil"
+    }
+   ]
+  },
+  {
+   "id": "indian-naan",
+   "title": "Naan",
+   "blurb": "Soft, bubbly skillet flatbread, no tandoor needed",
+   "type": "sides",
+   "serves": 8,
+   "prep": 20,
+   "cook": 20,
+   "tags": [
+    "vegetarian",
+    "make ahead"
+   ],
+   "ingredients": [
+    {
+     "q": 2.5,
+     "u": "cup",
+     "item": "all-purpose flour",
+     "aisle": "pantry"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "instant yeast",
+     "aisle": "pantry"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "sugar",
+     "aisle": "pantry"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "salt",
+     "aisle": "spices"
+    },
+    {
+     "q": 0.5,
+     "u": "cup",
+     "item": "plain whole milk yogurt",
+     "aisle": "dairy"
+    },
+    {
+     "q": 0.5,
+     "u": "cup",
+     "item": "whole milk",
+     "aisle": "dairy",
+     "note": "warm"
+    },
+    {
+     "q": 2,
+     "u": "tbsp",
+     "item": "vegetable oil",
+     "aisle": "pantry"
+    },
+    {
+     "q": 2,
+     "u": "tbsp",
+     "item": "unsalted butter",
+     "aisle": "dairy",
+     "note": "melted"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Mix flour, yeast, sugar and salt. Add yogurt, warm milk and oil. Knead into a soft dough, about 5 minutes.",
+     "timer": 300,
+     "timerLabel": "Knead"
+    },
+    {
+     "text": "Cover and let the dough rise until doubled.",
+     "timer": 3600,
+     "timerLabel": "Rise"
+    },
+    {
+     "text": "Divide into 8 balls. Roll each into an oval about 1/4 inch thick."
+    },
+    {
+     "text": "Heat a cast-iron skillet over high heat. Cook one naan until bubbled, about 1 to 2 minutes.",
+     "timer": 90,
+     "timerLabel": "Cook one side"
+    },
+    {
+     "text": "Flip and cook until golden spots form. Brush with butter and repeat.",
+     "timer": 60,
+     "timerLabel": "Cook other side"
+    }
+   ]
+  },
+  {
+   "id": "indian-chapati",
+   "title": "Chapati",
+   "blurb": "Everyday whole wheat flatbread puffed on the stove",
+   "type": "sides",
+   "serves": 8,
+   "prep": 20,
+   "cook": 20,
+   "tags": [
+    "vegan",
+    "vegetarian",
+    "healthy"
+   ],
+   "ingredients": [
+    {
+     "q": 2,
+     "u": "cup",
+     "item": "whole wheat flour (atta)",
+     "aisle": "international"
+    },
+    {
+     "q": 0.75,
+     "u": "cup",
+     "item": "water",
+     "aisle": "pantry",
+     "note": "warm, plus more as needed"
+    },
+    {
+     "q": 0.5,
+     "u": "tsp",
+     "item": "salt",
+     "aisle": "spices"
+    },
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "vegetable oil",
+     "aisle": "pantry"
+    },
+    {
+     "q": 2,
+     "u": "tbsp",
+     "item": "unsalted butter",
+     "aisle": "dairy",
+     "note": "melted"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Mix flour and salt. Stir in the water and oil. Knead into a soft dough, 5 minutes.",
+     "timer": 300,
+     "timerLabel": "Knead"
+    },
+    {
+     "text": "Cover and rest the dough.",
+     "timer": 1200,
+     "timerLabel": "Rest"
+    },
+    {
+     "text": "Divide into 8 balls. Roll each into a thin 6-inch round, dusting with flour."
+    },
+    {
+     "text": "Heat a dry skillet over medium-high. Cook one round until bubbles form, about 30 seconds.",
+     "timer": 30,
+     "timerLabel": "Cook one side"
+    },
+    {
+     "text": "Flip and cook until spotted. Press edges so it puffs. Brush with butter.",
+     "timer": 30,
+     "timerLabel": "Cook other side"
+    },
+    {
+     "text": "Stack in a towel to keep warm while you cook the rest."
+    }
+   ]
+  },
+  {
+   "id": "indian-aloo-paratha",
+   "title": "Aloo paratha",
+   "blurb": "Whole wheat flatbread stuffed with spiced potato",
+   "type": "sides",
+   "serves": 6,
+   "prep": 40,
+   "cook": 25,
+   "tags": [
+    "vegetarian",
+    "kid-friendly"
+   ],
+   "ingredients": [
+    {
+     "q": 2,
+     "u": "cup",
+     "item": "whole wheat flour (atta)",
+     "aisle": "international"
+    },
+    {
+     "q": 0.75,
+     "u": "cup",
+     "item": "water",
+     "aisle": "pantry",
+     "note": "warm"
+    },
+    {
+     "q": 0.5,
+     "u": "tsp",
+     "item": "salt",
+     "aisle": "spices"
+    },
+    {
+     "q": 1.5,
+     "u": "lb",
+     "item": "yellow potato",
+     "aisle": "produce",
+     "note": "boiled and mashed"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "ground cumin",
+     "aisle": "spices"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "ground coriander",
+     "aisle": "spices"
+    },
+    {
+     "q": 0.5,
+     "u": "tsp",
+     "item": "cayenne pepper",
+     "aisle": "spices"
+    },
+    {
+     "q": 0.5,
+     "u": "tsp",
+     "item": "garam masala",
+     "aisle": "spices"
+    },
+    {
+     "q": 1,
+     "u": "",
+     "item": "serrano chile",
+     "aisle": "produce",
+     "note": "minced"
+    },
+    {
+     "q": 0.25,
+     "u": "bunch",
+     "item": "fresh cilantro",
+     "aisle": "produce",
+     "note": "chopped"
+    },
+    {
+     "q": 3,
+     "u": "tbsp",
+     "item": "unsalted butter",
+     "aisle": "dairy",
+     "note": "melted"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Knead flour, water and 1/2 tsp salt into a soft dough. Cover and rest.",
+     "timer": 900,
+     "timerLabel": "Rest the dough"
+    },
+    {
+     "text": "Mix the mashed potato with cumin, coriander, cayenne, garam masala, chile, cilantro and 1 tsp salt."
+    },
+    {
+     "text": "Divide the dough into 6 balls. Roll each into a 4-inch round and add 1/3 cup filling."
+    },
+    {
+     "text": "Pinch the edges closed, then gently roll flat to 6 inches."
+    },
+    {
+     "text": "Cook in a hot skillet until browned on one side. Flip and brush with butter.",
+     "timer": 120,
+     "timerLabel": "Cook one side"
+    },
+    {
+     "text": "Cook until golden on the second side. Serve with yogurt or pickle.",
+     "timer": 120,
+     "timerLabel": "Cook other side"
+    }
+   ]
+  },
+  {
+   "id": "indian-cucumber-raita",
+   "title": "Cucumber raita",
+   "blurb": "Cooling yogurt with cucumber, mint and roasted cumin",
+   "type": "sides",
+   "serves": 4,
+   "prep": 10,
+   "cook": 0,
+   "tags": [
+    "quick",
+    "vegetarian",
+    "gluten-free",
+    "healthy",
+    "kid-friendly"
+   ],
+   "ingredients": [
+    {
+     "q": 1.5,
+     "u": "cup",
+     "item": "plain whole milk yogurt",
+     "aisle": "dairy"
+    },
+    {
+     "q": 1,
+     "u": "",
+     "item": "cucumber",
+     "aisle": "produce",
+     "note": "grated and squeezed dry"
+    },
+    {
+     "q": 0.25,
+     "u": "bunch",
+     "item": "fresh mint",
+     "aisle": "produce",
+     "note": "chopped"
+    },
+    {
+     "q": 0.5,
+     "u": "tsp",
+     "item": "ground cumin",
+     "aisle": "spices",
+     "note": "toasted"
+    },
+    {
+     "q": 0.5,
+     "u": "tsp",
+     "item": "salt",
+     "aisle": "spices"
+    },
+    {
+     "q": 0.25,
+     "u": "tsp",
+     "item": "cayenne pepper",
+     "aisle": "spices"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Toast the cumin in a dry pan for 30 seconds until fragrant.",
+     "timer": 30,
+     "timerLabel": "Toast the cumin"
+    },
+    {
+     "text": "Whisk the yogurt until smooth."
+    },
+    {
+     "text": "Stir in cucumber, mint, cumin, salt and cayenne."
+    },
+    {
+     "text": "Chill until ready to serve. Dust with a little cayenne."
+    }
+   ]
+  },
+  {
+   "id": "indian-mint-cilantro-chutney",
+   "title": "Mint-cilantro chutney",
+   "blurb": "Bright green dipping chutney for kebabs and samosas",
+   "type": "sides",
+   "serves": 8,
+   "prep": 10,
+   "cook": 0,
+   "tags": [
+    "quick",
+    "vegan",
+    "vegetarian",
+    "gluten-free"
+   ],
+   "ingredients": [
+    {
+     "q": 1,
+     "u": "bunch",
+     "item": "fresh cilantro",
+     "aisle": "produce"
+    },
+    {
+     "q": 0.5,
+     "u": "bunch",
+     "item": "fresh mint",
+     "aisle": "produce",
+     "note": "leaves only"
+    },
+    {
+     "q": 2,
+     "u": "",
+     "item": "serrano chile",
+     "aisle": "produce"
+    },
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "fresh ginger",
+     "aisle": "produce",
+     "note": "roughly chopped"
+    },
+    {
+     "q": 1,
+     "u": "",
+     "item": "lemon",
+     "aisle": "produce",
+     "note": "juiced"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "sugar",
+     "aisle": "pantry"
+    },
+    {
+     "q": 0.5,
+     "u": "tsp",
+     "item": "salt",
+     "aisle": "spices"
+    },
+    {
+     "q": 0.25,
+     "u": "cup",
+     "item": "water",
+     "aisle": "pantry"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Combine all ingredients in a blender."
+    },
+    {
+     "text": "Blend until smooth, adding a little more water if needed."
+    },
+    {
+     "text": "Taste and adjust the salt and lemon."
+    },
+    {
+     "text": "Chill and serve within 3 days."
+    }
+   ]
+  },
+  {
+   "id": "indian-tamarind-chutney",
+   "title": "Sweet tamarind chutney",
+   "blurb": "Sweet-tangy sauce for samosas, chaat and bhajis",
+   "type": "sides",
+   "serves": 10,
+   "prep": 5,
+   "cook": 15,
+   "tags": [
+    "vegan",
+    "vegetarian",
+    "make ahead",
+    "gluten-free"
+   ],
+   "ingredients": [
+    {
+     "q": 0.25,
+     "u": "cup",
+     "item": "tamarind paste",
+     "aisle": "international"
+    },
+    {
+     "q": 0.5,
+     "u": "cup",
+     "item": "brown sugar",
+     "aisle": "pantry"
+    },
+    {
+     "q": 1.5,
+     "u": "cup",
+     "item": "water",
+     "aisle": "pantry"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "ground cumin",
+     "aisle": "spices"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "ground ginger",
+     "aisle": "spices"
+    },
+    {
+     "q": 0.5,
+     "u": "tsp",
+     "item": "cayenne pepper",
+     "aisle": "spices"
+    },
+    {
+     "q": 0.5,
+     "u": "tsp",
+     "item": "salt",
+     "aisle": "spices"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Whisk everything in a small saucepan until smooth."
+    },
+    {
+     "text": "Bring to a boil, then reduce the heat."
+    },
+    {
+     "text": "Simmer, stirring, until syrupy and reduced by a third.",
+     "timer": 900,
+     "timerLabel": "Simmer"
+    },
+    {
+     "text": "Cool completely. It thickens as it cools."
+    },
+    {
+     "text": "Store in the fridge for up to 2 weeks."
+    }
+   ]
+  },
+  {
+   "id": "indian-kachumber-salad",
+   "title": "Kachumber salad",
+   "blurb": "Crunchy cucumber, tomato and onion salad",
+   "type": "sides",
+   "serves": 4,
+   "prep": 10,
+   "cook": 0,
+   "tags": [
+    "quick",
+    "vegan",
+    "vegetarian",
+    "gluten-free",
+    "healthy"
+   ],
+   "ingredients": [
+    {
+     "q": 2,
+     "u": "",
+     "item": "cucumbers",
+     "aisle": "produce",
+     "note": "diced"
+    },
+    {
+     "q": 3,
+     "u": "",
+     "item": "roma tomatoes",
+     "aisle": "produce",
+     "note": "seeded and diced"
+    },
+    {
+     "q": 1,
+     "u": "",
+     "item": "red onion",
+     "aisle": "produce",
+     "note": "finely diced"
+    },
+    {
+     "q": 1,
+     "u": "",
+     "item": "serrano chile",
+     "aisle": "produce",
+     "note": "minced"
+    },
+    {
+     "q": 0.25,
+     "u": "bunch",
+     "item": "fresh cilantro",
+     "aisle": "produce",
+     "note": "chopped"
+    },
+    {
+     "q": 2,
+     "u": "",
+     "item": "limes",
+     "aisle": "produce",
+     "note": "juiced"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "ground cumin",
+     "aisle": "spices"
+    },
+    {
+     "q": 0.5,
+     "u": "tsp",
+     "item": "salt",
+     "aisle": "spices"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Combine cucumbers, tomatoes, onion, chile and cilantro."
+    },
+    {
+     "text": "Add lime juice, cumin and salt."
+    },
+    {
+     "text": "Toss and taste for salt."
+    },
+    {
+     "text": "Chill briefly. Serve with curries and kebabs.",
+     "timer": 600,
+     "timerLabel": "Chill"
+    }
+   ]
+  },
+  {
+   "id": "indian-mango-lassi",
+   "title": "Mango lassi",
+   "blurb": "Thick, sweet yogurt and mango drink",
+   "type": "sides",
+   "serves": 4,
+   "prep": 5,
+   "cook": 0,
+   "tags": [
+    "quick",
+    "vegetarian",
+    "gluten-free",
+    "kid-friendly"
+   ],
+   "ingredients": [
+    {
+     "q": 2,
+     "u": "cup",
+     "item": "frozen mango chunks",
+     "aisle": "frozen"
+    },
+    {
+     "q": 1.5,
+     "u": "cup",
+     "item": "plain whole milk yogurt",
+     "aisle": "dairy"
+    },
+    {
+     "q": 0.5,
+     "u": "cup",
+     "item": "whole milk",
+     "aisle": "dairy"
+    },
+    {
+     "q": 2,
+     "u": "tbsp",
+     "item": "sugar",
+     "aisle": "pantry"
+    },
+    {
+     "q": 0.25,
+     "u": "tsp",
+     "item": "ground cardamom",
+     "aisle": "spices"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Combine mango, yogurt, milk, sugar and cardamom in a blender."
+    },
+    {
+     "text": "Blend until completely smooth."
+    },
+    {
+     "text": "Taste and add more sugar if the mango is tart."
+    },
+    {
+     "text": "Pour into glasses and serve cold."
+    }
+   ]
+  },
+  {
+   "id": "indian-onion-bhaji",
+   "title": "Onion bhaji",
+   "blurb": "Crisp spiced onion fritters",
+   "type": "sides",
+   "serves": 6,
+   "prep": 15,
+   "cook": 20,
+   "tags": [
+    "vegan",
+    "vegetarian",
+    "gluten-free",
+    "kid-friendly"
+   ],
+   "ingredients": [
+    {
+     "q": 2,
+     "u": "",
+     "item": "yellow onion",
+     "aisle": "produce",
+     "note": "thinly sliced"
+    },
+    {
+     "q": 1,
+     "u": "cup",
+     "item": "chickpea flour (besan)",
+     "aisle": "international"
+    },
+    {
+     "q": 0.5,
+     "u": "cup",
+     "item": "water",
+     "aisle": "pantry",
+     "note": "plus more as needed"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "ground cumin",
+     "aisle": "spices"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "ground coriander",
+     "aisle": "spices"
+    },
+    {
+     "q": 0.5,
+     "u": "tsp",
+     "item": "ground turmeric",
+     "aisle": "spices"
+    },
+    {
+     "q": 0.5,
+     "u": "tsp",
+     "item": "cayenne pepper",
+     "aisle": "spices"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "salt",
+     "aisle": "spices"
+    },
+    {
+     "q": 2,
+     "u": "cup",
+     "item": "vegetable oil",
+     "aisle": "pantry",
+     "note": "for frying"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Toss the onions with salt and let them sit until they release liquid.",
+     "timer": 600,
+     "timerLabel": "Salt the onions"
+    },
+    {
+     "text": "Add chickpea flour, spices and the water. Mix to a thick batter that clings to the onions."
+    },
+    {
+     "text": "Heat the oil in a deep pan to 350°F."
+    },
+    {
+     "text": "Drop in heaped tablespoons of batter. Fry in batches until deep golden.",
+     "timer": 240,
+     "timerLabel": "Fry a batch"
+    },
+    {
+     "text": "Drain on a rack. Serve with tamarind or mint chutney."
+    }
+   ]
+  },
+  {
+   "id": "indian-baked-samosas",
+   "title": "Baked vegetable samosas",
+   "blurb": "Flaky pastry triangles with spiced potato and peas",
+   "type": "sides",
+   "serves": 8,
+   "prep": 40,
+   "cook": 30,
+   "tags": [
+    "vegetarian",
+    "make ahead",
+    "kid-friendly"
+   ],
+   "ingredients": [
+    {
+     "q": 2,
+     "u": "cup",
+     "item": "all-purpose flour",
+     "aisle": "pantry"
+    },
+    {
+     "q": 0.25,
+     "u": "cup",
+     "item": "vegetable oil",
+     "aisle": "pantry",
+     "note": "plus extra for brushing"
+    },
+    {
+     "q": 0.5,
+     "u": "cup",
+     "item": "water",
+     "aisle": "pantry",
+     "note": "cold"
+    },
+    {
+     "q": 0.5,
+     "u": "tsp",
+     "item": "salt",
+     "aisle": "spices"
+    },
+    {
+     "q": 1.5,
+     "u": "lb",
+     "item": "yellow potato",
+     "aisle": "produce",
+     "note": "boiled and roughly mashed"
+    },
+    {
+     "q": 1,
+     "u": "cup",
+     "item": "frozen peas",
+     "aisle": "frozen"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "cumin seeds",
+     "aisle": "spices"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "ground coriander",
+     "aisle": "spices"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "garam masala",
+     "aisle": "spices"
+    },
+    {
+     "q": 0.5,
+     "u": "tsp",
+     "item": "cayenne pepper",
+     "aisle": "spices"
+    },
+    {
+     "q": 1,
+     "u": "",
+     "item": "serrano chile",
+     "aisle": "produce",
+     "note": "minced"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "salt",
+     "aisle": "spices"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Mix flour, oil, water and 1/2 tsp salt into a firm dough. Cover and rest.",
+     "timer": 1200,
+     "timerLabel": "Rest the dough"
+    },
+    {
+     "text": "Toast cumin seeds in oil for 30 seconds. Stir in the potato, peas, spices, chile and 1 tsp salt. Cool."
+    },
+    {
+     "text": "Heat the oven to 400°F. Divide the dough into 8 balls and roll each into an oval. Cut each in half."
+    },
+    {
+     "text": "Shape each half into a cone, fill with about 2 tbsp filling, and seal the edges with water."
+    },
+    {
+     "text": "Place on a lined sheet pan and brush with oil."
+    },
+    {
+     "text": "Bake, flipping once, until golden and crisp.",
+     "timer": 1800,
+     "timerLabel": "Bake"
+    }
+   ]
+  }
+ ]
+}

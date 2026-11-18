@@ -40,18 +40,26 @@ final class PhotoServer {
     static final int PORT = 8080;
     private static final String TAG = "HomeTablet";
 
-    interface Listener { void onPhotosChanged(); }
+    interface Listener {
+        void onPhotosChanged();
+        /** what: "settings" or "notes" */
+        void onFamilyChanged(String what);
+    }
+
+    private static final int MAX_JSON_BODY = 64 * 1024;
 
     private final Context ctx;
     private final PhotoStore store;
+    private final FamilyStore family;
     private final Listener listener;
     private final ExecutorService pool = Executors.newFixedThreadPool(3);
     private ServerSocket server;
     private volatile boolean running;
 
-    PhotoServer(Context ctx, PhotoStore store, Listener listener) {
+    PhotoServer(Context ctx, PhotoStore store, FamilyStore family, Listener listener) {
         this.ctx = ctx.getApplicationContext();
         this.store = store;
+        this.family = family;
         this.listener = listener;
     }
 
@@ -166,12 +174,54 @@ final class PhotoServer {
                 boolean ok = store.delete(uri.getQueryParameter("id"));
                 sendJson(out, ok ? 200 : 404, new JSONObject().put("ok", ok));
                 if (ok) listener.onPhotosChanged();
+            // ---- tablet settings (family name, people, dates, calendar links) ----
+            } else if (method.equals("GET") && path.equals("/api/settings")) {
+                sendJson(out, 200, family.settings());
+            } else if (method.equals("POST") && path.equals("/api/settings")) {
+                try {
+                    JSONObject saved = family.saveSettings(new JSONObject(readBody(in, headers)));
+                    sendJson(out, 200, new JSONObject().put("ok", true).put("settings", saved));
+                    listener.onFamilyChanged("settings");
+                } catch (Exception e) {
+                    sendJson(out, 400, new JSONObject().put("ok", false).put("error", String.valueOf(e.getMessage())));
+                }
+            } else if (method.equals("GET") && path.equals("/api/calendar-check")) {
+                sendJson(out, 200, FamilyStore.checkCalendar(uri.getQueryParameter("url")));
+            // ---- message board notes ----
+            } else if (method.equals("GET") && path.equals("/api/notes")) {
+                sendJson(out, 200, new JSONObject().put("notes", family.notes()));
+            } else if (method.equals("POST") && path.equals("/api/notes")) {
+                try {
+                    JSONObject b = new JSONObject(readBody(in, headers));
+                    JSONObject n = family.addNote(b.optString("who"), b.optString("text"), b.optString("photo", null), b.optString("replyTo", null));
+                    sendJson(out, 200, new JSONObject().put("ok", true).put("note", n));
+                    listener.onFamilyChanged("notes");
+                } catch (Exception e) {
+                    sendJson(out, 400, new JSONObject().put("ok", false).put("error", String.valueOf(e.getMessage())));
+                }
+            } else if (method.equals("POST") && path.equals("/api/notes/delete")) {
+                boolean ok = family.deleteNote(uri.getQueryParameter("id"));
+                sendJson(out, ok ? 200 : 404, new JSONObject().put("ok", ok));
+                if (ok) listener.onFamilyChanged("notes");
             } else {
                 send(out, 404, "text/plain", "Not found".getBytes());
             }
         } catch (Exception e) {
             Log.w(TAG, "Photo request failed", e);
         }
+    }
+
+    private static String readBody(InputStream in, Map<String, String> headers) throws Exception {
+        int len = Integer.parseInt(headers.getOrDefault("content-length", "0"));
+        if (len <= 0 || len > MAX_JSON_BODY) throw new Exception("Bad request size");
+        byte[] buf = new byte[len];
+        int got = 0;
+        while (got < len) {
+            int n = in.read(buf, got, len - got);
+            if (n < 0) throw new Exception("Request cut off");
+            got += n;
+        }
+        return new String(buf, "UTF-8");
     }
 
     private static String readLine(InputStream in) throws java.io.IOException {

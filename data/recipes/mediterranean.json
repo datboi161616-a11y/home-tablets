@@ -1,0 +1,5651 @@
+{
+ "id": "mediterranean",
+ "name": "Greek & Mediterranean",
+ "types": [
+  {
+   "id": "greek",
+   "name": "Greek"
+  },
+  {
+   "id": "middle-eastern",
+   "name": "Middle Eastern"
+  },
+  {
+   "id": "kebabs",
+   "name": "Grill & kebabs"
+  },
+  {
+   "id": "bowls",
+   "name": "Bowls & salads"
+  },
+  {
+   "id": "seafood",
+   "name": "Fish & seafood"
+  },
+  {
+   "id": "dips",
+   "name": "Dips & sides"
+  }
+ ],
+ "recipes": [
+  {
+   "id": "mediterranean-moussaka",
+   "title": "Moussaka",
+   "blurb": "Layers of eggplant, spiced lamb tomato sauce and creamy bechamel",
+   "type": "greek",
+   "serves": 8,
+   "prep": 60,
+   "cook": 105,
+   "tags": [
+    "make ahead",
+    "crowd",
+    "holiday"
+   ],
+   "ingredients": [
+    {
+     "q": 3,
+     "u": "lb",
+     "item": "eggplant",
+     "note": "sliced 1/2 inch thick",
+     "aisle": "produce"
+    },
+    {
+     "q": 0.33,
+     "u": "cup",
+     "item": "olive oil",
+     "note": "for brushing",
+     "aisle": "pantry"
+    },
+    {
+     "q": 1.5,
+     "u": "lb",
+     "item": "ground lamb",
+     "aisle": "meat"
+    },
+    {
+     "q": 1,
+     "u": "",
+     "item": "yellow onion",
+     "note": "diced",
+     "aisle": "produce"
+    },
+    {
+     "q": 3,
+     "u": "clove",
+     "item": "garlic",
+     "note": "minced",
+     "aisle": "produce"
+    },
+    {
+     "q": 1,
+     "u": "can",
+     "item": "crushed tomatoes (14.5 oz)",
+     "aisle": "canned"
+    },
+    {
+     "q": 2,
+     "u": "tbsp",
+     "item": "tomato paste",
+     "aisle": "canned"
+    },
+    {
+     "q": 0.5,
+     "u": "cup",
+     "item": "dry red wine",
+     "aisle": "beverages"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "ground cinnamon",
+     "aisle": "spices"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "dried oregano",
+     "aisle": "spices"
+    },
+    {
+     "q": 4,
+     "u": "tbsp",
+     "item": "unsalted butter",
+     "aisle": "dairy"
+    },
+    {
+     "q": 0.25,
+     "u": "cup",
+     "item": "all-purpose flour",
+     "aisle": "pantry"
+    },
+    {
+     "q": 2.5,
+     "u": "cup",
+     "item": "whole milk",
+     "note": "warmed",
+     "aisle": "dairy"
+    },
+    {
+     "q": 0.5,
+     "u": "cup",
+     "item": "grated parmesan",
+     "note": "divided",
+     "aisle": "dairy"
+    },
+    {
+     "q": 2,
+     "u": "",
+     "item": "large eggs",
+     "aisle": "dairy"
+    },
+    {
+     "q": null,
+     "u": "",
+     "item": "salt",
+     "aisle": "spices"
+    },
+    {
+     "q": null,
+     "u": "",
+     "item": "black pepper",
+     "aisle": "spices"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Heat the oven to 425°F. Brush eggplant slices with oil, season with salt and roast on sheet pans until golden.",
+     "timer": 1500,
+     "timerLabel": "Roast eggplant"
+    },
+    {
+     "text": "Brown the lamb with the onion in a large skillet. Drain extra fat and stir in the garlic."
+    },
+    {
+     "text": "Add wine, tomatoes, tomato paste, cinnamon and oregano. Simmer until thick, then season well.",
+     "timer": 1200,
+     "timerLabel": "Simmer meat sauce"
+    },
+    {
+     "text": "For the bechamel, melt the butter, whisk in the flour for 1 minute, then slowly whisk in warm milk until thick."
+    },
+    {
+     "text": "Off the heat, stir in half the cheese, then the eggs, with a little salt and pepper."
+    },
+    {
+     "text": "Lower the oven to 350°F. Layer half the eggplant, all the meat sauce, then the rest of the eggplant in a 9x13 dish."
+    },
+    {
+     "text": "Spread the bechamel on top and sprinkle with the remaining cheese."
+    },
+    {
+     "text": "Bake until bubbling and deep golden on top.",
+     "timer": 2700,
+     "timerLabel": "Bake the moussaka"
+    },
+    {
+     "text": "Rest 15 minutes before cutting so the layers set.",
+     "timer": 900,
+     "timerLabel": "Rest before slicing"
+    }
+   ]
+  },
+  {
+   "id": "mediterranean-spanakopita",
+   "title": "Spanakopita",
+   "blurb": "Flaky phyllo pie filled with spinach and feta",
+   "type": "greek",
+   "serves": 8,
+   "prep": 35,
+   "cook": 55,
+   "tags": [
+    "vegetarian",
+    "make ahead",
+    "crowd"
+   ],
+   "ingredients": [
+    {
+     "q": 2,
+     "u": "lb",
+     "item": "frozen chopped spinach",
+     "note": "thawed and squeezed very dry",
+     "aisle": "frozen"
+    },
+    {
+     "q": 1,
+     "u": "bunch",
+     "item": "green onions",
+     "note": "sliced",
+     "aisle": "produce"
+    },
+    {
+     "q": 2,
+     "u": "tbsp",
+     "item": "olive oil",
+     "aisle": "pantry"
+    },
+    {
+     "q": 1,
+     "u": "bunch",
+     "item": "fresh dill",
+     "note": "chopped",
+     "aisle": "produce"
+    },
+    {
+     "q": 12,
+     "u": "oz",
+     "item": "feta cheese",
+     "note": "crumbled",
+     "aisle": "dairy"
+    },
+    {
+     "q": 1,
+     "u": "cup",
+     "item": "cottage cheese",
+     "aisle": "dairy"
+    },
+    {
+     "q": 3,
+     "u": "",
+     "item": "large eggs",
+     "aisle": "dairy"
+    },
+    {
+     "q": 0.25,
+     "u": "tsp",
+     "item": "ground nutmeg",
+     "aisle": "spices"
+    },
+    {
+     "q": 1,
+     "u": "pkg",
+     "item": "phyllo dough (16 oz)",
+     "note": "thawed",
+     "aisle": "frozen"
+    },
+    {
+     "q": 0.75,
+     "u": "cup",
+     "item": "unsalted butter",
+     "note": "melted",
+     "aisle": "dairy"
+    },
+    {
+     "q": null,
+     "u": "",
+     "item": "black pepper",
+     "aisle": "spices"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Thaw the phyllo in the fridge overnight. Heat the oven to 350°F and butter a 9x13 pan."
+    },
+    {
+     "text": "Soften the green onions in the olive oil for 3 minutes, then cool a little."
+    },
+    {
+     "text": "Mix the squeezed spinach, onions, dill, feta, cottage cheese, eggs, nutmeg and pepper."
+    },
+    {
+     "text": "Lay 10 phyllo sheets in the pan, brushing each with butter. Keep the rest under a damp towel."
+    },
+    {
+     "text": "Spread on the spinach filling, then top with 10 more buttered sheets."
+    },
+    {
+     "text": "Trim the edges, brush the top with butter, and score into squares with a sharp knife."
+    },
+    {
+     "text": "Bake until deep golden and crisp.",
+     "timer": 3000,
+     "timerLabel": "Bake the pie"
+    },
+    {
+     "text": "Cool 10 minutes, then cut along the lines.",
+     "timer": 600,
+     "timerLabel": "Cool before cutting"
+    }
+   ]
+  },
+  {
+   "id": "mediterranean-pastitsio",
+   "title": "Pastitsio",
+   "blurb": "Baked pasta with cinnamon beef sauce and thick bechamel",
+   "type": "greek",
+   "serves": 8,
+   "prep": 40,
+   "cook": 90,
+   "tags": [
+    "make ahead",
+    "crowd",
+    "kid-friendly"
+   ],
+   "ingredients": [
+    {
+     "q": 1,
+     "u": "lb",
+     "item": "bucatini or ziti",
+     "aisle": "pantry"
+    },
+    {
+     "q": 1.5,
+     "u": "lb",
+     "item": "ground beef",
+     "aisle": "meat"
+    },
+    {
+     "q": 1,
+     "u": "",
+     "item": "yellow onion",
+     "note": "diced",
+     "aisle": "produce"
+    },
+    {
+     "q": 2,
+     "u": "clove",
+     "item": "garlic",
+     "note": "minced",
+     "aisle": "produce"
+    },
+    {
+     "q": 1,
+     "u": "can",
+     "item": "crushed tomatoes (14.5 oz)",
+     "aisle": "canned"
+    },
+    {
+     "q": 2,
+     "u": "tbsp",
+     "item": "tomato paste",
+     "aisle": "canned"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "ground cinnamon",
+     "aisle": "spices"
+    },
+    {
+     "q": 4,
+     "u": "tbsp",
+     "item": "unsalted butter",
+     "aisle": "dairy"
+    },
+    {
+     "q": 0.33,
+     "u": "cup",
+     "item": "all-purpose flour",
+     "aisle": "pantry"
+    },
+    {
+     "q": 3,
+     "u": "cup",
+     "item": "whole milk",
+     "note": "warmed",
+     "aisle": "dairy"
+    },
+    {
+     "q": 1,
+     "u": "cup",
+     "item": "grated parmesan",
+     "note": "divided",
+     "aisle": "dairy"
+    },
+    {
+     "q": 2,
+     "u": "",
+     "item": "large eggs",
+     "note": "beaten",
+     "aisle": "dairy"
+    },
+    {
+     "q": null,
+     "u": "",
+     "item": "salt",
+     "aisle": "spices"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Heat the oven to 350°F. Boil the pasta 2 minutes short of done, then drain.",
+     "timer": 480,
+     "timerLabel": "Boil the pasta"
+    },
+    {
+     "text": "Brown the beef with the onion until no pink remains (160°F). Add the garlic."
+    },
+    {
+     "text": "Stir in tomatoes, paste, cinnamon and salt. Simmer until thick.",
+     "timer": 900,
+     "timerLabel": "Simmer meat sauce"
+    },
+    {
+     "text": "Melt the butter, whisk in the flour 1 minute, then whisk in the warm milk until thickened."
+    },
+    {
+     "text": "Off the heat, stir in half the parmesan, then the eggs."
+    },
+    {
+     "text": "Toss the pasta with a third of the bechamel. Spread half in a 9x13 dish, add the meat sauce, then the rest of the pasta."
+    },
+    {
+     "text": "Pour the remaining bechamel over the top and sprinkle with the rest of the cheese."
+    },
+    {
+     "text": "Bake until golden and set.",
+     "timer": 2700,
+     "timerLabel": "Bake the pastitsio"
+    },
+    {
+     "text": "Rest 15 minutes before cutting.",
+     "timer": 900,
+     "timerLabel": "Rest before slicing"
+    }
+   ]
+  },
+  {
+   "id": "mediterranean-gemista",
+   "title": "Gemista (stuffed tomatoes and peppers)",
+   "blurb": "Tomatoes and peppers baked with herbed rice",
+   "type": "greek",
+   "serves": 6,
+   "prep": 30,
+   "cook": 75,
+   "tags": [
+    "vegan",
+    "make ahead"
+   ],
+   "ingredients": [
+    {
+     "q": 6,
+     "u": "",
+     "item": "large ripe tomatoes",
+     "aisle": "produce"
+    },
+    {
+     "q": 4,
+     "u": "",
+     "item": "bell peppers",
+     "aisle": "produce"
+    },
+    {
+     "q": 0.33,
+     "u": "cup",
+     "item": "olive oil",
+     "note": "divided",
+     "aisle": "pantry"
+    },
+    {
+     "q": 1,
+     "u": "",
+     "item": "yellow onion",
+     "note": "finely diced",
+     "aisle": "produce"
+    },
+    {
+     "q": 2,
+     "u": "clove",
+     "item": "garlic",
+     "note": "minced",
+     "aisle": "produce"
+    },
+    {
+     "q": 1,
+     "u": "cup",
+     "item": "long-grain white rice",
+     "aisle": "pantry"
+    },
+    {
+     "q": 0.5,
+     "u": "cup",
+     "item": "fresh mint",
+     "note": "chopped",
+     "aisle": "produce"
+    },
+    {
+     "q": 0.5,
+     "u": "cup",
+     "item": "fresh parsley",
+     "note": "chopped",
+     "aisle": "produce"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "dried oregano",
+     "aisle": "spices"
+    },
+    {
+     "q": 1,
+     "u": "lb",
+     "item": "baby potatoes",
+     "note": "quartered",
+     "aisle": "produce"
+    },
+    {
+     "q": null,
+     "u": "",
+     "item": "salt",
+     "aisle": "spices"
+    },
+    {
+     "q": null,
+     "u": "",
+     "item": "black pepper",
+     "aisle": "spices"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Heat the oven to 375°F. Slice the tops off the tomatoes and peppers and scoop out the pulp. Keep the tops and chop the pulp."
+    },
+    {
+     "text": "Cook the onion in 3 tablespoons oil until soft, then add the garlic and the chopped pulp."
+    },
+    {
+     "text": "Stir in the rice, herbs, oregano, salt and pepper. Cook 2 minutes off the heat."
+    },
+    {
+     "text": "Salt the hollowed vegetables inside. Fill them two-thirds full so the rice can swell."
+    },
+    {
+     "text": "Stand them in a deep roasting pan with the potatoes tucked around. Add the tops."
+    },
+    {
+     "text": "Drizzle with the remaining oil and pour 1 cup water around them."
+    },
+    {
+     "text": "Bake until the rice is tender and the tops are browned.",
+     "timer": 4200,
+     "timerLabel": "Bake the stuffed vegetables"
+    },
+    {
+     "text": "Rest 10 minutes before serving.",
+     "timer": 600,
+     "timerLabel": "Rest"
+    }
+   ]
+  },
+  {
+   "id": "mediterranean-avgolemono",
+   "title": "Avgolemono soup",
+   "blurb": "Silky lemon-egg chicken and rice soup",
+   "type": "greek",
+   "serves": 6,
+   "prep": 15,
+   "cook": 45,
+   "tags": [
+    "healthy",
+    "gluten-free"
+   ],
+   "ingredients": [
+    {
+     "q": 2,
+     "u": "quart",
+     "item": "chicken broth",
+     "note": "low sodium",
+     "aisle": "canned"
+    },
+    {
+     "q": 1,
+     "u": "lb",
+     "item": "boneless skinless chicken breasts",
+     "aisle": "meat"
+    },
+    {
+     "q": 0.5,
+     "u": "cup",
+     "item": "long-grain white rice",
+     "aisle": "pantry"
+    },
+    {
+     "q": 1,
+     "u": "",
+     "item": "yellow onion",
+     "note": "diced",
+     "aisle": "produce"
+    },
+    {
+     "q": 1,
+     "u": "stalk",
+     "item": "celery",
+     "note": "diced",
+     "aisle": "produce"
+    },
+    {
+     "q": 3,
+     "u": "",
+     "item": "large eggs",
+     "aisle": "dairy"
+    },
+    {
+     "q": 0.33,
+     "u": "cup",
+     "item": "lemon juice",
+     "note": "about 2 lemons",
+     "aisle": "produce"
+    },
+    {
+     "q": 2,
+     "u": "tbsp",
+     "item": "fresh dill",
+     "note": "chopped",
+     "aisle": "produce"
+    },
+    {
+     "q": null,
+     "u": "",
+     "item": "salt",
+     "aisle": "spices"
+    },
+    {
+     "q": null,
+     "u": "",
+     "item": "black pepper",
+     "aisle": "spices"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Bring the broth, chicken, onion and celery to a gentle simmer in a large pot."
+    },
+    {
+     "text": "Poach until the chicken reaches 165°F, then lift it out and shred.",
+     "timer": 1200,
+     "timerLabel": "Poach the chicken"
+    },
+    {
+     "text": "Add the rice to the broth and simmer until tender.",
+     "timer": 1080,
+     "timerLabel": "Cook the rice"
+    },
+    {
+     "text": "Whisk the eggs with the lemon juice until frothy."
+    },
+    {
+     "text": "Slowly ladle 2 cups hot broth into the eggs while whisking so they do not scramble."
+    },
+    {
+     "text": "Stir the egg mixture back into the pot over low heat. Do not boil."
+    },
+    {
+     "text": "Add the chicken, dill, salt and pepper and warm for 2 minutes."
+    },
+    {
+     "text": "Serve right away; the soup thickens as it sits."
+    }
+   ]
+  },
+  {
+   "id": "mediterranean-fasolada",
+   "title": "Fasolada",
+   "blurb": "Greek white bean and tomato soup",
+   "type": "greek",
+   "serves": 6,
+   "prep": 15,
+   "cook": 75,
+   "tags": [
+    "vegan",
+    "healthy",
+    "one pot",
+    "make ahead"
+   ],
+   "ingredients": [
+    {
+     "q": 1,
+     "u": "lb",
+     "item": "dried great northern beans",
+     "note": "soaked overnight and drained",
+     "aisle": "pantry"
+    },
+    {
+     "q": 0.33,
+     "u": "cup",
+     "item": "olive oil",
+     "note": "plus more to serve",
+     "aisle": "pantry"
+    },
+    {
+     "q": 1,
+     "u": "",
+     "item": "yellow onion",
+     "note": "diced",
+     "aisle": "produce"
+    },
+    {
+     "q": 3,
+     "u": "",
+     "item": "carrots",
+     "note": "diced",
+     "aisle": "produce"
+    },
+    {
+     "q": 3,
+     "u": "stalk",
+     "item": "celery",
+     "note": "diced",
+     "aisle": "produce"
+    },
+    {
+     "q": 3,
+     "u": "clove",
+     "item": "garlic",
+     "note": "minced",
+     "aisle": "produce"
+    },
+    {
+     "q": 2,
+     "u": "tbsp",
+     "item": "tomato paste",
+     "aisle": "canned"
+    },
+    {
+     "q": 1,
+     "u": "can",
+     "item": "diced tomatoes (14.5 oz)",
+     "aisle": "canned"
+    },
+    {
+     "q": 2,
+     "u": "",
+     "item": "bay leaves",
+     "aisle": "spices"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "dried oregano",
+     "aisle": "spices"
+    },
+    {
+     "q": null,
+     "u": "",
+     "item": "salt",
+     "aisle": "spices"
+    },
+    {
+     "q": null,
+     "u": "",
+     "item": "black pepper",
+     "aisle": "spices"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Cover the soaked beans with fresh water, bring to a boil and simmer 10 minutes. Drain.",
+     "timer": 600,
+     "timerLabel": "Parboil beans"
+    },
+    {
+     "text": "Heat the oil in the pot and cook the onion, carrots and celery until soft."
+    },
+    {
+     "text": "Add the garlic and tomato paste and stir 1 minute."
+    },
+    {
+     "text": "Return the beans with the tomatoes, bay leaves, oregano and 2 quarts water."
+    },
+    {
+     "text": "Simmer gently with the lid slightly open until the beans are very tender.",
+     "timer": 3600,
+     "timerLabel": "Simmer the beans"
+    },
+    {
+     "text": "Season with salt and pepper and remove the bay leaves."
+    },
+    {
+     "text": "Serve with a drizzle of olive oil and crusty bread."
+    }
+   ]
+  },
+  {
+   "id": "mediterranean-gigantes-plaki",
+   "title": "Gigantes plaki",
+   "blurb": "Giant beans baked in a sweet tomato and dill sauce",
+   "type": "greek",
+   "serves": 6,
+   "prep": 15,
+   "cook": 100,
+   "tags": [
+    "vegetarian",
+    "make ahead"
+   ],
+   "ingredients": [
+    {
+     "q": 1,
+     "u": "lb",
+     "item": "dried butter beans",
+     "note": "soaked overnight",
+     "aisle": "pantry"
+    },
+    {
+     "q": 0.33,
+     "u": "cup",
+     "item": "olive oil",
+     "aisle": "pantry"
+    },
+    {
+     "q": 2,
+     "u": "",
+     "item": "yellow onion",
+     "note": "sliced",
+     "aisle": "produce"
+    },
+    {
+     "q": 4,
+     "u": "clove",
+     "item": "garlic",
+     "note": "sliced",
+     "aisle": "produce"
+    },
+    {
+     "q": 1,
+     "u": "can",
+     "item": "crushed tomatoes (14.5 oz)",
+     "aisle": "canned"
+    },
+    {
+     "q": 2,
+     "u": "tbsp",
+     "item": "tomato paste",
+     "aisle": "canned"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "dried oregano",
+     "aisle": "spices"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "sugar",
+     "aisle": "pantry"
+    },
+    {
+     "q": 0.25,
+     "u": "cup",
+     "item": "fresh dill",
+     "note": "chopped",
+     "aisle": "produce"
+    },
+    {
+     "q": 0.25,
+     "u": "cup",
+     "item": "fresh parsley",
+     "note": "chopped",
+     "aisle": "produce"
+    },
+    {
+     "q": null,
+     "u": "",
+     "item": "salt",
+     "aisle": "spices"
+    },
+    {
+     "q": null,
+     "u": "",
+     "item": "black pepper",
+     "aisle": "spices"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Drain the soaked beans, cover with fresh water and simmer until just tender.",
+     "timer": 2700,
+     "timerLabel": "Simmer beans"
+    },
+    {
+     "text": "Drain, keeping 1 cup of the cooking water. Heat the oven to 375°F."
+    },
+    {
+     "text": "Cook the onions in the oil until golden, then add the garlic and tomato paste."
+    },
+    {
+     "text": "Stir in tomatoes, oregano, sugar, salt, pepper and the reserved water. Simmer 5 minutes.",
+     "timer": 300,
+     "timerLabel": "Simmer sauce"
+    },
+    {
+     "text": "Fold in the beans, dill and parsley and pour into a baking dish."
+    },
+    {
+     "text": "Bake uncovered until the sauce is thick and the tops are crisp.",
+     "timer": 2700,
+     "timerLabel": "Bake the beans"
+    },
+    {
+     "text": "Serve warm or at room temperature with feta and bread."
+    }
+   ]
+  },
+  {
+   "id": "mediterranean-briam",
+   "title": "Briam (Greek roasted vegetables)",
+   "blurb": "Potatoes, zucchini and eggplant roasted in tomato and olive oil",
+   "type": "greek",
+   "serves": 6,
+   "prep": 25,
+   "cook": 75,
+   "tags": [
+    "vegan",
+    "healthy",
+    "make ahead"
+   ],
+   "ingredients": [
+    {
+     "q": 1.5,
+     "u": "lb",
+     "item": "potatoes",
+     "note": "sliced into 1/4-inch rounds",
+     "aisle": "produce"
+    },
+    {
+     "q": 2,
+     "u": "",
+     "item": "zucchini",
+     "note": "sliced into rounds",
+     "aisle": "produce"
+    },
+    {
+     "q": 1,
+     "u": "",
+     "item": "eggplant",
+     "note": "cut in 1-inch pieces",
+     "aisle": "produce"
+    },
+    {
+     "q": 1,
+     "u": "",
+     "item": "yellow onion",
+     "note": "sliced",
+     "aisle": "produce"
+    },
+    {
+     "q": 4,
+     "u": "clove",
+     "item": "garlic",
+     "note": "sliced",
+     "aisle": "produce"
+    },
+    {
+     "q": 1,
+     "u": "can",
+     "item": "diced tomatoes (14.5 oz)",
+     "aisle": "canned"
+    },
+    {
+     "q": 0.5,
+     "u": "cup",
+     "item": "olive oil",
+     "aisle": "pantry"
+    },
+    {
+     "q": 2,
+     "u": "tsp",
+     "item": "dried oregano",
+     "aisle": "spices"
+    },
+    {
+     "q": 0.25,
+     "u": "cup",
+     "item": "fresh parsley",
+     "note": "chopped",
+     "aisle": "produce"
+    },
+    {
+     "q": null,
+     "u": "",
+     "item": "salt",
+     "aisle": "spices"
+    },
+    {
+     "q": null,
+     "u": "",
+     "item": "black pepper",
+     "aisle": "spices"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Heat the oven to 375°F."
+    },
+    {
+     "text": "Toss the potatoes, zucchini, eggplant, onion and garlic in a large roasting pan."
+    },
+    {
+     "text": "Add the tomatoes, oil, oregano, salt and pepper and toss until coated."
+    },
+    {
+     "text": "Spread level and cover with foil. Roast 40 minutes.",
+     "timer": 2400,
+     "timerLabel": "Roast covered"
+    },
+    {
+     "text": "Remove the foil and stir. Roast until the potatoes are tender and the edges brown.",
+     "timer": 1800,
+     "timerLabel": "Roast uncovered"
+    },
+    {
+     "text": "Sprinkle with parsley and serve warm."
+    }
+   ]
+  },
+  {
+   "id": "mediterranean-lemon-chicken-potatoes",
+   "title": "Greek lemon chicken and potatoes",
+   "blurb": "Roasted chicken thighs and crispy potatoes with lemon and oregano",
+   "type": "greek",
+   "serves": 6,
+   "prep": 15,
+   "cook": 70,
+   "tags": [
+    "sheet pan",
+    "gluten-free"
+   ],
+   "ingredients": [
+    {
+     "q": 3,
+     "u": "lb",
+     "item": "bone-in skin-on chicken thighs",
+     "aisle": "meat"
+    },
+    {
+     "q": 2,
+     "u": "lb",
+     "item": "baby yukon gold potatoes",
+     "note": "halved",
+     "aisle": "produce"
+    },
+    {
+     "q": 0.33,
+     "u": "cup",
+     "item": "lemon juice",
+     "note": "about 2 lemons",
+     "aisle": "produce"
+    },
+    {
+     "q": 0.25,
+     "u": "cup",
+     "item": "olive oil",
+     "aisle": "pantry"
+    },
+    {
+     "q": 5,
+     "u": "clove",
+     "item": "garlic",
+     "note": "minced",
+     "aisle": "produce"
+    },
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "dried oregano",
+     "aisle": "spices"
+    },
+    {
+     "q": 1,
+     "u": "cup",
+     "item": "chicken broth",
+     "note": "low sodium",
+     "aisle": "canned"
+    },
+    {
+     "q": null,
+     "u": "",
+     "item": "salt",
+     "aisle": "spices"
+    },
+    {
+     "q": null,
+     "u": "",
+     "item": "black pepper",
+     "aisle": "spices"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Heat the oven to 425°F."
+    },
+    {
+     "text": "Whisk the lemon juice, oil, garlic, oregano, 1 tsp salt and pepper."
+    },
+    {
+     "text": "Toss the chicken and potatoes in the marinade in a large roasting pan, chicken skin side up."
+    },
+    {
+     "text": "Pour the broth around the edges of the pan."
+    },
+    {
+     "text": "Roast until the chicken reaches 165°F and the skin is golden.",
+     "timer": 3000,
+     "timerLabel": "Roast chicken"
+    },
+    {
+     "text": "Stir the potatoes in the pan juices and rest everything 5 minutes.",
+     "timer": 300,
+     "timerLabel": "Rest"
+    }
+   ]
+  },
+  {
+   "id": "mediterranean-spanakorizo",
+   "title": "Spanakorizo (spinach rice)",
+   "blurb": "One-pot lemony rice with spinach and dill",
+   "type": "greek",
+   "serves": 4,
+   "prep": 10,
+   "cook": 35,
+   "tags": [
+    "vegan",
+    "one pot",
+    "healthy"
+   ],
+   "ingredients": [
+    {
+     "q": 0.25,
+     "u": "cup",
+     "item": "olive oil",
+     "aisle": "pantry"
+    },
+    {
+     "q": 1,
+     "u": "",
+     "item": "yellow onion",
+     "note": "diced",
+     "aisle": "produce"
+    },
+    {
+     "q": 1,
+     "u": "bunch",
+     "item": "green onions",
+     "note": "sliced",
+     "aisle": "produce"
+    },
+    {
+     "q": 1,
+     "u": "lb",
+     "item": "fresh spinach",
+     "note": "roughly chopped",
+     "aisle": "produce"
+    },
+    {
+     "q": 1,
+     "u": "cup",
+     "item": "long-grain white rice",
+     "aisle": "pantry"
+    },
+    {
+     "q": 2.5,
+     "u": "cup",
+     "item": "water",
+     "aisle": "pantry"
+    },
+    {
+     "q": 0.25,
+     "u": "cup",
+     "item": "fresh dill",
+     "note": "chopped",
+     "aisle": "produce"
+    },
+    {
+     "q": 2,
+     "u": "tbsp",
+     "item": "lemon juice",
+     "aisle": "produce"
+    },
+    {
+     "q": null,
+     "u": "",
+     "item": "salt",
+     "aisle": "spices"
+    },
+    {
+     "q": null,
+     "u": "",
+     "item": "black pepper",
+     "aisle": "spices"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Cook the onion and green onions in the oil until soft."
+    },
+    {
+     "text": "Add the spinach in batches and stir until it wilts."
+    },
+    {
+     "text": "Stir in the rice, water, salt and pepper and bring to a boil."
+    },
+    {
+     "text": "Cover and cook on low until the rice is tender and the liquid is absorbed.",
+     "timer": 1200,
+     "timerLabel": "Cook the rice"
+    },
+    {
+     "text": "Stir in the dill and lemon juice and rest covered 5 minutes.",
+     "timer": 300,
+     "timerLabel": "Rest"
+    },
+    {
+     "text": "Fluff with a fork and serve with lemon wedges."
+    }
+   ]
+  },
+  {
+   "id": "mediterranean-chicken-shawarma",
+   "title": "Chicken shawarma",
+   "blurb": "Spiced yogurt-marinated chicken thighs, roasted until charred",
+   "type": "middle-eastern",
+   "serves": 6,
+   "prep": 20,
+   "cook": 30,
+   "tags": [
+    "healthy"
+   ],
+   "ingredients": [
+    {
+     "q": 2,
+     "u": "lb",
+     "item": "boneless skinless chicken thighs",
+     "aisle": "meat"
+    },
+    {
+     "q": 0.5,
+     "u": "cup",
+     "item": "plain whole-milk yogurt",
+     "aisle": "dairy"
+    },
+    {
+     "q": 3,
+     "u": "tbsp",
+     "item": "lemon juice",
+     "aisle": "produce"
+    },
+    {
+     "q": 3,
+     "u": "tbsp",
+     "item": "olive oil",
+     "aisle": "pantry"
+    },
+    {
+     "q": 4,
+     "u": "clove",
+     "item": "garlic",
+     "note": "minced",
+     "aisle": "produce"
+    },
+    {
+     "q": 2,
+     "u": "tsp",
+     "item": "ground cumin",
+     "aisle": "spices"
+    },
+    {
+     "q": 2,
+     "u": "tsp",
+     "item": "paprika",
+     "aisle": "spices"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "ground coriander",
+     "aisle": "spices"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "ground turmeric",
+     "aisle": "spices"
+    },
+    {
+     "q": 0.5,
+     "u": "tsp",
+     "item": "ground cinnamon",
+     "aisle": "spices"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "salt",
+     "aisle": "spices"
+    },
+    {
+     "q": 6,
+     "u": "",
+     "item": "pita bread",
+     "note": "to serve",
+     "aisle": "bakery"
+    },
+    {
+     "q": null,
+     "u": "",
+     "item": "black pepper",
+     "aisle": "spices"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Whisk the yogurt, lemon juice, oil, garlic, spices, salt and pepper in a large bowl."
+    },
+    {
+     "text": "Coat the chicken in the marinade, cover and chill at least 1 hour.",
+     "timer": 3600,
+     "timerLabel": "Marinate"
+    },
+    {
+     "text": "Heat the oven to 450°F and line a sheet pan with foil."
+    },
+    {
+     "text": "Spread the chicken on the pan in a single layer."
+    },
+    {
+     "text": "Roast until charred in spots and 165°F inside.",
+     "timer": 1500,
+     "timerLabel": "Roast chicken"
+    },
+    {
+     "text": "Rest 5 minutes, then slice thinly.",
+     "timer": 300,
+     "timerLabel": "Rest"
+    },
+    {
+     "text": "Serve in warm pita with garlic sauce, tomatoes and pickles."
+    }
+   ]
+  },
+  {
+   "id": "mediterranean-falafel",
+   "title": "Baked falafel",
+   "blurb": "Crisp herby chickpea fritters, baked instead of fried",
+   "type": "middle-eastern",
+   "serves": 4,
+   "prep": 25,
+   "cook": 30,
+   "tags": [
+    "vegan",
+    "healthy",
+    "make ahead"
+   ],
+   "ingredients": [
+    {
+     "q": 1,
+     "u": "lb",
+     "item": "dried chickpeas",
+     "note": "soaked overnight and drained",
+     "aisle": "pantry"
+    },
+    {
+     "q": 1,
+     "u": "bunch",
+     "item": "fresh parsley",
+     "aisle": "produce"
+    },
+    {
+     "q": 0.5,
+     "u": "bunch",
+     "item": "fresh cilantro",
+     "aisle": "produce"
+    },
+    {
+     "q": 1,
+     "u": "",
+     "item": "yellow onion",
+     "note": "quartered",
+     "aisle": "produce"
+    },
+    {
+     "q": 5,
+     "u": "clove",
+     "item": "garlic",
+     "aisle": "produce"
+    },
+    {
+     "q": 2,
+     "u": "tsp",
+     "item": "ground cumin",
+     "aisle": "spices"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "ground coriander",
+     "aisle": "spices"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "baking powder",
+     "aisle": "pantry"
+    },
+    {
+     "q": 2,
+     "u": "tbsp",
+     "item": "all-purpose flour",
+     "aisle": "pantry"
+    },
+    {
+     "q": 3,
+     "u": "tbsp",
+     "item": "olive oil",
+     "aisle": "pantry"
+    },
+    {
+     "q": null,
+     "u": "",
+     "item": "salt",
+     "aisle": "spices"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Heat the oven to 375°F and oil a sheet pan."
+    },
+    {
+     "text": "Pulse the chickpeas, herbs, onion, garlic and spices in a food processor until coarse and just holding together."
+    },
+    {
+     "text": "Add the flour, baking powder and 1.5 tsp salt and pulse once more."
+    },
+    {
+     "text": "Chill the mixture for 30 minutes.",
+     "timer": 1800,
+     "timerLabel": "Chill the mix"
+    },
+    {
+     "text": "Shape into 16 small patties and set them on the pan. Brush with oil."
+    },
+    {
+     "text": "Bake, flipping once, until golden and crisp.",
+     "timer": 1800,
+     "timerLabel": "Bake falafel"
+    },
+    {
+     "text": "Serve in pita or on a salad with tahini sauce."
+    }
+   ]
+  },
+  {
+   "id": "mediterranean-mujaddara",
+   "title": "Mujaddara",
+   "blurb": "Lentils and rice topped with deeply browned onions",
+   "type": "middle-eastern",
+   "serves": 6,
+   "prep": 10,
+   "cook": 60,
+   "tags": [
+    "vegan",
+    "healthy",
+    "make ahead"
+   ],
+   "ingredients": [
+    {
+     "q": 1,
+     "u": "cup",
+     "item": "brown lentils",
+     "note": "rinsed",
+     "aisle": "pantry"
+    },
+    {
+     "q": 0.5,
+     "u": "cup",
+     "item": "olive oil",
+     "note": "divided",
+     "aisle": "pantry"
+    },
+    {
+     "q": 3,
+     "u": "",
+     "item": "yellow onion",
+     "note": "thinly sliced",
+     "aisle": "produce"
+    },
+    {
+     "q": 1,
+     "u": "cup",
+     "item": "long-grain white rice",
+     "aisle": "pantry"
+    },
+    {
+     "q": 2,
+     "u": "tsp",
+     "item": "ground cumin",
+     "aisle": "spices"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "salt",
+     "aisle": "spices"
+    },
+    {
+     "q": 1,
+     "u": "cup",
+     "item": "plain whole-milk yogurt",
+     "note": "to serve",
+     "aisle": "dairy"
+    },
+    {
+     "q": null,
+     "u": "",
+     "item": "black pepper",
+     "aisle": "spices"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Simmer the lentils in 3 cups water until almost tender.",
+     "timer": 1200,
+     "timerLabel": "Cook lentils"
+    },
+    {
+     "text": "Meanwhile, cook the onions in 6 tablespoons oil over medium-low heat, stirring often, until deep brown and crisp at the edges.",
+     "timer": 1800,
+     "timerLabel": "Brown the onions"
+    },
+    {
+     "text": "Lift out half the onions for the top."
+    },
+    {
+     "text": "Add the rice, cumin, salt, pepper and 1.5 cups water to the lentils."
+    },
+    {
+     "text": "Cover and simmer on low until the rice is tender.",
+     "timer": 1080,
+     "timerLabel": "Cook rice"
+    },
+    {
+     "text": "Rest covered 10 minutes.",
+     "timer": 600,
+     "timerLabel": "Rest"
+    },
+    {
+     "text": "Fluff, top with the onions and serve with yogurt."
+    }
+   ]
+  },
+  {
+   "id": "mediterranean-red-lentil-soup",
+   "title": "Lebanese red lentil soup",
+   "blurb": "Velvety lemony lentil soup with cumin",
+   "type": "middle-eastern",
+   "serves": 6,
+   "prep": 10,
+   "cook": 35,
+   "tags": [
+    "vegan",
+    "healthy",
+    "one pot",
+    "make ahead"
+   ],
+   "ingredients": [
+    {
+     "q": 3,
+     "u": "tbsp",
+     "item": "olive oil",
+     "aisle": "pantry"
+    },
+    {
+     "q": 1,
+     "u": "",
+     "item": "yellow onion",
+     "note": "diced",
+     "aisle": "produce"
+    },
+    {
+     "q": 2,
+     "u": "",
+     "item": "carrots",
+     "note": "diced",
+     "aisle": "produce"
+    },
+    {
+     "q": 4,
+     "u": "clove",
+     "item": "garlic",
+     "note": "minced",
+     "aisle": "produce"
+    },
+    {
+     "q": 2,
+     "u": "tsp",
+     "item": "ground cumin",
+     "aisle": "spices"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "ground turmeric",
+     "aisle": "spices"
+    },
+    {
+     "q": 1.5,
+     "u": "cup",
+     "item": "red lentils",
+     "note": "rinsed",
+     "aisle": "pantry"
+    },
+    {
+     "q": 6,
+     "u": "cup",
+     "item": "vegetable broth",
+     "note": "low sodium",
+     "aisle": "canned"
+    },
+    {
+     "q": 3,
+     "u": "tbsp",
+     "item": "lemon juice",
+     "aisle": "produce"
+    },
+    {
+     "q": null,
+     "u": "",
+     "item": "salt",
+     "aisle": "spices"
+    },
+    {
+     "q": null,
+     "u": "",
+     "item": "black pepper",
+     "aisle": "spices"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Cook the onion and carrots in the oil until soft.",
+     "timer": 420,
+     "timerLabel": "Soften vegetables"
+    },
+    {
+     "text": "Stir in the garlic, cumin and turmeric for 1 minute."
+    },
+    {
+     "text": "Add the lentils and broth and bring to a boil."
+    },
+    {
+     "text": "Simmer until the lentils fall apart.",
+     "timer": 1500,
+     "timerLabel": "Simmer soup"
+    },
+    {
+     "text": "Blend about half the soup with an immersion blender for a creamy texture."
+    },
+    {
+     "text": "Stir in lemon juice, salt and pepper and serve with pita."
+    }
+   ]
+  },
+  {
+   "id": "mediterranean-chicken-tagine",
+   "title": "Chicken tagine with olives and lemon",
+   "blurb": "Moroccan braised chicken with preserved-lemon flavor",
+   "type": "middle-eastern",
+   "serves": 6,
+   "prep": 20,
+   "cook": 65,
+   "tags": [
+    "gluten-free",
+    "one pot"
+   ],
+   "ingredients": [
+    {
+     "q": 3,
+     "u": "lb",
+     "item": "bone-in skin-on chicken thighs",
+     "aisle": "meat"
+    },
+    {
+     "q": 2,
+     "u": "tbsp",
+     "item": "olive oil",
+     "aisle": "pantry"
+    },
+    {
+     "q": 2,
+     "u": "",
+     "item": "yellow onion",
+     "note": "sliced",
+     "aisle": "produce"
+    },
+    {
+     "q": 4,
+     "u": "clove",
+     "item": "garlic",
+     "note": "minced",
+     "aisle": "produce"
+    },
+    {
+     "q": 2,
+     "u": "tsp",
+     "item": "ground ginger",
+     "aisle": "spices"
+    },
+    {
+     "q": 2,
+     "u": "tsp",
+     "item": "ground cumin",
+     "aisle": "spices"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "ground turmeric",
+     "aisle": "spices"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "ground cinnamon",
+     "aisle": "spices"
+    },
+    {
+     "q": 1.5,
+     "u": "cup",
+     "item": "chicken broth",
+     "note": "low sodium",
+     "aisle": "canned"
+    },
+    {
+     "q": 1,
+     "u": "cup",
+     "item": "green olives",
+     "note": "pitted",
+     "aisle": "canned"
+    },
+    {
+     "q": 1,
+     "u": "",
+     "item": "lemon",
+     "note": "thinly sliced",
+     "aisle": "produce"
+    },
+    {
+     "q": 0.25,
+     "u": "cup",
+     "item": "fresh cilantro",
+     "note": "chopped",
+     "aisle": "produce"
+    },
+    {
+     "q": null,
+     "u": "",
+     "item": "salt",
+     "aisle": "spices"
+    },
+    {
+     "q": null,
+     "u": "",
+     "item": "black pepper",
+     "aisle": "spices"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Season the chicken with salt and pepper and brown it in the oil in a Dutch oven. Set aside."
+    },
+    {
+     "text": "Cook the onions in the same pot until soft, then add the garlic and spices."
+    },
+    {
+     "text": "Return the chicken and add the broth and lemon slices."
+    },
+    {
+     "text": "Cover and simmer gently until the chicken is tender and 175°F inside.",
+     "timer": 2700,
+     "timerLabel": "Braise chicken"
+    },
+    {
+     "text": "Add the olives and simmer uncovered to thicken the sauce.",
+     "timer": 600,
+     "timerLabel": "Reduce sauce"
+    },
+    {
+     "text": "Top with cilantro and serve over couscous."
+    }
+   ]
+  },
+  {
+   "id": "mediterranean-musakhan",
+   "title": "Musakhan",
+   "blurb": "Palestinian sumac chicken with sweet onions on flatbread",
+   "type": "middle-eastern",
+   "serves": 6,
+   "prep": 20,
+   "cook": 60,
+   "tags": [
+    "crowd"
+   ],
+   "ingredients": [
+    {
+     "q": 3,
+     "u": "lb",
+     "item": "bone-in skin-on chicken thighs",
+     "aisle": "meat"
+    },
+    {
+     "q": 4,
+     "u": "",
+     "item": "yellow onion",
+     "note": "thinly sliced",
+     "aisle": "produce"
+    },
+    {
+     "q": 0.33,
+     "u": "cup",
+     "item": "olive oil",
+     "aisle": "pantry"
+    },
+    {
+     "q": 3,
+     "u": "tbsp",
+     "item": "ground sumac",
+     "aisle": "spices"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "ground allspice",
+     "aisle": "spices"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "ground cinnamon",
+     "aisle": "spices"
+    },
+    {
+     "q": 0.5,
+     "u": "cup",
+     "item": "pine nuts",
+     "note": "toasted",
+     "aisle": "pantry"
+    },
+    {
+     "q": 4,
+     "u": "",
+     "item": "pita bread",
+     "note": "or taboon flatbread",
+     "aisle": "bakery"
+    },
+    {
+     "q": null,
+     "u": "",
+     "item": "salt",
+     "aisle": "spices"
+    },
+    {
+     "q": null,
+     "u": "",
+     "item": "black pepper",
+     "aisle": "spices"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Heat the oven to 425°F. Rub the chicken with half the sumac, allspice, cinnamon, salt and pepper."
+    },
+    {
+     "text": "Roast on a sheet pan until golden and 165°F inside.",
+     "timer": 2400,
+     "timerLabel": "Roast chicken"
+    },
+    {
+     "text": "Cook the onions in the oil with the remaining sumac and 1 tsp salt until very soft and sweet.",
+     "timer": 1500,
+     "timerLabel": "Cook the onions"
+    },
+    {
+     "text": "Toast the pine nuts in a dry pan until golden.",
+     "timer": 180,
+     "timerLabel": "Toast pine nuts"
+    },
+    {
+     "text": "Spread the onions over the pita and warm in the oven for 5 minutes.",
+     "timer": 300,
+     "timerLabel": "Warm the bread"
+    },
+    {
+     "text": "Top with the chicken and pine nuts and serve."
+    }
+   ]
+  },
+  {
+   "id": "mediterranean-maqluba",
+   "title": "Maqluba",
+   "blurb": "Upside-down rice, chicken and vegetables",
+   "type": "middle-eastern",
+   "serves": 8,
+   "prep": 40,
+   "cook": 90,
+   "tags": [
+    "crowd",
+    "holiday"
+   ],
+   "ingredients": [
+    {
+     "q": 3,
+     "u": "lb",
+     "item": "bone-in chicken thighs",
+     "aisle": "meat"
+    },
+    {
+     "q": 2,
+     "u": "",
+     "item": "eggplant",
+     "note": "sliced into rounds",
+     "aisle": "produce"
+    },
+    {
+     "q": 0.5,
+     "u": "cup",
+     "item": "vegetable oil",
+     "note": "for frying",
+     "aisle": "pantry"
+    },
+    {
+     "q": 2,
+     "u": "cup",
+     "item": "basmati rice",
+     "note": "rinsed",
+     "aisle": "pantry"
+    },
+    {
+     "q": 1,
+     "u": "",
+     "item": "yellow onion",
+     "note": "quartered",
+     "aisle": "produce"
+    },
+    {
+     "q": 2,
+     "u": "tsp",
+     "item": "ground allspice",
+     "aisle": "spices"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "ground cinnamon",
+     "aisle": "spices"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "ground turmeric",
+     "aisle": "spices"
+    },
+    {
+     "q": 2,
+     "u": "",
+     "item": "tomatoes",
+     "note": "sliced",
+     "aisle": "produce"
+    },
+    {
+     "q": 4,
+     "u": "cup",
+     "item": "chicken broth",
+     "note": "from simmering chicken",
+     "aisle": "canned"
+    },
+    {
+     "q": 0.5,
+     "u": "cup",
+     "item": "slivered almonds",
+     "note": "toasted",
+     "aisle": "pantry"
+    },
+    {
+     "q": null,
+     "u": "",
+     "item": "salt",
+     "aisle": "spices"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Simmer the chicken with the onion, half the spices and 6 cups water until cooked to 165°F. Save 4 cups broth.",
+     "timer": 2400,
+     "timerLabel": "Simmer chicken"
+    },
+    {
+     "text": "Salt the eggplant, then fry it in oil until golden. Drain on paper towels."
+    },
+    {
+     "text": "Layer tomato slices on the bottom of a large pot, then the eggplant and the chicken."
+    },
+    {
+     "text": "Mix the rice with the remaining spices and 1 tsp salt and spread over the top."
+    },
+    {
+     "text": "Pour in the hot broth to cover by 1/2 inch. Bring to a boil, then cover and cook on low.",
+     "timer": 2400,
+     "timerLabel": "Cook the rice"
+    },
+    {
+     "text": "Rest 15 minutes, then flip onto a large platter.",
+     "timer": 900,
+     "timerLabel": "Rest before flipping"
+    },
+    {
+     "text": "Top with toasted almonds."
+    }
+   ]
+  },
+  {
+   "id": "mediterranean-moroccan-chickpea-stew",
+   "title": "Moroccan chickpea and spinach stew",
+   "blurb": "Warmly spiced chickpeas simmered in tomato",
+   "type": "middle-eastern",
+   "serves": 4,
+   "prep": 10,
+   "cook": 30,
+   "tags": [
+    "vegan",
+    "healthy",
+    "one pot"
+   ],
+   "ingredients": [
+    {
+     "q": 2,
+     "u": "tbsp",
+     "item": "olive oil",
+     "aisle": "pantry"
+    },
+    {
+     "q": 1,
+     "u": "",
+     "item": "yellow onion",
+     "note": "diced",
+     "aisle": "produce"
+    },
+    {
+     "q": 3,
+     "u": "clove",
+     "item": "garlic",
+     "note": "minced",
+     "aisle": "produce"
+    },
+    {
+     "q": 2,
+     "u": "tsp",
+     "item": "ground cumin",
+     "aisle": "spices"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "paprika",
+     "aisle": "spices"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "ground cinnamon",
+     "aisle": "spices"
+    },
+    {
+     "q": 1,
+     "u": "can",
+     "item": "diced tomatoes (14.5 oz)",
+     "aisle": "canned"
+    },
+    {
+     "q": 2,
+     "u": "can",
+     "item": "chickpeas (15 oz)",
+     "note": "drained and rinsed",
+     "aisle": "canned"
+    },
+    {
+     "q": 1,
+     "u": "cup",
+     "item": "vegetable broth",
+     "note": "low sodium",
+     "aisle": "canned"
+    },
+    {
+     "q": 5,
+     "u": "oz",
+     "item": "fresh baby spinach",
+     "aisle": "produce"
+    },
+    {
+     "q": 2,
+     "u": "tbsp",
+     "item": "lemon juice",
+     "aisle": "produce"
+    },
+    {
+     "q": null,
+     "u": "",
+     "item": "salt",
+     "aisle": "spices"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Cook the onion in the oil until soft.",
+     "timer": 420,
+     "timerLabel": "Soften onion"
+    },
+    {
+     "text": "Add the garlic and spices and stir 1 minute."
+    },
+    {
+     "text": "Add the tomatoes, chickpeas, broth and 1/2 tsp salt."
+    },
+    {
+     "text": "Simmer until the sauce thickens.",
+     "timer": 1200,
+     "timerLabel": "Simmer stew"
+    },
+    {
+     "text": "Stir in the spinach until wilted."
+    },
+    {
+     "text": "Add the lemon juice and serve over couscous or rice."
+    }
+   ]
+  },
+  {
+   "id": "mediterranean-pork-souvlaki",
+   "title": "Pork souvlaki",
+   "blurb": "Lemon-oregano marinated pork skewers, grilled until charred",
+   "type": "kebabs",
+   "serves": 6,
+   "prep": 20,
+   "cook": 15,
+   "tags": [
+    "grill",
+    "gluten-free"
+   ],
+   "ingredients": [
+    {
+     "q": 2,
+     "u": "lb",
+     "item": "boneless pork shoulder",
+     "note": "cut in 1-inch pieces",
+     "aisle": "meat"
+    },
+    {
+     "q": 0.25,
+     "u": "cup",
+     "item": "olive oil",
+     "aisle": "pantry"
+    },
+    {
+     "q": 0.25,
+     "u": "cup",
+     "item": "lemon juice",
+     "aisle": "produce"
+    },
+    {
+     "q": 4,
+     "u": "clove",
+     "item": "garlic",
+     "note": "minced",
+     "aisle": "produce"
+    },
+    {
+     "q": 2,
+     "u": "tsp",
+     "item": "dried oregano",
+     "aisle": "spices"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "salt",
+     "aisle": "spices"
+    },
+    {
+     "q": null,
+     "u": "",
+     "item": "black pepper",
+     "aisle": "spices"
+    },
+    {
+     "q": 6,
+     "u": "",
+     "item": "pita bread",
+     "note": "to serve",
+     "aisle": "bakery"
+    },
+    {
+     "q": 1,
+     "u": "cup",
+     "item": "tzatziki",
+     "note": "to serve",
+     "aisle": "dairy"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Whisk the oil, lemon juice, garlic, oregano, salt and pepper."
+    },
+    {
+     "text": "Toss the pork in the marinade and chill at least 2 hours.",
+     "timer": 7200,
+     "timerLabel": "Marinate"
+    },
+    {
+     "text": "Soak wooden skewers in water for 30 minutes, then thread on the pork."
+    },
+    {
+     "text": "Heat the grill to medium-high and oil the grates."
+    },
+    {
+     "text": "Grill, turning, until browned and 145°F inside.",
+     "timer": 720,
+     "timerLabel": "Grill skewers"
+    },
+    {
+     "text": "Rest 3 minutes and serve in warm pita with tzatziki.",
+     "timer": 180,
+     "timerLabel": "Rest"
+    }
+   ]
+  },
+  {
+   "id": "mediterranean-shish-tawook",
+   "title": "Shish tawook",
+   "blurb": "Lebanese garlic-yogurt chicken skewers",
+   "type": "kebabs",
+   "serves": 6,
+   "prep": 20,
+   "cook": 15,
+   "tags": [
+    "grill",
+    "healthy"
+   ],
+   "ingredients": [
+    {
+     "q": 2,
+     "u": "lb",
+     "item": "boneless skinless chicken breasts",
+     "note": "cut in 1.5-inch cubes",
+     "aisle": "meat"
+    },
+    {
+     "q": 0.75,
+     "u": "cup",
+     "item": "plain whole-milk yogurt",
+     "aisle": "dairy"
+    },
+    {
+     "q": 3,
+     "u": "tbsp",
+     "item": "lemon juice",
+     "aisle": "produce"
+    },
+    {
+     "q": 2,
+     "u": "tbsp",
+     "item": "tomato paste",
+     "aisle": "canned"
+    },
+    {
+     "q": 4,
+     "u": "clove",
+     "item": "garlic",
+     "note": "minced",
+     "aisle": "produce"
+    },
+    {
+     "q": 2,
+     "u": "tbsp",
+     "item": "olive oil",
+     "aisle": "pantry"
+    },
+    {
+     "q": 2,
+     "u": "tsp",
+     "item": "paprika",
+     "aisle": "spices"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "ground cumin",
+     "aisle": "spices"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "salt",
+     "aisle": "spices"
+    },
+    {
+     "q": null,
+     "u": "",
+     "item": "black pepper",
+     "aisle": "spices"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Mix the yogurt, lemon juice, tomato paste, garlic, oil, spices, salt and pepper."
+    },
+    {
+     "text": "Coat the chicken and marinate in the fridge for at least 2 hours.",
+     "timer": 7200,
+     "timerLabel": "Marinate"
+    },
+    {
+     "text": "Thread the chicken onto skewers."
+    },
+    {
+     "text": "Heat the grill to medium-high."
+    },
+    {
+     "text": "Grill, turning, until charred and 165°F inside.",
+     "timer": 840,
+     "timerLabel": "Grill skewers"
+    },
+    {
+     "text": "Rest 3 minutes and serve with rice or pita and garlic sauce.",
+     "timer": 180,
+     "timerLabel": "Rest"
+    }
+   ]
+  },
+  {
+   "id": "mediterranean-lamb-kofta",
+   "title": "Lamb kofta",
+   "blurb": "Spiced ground lamb skewers with parsley and onion",
+   "type": "kebabs",
+   "serves": 6,
+   "prep": 20,
+   "cook": 12,
+   "tags": [
+    "grill"
+   ],
+   "ingredients": [
+    {
+     "q": 1.5,
+     "u": "lb",
+     "item": "ground lamb",
+     "aisle": "meat"
+    },
+    {
+     "q": 1,
+     "u": "",
+     "item": "yellow onion",
+     "note": "grated and squeezed dry",
+     "aisle": "produce"
+    },
+    {
+     "q": 0.5,
+     "u": "cup",
+     "item": "fresh parsley",
+     "note": "finely chopped",
+     "aisle": "produce"
+    },
+    {
+     "q": 3,
+     "u": "clove",
+     "item": "garlic",
+     "note": "minced",
+     "aisle": "produce"
+    },
+    {
+     "q": 2,
+     "u": "tsp",
+     "item": "ground cumin",
+     "aisle": "spices"
+    },
+    {
+     "q": 2,
+     "u": "tsp",
+     "item": "ground coriander",
+     "aisle": "spices"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "paprika",
+     "aisle": "spices"
+    },
+    {
+     "q": 0.5,
+     "u": "tsp",
+     "item": "ground cinnamon",
+     "aisle": "spices"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "salt",
+     "aisle": "spices"
+    },
+    {
+     "q": null,
+     "u": "",
+     "item": "black pepper",
+     "aisle": "spices"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Mix everything in a bowl with your hands until sticky."
+    },
+    {
+     "text": "Chill the mixture 30 minutes so it holds on the skewers.",
+     "timer": 1800,
+     "timerLabel": "Chill"
+    },
+    {
+     "text": "Shape into long ovals around flat metal skewers."
+    },
+    {
+     "text": "Heat the grill to medium-high and oil the grates."
+    },
+    {
+     "text": "Grill, turning, until browned and 160°F inside.",
+     "timer": 720,
+     "timerLabel": "Grill kofta"
+    },
+    {
+     "text": "Serve with pita, yogurt sauce and sliced tomato."
+    }
+   ]
+  },
+  {
+   "id": "mediterranean-beef-shish-kebab",
+   "title": "Beef shish kebab",
+   "blurb": "Marinated sirloin with peppers and onion",
+   "type": "kebabs",
+   "serves": 6,
+   "prep": 25,
+   "cook": 15,
+   "tags": [
+    "grill",
+    "gluten-free"
+   ],
+   "ingredients": [
+    {
+     "q": 2,
+     "u": "lb",
+     "item": "beef sirloin",
+     "note": "cut in 1.5-inch cubes",
+     "aisle": "meat"
+    },
+    {
+     "q": 0.25,
+     "u": "cup",
+     "item": "olive oil",
+     "aisle": "pantry"
+    },
+    {
+     "q": 3,
+     "u": "tbsp",
+     "item": "red wine vinegar",
+     "aisle": "pantry"
+    },
+    {
+     "q": 4,
+     "u": "clove",
+     "item": "garlic",
+     "note": "minced",
+     "aisle": "produce"
+    },
+    {
+     "q": 2,
+     "u": "tsp",
+     "item": "dried oregano",
+     "aisle": "spices"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "salt",
+     "aisle": "spices"
+    },
+    {
+     "q": 2,
+     "u": "",
+     "item": "bell peppers",
+     "note": "cut in 1-inch squares",
+     "aisle": "produce"
+    },
+    {
+     "q": 1,
+     "u": "",
+     "item": "red onion",
+     "note": "cut in wedges",
+     "aisle": "produce"
+    },
+    {
+     "q": null,
+     "u": "",
+     "item": "black pepper",
+     "aisle": "spices"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Whisk the oil, vinegar, garlic, oregano, salt and pepper."
+    },
+    {
+     "text": "Marinate the beef for 2 to 4 hours in the fridge.",
+     "timer": 7200,
+     "timerLabel": "Marinate"
+    },
+    {
+     "text": "Thread beef, pepper and onion alternately on skewers."
+    },
+    {
+     "text": "Heat the grill to high."
+    },
+    {
+     "text": "Grill, turning, until browned outside and 145°F for medium.",
+     "timer": 600,
+     "timerLabel": "Grill skewers"
+    },
+    {
+     "text": "Rest 5 minutes and serve over rice.",
+     "timer": 300,
+     "timerLabel": "Rest"
+    }
+   ]
+  },
+  {
+   "id": "mediterranean-halloumi-veggie-skewers",
+   "title": "Halloumi and vegetable skewers",
+   "blurb": "Grilled halloumi, zucchini and peppers with lemon",
+   "type": "kebabs",
+   "serves": 4,
+   "prep": 20,
+   "cook": 12,
+   "tags": [
+    "grill",
+    "vegetarian",
+    "gluten-free",
+    "quick"
+   ],
+   "ingredients": [
+    {
+     "q": 8,
+     "u": "oz",
+     "item": "halloumi cheese",
+     "note": "cut in 1-inch cubes",
+     "aisle": "dairy"
+    },
+    {
+     "q": 2,
+     "u": "",
+     "item": "zucchini",
+     "note": "cut in thick half-moons",
+     "aisle": "produce"
+    },
+    {
+     "q": 2,
+     "u": "",
+     "item": "bell peppers",
+     "note": "cut in 1-inch squares",
+     "aisle": "produce"
+    },
+    {
+     "q": 1,
+     "u": "",
+     "item": "red onion",
+     "note": "cut in wedges",
+     "aisle": "produce"
+    },
+    {
+     "q": 1,
+     "u": "pint",
+     "item": "cherry tomatoes",
+     "aisle": "produce"
+    },
+    {
+     "q": 3,
+     "u": "tbsp",
+     "item": "olive oil",
+     "aisle": "pantry"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "dried oregano",
+     "aisle": "spices"
+    },
+    {
+     "q": 1,
+     "u": "",
+     "item": "lemon",
+     "note": "cut in wedges",
+     "aisle": "produce"
+    },
+    {
+     "q": null,
+     "u": "",
+     "item": "salt",
+     "aisle": "spices"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Toss the vegetables with the oil, oregano and a pinch of salt."
+    },
+    {
+     "text": "Thread vegetables and halloumi onto skewers."
+    },
+    {
+     "text": "Heat the grill to medium-high and oil the grates."
+    },
+    {
+     "text": "Grill, turning, until the cheese has grill marks and the vegetables are tender.",
+     "timer": 600,
+     "timerLabel": "Grill skewers"
+    },
+    {
+     "text": "Squeeze the lemon over the top and serve right away."
+    }
+   ]
+  },
+  {
+   "id": "mediterranean-lemon-garlic-shrimp-skewers",
+   "title": "Lemon garlic shrimp skewers",
+   "blurb": "Quick grilled shrimp with a bright herb marinade",
+   "type": "kebabs",
+   "serves": 4,
+   "prep": 15,
+   "cook": 6,
+   "tags": [
+    "grill",
+    "quick",
+    "gluten-free"
+   ],
+   "ingredients": [
+    {
+     "q": 1.5,
+     "u": "lb",
+     "item": "large shrimp",
+     "note": "peeled and deveined",
+     "aisle": "seafood"
+    },
+    {
+     "q": 3,
+     "u": "tbsp",
+     "item": "olive oil",
+     "aisle": "pantry"
+    },
+    {
+     "q": 3,
+     "u": "tbsp",
+     "item": "lemon juice",
+     "aisle": "produce"
+    },
+    {
+     "q": 4,
+     "u": "clove",
+     "item": "garlic",
+     "note": "minced",
+     "aisle": "produce"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "dried oregano",
+     "aisle": "spices"
+    },
+    {
+     "q": 0.25,
+     "u": "cup",
+     "item": "fresh parsley",
+     "note": "chopped",
+     "aisle": "produce"
+    },
+    {
+     "q": null,
+     "u": "",
+     "item": "salt",
+     "aisle": "spices"
+    },
+    {
+     "q": null,
+     "u": "",
+     "item": "black pepper",
+     "aisle": "spices"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Mix the oil, lemon juice, garlic, oregano, salt and pepper."
+    },
+    {
+     "text": "Toss in the shrimp and marinate no more than 20 minutes.",
+     "timer": 1200,
+     "timerLabel": "Marinate"
+    },
+    {
+     "text": "Thread the shrimp onto skewers."
+    },
+    {
+     "text": "Heat the grill to high and oil the grates."
+    },
+    {
+     "text": "Grill until pink and opaque, about 2 minutes per side.",
+     "timer": 240,
+     "timerLabel": "Grill shrimp"
+    },
+    {
+     "text": "Sprinkle with parsley and serve with lemon."
+    }
+   ]
+  },
+  {
+   "id": "mediterranean-chicken-gyros",
+   "title": "Oven chicken gyros",
+   "blurb": "Juicy sliced chicken in pita with tzatziki",
+   "type": "kebabs",
+   "serves": 6,
+   "prep": 20,
+   "cook": 30,
+   "tags": [
+    "kid-friendly"
+   ],
+   "ingredients": [
+    {
+     "q": 2,
+     "u": "lb",
+     "item": "boneless skinless chicken thighs",
+     "aisle": "meat"
+    },
+    {
+     "q": 3,
+     "u": "tbsp",
+     "item": "olive oil",
+     "aisle": "pantry"
+    },
+    {
+     "q": 3,
+     "u": "tbsp",
+     "item": "lemon juice",
+     "aisle": "produce"
+    },
+    {
+     "q": 4,
+     "u": "clove",
+     "item": "garlic",
+     "note": "minced",
+     "aisle": "produce"
+    },
+    {
+     "q": 2,
+     "u": "tsp",
+     "item": "dried oregano",
+     "aisle": "spices"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "ground cumin",
+     "aisle": "spices"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "salt",
+     "aisle": "spices"
+    },
+    {
+     "q": 6,
+     "u": "",
+     "item": "pita bread",
+     "aisle": "bakery"
+    },
+    {
+     "q": 1,
+     "u": "cup",
+     "item": "tzatziki",
+     "aisle": "dairy"
+    },
+    {
+     "q": 2,
+     "u": "",
+     "item": "tomatoes",
+     "note": "sliced",
+     "aisle": "produce"
+    },
+    {
+     "q": 1,
+     "u": "",
+     "item": "red onion",
+     "note": "thinly sliced",
+     "aisle": "produce"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Toss the chicken with the oil, lemon juice, garlic, oregano, cumin and salt. Marinate 30 minutes.",
+     "timer": 1800,
+     "timerLabel": "Marinate"
+    },
+    {
+     "text": "Heat the oven to 450°F and line a sheet pan."
+    },
+    {
+     "text": "Roast the chicken until browned and 165°F inside.",
+     "timer": 1500,
+     "timerLabel": "Roast chicken"
+    },
+    {
+     "text": "Rest 5 minutes and slice thin.",
+     "timer": 300,
+     "timerLabel": "Rest"
+    },
+    {
+     "text": "Warm the pita and spread with tzatziki."
+    },
+    {
+     "text": "Fill with chicken, tomato and onion and fold up."
+    }
+   ]
+  },
+  {
+   "id": "mediterranean-oregano-lamb-chops",
+   "title": "Grilled lamb chops with oregano",
+   "blurb": "Greek-style paidakia, simply seasoned and charred",
+   "type": "kebabs",
+   "serves": 4,
+   "prep": 10,
+   "cook": 12,
+   "tags": [
+    "grill",
+    "quick",
+    "gluten-free"
+   ],
+   "ingredients": [
+    {
+     "q": 8,
+     "u": "",
+     "item": "lamb loin or rib chops",
+     "note": "about 1 inch thick",
+     "aisle": "meat"
+    },
+    {
+     "q": 3,
+     "u": "tbsp",
+     "item": "olive oil",
+     "aisle": "pantry"
+    },
+    {
+     "q": 3,
+     "u": "tbsp",
+     "item": "lemon juice",
+     "aisle": "produce"
+    },
+    {
+     "q": 3,
+     "u": "clove",
+     "item": "garlic",
+     "note": "minced",
+     "aisle": "produce"
+    },
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "dried oregano",
+     "aisle": "spices"
+    },
+    {
+     "q": null,
+     "u": "",
+     "item": "salt",
+     "aisle": "spices"
+    },
+    {
+     "q": null,
+     "u": "",
+     "item": "black pepper",
+     "aisle": "spices"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Mix the oil, lemon juice, garlic, oregano, salt and pepper."
+    },
+    {
+     "text": "Rub over the chops and let stand 30 minutes.",
+     "timer": 1800,
+     "timerLabel": "Marinate"
+    },
+    {
+     "text": "Heat the grill to high."
+    },
+    {
+     "text": "Grill the chops 4 to 5 minutes per side to 145°F for medium.",
+     "timer": 540,
+     "timerLabel": "Grill chops"
+    },
+    {
+     "text": "Rest 5 minutes before serving with lemon wedges.",
+     "timer": 300,
+     "timerLabel": "Rest"
+    }
+   ]
+  },
+  {
+   "id": "mediterranean-turkey-kofta",
+   "title": "Turkey kofta skewers",
+   "blurb": "A lighter kofta with fresh mint and cumin",
+   "type": "kebabs",
+   "serves": 6,
+   "prep": 20,
+   "cook": 12,
+   "tags": [
+    "grill",
+    "healthy"
+   ],
+   "ingredients": [
+    {
+     "q": 1.5,
+     "u": "lb",
+     "item": "ground turkey",
+     "aisle": "meat"
+    },
+    {
+     "q": 0.25,
+     "u": "cup",
+     "item": "fresh mint",
+     "note": "chopped",
+     "aisle": "produce"
+    },
+    {
+     "q": 0.25,
+     "u": "cup",
+     "item": "fresh parsley",
+     "note": "chopped",
+     "aisle": "produce"
+    },
+    {
+     "q": 3,
+     "u": "clove",
+     "item": "garlic",
+     "note": "minced",
+     "aisle": "produce"
+    },
+    {
+     "q": 1,
+     "u": "",
+     "item": "yellow onion",
+     "note": "grated",
+     "aisle": "produce"
+    },
+    {
+     "q": 2,
+     "u": "tsp",
+     "item": "ground cumin",
+     "aisle": "spices"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "paprika",
+     "aisle": "spices"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "salt",
+     "aisle": "spices"
+    },
+    {
+     "q": 1,
+     "u": "cup",
+     "item": "plain whole-milk yogurt",
+     "note": "to serve",
+     "aisle": "dairy"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Mix the turkey, herbs, garlic, onion, spices and salt until well combined."
+    },
+    {
+     "text": "Chill 30 minutes.",
+     "timer": 1800,
+     "timerLabel": "Chill"
+    },
+    {
+     "text": "Shape into ovals around skewers."
+    },
+    {
+     "text": "Heat the grill to medium-high and oil the grates."
+    },
+    {
+     "text": "Grill, turning, until browned and 165°F inside.",
+     "timer": 840,
+     "timerLabel": "Grill kofta"
+    },
+    {
+     "text": "Serve with yogurt, pita and sliced cucumber."
+    }
+   ]
+  },
+  {
+   "id": "mediterranean-horiatiki",
+   "title": "Horiatiki (Greek village salad)",
+   "blurb": "Tomato, cucumber, olives and a slab of feta",
+   "type": "bowls",
+   "serves": 4,
+   "prep": 15,
+   "cook": 0,
+   "tags": [
+    "vegetarian",
+    "quick",
+    "gluten-free",
+    "healthy"
+   ],
+   "ingredients": [
+    {
+     "q": 4,
+     "u": "",
+     "item": "ripe tomatoes",
+     "note": "cut in wedges",
+     "aisle": "produce"
+    },
+    {
+     "q": 1,
+     "u": "",
+     "item": "cucumber",
+     "note": "sliced thick",
+     "aisle": "produce"
+    },
+    {
+     "q": 0.5,
+     "u": "",
+     "item": "red onion",
+     "note": "thinly sliced",
+     "aisle": "produce"
+    },
+    {
+     "q": 1,
+     "u": "",
+     "item": "green bell pepper",
+     "note": "sliced in rings",
+     "aisle": "produce"
+    },
+    {
+     "q": 0.5,
+     "u": "cup",
+     "item": "kalamata olives",
+     "aisle": "canned"
+    },
+    {
+     "q": 6,
+     "u": "oz",
+     "item": "feta cheese",
+     "note": "in one slab",
+     "aisle": "dairy"
+    },
+    {
+     "q": 0.25,
+     "u": "cup",
+     "item": "olive oil",
+     "aisle": "pantry"
+    },
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "red wine vinegar",
+     "aisle": "pantry"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "dried oregano",
+     "aisle": "spices"
+    },
+    {
+     "q": null,
+     "u": "",
+     "item": "salt",
+     "aisle": "spices"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Put the tomatoes, cucumber, onion and pepper in a wide bowl."
+    },
+    {
+     "text": "Add the olives and a pinch of salt."
+    },
+    {
+     "text": "Whisk the oil and vinegar and pour over the vegetables."
+    },
+    {
+     "text": "Lay the feta slab on top."
+    },
+    {
+     "text": "Sprinkle with oregano and serve with crusty bread."
+    }
+   ]
+  },
+  {
+   "id": "mediterranean-tabbouleh",
+   "title": "Tabbouleh",
+   "blurb": "Parsley-heavy salad with bulgur, tomato and lemon",
+   "type": "bowls",
+   "serves": 6,
+   "prep": 25,
+   "cook": 10,
+   "tags": [
+    "vegan",
+    "healthy",
+    "make ahead"
+   ],
+   "ingredients": [
+    {
+     "q": 0.5,
+     "u": "cup",
+     "item": "fine bulgur",
+     "aisle": "pantry"
+    },
+    {
+     "q": 3,
+     "u": "bunch",
+     "item": "fresh parsley",
+     "note": "finely chopped",
+     "aisle": "produce"
+    },
+    {
+     "q": 1,
+     "u": "bunch",
+     "item": "fresh mint",
+     "note": "finely chopped",
+     "aisle": "produce"
+    },
+    {
+     "q": 4,
+     "u": "",
+     "item": "ripe tomatoes",
+     "note": "diced small",
+     "aisle": "produce"
+    },
+    {
+     "q": 1,
+     "u": "bunch",
+     "item": "green onions",
+     "note": "thinly sliced",
+     "aisle": "produce"
+    },
+    {
+     "q": 0.33,
+     "u": "cup",
+     "item": "lemon juice",
+     "aisle": "produce"
+    },
+    {
+     "q": 0.33,
+     "u": "cup",
+     "item": "olive oil",
+     "aisle": "pantry"
+    },
+    {
+     "q": null,
+     "u": "",
+     "item": "salt",
+     "aisle": "spices"
+    },
+    {
+     "q": null,
+     "u": "",
+     "item": "black pepper",
+     "aisle": "spices"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Soak the bulgur in the lemon juice for 15 minutes until softened.",
+     "timer": 900,
+     "timerLabel": "Soak bulgur"
+    },
+    {
+     "text": "Wash and dry the parsley and mint very well, then chop finely."
+    },
+    {
+     "text": "Dice the tomatoes and slice the green onions."
+    },
+    {
+     "text": "Toss everything with the bulgur and its juice."
+    },
+    {
+     "text": "Add the oil, 1 tsp salt and pepper and toss again."
+    },
+    {
+     "text": "Chill 20 minutes before serving so the flavors blend.",
+     "timer": 1200,
+     "timerLabel": "Chill"
+    }
+   ]
+  },
+  {
+   "id": "mediterranean-fattoush",
+   "title": "Fattoush",
+   "blurb": "Crunchy Lebanese salad with sumac dressing and pita chips",
+   "type": "bowls",
+   "serves": 6,
+   "prep": 20,
+   "cook": 10,
+   "tags": [
+    "vegetarian",
+    "quick"
+   ],
+   "ingredients": [
+    {
+     "q": 2,
+     "u": "",
+     "item": "pita bread",
+     "note": "torn into pieces",
+     "aisle": "bakery"
+    },
+    {
+     "q": 3,
+     "u": "tbsp",
+     "item": "olive oil",
+     "note": "for the pita",
+     "aisle": "pantry"
+    },
+    {
+     "q": 1,
+     "u": "head",
+     "item": "romaine lettuce",
+     "note": "chopped",
+     "aisle": "produce"
+    },
+    {
+     "q": 4,
+     "u": "",
+     "item": "tomatoes",
+     "note": "diced",
+     "aisle": "produce"
+    },
+    {
+     "q": 1,
+     "u": "",
+     "item": "cucumber",
+     "note": "diced",
+     "aisle": "produce"
+    },
+    {
+     "q": 6,
+     "u": "",
+     "item": "radishes",
+     "note": "sliced",
+     "aisle": "produce"
+    },
+    {
+     "q": 4,
+     "u": "",
+     "item": "green onions",
+     "note": "sliced",
+     "aisle": "produce"
+    },
+    {
+     "q": 0.5,
+     "u": "cup",
+     "item": "fresh mint",
+     "note": "chopped",
+     "aisle": "produce"
+    },
+    {
+     "q": 3,
+     "u": "tbsp",
+     "item": "lemon juice",
+     "aisle": "produce"
+    },
+    {
+     "q": 0.25,
+     "u": "cup",
+     "item": "olive oil",
+     "note": "for the dressing",
+     "aisle": "pantry"
+    },
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "ground sumac",
+     "aisle": "spices"
+    },
+    {
+     "q": null,
+     "u": "",
+     "item": "salt",
+     "aisle": "spices"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Heat the oven to 400°F. Toss the pita with 3 tablespoons oil and a pinch of salt."
+    },
+    {
+     "text": "Bake until golden and crisp.",
+     "timer": 600,
+     "timerLabel": "Bake pita chips"
+    },
+    {
+     "text": "Whisk the lemon juice, 1/4 cup oil, sumac and 1/2 tsp salt."
+    },
+    {
+     "text": "Toss the lettuce, tomatoes, cucumber, radishes, green onions and mint with the dressing."
+    },
+    {
+     "text": "Add the pita chips just before serving so they stay crisp."
+    }
+   ]
+  },
+  {
+   "id": "mediterranean-chickpea-cucumber-salad",
+   "title": "Mediterranean chickpea salad",
+   "blurb": "Chickpeas, cucumber, feta and red onion in lemon dressing",
+   "type": "bowls",
+   "serves": 4,
+   "prep": 15,
+   "cook": 0,
+   "tags": [
+    "vegetarian",
+    "quick",
+    "healthy",
+    "make ahead"
+   ],
+   "ingredients": [
+    {
+     "q": 2,
+     "u": "can",
+     "item": "chickpeas (15 oz)",
+     "note": "drained and rinsed",
+     "aisle": "canned"
+    },
+    {
+     "q": 1,
+     "u": "",
+     "item": "cucumber",
+     "note": "diced",
+     "aisle": "produce"
+    },
+    {
+     "q": 1,
+     "u": "pint",
+     "item": "cherry tomatoes",
+     "note": "halved",
+     "aisle": "produce"
+    },
+    {
+     "q": 0.5,
+     "u": "",
+     "item": "red onion",
+     "note": "finely diced",
+     "aisle": "produce"
+    },
+    {
+     "q": 0.5,
+     "u": "cup",
+     "item": "kalamata olives",
+     "note": "halved",
+     "aisle": "canned"
+    },
+    {
+     "q": 0.5,
+     "u": "cup",
+     "item": "feta cheese",
+     "note": "crumbled",
+     "aisle": "dairy"
+    },
+    {
+     "q": 0.25,
+     "u": "cup",
+     "item": "fresh parsley",
+     "note": "chopped",
+     "aisle": "produce"
+    },
+    {
+     "q": 3,
+     "u": "tbsp",
+     "item": "olive oil",
+     "aisle": "pantry"
+    },
+    {
+     "q": 3,
+     "u": "tbsp",
+     "item": "lemon juice",
+     "aisle": "produce"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "dried oregano",
+     "aisle": "spices"
+    },
+    {
+     "q": null,
+     "u": "",
+     "item": "salt",
+     "aisle": "spices"
+    },
+    {
+     "q": null,
+     "u": "",
+     "item": "black pepper",
+     "aisle": "spices"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Whisk the oil, lemon juice, oregano, salt and pepper in a large bowl."
+    },
+    {
+     "text": "Add the chickpeas, cucumber, tomatoes, onion and olives."
+    },
+    {
+     "text": "Toss well and let sit 10 minutes.",
+     "timer": 600,
+     "timerLabel": "Let flavors blend"
+    },
+    {
+     "text": "Fold in the feta and parsley and serve."
+    }
+   ]
+  },
+  {
+   "id": "mediterranean-mediterranean-quinoa-bowl",
+   "title": "Mediterranean quinoa bowl",
+   "blurb": "Quinoa with roasted vegetables, hummus and feta",
+   "type": "bowls",
+   "serves": 4,
+   "prep": 15,
+   "cook": 30,
+   "tags": [
+    "vegetarian",
+    "healthy"
+   ],
+   "ingredients": [
+    {
+     "q": 1,
+     "u": "cup",
+     "item": "quinoa",
+     "note": "rinsed",
+     "aisle": "pantry"
+    },
+    {
+     "q": 2,
+     "u": "cup",
+     "item": "vegetable broth",
+     "note": "low sodium",
+     "aisle": "canned"
+    },
+    {
+     "q": 2,
+     "u": "",
+     "item": "zucchini",
+     "note": "cut in half-moons",
+     "aisle": "produce"
+    },
+    {
+     "q": 1,
+     "u": "",
+     "item": "red bell pepper",
+     "note": "diced",
+     "aisle": "produce"
+    },
+    {
+     "q": 1,
+     "u": "pint",
+     "item": "cherry tomatoes",
+     "aisle": "produce"
+    },
+    {
+     "q": 2,
+     "u": "tbsp",
+     "item": "olive oil",
+     "aisle": "pantry"
+    },
+    {
+     "q": 1,
+     "u": "can",
+     "item": "chickpeas (15 oz)",
+     "note": "drained and rinsed",
+     "aisle": "canned"
+    },
+    {
+     "q": 0.5,
+     "u": "cup",
+     "item": "hummus",
+     "aisle": "dairy"
+    },
+    {
+     "q": 0.5,
+     "u": "cup",
+     "item": "feta cheese",
+     "note": "crumbled",
+     "aisle": "dairy"
+    },
+    {
+     "q": 2,
+     "u": "tbsp",
+     "item": "lemon juice",
+     "aisle": "produce"
+    },
+    {
+     "q": null,
+     "u": "",
+     "item": "salt",
+     "aisle": "spices"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Heat the oven to 425°F. Toss the zucchini, pepper, tomatoes and chickpeas with the oil and salt."
+    },
+    {
+     "text": "Roast on a sheet pan until browned at the edges.",
+     "timer": 1500,
+     "timerLabel": "Roast vegetables"
+    },
+    {
+     "text": "Meanwhile, simmer the quinoa in the broth, covered, until the liquid is absorbed.",
+     "timer": 900,
+     "timerLabel": "Cook quinoa"
+    },
+    {
+     "text": "Fluff the quinoa with the lemon juice."
+    },
+    {
+     "text": "Divide among bowls and top with the roasted vegetables."
+    },
+    {
+     "text": "Add dollops of hummus and sprinkle with feta."
+    }
+   ]
+  },
+  {
+   "id": "mediterranean-lemon-orzo-salad",
+   "title": "Lemon orzo salad",
+   "blurb": "Chilled orzo with spinach, olives and feta",
+   "type": "bowls",
+   "serves": 6,
+   "prep": 15,
+   "cook": 15,
+   "tags": [
+    "vegetarian",
+    "make ahead",
+    "crowd"
+   ],
+   "ingredients": [
+    {
+     "q": 1,
+     "u": "lb",
+     "item": "orzo",
+     "aisle": "pantry"
+    },
+    {
+     "q": 0.25,
+     "u": "cup",
+     "item": "olive oil",
+     "aisle": "pantry"
+    },
+    {
+     "q": 0.25,
+     "u": "cup",
+     "item": "lemon juice",
+     "aisle": "produce"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "lemon zest",
+     "aisle": "produce"
+    },
+    {
+     "q": 5,
+     "u": "oz",
+     "item": "fresh baby spinach",
+     "note": "chopped",
+     "aisle": "produce"
+    },
+    {
+     "q": 1,
+     "u": "pint",
+     "item": "cherry tomatoes",
+     "note": "halved",
+     "aisle": "produce"
+    },
+    {
+     "q": 0.5,
+     "u": "cup",
+     "item": "kalamata olives",
+     "note": "halved",
+     "aisle": "canned"
+    },
+    {
+     "q": 1,
+     "u": "cup",
+     "item": "feta cheese",
+     "note": "crumbled",
+     "aisle": "dairy"
+    },
+    {
+     "q": 0.25,
+     "u": "cup",
+     "item": "fresh dill",
+     "note": "chopped",
+     "aisle": "produce"
+    },
+    {
+     "q": null,
+     "u": "",
+     "item": "salt",
+     "aisle": "spices"
+    },
+    {
+     "q": null,
+     "u": "",
+     "item": "black pepper",
+     "aisle": "spices"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Boil the orzo in salted water until tender, then drain.",
+     "timer": 540,
+     "timerLabel": "Boil orzo"
+    },
+    {
+     "text": "Rinse briefly under cool water and drain well."
+    },
+    {
+     "text": "Whisk the oil, lemon juice, zest, salt and pepper in a large bowl."
+    },
+    {
+     "text": "Add the orzo, spinach, tomatoes and olives and toss."
+    },
+    {
+     "text": "Fold in the feta and dill."
+    },
+    {
+     "text": "Chill 30 minutes, then taste for salt.",
+     "timer": 1800,
+     "timerLabel": "Chill"
+    }
+   ]
+  },
+  {
+   "id": "mediterranean-tuna-white-bean-salad",
+   "title": "Tuna and white bean salad",
+   "blurb": "Pantry-friendly Tuscan-Greek lunch with lemon and parsley",
+   "type": "bowls",
+   "serves": 4,
+   "prep": 10,
+   "cook": 0,
+   "tags": [
+    "quick",
+    "healthy",
+    "make ahead"
+   ],
+   "ingredients": [
+    {
+     "q": 2,
+     "u": "can",
+     "item": "cannellini beans (15 oz)",
+     "note": "drained and rinsed",
+     "aisle": "canned"
+    },
+    {
+     "q": 2,
+     "u": "can",
+     "item": "tuna in olive oil (5 oz)",
+     "note": "drained",
+     "aisle": "canned"
+    },
+    {
+     "q": 0.5,
+     "u": "",
+     "item": "red onion",
+     "note": "thinly sliced",
+     "aisle": "produce"
+    },
+    {
+     "q": 1,
+     "u": "pint",
+     "item": "cherry tomatoes",
+     "note": "halved",
+     "aisle": "produce"
+    },
+    {
+     "q": 0.25,
+     "u": "cup",
+     "item": "fresh parsley",
+     "note": "chopped",
+     "aisle": "produce"
+    },
+    {
+     "q": 2,
+     "u": "tbsp",
+     "item": "capers",
+     "note": "drained",
+     "aisle": "pantry"
+    },
+    {
+     "q": 3,
+     "u": "tbsp",
+     "item": "olive oil",
+     "aisle": "pantry"
+    },
+    {
+     "q": 3,
+     "u": "tbsp",
+     "item": "lemon juice",
+     "aisle": "produce"
+    },
+    {
+     "q": null,
+     "u": "",
+     "item": "salt",
+     "aisle": "spices"
+    },
+    {
+     "q": null,
+     "u": "",
+     "item": "black pepper",
+     "aisle": "spices"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Whisk the oil, lemon juice, salt and pepper in a bowl."
+    },
+    {
+     "text": "Add the beans, onion, tomatoes and capers and stir."
+    },
+    {
+     "text": "Flake in the tuna and fold gently."
+    },
+    {
+     "text": "Stir in the parsley."
+    },
+    {
+     "text": "Rest 10 minutes and serve on greens or toast.",
+     "timer": 600,
+     "timerLabel": "Let flavors blend"
+    }
+   ]
+  },
+  {
+   "id": "mediterranean-chicken-gyro-bowl",
+   "title": "Chicken gyro bowl",
+   "blurb": "Rice bowl with spiced chicken, cucumber and tzatziki",
+   "type": "bowls",
+   "serves": 4,
+   "prep": 20,
+   "cook": 25,
+   "tags": [
+    "healthy"
+   ],
+   "ingredients": [
+    {
+     "q": 1.5,
+     "u": "lb",
+     "item": "boneless skinless chicken thighs",
+     "note": "cut in strips",
+     "aisle": "meat"
+    },
+    {
+     "q": 2,
+     "u": "tbsp",
+     "item": "olive oil",
+     "aisle": "pantry"
+    },
+    {
+     "q": 2,
+     "u": "tsp",
+     "item": "dried oregano",
+     "aisle": "spices"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "ground cumin",
+     "aisle": "spices"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "garlic powder",
+     "aisle": "spices"
+    },
+    {
+     "q": 2,
+     "u": "cup",
+     "item": "cooked basmati rice",
+     "aisle": "pantry"
+    },
+    {
+     "q": 1,
+     "u": "",
+     "item": "cucumber",
+     "note": "diced",
+     "aisle": "produce"
+    },
+    {
+     "q": 1,
+     "u": "pint",
+     "item": "cherry tomatoes",
+     "note": "halved",
+     "aisle": "produce"
+    },
+    {
+     "q": 0.5,
+     "u": "",
+     "item": "red onion",
+     "note": "thinly sliced",
+     "aisle": "produce"
+    },
+    {
+     "q": 0.5,
+     "u": "cup",
+     "item": "feta cheese",
+     "note": "crumbled",
+     "aisle": "dairy"
+    },
+    {
+     "q": 1,
+     "u": "cup",
+     "item": "tzatziki",
+     "aisle": "dairy"
+    },
+    {
+     "q": null,
+     "u": "",
+     "item": "salt",
+     "aisle": "spices"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Toss the chicken with the oil, oregano, cumin, garlic powder and 1 tsp salt."
+    },
+    {
+     "text": "Heat a large skillet over medium-high heat."
+    },
+    {
+     "text": "Cook the chicken, turning occasionally, until browned and 165°F inside.",
+     "timer": 720,
+     "timerLabel": "Cook chicken"
+    },
+    {
+     "text": "Divide the rice among bowls."
+    },
+    {
+     "text": "Top with chicken, cucumber, tomatoes, onion and feta."
+    },
+    {
+     "text": "Finish with a big spoonful of tzatziki."
+    }
+   ]
+  },
+  {
+   "id": "mediterranean-watermelon-feta-salad",
+   "title": "Watermelon feta salad",
+   "blurb": "Sweet melon, salty feta and mint with lime",
+   "type": "bowls",
+   "serves": 6,
+   "prep": 10,
+   "cook": 0,
+   "tags": [
+    "vegetarian",
+    "quick",
+    "gluten-free"
+   ],
+   "ingredients": [
+    {
+     "q": 5,
+     "u": "cup",
+     "item": "seedless watermelon",
+     "note": "cut in 1-inch cubes",
+     "aisle": "produce"
+    },
+    {
+     "q": 6,
+     "u": "oz",
+     "item": "feta cheese",
+     "note": "cubed",
+     "aisle": "dairy"
+    },
+    {
+     "q": 0.25,
+     "u": "cup",
+     "item": "fresh mint",
+     "note": "torn",
+     "aisle": "produce"
+    },
+    {
+     "q": 0.5,
+     "u": "",
+     "item": "red onion",
+     "note": "very thinly sliced",
+     "aisle": "produce"
+    },
+    {
+     "q": 2,
+     "u": "tbsp",
+     "item": "olive oil",
+     "aisle": "pantry"
+    },
+    {
+     "q": 2,
+     "u": "tbsp",
+     "item": "lime juice",
+     "aisle": "produce"
+    },
+    {
+     "q": null,
+     "u": "",
+     "item": "black pepper",
+     "aisle": "spices"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Put the watermelon and onion in a large shallow bowl."
+    },
+    {
+     "text": "Whisk the oil and lime juice and drizzle over."
+    },
+    {
+     "text": "Scatter the feta and mint on top."
+    },
+    {
+     "text": "Finish with plenty of pepper and serve cold."
+    }
+   ]
+  },
+  {
+   "id": "mediterranean-shrimp-saganaki",
+   "title": "Shrimp saganaki",
+   "blurb": "Shrimp baked in tomato sauce, topped with melted feta",
+   "type": "seafood",
+   "serves": 4,
+   "prep": 15,
+   "cook": 25,
+   "tags": [
+    "quick",
+    "gluten-free"
+   ],
+   "ingredients": [
+    {
+     "q": 1.5,
+     "u": "lb",
+     "item": "large shrimp",
+     "note": "peeled and deveined",
+     "aisle": "seafood"
+    },
+    {
+     "q": 3,
+     "u": "tbsp",
+     "item": "olive oil",
+     "aisle": "pantry"
+    },
+    {
+     "q": 1,
+     "u": "",
+     "item": "yellow onion",
+     "note": "diced",
+     "aisle": "produce"
+    },
+    {
+     "q": 3,
+     "u": "clove",
+     "item": "garlic",
+     "note": "minced",
+     "aisle": "produce"
+    },
+    {
+     "q": 1,
+     "u": "can",
+     "item": "crushed tomatoes (14.5 oz)",
+     "aisle": "canned"
+    },
+    {
+     "q": 0.25,
+     "u": "cup",
+     "item": "dry white wine",
+     "aisle": "beverages"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "dried oregano",
+     "aisle": "spices"
+    },
+    {
+     "q": 6,
+     "u": "oz",
+     "item": "feta cheese",
+     "note": "crumbled",
+     "aisle": "dairy"
+    },
+    {
+     "q": 0.25,
+     "u": "cup",
+     "item": "fresh parsley",
+     "note": "chopped",
+     "aisle": "produce"
+    },
+    {
+     "q": null,
+     "u": "",
+     "item": "salt",
+     "aisle": "spices"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Heat the broiler. Cook the onion in the oil in an oven-safe skillet until soft.",
+     "timer": 300,
+     "timerLabel": "Soften onion"
+    },
+    {
+     "text": "Add the garlic, wine, tomatoes, oregano and 1/2 tsp salt. Simmer until thick.",
+     "timer": 600,
+     "timerLabel": "Simmer sauce"
+    },
+    {
+     "text": "Nestle the shrimp into the sauce and cook until just pink.",
+     "timer": 180,
+     "timerLabel": "Cook shrimp"
+    },
+    {
+     "text": "Scatter the feta over the top."
+    },
+    {
+     "text": "Broil until the feta is soft and lightly browned.",
+     "timer": 240,
+     "timerLabel": "Broil feta"
+    },
+    {
+     "text": "Sprinkle with parsley and serve with bread."
+    }
+   ]
+  },
+  {
+   "id": "mediterranean-cod-plaki",
+   "title": "Baked cod with tomatoes and olives",
+   "blurb": "Flaky cod in a bright Greek-style tomato sauce",
+   "type": "seafood",
+   "serves": 4,
+   "prep": 10,
+   "cook": 25,
+   "tags": [
+    "healthy",
+    "gluten-free",
+    "quick"
+   ],
+   "ingredients": [
+    {
+     "q": 4,
+     "u": "",
+     "item": "cod fillets (6 oz each)",
+     "aisle": "seafood"
+    },
+    {
+     "q": 2,
+     "u": "tbsp",
+     "item": "olive oil",
+     "aisle": "pantry"
+    },
+    {
+     "q": 1,
+     "u": "",
+     "item": "yellow onion",
+     "note": "sliced",
+     "aisle": "produce"
+    },
+    {
+     "q": 3,
+     "u": "clove",
+     "item": "garlic",
+     "note": "sliced",
+     "aisle": "produce"
+    },
+    {
+     "q": 1,
+     "u": "can",
+     "item": "diced tomatoes (14.5 oz)",
+     "aisle": "canned"
+    },
+    {
+     "q": 0.5,
+     "u": "cup",
+     "item": "kalamata olives",
+     "aisle": "canned"
+    },
+    {
+     "q": 2,
+     "u": "tbsp",
+     "item": "capers",
+     "note": "drained",
+     "aisle": "pantry"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "dried oregano",
+     "aisle": "spices"
+    },
+    {
+     "q": null,
+     "u": "",
+     "item": "salt",
+     "aisle": "spices"
+    },
+    {
+     "q": null,
+     "u": "",
+     "item": "black pepper",
+     "aisle": "spices"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Heat the oven to 400°F."
+    },
+    {
+     "text": "Cook the onion and garlic in the oil in a skillet until soft.",
+     "timer": 300,
+     "timerLabel": "Soften onion"
+    },
+    {
+     "text": "Add the tomatoes, olives, capers and oregano and simmer 5 minutes.",
+     "timer": 300,
+     "timerLabel": "Simmer sauce"
+    },
+    {
+     "text": "Season the cod with salt and pepper and nestle it into a baking dish."
+    },
+    {
+     "text": "Spoon the sauce over the fish."
+    },
+    {
+     "text": "Bake until the fish flakes and reaches 145°F.",
+     "timer": 900,
+     "timerLabel": "Bake cod"
+    }
+   ]
+  },
+  {
+   "id": "mediterranean-salmon-lemon-dill-foil",
+   "title": "Lemon dill salmon in foil",
+   "blurb": "Easy salmon packets with zucchini and tomatoes",
+   "type": "seafood",
+   "serves": 4,
+   "prep": 10,
+   "cook": 20,
+   "tags": [
+    "healthy",
+    "gluten-free",
+    "quick"
+   ],
+   "ingredients": [
+    {
+     "q": 4,
+     "u": "",
+     "item": "salmon fillets (6 oz each)",
+     "aisle": "seafood"
+    },
+    {
+     "q": 2,
+     "u": "",
+     "item": "zucchini",
+     "note": "thinly sliced",
+     "aisle": "produce"
+    },
+    {
+     "q": 1,
+     "u": "pint",
+     "item": "cherry tomatoes",
+     "note": "halved",
+     "aisle": "produce"
+    },
+    {
+     "q": 2,
+     "u": "tbsp",
+     "item": "olive oil",
+     "aisle": "pantry"
+    },
+    {
+     "q": 2,
+     "u": "",
+     "item": "lemon",
+     "note": "1 sliced, 1 juiced",
+     "aisle": "produce"
+    },
+    {
+     "q": 2,
+     "u": "tbsp",
+     "item": "fresh dill",
+     "note": "chopped",
+     "aisle": "produce"
+    },
+    {
+     "q": 2,
+     "u": "clove",
+     "item": "garlic",
+     "note": "minced",
+     "aisle": "produce"
+    },
+    {
+     "q": null,
+     "u": "",
+     "item": "salt",
+     "aisle": "spices"
+    },
+    {
+     "q": null,
+     "u": "",
+     "item": "black pepper",
+     "aisle": "spices"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Heat the oven to 400°F. Tear 4 big sheets of foil."
+    },
+    {
+     "text": "Divide the zucchini and tomatoes among the sheets."
+    },
+    {
+     "text": "Set a salmon fillet on each pile and season with salt and pepper."
+    },
+    {
+     "text": "Top with oil, lemon juice, garlic, dill and lemon slices."
+    },
+    {
+     "text": "Fold the foil into sealed packets on a sheet pan."
+    },
+    {
+     "text": "Bake until the salmon flakes and reaches 145°F.",
+     "timer": 1080,
+     "timerLabel": "Bake salmon"
+    }
+   ]
+  },
+  {
+   "id": "mediterranean-mussels-tomato-wine",
+   "title": "Mussels in tomato and white wine",
+   "blurb": "Steamed mussels in a garlicky broth, great with bread",
+   "type": "seafood",
+   "serves": 4,
+   "prep": 15,
+   "cook": 15,
+   "tags": [
+    "quick",
+    "one pot"
+   ],
+   "ingredients": [
+    {
+     "q": 3,
+     "u": "lb",
+     "item": "mussels",
+     "note": "scrubbed and debearded",
+     "aisle": "seafood"
+    },
+    {
+     "q": 3,
+     "u": "tbsp",
+     "item": "olive oil",
+     "aisle": "pantry"
+    },
+    {
+     "q": 1,
+     "u": "",
+     "item": "shallot",
+     "note": "minced",
+     "aisle": "produce"
+    },
+    {
+     "q": 4,
+     "u": "clove",
+     "item": "garlic",
+     "note": "minced",
+     "aisle": "produce"
+    },
+    {
+     "q": 1,
+     "u": "can",
+     "item": "diced tomatoes (14.5 oz)",
+     "aisle": "canned"
+    },
+    {
+     "q": 1,
+     "u": "cup",
+     "item": "dry white wine",
+     "aisle": "beverages"
+    },
+    {
+     "q": 0.25,
+     "u": "tsp",
+     "item": "red pepper flakes",
+     "aisle": "spices"
+    },
+    {
+     "q": 0.25,
+     "u": "cup",
+     "item": "fresh parsley",
+     "note": "chopped",
+     "aisle": "produce"
+    },
+    {
+     "q": 1,
+     "u": "",
+     "item": "baguette",
+     "note": "to serve",
+     "aisle": "bakery"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Discard any mussels that stay open when tapped."
+    },
+    {
+     "text": "Cook the shallot and garlic in the oil in a large pot for 2 minutes."
+    },
+    {
+     "text": "Add the tomatoes, wine and pepper flakes and simmer.",
+     "timer": 300,
+     "timerLabel": "Simmer broth"
+    },
+    {
+     "text": "Add the mussels, cover and steam until the shells open.",
+     "timer": 420,
+     "timerLabel": "Steam mussels"
+    },
+    {
+     "text": "Throw away any that did not open and stir in the parsley."
+    },
+    {
+     "text": "Serve in bowls with the broth and warm bread."
+    }
+   ]
+  },
+  {
+   "id": "mediterranean-roasted-branzino",
+   "title": "Roasted whole branzino",
+   "blurb": "Crisp-skinned fish stuffed with lemon and herbs",
+   "type": "seafood",
+   "serves": 2,
+   "prep": 10,
+   "cook": 25,
+   "tags": [
+    "healthy",
+    "gluten-free"
+   ],
+   "ingredients": [
+    {
+     "q": 2,
+     "u": "",
+     "item": "whole branzino (about 1 lb each)",
+     "note": "scaled and gutted",
+     "aisle": "seafood"
+    },
+    {
+     "q": 2,
+     "u": "tbsp",
+     "item": "olive oil",
+     "aisle": "pantry"
+    },
+    {
+     "q": 1,
+     "u": "",
+     "item": "lemon",
+     "note": "thinly sliced",
+     "aisle": "produce"
+    },
+    {
+     "q": 4,
+     "u": "sprig",
+     "item": "fresh thyme",
+     "aisle": "produce"
+    },
+    {
+     "q": 4,
+     "u": "sprig",
+     "item": "fresh parsley",
+     "aisle": "produce"
+    },
+    {
+     "q": 2,
+     "u": "clove",
+     "item": "garlic",
+     "note": "sliced",
+     "aisle": "produce"
+    },
+    {
+     "q": null,
+     "u": "",
+     "item": "salt",
+     "aisle": "spices"
+    },
+    {
+     "q": null,
+     "u": "",
+     "item": "black pepper",
+     "aisle": "spices"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Heat the oven to 450°F and oil a sheet pan."
+    },
+    {
+     "text": "Pat the fish dry and cut 3 slashes in each side."
+    },
+    {
+     "text": "Rub with oil, salt and pepper inside and out."
+    },
+    {
+     "text": "Stuff each cavity with lemon, thyme, parsley and garlic."
+    },
+    {
+     "text": "Roast until the flesh is opaque and reaches 145°F.",
+     "timer": 1500,
+     "timerLabel": "Roast fish"
+    },
+    {
+     "text": "Rest 3 minutes, then lift fillets off the bone to serve.",
+     "timer": 180,
+     "timerLabel": "Rest"
+    }
+   ]
+  },
+  {
+   "id": "mediterranean-chermoula-fish",
+   "title": "Chermoula baked fish",
+   "blurb": "Moroccan herb and spice marinade on white fish",
+   "type": "seafood",
+   "serves": 4,
+   "prep": 15,
+   "cook": 25,
+   "tags": [
+    "healthy",
+    "gluten-free"
+   ],
+   "ingredients": [
+    {
+     "q": 1.5,
+     "u": "lb",
+     "item": "firm white fish fillets",
+     "note": "such as halibut or cod",
+     "aisle": "seafood"
+    },
+    {
+     "q": 1,
+     "u": "cup",
+     "item": "fresh cilantro",
+     "aisle": "produce"
+    },
+    {
+     "q": 0.5,
+     "u": "cup",
+     "item": "fresh parsley",
+     "aisle": "produce"
+    },
+    {
+     "q": 4,
+     "u": "clove",
+     "item": "garlic",
+     "aisle": "produce"
+    },
+    {
+     "q": 0.33,
+     "u": "cup",
+     "item": "olive oil",
+     "aisle": "pantry"
+    },
+    {
+     "q": 3,
+     "u": "tbsp",
+     "item": "lemon juice",
+     "aisle": "produce"
+    },
+    {
+     "q": 2,
+     "u": "tsp",
+     "item": "ground cumin",
+     "aisle": "spices"
+    },
+    {
+     "q": 2,
+     "u": "tsp",
+     "item": "paprika",
+     "aisle": "spices"
+    },
+    {
+     "q": 0.25,
+     "u": "tsp",
+     "item": "cayenne pepper",
+     "aisle": "spices"
+    },
+    {
+     "q": null,
+     "u": "",
+     "item": "salt",
+     "aisle": "spices"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Blend the herbs, garlic, oil, lemon juice, spices and 1 tsp salt into a loose paste."
+    },
+    {
+     "text": "Coat the fish with half the chermoula and marinate 30 minutes.",
+     "timer": 1800,
+     "timerLabel": "Marinate"
+    },
+    {
+     "text": "Heat the oven to 400°F."
+    },
+    {
+     "text": "Set the fish in a baking dish."
+    },
+    {
+     "text": "Bake until it flakes and reaches 145°F.",
+     "timer": 1080,
+     "timerLabel": "Bake fish"
+    },
+    {
+     "text": "Spoon the rest of the chermoula over the top to serve."
+    }
+   ]
+  },
+  {
+   "id": "mediterranean-shrimp-orzo",
+   "title": "Shrimp and feta orzo",
+   "blurb": "One-pan tomato orzo with juicy shrimp",
+   "type": "seafood",
+   "serves": 4,
+   "prep": 10,
+   "cook": 30,
+   "tags": [
+    "one pot"
+   ],
+   "ingredients": [
+    {
+     "q": 1,
+     "u": "lb",
+     "item": "large shrimp",
+     "note": "peeled and deveined",
+     "aisle": "seafood"
+    },
+    {
+     "q": 2,
+     "u": "tbsp",
+     "item": "olive oil",
+     "aisle": "pantry"
+    },
+    {
+     "q": 1,
+     "u": "",
+     "item": "yellow onion",
+     "note": "diced",
+     "aisle": "produce"
+    },
+    {
+     "q": 3,
+     "u": "clove",
+     "item": "garlic",
+     "note": "minced",
+     "aisle": "produce"
+    },
+    {
+     "q": 1,
+     "u": "cup",
+     "item": "orzo",
+     "aisle": "pantry"
+    },
+    {
+     "q": 1,
+     "u": "can",
+     "item": "diced tomatoes (14.5 oz)",
+     "aisle": "canned"
+    },
+    {
+     "q": 2,
+     "u": "cup",
+     "item": "chicken broth",
+     "note": "low sodium",
+     "aisle": "canned"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "dried oregano",
+     "aisle": "spices"
+    },
+    {
+     "q": 0.75,
+     "u": "cup",
+     "item": "feta cheese",
+     "note": "crumbled",
+     "aisle": "dairy"
+    },
+    {
+     "q": 0.25,
+     "u": "cup",
+     "item": "fresh dill",
+     "note": "chopped",
+     "aisle": "produce"
+    },
+    {
+     "q": null,
+     "u": "",
+     "item": "salt",
+     "aisle": "spices"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Cook the onion in the oil in a large deep skillet until soft.",
+     "timer": 300,
+     "timerLabel": "Soften onion"
+    },
+    {
+     "text": "Add the garlic and orzo and stir 1 minute."
+    },
+    {
+     "text": "Pour in the tomatoes, broth, oregano and 1/2 tsp salt. Bring to a boil."
+    },
+    {
+     "text": "Cover and simmer, stirring now and then, until the orzo is nearly tender.",
+     "timer": 720,
+     "timerLabel": "Cook orzo"
+    },
+    {
+     "text": "Nestle in the shrimp and cook until pink.",
+     "timer": 240,
+     "timerLabel": "Cook shrimp"
+    },
+    {
+     "text": "Top with feta and dill and serve."
+    }
+   ]
+  },
+  {
+   "id": "mediterranean-tuna-olive-salsa",
+   "title": "Seared tuna with olive and caper salsa",
+   "blurb": "Quick seared tuna steaks with a sharp salsa",
+   "type": "seafood",
+   "serves": 4,
+   "prep": 15,
+   "cook": 8,
+   "tags": [
+    "quick",
+    "healthy",
+    "gluten-free"
+   ],
+   "ingredients": [
+    {
+     "q": 4,
+     "u": "",
+     "item": "tuna steaks (6 oz each)",
+     "note": "about 1 inch thick",
+     "aisle": "seafood"
+    },
+    {
+     "q": 2,
+     "u": "tbsp",
+     "item": "olive oil",
+     "note": "divided",
+     "aisle": "pantry"
+    },
+    {
+     "q": 0.5,
+     "u": "cup",
+     "item": "green olives",
+     "note": "chopped",
+     "aisle": "canned"
+    },
+    {
+     "q": 2,
+     "u": "tbsp",
+     "item": "capers",
+     "note": "drained",
+     "aisle": "pantry"
+    },
+    {
+     "q": 1,
+     "u": "pint",
+     "item": "cherry tomatoes",
+     "note": "quartered",
+     "aisle": "produce"
+    },
+    {
+     "q": 1,
+     "u": "",
+     "item": "shallot",
+     "note": "minced",
+     "aisle": "produce"
+    },
+    {
+     "q": 2,
+     "u": "tbsp",
+     "item": "lemon juice",
+     "aisle": "produce"
+    },
+    {
+     "q": 0.25,
+     "u": "cup",
+     "item": "fresh parsley",
+     "note": "chopped",
+     "aisle": "produce"
+    },
+    {
+     "q": null,
+     "u": "",
+     "item": "salt",
+     "aisle": "spices"
+    },
+    {
+     "q": null,
+     "u": "",
+     "item": "black pepper",
+     "aisle": "spices"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Mix the olives, capers, tomatoes, shallot, lemon juice, parsley and 1 tablespoon oil."
+    },
+    {
+     "text": "Pat the tuna dry and season with salt and pepper."
+    },
+    {
+     "text": "Heat the remaining oil in a skillet over high heat until shimmering."
+    },
+    {
+     "text": "Sear the tuna about 2 minutes per side for medium-rare, or to 145°F for well done.",
+     "timer": 240,
+     "timerLabel": "Sear tuna"
+    },
+    {
+     "text": "Slice and spoon the salsa over."
+    }
+   ]
+  },
+  {
+   "id": "mediterranean-garlic-shrimp-white-beans",
+   "title": "Lemon garlic shrimp with white beans",
+   "blurb": "Fast skillet shrimp over creamy cannellini",
+   "type": "seafood",
+   "serves": 4,
+   "prep": 10,
+   "cook": 15,
+   "tags": [
+    "quick",
+    "healthy"
+   ],
+   "ingredients": [
+    {
+     "q": 1.5,
+     "u": "lb",
+     "item": "large shrimp",
+     "note": "peeled and deveined",
+     "aisle": "seafood"
+    },
+    {
+     "q": 3,
+     "u": "tbsp",
+     "item": "olive oil",
+     "aisle": "pantry"
+    },
+    {
+     "q": 5,
+     "u": "clove",
+     "item": "garlic",
+     "note": "sliced",
+     "aisle": "produce"
+    },
+    {
+     "q": 0.25,
+     "u": "tsp",
+     "item": "red pepper flakes",
+     "aisle": "spices"
+    },
+    {
+     "q": 2,
+     "u": "can",
+     "item": "cannellini beans (15 oz)",
+     "note": "drained and rinsed",
+     "aisle": "canned"
+    },
+    {
+     "q": 0.5,
+     "u": "cup",
+     "item": "chicken broth",
+     "note": "low sodium",
+     "aisle": "canned"
+    },
+    {
+     "q": 3,
+     "u": "tbsp",
+     "item": "lemon juice",
+     "aisle": "produce"
+    },
+    {
+     "q": 0.25,
+     "u": "cup",
+     "item": "fresh parsley",
+     "note": "chopped",
+     "aisle": "produce"
+    },
+    {
+     "q": null,
+     "u": "",
+     "item": "salt",
+     "aisle": "spices"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Heat the oil in a large skillet and cook the garlic and pepper flakes for 1 minute."
+    },
+    {
+     "text": "Add the beans, broth and a pinch of salt and simmer.",
+     "timer": 300,
+     "timerLabel": "Simmer beans"
+    },
+    {
+     "text": "Mash a few beans with a spoon to thicken the sauce."
+    },
+    {
+     "text": "Add the shrimp and cook until pink and opaque.",
+     "timer": 240,
+     "timerLabel": "Cook shrimp"
+    },
+    {
+     "text": "Stir in the lemon juice and parsley and serve."
+    }
+   ]
+  },
+  {
+   "id": "mediterranean-hummus",
+   "title": "Classic hummus",
+   "blurb": "Ultra-smooth chickpea and tahini dip",
+   "type": "dips",
+   "serves": 8,
+   "prep": 15,
+   "cook": 0,
+   "tags": [
+    "vegan",
+    "healthy",
+    "make ahead",
+    "quick"
+   ],
+   "ingredients": [
+    {
+     "q": 2,
+     "u": "can",
+     "item": "chickpeas (15 oz)",
+     "note": "drained and rinsed",
+     "aisle": "canned"
+    },
+    {
+     "q": 0.5,
+     "u": "cup",
+     "item": "tahini",
+     "aisle": "pantry"
+    },
+    {
+     "q": 0.25,
+     "u": "cup",
+     "item": "lemon juice",
+     "aisle": "produce"
+    },
+    {
+     "q": 2,
+     "u": "clove",
+     "item": "garlic",
+     "aisle": "produce"
+    },
+    {
+     "q": 0.5,
+     "u": "tsp",
+     "item": "ground cumin",
+     "aisle": "spices"
+    },
+    {
+     "q": 0.25,
+     "u": "cup",
+     "item": "water",
+     "aisle": "pantry"
+    },
+    {
+     "q": 2,
+     "u": "tbsp",
+     "item": "olive oil",
+     "note": "plus more to serve",
+     "aisle": "pantry"
+    },
+    {
+     "q": null,
+     "u": "",
+     "item": "salt",
+     "aisle": "spices"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Blend the tahini and lemon juice in a food processor for 1 minute."
+    },
+    {
+     "text": "Add the garlic, cumin and 1 tsp salt and blend until smooth."
+    },
+    {
+     "text": "Add the chickpeas and blend 2 minutes, scraping the sides."
+    },
+    {
+     "text": "With the motor running, drizzle in ice water until fluffy."
+    },
+    {
+     "text": "Spoon into a bowl, make a swirl and drizzle with olive oil."
+    }
+   ]
+  },
+  {
+   "id": "mediterranean-tzatziki",
+   "title": "Tzatziki",
+   "blurb": "Thick garlicky cucumber yogurt sauce",
+   "type": "dips",
+   "serves": 8,
+   "prep": 15,
+   "cook": 0,
+   "tags": [
+    "vegetarian",
+    "healthy",
+    "make ahead",
+    "quick"
+   ],
+   "ingredients": [
+    {
+     "q": 2,
+     "u": "cup",
+     "item": "plain whole-milk Greek yogurt",
+     "aisle": "dairy"
+    },
+    {
+     "q": 1,
+     "u": "",
+     "item": "cucumber",
+     "note": "grated and squeezed dry",
+     "aisle": "produce"
+    },
+    {
+     "q": 2,
+     "u": "clove",
+     "item": "garlic",
+     "note": "grated",
+     "aisle": "produce"
+    },
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "olive oil",
+     "aisle": "pantry"
+    },
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "lemon juice",
+     "aisle": "produce"
+    },
+    {
+     "q": 2,
+     "u": "tbsp",
+     "item": "fresh dill",
+     "note": "chopped",
+     "aisle": "produce"
+    },
+    {
+     "q": null,
+     "u": "",
+     "item": "salt",
+     "aisle": "spices"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Grate the cucumber and squeeze out as much water as you can in a towel."
+    },
+    {
+     "text": "Stir the yogurt, cucumber, garlic, oil, lemon juice and dill together."
+    },
+    {
+     "text": "Season with 1/2 tsp salt."
+    },
+    {
+     "text": "Chill at least 1 hour for the best flavor.",
+     "timer": 3600,
+     "timerLabel": "Chill"
+    },
+    {
+     "text": "Serve with a drizzle of oil."
+    }
+   ]
+  },
+  {
+   "id": "mediterranean-baba-ghanoush",
+   "title": "Baba ghanoush",
+   "blurb": "Smoky roasted eggplant with tahini and lemon",
+   "type": "dips",
+   "serves": 6,
+   "prep": 10,
+   "cook": 50,
+   "tags": [
+    "vegan",
+    "healthy",
+    "make ahead"
+   ],
+   "ingredients": [
+    {
+     "q": 2,
+     "u": "lb",
+     "item": "eggplant",
+     "note": "about 2 large",
+     "aisle": "produce"
+    },
+    {
+     "q": 3,
+     "u": "tbsp",
+     "item": "tahini",
+     "aisle": "pantry"
+    },
+    {
+     "q": 3,
+     "u": "tbsp",
+     "item": "lemon juice",
+     "aisle": "produce"
+    },
+    {
+     "q": 2,
+     "u": "clove",
+     "item": "garlic",
+     "note": "minced",
+     "aisle": "produce"
+    },
+    {
+     "q": 2,
+     "u": "tbsp",
+     "item": "olive oil",
+     "aisle": "pantry"
+    },
+    {
+     "q": 2,
+     "u": "tbsp",
+     "item": "fresh parsley",
+     "note": "chopped",
+     "aisle": "produce"
+    },
+    {
+     "q": null,
+     "u": "",
+     "item": "salt",
+     "aisle": "spices"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Heat the oven to 450°F and prick the eggplants all over with a fork."
+    },
+    {
+     "text": "Roast on a foil-lined sheet pan, turning once, until collapsed and charred.",
+     "timer": 2700,
+     "timerLabel": "Roast eggplant"
+    },
+    {
+     "text": "Cool 10 minutes, then scoop out the flesh and drain it in a sieve.",
+     "timer": 600,
+     "timerLabel": "Cool"
+    },
+    {
+     "text": "Mash the flesh with the tahini, lemon juice, garlic and 1/2 tsp salt."
+    },
+    {
+     "text": "Spoon into a bowl and top with olive oil and parsley."
+    }
+   ]
+  },
+  {
+   "id": "mediterranean-whipped-feta",
+   "title": "Whipped feta dip (tirokafteri-style)",
+   "blurb": "Creamy feta with a touch of heat",
+   "type": "dips",
+   "serves": 8,
+   "prep": 10,
+   "cook": 0,
+   "tags": [
+    "vegetarian",
+    "quick",
+    "gluten-free"
+   ],
+   "ingredients": [
+    {
+     "q": 8,
+     "u": "oz",
+     "item": "feta cheese",
+     "note": "crumbled",
+     "aisle": "dairy"
+    },
+    {
+     "q": 0.5,
+     "u": "cup",
+     "item": "plain whole-milk Greek yogurt",
+     "aisle": "dairy"
+    },
+    {
+     "q": 2,
+     "u": "tbsp",
+     "item": "olive oil",
+     "aisle": "pantry"
+    },
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "lemon juice",
+     "aisle": "produce"
+    },
+    {
+     "q": 0.5,
+     "u": "tsp",
+     "item": "red pepper flakes",
+     "aisle": "spices"
+    },
+    {
+     "q": null,
+     "u": "",
+     "item": "black pepper",
+     "aisle": "spices"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Blend the feta and yogurt until completely smooth, scraping the sides."
+    },
+    {
+     "text": "Add the oil, lemon juice and pepper flakes and blend again."
+    },
+    {
+     "text": "Taste and add pepper; it should not need salt."
+    },
+    {
+     "text": "Spoon into a bowl and drizzle with more oil."
+    },
+    {
+     "text": "Serve with pita, cucumbers and olives."
+    }
+   ]
+  },
+  {
+   "id": "mediterranean-muhammara",
+   "title": "Muhammara",
+   "blurb": "Roasted red pepper and walnut dip with pomegranate molasses",
+   "type": "dips",
+   "serves": 8,
+   "prep": 15,
+   "cook": 25,
+   "tags": [
+    "vegan",
+    "make ahead"
+   ],
+   "ingredients": [
+    {
+     "q": 3,
+     "u": "",
+     "item": "red bell peppers",
+     "aisle": "produce"
+    },
+    {
+     "q": 1,
+     "u": "cup",
+     "item": "walnuts",
+     "note": "toasted",
+     "aisle": "pantry"
+    },
+    {
+     "q": 0.25,
+     "u": "cup",
+     "item": "plain breadcrumbs",
+     "aisle": "pantry"
+    },
+    {
+     "q": 2,
+     "u": "tbsp",
+     "item": "pomegranate molasses",
+     "aisle": "international"
+    },
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "lemon juice",
+     "aisle": "produce"
+    },
+    {
+     "q": 2,
+     "u": "clove",
+     "item": "garlic",
+     "aisle": "produce"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "ground cumin",
+     "aisle": "spices"
+    },
+    {
+     "q": 0.5,
+     "u": "tsp",
+     "item": "red pepper flakes",
+     "aisle": "spices"
+    },
+    {
+     "q": 0.25,
+     "u": "cup",
+     "item": "olive oil",
+     "aisle": "pantry"
+    },
+    {
+     "q": null,
+     "u": "",
+     "item": "salt",
+     "aisle": "spices"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Heat the broiler. Broil the peppers, turning, until blackened all over.",
+     "timer": 1200,
+     "timerLabel": "Char peppers"
+    },
+    {
+     "text": "Cover the peppers in a bowl for 10 minutes, then peel and seed them.",
+     "timer": 600,
+     "timerLabel": "Steam peppers"
+    },
+    {
+     "text": "Pulse the walnuts, breadcrumbs, garlic and spices in a food processor."
+    },
+    {
+     "text": "Add the peppers, molasses, lemon juice and 1 tsp salt and blend until thick."
+    },
+    {
+     "text": "Stream in the oil and blend until spreadable."
+    },
+    {
+     "text": "Serve with pita or vegetables."
+    }
+   ]
+  },
+  {
+   "id": "mediterranean-lemon-roasted-potatoes",
+   "title": "Greek lemon roasted potatoes",
+   "blurb": "Soft inside, crisp outside, drenched in lemon and oregano",
+   "type": "dips",
+   "serves": 6,
+   "prep": 15,
+   "cook": 70,
+   "tags": [
+    "vegan",
+    "gluten-free"
+   ],
+   "ingredients": [
+    {
+     "q": 3,
+     "u": "lb",
+     "item": "yukon gold potatoes",
+     "note": "cut in 1.5-inch wedges",
+     "aisle": "produce"
+    },
+    {
+     "q": 0.33,
+     "u": "cup",
+     "item": "olive oil",
+     "aisle": "pantry"
+    },
+    {
+     "q": 0.33,
+     "u": "cup",
+     "item": "lemon juice",
+     "aisle": "produce"
+    },
+    {
+     "q": 4,
+     "u": "clove",
+     "item": "garlic",
+     "note": "minced",
+     "aisle": "produce"
+    },
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "dried oregano",
+     "aisle": "spices"
+    },
+    {
+     "q": 1,
+     "u": "cup",
+     "item": "chicken broth",
+     "note": "low sodium",
+     "aisle": "canned"
+    },
+    {
+     "q": null,
+     "u": "",
+     "item": "salt",
+     "aisle": "spices"
+    },
+    {
+     "q": null,
+     "u": "",
+     "item": "black pepper",
+     "aisle": "spices"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Heat the oven to 425°F."
+    },
+    {
+     "text": "Toss the potatoes with the oil, lemon juice, garlic, oregano, 1.5 tsp salt and pepper in a roasting pan."
+    },
+    {
+     "text": "Spread them in one layer and pour the broth around."
+    },
+    {
+     "text": "Roast 35 minutes, then stir.",
+     "timer": 2100,
+     "timerLabel": "Roast potatoes"
+    },
+    {
+     "text": "Roast until the liquid is gone and the potatoes are golden.",
+     "timer": 2100,
+     "timerLabel": "Finish roasting"
+    },
+    {
+     "text": "Serve hot with extra lemon."
+    }
+   ]
+  },
+  {
+   "id": "mediterranean-greek-lemon-rice",
+   "title": "Greek lemon rice",
+   "blurb": "Fluffy rice with lemon, dill and olive oil",
+   "type": "dips",
+   "serves": 6,
+   "prep": 5,
+   "cook": 30,
+   "tags": [
+    "vegetarian",
+    "gluten-free",
+    "one pot"
+   ],
+   "ingredients": [
+    {
+     "q": 2,
+     "u": "tbsp",
+     "item": "olive oil",
+     "aisle": "pantry"
+    },
+    {
+     "q": 1,
+     "u": "",
+     "item": "yellow onion",
+     "note": "finely diced",
+     "aisle": "produce"
+    },
+    {
+     "q": 1.5,
+     "u": "cup",
+     "item": "long-grain white rice",
+     "aisle": "pantry"
+    },
+    {
+     "q": 3,
+     "u": "cup",
+     "item": "chicken broth",
+     "note": "low sodium",
+     "aisle": "canned"
+    },
+    {
+     "q": 0.25,
+     "u": "cup",
+     "item": "lemon juice",
+     "aisle": "produce"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "lemon zest",
+     "aisle": "produce"
+    },
+    {
+     "q": 2,
+     "u": "tbsp",
+     "item": "fresh dill",
+     "note": "chopped",
+     "aisle": "produce"
+    },
+    {
+     "q": null,
+     "u": "",
+     "item": "salt",
+     "aisle": "spices"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Cook the onion in the oil until soft.",
+     "timer": 300,
+     "timerLabel": "Soften onion"
+    },
+    {
+     "text": "Add the rice and stir 1 minute."
+    },
+    {
+     "text": "Pour in the broth, lemon juice, zest and 1/2 tsp salt. Bring to a boil."
+    },
+    {
+     "text": "Cover and cook on low until the rice is tender.",
+     "timer": 1080,
+     "timerLabel": "Cook the rice"
+    },
+    {
+     "text": "Rest covered 5 minutes.",
+     "timer": 300,
+     "timerLabel": "Rest"
+    },
+    {
+     "text": "Fluff with a fork and fold in the dill."
+    }
+   ]
+  },
+  {
+   "id": "mediterranean-homemade-pita",
+   "title": "Homemade pita bread",
+   "blurb": "Puffy skillet pita ready in under 2 hours",
+   "type": "dips",
+   "serves": 8,
+   "prep": 20,
+   "cook": 90,
+   "tags": [
+    "vegan",
+    "make ahead"
+   ],
+   "ingredients": [
+    {
+     "q": 3,
+     "u": "cup",
+     "item": "all-purpose flour",
+     "aisle": "pantry"
+    },
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "sugar",
+     "aisle": "pantry"
+    },
+    {
+     "q": 2.25,
+     "u": "tsp",
+     "item": "instant yeast",
+     "aisle": "pantry"
+    },
+    {
+     "q": 1.5,
+     "u": "tsp",
+     "item": "salt",
+     "aisle": "spices"
+    },
+    {
+     "q": 1,
+     "u": "cup",
+     "item": "water",
+     "note": "warm",
+     "aisle": "pantry"
+    },
+    {
+     "q": 2,
+     "u": "tbsp",
+     "item": "olive oil",
+     "aisle": "pantry"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Mix the flour, sugar, yeast and salt, then stir in the warm water and oil."
+    },
+    {
+     "text": "Knead 8 minutes until smooth and slightly tacky.",
+     "timer": 480,
+     "timerLabel": "Knead"
+    },
+    {
+     "text": "Cover and let rise until doubled.",
+     "timer": 3600,
+     "timerLabel": "First rise"
+    },
+    {
+     "text": "Divide into 8 balls and roll each into a 6-inch round. Rest 15 minutes.",
+     "timer": 900,
+     "timerLabel": "Rest dough"
+    },
+    {
+     "text": "Heat a dry cast iron skillet over high heat."
+    },
+    {
+     "text": "Cook each pita 1 to 2 minutes per side until puffed with brown spots.",
+     "timer": 120,
+     "timerLabel": "Cook a pita"
+    },
+    {
+     "text": "Stack in a towel to keep them soft."
+    }
+   ]
+  },
+  {
+   "id": "mediterranean-roasted-cauliflower-tahini",
+   "title": "Roasted cauliflower with tahini sauce",
+   "blurb": "Deeply browned florets with lemony tahini drizzle",
+   "type": "dips",
+   "serves": 4,
+   "prep": 10,
+   "cook": 30,
+   "tags": [
+    "vegan",
+    "healthy",
+    "gluten-free",
+    "sheet pan"
+   ],
+   "ingredients": [
+    {
+     "q": 1,
+     "u": "head",
+     "item": "cauliflower",
+     "note": "cut in florets",
+     "aisle": "produce"
+    },
+    {
+     "q": 3,
+     "u": "tbsp",
+     "item": "olive oil",
+     "aisle": "pantry"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "ground cumin",
+     "aisle": "spices"
+    },
+    {
+     "q": 0.33,
+     "u": "cup",
+     "item": "tahini",
+     "aisle": "pantry"
+    },
+    {
+     "q": 3,
+     "u": "tbsp",
+     "item": "lemon juice",
+     "aisle": "produce"
+    },
+    {
+     "q": 1,
+     "u": "clove",
+     "item": "garlic",
+     "note": "grated",
+     "aisle": "produce"
+    },
+    {
+     "q": 0.25,
+     "u": "cup",
+     "item": "water",
+     "aisle": "pantry"
+    },
+    {
+     "q": 2,
+     "u": "tbsp",
+     "item": "fresh parsley",
+     "note": "chopped",
+     "aisle": "produce"
+    },
+    {
+     "q": null,
+     "u": "",
+     "item": "salt",
+     "aisle": "spices"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Heat the oven to 425°F."
+    },
+    {
+     "text": "Toss the cauliflower with the oil, cumin and 1 tsp salt on a sheet pan."
+    },
+    {
+     "text": "Roast, turning once, until deep brown at the edges.",
+     "timer": 1800,
+     "timerLabel": "Roast cauliflower"
+    },
+    {
+     "text": "Whisk the tahini, lemon juice, garlic, water and a pinch of salt until pourable."
+    },
+    {
+     "text": "Drizzle over the cauliflower and top with parsley."
+    }
+   ]
+  }
+ ]
+}

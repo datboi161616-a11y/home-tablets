@@ -1,0 +1,5891 @@
+{
+ "id": "american",
+ "name": "American",
+ "types": [
+  {
+   "id": "chicken",
+   "name": "Chicken"
+  },
+  {
+   "id": "beef-pork",
+   "name": "Beef & pork"
+  },
+  {
+   "id": "seafood",
+   "name": "Fish & seafood"
+  },
+  {
+   "id": "casseroles",
+   "name": "Casseroles & bakes"
+  },
+  {
+   "id": "soups",
+   "name": "Soups & chili"
+  },
+  {
+   "id": "sandwiches",
+   "name": "Burgers & sandwiches"
+  },
+  {
+   "id": "sides",
+   "name": "Sides & salads"
+  }
+ ],
+ "recipes": [
+  {
+   "id": "white-chicken-chili",
+   "title": "Slow-cooker white chicken chili",
+   "blurb": "Creamy, mild and cozy, with shredded chicken and white beans",
+   "type": "soups",
+   "serves": 6,
+   "prep": 20,
+   "cook": 360,
+   "tags": [
+    "slow cooker",
+    "kid-friendly",
+    "make ahead"
+   ],
+   "ingredients": [
+    {
+     "q": 2,
+     "u": "lb",
+     "item": "boneless skinless chicken breasts",
+     "aisle": "meat"
+    },
+    {
+     "q": 2,
+     "u": "can",
+     "item": "white beans (15 oz), drained",
+     "aisle": "canned"
+    },
+    {
+     "q": 1,
+     "u": "",
+     "item": "yellow onion",
+     "aisle": "produce",
+     "note": "diced"
+    },
+    {
+     "q": 3,
+     "u": "clove",
+     "item": "garlic",
+     "aisle": "produce",
+     "note": "minced"
+    },
+    {
+     "q": 1,
+     "u": "can",
+     "item": "diced green chiles (4 oz)",
+     "aisle": "canned"
+    },
+    {
+     "q": 3,
+     "u": "cup",
+     "item": "chicken broth",
+     "aisle": "pantry"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "ground cumin",
+     "aisle": "spices"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "dried oregano",
+     "aisle": "spices"
+    },
+    {
+     "q": 4,
+     "u": "oz",
+     "item": "cream cheese",
+     "aisle": "dairy",
+     "note": "cubed"
+    },
+    {
+     "q": null,
+     "u": "",
+     "item": "salt",
+     "aisle": "spices"
+    },
+    {
+     "q": null,
+     "u": "",
+     "item": "black pepper",
+     "aisle": "spices"
+    },
+    {
+     "q": 1,
+     "u": "bunch",
+     "item": "cilantro",
+     "aisle": "produce",
+     "note": "to serve"
+    },
+    {
+     "q": 1,
+     "u": "",
+     "item": "lime",
+     "aisle": "produce",
+     "note": "to serve"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Put the chicken in the slow cooker. Season with the cumin, oregano, salt and pepper."
+    },
+    {
+     "text": "Add the onion, garlic, green chiles and drained beans on top."
+    },
+    {
+     "text": "Pour in the broth, cover, and cook on low for 6 hours.",
+     "timer": 21600,
+     "timerLabel": "Slow cook on low"
+    },
+    {
+     "text": "Check the chicken is 165°F inside. Lift it out and shred it with two forks."
+    },
+    {
+     "text": "Stir the chicken back in with the cream cheese. Cover until the cheese melts.",
+     "timer": 600,
+     "timerLabel": "Melt the cream cheese"
+    },
+    {
+     "text": "Stir well. Top with cilantro and a squeeze of lime, and serve."
+    }
+   ]
+  },
+  {
+   "id": "lemon-salmon",
+   "title": "Lemon salmon with green beans",
+   "blurb": "Sheet-pan salmon and crisp green beans, ready in 30 minutes",
+   "type": "seafood",
+   "serves": 4,
+   "prep": 10,
+   "cook": 20,
+   "tags": [
+    "sheet pan",
+    "quick",
+    "healthy",
+    "gluten-free"
+   ],
+   "ingredients": [
+    {
+     "q": 4,
+     "u": "",
+     "item": "salmon fillets (about 6 oz each)",
+     "aisle": "seafood"
+    },
+    {
+     "q": 1,
+     "u": "lb",
+     "item": "green beans",
+     "aisle": "produce",
+     "note": "trimmed"
+    },
+    {
+     "q": 3,
+     "u": "tbsp",
+     "item": "olive oil",
+     "aisle": "pantry",
+     "note": "divided"
+    },
+    {
+     "q": 2,
+     "u": "clove",
+     "item": "garlic",
+     "aisle": "produce",
+     "note": "minced"
+    },
+    {
+     "q": 1,
+     "u": "",
+     "item": "lemon",
+     "aisle": "produce",
+     "note": "half sliced, half for juice"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "salt",
+     "aisle": "spices"
+    },
+    {
+     "q": 0.5,
+     "u": "tsp",
+     "item": "black pepper",
+     "aisle": "spices"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "dried dill",
+     "aisle": "spices"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Heat the oven to 400°F. Line a sheet pan with foil."
+    },
+    {
+     "text": "Toss the green beans with 1 tbsp oil and half the salt and pepper. Spread them on the pan."
+    },
+    {
+     "text": "Roast the green beans by themselves first.",
+     "timer": 480,
+     "timerLabel": "Roast the beans"
+    },
+    {
+     "text": "Push the beans to the sides. Add the salmon, brush with the rest of the oil and garlic, and season."
+    },
+    {
+     "text": "Sprinkle with dill and lay lemon slices on top. Bake until the salmon is 145°F and flakes easily.",
+     "timer": 720,
+     "timerLabel": "Bake the salmon"
+    },
+    {
+     "text": "Squeeze the lemon juice over everything and serve."
+    }
+   ]
+  },
+  {
+   "id": "chicken-noodle-soup",
+   "title": "Chicken noodle soup",
+   "blurb": "The classic: tender chicken, carrots and egg noodles",
+   "type": "soups",
+   "serves": 6,
+   "prep": 15,
+   "cook": 40,
+   "tags": [
+    "kid-friendly",
+    "healthy"
+   ],
+   "ingredients": [
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "unsalted butter",
+     "aisle": "dairy"
+    },
+    {
+     "q": 1,
+     "u": "",
+     "item": "yellow onion",
+     "aisle": "produce",
+     "note": "diced"
+    },
+    {
+     "q": 3,
+     "u": "",
+     "item": "carrots",
+     "aisle": "produce",
+     "note": "sliced"
+    },
+    {
+     "q": 3,
+     "u": "stalk",
+     "item": "celery",
+     "aisle": "produce",
+     "note": "sliced"
+    },
+    {
+     "q": 2,
+     "u": "clove",
+     "item": "garlic",
+     "aisle": "produce",
+     "note": "minced"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "dried thyme",
+     "aisle": "spices"
+    },
+    {
+     "q": 8,
+     "u": "cup",
+     "item": "chicken broth",
+     "aisle": "pantry"
+    },
+    {
+     "q": 1,
+     "u": "lb",
+     "item": "boneless skinless chicken breasts",
+     "aisle": "meat"
+    },
+    {
+     "q": 2,
+     "u": "cup",
+     "item": "wide egg noodles",
+     "aisle": "pantry"
+    },
+    {
+     "q": null,
+     "u": "",
+     "item": "salt",
+     "aisle": "spices"
+    },
+    {
+     "q": null,
+     "u": "",
+     "item": "black pepper",
+     "aisle": "spices"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Melt the butter in a large pot over medium heat. Cook the onion, carrots and celery until soft.",
+     "timer": 360,
+     "timerLabel": "Soften the vegetables"
+    },
+    {
+     "text": "Add the garlic and thyme and stir for 1 minute."
+    },
+    {
+     "text": "Pour in the broth, add the whole chicken breasts, and bring to a boil."
+    },
+    {
+     "text": "Turn the heat to low, cover, and simmer until the chicken is 165°F inside.",
+     "timer": 1200,
+     "timerLabel": "Simmer the chicken"
+    },
+    {
+     "text": "Lift out the chicken and shred it with two forks."
+    },
+    {
+     "text": "Add the noodles to the pot and simmer until tender.",
+     "timer": 480,
+     "timerLabel": "Cook the noodles"
+    },
+    {
+     "text": "Stir the chicken back in. Taste, add salt and pepper, and serve."
+    }
+   ]
+  },
+  {
+   "id": "pork-chops-apples",
+   "title": "Skillet pork chops with apples",
+   "blurb": "Seared chops with cinnamon-brown sugar apples",
+   "type": "beef-pork",
+   "serves": 4,
+   "prep": 10,
+   "cook": 20,
+   "tags": [
+    "quick",
+    "kid-friendly"
+   ],
+   "ingredients": [
+    {
+     "q": 4,
+     "u": "",
+     "item": "boneless pork chops (1 inch thick)",
+     "aisle": "meat"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "salt",
+     "aisle": "spices"
+    },
+    {
+     "q": 0.5,
+     "u": "tsp",
+     "item": "black pepper",
+     "aisle": "spices"
+    },
+    {
+     "q": 0.5,
+     "u": "tsp",
+     "item": "garlic powder",
+     "aisle": "spices"
+    },
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "olive oil",
+     "aisle": "pantry"
+    },
+    {
+     "q": 2,
+     "u": "tbsp",
+     "item": "unsalted butter",
+     "aisle": "dairy"
+    },
+    {
+     "q": 2,
+     "u": "",
+     "item": "apples",
+     "aisle": "produce",
+     "note": "cored and sliced"
+    },
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "brown sugar",
+     "aisle": "pantry"
+    },
+    {
+     "q": 0.5,
+     "u": "tsp",
+     "item": "ground cinnamon",
+     "aisle": "spices"
+    },
+    {
+     "q": 0.5,
+     "u": "cup",
+     "item": "chicken broth",
+     "aisle": "pantry"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Pat the chops dry. Season both sides with salt, pepper and garlic powder."
+    },
+    {
+     "text": "Heat the oil in a large skillet over medium-high. Add the chops and leave them alone to brown.",
+     "timer": 240,
+     "timerLabel": "Brown the first side"
+    },
+    {
+     "text": "Flip and cook until a thermometer reads 145°F in the middle.",
+     "timer": 240,
+     "timerLabel": "Cook the second side"
+    },
+    {
+     "text": "Move the chops to a plate and cover loosely with foil. They rest while you cook the apples."
+    },
+    {
+     "text": "Turn the heat to medium. Add the butter, apples, brown sugar and cinnamon. Cook until soft.",
+     "timer": 300,
+     "timerLabel": "Soften the apples"
+    },
+    {
+     "text": "Pour in the broth and scrape up the brown bits. Simmer until a little syrupy.",
+     "timer": 120,
+     "timerLabel": "Simmer"
+    },
+    {
+     "text": "Put the chops back with their juices, spoon the apples over, and serve."
+    }
+   ]
+  },
+  {
+   "id": "tomato-soup-grilled-cheese",
+   "title": "Tomato soup and grilled cheese",
+   "blurb": "Creamy homemade tomato soup with golden cheddar sandwiches",
+   "type": "soups",
+   "serves": 4,
+   "prep": 10,
+   "cook": 25,
+   "tags": [
+    "vegetarian",
+    "kid-friendly",
+    "quick"
+   ],
+   "ingredients": [
+    {
+     "q": 2,
+     "u": "tbsp",
+     "item": "unsalted butter",
+     "aisle": "dairy"
+    },
+    {
+     "q": 1,
+     "u": "",
+     "item": "yellow onion",
+     "aisle": "produce",
+     "note": "diced"
+    },
+    {
+     "q": 2,
+     "u": "clove",
+     "item": "garlic",
+     "aisle": "produce",
+     "note": "minced"
+    },
+    {
+     "q": 1,
+     "u": "can",
+     "item": "crushed tomatoes (28 oz)",
+     "aisle": "canned"
+    },
+    {
+     "q": 2,
+     "u": "cup",
+     "item": "vegetable broth",
+     "aisle": "pantry"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "sugar",
+     "aisle": "pantry"
+    },
+    {
+     "q": 0.5,
+     "u": "tsp",
+     "item": "dried basil",
+     "aisle": "spices"
+    },
+    {
+     "q": 0.5,
+     "u": "cup",
+     "item": "heavy cream",
+     "aisle": "dairy"
+    },
+    {
+     "q": 8,
+     "u": "slice",
+     "item": "sandwich bread",
+     "aisle": "bakery"
+    },
+    {
+     "q": 8,
+     "u": "slice",
+     "item": "cheddar cheese",
+     "aisle": "dairy"
+    },
+    {
+     "q": 2,
+     "u": "tbsp",
+     "item": "unsalted butter",
+     "aisle": "dairy",
+     "note": "softened, for the bread"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Melt the butter in a pot over medium heat. Cook the onion until soft.",
+     "timer": 300,
+     "timerLabel": "Soften the onion"
+    },
+    {
+     "text": "Stir in the garlic for 1 minute. Add the tomatoes, broth, sugar and basil."
+    },
+    {
+     "text": "Bring to a boil, then turn the heat to low and simmer.",
+     "timer": 900,
+     "timerLabel": "Simmer the soup"
+    },
+    {
+     "text": "Meanwhile, butter one side of each bread slice. Make 4 sandwiches, cheese inside, butter outside."
+    },
+    {
+     "text": "Cook the sandwiches in a skillet over medium-low until golden, then flip and cook the other side.",
+     "timer": 180,
+     "timerLabel": "Toast each side"
+    },
+    {
+     "text": "Turn off the soup. Blend it smooth with a stick blender, then stir in the cream."
+    },
+    {
+     "text": "Cut the sandwiches in half and serve with the soup for dipping."
+    }
+   ]
+  },
+  {
+   "id": "sausage-veggies",
+   "title": "Sheet-pan sausage and vegetables",
+   "blurb": "Smoked sausage, potatoes and broccoli on one pan",
+   "type": "beef-pork",
+   "serves": 4,
+   "prep": 15,
+   "cook": 30,
+   "tags": [
+    "sheet pan",
+    "kid-friendly",
+    "gluten-free"
+   ],
+   "ingredients": [
+    {
+     "q": 1,
+     "u": "lb",
+     "item": "smoked sausage",
+     "aisle": "meat",
+     "note": "sliced"
+    },
+    {
+     "q": 1.5,
+     "u": "lb",
+     "item": "baby potatoes",
+     "aisle": "produce",
+     "note": "halved"
+    },
+    {
+     "q": 2,
+     "u": "cup",
+     "item": "broccoli florets",
+     "aisle": "produce"
+    },
+    {
+     "q": 1,
+     "u": "",
+     "item": "bell pepper",
+     "aisle": "produce",
+     "note": "chopped"
+    },
+    {
+     "q": 1,
+     "u": "",
+     "item": "red onion",
+     "aisle": "produce",
+     "note": "chopped"
+    },
+    {
+     "q": 3,
+     "u": "tbsp",
+     "item": "olive oil",
+     "aisle": "pantry",
+     "note": "divided"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "garlic powder",
+     "aisle": "spices"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "Italian seasoning",
+     "aisle": "spices"
+    },
+    {
+     "q": 0.5,
+     "u": "tsp",
+     "item": "salt",
+     "aisle": "spices"
+    },
+    {
+     "q": 0.25,
+     "u": "tsp",
+     "item": "black pepper",
+     "aisle": "spices"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Heat the oven to 425°F. Line a large sheet pan with foil."
+    },
+    {
+     "text": "Toss the potatoes on the pan with 1 tbsp oil and half the seasonings. Roast them alone first.",
+     "timer": 900,
+     "timerLabel": "Roast the potatoes"
+    },
+    {
+     "text": "Meanwhile, toss the sausage, broccoli, pepper and onion with the rest of the oil and seasonings."
+    },
+    {
+     "text": "Add them to the pan, stir everything together, and spread it out."
+    },
+    {
+     "text": "Roast until the potatoes are tender and the sausage is browned and hot.",
+     "timer": 900,
+     "timerLabel": "Roast it all"
+    },
+    {
+     "text": "Serve hot, with mustard for dipping if you like."
+    }
+   ]
+  },
+  {
+   "id": "american-baked-chicken-tenders",
+   "title": "Crispy baked chicken tenders",
+   "blurb": "Panko-crunchy tenders, no frying, with honey mustard",
+   "type": "chicken",
+   "serves": 4,
+   "prep": 15,
+   "cook": 20,
+   "tags": [
+    "kid-friendly",
+    "quick"
+   ],
+   "ingredients": [
+    {
+     "q": 1.5,
+     "u": "lb",
+     "item": "chicken tenderloins",
+     "aisle": "meat"
+    },
+    {
+     "q": 0.5,
+     "u": "cup",
+     "item": "all-purpose flour",
+     "aisle": "pantry"
+    },
+    {
+     "q": 2,
+     "u": "",
+     "item": "large eggs",
+     "aisle": "dairy",
+     "note": "beaten"
+    },
+    {
+     "q": 1.5,
+     "u": "cup",
+     "item": "panko breadcrumbs",
+     "aisle": "pantry"
+    },
+    {
+     "q": 0.5,
+     "u": "cup",
+     "item": "grated Parmesan cheese",
+     "aisle": "dairy"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "garlic powder",
+     "aisle": "spices"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "paprika",
+     "aisle": "spices"
+    },
+    {
+     "q": 0.5,
+     "u": "tsp",
+     "item": "salt",
+     "aisle": "spices"
+    },
+    {
+     "q": null,
+     "u": "",
+     "item": "cooking spray",
+     "aisle": "pantry"
+    },
+    {
+     "q": 0.5,
+     "u": "cup",
+     "item": "honey mustard dressing",
+     "aisle": "pantry",
+     "note": "for dipping"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Heat the oven to 425°F. Set a wire rack on a sheet pan and coat it with cooking spray."
+    },
+    {
+     "text": "Mix the panko, Parmesan, garlic powder, paprika and salt in a shallow dish."
+    },
+    {
+     "text": "Dredge each tender in flour, then egg, then the panko mix. Press the crumbs on."
+    },
+    {
+     "text": "Set the tenders on the rack and spray the tops well with cooking spray."
+    },
+    {
+     "text": "Bake until golden and 165°F inside, flipping once halfway.",
+     "timer": 1200,
+     "timerLabel": "Bake the tenders"
+    },
+    {
+     "text": "Serve hot with the honey mustard."
+    }
+   ]
+  },
+  {
+   "id": "american-oven-fried-drumsticks",
+   "title": "Oven-fried chicken drumsticks",
+   "blurb": "Crunchy-skinned drumsticks, baked until juicy",
+   "type": "chicken",
+   "serves": 5,
+   "prep": 15,
+   "cook": 45,
+   "tags": [
+    "kid-friendly",
+    "crowd"
+   ],
+   "ingredients": [
+    {
+     "q": 10,
+     "u": "",
+     "item": "chicken drumsticks",
+     "aisle": "meat"
+    },
+    {
+     "q": 1,
+     "u": "cup",
+     "item": "buttermilk",
+     "aisle": "dairy"
+    },
+    {
+     "q": 1,
+     "u": "cup",
+     "item": "all-purpose flour",
+     "aisle": "pantry"
+    },
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "paprika",
+     "aisle": "spices"
+    },
+    {
+     "q": 2,
+     "u": "tsp",
+     "item": "garlic powder",
+     "aisle": "spices"
+    },
+    {
+     "q": 2,
+     "u": "tsp",
+     "item": "salt",
+     "aisle": "spices"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "black pepper",
+     "aisle": "spices"
+    },
+    {
+     "q": 4,
+     "u": "tbsp",
+     "item": "unsalted butter",
+     "aisle": "dairy",
+     "note": "melted"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Toss the drumsticks in the buttermilk in a big bowl. Let them sit while the oven heats.",
+     "timer": 900,
+     "timerLabel": "Soak in buttermilk"
+    },
+    {
+     "text": "Heat the oven to 425°F. Line a sheet pan with foil and set a rack on top."
+    },
+    {
+     "text": "Mix the flour, paprika, garlic powder, salt and pepper in a bag or dish."
+    },
+    {
+     "text": "Shake off extra buttermilk, then coat each drumstick in the flour mix."
+    },
+    {
+     "text": "Place them on the rack and drizzle with the melted butter."
+    },
+    {
+     "text": "Bake, turning once, until deep golden and 175°F near the bone.",
+     "timer": 2700,
+     "timerLabel": "Bake the drumsticks"
+    },
+    {
+     "text": "Rest 5 minutes before serving."
+    }
+   ]
+  },
+  {
+   "id": "american-honey-garlic-thighs",
+   "title": "Honey garlic chicken thighs",
+   "blurb": "Sticky sweet-savory glaze, one skillet",
+   "type": "chicken",
+   "serves": 4,
+   "prep": 10,
+   "cook": 30,
+   "tags": [
+    "one pot",
+    "kid-friendly"
+   ],
+   "ingredients": [
+    {
+     "q": 2,
+     "u": "lb",
+     "item": "boneless skinless chicken thighs",
+     "aisle": "meat"
+    },
+    {
+     "q": 0.5,
+     "u": "tsp",
+     "item": "salt",
+     "aisle": "spices"
+    },
+    {
+     "q": 0.5,
+     "u": "tsp",
+     "item": "black pepper",
+     "aisle": "spices"
+    },
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "vegetable oil",
+     "aisle": "pantry"
+    },
+    {
+     "q": 0.33,
+     "u": "cup",
+     "item": "honey",
+     "aisle": "pantry"
+    },
+    {
+     "q": 0.25,
+     "u": "cup",
+     "item": "soy sauce",
+     "aisle": "international"
+    },
+    {
+     "q": 4,
+     "u": "clove",
+     "item": "garlic",
+     "aisle": "produce",
+     "note": "minced"
+    },
+    {
+     "q": 2,
+     "u": "tbsp",
+     "item": "apple cider vinegar",
+     "aisle": "pantry"
+    },
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "cornstarch",
+     "aisle": "pantry"
+    },
+    {
+     "q": 2,
+     "u": "tbsp",
+     "item": "water",
+     "aisle": "pantry"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Season the thighs with salt and pepper. Whisk the honey, soy sauce, garlic and vinegar in a bowl."
+    },
+    {
+     "text": "Heat the oil in a large skillet over medium-high. Brown the thighs.",
+     "timer": 300,
+     "timerLabel": "Brown first side"
+    },
+    {
+     "text": "Flip the thighs and cook the second side until golden.",
+     "timer": 240,
+     "timerLabel": "Brown second side"
+    },
+    {
+     "text": "Pour the sauce over the chicken. Cover and simmer on low until 175°F inside.",
+     "timer": 720,
+     "timerLabel": "Simmer the chicken"
+    },
+    {
+     "text": "Move the chicken to a plate. Stir the cornstarch into the water, then into the pan."
+    },
+    {
+     "text": "Simmer until the sauce is glossy and thick. Spoon over the chicken.",
+     "timer": 90,
+     "timerLabel": "Thicken the sauce"
+    }
+   ]
+  },
+  {
+   "id": "american-bbq-drumsticks",
+   "title": "Oven BBQ chicken drumsticks",
+   "blurb": "Sticky barbecue chicken without the grill",
+   "type": "chicken",
+   "serves": 5,
+   "prep": 10,
+   "cook": 50,
+   "tags": [
+    "kid-friendly",
+    "crowd",
+    "gluten-free"
+   ],
+   "ingredients": [
+    {
+     "q": 10,
+     "u": "",
+     "item": "chicken drumsticks",
+     "aisle": "meat"
+    },
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "olive oil",
+     "aisle": "pantry"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "smoked paprika",
+     "aisle": "spices"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "garlic powder",
+     "aisle": "spices"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "salt",
+     "aisle": "spices"
+    },
+    {
+     "q": 0.5,
+     "u": "tsp",
+     "item": "black pepper",
+     "aisle": "spices"
+    },
+    {
+     "q": 1,
+     "u": "cup",
+     "item": "barbecue sauce",
+     "aisle": "pantry"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Heat the oven to 425°F. Line a sheet pan with foil and spray a rack or the foil."
+    },
+    {
+     "text": "Toss the drumsticks with the oil, paprika, garlic powder, salt and pepper."
+    },
+    {
+     "text": "Bake the drumsticks, turning once.",
+     "timer": 1800,
+     "timerLabel": "Bake the chicken"
+    },
+    {
+     "text": "Brush with half the barbecue sauce. Bake again until sticky.",
+     "timer": 600,
+     "timerLabel": "Glaze and bake"
+    },
+    {
+     "text": "Turn, brush with the rest of the sauce, and bake until 175°F near the bone.",
+     "timer": 300,
+     "timerLabel": "Final glaze"
+    },
+    {
+     "text": "Rest 5 minutes and serve."
+    }
+   ]
+  },
+  {
+   "id": "american-roast-chicken",
+   "title": "Classic roast chicken and potatoes",
+   "blurb": "Sunday-style whole bird with crisp skin and golden potatoes",
+   "type": "chicken",
+   "serves": 6,
+   "prep": 20,
+   "cook": 90,
+   "tags": [
+    "holiday",
+    "gluten-free"
+   ],
+   "ingredients": [
+    {
+     "q": 1,
+     "u": "",
+     "item": "whole chicken (4 to 5 lb)",
+     "aisle": "meat"
+    },
+    {
+     "q": 3,
+     "u": "tbsp",
+     "item": "unsalted butter",
+     "aisle": "dairy",
+     "note": "softened"
+    },
+    {
+     "q": 2,
+     "u": "tsp",
+     "item": "salt",
+     "aisle": "spices"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "black pepper",
+     "aisle": "spices"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "dried thyme",
+     "aisle": "spices"
+    },
+    {
+     "q": 1,
+     "u": "",
+     "item": "lemon",
+     "aisle": "produce",
+     "note": "halved"
+    },
+    {
+     "q": 1,
+     "u": "head",
+     "item": "garlic",
+     "aisle": "produce",
+     "note": "halved across"
+    },
+    {
+     "q": 2,
+     "u": "lb",
+     "item": "baby potatoes",
+     "aisle": "produce",
+     "note": "halved"
+    },
+    {
+     "q": 2,
+     "u": "",
+     "item": "carrots",
+     "aisle": "produce",
+     "note": "cut in 2-inch pieces"
+    },
+    {
+     "q": 2,
+     "u": "tbsp",
+     "item": "olive oil",
+     "aisle": "pantry"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Heat the oven to 425°F. Pat the chicken very dry, inside and out. Remove any giblets."
+    },
+    {
+     "text": "Rub the butter under and over the skin. Season with salt, pepper and thyme."
+    },
+    {
+     "text": "Put the lemon and garlic in the cavity. Set the chicken in a roasting pan."
+    },
+    {
+     "text": "Toss the potatoes and carrots with the oil, salt and pepper. Scatter around the bird."
+    },
+    {
+     "text": "Roast until a thermometer in the thigh reads 165°F, about 1 hour 15 minutes.",
+     "timer": 4500,
+     "timerLabel": "Roast the chicken"
+    },
+    {
+     "text": "Rest the chicken under foil before carving.",
+     "timer": 900,
+     "timerLabel": "Rest the chicken"
+    },
+    {
+     "text": "Carve and serve with the vegetables and pan juices."
+    }
+   ]
+  },
+  {
+   "id": "american-honey-mustard-sheet-pan",
+   "title": "Honey mustard chicken and broccoli",
+   "blurb": "Thighs, potatoes and broccoli roasted on one pan",
+   "type": "chicken",
+   "serves": 4,
+   "prep": 15,
+   "cook": 35,
+   "tags": [
+    "sheet pan",
+    "gluten-free"
+   ],
+   "ingredients": [
+    {
+     "q": 1.5,
+     "u": "lb",
+     "item": "bone-in chicken thighs",
+     "aisle": "meat"
+    },
+    {
+     "q": 1.5,
+     "u": "lb",
+     "item": "baby potatoes",
+     "aisle": "produce",
+     "note": "halved"
+    },
+    {
+     "q": 3,
+     "u": "cup",
+     "item": "broccoli florets",
+     "aisle": "produce"
+    },
+    {
+     "q": 3,
+     "u": "tbsp",
+     "item": "olive oil",
+     "aisle": "pantry",
+     "note": "divided"
+    },
+    {
+     "q": 0.25,
+     "u": "cup",
+     "item": "Dijon mustard",
+     "aisle": "pantry"
+    },
+    {
+     "q": 3,
+     "u": "tbsp",
+     "item": "honey",
+     "aisle": "pantry"
+    },
+    {
+     "q": 2,
+     "u": "clove",
+     "item": "garlic",
+     "aisle": "produce",
+     "note": "minced"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "salt",
+     "aisle": "spices"
+    },
+    {
+     "q": 0.5,
+     "u": "tsp",
+     "item": "black pepper",
+     "aisle": "spices"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Heat the oven to 425°F. Toss the potatoes with 1 tbsp oil, salt and pepper on a large sheet pan."
+    },
+    {
+     "text": "Roast the potatoes by themselves first.",
+     "timer": 900,
+     "timerLabel": "Roast the potatoes"
+    },
+    {
+     "text": "Whisk the mustard, honey, garlic and 1 tbsp oil. Toss the thighs in half of it."
+    },
+    {
+     "text": "Push the potatoes aside. Add the thighs skin-side up. Roast.",
+     "timer": 1200,
+     "timerLabel": "Roast the chicken"
+    },
+    {
+     "text": "Toss the broccoli with the last 1 tbsp oil. Add to the pan and roast until the chicken is 175°F.",
+     "timer": 600,
+     "timerLabel": "Add the broccoli"
+    },
+    {
+     "text": "Drizzle the rest of the sauce over the chicken and serve."
+    }
+   ]
+  },
+  {
+   "id": "american-creamy-garlic-skillet",
+   "title": "Creamy garlic chicken skillet",
+   "blurb": "Seared chicken in a quick garlic-Parmesan cream sauce",
+   "type": "chicken",
+   "serves": 4,
+   "prep": 10,
+   "cook": 25,
+   "tags": [
+    "one pot",
+    "quick"
+   ],
+   "ingredients": [
+    {
+     "q": 1.5,
+     "u": "lb",
+     "item": "boneless skinless chicken breasts",
+     "aisle": "meat",
+     "note": "sliced thin"
+    },
+    {
+     "q": 0.5,
+     "u": "tsp",
+     "item": "salt",
+     "aisle": "spices"
+    },
+    {
+     "q": 0.5,
+     "u": "tsp",
+     "item": "black pepper",
+     "aisle": "spices"
+    },
+    {
+     "q": 2,
+     "u": "tbsp",
+     "item": "olive oil",
+     "aisle": "pantry"
+    },
+    {
+     "q": 4,
+     "u": "clove",
+     "item": "garlic",
+     "aisle": "produce",
+     "note": "minced"
+    },
+    {
+     "q": 0.75,
+     "u": "cup",
+     "item": "chicken broth",
+     "aisle": "pantry"
+    },
+    {
+     "q": 0.75,
+     "u": "cup",
+     "item": "heavy cream",
+     "aisle": "dairy"
+    },
+    {
+     "q": 0.5,
+     "u": "cup",
+     "item": "grated Parmesan cheese",
+     "aisle": "dairy"
+    },
+    {
+     "q": 3,
+     "u": "cup",
+     "item": "baby spinach",
+     "aisle": "produce"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Season the chicken with salt and pepper."
+    },
+    {
+     "text": "Heat the oil in a large skillet over medium-high. Cook the chicken until golden and 165°F inside.",
+     "timer": 480,
+     "timerLabel": "Cook the chicken"
+    },
+    {
+     "text": "Move the chicken to a plate. Add the garlic to the pan and stir for 30 seconds."
+    },
+    {
+     "text": "Pour in the broth and cream. Simmer until slightly thickened.",
+     "timer": 240,
+     "timerLabel": "Simmer the sauce"
+    },
+    {
+     "text": "Stir in the Parmesan and spinach until the spinach wilts."
+    },
+    {
+     "text": "Return the chicken to the pan, warm through, and serve over pasta or rice."
+    }
+   ]
+  },
+  {
+   "id": "american-air-fryer-thighs",
+   "title": "Air fryer crispy chicken thighs",
+   "blurb": "Shatter-crisp skin in under 30 minutes",
+   "type": "chicken",
+   "serves": 4,
+   "prep": 5,
+   "cook": 25,
+   "tags": [
+    "air fryer",
+    "quick",
+    "gluten-free"
+   ],
+   "ingredients": [
+    {
+     "q": 8,
+     "u": "",
+     "item": "bone-in skin-on chicken thighs",
+     "aisle": "meat"
+    },
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "olive oil",
+     "aisle": "pantry"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "smoked paprika",
+     "aisle": "spices"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "garlic powder",
+     "aisle": "spices"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "onion powder",
+     "aisle": "spices"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "salt",
+     "aisle": "spices"
+    },
+    {
+     "q": 0.5,
+     "u": "tsp",
+     "item": "black pepper",
+     "aisle": "spices"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Heat the air fryer to 380°F. Pat the thighs very dry."
+    },
+    {
+     "text": "Rub the thighs with the oil, then the paprika, garlic powder, onion powder, salt and pepper."
+    },
+    {
+     "text": "Place skin-side down in the basket in one layer. Work in two batches if needed."
+    },
+    {
+     "text": "Cook skin-side down.",
+     "timer": 720,
+     "timerLabel": "Cook skin-side down"
+    },
+    {
+     "text": "Flip skin-side up and cook until 175°F inside and crisp.",
+     "timer": 720,
+     "timerLabel": "Cook skin-side up"
+    },
+    {
+     "text": "Rest 5 minutes before serving."
+    }
+   ]
+  },
+  {
+   "id": "american-lemon-herb-chicken",
+   "title": "Pan-seared lemon herb chicken breasts",
+   "blurb": "Juicy breasts with a fast lemon butter pan sauce",
+   "type": "chicken",
+   "serves": 4,
+   "prep": 10,
+   "cook": 25,
+   "tags": [
+    "quick",
+    "gluten-free"
+   ],
+   "ingredients": [
+    {
+     "q": 4,
+     "u": "",
+     "item": "boneless skinless chicken breasts (6 oz each)",
+     "aisle": "meat"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "salt",
+     "aisle": "spices"
+    },
+    {
+     "q": 0.5,
+     "u": "tsp",
+     "item": "black pepper",
+     "aisle": "spices"
+    },
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "olive oil",
+     "aisle": "pantry"
+    },
+    {
+     "q": 3,
+     "u": "tbsp",
+     "item": "unsalted butter",
+     "aisle": "dairy",
+     "note": "divided"
+    },
+    {
+     "q": 3,
+     "u": "clove",
+     "item": "garlic",
+     "aisle": "produce",
+     "note": "minced"
+    },
+    {
+     "q": 0.5,
+     "u": "cup",
+     "item": "chicken broth",
+     "aisle": "pantry"
+    },
+    {
+     "q": 2,
+     "u": "",
+     "item": "lemons",
+     "aisle": "produce",
+     "note": "1 juiced, 1 sliced"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "dried thyme",
+     "aisle": "spices"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Pound the breasts to an even thickness. Season both sides with salt, pepper and thyme."
+    },
+    {
+     "text": "Heat the oil and 1 tbsp butter in a large skillet over medium-high. Cook the chicken.",
+     "timer": 360,
+     "timerLabel": "Sear the first side"
+    },
+    {
+     "text": "Flip and cook until 165°F inside. Move the chicken to a plate.",
+     "timer": 300,
+     "timerLabel": "Sear the second side"
+    },
+    {
+     "text": "Lower the heat. Add the garlic and cook 30 seconds. Pour in the broth and lemon juice."
+    },
+    {
+     "text": "Simmer until reduced by half, then whisk in the last 2 tbsp butter.",
+     "timer": 180,
+     "timerLabel": "Reduce the sauce"
+    },
+    {
+     "text": "Return the chicken, spoon sauce over, and add the lemon slices. Serve."
+    }
+   ]
+  },
+  {
+   "id": "american-meatloaf",
+   "title": "Classic glazed meatloaf",
+   "blurb": "Tender, ketchup-glazed and made for leftover sandwiches",
+   "type": "beef-pork",
+   "serves": 6,
+   "prep": 15,
+   "cook": 60,
+   "tags": [
+    "kid-friendly",
+    "make ahead"
+   ],
+   "ingredients": [
+    {
+     "q": 2,
+     "u": "lb",
+     "item": "lean ground beef",
+     "aisle": "meat"
+    },
+    {
+     "q": 1,
+     "u": "",
+     "item": "yellow onion",
+     "aisle": "produce",
+     "note": "finely diced"
+    },
+    {
+     "q": 2,
+     "u": "clove",
+     "item": "garlic",
+     "aisle": "produce",
+     "note": "minced"
+    },
+    {
+     "q": 0.75,
+     "u": "cup",
+     "item": "panko breadcrumbs",
+     "aisle": "pantry"
+    },
+    {
+     "q": 0.5,
+     "u": "cup",
+     "item": "whole milk",
+     "aisle": "dairy"
+    },
+    {
+     "q": 2,
+     "u": "",
+     "item": "large eggs",
+     "aisle": "dairy"
+    },
+    {
+     "q": 2,
+     "u": "tbsp",
+     "item": "Worcestershire sauce",
+     "aisle": "pantry"
+    },
+    {
+     "q": 1.5,
+     "u": "tsp",
+     "item": "salt",
+     "aisle": "spices"
+    },
+    {
+     "q": 0.5,
+     "u": "tsp",
+     "item": "black pepper",
+     "aisle": "spices"
+    },
+    {
+     "q": 0.5,
+     "u": "cup",
+     "item": "ketchup",
+     "aisle": "pantry",
+     "note": "divided"
+    },
+    {
+     "q": 2,
+     "u": "tbsp",
+     "item": "brown sugar",
+     "aisle": "pantry"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Heat the oven to 350°F. Line a sheet pan with foil."
+    },
+    {
+     "text": "Stir the panko and milk together in a large bowl for 5 minutes."
+    },
+    {
+     "text": "Add the beef, onion, garlic, eggs, Worcestershire, salt, pepper and 1/4 cup ketchup. Mix gently."
+    },
+    {
+     "text": "Shape into a loaf about 9 by 5 inches on the pan. Mix the rest of the ketchup with the brown sugar."
+    },
+    {
+     "text": "Spread the glaze over the loaf. Bake until 160°F in the middle.",
+     "timer": 3000,
+     "timerLabel": "Bake the meatloaf"
+    },
+    {
+     "text": "Rest 10 minutes, then slice.",
+     "timer": 600,
+     "timerLabel": "Rest the meatloaf"
+    }
+   ]
+  },
+  {
+   "id": "american-slow-cooker-pot-roast",
+   "title": "Slow-cooker pot roast",
+   "blurb": "Fall-apart beef with carrots and potatoes",
+   "type": "beef-pork",
+   "serves": 6,
+   "prep": 20,
+   "cook": 480,
+   "tags": [
+    "slow cooker",
+    "crowd"
+   ],
+   "ingredients": [
+    {
+     "q": 3,
+     "u": "lb",
+     "item": "beef chuck roast",
+     "aisle": "meat"
+    },
+    {
+     "q": 2,
+     "u": "tsp",
+     "item": "salt",
+     "aisle": "spices"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "black pepper",
+     "aisle": "spices"
+    },
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "vegetable oil",
+     "aisle": "pantry"
+    },
+    {
+     "q": 1,
+     "u": "",
+     "item": "yellow onion",
+     "aisle": "produce",
+     "note": "cut in wedges"
+    },
+    {
+     "q": 4,
+     "u": "",
+     "item": "carrots",
+     "aisle": "produce",
+     "note": "cut in 2-inch pieces"
+    },
+    {
+     "q": 1.5,
+     "u": "lb",
+     "item": "baby potatoes",
+     "aisle": "produce",
+     "note": "halved"
+    },
+    {
+     "q": 2,
+     "u": "cup",
+     "item": "beef broth",
+     "aisle": "pantry"
+    },
+    {
+     "q": 2,
+     "u": "tbsp",
+     "item": "tomato paste",
+     "aisle": "canned"
+    },
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "Worcestershire sauce",
+     "aisle": "pantry"
+    },
+    {
+     "q": 3,
+     "u": "sprig",
+     "item": "fresh thyme",
+     "aisle": "produce"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Pat the roast dry and rub it all over with the salt and pepper."
+    },
+    {
+     "text": "Heat the oil in a large skillet over medium-high. Sear the roast on all sides until deep brown.",
+     "timer": 600,
+     "timerLabel": "Sear the roast"
+    },
+    {
+     "text": "Put the onion, carrots and potatoes in the slow cooker. Set the roast on top."
+    },
+    {
+     "text": "Whisk the broth, tomato paste and Worcestershire. Pour over and add the thyme."
+    },
+    {
+     "text": "Cover and cook on low until the roast shreds easily.",
+     "timer": 28800,
+     "timerLabel": "Slow cook on low"
+    },
+    {
+     "text": "Lift out the roast and vegetables. Shred the beef and serve with the juices."
+    }
+   ]
+  },
+  {
+   "id": "american-salisbury-steak",
+   "title": "Salisbury steak with mushroom gravy",
+   "blurb": "Beef patties in rich onion-mushroom gravy",
+   "type": "beef-pork",
+   "serves": 4,
+   "prep": 15,
+   "cook": 30,
+   "tags": [
+    "kid-friendly"
+   ],
+   "ingredients": [
+    {
+     "q": 1.5,
+     "u": "lb",
+     "item": "lean ground beef",
+     "aisle": "meat"
+    },
+    {
+     "q": 0.5,
+     "u": "cup",
+     "item": "panko breadcrumbs",
+     "aisle": "pantry"
+    },
+    {
+     "q": 1,
+     "u": "",
+     "item": "large eggs",
+     "aisle": "dairy"
+    },
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "Worcestershire sauce",
+     "aisle": "pantry"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "salt",
+     "aisle": "spices"
+    },
+    {
+     "q": 0.5,
+     "u": "tsp",
+     "item": "black pepper",
+     "aisle": "spices"
+    },
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "vegetable oil",
+     "aisle": "pantry"
+    },
+    {
+     "q": 8,
+     "u": "oz",
+     "item": "sliced mushrooms",
+     "aisle": "produce"
+    },
+    {
+     "q": 1,
+     "u": "",
+     "item": "yellow onion",
+     "aisle": "produce",
+     "note": "sliced"
+    },
+    {
+     "q": 2,
+     "u": "tbsp",
+     "item": "all-purpose flour",
+     "aisle": "pantry"
+    },
+    {
+     "q": 1.5,
+     "u": "cup",
+     "item": "beef broth",
+     "aisle": "pantry"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Mix the beef, panko, egg, Worcestershire, salt and pepper. Shape into 4 oval patties."
+    },
+    {
+     "text": "Heat the oil in a large skillet over medium-high. Brown the patties on both sides.",
+     "timer": 480,
+     "timerLabel": "Brown the patties"
+    },
+    {
+     "text": "Move the patties to a plate. Cook the mushrooms and onion in the same pan until soft.",
+     "timer": 420,
+     "timerLabel": "Soften the vegetables"
+    },
+    {
+     "text": "Sprinkle in the flour and stir for 1 minute. Slowly pour in the broth, stirring."
+    },
+    {
+     "text": "Return the patties to the gravy. Cover and simmer until 160°F inside.",
+     "timer": 600,
+     "timerLabel": "Simmer the patties"
+    },
+    {
+     "text": "Serve over mashed potatoes or egg noodles."
+    }
+   ]
+  },
+  {
+   "id": "american-garlic-butter-steak",
+   "title": "Garlic butter steak bites",
+   "blurb": "Seared sirloin cubes, ready in 20 minutes",
+   "type": "beef-pork",
+   "serves": 4,
+   "prep": 10,
+   "cook": 10,
+   "tags": [
+    "quick",
+    "gluten-free"
+   ],
+   "ingredients": [
+    {
+     "q": 1.5,
+     "u": "lb",
+     "item": "sirloin steak",
+     "aisle": "meat",
+     "note": "cut in 1-inch cubes"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "salt",
+     "aisle": "spices"
+    },
+    {
+     "q": 0.5,
+     "u": "tsp",
+     "item": "black pepper",
+     "aisle": "spices"
+    },
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "olive oil",
+     "aisle": "pantry"
+    },
+    {
+     "q": 4,
+     "u": "tbsp",
+     "item": "unsalted butter",
+     "aisle": "dairy"
+    },
+    {
+     "q": 4,
+     "u": "clove",
+     "item": "garlic",
+     "aisle": "produce",
+     "note": "minced"
+    },
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "fresh parsley",
+     "aisle": "produce",
+     "note": "chopped"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Pat the steak cubes dry. Season with salt and pepper."
+    },
+    {
+     "text": "Heat the oil in a large skillet over high heat until it shimmers."
+    },
+    {
+     "text": "Sear the steak in one layer without moving it. Work in two batches.",
+     "timer": 120,
+     "timerLabel": "Sear the first side"
+    },
+    {
+     "text": "Turn the pieces and sear until browned. Medium is 135°F.",
+     "timer": 90,
+     "timerLabel": "Sear the second side"
+    },
+    {
+     "text": "Lower the heat. Add the butter and garlic and stir for 30 seconds."
+    },
+    {
+     "text": "Toss the steak in the butter, sprinkle with parsley, and serve."
+    }
+   ]
+  },
+  {
+   "id": "american-oven-baby-back-ribs",
+   "title": "Oven-baked BBQ ribs",
+   "blurb": "Tender, slow-baked ribs with sticky sauce",
+   "type": "beef-pork",
+   "serves": 4,
+   "prep": 15,
+   "cook": 170,
+   "tags": [
+    "gluten-free",
+    "crowd"
+   ],
+   "ingredients": [
+    {
+     "q": 2,
+     "u": "",
+     "item": "racks baby back ribs (about 2 lb each)",
+     "aisle": "meat"
+    },
+    {
+     "q": 2,
+     "u": "tbsp",
+     "item": "brown sugar",
+     "aisle": "pantry"
+    },
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "smoked paprika",
+     "aisle": "spices"
+    },
+    {
+     "q": 2,
+     "u": "tsp",
+     "item": "garlic powder",
+     "aisle": "spices"
+    },
+    {
+     "q": 2,
+     "u": "tsp",
+     "item": "salt",
+     "aisle": "spices"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "black pepper",
+     "aisle": "spices"
+    },
+    {
+     "q": 1.5,
+     "u": "cup",
+     "item": "barbecue sauce",
+     "aisle": "pantry"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Heat the oven to 275°F. Peel the thin membrane off the back of each rack."
+    },
+    {
+     "text": "Mix the brown sugar, paprika, garlic powder, salt and pepper. Rub it all over the ribs."
+    },
+    {
+     "text": "Wrap each rack tightly in foil and set on a sheet pan."
+    },
+    {
+     "text": "Bake until the meat is very tender.",
+     "timer": 9000,
+     "timerLabel": "Bake the ribs"
+    },
+    {
+     "text": "Unwrap, brush with sauce, and set the oven to broil. Broil until bubbly and sticky.",
+     "timer": 300,
+     "timerLabel": "Broil the glaze"
+    },
+    {
+     "text": "Rest 5 minutes, then cut between the bones."
+    }
+   ]
+  },
+  {
+   "id": "american-pork-tenderloin-veggies",
+   "title": "Roasted pork tenderloin and vegetables",
+   "blurb": "Garlicky tenderloin with potatoes and carrots",
+   "type": "beef-pork",
+   "serves": 4,
+   "prep": 15,
+   "cook": 35,
+   "tags": [
+    "sheet pan",
+    "gluten-free"
+   ],
+   "ingredients": [
+    {
+     "q": 1.5,
+     "u": "lb",
+     "item": "pork tenderloin",
+     "aisle": "meat"
+    },
+    {
+     "q": 1.5,
+     "u": "lb",
+     "item": "baby potatoes",
+     "aisle": "produce",
+     "note": "halved"
+    },
+    {
+     "q": 3,
+     "u": "",
+     "item": "carrots",
+     "aisle": "produce",
+     "note": "cut in 1-inch pieces"
+    },
+    {
+     "q": 3,
+     "u": "tbsp",
+     "item": "olive oil",
+     "aisle": "pantry",
+     "note": "divided"
+    },
+    {
+     "q": 3,
+     "u": "clove",
+     "item": "garlic",
+     "aisle": "produce",
+     "note": "minced"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "dried rosemary",
+     "aisle": "spices"
+    },
+    {
+     "q": 1.5,
+     "u": "tsp",
+     "item": "salt",
+     "aisle": "spices"
+    },
+    {
+     "q": 0.5,
+     "u": "tsp",
+     "item": "black pepper",
+     "aisle": "spices"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Heat the oven to 425°F. Toss the potatoes and carrots with 2 tbsp oil, half the salt and pepper on a sheet pan."
+    },
+    {
+     "text": "Roast the vegetables by themselves first.",
+     "timer": 600,
+     "timerLabel": "Roast the vegetables"
+    },
+    {
+     "text": "Rub the pork with 1 tbsp oil, garlic, rosemary and the rest of the salt and pepper."
+    },
+    {
+     "text": "Push the vegetables aside and set the pork in the middle of the pan."
+    },
+    {
+     "text": "Roast until the pork is 145°F in the thickest part.",
+     "timer": 1500,
+     "timerLabel": "Roast the pork"
+    },
+    {
+     "text": "Rest the pork 5 minutes, slice, and serve with the vegetables.",
+     "timer": 300,
+     "timerLabel": "Rest the pork"
+    }
+   ]
+  },
+  {
+   "id": "american-beef-tips-gravy",
+   "title": "Beef tips and gravy",
+   "blurb": "Tender steak tips in onion gravy over egg noodles",
+   "type": "beef-pork",
+   "serves": 4,
+   "prep": 10,
+   "cook": 35,
+   "tags": [
+    "one pot"
+   ],
+   "ingredients": [
+    {
+     "q": 1.5,
+     "u": "lb",
+     "item": "sirloin steak",
+     "aisle": "meat",
+     "note": "cut in 1-inch cubes"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "salt",
+     "aisle": "spices"
+    },
+    {
+     "q": 0.5,
+     "u": "tsp",
+     "item": "black pepper",
+     "aisle": "spices"
+    },
+    {
+     "q": 2,
+     "u": "tbsp",
+     "item": "vegetable oil",
+     "aisle": "pantry",
+     "note": "divided"
+    },
+    {
+     "q": 1,
+     "u": "",
+     "item": "yellow onion",
+     "aisle": "produce",
+     "note": "sliced"
+    },
+    {
+     "q": 8,
+     "u": "oz",
+     "item": "sliced mushrooms",
+     "aisle": "produce"
+    },
+    {
+     "q": 3,
+     "u": "tbsp",
+     "item": "all-purpose flour",
+     "aisle": "pantry"
+    },
+    {
+     "q": 2,
+     "u": "cup",
+     "item": "beef broth",
+     "aisle": "pantry"
+    },
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "Worcestershire sauce",
+     "aisle": "pantry"
+    },
+    {
+     "q": 12,
+     "u": "oz",
+     "item": "wide egg noodles",
+     "aisle": "pantry"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Season the beef with salt and pepper. Sear in 1 tbsp hot oil in batches until browned. Set aside.",
+     "timer": 360,
+     "timerLabel": "Sear the beef"
+    },
+    {
+     "text": "In the same pan add the last 1 tbsp oil, onion and mushrooms. Cook until soft.",
+     "timer": 360,
+     "timerLabel": "Soften the vegetables"
+    },
+    {
+     "text": "Stir in the flour for 1 minute. Slowly add the broth and Worcestershire, stirring."
+    },
+    {
+     "text": "Return the beef. Cover and simmer on low until the beef is tender.",
+     "timer": 1200,
+     "timerLabel": "Simmer the beef"
+    },
+    {
+     "text": "Boil the noodles in salted water until tender, then drain.",
+     "timer": 480,
+     "timerLabel": "Boil the noodles"
+    },
+    {
+     "text": "Serve the beef tips and gravy over the noodles."
+    }
+   ]
+  },
+  {
+   "id": "american-ham-steak-pineapple",
+   "title": "Brown sugar ham steak with pineapple",
+   "blurb": "Sweet and savory, done in 15 minutes",
+   "type": "beef-pork",
+   "serves": 4,
+   "prep": 5,
+   "cook": 12,
+   "tags": [
+    "quick",
+    "kid-friendly"
+   ],
+   "ingredients": [
+    {
+     "q": 1.5,
+     "u": "lb",
+     "item": "fully cooked ham steak",
+     "aisle": "meat"
+    },
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "unsalted butter",
+     "aisle": "dairy"
+    },
+    {
+     "q": 1,
+     "u": "can",
+     "item": "pineapple slices (20 oz), drained",
+     "aisle": "canned",
+     "note": "juice reserved"
+    },
+    {
+     "q": 3,
+     "u": "tbsp",
+     "item": "brown sugar",
+     "aisle": "pantry"
+    },
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "Dijon mustard",
+     "aisle": "pantry"
+    },
+    {
+     "q": 0.25,
+     "u": "cup",
+     "item": "pineapple juice",
+     "aisle": "canned",
+     "note": "from the can"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Cut the ham steak into 4 pieces. Mix the brown sugar, mustard and pineapple juice."
+    },
+    {
+     "text": "Melt the butter in a large skillet over medium-high. Brown the ham pieces.",
+     "timer": 180,
+     "timerLabel": "Brown the first side"
+    },
+    {
+     "text": "Flip the ham and add the pineapple slices around it.",
+     "timer": 180,
+     "timerLabel": "Brown the second side"
+    },
+    {
+     "text": "Pour the glaze over everything. Simmer until syrupy, spooning it over.",
+     "timer": 180,
+     "timerLabel": "Glaze the ham"
+    },
+    {
+     "text": "Serve with rice or roasted potatoes."
+    }
+   ]
+  },
+  {
+   "id": "american-baked-cod-crumb",
+   "title": "Baked cod with buttery crumbs",
+   "blurb": "Flaky cod under a crisp golden topping",
+   "type": "seafood",
+   "serves": 4,
+   "prep": 10,
+   "cook": 15,
+   "tags": [
+    "quick",
+    "healthy"
+   ],
+   "ingredients": [
+    {
+     "q": 1.5,
+     "u": "lb",
+     "item": "cod fillets",
+     "aisle": "seafood",
+     "note": "cut in 4 pieces"
+    },
+    {
+     "q": 0.5,
+     "u": "tsp",
+     "item": "salt",
+     "aisle": "spices"
+    },
+    {
+     "q": 0.25,
+     "u": "tsp",
+     "item": "black pepper",
+     "aisle": "spices"
+    },
+    {
+     "q": 1,
+     "u": "cup",
+     "item": "panko breadcrumbs",
+     "aisle": "pantry"
+    },
+    {
+     "q": 3,
+     "u": "tbsp",
+     "item": "unsalted butter",
+     "aisle": "dairy",
+     "note": "melted"
+    },
+    {
+     "q": 0.25,
+     "u": "cup",
+     "item": "grated Parmesan cheese",
+     "aisle": "dairy"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "garlic powder",
+     "aisle": "spices"
+    },
+    {
+     "q": 1,
+     "u": "",
+     "item": "lemon",
+     "aisle": "produce",
+     "note": "cut in wedges"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Heat the oven to 400°F. Grease a baking dish or line a pan with foil."
+    },
+    {
+     "text": "Pat the cod dry. Set it in the dish and season with salt and pepper."
+    },
+    {
+     "text": "Mix the panko, melted butter, Parmesan and garlic powder."
+    },
+    {
+     "text": "Press the crumbs on top of each fillet."
+    },
+    {
+     "text": "Bake until the topping is golden and the fish is 145°F and flakes.",
+     "timer": 900,
+     "timerLabel": "Bake the cod"
+    },
+    {
+     "text": "Serve with lemon wedges."
+    }
+   ]
+  },
+  {
+   "id": "american-shrimp-scampi",
+   "title": "Shrimp scampi with linguine",
+   "blurb": "Garlic, lemon and butter, ready in 25 minutes",
+   "type": "seafood",
+   "serves": 4,
+   "prep": 10,
+   "cook": 15,
+   "tags": [
+    "quick"
+   ],
+   "ingredients": [
+    {
+     "q": 12,
+     "u": "oz",
+     "item": "linguine",
+     "aisle": "pantry"
+    },
+    {
+     "q": 1.5,
+     "u": "lb",
+     "item": "large shrimp",
+     "aisle": "seafood",
+     "note": "peeled and deveined"
+    },
+    {
+     "q": 3,
+     "u": "tbsp",
+     "item": "unsalted butter",
+     "aisle": "dairy"
+    },
+    {
+     "q": 2,
+     "u": "tbsp",
+     "item": "olive oil",
+     "aisle": "pantry"
+    },
+    {
+     "q": 5,
+     "u": "clove",
+     "item": "garlic",
+     "aisle": "produce",
+     "note": "minced"
+    },
+    {
+     "q": 0.5,
+     "u": "cup",
+     "item": "chicken broth",
+     "aisle": "pantry"
+    },
+    {
+     "q": 2,
+     "u": "",
+     "item": "lemons",
+     "aisle": "produce",
+     "note": "juiced"
+    },
+    {
+     "q": 0.25,
+     "u": "tsp",
+     "item": "red pepper flakes",
+     "aisle": "spices"
+    },
+    {
+     "q": 0.25,
+     "u": "cup",
+     "item": "fresh parsley",
+     "aisle": "produce",
+     "note": "chopped"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "salt",
+     "aisle": "spices"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Boil the linguine in well-salted water until al dente. Save 1/2 cup of the pasta water.",
+     "timer": 600,
+     "timerLabel": "Boil the pasta"
+    },
+    {
+     "text": "Heat the oil and 1 tbsp butter in a large skillet over medium. Cook the garlic and pepper flakes 30 seconds."
+    },
+    {
+     "text": "Add the shrimp, season with salt, and cook until pink.",
+     "timer": 180,
+     "timerLabel": "Cook the shrimp"
+    },
+    {
+     "text": "Pour in the broth and lemon juice. Simmer 1 minute, then stir in the remaining butter.",
+     "timer": 60,
+     "timerLabel": "Simmer the sauce"
+    },
+    {
+     "text": "Toss in the drained linguine and parsley. Loosen with pasta water if needed."
+    }
+   ]
+  },
+  {
+   "id": "american-sheet-pan-shrimp-boil",
+   "title": "Sheet-pan shrimp boil",
+   "blurb": "Shrimp, sausage, corn and potatoes with Old Bay",
+   "type": "seafood",
+   "serves": 4,
+   "prep": 15,
+   "cook": 35,
+   "tags": [
+    "sheet pan",
+    "crowd"
+   ],
+   "ingredients": [
+    {
+     "q": 1.5,
+     "u": "lb",
+     "item": "baby potatoes",
+     "aisle": "produce",
+     "note": "halved"
+    },
+    {
+     "q": 3,
+     "u": "",
+     "item": "ears corn",
+     "aisle": "produce",
+     "note": "cut in 3 pieces each"
+    },
+    {
+     "q": 12,
+     "u": "oz",
+     "item": "smoked sausage",
+     "aisle": "meat",
+     "note": "sliced"
+    },
+    {
+     "q": 1.5,
+     "u": "lb",
+     "item": "large shrimp",
+     "aisle": "seafood",
+     "note": "peeled and deveined"
+    },
+    {
+     "q": 3,
+     "u": "tbsp",
+     "item": "olive oil",
+     "aisle": "pantry"
+    },
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "Old Bay seasoning",
+     "aisle": "spices"
+    },
+    {
+     "q": 3,
+     "u": "tbsp",
+     "item": "unsalted butter",
+     "aisle": "dairy",
+     "note": "melted"
+    },
+    {
+     "q": 1,
+     "u": "",
+     "item": "lemon",
+     "aisle": "produce",
+     "note": "cut in wedges"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Heat the oven to 425°F. Toss the potatoes with 1 tbsp oil and half the Old Bay on a large sheet pan."
+    },
+    {
+     "text": "Roast the potatoes by themselves first.",
+     "timer": 1200,
+     "timerLabel": "Roast the potatoes"
+    },
+    {
+     "text": "Add the corn and sausage. Drizzle with 1 tbsp oil and roast.",
+     "timer": 600,
+     "timerLabel": "Roast the corn"
+    },
+    {
+     "text": "Toss the shrimp with the last oil and Old Bay. Add to the pan and roast until pink.",
+     "timer": 480,
+     "timerLabel": "Add the shrimp"
+    },
+    {
+     "text": "Drizzle with the melted butter and squeeze lemon over it all. Serve."
+    }
+   ]
+  },
+  {
+   "id": "american-salmon-patties",
+   "title": "Pan-fried salmon patties",
+   "blurb": "Budget-friendly canned salmon cakes with a crisp crust",
+   "type": "seafood",
+   "serves": 4,
+   "prep": 15,
+   "cook": 15,
+   "tags": [
+    "quick",
+    "kid-friendly"
+   ],
+   "ingredients": [
+    {
+     "q": 2,
+     "u": "can",
+     "item": "pink salmon (14.75 oz), drained",
+     "aisle": "canned"
+    },
+    {
+     "q": 2,
+     "u": "",
+     "item": "large eggs",
+     "aisle": "dairy"
+    },
+    {
+     "q": 0.75,
+     "u": "cup",
+     "item": "panko breadcrumbs",
+     "aisle": "pantry"
+    },
+    {
+     "q": 0.25,
+     "u": "cup",
+     "item": "mayonnaise",
+     "aisle": "pantry"
+    },
+    {
+     "q": 2,
+     "u": "",
+     "item": "green onions",
+     "aisle": "produce",
+     "note": "sliced"
+    },
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "Dijon mustard",
+     "aisle": "pantry"
+    },
+    {
+     "q": 0.5,
+     "u": "tsp",
+     "item": "black pepper",
+     "aisle": "spices"
+    },
+    {
+     "q": 3,
+     "u": "tbsp",
+     "item": "vegetable oil",
+     "aisle": "pantry"
+    },
+    {
+     "q": 1,
+     "u": "",
+     "item": "lemon",
+     "aisle": "produce",
+     "note": "cut in wedges"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Flake the salmon into a bowl, removing any bones."
+    },
+    {
+     "text": "Stir in the eggs, panko, mayonnaise, green onions, mustard and pepper."
+    },
+    {
+     "text": "Shape into 8 patties about 1/2 inch thick. Chill 10 minutes.",
+     "timer": 600,
+     "timerLabel": "Chill the patties"
+    },
+    {
+     "text": "Heat the oil in a large skillet over medium. Fry the patties until golden.",
+     "timer": 240,
+     "timerLabel": "Fry the first side"
+    },
+    {
+     "text": "Flip and cook until golden and hot throughout.",
+     "timer": 180,
+     "timerLabel": "Fry the second side"
+    },
+    {
+     "text": "Serve with lemon wedges."
+    }
+   ]
+  },
+  {
+   "id": "american-blackened-tilapia",
+   "title": "Blackened tilapia",
+   "blurb": "Smoky spiced fish in 10 minutes",
+   "type": "seafood",
+   "serves": 4,
+   "prep": 5,
+   "cook": 10,
+   "tags": [
+    "quick",
+    "healthy",
+    "gluten-free"
+   ],
+   "ingredients": [
+    {
+     "q": 4,
+     "u": "",
+     "item": "tilapia fillets (5 oz each)",
+     "aisle": "seafood"
+    },
+    {
+     "q": 2,
+     "u": "tsp",
+     "item": "smoked paprika",
+     "aisle": "spices"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "garlic powder",
+     "aisle": "spices"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "onion powder",
+     "aisle": "spices"
+    },
+    {
+     "q": 0.5,
+     "u": "tsp",
+     "item": "cayenne pepper",
+     "aisle": "spices"
+    },
+    {
+     "q": 0.5,
+     "u": "tsp",
+     "item": "salt",
+     "aisle": "spices"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "dried thyme",
+     "aisle": "spices"
+    },
+    {
+     "q": 2,
+     "u": "tbsp",
+     "item": "olive oil",
+     "aisle": "pantry"
+    },
+    {
+     "q": 1,
+     "u": "",
+     "item": "lime",
+     "aisle": "produce",
+     "note": "cut in wedges"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Mix the paprika, garlic powder, onion powder, cayenne, salt and thyme."
+    },
+    {
+     "text": "Pat the fillets dry and coat both sides with the spice mix."
+    },
+    {
+     "text": "Heat the oil in a large skillet over medium-high until hot."
+    },
+    {
+     "text": "Cook the fillets until dark and crusty.",
+     "timer": 180,
+     "timerLabel": "Cook the first side"
+    },
+    {
+     "text": "Flip and cook until the fish is 145°F and flakes.",
+     "timer": 150,
+     "timerLabel": "Cook the second side"
+    },
+    {
+     "text": "Serve with lime wedges."
+    }
+   ]
+  },
+  {
+   "id": "american-brown-sugar-salmon",
+   "title": "Brown sugar glazed salmon",
+   "blurb": "Sweet-spicy glaze, broiled until caramelized",
+   "type": "seafood",
+   "serves": 4,
+   "prep": 10,
+   "cook": 15,
+   "tags": [
+    "quick"
+   ],
+   "ingredients": [
+    {
+     "q": 4,
+     "u": "",
+     "item": "salmon fillets (6 oz each)",
+     "aisle": "seafood"
+    },
+    {
+     "q": 3,
+     "u": "tbsp",
+     "item": "brown sugar",
+     "aisle": "pantry"
+    },
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "Dijon mustard",
+     "aisle": "pantry"
+    },
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "soy sauce",
+     "aisle": "international"
+    },
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "olive oil",
+     "aisle": "pantry"
+    },
+    {
+     "q": 2,
+     "u": "clove",
+     "item": "garlic",
+     "aisle": "produce",
+     "note": "minced"
+    },
+    {
+     "q": 0.5,
+     "u": "tsp",
+     "item": "salt",
+     "aisle": "spices"
+    },
+    {
+     "q": 0.25,
+     "u": "tsp",
+     "item": "black pepper",
+     "aisle": "spices"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Heat the oven to 400°F. Line a sheet pan with foil and lightly oil it."
+    },
+    {
+     "text": "Whisk the brown sugar, mustard, soy sauce, oil and garlic into a glaze."
+    },
+    {
+     "text": "Set the salmon on the pan. Season with salt and pepper, then spoon the glaze over each."
+    },
+    {
+     "text": "Bake until the salmon is 145°F and flakes easily.",
+     "timer": 720,
+     "timerLabel": "Bake the salmon"
+    },
+    {
+     "text": "For a darker glaze, broil 1 to 2 minutes, watching closely.",
+     "timer": 90,
+     "timerLabel": "Broil to finish"
+    }
+   ]
+  },
+  {
+   "id": "american-baked-fish-and-chips",
+   "title": "Oven fish and chips",
+   "blurb": "Crunchy baked cod fillets with seasoned potato wedges",
+   "type": "seafood",
+   "serves": 4,
+   "prep": 15,
+   "cook": 35,
+   "tags": [
+    "sheet pan",
+    "kid-friendly"
+   ],
+   "ingredients": [
+    {
+     "q": 2,
+     "u": "lb",
+     "item": "russet potatoes",
+     "aisle": "produce",
+     "note": "cut in wedges"
+    },
+    {
+     "q": 3,
+     "u": "tbsp",
+     "item": "olive oil",
+     "aisle": "pantry"
+    },
+    {
+     "q": 1.5,
+     "u": "tsp",
+     "item": "salt",
+     "aisle": "spices"
+    },
+    {
+     "q": 1.5,
+     "u": "lb",
+     "item": "cod fillets",
+     "aisle": "seafood",
+     "note": "cut in 4 pieces"
+    },
+    {
+     "q": 0.5,
+     "u": "cup",
+     "item": "all-purpose flour",
+     "aisle": "pantry"
+    },
+    {
+     "q": 2,
+     "u": "",
+     "item": "large eggs",
+     "aisle": "dairy",
+     "note": "beaten"
+    },
+    {
+     "q": 1.5,
+     "u": "cup",
+     "item": "panko breadcrumbs",
+     "aisle": "pantry"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "paprika",
+     "aisle": "spices"
+    },
+    {
+     "q": null,
+     "u": "",
+     "item": "cooking spray",
+     "aisle": "pantry"
+    },
+    {
+     "q": 0.5,
+     "u": "cup",
+     "item": "tartar sauce",
+     "aisle": "pantry",
+     "note": "to serve"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Heat the oven to 425°F. Toss the potato wedges with the oil and 1 tsp salt on a large sheet pan."
+    },
+    {
+     "text": "Roast the potatoes by themselves first.",
+     "timer": 1200,
+     "timerLabel": "Roast the potatoes"
+    },
+    {
+     "text": "Mix the panko, paprika and remaining salt. Coat the cod in flour, then egg, then panko."
+    },
+    {
+     "text": "Move the potatoes over. Add the cod and spray the tops with cooking spray."
+    },
+    {
+     "text": "Bake until the cod is 145°F and the crumbs are golden.",
+     "timer": 900,
+     "timerLabel": "Bake the cod"
+    },
+    {
+     "text": "Serve with tartar sauce."
+    }
+   ]
+  },
+  {
+   "id": "american-crab-cakes",
+   "title": "Pan-seared crab cakes",
+   "blurb": "Mostly crab, lightly bound, with lemon-mayo sauce",
+   "type": "seafood",
+   "serves": 4,
+   "prep": 20,
+   "cook": 12,
+   "tags": [
+    "quick"
+   ],
+   "ingredients": [
+    {
+     "q": 1,
+     "u": "lb",
+     "item": "lump crabmeat",
+     "aisle": "seafood",
+     "note": "drained"
+    },
+    {
+     "q": 0.5,
+     "u": "cup",
+     "item": "panko breadcrumbs",
+     "aisle": "pantry"
+    },
+    {
+     "q": 1,
+     "u": "",
+     "item": "large eggs",
+     "aisle": "dairy"
+    },
+    {
+     "q": 0.25,
+     "u": "cup",
+     "item": "mayonnaise",
+     "aisle": "pantry"
+    },
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "Dijon mustard",
+     "aisle": "pantry"
+    },
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "Old Bay seasoning",
+     "aisle": "spices"
+    },
+    {
+     "q": 2,
+     "u": "",
+     "item": "green onions",
+     "aisle": "produce",
+     "note": "sliced"
+    },
+    {
+     "q": 3,
+     "u": "tbsp",
+     "item": "vegetable oil",
+     "aisle": "pantry"
+    },
+    {
+     "q": 1,
+     "u": "",
+     "item": "lemon",
+     "aisle": "produce",
+     "note": "juiced, plus wedges"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Gently mix the crab, panko, egg, 2 tbsp mayo, mustard, Old Bay and green onions. Do not break up the lumps."
+    },
+    {
+     "text": "Form into 8 small cakes. Chill so they hold together.",
+     "timer": 1200,
+     "timerLabel": "Chill the cakes"
+    },
+    {
+     "text": "Heat the oil in a large skillet over medium. Cook the cakes until golden.",
+     "timer": 300,
+     "timerLabel": "Cook the first side"
+    },
+    {
+     "text": "Flip and cook the other side until golden and hot.",
+     "timer": 240,
+     "timerLabel": "Cook the second side"
+    },
+    {
+     "text": "Stir the lemon juice into the last 2 tbsp mayo. Serve with the cakes and lemon wedges."
+    }
+   ]
+  },
+  {
+   "id": "american-chicken-pot-pie",
+   "title": "Chicken pot pie",
+   "blurb": "Creamy chicken and vegetables under a flaky crust",
+   "type": "casseroles",
+   "serves": 6,
+   "prep": 20,
+   "cook": 55,
+   "tags": [
+    "make ahead",
+    "kid-friendly"
+   ],
+   "ingredients": [
+    {
+     "q": 3,
+     "u": "tbsp",
+     "item": "unsalted butter",
+     "aisle": "dairy"
+    },
+    {
+     "q": 1,
+     "u": "",
+     "item": "yellow onion",
+     "aisle": "produce",
+     "note": "diced"
+    },
+    {
+     "q": 0.33,
+     "u": "cup",
+     "item": "all-purpose flour",
+     "aisle": "pantry"
+    },
+    {
+     "q": 1.75,
+     "u": "cup",
+     "item": "chicken broth",
+     "aisle": "pantry"
+    },
+    {
+     "q": 0.75,
+     "u": "cup",
+     "item": "whole milk",
+     "aisle": "dairy"
+    },
+    {
+     "q": 3,
+     "u": "cup",
+     "item": "cooked chicken",
+     "aisle": "meat",
+     "note": "shredded or diced"
+    },
+    {
+     "q": 2,
+     "u": "cup",
+     "item": "frozen peas and carrots",
+     "aisle": "frozen"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "dried thyme",
+     "aisle": "spices"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "salt",
+     "aisle": "spices"
+    },
+    {
+     "q": 0.5,
+     "u": "tsp",
+     "item": "black pepper",
+     "aisle": "spices"
+    },
+    {
+     "q": 1,
+     "u": "pkg",
+     "item": "refrigerated pie crusts (2 crusts)",
+     "aisle": "dairy"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Heat the oven to 400°F. Melt the butter in a large pot over medium and cook the onion until soft.",
+     "timer": 240,
+     "timerLabel": "Soften the onion"
+    },
+    {
+     "text": "Stir in the flour for 1 minute. Slowly add the broth and milk, stirring, until thick.",
+     "timer": 300,
+     "timerLabel": "Thicken the filling"
+    },
+    {
+     "text": "Stir in the chicken, vegetables, thyme, salt and pepper. Remove from the heat."
+    },
+    {
+     "text": "Fit one crust in a 9-inch pie plate. Pour in the filling. Cover with the second crust, crimp, and cut 4 slits."
+    },
+    {
+     "text": "Bake until deep golden and bubbling. Cover the edge with foil if it browns too fast.",
+     "timer": 2400,
+     "timerLabel": "Bake the pie"
+    },
+    {
+     "text": "Rest 15 minutes before cutting.",
+     "timer": 900,
+     "timerLabel": "Rest the pie"
+    }
+   ]
+  },
+  {
+   "id": "american-tuna-noodle-casserole",
+   "title": "Tuna noodle casserole",
+   "blurb": "Creamy, crunchy-topped comfort from the pantry",
+   "type": "casseroles",
+   "serves": 6,
+   "prep": 15,
+   "cook": 30,
+   "tags": [
+    "kid-friendly",
+    "make ahead"
+   ],
+   "ingredients": [
+    {
+     "q": 8,
+     "u": "oz",
+     "item": "wide egg noodles",
+     "aisle": "pantry"
+    },
+    {
+     "q": 2,
+     "u": "tbsp",
+     "item": "unsalted butter",
+     "aisle": "dairy"
+    },
+    {
+     "q": 1,
+     "u": "",
+     "item": "yellow onion",
+     "aisle": "produce",
+     "note": "diced"
+    },
+    {
+     "q": 1,
+     "u": "can",
+     "item": "cream of mushroom soup (10.5 oz)",
+     "aisle": "canned"
+    },
+    {
+     "q": 1,
+     "u": "cup",
+     "item": "whole milk",
+     "aisle": "dairy"
+    },
+    {
+     "q": 2,
+     "u": "can",
+     "item": "tuna in water (5 oz), drained",
+     "aisle": "canned"
+    },
+    {
+     "q": 1,
+     "u": "cup",
+     "item": "frozen peas",
+     "aisle": "frozen"
+    },
+    {
+     "q": 1.5,
+     "u": "cup",
+     "item": "shredded cheddar cheese",
+     "aisle": "dairy",
+     "note": "divided"
+    },
+    {
+     "q": 1,
+     "u": "cup",
+     "item": "crushed potato chips",
+     "aisle": "pantry"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Heat the oven to 375°F. Boil the noodles 2 minutes less than the package says, then drain.",
+     "timer": 480,
+     "timerLabel": "Boil the noodles"
+    },
+    {
+     "text": "Melt the butter in a large pot. Cook the onion until soft.",
+     "timer": 240,
+     "timerLabel": "Soften the onion"
+    },
+    {
+     "text": "Stir in the soup and milk until smooth. Add the tuna, peas and 1 cup cheese."
+    },
+    {
+     "text": "Fold in the noodles. Pour into a greased 9 by 13 inch dish."
+    },
+    {
+     "text": "Top with the rest of the cheese and the crushed chips."
+    },
+    {
+     "text": "Bake until bubbling and golden.",
+     "timer": 1200,
+     "timerLabel": "Bake the casserole"
+    }
+   ]
+  },
+  {
+   "id": "american-baked-mac-and-cheese",
+   "title": "Baked macaroni and cheese",
+   "blurb": "Real cheese sauce with a golden crumb top",
+   "type": "casseroles",
+   "serves": 8,
+   "prep": 15,
+   "cook": 40,
+   "tags": [
+    "vegetarian",
+    "kid-friendly",
+    "crowd"
+   ],
+   "ingredients": [
+    {
+     "q": 1,
+     "u": "lb",
+     "item": "elbow macaroni",
+     "aisle": "pantry"
+    },
+    {
+     "q": 4,
+     "u": "tbsp",
+     "item": "unsalted butter",
+     "aisle": "dairy",
+     "note": "divided"
+    },
+    {
+     "q": 0.25,
+     "u": "cup",
+     "item": "all-purpose flour",
+     "aisle": "pantry"
+    },
+    {
+     "q": 3,
+     "u": "cup",
+     "item": "whole milk",
+     "aisle": "dairy"
+    },
+    {
+     "q": 0.5,
+     "u": "tsp",
+     "item": "dry mustard",
+     "aisle": "spices"
+    },
+    {
+     "q": 0.5,
+     "u": "tsp",
+     "item": "salt",
+     "aisle": "spices"
+    },
+    {
+     "q": 4,
+     "u": "cup",
+     "item": "shredded sharp cheddar cheese",
+     "aisle": "dairy",
+     "note": "divided"
+    },
+    {
+     "q": 0.75,
+     "u": "cup",
+     "item": "panko breadcrumbs",
+     "aisle": "pantry"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Heat the oven to 375°F. Boil the macaroni 2 minutes short of the package time, then drain.",
+     "timer": 480,
+     "timerLabel": "Boil the macaroni"
+    },
+    {
+     "text": "Melt 3 tbsp butter in a pot. Whisk in the flour for 1 minute. Slowly whisk in the milk."
+    },
+    {
+     "text": "Cook, stirring, until thick enough to coat a spoon. Stir in the mustard, salt and 3 cups cheese.",
+     "timer": 300,
+     "timerLabel": "Thicken the sauce"
+    },
+    {
+     "text": "Fold in the macaroni. Pour into a greased 9 by 13 inch dish and top with the last cheese."
+    },
+    {
+     "text": "Melt 1 tbsp butter, mix with the panko, and sprinkle over the top."
+    },
+    {
+     "text": "Bake until bubbly and golden.",
+     "timer": 1500,
+     "timerLabel": "Bake the mac and cheese"
+    }
+   ]
+  },
+  {
+   "id": "american-chicken-broccoli-rice",
+   "title": "Cheesy chicken broccoli rice casserole",
+   "blurb": "Creamy rice bake with chicken and broccoli",
+   "type": "casseroles",
+   "serves": 6,
+   "prep": 15,
+   "cook": 50,
+   "tags": [
+    "kid-friendly"
+   ],
+   "ingredients": [
+    {
+     "q": 1.5,
+     "u": "cup",
+     "item": "long-grain white rice",
+     "aisle": "pantry",
+     "note": "uncooked"
+    },
+    {
+     "q": 2,
+     "u": "cup",
+     "item": "chicken broth",
+     "aisle": "pantry"
+    },
+    {
+     "q": 1,
+     "u": "can",
+     "item": "cream of chicken soup (10.5 oz)",
+     "aisle": "canned"
+    },
+    {
+     "q": 1,
+     "u": "cup",
+     "item": "whole milk",
+     "aisle": "dairy"
+    },
+    {
+     "q": 1.5,
+     "u": "lb",
+     "item": "boneless skinless chicken breasts",
+     "aisle": "meat",
+     "note": "cut in 1-inch pieces"
+    },
+    {
+     "q": 4,
+     "u": "cup",
+     "item": "broccoli florets",
+     "aisle": "produce"
+    },
+    {
+     "q": 2,
+     "u": "cup",
+     "item": "shredded cheddar cheese",
+     "aisle": "dairy",
+     "note": "divided"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "garlic powder",
+     "aisle": "spices"
+    },
+    {
+     "q": 0.5,
+     "u": "tsp",
+     "item": "salt",
+     "aisle": "spices"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Heat the oven to 375°F. Grease a 9 by 13 inch baking dish."
+    },
+    {
+     "text": "Whisk the broth, soup, milk, garlic powder and salt. Stir in the rice and 1 cup cheese."
+    },
+    {
+     "text": "Add the chicken and broccoli and stir. Pour into the dish and cover tightly with foil."
+    },
+    {
+     "text": "Bake covered until the rice is tender and the chicken is 165°F.",
+     "timer": 2700,
+     "timerLabel": "Bake covered"
+    },
+    {
+     "text": "Uncover, top with the rest of the cheese, and bake until melted.",
+     "timer": 600,
+     "timerLabel": "Melt the cheese"
+    },
+    {
+     "text": "Rest 5 minutes, then fluff and serve."
+    }
+   ]
+  },
+  {
+   "id": "american-shepherds-pie",
+   "title": "Shepherd's pie",
+   "blurb": "Savory beef and vegetables under mashed potatoes",
+   "type": "casseroles",
+   "serves": 6,
+   "prep": 25,
+   "cook": 50,
+   "tags": [
+    "make ahead"
+   ],
+   "ingredients": [
+    {
+     "q": 2,
+     "u": "lb",
+     "item": "russet potatoes",
+     "aisle": "produce",
+     "note": "peeled and cut up"
+    },
+    {
+     "q": 4,
+     "u": "tbsp",
+     "item": "unsalted butter",
+     "aisle": "dairy",
+     "note": "divided"
+    },
+    {
+     "q": 0.5,
+     "u": "cup",
+     "item": "whole milk",
+     "aisle": "dairy"
+    },
+    {
+     "q": 1.5,
+     "u": "lb",
+     "item": "lean ground beef",
+     "aisle": "meat"
+    },
+    {
+     "q": 1,
+     "u": "",
+     "item": "yellow onion",
+     "aisle": "produce",
+     "note": "diced"
+    },
+    {
+     "q": 2,
+     "u": "",
+     "item": "carrots",
+     "aisle": "produce",
+     "note": "diced"
+    },
+    {
+     "q": 2,
+     "u": "clove",
+     "item": "garlic",
+     "aisle": "produce",
+     "note": "minced"
+    },
+    {
+     "q": 2,
+     "u": "tbsp",
+     "item": "tomato paste",
+     "aisle": "canned"
+    },
+    {
+     "q": 1,
+     "u": "cup",
+     "item": "beef broth",
+     "aisle": "pantry"
+    },
+    {
+     "q": 1,
+     "u": "cup",
+     "item": "frozen peas",
+     "aisle": "frozen"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "salt",
+     "aisle": "spices"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Heat the oven to 400°F. Boil the potatoes in salted water until tender, then drain.",
+     "timer": 1200,
+     "timerLabel": "Boil the potatoes"
+    },
+    {
+     "text": "Mash the potatoes with 3 tbsp butter, the milk and salt."
+    },
+    {
+     "text": "Brown the beef with the onion and carrots in a large oven-safe skillet. Drain the fat.",
+     "timer": 600,
+     "timerLabel": "Brown the beef"
+    },
+    {
+     "text": "Stir in the garlic, tomato paste and broth. Simmer until thickened, then add the peas.",
+     "timer": 480,
+     "timerLabel": "Simmer the filling"
+    },
+    {
+     "text": "Spread the potatoes over the filling. Dot with the last butter and rake with a fork."
+    },
+    {
+     "text": "Bake until bubbling and the top is golden.",
+     "timer": 1500,
+     "timerLabel": "Bake the pie"
+    }
+   ]
+  },
+  {
+   "id": "american-baked-ziti",
+   "title": "Easy baked ziti",
+   "blurb": "Pasta, meat sauce and gooey mozzarella",
+   "type": "casseroles",
+   "serves": 6,
+   "prep": 15,
+   "cook": 40,
+   "tags": [
+    "make ahead",
+    "kid-friendly"
+   ],
+   "ingredients": [
+    {
+     "q": 1,
+     "u": "lb",
+     "item": "ziti",
+     "aisle": "pantry"
+    },
+    {
+     "q": 1,
+     "u": "lb",
+     "item": "ground beef",
+     "aisle": "meat"
+    },
+    {
+     "q": 1,
+     "u": "",
+     "item": "yellow onion",
+     "aisle": "produce",
+     "note": "diced"
+    },
+    {
+     "q": 3,
+     "u": "clove",
+     "item": "garlic",
+     "aisle": "produce",
+     "note": "minced"
+    },
+    {
+     "q": 1,
+     "u": "jar",
+     "item": "marinara sauce (24 oz)",
+     "aisle": "pantry"
+    },
+    {
+     "q": 1,
+     "u": "cup",
+     "item": "ricotta cheese",
+     "aisle": "dairy"
+    },
+    {
+     "q": 3,
+     "u": "cup",
+     "item": "shredded mozzarella cheese",
+     "aisle": "dairy",
+     "note": "divided"
+    },
+    {
+     "q": 0.25,
+     "u": "cup",
+     "item": "grated Parmesan cheese",
+     "aisle": "dairy"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Heat the oven to 375°F. Boil the ziti 2 minutes short of the package time, then drain.",
+     "timer": 540,
+     "timerLabel": "Boil the ziti"
+    },
+    {
+     "text": "Brown the beef and onion in a large pot. Drain the fat. Add the garlic and marinara.",
+     "timer": 600,
+     "timerLabel": "Brown the beef"
+    },
+    {
+     "text": "Stir in the ziti, ricotta and 1.5 cups mozzarella."
+    },
+    {
+     "text": "Pour into a greased 9 by 13 inch dish. Top with the rest of the mozzarella and the Parmesan."
+    },
+    {
+     "text": "Cover with foil and bake.",
+     "timer": 1200,
+     "timerLabel": "Bake covered"
+    },
+    {
+     "text": "Uncover and bake until the cheese is golden.",
+     "timer": 600,
+     "timerLabel": "Bake uncovered"
+    }
+   ]
+  },
+  {
+   "id": "american-cheeseburger-casserole",
+   "title": "Cheeseburger casserole",
+   "blurb": "Burger flavors baked with pasta and cheddar",
+   "type": "casseroles",
+   "serves": 6,
+   "prep": 15,
+   "cook": 40,
+   "tags": [
+    "kid-friendly",
+    "make ahead"
+   ],
+   "ingredients": [
+    {
+     "q": 1.5,
+     "u": "lb",
+     "item": "ground beef",
+     "aisle": "meat"
+    },
+    {
+     "q": 1,
+     "u": "",
+     "item": "yellow onion",
+     "aisle": "produce",
+     "note": "diced"
+    },
+    {
+     "q": 8,
+     "u": "oz",
+     "item": "elbow macaroni",
+     "aisle": "pantry"
+    },
+    {
+     "q": 1,
+     "u": "can",
+     "item": "diced tomatoes (14.5 oz)",
+     "aisle": "canned"
+    },
+    {
+     "q": 1,
+     "u": "can",
+     "item": "tomato sauce (8 oz)",
+     "aisle": "canned"
+    },
+    {
+     "q": 1,
+     "u": "cup",
+     "item": "beef broth",
+     "aisle": "pantry"
+    },
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "Worcestershire sauce",
+     "aisle": "pantry"
+    },
+    {
+     "q": 2,
+     "u": "cup",
+     "item": "shredded cheddar cheese",
+     "aisle": "dairy",
+     "note": "divided"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "salt",
+     "aisle": "spices"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Heat the oven to 375°F. Boil the macaroni 2 minutes short of the package time, then drain.",
+     "timer": 480,
+     "timerLabel": "Boil the macaroni"
+    },
+    {
+     "text": "Brown the beef and onion in a large skillet. Drain the fat.",
+     "timer": 600,
+     "timerLabel": "Brown the beef"
+    },
+    {
+     "text": "Stir in the tomatoes, tomato sauce, broth, Worcestershire and salt. Simmer.",
+     "timer": 300,
+     "timerLabel": "Simmer the sauce"
+    },
+    {
+     "text": "Mix in the macaroni and 1 cup cheese. Pour into a 9 by 13 inch dish."
+    },
+    {
+     "text": "Top with the rest of the cheese. Bake until bubbly and the beef is 160°F.",
+     "timer": 1200,
+     "timerLabel": "Bake the casserole"
+    }
+   ]
+  },
+  {
+   "id": "american-ham-potato-bake",
+   "title": "Cheesy ham and potato bake",
+   "blurb": "Scalloped potatoes with ham, baked in one dish",
+   "type": "casseroles",
+   "serves": 6,
+   "prep": 20,
+   "cook": 75,
+   "tags": [
+    "make ahead",
+    "kid-friendly"
+   ],
+   "ingredients": [
+    {
+     "q": 2.5,
+     "u": "lb",
+     "item": "russet potatoes",
+     "aisle": "produce",
+     "note": "peeled, sliced thin"
+    },
+    {
+     "q": 2,
+     "u": "cup",
+     "item": "diced cooked ham",
+     "aisle": "meat"
+    },
+    {
+     "q": 3,
+     "u": "tbsp",
+     "item": "unsalted butter",
+     "aisle": "dairy"
+    },
+    {
+     "q": 3,
+     "u": "tbsp",
+     "item": "all-purpose flour",
+     "aisle": "pantry"
+    },
+    {
+     "q": 2.5,
+     "u": "cup",
+     "item": "whole milk",
+     "aisle": "dairy"
+    },
+    {
+     "q": 2,
+     "u": "cup",
+     "item": "shredded cheddar cheese",
+     "aisle": "dairy",
+     "note": "divided"
+    },
+    {
+     "q": 0.5,
+     "u": "tsp",
+     "item": "salt",
+     "aisle": "spices"
+    },
+    {
+     "q": 0.5,
+     "u": "tsp",
+     "item": "black pepper",
+     "aisle": "spices"
+    },
+    {
+     "q": 1,
+     "u": "",
+     "item": "yellow onion",
+     "aisle": "produce",
+     "note": "diced"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Heat the oven to 375°F. Grease a 9 by 13 inch baking dish."
+    },
+    {
+     "text": "Melt the butter in a pot. Cook the onion until soft. Whisk in the flour for 1 minute.",
+     "timer": 240,
+     "timerLabel": "Soften the onion"
+    },
+    {
+     "text": "Slowly whisk in the milk. Simmer until thickened. Stir in 1 cup cheese, salt and pepper.",
+     "timer": 300,
+     "timerLabel": "Thicken the sauce"
+    },
+    {
+     "text": "Layer the potatoes and ham in the dish. Pour the sauce over."
+    },
+    {
+     "text": "Cover with foil and bake until the potatoes are almost tender.",
+     "timer": 2700,
+     "timerLabel": "Bake covered"
+    },
+    {
+     "text": "Uncover, top with the rest of the cheese, and bake until golden.",
+     "timer": 1200,
+     "timerLabel": "Bake uncovered"
+    }
+   ]
+  },
+  {
+   "id": "american-classic-beef-chili",
+   "title": "Classic beef chili",
+   "blurb": "Thick, hearty and mildly spicy, even better the next day",
+   "type": "soups",
+   "serves": 6,
+   "prep": 15,
+   "cook": 60,
+   "tags": [
+    "one pot",
+    "make ahead",
+    "crowd"
+   ],
+   "ingredients": [
+    {
+     "q": 2,
+     "u": "lb",
+     "item": "ground beef",
+     "aisle": "meat"
+    },
+    {
+     "q": 1,
+     "u": "",
+     "item": "yellow onion",
+     "aisle": "produce",
+     "note": "diced"
+    },
+    {
+     "q": 1,
+     "u": "",
+     "item": "bell pepper",
+     "aisle": "produce",
+     "note": "diced"
+    },
+    {
+     "q": 3,
+     "u": "clove",
+     "item": "garlic",
+     "aisle": "produce",
+     "note": "minced"
+    },
+    {
+     "q": 3,
+     "u": "tbsp",
+     "item": "chili powder",
+     "aisle": "spices"
+    },
+    {
+     "q": 2,
+     "u": "tsp",
+     "item": "ground cumin",
+     "aisle": "spices"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "salt",
+     "aisle": "spices"
+    },
+    {
+     "q": 1,
+     "u": "can",
+     "item": "crushed tomatoes (28 oz)",
+     "aisle": "canned"
+    },
+    {
+     "q": 1,
+     "u": "can",
+     "item": "kidney beans (15 oz), drained",
+     "aisle": "canned"
+    },
+    {
+     "q": 1,
+     "u": "can",
+     "item": "pinto beans (15 oz), drained",
+     "aisle": "canned"
+    },
+    {
+     "q": 1,
+     "u": "cup",
+     "item": "beef broth",
+     "aisle": "pantry"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Brown the beef with the onion and pepper in a large pot, breaking it up. Drain the fat.",
+     "timer": 600,
+     "timerLabel": "Brown the beef"
+    },
+    {
+     "text": "Stir in the garlic, chili powder, cumin and salt for 1 minute."
+    },
+    {
+     "text": "Add the tomatoes, beans and broth. Bring to a boil."
+    },
+    {
+     "text": "Lower the heat, cover partly, and simmer, stirring now and then.",
+     "timer": 2700,
+     "timerLabel": "Simmer the chili"
+    },
+    {
+     "text": "Taste and add salt. Serve with cheese, sour cream or crackers."
+    }
+   ]
+  },
+  {
+   "id": "american-slow-cooker-beef-stew",
+   "title": "Slow-cooker beef stew",
+   "blurb": "Fork-tender beef, potatoes and carrots in a rich gravy",
+   "type": "soups",
+   "serves": 6,
+   "prep": 20,
+   "cook": 480,
+   "tags": [
+    "slow cooker",
+    "crowd"
+   ],
+   "ingredients": [
+    {
+     "q": 2,
+     "u": "lb",
+     "item": "beef stew meat",
+     "aisle": "meat",
+     "note": "cut in 1-inch pieces"
+    },
+    {
+     "q": 3,
+     "u": "tbsp",
+     "item": "all-purpose flour",
+     "aisle": "pantry"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "salt",
+     "aisle": "spices"
+    },
+    {
+     "q": 0.5,
+     "u": "tsp",
+     "item": "black pepper",
+     "aisle": "spices"
+    },
+    {
+     "q": 1.5,
+     "u": "lb",
+     "item": "baby potatoes",
+     "aisle": "produce",
+     "note": "halved"
+    },
+    {
+     "q": 4,
+     "u": "",
+     "item": "carrots",
+     "aisle": "produce",
+     "note": "cut in chunks"
+    },
+    {
+     "q": 1,
+     "u": "",
+     "item": "yellow onion",
+     "aisle": "produce",
+     "note": "diced"
+    },
+    {
+     "q": 3,
+     "u": "clove",
+     "item": "garlic",
+     "aisle": "produce",
+     "note": "minced"
+    },
+    {
+     "q": 3,
+     "u": "cup",
+     "item": "beef broth",
+     "aisle": "pantry"
+    },
+    {
+     "q": 2,
+     "u": "tbsp",
+     "item": "tomato paste",
+     "aisle": "canned"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "dried thyme",
+     "aisle": "spices"
+    },
+    {
+     "q": 1,
+     "u": "cup",
+     "item": "frozen peas",
+     "aisle": "frozen"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Toss the beef with the flour, salt and pepper until coated."
+    },
+    {
+     "text": "Put the potatoes, carrots, onion and garlic in the slow cooker. Top with the beef."
+    },
+    {
+     "text": "Whisk the broth, tomato paste and thyme. Pour over the top."
+    },
+    {
+     "text": "Cover and cook on low until the beef is tender.",
+     "timer": 28800,
+     "timerLabel": "Slow cook on low"
+    },
+    {
+     "text": "Stir in the frozen peas and cook until hot.",
+     "timer": 600,
+     "timerLabel": "Warm the peas"
+    },
+    {
+     "text": "Stir and serve with crusty bread."
+    }
+   ]
+  },
+  {
+   "id": "american-broccoli-cheddar-soup",
+   "title": "Broccoli cheddar soup",
+   "blurb": "Creamy, cheesy and quick, like the cafe version",
+   "type": "soups",
+   "serves": 6,
+   "prep": 15,
+   "cook": 30,
+   "tags": [
+    "vegetarian",
+    "quick"
+   ],
+   "ingredients": [
+    {
+     "q": 3,
+     "u": "tbsp",
+     "item": "unsalted butter",
+     "aisle": "dairy"
+    },
+    {
+     "q": 1,
+     "u": "",
+     "item": "yellow onion",
+     "aisle": "produce",
+     "note": "diced"
+    },
+    {
+     "q": 3,
+     "u": "tbsp",
+     "item": "all-purpose flour",
+     "aisle": "pantry"
+    },
+    {
+     "q": 2,
+     "u": "cup",
+     "item": "whole milk",
+     "aisle": "dairy"
+    },
+    {
+     "q": 2,
+     "u": "cup",
+     "item": "vegetable broth",
+     "aisle": "pantry"
+    },
+    {
+     "q": 4,
+     "u": "cup",
+     "item": "broccoli florets",
+     "aisle": "produce",
+     "note": "chopped small"
+    },
+    {
+     "q": 1,
+     "u": "",
+     "item": "carrots",
+     "aisle": "produce",
+     "note": "grated"
+    },
+    {
+     "q": 3,
+     "u": "cup",
+     "item": "shredded sharp cheddar cheese",
+     "aisle": "dairy"
+    },
+    {
+     "q": 0.5,
+     "u": "tsp",
+     "item": "salt",
+     "aisle": "spices"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Melt the butter in a large pot. Cook the onion until soft.",
+     "timer": 240,
+     "timerLabel": "Soften the onion"
+    },
+    {
+     "text": "Stir in the flour for 1 minute. Slowly add the milk and broth, stirring."
+    },
+    {
+     "text": "Add the broccoli and carrot. Simmer, stirring now and then, until tender.",
+     "timer": 900,
+     "timerLabel": "Simmer the soup"
+    },
+    {
+     "text": "Turn the heat to low. Stir in the cheese a handful at a time until melted."
+    },
+    {
+     "text": "Season with salt. For a smoother soup, blend part of it with a stick blender."
+    }
+   ]
+  },
+  {
+   "id": "american-loaded-potato-soup",
+   "title": "Loaded baked potato soup",
+   "blurb": "Creamy potato soup with bacon, cheddar and green onion",
+   "type": "soups",
+   "serves": 6,
+   "prep": 15,
+   "cook": 35,
+   "tags": [
+    "one pot",
+    "kid-friendly"
+   ],
+   "ingredients": [
+    {
+     "q": 6,
+     "u": "slice",
+     "item": "bacon",
+     "aisle": "meat",
+     "note": "chopped"
+    },
+    {
+     "q": 1,
+     "u": "",
+     "item": "yellow onion",
+     "aisle": "produce",
+     "note": "diced"
+    },
+    {
+     "q": 3,
+     "u": "tbsp",
+     "item": "all-purpose flour",
+     "aisle": "pantry"
+    },
+    {
+     "q": 4,
+     "u": "cup",
+     "item": "chicken broth",
+     "aisle": "pantry"
+    },
+    {
+     "q": 2,
+     "u": "lb",
+     "item": "russet potatoes",
+     "aisle": "produce",
+     "note": "peeled and cubed"
+    },
+    {
+     "q": 1.5,
+     "u": "cup",
+     "item": "whole milk",
+     "aisle": "dairy"
+    },
+    {
+     "q": 1,
+     "u": "cup",
+     "item": "shredded cheddar cheese",
+     "aisle": "dairy"
+    },
+    {
+     "q": 0.5,
+     "u": "cup",
+     "item": "sour cream",
+     "aisle": "dairy"
+    },
+    {
+     "q": 3,
+     "u": "",
+     "item": "green onions",
+     "aisle": "produce",
+     "note": "sliced"
+    },
+    {
+     "q": 0.5,
+     "u": "tsp",
+     "item": "salt",
+     "aisle": "spices"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Cook the bacon in a large pot until crisp. Move it to a plate and leave 2 tbsp fat in the pot.",
+     "timer": 600,
+     "timerLabel": "Crisp the bacon"
+    },
+    {
+     "text": "Cook the onion in the bacon fat until soft. Stir in the flour for 1 minute.",
+     "timer": 240,
+     "timerLabel": "Soften the onion"
+    },
+    {
+     "text": "Add the broth and potatoes. Simmer until the potatoes are tender.",
+     "timer": 1200,
+     "timerLabel": "Simmer the potatoes"
+    },
+    {
+     "text": "Mash some of the potatoes right in the pot for a thicker soup."
+    },
+    {
+     "text": "Stir in the milk, cheese, sour cream and salt. Heat gently without boiling."
+    },
+    {
+     "text": "Top with bacon and green onions."
+    }
+   ]
+  },
+  {
+   "id": "american-three-bean-chili",
+   "title": "Vegetarian three-bean chili",
+   "blurb": "Meatless chili with beans, peppers and corn",
+   "type": "soups",
+   "serves": 6,
+   "prep": 15,
+   "cook": 40,
+   "tags": [
+    "vegetarian",
+    "one pot",
+    "healthy"
+   ],
+   "ingredients": [
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "olive oil",
+     "aisle": "pantry"
+    },
+    {
+     "q": 1,
+     "u": "",
+     "item": "yellow onion",
+     "aisle": "produce",
+     "note": "diced"
+    },
+    {
+     "q": 1,
+     "u": "",
+     "item": "bell pepper",
+     "aisle": "produce",
+     "note": "diced"
+    },
+    {
+     "q": 3,
+     "u": "clove",
+     "item": "garlic",
+     "aisle": "produce",
+     "note": "minced"
+    },
+    {
+     "q": 2,
+     "u": "tbsp",
+     "item": "chili powder",
+     "aisle": "spices"
+    },
+    {
+     "q": 2,
+     "u": "tsp",
+     "item": "ground cumin",
+     "aisle": "spices"
+    },
+    {
+     "q": 1,
+     "u": "can",
+     "item": "crushed tomatoes (28 oz)",
+     "aisle": "canned"
+    },
+    {
+     "q": 1,
+     "u": "can",
+     "item": "kidney beans (15 oz), drained",
+     "aisle": "canned"
+    },
+    {
+     "q": 1,
+     "u": "can",
+     "item": "black beans (15 oz), drained",
+     "aisle": "canned"
+    },
+    {
+     "q": 1,
+     "u": "can",
+     "item": "pinto beans (15 oz), drained",
+     "aisle": "canned"
+    },
+    {
+     "q": 1,
+     "u": "cup",
+     "item": "frozen corn",
+     "aisle": "frozen"
+    },
+    {
+     "q": 1,
+     "u": "cup",
+     "item": "vegetable broth",
+     "aisle": "pantry"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Heat the oil in a large pot. Cook the onion and pepper until soft.",
+     "timer": 420,
+     "timerLabel": "Soften the vegetables"
+    },
+    {
+     "text": "Stir in the garlic, chili powder and cumin for 1 minute."
+    },
+    {
+     "text": "Add the tomatoes, all three beans, corn and broth. Bring to a boil."
+    },
+    {
+     "text": "Lower the heat and simmer, stirring now and then, until thick.",
+     "timer": 1800,
+     "timerLabel": "Simmer the chili"
+    },
+    {
+     "text": "Season with salt and serve with cheese, avocado or tortilla chips."
+    }
+   ]
+  },
+  {
+   "id": "american-classic-cheeseburgers",
+   "title": "Classic cheeseburgers",
+   "blurb": "Juicy skillet or grill burgers with melty American cheese",
+   "type": "sandwiches",
+   "serves": 4,
+   "prep": 10,
+   "cook": 12,
+   "tags": [
+    "quick",
+    "grill",
+    "kid-friendly"
+   ],
+   "ingredients": [
+    {
+     "q": 1.5,
+     "u": "lb",
+     "item": "ground beef (80% lean)",
+     "aisle": "meat"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "salt",
+     "aisle": "spices"
+    },
+    {
+     "q": 0.5,
+     "u": "tsp",
+     "item": "black pepper",
+     "aisle": "spices"
+    },
+    {
+     "q": 4,
+     "u": "slice",
+     "item": "American cheese",
+     "aisle": "dairy"
+    },
+    {
+     "q": 4,
+     "u": "",
+     "item": "hamburger buns",
+     "aisle": "bakery"
+    },
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "unsalted butter",
+     "aisle": "dairy",
+     "note": "for the buns"
+    },
+    {
+     "q": 1,
+     "u": "",
+     "item": "tomato",
+     "aisle": "produce",
+     "note": "sliced"
+    },
+    {
+     "q": 4,
+     "u": "",
+     "item": "lettuce leaves",
+     "aisle": "produce"
+    },
+    {
+     "q": null,
+     "u": "",
+     "item": "ketchup and mustard",
+     "aisle": "pantry",
+     "note": "to serve"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Divide the beef into 4 loose balls. Flatten each to 3/4 inch, a bit wider than the bun. Press a dimple in the middle."
+    },
+    {
+     "text": "Season both sides with salt and pepper just before cooking."
+    },
+    {
+     "text": "Heat a skillet or grill to medium-high. Cook the burgers.",
+     "timer": 300,
+     "timerLabel": "Cook the first side"
+    },
+    {
+     "text": "Flip. Cook until 160°F inside. Top with cheese for the last minute.",
+     "timer": 240,
+     "timerLabel": "Cook the second side"
+    },
+    {
+     "text": "Toast the buttered buns in the pan until golden.",
+     "timer": 60,
+     "timerLabel": "Toast the buns"
+    },
+    {
+     "text": "Build the burgers with lettuce, tomato and your toppings."
+    }
+   ]
+  },
+  {
+   "id": "american-sloppy-joes",
+   "title": "Sloppy Joes",
+   "blurb": "Sweet-tangy beef on toasted buns",
+   "type": "sandwiches",
+   "serves": 6,
+   "prep": 10,
+   "cook": 25,
+   "tags": [
+    "quick",
+    "kid-friendly"
+   ],
+   "ingredients": [
+    {
+     "q": 1.5,
+     "u": "lb",
+     "item": "ground beef",
+     "aisle": "meat"
+    },
+    {
+     "q": 1,
+     "u": "",
+     "item": "yellow onion",
+     "aisle": "produce",
+     "note": "diced"
+    },
+    {
+     "q": 1,
+     "u": "",
+     "item": "bell pepper",
+     "aisle": "produce",
+     "note": "diced"
+    },
+    {
+     "q": 2,
+     "u": "clove",
+     "item": "garlic",
+     "aisle": "produce",
+     "note": "minced"
+    },
+    {
+     "q": 1,
+     "u": "cup",
+     "item": "ketchup",
+     "aisle": "pantry"
+    },
+    {
+     "q": 2,
+     "u": "tbsp",
+     "item": "brown sugar",
+     "aisle": "pantry"
+    },
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "Worcestershire sauce",
+     "aisle": "pantry"
+    },
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "yellow mustard",
+     "aisle": "pantry"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "salt",
+     "aisle": "spices"
+    },
+    {
+     "q": 6,
+     "u": "",
+     "item": "hamburger buns",
+     "aisle": "bakery"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Brown the beef with the onion and pepper in a large skillet, breaking it up. Drain the fat.",
+     "timer": 600,
+     "timerLabel": "Brown the beef"
+    },
+    {
+     "text": "Stir in the garlic for 30 seconds."
+    },
+    {
+     "text": "Add the ketchup, brown sugar, Worcestershire, mustard and salt."
+    },
+    {
+     "text": "Simmer on low until thick, stirring now and then.",
+     "timer": 600,
+     "timerLabel": "Simmer the sauce"
+    },
+    {
+     "text": "Toast the buns lightly."
+    },
+    {
+     "text": "Spoon the beef onto the buns and serve with napkins."
+    }
+   ]
+  },
+  {
+   "id": "american-philly-cheesesteaks",
+   "title": "Philly cheesesteak sandwiches",
+   "blurb": "Thin beef, peppers and onions with melted provolone",
+   "type": "sandwiches",
+   "serves": 4,
+   "prep": 15,
+   "cook": 20,
+   "tags": [
+    "quick"
+   ],
+   "ingredients": [
+    {
+     "q": 1.5,
+     "u": "lb",
+     "item": "ribeye or sirloin steak",
+     "aisle": "meat",
+     "note": "sliced very thin"
+    },
+    {
+     "q": 2,
+     "u": "tbsp",
+     "item": "vegetable oil",
+     "aisle": "pantry",
+     "note": "divided"
+    },
+    {
+     "q": 1,
+     "u": "",
+     "item": "yellow onion",
+     "aisle": "produce",
+     "note": "sliced"
+    },
+    {
+     "q": 1,
+     "u": "",
+     "item": "green bell pepper",
+     "aisle": "produce",
+     "note": "sliced"
+    },
+    {
+     "q": 0.5,
+     "u": "tsp",
+     "item": "salt",
+     "aisle": "spices"
+    },
+    {
+     "q": 0.5,
+     "u": "tsp",
+     "item": "black pepper",
+     "aisle": "spices"
+    },
+    {
+     "q": 8,
+     "u": "slice",
+     "item": "provolone cheese",
+     "aisle": "dairy"
+    },
+    {
+     "q": 4,
+     "u": "",
+     "item": "hoagie rolls",
+     "aisle": "bakery"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Cook the onion and pepper in 1 tbsp oil in a large skillet until soft. Move to a plate.",
+     "timer": 480,
+     "timerLabel": "Soften the vegetables"
+    },
+    {
+     "text": "Add the last oil. Cook the steak over high heat, stirring, until browned. Season with salt and pepper.",
+     "timer": 240,
+     "timerLabel": "Sear the steak"
+    },
+    {
+     "text": "Return the vegetables. Pile the mixture into 4 mounds and top each with 2 slices provolone."
+    },
+    {
+     "text": "Cover until the cheese melts.",
+     "timer": 60,
+     "timerLabel": "Melt the cheese"
+    },
+    {
+     "text": "Split the rolls and toast lightly. Slide a mound into each roll."
+    }
+   ]
+  },
+  {
+   "id": "american-meatball-subs",
+   "title": "Baked meatball subs",
+   "blurb": "Tender meatballs, marinara and bubbly mozzarella",
+   "type": "sandwiches",
+   "serves": 6,
+   "prep": 20,
+   "cook": 35,
+   "tags": [
+    "kid-friendly"
+   ],
+   "ingredients": [
+    {
+     "q": 1.5,
+     "u": "lb",
+     "item": "ground beef",
+     "aisle": "meat"
+    },
+    {
+     "q": 0.5,
+     "u": "cup",
+     "item": "Italian breadcrumbs",
+     "aisle": "pantry"
+    },
+    {
+     "q": 1,
+     "u": "",
+     "item": "large eggs",
+     "aisle": "dairy"
+    },
+    {
+     "q": 0.25,
+     "u": "cup",
+     "item": "grated Parmesan cheese",
+     "aisle": "dairy"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "salt",
+     "aisle": "spices"
+    },
+    {
+     "q": 2,
+     "u": "clove",
+     "item": "garlic",
+     "aisle": "produce",
+     "note": "minced"
+    },
+    {
+     "q": 3,
+     "u": "cup",
+     "item": "marinara sauce",
+     "aisle": "pantry"
+    },
+    {
+     "q": 6,
+     "u": "",
+     "item": "sub rolls",
+     "aisle": "bakery"
+    },
+    {
+     "q": 1.5,
+     "u": "cup",
+     "item": "shredded mozzarella cheese",
+     "aisle": "dairy"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Heat the oven to 400°F. Mix the beef, breadcrumbs, egg, Parmesan, salt and garlic. Roll into 18 meatballs."
+    },
+    {
+     "text": "Bake the meatballs on a lined sheet pan until browned.",
+     "timer": 1080,
+     "timerLabel": "Bake the meatballs"
+    },
+    {
+     "text": "Warm the marinara in a pot. Add the meatballs and simmer until they reach 160°F inside.",
+     "timer": 600,
+     "timerLabel": "Simmer the meatballs"
+    },
+    {
+     "text": "Split the rolls and set on a pan. Fill with meatballs and sauce. Top with mozzarella."
+    },
+    {
+     "text": "Broil until the cheese is bubbly.",
+     "timer": 180,
+     "timerLabel": "Melt the cheese"
+    }
+   ]
+  },
+  {
+   "id": "american-crispy-chicken-sandwiches",
+   "title": "Crispy chicken sandwiches",
+   "blurb": "Buttermilk-marinated cutlets, pan-fried and crunchy",
+   "type": "sandwiches",
+   "serves": 4,
+   "prep": 20,
+   "cook": 15,
+   "tags": [
+    "kid-friendly"
+   ],
+   "ingredients": [
+    {
+     "q": 1.5,
+     "u": "lb",
+     "item": "boneless skinless chicken breasts",
+     "aisle": "meat",
+     "note": "sliced into 4 thin cutlets"
+    },
+    {
+     "q": 1,
+     "u": "cup",
+     "item": "buttermilk",
+     "aisle": "dairy"
+    },
+    {
+     "q": 1,
+     "u": "cup",
+     "item": "all-purpose flour",
+     "aisle": "pantry"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "paprika",
+     "aisle": "spices"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "salt",
+     "aisle": "spices"
+    },
+    {
+     "q": 0.5,
+     "u": "tsp",
+     "item": "black pepper",
+     "aisle": "spices"
+    },
+    {
+     "q": 1,
+     "u": "cup",
+     "item": "vegetable oil",
+     "aisle": "pantry",
+     "note": "for frying"
+    },
+    {
+     "q": 4,
+     "u": "",
+     "item": "brioche buns",
+     "aisle": "bakery"
+    },
+    {
+     "q": 8,
+     "u": "slice",
+     "item": "dill pickle chips",
+     "aisle": "pantry"
+    },
+    {
+     "q": null,
+     "u": "",
+     "item": "mayonnaise",
+     "aisle": "pantry",
+     "note": "to serve"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Soak the cutlets in the buttermilk.",
+     "timer": 1200,
+     "timerLabel": "Marinate the chicken"
+    },
+    {
+     "text": "Mix the flour, paprika, salt and pepper in a dish."
+    },
+    {
+     "text": "Lift out a cutlet, let it drip, and press it into the flour mix on both sides."
+    },
+    {
+     "text": "Heat the oil in a large skillet over medium-high to about 350°F."
+    },
+    {
+     "text": "Fry the cutlets until deep golden and 165°F inside. Work in batches.",
+     "timer": 360,
+     "timerLabel": "Fry the chicken"
+    },
+    {
+     "text": "Drain on paper towels. Serve on toasted buns with mayo and pickles."
+    }
+   ]
+  },
+  {
+   "id": "american-tuna-melts",
+   "title": "Classic tuna melts",
+   "blurb": "Crisp-toasted bread, warm tuna and gooey cheddar",
+   "type": "sandwiches",
+   "serves": 4,
+   "prep": 10,
+   "cook": 10,
+   "tags": [
+    "quick",
+    "kid-friendly"
+   ],
+   "ingredients": [
+    {
+     "q": 2,
+     "u": "can",
+     "item": "tuna in water (5 oz), drained",
+     "aisle": "canned"
+    },
+    {
+     "q": 0.25,
+     "u": "cup",
+     "item": "mayonnaise",
+     "aisle": "pantry"
+    },
+    {
+     "q": 1,
+     "u": "stalk",
+     "item": "celery",
+     "aisle": "produce",
+     "note": "finely diced"
+    },
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "Dijon mustard",
+     "aisle": "pantry"
+    },
+    {
+     "q": 8,
+     "u": "slice",
+     "item": "sandwich bread",
+     "aisle": "bakery"
+    },
+    {
+     "q": 8,
+     "u": "slice",
+     "item": "cheddar cheese",
+     "aisle": "dairy"
+    },
+    {
+     "q": 2,
+     "u": "tbsp",
+     "item": "unsalted butter",
+     "aisle": "dairy",
+     "note": "softened"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Mix the tuna, mayonnaise, celery and mustard in a bowl."
+    },
+    {
+     "text": "Butter one side of each bread slice. Flip the bread so the butter side is out."
+    },
+    {
+     "text": "Spread the tuna on 4 slices. Top each with 2 cheese slices and a second slice of bread."
+    },
+    {
+     "text": "Cook in a skillet over medium-low until golden and the cheese melts.",
+     "timer": 240,
+     "timerLabel": "Toast the first side"
+    },
+    {
+     "text": "Flip and toast the other side.",
+     "timer": 180,
+     "timerLabel": "Toast the second side"
+    },
+    {
+     "text": "Cut in half and serve."
+    }
+   ]
+  },
+  {
+   "id": "american-black-bean-burgers",
+   "title": "Black bean burgers",
+   "blurb": "Hearty meatless burgers that hold together",
+   "type": "sandwiches",
+   "serves": 4,
+   "prep": 15,
+   "cook": 15,
+   "tags": [
+    "vegetarian",
+    "kid-friendly"
+   ],
+   "ingredients": [
+    {
+     "q": 1,
+     "u": "can",
+     "item": "black beans (15 oz), drained and rinsed",
+     "aisle": "canned"
+    },
+    {
+     "q": 0.5,
+     "u": "cup",
+     "item": "panko breadcrumbs",
+     "aisle": "pantry"
+    },
+    {
+     "q": 1,
+     "u": "",
+     "item": "large eggs",
+     "aisle": "dairy"
+    },
+    {
+     "q": 0.5,
+     "u": "cup",
+     "item": "cooked rice",
+     "aisle": "pantry"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "ground cumin",
+     "aisle": "spices"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "garlic powder",
+     "aisle": "spices"
+    },
+    {
+     "q": 0.5,
+     "u": "tsp",
+     "item": "salt",
+     "aisle": "spices"
+    },
+    {
+     "q": 2,
+     "u": "tbsp",
+     "item": "vegetable oil",
+     "aisle": "pantry"
+    },
+    {
+     "q": 4,
+     "u": "",
+     "item": "hamburger buns",
+     "aisle": "bakery"
+    },
+    {
+     "q": 4,
+     "u": "",
+     "item": "lettuce leaves",
+     "aisle": "produce"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Mash the beans in a bowl, leaving some chunky. Stir in the panko, egg, rice, cumin, garlic powder and salt."
+    },
+    {
+     "text": "Shape into 4 patties and chill.",
+     "timer": 600,
+     "timerLabel": "Chill the patties"
+    },
+    {
+     "text": "Heat the oil in a large skillet over medium. Cook the patties until crisp.",
+     "timer": 300,
+     "timerLabel": "Cook the first side"
+    },
+    {
+     "text": "Flip carefully and cook until heated through.",
+     "timer": 240,
+     "timerLabel": "Cook the second side"
+    },
+    {
+     "text": "Serve on buns with lettuce and your favorite toppings."
+    }
+   ]
+  },
+  {
+   "id": "american-turkey-burgers",
+   "title": "Juicy turkey burgers",
+   "blurb": "Lean burgers with onion and Worcestershire for flavor",
+   "type": "sandwiches",
+   "serves": 4,
+   "prep": 10,
+   "cook": 15,
+   "tags": [
+    "healthy",
+    "quick"
+   ],
+   "ingredients": [
+    {
+     "q": 1.25,
+     "u": "lb",
+     "item": "ground turkey",
+     "aisle": "meat"
+    },
+    {
+     "q": 0.25,
+     "u": "cup",
+     "item": "panko breadcrumbs",
+     "aisle": "pantry"
+    },
+    {
+     "q": 0.25,
+     "u": "cup",
+     "item": "yellow onion",
+     "aisle": "produce",
+     "note": "finely grated"
+    },
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "Worcestershire sauce",
+     "aisle": "pantry"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "garlic powder",
+     "aisle": "spices"
+    },
+    {
+     "q": 0.75,
+     "u": "tsp",
+     "item": "salt",
+     "aisle": "spices"
+    },
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "olive oil",
+     "aisle": "pantry"
+    },
+    {
+     "q": 4,
+     "u": "",
+     "item": "hamburger buns",
+     "aisle": "bakery"
+    },
+    {
+     "q": 4,
+     "u": "",
+     "item": "lettuce leaves",
+     "aisle": "produce"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Mix the turkey, panko, onion, Worcestershire, garlic powder and salt gently. Form 4 patties and press a dimple in the middle."
+    },
+    {
+     "text": "Heat the oil in a large skillet over medium. Cook the patties.",
+     "timer": 360,
+     "timerLabel": "Cook the first side"
+    },
+    {
+     "text": "Flip and cook until 165°F inside.",
+     "timer": 300,
+     "timerLabel": "Cook the second side"
+    },
+    {
+     "text": "Toast the buns and build the burgers with lettuce and your toppings."
+    }
+   ]
+  },
+  {
+   "id": "american-creamy-mashed-potatoes",
+   "title": "Creamy mashed potatoes",
+   "blurb": "Fluffy, buttery and lump-free",
+   "type": "sides",
+   "serves": 6,
+   "prep": 10,
+   "cook": 25,
+   "tags": [
+    "vegetarian",
+    "gluten-free",
+    "kid-friendly"
+   ],
+   "ingredients": [
+    {
+     "q": 3,
+     "u": "lb",
+     "item": "russet potatoes",
+     "aisle": "produce",
+     "note": "peeled and cut in chunks"
+    },
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "salt",
+     "aisle": "spices",
+     "note": "for the water"
+    },
+    {
+     "q": 6,
+     "u": "tbsp",
+     "item": "unsalted butter",
+     "aisle": "dairy"
+    },
+    {
+     "q": 0.75,
+     "u": "cup",
+     "item": "whole milk",
+     "aisle": "dairy",
+     "note": "warmed"
+    },
+    {
+     "q": 0.5,
+     "u": "tsp",
+     "item": "black pepper",
+     "aisle": "spices"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Put the potatoes in a large pot, cover with cold water, and add the salt."
+    },
+    {
+     "text": "Bring to a boil, then simmer until a fork slides in easily.",
+     "timer": 1200,
+     "timerLabel": "Simmer the potatoes"
+    },
+    {
+     "text": "Drain well and return to the hot pot for a minute to steam dry."
+    },
+    {
+     "text": "Mash with the butter. Pour in the warm milk a little at a time."
+    },
+    {
+     "text": "Stir in pepper and taste for salt. Serve hot."
+    }
+   ]
+  },
+  {
+   "id": "american-creamy-coleslaw",
+   "title": "Creamy coleslaw",
+   "blurb": "Crisp and tangy picnic slaw",
+   "type": "sides",
+   "serves": 8,
+   "prep": 15,
+   "cook": 0,
+   "tags": [
+    "vegetarian",
+    "make ahead",
+    "gluten-free"
+   ],
+   "ingredients": [
+    {
+     "q": 1,
+     "u": "pkg",
+     "item": "coleslaw mix (14 oz)",
+     "aisle": "produce"
+    },
+    {
+     "q": 0.5,
+     "u": "cup",
+     "item": "mayonnaise",
+     "aisle": "pantry"
+    },
+    {
+     "q": 2,
+     "u": "tbsp",
+     "item": "sugar",
+     "aisle": "pantry"
+    },
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "apple cider vinegar",
+     "aisle": "pantry"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "Dijon mustard",
+     "aisle": "pantry"
+    },
+    {
+     "q": 0.5,
+     "u": "tsp",
+     "item": "salt",
+     "aisle": "spices"
+    },
+    {
+     "q": 0.25,
+     "u": "tsp",
+     "item": "black pepper",
+     "aisle": "spices"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Whisk the mayonnaise, sugar, vinegar, mustard, salt and pepper in a large bowl."
+    },
+    {
+     "text": "Add the coleslaw mix and toss to coat."
+    },
+    {
+     "text": "Chill so the flavors blend and the cabbage softens.",
+     "timer": 1800,
+     "timerLabel": "Chill the slaw"
+    },
+    {
+     "text": "Stir, taste, and serve cold."
+    }
+   ]
+  },
+  {
+   "id": "american-classic-potato-salad",
+   "title": "Classic potato salad",
+   "blurb": "Creamy picnic potato salad with egg and pickle",
+   "type": "sides",
+   "serves": 8,
+   "prep": 20,
+   "cook": 25,
+   "tags": [
+    "vegetarian",
+    "make ahead",
+    "gluten-free",
+    "crowd"
+   ],
+   "ingredients": [
+    {
+     "q": 3,
+     "u": "lb",
+     "item": "Yukon gold potatoes",
+     "aisle": "produce",
+     "note": "peeled and cubed"
+    },
+    {
+     "q": 4,
+     "u": "",
+     "item": "large eggs",
+     "aisle": "dairy"
+    },
+    {
+     "q": 0.75,
+     "u": "cup",
+     "item": "mayonnaise",
+     "aisle": "pantry"
+    },
+    {
+     "q": 2,
+     "u": "tbsp",
+     "item": "yellow mustard",
+     "aisle": "pantry"
+    },
+    {
+     "q": 0.25,
+     "u": "cup",
+     "item": "sweet pickle relish",
+     "aisle": "pantry"
+    },
+    {
+     "q": 2,
+     "u": "stalk",
+     "item": "celery",
+     "aisle": "produce",
+     "note": "finely diced"
+    },
+    {
+     "q": 3,
+     "u": "",
+     "item": "green onions",
+     "aisle": "produce",
+     "note": "sliced"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "salt",
+     "aisle": "spices"
+    },
+    {
+     "q": 0.5,
+     "u": "tsp",
+     "item": "black pepper",
+     "aisle": "spices"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Boil the potatoes in salted water until just tender. Drain and let cool.",
+     "timer": 720,
+     "timerLabel": "Boil the potatoes"
+    },
+    {
+     "text": "Cover the eggs with water, bring to a boil, then turn off the heat and cover. Let stand, then chill in cold water.",
+     "timer": 720,
+     "timerLabel": "Cook the eggs"
+    },
+    {
+     "text": "Peel and chop the eggs."
+    },
+    {
+     "text": "Stir the mayonnaise, mustard, relish, salt and pepper in a large bowl."
+    },
+    {
+     "text": "Fold in the potatoes, eggs, celery and green onions. Chill before serving.",
+     "timer": 3600,
+     "timerLabel": "Chill the salad"
+    }
+   ]
+  },
+  {
+   "id": "american-skillet-cornbread",
+   "title": "Skillet cornbread",
+   "blurb": "Golden, tender cornbread with crisp edges",
+   "type": "sides",
+   "serves": 8,
+   "prep": 10,
+   "cook": 22,
+   "tags": [
+    "vegetarian",
+    "kid-friendly"
+   ],
+   "ingredients": [
+    {
+     "q": 1,
+     "u": "cup",
+     "item": "yellow cornmeal",
+     "aisle": "pantry"
+    },
+    {
+     "q": 1,
+     "u": "cup",
+     "item": "all-purpose flour",
+     "aisle": "pantry"
+    },
+    {
+     "q": 2,
+     "u": "tbsp",
+     "item": "sugar",
+     "aisle": "pantry"
+    },
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "baking powder",
+     "aisle": "pantry"
+    },
+    {
+     "q": 0.5,
+     "u": "tsp",
+     "item": "salt",
+     "aisle": "spices"
+    },
+    {
+     "q": 1,
+     "u": "cup",
+     "item": "whole milk",
+     "aisle": "dairy"
+    },
+    {
+     "q": 2,
+     "u": "",
+     "item": "large eggs",
+     "aisle": "dairy"
+    },
+    {
+     "q": 6,
+     "u": "tbsp",
+     "item": "unsalted butter",
+     "aisle": "dairy",
+     "note": "melted, divided"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Heat the oven to 400°F. Put a 10-inch cast-iron skillet in the oven to heat."
+    },
+    {
+     "text": "Whisk the cornmeal, flour, sugar, baking powder and salt."
+    },
+    {
+     "text": "Whisk the milk, eggs and 4 tbsp butter. Stir into the dry ingredients until just combined."
+    },
+    {
+     "text": "Carefully add the last 2 tbsp butter to the hot skillet to coat it. Pour in the batter."
+    },
+    {
+     "text": "Bake until golden and a toothpick comes out clean.",
+     "timer": 1320,
+     "timerLabel": "Bake the cornbread"
+    },
+    {
+     "text": "Cool 5 minutes, then slice."
+    }
+   ]
+  },
+  {
+   "id": "american-green-bean-casserole",
+   "title": "Green bean casserole",
+   "blurb": "The holiday favorite with crispy onions",
+   "type": "sides",
+   "serves": 8,
+   "prep": 10,
+   "cook": 35,
+   "tags": [
+    "vegetarian",
+    "holiday",
+    "crowd"
+   ],
+   "ingredients": [
+    {
+     "q": 2,
+     "u": "lb",
+     "item": "green beans",
+     "aisle": "produce",
+     "note": "trimmed, cut in 2-inch pieces"
+    },
+    {
+     "q": 1,
+     "u": "can",
+     "item": "cream of mushroom soup (10.5 oz)",
+     "aisle": "canned"
+    },
+    {
+     "q": 0.5,
+     "u": "cup",
+     "item": "whole milk",
+     "aisle": "dairy"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "soy sauce",
+     "aisle": "international"
+    },
+    {
+     "q": 0.25,
+     "u": "tsp",
+     "item": "black pepper",
+     "aisle": "spices"
+    },
+    {
+     "q": 1.5,
+     "u": "cup",
+     "item": "crispy fried onions",
+     "aisle": "pantry",
+     "note": "divided"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Heat the oven to 350°F. Boil the green beans in salted water until crisp-tender, then drain.",
+     "timer": 300,
+     "timerLabel": "Blanch the beans"
+    },
+    {
+     "text": "Stir the soup, milk, soy sauce, pepper and 2/3 cup fried onions in a 2-quart baking dish."
+    },
+    {
+     "text": "Add the green beans and stir to coat."
+    },
+    {
+     "text": "Bake until bubbling.",
+     "timer": 1500,
+     "timerLabel": "Bake the casserole"
+    },
+    {
+     "text": "Top with the remaining fried onions and bake until golden.",
+     "timer": 300,
+     "timerLabel": "Crisp the onions"
+    }
+   ]
+  },
+  {
+   "id": "american-baked-beans",
+   "title": "Homestyle baked beans",
+   "blurb": "Smoky-sweet beans with bacon, slow-baked",
+   "type": "sides",
+   "serves": 8,
+   "prep": 15,
+   "cook": 90,
+   "tags": [
+    "make ahead",
+    "crowd"
+   ],
+   "ingredients": [
+    {
+     "q": 4,
+     "u": "slice",
+     "item": "bacon",
+     "aisle": "meat",
+     "note": "chopped"
+    },
+    {
+     "q": 1,
+     "u": "",
+     "item": "yellow onion",
+     "aisle": "produce",
+     "note": "diced"
+    },
+    {
+     "q": 3,
+     "u": "can",
+     "item": "pork and beans (15 oz)",
+     "aisle": "canned"
+    },
+    {
+     "q": 0.5,
+     "u": "cup",
+     "item": "ketchup",
+     "aisle": "pantry"
+    },
+    {
+     "q": 0.25,
+     "u": "cup",
+     "item": "brown sugar",
+     "aisle": "pantry"
+    },
+    {
+     "q": 2,
+     "u": "tbsp",
+     "item": "yellow mustard",
+     "aisle": "pantry"
+    },
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "Worcestershire sauce",
+     "aisle": "pantry"
+    },
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "molasses",
+     "aisle": "pantry"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Heat the oven to 350°F. Cook the bacon in a skillet until crisp.",
+     "timer": 480,
+     "timerLabel": "Crisp the bacon"
+    },
+    {
+     "text": "Add the onion and cook until soft.",
+     "timer": 240,
+     "timerLabel": "Soften the onion"
+    },
+    {
+     "text": "Stir the beans, ketchup, brown sugar, mustard, Worcestershire and molasses in a 2-quart baking dish."
+    },
+    {
+     "text": "Mix in the bacon and onion."
+    },
+    {
+     "text": "Bake uncovered until thick and bubbly.",
+     "timer": 4800,
+     "timerLabel": "Bake the beans"
+    },
+    {
+     "text": "Let stand 10 minutes before serving.",
+     "timer": 600,
+     "timerLabel": "Stand"
+    }
+   ]
+  },
+  {
+   "id": "american-honey-glazed-carrots",
+   "title": "Honey glazed carrots",
+   "blurb": "Tender, buttery carrots in 15 minutes",
+   "type": "sides",
+   "serves": 6,
+   "prep": 5,
+   "cook": 15,
+   "tags": [
+    "vegetarian",
+    "quick",
+    "gluten-free",
+    "kid-friendly"
+   ],
+   "ingredients": [
+    {
+     "q": 1.5,
+     "u": "lb",
+     "item": "carrots",
+     "aisle": "produce",
+     "note": "peeled, sliced 1/4 inch thick"
+    },
+    {
+     "q": 2,
+     "u": "tbsp",
+     "item": "unsalted butter",
+     "aisle": "dairy"
+    },
+    {
+     "q": 2,
+     "u": "tbsp",
+     "item": "honey",
+     "aisle": "pantry"
+    },
+    {
+     "q": 0.25,
+     "u": "cup",
+     "item": "water",
+     "aisle": "pantry"
+    },
+    {
+     "q": 0.5,
+     "u": "tsp",
+     "item": "salt",
+     "aisle": "spices"
+    },
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "fresh parsley",
+     "aisle": "produce",
+     "note": "chopped"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Put the carrots, butter, honey, water and salt in a large skillet."
+    },
+    {
+     "text": "Bring to a boil, then cover and cook over medium heat until nearly tender.",
+     "timer": 480,
+     "timerLabel": "Cook covered"
+    },
+    {
+     "text": "Uncover and cook until the liquid becomes a glaze, stirring.",
+     "timer": 300,
+     "timerLabel": "Glaze the carrots"
+    },
+    {
+     "text": "Sprinkle with parsley and serve."
+    }
+   ]
+  },
+  {
+   "id": "american-garlic-roasted-potatoes",
+   "title": "Garlic roasted red potatoes",
+   "blurb": "Crispy-edged potatoes with garlic and herbs",
+   "type": "sides",
+   "serves": 6,
+   "prep": 10,
+   "cook": 40,
+   "tags": [
+    "vegan",
+    "gluten-free",
+    "kid-friendly"
+   ],
+   "ingredients": [
+    {
+     "q": 2.5,
+     "u": "lb",
+     "item": "red potatoes",
+     "aisle": "produce",
+     "note": "cut in 1-inch pieces"
+    },
+    {
+     "q": 3,
+     "u": "tbsp",
+     "item": "olive oil",
+     "aisle": "pantry"
+    },
+    {
+     "q": 4,
+     "u": "clove",
+     "item": "garlic",
+     "aisle": "produce",
+     "note": "minced"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "salt",
+     "aisle": "spices"
+    },
+    {
+     "q": 0.5,
+     "u": "tsp",
+     "item": "black pepper",
+     "aisle": "spices"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "dried rosemary",
+     "aisle": "spices"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Heat the oven to 425°F with a sheet pan inside."
+    },
+    {
+     "text": "Toss the potatoes with the oil, salt, pepper and rosemary."
+    },
+    {
+     "text": "Spread them on the hot pan in one layer. Roast, stirring halfway.",
+     "timer": 1800,
+     "timerLabel": "Roast the potatoes"
+    },
+    {
+     "text": "Stir in the garlic and roast until golden and crisp.",
+     "timer": 600,
+     "timerLabel": "Add the garlic"
+    },
+    {
+     "text": "Serve hot."
+    }
+   ]
+  },
+  {
+   "id": "american-macaroni-salad",
+   "title": "Creamy macaroni salad",
+   "blurb": "Cookout-style pasta salad, made ahead",
+   "type": "sides",
+   "serves": 8,
+   "prep": 15,
+   "cook": 10,
+   "tags": [
+    "vegetarian",
+    "make ahead",
+    "crowd"
+   ],
+   "ingredients": [
+    {
+     "q": 1,
+     "u": "lb",
+     "item": "elbow macaroni",
+     "aisle": "pantry"
+    },
+    {
+     "q": 1,
+     "u": "cup",
+     "item": "mayonnaise",
+     "aisle": "pantry"
+    },
+    {
+     "q": 2,
+     "u": "tbsp",
+     "item": "apple cider vinegar",
+     "aisle": "pantry"
+    },
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "sugar",
+     "aisle": "pantry"
+    },
+    {
+     "q": 1,
+     "u": "tbsp",
+     "item": "yellow mustard",
+     "aisle": "pantry"
+    },
+    {
+     "q": 2,
+     "u": "stalk",
+     "item": "celery",
+     "aisle": "produce",
+     "note": "diced"
+    },
+    {
+     "q": 1,
+     "u": "",
+     "item": "red bell pepper",
+     "aisle": "produce",
+     "note": "diced"
+    },
+    {
+     "q": 0.25,
+     "u": "cup",
+     "item": "red onion",
+     "aisle": "produce",
+     "note": "finely diced"
+    },
+    {
+     "q": 1,
+     "u": "tsp",
+     "item": "salt",
+     "aisle": "spices"
+    },
+    {
+     "q": 0.5,
+     "u": "tsp",
+     "item": "black pepper",
+     "aisle": "spices"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Boil the macaroni until tender, then drain and rinse with cold water.",
+     "timer": 600,
+     "timerLabel": "Boil the macaroni"
+    },
+    {
+     "text": "Whisk the mayonnaise, vinegar, sugar, mustard, salt and pepper in a large bowl."
+    },
+    {
+     "text": "Add the macaroni, celery, pepper and onion. Stir to coat."
+    },
+    {
+     "text": "Chill so the pasta soaks up the dressing.",
+     "timer": 3600,
+     "timerLabel": "Chill the salad"
+    },
+    {
+     "text": "Stir, adding a splash of milk if dry. Serve cold."
+    }
+   ]
+  }
+ ]
+}

@@ -1,20 +1,30 @@
 // Family · Home dashboard (Main.dc.html in the design)
-import { settings, events } from '../config.js';
+import { settings } from '../config.js';
 import { getLocation } from '../services/location.js';
 import { getWeather, describe } from '../services/weather.js';
 import { icon } from '../icons.js';
 import { isTablet, getPhotos, onPhotosChanged } from '../services/tablet-photos.js';
+import { upcoming, refreshCalendars } from '../services/calendar-data.js';
+import { fmtMinutes } from '../services/recipe-data.js';
+import { tonight } from '../services/meal-plan.js';
 
-let timer, photoTimer, offPhotos;
+let timer, photoTimer, offPhotos, onCalendar;
 
 const fmtHour = (d) => d.toLocaleTimeString('en-US', { hour: 'numeric' });
 
-function daysUntil({ month, day }) {
-  const today = new Date(); today.setHours(0, 0, 0, 0);
-  let next = new Date(today.getFullYear(), month - 1, day);
-  if (next < today) next = new Date(today.getFullYear() + 1, month - 1, day);
-  return Math.round((next - today) / 86400000);
+const esc = (s) => String(s).replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+
+// "Coming up" rows: next three things from the calendar, birthdays and holidays.
+function comingUpRows() {
+  const list = upcoming(3);
+  if (!list.length) return '<div class="muted" style="font-size:18px">Nothing coming up</div>';
+  return list.map((e) => `
+            <div style="display:flex;justify-content:space-between;gap:12px;font-size:18px">
+              <span style="min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${esc(e.name)}</span>
+              <span style="font-weight:600;flex:none">${e.days === 0 ? 'Today' : e.days === 1 ? 'Tomorrow' : `${e.days} days`}</span>
+            </div>`).join('');
 }
+
 
 function clockParts() {
   const now = new Date();
@@ -29,10 +39,6 @@ function clockParts() {
 
 export function mount(el) {
   const c = clockParts();
-  const upcoming = events
-    .map((e) => ({ ...e, days: daysUntil(e) }))
-    .sort((a, b) => a.days - b.days)
-    .slice(0, 3);
 
   el.innerHTML = `
   <div style="height:100%;padding:40px;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:24px">
@@ -43,7 +49,7 @@ export function mount(el) {
           <span data-time>${c.time}</span><span data-ampm class="muted" style="font-size:40px;letter-spacing:0;margin-left:12px;font-weight:500">${c.ampm}</span>
         </div>
         <div style="display:flex;align-items:center;justify-content:space-between;gap:16px;margin-top:8px">
-          <div class="display" style="font-size:30px;font-weight:500"><span data-greeting>${c.greeting}</span>, ${settings.familyName}</div>
+          <div class="display" style="font-size:30px;font-weight:500"><span data-greeting>${c.greeting}</span>, ${esc(settings.familyName)}</div>
           <a href="#/launcher" class="pill" style="background:var(--card);color:var(--ink);gap:8px;flex:none">
             <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><rect x="3" y="3" width="7" height="7" rx="2"/><rect x="14" y="3" width="7" height="7" rx="2"/><rect x="3" y="14" width="7" height="7" rx="2"/><rect x="14" y="14" width="7" height="7" rx="2"/></svg>
             All apps
@@ -76,24 +82,35 @@ export function mount(el) {
       </div>
 
       <div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:24px">
-        <a href="#/recipe" style="background:${settings.accent};color:#fff;border-radius:var(--radius);padding:24px;display:flex;flex-direction:column;gap:8px">
-          <div class="eyebrow">Tonight's dinner idea</div>
-          <div class="display" style="font-size:28px;font-weight:500;line-height:1.15">Slow-cooker white chicken chili</div>
-          <div style="font-size:16px">20 min prep · Tap to cook</div>
+        <a data-dinner href="#/recipes" style="background:${settings.accent};color:#fff;border-radius:var(--radius);padding:24px;display:flex;flex-direction:column;gap:8px">
+          <div data-d-eyebrow class="eyebrow">Tonight's dinner idea</div>
+          <div data-d-title class="display" style="font-size:28px;font-weight:500;line-height:1.15;overflow-wrap:anywhere;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden">Pick a recipe</div>
+          <div data-d-sub style="font-size:16px">Tap to browse recipes</div>
         </a>
-        <a href="#/calendar" class="card" style="padding:24px;display:flex;flex-direction:column;gap:12px">
+        <a href="#/calendar" class="card" style="padding:24px;display:flex;flex-direction:column;gap:12px;min-width:0">
           <div class="eyebrow muted">Coming up</div>
-          ${upcoming.map((e) => `
-            <div style="display:flex;justify-content:space-between;font-size:18px">
-              <span>${e.name}</span>
-              <span style="font-weight:600">${e.days === 0 ? 'Today!' : e.days === 1 ? 'Tomorrow' : `${e.days} days`}</span>
-            </div>`).join('')}
+          <div data-coming style="display:flex;flex-direction:column;gap:12px">${comingUpRows()}</div>
         </a>
       </div>
     </div>
   </div>`;
 
   const $ = (s) => el.querySelector(s);
+
+  // Dinner card: what's planned tonight, else the daily idea.
+  tonight().then((t) => {
+    if (!el.isConnected || !t) return;
+    const id = encodeURIComponent(t.entry.id);
+    $('[data-dinner]').setAttribute('href', t.planned ? `#/recipe/${id}` : `#/dish/${id}`);
+    $('[data-d-eyebrow]').textContent = t.planned ? "Tonight's dinner" : "Tonight's dinner idea";
+    $('[data-d-title]').textContent = t.entry.t;
+    $('[data-d-sub]').textContent = `${fmtMinutes(t.entry.m)} · ${t.planned ? 'Tap to cook' : 'Tap to see it'}`;
+  }).catch(() => {});
+
+  // Calendar links download in the background; redraw "Coming up" when they arrive.
+  onCalendar = () => { if (el.isConnected) $('[data-coming]').innerHTML = comingUpRows(); };
+  window.addEventListener('calendar-updated', onCalendar);
+  refreshCalendars();
 
   // Photo card: this tablet's newest photos, changing every 30 seconds.
   let photoIndex = 0;
@@ -154,4 +171,5 @@ export function unmount() {
   clearInterval(timer);
   clearInterval(photoTimer);
   offPhotos?.();
+  window.removeEventListener('calendar-updated', onCalendar);
 }

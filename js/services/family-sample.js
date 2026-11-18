@@ -1,11 +1,7 @@
-// Sample data for the family screens (launcher, photos, night clock).
-// TODO(backend): everything here comes from the shared family backend once it
-// exists (shared photo album, shared calendar, shared messages). Keep the same
-// shapes so the screens don't need to change.
-
-// TODO(backend): replace `art` with a real photo URL (e.g. `src: 'https://…/lake.jpg'`).
-// photos.js already renders `src` as a background image when it's present and
-// falls back to the gradient `art` otherwise.
+// Example photos for previewing the Photos screen in a normal browser (on a PC),
+// where there's no tablet album. On the tablet, photos.js shows the photos that
+// were added to this tablet from a phone. `art` is a gradient stand-in; photos.js
+// renders `src` as a background image when present.
 export const photos = [
   {
     title: 'Lake trip, summer 2025',
@@ -42,24 +38,3 @@ export const photos = [
           linear-gradient(180deg, #2A1A16 0%, #4A2C22 50%, #6B3D2A 80%, #3A221A 100%)`,
   },
 ];
-
-// How many photos were added since the tablet last looked (launcher tile).
-export const newPhotoCount = 4;
-
-// TODO(backend): shared calendar. `day` is days from today, time is "H:MM AM".
-export const calendar = [
-  { name: 'Dentist — Sam', day: 1, time: '8:00 AM' },
-  { name: 'Book club at our place', day: 3, time: '7:00 PM' },
-];
-
-// TODO(backend): shared messages.
-export const unreadNotes = 1;
-
-export function thisWeekCount() {
-  return calendar.filter((e) => e.day >= 0 && e.day < 7).length;
-}
-
-// The first event tomorrow, for the night clock.
-export function firstTomorrow() {
-  return calendar.find((e) => e.day === 1) || null;
-}

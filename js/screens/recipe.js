@@ -1,20 +1,29 @@
 // Family · Cooking mode (Recipe.dc.html in the design)
 // Step-by-step with big buttons, tickable ingredients, and real countdown timers.
-// Progress (step, ticks, timers) is saved so leaving the screen doesn't lose it;
-// timers keep counting in the background via their end time.
+// Progress (step, ticks, timers) is saved per recipe id so leaving the screen or
+// switching recipes doesn't lose it; timers keep counting in the background via their end time.
+// "All recipes" goes to the recipe browser; the recipe being cooked is remembered in localStorage.
+// #/recipe/<id> opens that recipe; plain #/recipe opens the one in progress, else tonight's.
 import { settings } from '../config.js';
-import { recipes, defaultRecipe } from '../services/recipe-data.js';
+import { getRecipe, ingredientText, metaLine } from '../services/recipe-data.js';
+import { tonight } from '../services/meal-plan.js';
+
+const esc = (x) => String(x == null ? '' : x).replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 
 const ALARM_MAX_MS = 2 * 60 * 1000; // stop ringing after 2 minutes if nobody taps
+const CURRENT_KEY = 'recipe.current';
 let tickTimer, audio;
 
 // ---- Saved state ----------------------------------------------------------
 const keyFor = (id) => `recipe.v1.${id}`;
 function load(r) {
-  const s = JSON.parse(localStorage.getItem(keyFor(r.id)) || 'null') || {};
+  let s = null;
+  try { s = JSON.parse(localStorage.getItem(keyFor(r.id)) || 'null'); } catch (e) { s = null; }
+  s = s || {};
+  const checked = s.checked || [];
   return {
     step: Math.min(Math.max(0, s.step || 0), r.steps.length - 1),
-    checked: r.ingredients.map((_, i) => !!s.checked?.[i]),
+    checked: r.ingredients.map((_, i) => !!checked[i]),
     // timers[i]: { end } running · { left } paused · { end, ack } finished and dismissed
     timers: s.timers || {},
   };
@@ -34,6 +43,18 @@ function status(s, i) {
   if (t.end != null) return t.end <= Date.now() ? 'done' : 'running';
   return 'paused';
 }
+// Running, paused, or finished but not yet dismissed.
+function isActive(s, i) {
+  const st = status(s, i);
+  return st === 'running' || st === 'paused' || (st === 'done' && !s.timers[i].ack);
+}
+function activeTimers(r, s) {
+  return r.steps.map((_, i) => i).filter((i) => r.steps[i].timer && isActive(s, i));
+}
+// Someone has started cooking this recipe.
+function inProgress(r, s) {
+  return s.step > 0 || s.checked.some(Boolean) || activeTimers(r, s).length > 0;
+}
 function fmt(ms) {
   const total = Math.ceil(ms / 1000);
   const h = Math.floor(total / 3600);
@@ -45,9 +66,9 @@ function fmt(ms) {
 // ---- Alarm sound (Web Audio, no files needed) ------------------------------
 function ensureAudio() {
   try {
-    audio ||= new (window.AudioContext || window.webkitAudioContext)();
+    if (!audio) audio = new (window.AudioContext || window.webkitAudioContext)();
     if (audio.state === 'suspended') audio.resume();
-  } catch { /* no audio available */ }
+  } catch (e) { /* no audio available */ }
 }
 function beep() {
   if (!audio) return;
@@ -66,11 +87,61 @@ function beep() {
   });
 }
 
+// Short name for chips about another recipe's timer ("Slow-cooker white…").
+const shortTitle = (t) => (t.length > 18 ? `${t.slice(0, 17)}…` : t);
+// Long steps get slightly smaller type so they always fit the card.
+const stepSize = (text) => (text.length <= 90 ? 46 : text.length <= 130 ? 40 : 34);
+
 // ---- Screen -----------------------------------------------------------------
-export function mount(el) {
+export function mount(el, ctx) {
+  el.innerHTML = '<div class="k-empty" style="height:100%;display:flex;align-items:center;justify-content:center;font-size:22px;color:#4A5363">Loading recipe…</div>';
+  start(el, (ctx && ctx.args) || []).catch((err) => {
+    console.error(err);
+    if (el.isConnected) el.innerHTML = '<div style="height:100%;display:flex;flex-direction:column;gap:20px;align-items:center;justify-content:center;font-size:22px;color:#4A5363">Couldn’t load the recipe. Check the Wi-Fi.<a href="#/recipes" class="pill" style="background:#1D2430;color:#fff">All recipes</a></div>';
+  });
+}
+
+async function start(el, args) {
   const a = settings.accent;
-  const r = recipes[defaultRecipe];
-  const s = load(r);
+
+  // Every recipe with saved progress (so running timers in other recipes keep showing).
+  const savedIds = [];
+  for (let k = 0; k < localStorage.length; k++) {
+    const key = localStorage.key(k);
+    if (key && key.indexOf('recipe.v1.') === 0) savedIds.push(key.slice(10));
+  }
+  const loaded = await Promise.all(savedIds.map((id) => getRecipe(id).catch(() => null)));
+  const recipes = {};
+  loaded.forEach((x) => { if (x) recipes[x.id] = x; });
+  const list = loaded.filter(Boolean);
+
+  // The recipe asked for, else the one in progress, else tonight's.
+  let r = null;
+  let s = null;
+  if (args[0]) r = await getRecipe(args[0]);
+  if (!r) {
+    r = await getRecipe(localStorage.getItem(CURRENT_KEY));
+    s = r ? load(r) : null;
+    if (!r || !inProgress(r, s)) {
+      const t = await tonight();
+      r = (t && await getRecipe(t.entry.id)) || r;
+    }
+  }
+  if (!el.isConnected) return;
+  if (!r) { location.hash = '#/recipes'; return; }
+  recipes[r.id] = r;
+  s = load(r);
+  localStorage.setItem(CURRENT_KEY, r.id);
+
+  // Other recipes with timers still going (so switching never loses a running timer).
+  let others = [];
+  function loadOthers() {
+    others = list.filter((x) => x.id !== r.id)
+      .map((x) => ({ r: x, s: load(x) }))
+      .filter((o) => activeTimers(o.r, o.s).length > 0);
+  }
+  loadOthers();
+
   let lastBeep = 0;
   let sideHtml = '';
 
@@ -95,19 +166,44 @@ export function mount(el) {
     .rc-chip{min-height:44px;padding:0 18px;border-radius:999px;border:none;background:#F4F5F7;color:#1D2430;
       font-size:16px;font-weight:600;font-family:Inter,sans-serif;cursor:pointer;display:inline-flex;align-items:center;gap:8px}
     .rc-chip.done{background:${a};color:#FFFFFF}
+    .rc-pillbtn{border:none;background:#FFFFFF;color:#1D2430;font-family:Inter,sans-serif;cursor:pointer;flex:none}
+    .rc-chooser{position:absolute;top:0;right:0;bottom:0;left:0;background:var(--bg);padding:40px;
+      display:flex;flex-direction:column;gap:24px;z-index:2}
+    .rc-grid{flex-grow:1;min-height:0;overflow-y:auto;-webkit-overflow-scrolling:touch;display:grid;
+      grid-template-columns:repeat(4,minmax(0,1fr));gap:20px;align-content:start;padding-bottom:4px}
+    .rc-card{border:3px solid transparent;background:#FFFFFF;border-radius:var(--radius);padding:22px;min-height:168px;
+      display:flex;flex-direction:column;gap:10px;text-align:left;font-family:Inter,sans-serif;color:#1D2430;cursor:pointer;
+      transition:transform .1s ease}
+    .rc-card:active{transform:scale(.97)}
+    .rc-card.tonight{border-color:${a}}
+    .rc-card .t{font-size:24px;font-weight:500;line-height:1.15}
+    .rc-card .m{font-size:15px;color:#4A5363}
+    .rc-tag{align-self:flex-start;border-radius:999px;padding:5px 12px;font-size:14px;font-weight:600;background:#F4F5F7;color:#1D2430}
+    .rc-badge{align-self:flex-start;border-radius:999px;padding:5px 12px;font-size:14px;font-weight:600;background:${a};color:#FFFFFF}
+    .rc-badge.now{background:#1D2430}
   </style>
-  <div data-root style="height:100%;padding:40px;display:flex;flex-direction:column;gap:24px">
+  <div data-root style="height:100%;position:relative">
+    <div data-cook style="height:100%;padding:40px;display:flex;flex-direction:column;gap:24px"></div>
+  </div>`;
+
+  const $ = (sel) => el.querySelector(sel);
+
+  // ---- Cooking mode ----
+  function renderCook() {
+    sideHtml = '';
+    $('[data-cook]').innerHTML = `
     <div style="display:flex;align-items:center;justify-content:space-between;gap:16px">
-      <a href="#/home" class="pill" style="background:#FFFFFF">← Home</a>
-      <div class="display" style="font-size:34px;font-weight:500">${r.title}</div>
-      <div class="muted" style="font-size:18px">${r.meta}</div>
+      <a href="#/home" class="pill" style="background:#FFFFFF;flex:none">← Home</a>
+      <div class="display" style="font-size:34px;font-weight:500;flex:1;min-width:0;text-align:center;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${esc(r.title)}</div>
+      <div class="muted" style="font-size:18px;flex:none">${esc(metaLine(r))}</div>
+      <a href="#/recipes" class="pill rc-pillbtn">All recipes</a>
     </div>
     <div style="flex-grow:1;display:grid;grid-template-columns:380px minmax(0,1fr);gap:24px;min-height:0">
       <div class="card" style="padding:28px;display:flex;flex-direction:column;gap:14px;overflow:auto">
         <div class="eyebrow muted">Ingredients</div>
         ${r.ingredients.map((ing, i) => `
           <label class="rc-ing${s.checked[i] ? ' on' : ''}">
-            <input type="checkbox" data-ing="${i}"${s.checked[i] ? ' checked' : ''}><span>${ing}</span>
+            <input type="checkbox" data-ing="${i}"${s.checked[i] ? ' checked' : ''}><span>${esc(ingredientText(ing))}</span>
           </label>`).join('')}
       </div>
       <div class="card" style="padding:40px;display:flex;flex-direction:column;justify-content:space-between;gap:24px;min-width:0">
@@ -122,17 +218,18 @@ export function mount(el) {
           <div data-side style="margin-left:auto;display:flex;gap:10px;align-items:center;justify-content:flex-end;flex-wrap:wrap;min-width:0"></div>
         </div>
       </div>
-    </div>
-  </div>`;
-
-  const $ = (sel) => el.querySelector(sel);
+    </div>`;
+    renderStep();
+  }
 
   function renderStep() {
     const i = s.step;
     const step = r.steps[i];
     const last = i === r.steps.length - 1;
     $('[data-stepnum]').textContent = `Step ${i + 1} of ${r.steps.length}`;
-    $('[data-steptext]').textContent = step.text;
+    const text = $('[data-steptext]');
+    text.textContent = step.text;
+    text.style.fontSize = `${stepSize(step.text)}px`;
     $('[data-prev]').disabled = i === 0;
     $('[data-next]').textContent = last ? 'Start over' : 'Next step';
     $('[data-timerbox]').innerHTML = step.timer ? `
@@ -171,13 +268,21 @@ export function mount(el) {
     }
 
     // Chips for timers on other steps (tap to jump there).
-    const chips = r.steps.map((stp, j) => {
-      if (j === i || !stp.timer) return '';
+    let chips = r.steps.map((stp, j) => {
+      if (j === i || !stp.timer || !isActive(s, j)) return '';
       const st = status(s, j);
-      if (st === 'idle' || (st === 'done' && s.timers[j].ack)) return '';
       const done = st === 'done';
       return `<button class="rc-chip${done ? ' done' : ''}" data-jump="${j}">Step ${j + 1} · ${done ? 'Time’s up!' : fmt(remaining(r, s, j))}${st === 'paused' ? ' (paused)' : ''}</button>`;
     }).join('');
+    // ...and for timers still going in other recipes (tap to switch back).
+    others.forEach((o) => {
+      activeTimers(o.r, o.s).forEach((j) => {
+        const st = status(o.s, j);
+        const done = st === 'done';
+        chips += `<button class="rc-chip${done ? ' done' : ''}" data-other="${o.r.id}" data-ostep="${j}">${shortTitle(o.r.title)} · ${done ? 'Time’s up!' : fmt(remaining(o.r, o.s, j))}${st === 'paused' ? ' (paused)' : ''}</button>`;
+        if (done && Date.now() - o.s.timers[j].end < ALARM_MAX_MS) ringing = true;
+      });
+    });
     const side = $('[data-side]');
     const html = chips || '<span class="muted" style="font-size:18px">Big buttons for messy hands</span>';
     if (sideHtml !== html) { sideHtml = html; side.innerHTML = html; }
@@ -197,13 +302,33 @@ export function mount(el) {
     renderStep();
   }
 
+  // Switch cooking mode to another recipe. Its own saved progress is kept only if
+  // `keep` (going back to a recipe with timers running); otherwise it starts fresh.
+  function openRecipe(id, keep) {
+    const next = recipes[id];
+    if (!next) return;
+    if (next.id !== r.id) {
+      if (!keep && !activeTimers(next, load(next)).length) localStorage.removeItem(keyFor(next.id));
+      r = next;
+      s = load(r);
+      localStorage.setItem(CURRENT_KEY, r.id);
+      loadOthers();
+      renderCook();
+    }
+  }
+
   const root = $('[data-root]');
-  root.addEventListener('click', (e) => {
+  function onClick(e) {
     const t = e.target.closest('button');
     if (!t) return;
     ensureAudio(); // unlock sound on the first tap so alarms can play later
     const i = s.step;
-    if (t.matches('[data-prev]')) setStep(i - 1);
+    if (t.matches('[data-other]')) {
+      const j = +t.dataset.ostep;
+      openRecipe(t.dataset.other, true);
+      if (status(s, j) === 'done') { s.timers[j].ack = true; save(r, s); }
+      setStep(j);
+    } else if (t.matches('[data-prev]')) setStep(i - 1);
     else if (t.matches('[data-next]')) {
       if (i === r.steps.length - 1) {
         // Start over: clear ticks and timers.
@@ -227,20 +352,23 @@ export function mount(el) {
       if (status(s, j) === 'done') { s.timers[j].ack = true; save(r, s); }
       setStep(j);
     }
-  });
-
-  root.addEventListener('change', (e) => {
+  }
+  function onChange(e) {
     const cb = e.target.closest('[data-ing]');
     if (!cb) return;
     s.checked[+cb.dataset.ing] = cb.checked;
     cb.parentElement.classList.toggle('on', cb.checked);
     save(r, s);
-  });
+  }
+  root.addEventListener('click', onClick);
+  root.addEventListener('change', onChange);
 
-  renderStep();
-  tickTimer = setInterval(tick, 250);
+  renderCook();
+  clearInterval(tickTimer);
+  tickTimer = setInterval(() => { if (el.isConnected) tick(); }, 250);
 }
 
 export function unmount() {
   clearInterval(tickTimer);
+  tickTimer = null;
 }

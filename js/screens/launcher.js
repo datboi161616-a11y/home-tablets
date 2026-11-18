@@ -2,7 +2,10 @@
 import { settings } from '../config.js';
 import { getLocation } from '../services/location.js';
 import { getWeather, describe } from '../services/weather.js';
-import { newPhotoCount, thisWeekCount, unreadNotes } from '../services/family-sample.js';
+import { photos as samplePhotos } from '../services/family-sample.js';
+import { thisWeekCount } from '../services/calendar-data.js';
+import { unreadCount } from '../services/messages-data.js';
+import { tonight, weekRecipeIds, shoppingCount } from '../services/meal-plan.js';
 import { isTablet, getPhotos } from '../services/tablet-photos.js';
 import { getApps } from '../services/apps.js';
 import { feature } from '../services/features.js';
@@ -35,8 +38,20 @@ const ICONS = {
 
 const plural = (n, one, many) => `${n} ${n === 1 ? one : many}`;
 
+const esc = (s) => String(s).replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+
+function planSub() {
+  const n = weekRecipeIds().length;
+  return n ? plural(n, 'meal planned', 'meals planned') : 'Browse and plan the week';
+}
+
+function notesSub() {
+  const n = unreadCount();
+  return n ? plural(n, 'new note', 'new notes') : 'No new notes';
+}
+
 function photosSub() {
-  if (!isTablet()) return `${newPhotoCount} new from the family`;
+  if (!isTablet()) return plural(samplePhotos.length, 'photo', 'photos'); // browser preview
   const n = getPhotos().length;
   return n ? `${n} photo${n === 1 ? '' : 's'}` : 'Add from your phone';
 }
@@ -59,13 +74,13 @@ export function mount(el) {
     { href: '#/photos', icon: 'photos', title: 'Photos', sub: photosSub() },
     { href: '#/calendar', icon: 'calendar', title: 'Calendar', sub: week ? `${plural(week, 'thing', 'things')} this week` : 'Nothing this week' },
     { href: '#/forecast', icon: 'weather', title: 'Weather', sub: 'Loading…', data: 'data-weather' },
-    { href: '#/recipe', icon: 'recipe', title: 'Recipes', sub: 'Family favorites', style: 'accent' },
-    { href: '#/messages', icon: 'messages', title: 'Messages', sub: unreadNotes ? `${plural(unreadNotes, 'new note', 'new notes')}` : 'No new notes' },
-    // The design's "Grocery list" tile (no grocery screen yet) is now the Apps tile.
+    { href: '#/recipes', icon: 'recipe', title: 'Recipes', sub: planSub(), style: 'accent', data: 'data-recipes' },
+    { href: '#/messages', icon: 'messages', title: 'Messages', sub: notesSub() },
+    { href: '#/shopping', icon: 'grocery', title: 'Grocery list', sub: 'From your week plan', data: 'data-grocery' },
+    // The night clock comes on by itself at 10 PM, so its tile gives way to Apps when Apps is on.
     feature('apps')
       ? { href: '#/apps', icon: 'apps', title: 'Apps', sub: appsSub() }
-      : { icon: 'grocery', title: 'Grocery list', sub: 'Shared with phones' }, // the design's original tile
-    { href: '#/night', icon: 'night', title: 'Night clock', sub: 'Starts at 10 PM' },
+      : { href: '#/night', icon: 'night', title: 'Night clock', sub: 'Starts at 10 PM' },
   ];
 
   const tile = (t) => {
@@ -76,9 +91,9 @@ export function mount(el) {
     const tag = t.href ? 'a' : 'div';
     return `<${tag} ${t.href ? `href="${t.href}"` : ''} class="ln-tile" style="background:${bg};color:${fg}">
       ${svg(ICONS[t.icon], iconColor)}
-      <div>
+      <div style="min-width:0">
         <div class="display" style="font-size:30px;font-weight:500">${t.title}</div>
-        <div ${t.data || ''} style="font-size:17px;color:${subColor};margin-top:4px">${t.sub}</div>
+        <div ${t.data || ''} style="font-size:17px;color:${subColor};margin-top:4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${esc(t.sub)}</div>
       </div>
     </${tag}>`;
   };
@@ -103,6 +118,15 @@ export function mount(el) {
   </div>`;
 
   const $ = (s) => el.querySelector(s);
+
+  // Recipes: tonight's dinner; Grocery list: how many things to get.
+  tonight().then((t) => {
+    if (!el.isConnected || !t) return;
+    if (t.planned || !weekRecipeIds().length) $('[data-recipes]').textContent = `${t.planned ? 'Tonight' : 'Idea'}: ${t.entry.t}`;
+  }).catch(() => {});
+  shoppingCount().then((n) => {
+    if (el.isConnected) $('[data-grocery]').textContent = n ? plural(n, 'thing to get', 'things to get') : 'Nothing on the list';
+  }).catch(() => {});
 
   timer = setInterval(() => {
     const n = clockParts();
