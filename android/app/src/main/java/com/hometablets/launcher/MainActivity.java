@@ -441,6 +441,7 @@ public class MainActivity extends Activity {
                 "New photo upload code (old QR codes stop working)",
                 "Apps screen: " + (featureOn("apps") ? "ON (tap to hide)" : "OFF (tap to show)"),
                 "Camera: " + (featureOn("camera") ? "ON (tap to hide)" : "OFF (tap to show)"),
+                "Welcome tour: show again (for a new owner)",
                 "About: app " + BuildConfig.VERSION_NAME + (Kiosk.isOwner(this) ? ", kiosk on" : ", kiosk off")
                         + ", WebView " + webViewVersion(),
         };
@@ -488,6 +489,11 @@ public class MainActivity extends Activity {
                             break;
                         case 8:
                             setFeature("camera", !featureOn("camera"));
+                            break;
+                        case 9:
+                            // Shows the tour now, and again at every start until someone finishes or skips it.
+                            web.evaluateJavascript("localStorage.removeItem('welcome.done.v1');location.hash='#/welcome'", null);
+                            Toast.makeText(this, "The welcome tour will show until someone finishes it", Toast.LENGTH_LONG).show();
                             break;
                         default:
                             break;

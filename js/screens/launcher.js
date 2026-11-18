@@ -149,7 +149,10 @@ export function mount(el) {
         <div data-date class="muted" style="font-size:20px">${c.date}</div>
         <div class="display" style="font-size:48px;font-weight:500">What would you like to see?</div>
       </div>
+      <div style="display:flex;align-items:center;gap:20px">
+      <a href="#/welcome" class="pill" style="background:#fff;color:var(--ink);font-size:16px" aria-label="Show the welcome tour again">Tour</a>
       <div class="display" style="font-size:56px;font-weight:300;white-space:nowrap"><span data-time>${c.time}</span><span data-ampm class="muted" style="font-size:24px;font-weight:500;margin-left:8px">${c.ampm}</span></div>
+      </div>
     </div>
     <div style="flex-grow:1;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));grid-template-rows:repeat(2,minmax(0,1fr));gap:20px">
       ${tiles.map(tile).join('')}

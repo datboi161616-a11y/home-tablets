@@ -1,6 +1,7 @@
 import { installCompat } from './compat.js';
 import { profile } from './config.js';
 import * as placeholder from './screens/placeholder.js';
+import { welcomeDone } from './services/welcome-state.js';
 
 const screenEl = document.getElementById('screen');
 installCompat(screenEl);
@@ -23,6 +24,8 @@ const SCREENS = {
   bridge: 'Flight deck', flights: 'Planes overhead', departures: 'Departures', trivia: 'Trivia',
   alert: 'Sky alert', missions: 'Space missions', sky: "Tonight's sky",
   deepimage: 'Space image', viewscreen: 'Starfield',
+  // Both
+  welcome: 'Welcome',
 };
 
 export const homeRoute = profile === 'tom' ? 'bridge' : 'home';
@@ -35,7 +38,11 @@ async function navigate() {
   const id = ++navId;
   // "#/recipes/chinese/noodles" -> screen "recipes", args ['chinese', 'noodles']
   const parts = location.hash.replace(/^#\/?/, '').split('/').map((x) => { try { return decodeURIComponent(x); } catch (e) { return x; } });
-  const name = parts[0] || homeRoute;
+  let name = parts[0] || homeRoute;
+  // A brand-new tablet opens the welcome tour instead of Home until it's finished or skipped
+  // (never in the hidden admin copy).
+  const ghost = (() => { try { return !!(window.TabletNative && window.TabletNative.isGhost && window.TabletNative.isGhost()); } catch (e) { return false; } })();
+  if (name === homeRoute && !ghost && !welcomeDone()) name = 'welcome';
   const args = parts.slice(1).filter(Boolean);
   let mod = placeholder;
   if (SCREENS[name]) {
