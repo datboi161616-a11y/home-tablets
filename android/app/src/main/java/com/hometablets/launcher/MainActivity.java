@@ -127,7 +127,7 @@ public class MainActivity extends Activity {
             photoServer = new PhotoServer(this, photos, family, new PhotoServer.Listener() {
                 @Override public void onPhotosChanged() { tell("tablet-photos"); }
                 @Override public void onFamilyChanged(String what) {
-                    tell("settings".equals(what) ? "tablet-family" : "tablet-notes");
+                    tell("settings".equals(what) ? "tablet-family" : "recipes".equals(what) ? "tablet-recipes" : "tablet-notes");
                 }
                 @Override public void onShoppingAction(JSONObject action) {
                     // action is built by FamilyStore.shoppingAction (plain JSON, safe as a JS literal).
@@ -1059,6 +1059,26 @@ public class MainActivity extends Activity {
         /** Message-board notes, newest first. */
         @JavascriptInterface
         public String notes() { return family.notes().toString(); }
+
+        /** The family's own recipes (as typed: one ingredient / step per line). */
+        @JavascriptInterface
+        public String myRecipes() { return family.myRecipes().toString(); }
+
+        /** Add or update a recipe (JSON). Returns the saved recipe as JSON, or an {"error"} object. */
+        @JavascriptInterface
+        public String saveMyRecipe(String json) {
+            if (isGhost) return "{\"error\":\"not here\"}";
+            try { return family.saveRecipe(new JSONObject(json)).toString(); }
+            catch (Exception e) {
+                try { return new JSONObject().put("error", String.valueOf(e.getMessage())).toString(); } catch (Exception x) { return "{}"; }
+            }
+        }
+
+        @JavascriptInterface
+        public boolean deleteMyRecipe(String id) {
+            if (isGhost) return false;
+            try { return family.deleteRecipe(id); } catch (Exception e) { return false; }
+        }
 
         /** The screens save the current shopping list here so the phone page can show it. */
         @JavascriptInterface

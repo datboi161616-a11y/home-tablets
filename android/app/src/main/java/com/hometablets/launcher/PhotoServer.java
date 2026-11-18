@@ -42,7 +42,7 @@ final class PhotoServer {
 
     interface Listener {
         void onPhotosChanged();
-        /** what: "settings" or "notes" */
+        /** what: "settings", "notes" or "recipes" */
         void onFamilyChanged(String what);
         /** A tick or new item from the phone's shopping list (see FamilyStore.shoppingAction). */
         void onShoppingAction(JSONObject action);
@@ -201,6 +201,20 @@ final class PhotoServer {
                 } catch (Exception e) {
                     sendJson(out, 400, new JSONObject().put("ok", false).put("error", String.valueOf(e.getMessage())));
                 }
+            } else if (method.equals("GET") && path.equals("/api/recipes")) {
+                sendJson(out, 200, new JSONObject().put("recipes", family.myRecipes()));
+            } else if (method.equals("POST") && path.equals("/api/recipes")) {
+                try {
+                    JSONObject r = family.saveRecipe(new JSONObject(readBody(in, headers)));
+                    sendJson(out, 200, new JSONObject().put("ok", true).put("recipe", r));
+                    listener.onFamilyChanged("recipes");
+                } catch (Exception e) {
+                    sendJson(out, 400, new JSONObject().put("ok", false).put("error", String.valueOf(e.getMessage())));
+                }
+            } else if (method.equals("POST") && path.equals("/api/recipes/delete")) {
+                boolean ok = family.deleteRecipe(uri.getQueryParameter("id"));
+                sendJson(out, ok ? 200 : 404, new JSONObject().put("ok", ok));
+                if (ok) listener.onFamilyChanged("recipes");
             } else if (method.equals("GET") && path.equals("/api/shopping")) {
                 sendJson(out, 200, family.shopping());
             } else if (method.equals("POST") && path.equals("/api/shopping")) {

@@ -36,6 +36,13 @@
   .sl-name::first-letter { text-transform:uppercase; }
   .sl-amt { color:var(--ink2); font-size:14px; }
   .sl-h { font-size:13px; font-weight:700; letter-spacing:1px; text-transform:uppercase; color:var(--ink2); margin-bottom:4px; }
+  textarea { width:100%; font:inherit; padding:14px; border:1px solid var(--line); border-radius:12px; margin-bottom:14px; background:#fff; min-height:150px; resize:vertical; }
+  .row3 { display:grid; grid-template-columns:repeat(3,1fr); gap:8px; }
+  .row3 input { margin-bottom:14px; }
+  .rc-item { display:flex; align-items:center; gap:10px; min-height:52px; border-top:1px solid #EEF0F2; }
+  .rc-item:first-of-type { border-top:0; }
+  .rc-item .t { flex:1; font-weight:600; }
+  .small-btn { border:0; background:#F1F2F4; border-radius:10px; padding:10px 14px; font:inherit; font-size:15px; cursor:pointer; }
   h2 { font-size:18px; margin:0 0 12px; display:flex; justify-content:space-between; align-items:baseline; }
   .tabs { display:flex; gap:6px; background:#DDE1E6; padding:5px; border-radius:16px; margin:0 0 18px; position:sticky; top:8px; z-index:5; }
   .tabs button { flex:1; border:0; background:transparent; font:inherit; font-weight:600; font-size:15px; padding:12px 6px; border-radius:12px; color:var(--ink2); cursor:pointer; min-height:44px; }
@@ -70,7 +77,8 @@
   <div class="tabs">
     <button data-tab="photos" class="on">Photos</button>
     <button data-tab="note">Note</button>
-    <button data-tab="shopping">Shopping</button>
+    <button data-tab="shopping">List</button>
+    <button data-tab="recipe">Recipe</button>
     <button data-tab="settings">Settings</button>
   </div>
 
@@ -128,6 +136,34 @@
     <div id="slStatus" class="status"></div>
   </div>
   <div id="slList"></div>
+  </section>
+
+  <section id="tab-recipe" hidden>
+  <div class="card">
+    <h2><span id="rcHead">Add a recipe</span><button id="rcNew" class="small-btn" hidden>New</button></h2>
+    <p class="muted" style="margin:0 0 14px">It shows up on the tablet under Recipes &rarr; My recipes, ready for the week plan and shopping list.</p>
+    <label for="rcTitle">Name</label>
+    <input id="rcTitle" type="text" maxlength="60" placeholder="Grandma's pot roast">
+    <label for="rcMeal">Meal</label>
+    <select id="rcMeal" style="width:100%;font:inherit;padding:14px;border:1px solid var(--line);border-radius:12px;margin-bottom:14px;background:#fff">
+      <option value="breakfast">Breakfast</option><option value="lunch">Lunch</option><option value="dinner" selected>Dinner</option><option value="dessert">Dessert</option>
+    </select>
+    <div class="row3">
+      <div><label for="rcServes">Serves</label><input id="rcServes" type="text" inputmode="numeric" value="4"></div>
+      <div><label for="rcPrep">Prep min</label><input id="rcPrep" type="text" inputmode="numeric" value="15"></div>
+      <div><label for="rcCook">Cook min</label><input id="rcCook" type="text" inputmode="numeric" value="30"></div>
+    </div>
+    <label for="rcIng">Ingredients <span class="muted">(one per line, like "2 cups flour")</span></label>
+    <textarea id="rcIng" placeholder="2 lb chuck roast&#10;1 onion, sliced&#10;3 carrots"></textarea>
+    <label for="rcSteps">Steps <span class="muted">(one per line; "bake 25 minutes" gets a timer)</span></label>
+    <textarea id="rcSteps" placeholder="Brown the roast on all sides.&#10;Add the vegetables and broth.&#10;Cook on low for 8 hours."></textarea>
+    <button id="rcSave" class="pick" type="button">Save to the tablet</button>
+    <div id="rcStatus" class="status"></div>
+  </div>
+  <div class="card">
+    <h2><span>Your recipes on the tablet</span></h2>
+    <div id="rcList" class="muted">Loading…</div>
+  </div>
   </section>
 
   <section id="tab-settings" hidden>
@@ -289,14 +325,15 @@
   var tabs = document.querySelectorAll('[data-tab]');
   function showTab(name) {
     tabs.forEach(function (b) { b.classList.toggle('on', b.dataset.tab === name); });
-    ['photos', 'note', 'shopping', 'settings'].forEach(function (t) { $('tab-' + t).hidden = t !== name; });
+    ['photos', 'note', 'shopping', 'recipe', 'settings'].forEach(function (t) { $('tab-' + t).hidden = t !== name; });
+    if (name === 'recipe') loadRecipes();
     if (name === 'note') loadNotes();
     if (name === 'shopping') loadShopping();
     if (name === 'settings') loadSettings();
     try { history.replaceState(null, '', location.pathname + location.search + '#' + name); } catch (e) {}
   }
   tabs.forEach(function (b) { b.onclick = function () { showTab(b.dataset.tab); }; });
-  if (/^#(note|shopping|settings)$/.test(location.hash)) showTab(location.hash.slice(1));
+  if (/^#(note|shopping|recipe|settings)$/.test(location.hash)) showTab(location.hash.slice(1));
 
   function esc(t) { return String(t == null ? '' : t).replace(/[&<>"']/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]; }); }
   function api(path, body) {
@@ -544,6 +581,54 @@
   });
   // While the list is open: send waiting ticks and pick up changes made on the tablet.
   setInterval(function () { if (!$('tab-shopping').hidden) loadShopping(); }, 20000);
+
+  // ===================== your own recipes =====================
+  var RC = [], rcEditing = '';
+  function rcLines(id) { return $(id).value.split('\n').map(function (x) { return x.trim(); }).filter(Boolean); }
+  function rcFill(r) {
+    rcEditing = r ? r.id : '';
+    $('rcHead').textContent = r ? 'Edit recipe' : 'Add a recipe';
+    $('rcNew').hidden = !r;
+    $('rcTitle').value = r ? r.title : '';
+    $('rcMeal').value = r ? r.meal : 'dinner';
+    $('rcServes').value = r ? r.serves : 4;
+    $('rcPrep').value = r ? r.prep : 15;
+    $('rcCook').value = r ? r.cook : 30;
+    $('rcIng').value = r ? r.ingredients.join('\n') : '';
+    $('rcSteps').value = r ? r.steps.join('\n') : '';
+  }
+  function loadRecipes() {
+    fetch('/api/recipes' + q()).then(function (r) { return r.json(); }).then(function (d) {
+      RC = d.recipes || [];
+      $('rcList').innerHTML = RC.length ? RC.map(function (r) {
+        return '<div class="rc-item"><div class="t">' + esc(r.title) + '</div>' +
+          '<button class="small-btn" data-rc-edit="' + esc(r.id) + '">Edit</button>' +
+          '<button class="small-btn" data-rc-del="' + esc(r.id) + '">Delete</button></div>';
+      }).join('') : 'None yet.';
+    }).catch(function () { $('rcList').textContent = 'Can’t reach the tablet. Are you on your home Wi-Fi?'; });
+  }
+  $('rcNew').onclick = function () { rcFill(null); };
+  $('rcSave').onclick = function () {
+    var body = {
+      id: rcEditing, title: $('rcTitle').value.trim(), meal: $('rcMeal').value,
+      serves: parseInt($('rcServes').value, 10) || 4, prep: parseInt($('rcPrep').value, 10) || 0, cook: parseInt($('rcCook').value, 10) || 0,
+      ingredients: rcLines('rcIng'), steps: rcLines('rcSteps')
+    };
+    setMsg($('rcStatus'), 'Saving…');
+    api('/api/recipes', body).then(function (r) {
+      if (!r.ok) { setMsg($('rcStatus'), r.error || 'Couldn’t save', 'err'); return; }
+      setMsg($('rcStatus'), '✓ Saved: ' + r.recipe.title + ' is on the tablet', 'ok');
+      rcFill(null); loadRecipes();
+    }).catch(function () { setMsg($('rcStatus'), 'Can’t reach the tablet. Are you on your home Wi-Fi?', 'err'); });
+  };
+  $('rcList').addEventListener('click', function (e) {
+    var ed = e.target.closest('[data-rc-edit]'), del = e.target.closest('[data-rc-del]');
+    if (ed) { rcFill(RC.filter(function (r) { return r.id === ed.dataset.rcEdit; })[0]); window.scrollTo(0, 0); }
+    if (del) {
+      if (!confirm('Delete this recipe from the tablet?')) return;
+      fetch('/api/recipes/delete' + q('&id=' + encodeURIComponent(del.dataset.rcDel)), { method: 'POST' }).then(loadRecipes);
+    }
+  });
 })();
 </script>
 </body>

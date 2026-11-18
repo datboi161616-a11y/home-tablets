@@ -2,13 +2,15 @@
 // index.json is a small list for browsing; a cuisine's full recipes load when opened.
 // Files are cached by the service worker, so browsing works offline after the first visit.
 
+import { savedRecipes, toRecipe, MEAL_NAMES } from './my-recipes.js';
+
 const BASE = './data/recipes/';
 
 // Tile colours for each cuisine (anything new falls back to ink).
 export const CUISINE_COLORS = {
   american: '#35557F', italian: '#2E6B45', mexican: '#C2491F', chinese: '#A8322A',
   japanese: '#3F4F6B', thai: '#4F7A3A', indian: '#B5701A', mediterranean: '#2C6E8A',
-  korean: '#8A3B5C', southern: '#7A4A2A', breakfast: '#C98A1E', lunch: '#3E7C6E', desserts: '#A84E73', weeknight: '#6B5B95',
+  mine: '#1D2430', korean: '#8A3B5C', southern: '#7A4A2A', breakfast: '#C98A1E', lunch: '#3E7C6E', desserts: '#A84E73', weeknight: '#6B5B95',
 };
 export const cuisineColor = (id) => CUISINE_COLORS[id] || '#1D2430';
 
@@ -22,17 +24,29 @@ async function getJson(name) {
   return res.json();
 }
 
-/** { cuisines: [{id,name,count,types:[{id,name,count}]}], recipes: [{id,t,c,ty,m,g,b,s}] } */
+/** { cuisines: [{id,name,count,types:[{id,name,count}]}], recipes: [{id,t,c,ty,m,g,b,s}] }
+ *  The family's own recipes are added as the 'mine' cuisine (always present, maybe empty). */
 export function loadIndex() {
   if (!indexP) {
-    indexP = getJson('index.json').then((ix) => {
-      ix.byId = {};
-      ix.recipes.forEach((r) => { ix.byId[r.id] = r; });
-      return ix;
-    });
+    indexP = getJson('index.json');
     indexP.catch(() => { indexP = null; }); // try again next time (offline first run)
   }
-  return indexP;
+  return indexP.then(withMine);
+}
+
+function withMine(base) {
+  const mine = savedRecipes().map(toRecipe);
+  const types = Object.keys(MEAL_NAMES)
+    .map((m) => ({ id: m, name: MEAL_NAMES[m], count: mine.filter((r) => r.type === m).length }))
+    .filter((t) => t.count);
+  const entries = mine.map((r) => ({ id: r.id, t: r.title, c: 'mine', ty: r.type, m: r.prep + r.cook, g: [], b: r.blurb, s: r.serves }));
+  const ix = {
+    cuisines: base.cuisines.concat([{ id: 'mine', name: 'My recipes', meal: 'mine', count: mine.length, types }]),
+    recipes: base.recipes.concat(entries),
+    byId: {},
+  };
+  ix.recipes.forEach((r) => { ix.byId[r.id] = r; });
+  return ix;
 }
 
 /** All recipes of one cuisine (full detail). */
@@ -50,6 +64,7 @@ export function loadCuisine(id) {
 /** One recipe by id (loads its cuisine file if needed). Resolves null if unknown. */
 export async function getRecipe(id) {
   if (!id) return null;
+  if (/^my-/.test(id)) { const x = savedRecipes().find((r) => r.id === id); return x ? toRecipe(x) : null; }
   if (byId[id]) return byId[id];
   const ix = await loadIndex();
   const e = ix.byId[id];
@@ -137,6 +152,7 @@ export async function prefetchAll() {
   try {
     const ix = await loadIndex();
     for (const c of ix.cuisines) {
+      if (c.id === 'mine') continue; // kept on the tablet, not a file
       await fetch(BASE + `${c.id}.json`).catch(() => null);
       await new Promise((r) => setTimeout(r, 1500));
     }

@@ -3,6 +3,8 @@ import { settings } from '../config.js';
 import { getWeek, nextBigThing, calendarStatus, refreshCalendars, KINDS } from '../services/calendar-data.js';
 
 let timer, onUpdate;
+let weekOffset = 0; // 0 = this week, 1 = next week… (the arrows; back to this week on every visit)
+const MAX_AHEAD = 8; // calendar links are read about two months ahead
 
 const colorOf = (kind) => (kind === 'family' ? settings.accent : KINDS[kind]?.color || '#2D5BA8');
 
@@ -37,8 +39,14 @@ function fitDays(el) {
   });
 }
 
+function weekTitle(days) {
+  if (weekOffset === 0) return 'This week';
+  if (weekOffset === 1) return 'Next week';
+  return `Week of ${days[0].date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}`;
+}
+
 function render(el) {
-  const days = getWeek();
+  const days = getWeek(new Date(Date.now() + weekOffset * 7 * 86400000));
   const big = nextBigThing();
 
   el.innerHTML = `
@@ -46,6 +54,7 @@ function render(el) {
     .cal-ev { color:#fff; border-radius:12px; padding:10px 12px; display:flex; flex-direction:column; gap:2px; flex:none; min-width:0; }
     .cal-ev-time { font-size:13px; font-weight:600; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
     .cal-ev-title { font-size:16px; line-height:1.3; overflow-wrap:anywhere; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden; }
+    [data-week][disabled] { opacity:.3; }
     .cal-more { font-size:14px; font-weight:600; opacity:.7; flex:none; }
     .cal-day { border-radius:20px; padding:18px 14px; display:flex; flex-direction:column; gap:12px; min-height:0; overflow:hidden; }
     .cal-day.today .cal-ev[data-kind="birthday"] { box-shadow: inset 0 0 0 2px rgba(255,255,255,.35); }
@@ -54,7 +63,10 @@ function render(el) {
     <div style="display:flex;align-items:center;justify-content:space-between">
       <div style="display:flex;align-items:center;gap:16px">
         <a href="#/launcher" class="pill" style="background:#fff">← Menu</a>
-        <div class="display" style="font-size:40px;font-weight:500">This week</div>
+        <div class="display" style="font-size:40px;font-weight:500;min-width:250px">${weekTitle(days)}</div>
+        <button data-week="-1" class="pill" style="background:#fff;border:none;font-size:22px;padding:0 18px;cursor:pointer"${weekOffset <= 0 ? ' disabled' : ''} aria-label="Earlier week">‹</button>
+        <button data-week="1" class="pill" style="background:#fff;border:none;font-size:22px;padding:0 18px;cursor:pointer"${weekOffset >= MAX_AHEAD ? ' disabled' : ''} aria-label="Later week">›</button>
+        ${weekOffset ? '<button data-week="0" class="pill" style="background:var(--ink);color:#fff;border:none;cursor:pointer">Today</button>' : ''}
       </div>
       <div class="muted" style="display:flex;gap:16px;font-size:16px">
         ${Object.entries(KINDS).map(([k, v]) => `
@@ -92,7 +104,15 @@ function draw(el) {
 }
 
 export function mount(el) {
+  weekOffset = 0;
   draw(el);
+  el.addEventListener('click', (e) => {
+    const b = e.target.closest('[data-week]');
+    if (!b || b.disabled) return;
+    const n = +b.dataset.week;
+    weekOffset = n === 0 ? 0 : Math.max(0, Math.min(MAX_AHEAD, weekOffset + n));
+    draw(el);
+  });
   onUpdate = () => { if (el.isConnected) draw(el); };
   window.addEventListener('calendar-updated', onUpdate);
   refreshCalendars(); // no-op unless the saved copy is older than 30 minutes

@@ -148,6 +148,11 @@ jobs:
           curl -sf -X POST -H "Content-Type: application/json" --data '{"act":"add","text":"CI milk"}' "http://127.0.0.1:8080/api/shopping?k=ci-test-key" | grep -q '"ok":true'
           sleep 4
           curl -sf "http://127.0.0.1:8080/api/shopping?k=ci-test-key" | tee shopping-after.json | grep -q 'CI milk'
+          # The family's own recipes: saved from the phone page, kept on the tablet.
+          curl -sf -X POST -H "Content-Type: application/json" --data '{"title":"CI pot roast","meal":"dinner","serves":6,"ingredients":["3 lb chuck roast","2 cups beef broth"],"steps":["Cook on low for 8 hours."]}' "http://127.0.0.1:8080/api/recipes?k=ci-test-key" | tee myrecipe.json | grep -q '"ok":true'
+          curl -sf "http://127.0.0.1:8080/api/recipes?k=ci-test-key" | grep -q 'CI pot roast'
+          code=$(curl -s -o /dev/null -w "%{http_code}" -X POST -H "Content-Type: application/json" --data '{"title":""}' "http://127.0.0.1:8080/api/recipes?k=ci-test-key")
+          echo "recipe without a name -> $code"; [ "$code" = "400" ]
           adb shell am start -n com.hometablets.launcher/.MainActivity --es screen calendar
           sleep 20
           adb exec-out screencap -p > shot-calendar.png
@@ -229,6 +234,7 @@ jobs:
             note.json
             shopping.json
             shopping-after.json
+            myrecipe.json
             logcat-full.txt
 
   release:

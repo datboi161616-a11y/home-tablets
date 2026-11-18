@@ -17,7 +17,7 @@ fit();
 const SCREENS = {
   // Family
   home: 'Home dashboard', launcher: 'Apps', photos: 'Photo frame', recipe: 'Cooking mode',
-  recipes: 'Recipes', dish: 'Recipe', plan: 'Week plan', shopping: 'Shopping list', timers: 'Timers',
+  recipes: 'Recipes', dish: 'Recipe', plan: 'Week plan', shopping: 'Shopping list', timers: 'Timers', myrecipe: 'My recipe',
   addphotos: 'Add photos', apps: 'Apps', camera: 'Camera', calendar: 'Calendar', forecast: 'Weather', messages: 'Messages', night: 'Night clock',
   // Tom · Space & Flight
   bridge: 'Flight deck', flights: 'Planes overhead', departures: 'Departures', trivia: 'Trivia',
@@ -91,7 +91,7 @@ const idleFor = (ms) => Date.now() - lastTouch > ms;
 const screenName = () => location.hash.replace(/^#\/?/, '').split('/')[0] || homeRoute;
 const isGhost = (() => { try { return !!(window.TabletNative && window.TabletNative.isGhost && window.TabletNative.isGhost()); } catch { return false; } })();
 // Never yank someone out of these.
-const BUSY = ['camera', 'recipe'];
+const BUSY = ['camera', 'recipe', 'myrecipe'];
 
 // Check for a new version every 30 minutes. A new deploy is applied the next time
 // the tablet is idle (2 minutes untouched), never in the middle of the camera or a recipe.

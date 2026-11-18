@@ -152,9 +152,9 @@ export async function getPasses(loc, opts) {
   return predictPasses(el, loc, opts);
 }
 
-// Next pass you can actually see with your eyes (or null)
-export async function nextVisiblePass(loc) {
-  const passes = await getPasses(loc, { from: Date.now() - 10 * 60000 });
+// Next pass you can actually see with your eyes (or null), looking `hours` ahead.
+export async function nextVisiblePass(loc, hours = 48) {
+  const passes = await getPasses(loc, { from: Date.now() - 10 * 60000, hours });
   return passes.find((p) => p.visible && p.visEnd > Date.now()) || null;
 }
 

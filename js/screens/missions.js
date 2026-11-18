@@ -64,7 +64,10 @@ function updateLaunch(el) {
   }
   const net = new Date(l.net);
   const when = net.toLocaleString('en-US', { weekday: 'short', hour: 'numeric', minute: '2-digit' }).toUpperCase();
-  $('[data-l-name]').textContent = `${l.name} · ${l.rocket}`.toUpperCase();
+  // Secret launches come through as "Unknown Payload": say so plainly.
+  const secret = /^unknown payload$/i.test(l.name || '');
+  const name = secret ? 'Secret payload' : l.name;
+  $('[data-l-name]').textContent = (l.rocket && l.rocket !== name ? `${name} · ${l.rocket}` : name).toUpperCase();
   $('[data-l-site]').textContent = [l.site, l.status, ['MIN', 'SEC', 'HR'].includes(l.precision) ? when : '']
     .filter(Boolean).join(' · ').toUpperCase();
 

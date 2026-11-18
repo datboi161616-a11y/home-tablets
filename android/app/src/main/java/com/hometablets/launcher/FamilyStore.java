@@ -28,12 +28,15 @@ final class FamilyStore {
 
     private static final int MAX_SHOPPING_CHARS = 256 * 1024;
 
-    private final File settingsFile, notesFile, calendarCache, shoppingFile;
+    static final int MAX_RECIPES = 300;
+
+    private final File settingsFile, notesFile, calendarCache, shoppingFile, recipesFile;
 
     FamilyStore(Context c) {
         settingsFile = new File(c.getFilesDir(), "settings.json");
         notesFile = new File(c.getFilesDir(), "notes.json");
         shoppingFile = new File(c.getFilesDir(), "shopping.json");
+        recipesFile = new File(c.getFilesDir(), "recipes.json");
         calendarCache = new File(c.getFilesDir(), "calendars");
         //noinspection ResultOfMethodCallIgnored
         calendarCache.mkdirs();
@@ -258,6 +261,65 @@ final class FamilyStore {
             a.put("text", text);
         } else throw new Exception("unknown action");
         return a;
+    }
+
+    // ------------------------------------------------------------ the family's own recipes
+    // Kept as typed (one ingredient / step per line); the screens work out amounts and timers.
+
+    synchronized JSONArray myRecipes() {
+        try { return new JSONArray(read(recipesFile, "[]")); } catch (Exception e) { return new JSONArray(); }
+    }
+
+    /** Add or replace (same id) a recipe. Returns the saved recipe. */
+    synchronized JSONObject saveRecipe(JSONObject b) throws Exception {
+        String title = clip(b.optString("title"), 60);
+        if (title.isEmpty()) throw new Exception("Give it a name");
+        JSONArray ing = lines(b.optJSONArray("ingredients"), 60, 120);
+        JSONArray steps = lines(b.optJSONArray("steps"), 40, 300);
+        if (ing.length() == 0) throw new Exception("Add at least one ingredient");
+        if (steps.length() == 0) throw new Exception("Add at least one step");
+        String meal = b.optString("meal");
+        if (!meal.matches("breakfast|lunch|dinner|dessert")) meal = "dinner";
+        String id = b.optString("id");
+        if (!id.matches("my-[a-z0-9]{4,20}")) id = "my-" + Long.toString(System.currentTimeMillis(), 36);
+        JSONObject r = new JSONObject()
+                .put("id", id).put("title", title).put("meal", meal)
+                .put("blurb", clip(b.optString("blurb"), 90))
+                .put("serves", Math.max(1, Math.min(24, b.optInt("serves", 4))))
+                .put("prep", Math.max(0, Math.min(1440, b.optInt("prep", 0))))
+                .put("cook", Math.max(0, Math.min(1440, b.optInt("cook", 0))))
+                .put("ingredients", ing).put("steps", steps)
+                .put("updated", System.currentTimeMillis());
+        JSONArray all = myRecipes(), out = new JSONArray();
+        boolean replaced = false;
+        for (int i = 0; i < all.length(); i++) {
+            JSONObject x = all.getJSONObject(i);
+            if (x.optString("id").equals(id)) { out.put(r); replaced = true; } else out.put(x);
+        }
+        if (!replaced) {
+            if (all.length() >= MAX_RECIPES) throw new Exception("That's the most recipes this tablet keeps (" + MAX_RECIPES + ")");
+            out.put(r);
+        }
+        write(recipesFile, out.toString());
+        return r;
+    }
+
+    synchronized boolean deleteRecipe(String id) throws Exception {
+        JSONArray all = myRecipes(), keep = new JSONArray();
+        for (int i = 0; i < all.length(); i++) if (!all.getJSONObject(i).optString("id").equals(id)) keep.put(all.get(i));
+        if (keep.length() == all.length()) return false;
+        write(recipesFile, keep.toString());
+        return true;
+    }
+
+    private static JSONArray lines(JSONArray in, int maxLines, int maxChars) {
+        JSONArray out = new JSONArray();
+        if (in == null) return out;
+        for (int i = 0; i < in.length() && out.length() < maxLines; i++) {
+            String s = clip(in.optString(i), maxChars);
+            if (!s.isEmpty()) out.put(s);
+        }
+        return out;
     }
 
     // ------------------------------------------------------------ files

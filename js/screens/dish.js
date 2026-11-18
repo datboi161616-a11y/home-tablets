@@ -39,7 +39,7 @@ export function mount(el, { args = [] } = {}) {
     const cuisine = ix.cuisines.find((c) => c.id === r.cuisine) || { name: '', types: [] };
     const type = cuisine.types.find((t) => t.id === r.type);
     const p0 = pending();
-    let meal = p0 ? p0.meal : defaultMeal(cuisine.meal);
+    let meal = p0 ? p0.meal : defaultMeal(r.mine ? r.type : cuisine.meal);
     const mealName = (m) => MEALS.find((x) => x[0] === m)[1].toLowerCase();
 
     function render() {
@@ -49,7 +49,7 @@ export function mount(el, { args = [] } = {}) {
       const target = p && days.find((d) => d.key === p.key);
       root.innerHTML = `
         ${kitchenTop({ title: r.title, back: 'history', backLabel: '← Back', active: 'recipes',
-          extra: `<button data-fav class="k-btn" style="color:#C2491F">${isFavorite(r.id) ? '♥ Saved' : '♡ Save'}</button>` })}
+          extra: `${r.mine ? `<a href="#/myrecipe/${encodeURIComponent(r.id)}" class="k-btn">Edit</a>` : ''}<button data-fav class="k-btn" style="color:#C2491F">${isFavorite(r.id) ? '♥ Saved' : '♡ Save'}</button>` })}
         <div style="flex-grow:1;min-height:0;display:grid;grid-template-columns:400px minmax(0,1fr);gap:24px">
           <div class="card" style="padding:26px 28px;display:flex;flex-direction:column;gap:12px;min-height:0">
             <div style="display:flex;gap:8px;flex-wrap:wrap">

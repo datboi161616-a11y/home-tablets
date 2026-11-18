@@ -53,7 +53,9 @@ export function mount(el, { args = [] } = {}) {
     .rb-meal:active{transform:scale(.98)}
     .rb-meal .n{font-size:52px;font-weight:500;line-height:1}
     .rb-meal .c{font-size:18px;opacity:.92;line-height:1.4}
-    .rb-meal.small{grid-column:1 / -1;flex-direction:row;align-items:center;padding:0 32px}
+    .rb-meal.small{grid-column:1 / 3;flex-direction:row;align-items:center;padding:0 32px}
+    .rb-meal.mine{grid-column:3 / 4;flex-direction:row;align-items:center;padding:0 28px;background:#FFFFFF;color:#1D2430;border:2px dashed #C9CFD6}
+    .rb-meal.mine .n{font-size:28px}
     .rb-meal.small .n{font-size:32px}
     .rb-cards{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:18px;align-content:start;padding-bottom:4px}
     .rb-card{padding:20px 22px;min-height:178px;display:flex;flex-direction:column;gap:8px;transition:transform .1s ease}
@@ -108,6 +110,7 @@ export function mount(el, { args = [] } = {}) {
             <div class="n display">${esc(name)}</div>
             <div class="c">${count(list)} recipes${small ? '' : `<br>${esc((list.length > 1 ? list.map((c) => c.name.split(' ')[0]) : list[0].types.map((t) => t.name)).slice(0, 5).join(' · '))}`}</div>
           </a>` : '');
+      const mineCount = (ix.cuisines.find((c) => c.id === 'mine') || { count: 0 }).count;
       const showMeals = () => {
         const one = (m) => { const l = byMeal(m); return l.length === 1 ? `#/recipes/${l[0].id}` : `#/recipes/${m}`; };
         body.style.overflow = 'hidden';
@@ -116,6 +119,10 @@ export function mount(el, { args = [] } = {}) {
           ${mealTile('lunch', 'Lunch', byMeal('lunch'), one('lunch'), cuisineColor('lunch'))}
           ${mealTile('dinner', 'Dinner', byMeal('dinner'), '#/recipes/dinner', '#1D2430')}
           ${mealTile('dessert', 'Desserts & baking', byMeal('dessert'), one('dessert'), cuisineColor('desserts'), true)}
+          <a href="${mineCount ? '#/recipes/mine' : '#/myrecipe'}" class="rb-meal mine">
+            <div class="n display">My recipes</div>
+            <div class="c" style="opacity:1;font-weight:600">${mineCount ? `${mineCount} saved` : '+ Add your own'}</div>
+          </a>
         </div>`;
       };
       const showGrid = () => {
@@ -150,14 +157,17 @@ export function mount(el, { args = [] } = {}) {
       root.innerHTML = `
         ${kitchenTop({ title: type ? `${cuisine.name} · ${type.name}` : cuisine.name, active: 'recipes',
           back: (cuisine.meal || 'dinner') === 'dinner' ? '#/recipes/dinner' : '#/recipes',
-          backLabel: (cuisine.meal || 'dinner') === 'dinner' ? '← Dinner' : '← Recipes' })}
+          backLabel: (cuisine.meal || 'dinner') === 'dinner' ? '← Dinner' : '← Recipes',
+          extra: cuisine.id === 'mine' ? '<a href="#/myrecipe" class="k-btn solid">+ Add a recipe</a>' : '' })}
         <div style="flex-grow:1;min-height:0;display:flex;gap:24px">
           <div class="rb-types">
             <a href="#/recipes/${cuisine.id}" class="rb-type${type ? '' : ' on'}">All ${esc(cuisine.name)}<span>${cuisine.count}</span></a>
             ${cuisine.types.map((t) => `
               <a href="#/recipes/${cuisine.id}/${t.id}" class="rb-type${type && type.id === t.id ? ' on' : ''}">${esc(t.name)}<span>${t.count}</span></a>`).join('')}
           </div>
-          <div class="k-scroll"><div class="rb-cards">${list.map((r) => recipeCard(r, planned)).join('')}</div></div>
+          <div class="k-scroll">${list.length
+            ? `<div class="rb-cards">${list.map((r) => recipeCard(r, planned)).join('')}</div>`
+            : `<div class="k-empty">${cuisine.id === 'mine' ? 'Your own recipes live here.<a href="#/myrecipe" class="k-btn solid">+ Add a recipe</a>' : 'Nothing here yet.'}</div>`}</div>
         </div>`;
     }
     fillCounts(root);

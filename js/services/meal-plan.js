@@ -171,8 +171,8 @@ export async function buildShoppingList() {
   const items = {};
   let missing = 0;
   const recipes = await Promise.all(ids.map((id) => getRecipe(id).catch(() => null)));
-  recipes.forEach((r) => {
-    if (!r) { missing++; return; }
+  recipes.forEach((r, n) => {
+    if (!r) { if (!/^my-/.test(ids[n])) missing++; return; } // a deleted own recipe just drops off
     (r.ingredients || []).forEach((i) => {
       if (typeof i === 'string') return;
       // Keep the size on cans and jars ("diced tomatoes (14.5 oz)"); drop other notes in brackets.

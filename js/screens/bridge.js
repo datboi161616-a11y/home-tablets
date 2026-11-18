@@ -4,7 +4,7 @@ import { feature } from '../services/features.js';
 import {
   getAircraft, getRoutes, advance, flightLabel, typeName, fmtAlt, compass, RADIUS_NM,
 } from '../services/aircraft.js';
-import { nextVisiblePass } from '../services/iss.js';
+import { nextVisiblePass, getCrew } from '../services/iss.js';
 import { getBoard } from '../services/departures.js';
 import { checkAlerts, wasSeen, markSeen } from '../services/skyalert.js';
 
@@ -128,6 +128,11 @@ export function mount(el) {
           <div data-iss-title style="font-family: Oxanium, sans-serif; font-size: 22px">CALCULATING…</div>
           <div data-iss-time style="font-family: Oxanium, sans-serif; font-size: 36px; color: #FFB547; line-height: 1">--:--</div>
           <div data-iss-sub style="font-size: 14px; color: #7FA6B8">&nbsp;</div>
+          <div style="margin-top: auto; border-top: 1px solid #1E3A4A; padding-top: 12px; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px">
+            <div><div style="font-size: 11px; letter-spacing: 2px; color: #7FA6B8">ABOARD</div><div data-iss-crew style="font-family: Oxanium, sans-serif; font-size: 20px">--</div></div>
+            <div><div style="font-size: 11px; letter-spacing: 2px; color: #7FA6B8">MPH</div><div style="font-family: Oxanium, sans-serif; font-size: 20px">17,500</div></div>
+            <div><div style="font-size: 11px; letter-spacing: 2px; color: #7FA6B8">MILES UP</div><div style="font-family: Oxanium, sans-serif; font-size: 20px">250</div></div>
+          </div>
         </a>
         <a href="#/departures" style="border: 1px solid #1E3A4A; background: #0A1220; padding: 16px 22px; text-decoration: none; color: #D7E6F0; display: flex; flex-direction: column; gap: 4px">
           <div data-dep-title class="glow-c" style="font-size: 12px; letter-spacing: 3px">DEPARTURES</div>
@@ -209,12 +214,14 @@ export function mount(el) {
 
   async function loadIss() {
     try {
-      const p = await nextVisiblePass(loc);
+      getCrew().then((c) => { if (alive && c.onIss) $('[data-iss-crew]').textContent = String(c.onIss); }).catch(() => {});
+      // Look up to 6 days ahead (the day name below is only clear within a week).
+      const p = await nextVisiblePass(loc, 144);
       if (!alive) return;
       if (!p) {
-        $('[data-iss-title]').textContent = 'NOT VISIBLE SOON';
+        $('[data-iss-title]').textContent = 'NOT VISIBLE THIS WEEK';
         $('[data-iss-time]').textContent = '--:--';
-        $('[data-iss-sub]').textContent = 'NO DARK-SKY PASSES IN 2 DAYS';
+        $('[data-iss-sub]').textContent = 'IT PASSES IN DAYLIGHT OR TOO LOW FOR NOW';
         return;
       }
       const now = Date.now();

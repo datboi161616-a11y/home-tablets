@@ -73,6 +73,31 @@ function feedEvents() {
 
 // ---------- Yearly dates (settings + holidays) ----------
 
+// Easter Sunday (Gregorian, "anonymous" algorithm) as [month 1-12, day].
+function easter(y) {
+  const a = y % 19, b = Math.floor(y / 100), c = y % 100, d = Math.floor(b / 4), e = b % 4;
+  const f = Math.floor((b + 8) / 25), g = Math.floor((b - f + 1) / 3);
+  const h = (19 * a + b - d - g + 15) % 30, i = Math.floor(c / 4), k = c % 4;
+  const l = (32 + 2 * e + 2 * i - h - k) % 7, m = Math.floor((a + 11 * h + 22 * l) / 451);
+  const month = Math.floor((h + l - 7 * m + 114) / 31), day = ((h + l - 7 * m + 114) % 31) + 1;
+  return [month, day];
+}
+/** Does holiday `h` (see config.js) fall on day `d`? */
+function holidayOn(h, d) {
+  const m = d.getMonth() + 1, day = d.getDate();
+  if (h.easter != null) {
+    const [em, ed] = easter(d.getFullYear());
+    const e = new Date(d.getFullYear(), em - 1, ed + h.easter);
+    return e.getMonth() + 1 === m && e.getDate() === day;
+  }
+  if (h.month !== m) return false;
+  if (h.weekday == null) return h.day === day;
+  if (d.getDay() !== h.weekday) return false;
+  const nth = Math.floor((day - 1) / 7) + 1; // 1st, 2nd… of this weekday in the month
+  if (h.nth > 0) return nth === h.nth;
+  return day + 7 > new Date(d.getFullYear(), m, 0).getDate(); // last one in the month
+}
+
 /** Settings dates and holidays that fall on day `d`. */
 function datedOn(d, feedTitles) {
   const m = d.getMonth() + 1, day = d.getDate();
@@ -82,7 +107,7 @@ function datedOn(d, feedTitles) {
   });
   holidays.forEach((h) => {
     // Skip a holiday the calendar link already has (e.g. a Google "Holidays" calendar).
-    if (h.month === m && h.day === day && !feedTitles.some((t) => sameName(t, h.name)) && !out.some((o) => sameName(o.title, h.name))) {
+    if (holidayOn(h, d) && !feedTitles.some((t) => sameName(t, h.name)) && !out.some((o) => sameName(o.title, h.name))) {
       out.push({ title: h.name, kind: 'holiday' });
     }
   });
