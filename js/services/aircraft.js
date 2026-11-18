@@ -317,3 +317,30 @@ export function routeText(ac, route) {
   if (!/^[A-Z]{3}\d/.test(ac.callsign || '')) return 'LOCAL FLIGHT';
   return 'ROUTE UNKNOWN';
 }
+
+// ---------- A photo of the actual aircraft (adsbdb.com, from airport-data.com) ----------
+const INFO_KEY = 'aircraft.info.v1';
+const INFO_MAX_AGE = 14 * 24 * 3600 * 1000;
+const MISS_MAX_AGE = 24 * 3600 * 1000;
+
+/** { photo, reg, owner, model } for an aircraft (by its hex code), or null. Remembered. */
+export async function getAircraftInfo(hex) {
+  if (!hex || !/^[0-9a-f]{6}$/i.test(hex)) return null;
+  let all = {};
+  try { all = JSON.parse(localStorage.getItem(INFO_KEY) || '{}'); } catch (e) { all = {}; }
+  const hit = all[hex];
+  if (hit && Date.now() - hit.at < (hit.info ? INFO_MAX_AGE : MISS_MAX_AGE)) return hit.info;
+  let info = null;
+  try {
+    const res = await fetch(`https://api.adsbdb.com/v0/aircraft/${hex}`, { signal: AbortSignal.timeout(10000) });
+    if (res.ok || res.status === 404) {
+      const a = res.ok ? (await res.json()).response?.aircraft : null;
+      if (a) info = { photo: a.url_photo || '', reg: a.registration || '', owner: a.registered_owner || '', model: [a.manufacturer, a.type].filter(Boolean).join(' ') };
+    } else return null; // busy or offline: try again next time
+  } catch (e) { return null; }
+  all[hex] = { at: Date.now(), info };
+  const keys = Object.keys(all);
+  if (keys.length > 400) keys.sort((x, y) => all[x].at - all[y].at).slice(0, keys.length - 400).forEach((k) => delete all[k]);
+  try { localStorage.setItem(INFO_KEY, JSON.stringify(all)); } catch (e) { /* full */ }
+  return info;
+}

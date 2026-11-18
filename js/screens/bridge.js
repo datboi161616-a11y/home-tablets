@@ -101,7 +101,7 @@ export function mount(el) {
         <div style="margin-top: auto; border-top: 1px solid #1E3A4A; padding-top: 12px; display: flex; flex-direction: column; gap: 4px; min-width: 0">
           <div class="glow-c" style="font-size: 12px; letter-spacing: 3px">CLOSEST</div>
           <div data-c-flight style="font-family: Oxanium, sans-serif; font-size: 20px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">SCANNING…</div>
-          <div data-c-sub style="font-size: 14px; color: #7FA6B8; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">&nbsp;</div>
+          <div data-c-sub style="font-size: 14px; color: #7FA6B8; line-height: 1.35; overflow-wrap: anywhere; white-space: pre-line">&nbsp;</div>
         </div>
       </a>
 
@@ -206,7 +206,8 @@ export function mount(el) {
       if (!alive) return;
       const codes = route?.from && route?.to ? ` · ${route.from.iata || route.from.city} → ${route.to.iata || route.to.city}` : '';
       $('[data-c-flight]').textContent = flightLabel(c, route) + codes;
-      $('[data-c-sub]').textContent = `${typeName(c)} · ${fmtAlt(c)}`;
+      $('[data-c-sub]').textContent = `${typeName(c)}
+${fmtAlt(c)}`;
     } catch (e) {
       console.error(e);
     }

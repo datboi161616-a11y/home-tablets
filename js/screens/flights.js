@@ -1,7 +1,7 @@
 // Tom · Planes over your house, live radar (Flights.dc.html in the design)
 import { getLocation } from '../services/location.js';
 import {
-  getAircraft, getRoutes, advance, flightLabel, typeName, airlineOf, routeText, fmtAlt, fmtSpd, RADIUS_NM,
+  getAircraft, getRoutes, advance, flightLabel, typeName, airlineOf, routeText, fmtAlt, fmtSpd, RADIUS_NM, getAircraftInfo,
 } from '../services/aircraft.js';
 
 const PLANE = '<path d="M21 16v-2l-8-5V3.5a1.5 1.5 0 0 0-3 0V9l-8 5v2l8-2.5V19l-2 1.5V22l3.5-1 3.5 1v-1.5L13 19v-5.5z"></path>';
@@ -48,7 +48,11 @@ export function mount(el) {
         </div>
       </div>
       <div style="display: flex; flex-direction: column; gap: 14px; min-height: 0; min-width: 0">
-        <div style="border: 1px solid #FFB547; background: #0A1220; padding: 22px 24px; display: flex; flex-direction: column; gap: 10px">
+        <div style="border: 1px solid #FFB547; background: #0A1220; padding: 22px 24px; display: flex; gap: 18px">
+          <div data-s-photo style="display: none; width: 190px; flex: none; position: relative; background: #070C18 center/cover no-repeat; border: 1px solid #1E3A4A">
+            <div data-s-reg style="position: absolute; left: 0; right: 0; bottom: 0; padding: 4px 8px; background: rgba(5,7,13,.75); font-size: 12px; color: #D7E6F0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis"></div>
+          </div>
+          <div style="flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 10px">
           <div style="display: flex; justify-content: space-between; align-items: baseline; gap: 12px">
             <div data-s-id style="font-family: Oxanium, sans-serif; font-size: 34px; font-weight: 500; color: #FFB547; white-space: nowrap">SCANNING…</div>
             <div data-s-airline style="font-size: 14px; color: #7FA6B8; text-align: right">&nbsp;</div>
@@ -58,6 +62,7 @@ export function mount(el) {
             <div><div style="color: #7FA6B8">AIRCRAFT</div><div data-s-type style="font-size: 16px; margin-top: 2px">—</div></div>
             <div><div style="color: #7FA6B8">ALTITUDE</div><div data-s-alt style="font-size: 16px; margin-top: 2px">—</div></div>
             <div><div style="color: #7FA6B8">SPEED</div><div data-s-spd style="font-size: 16px; margin-top: 2px">—</div></div>
+          </div>
           </div>
         </div>
         <div data-rows style="display: flex; flex-direction: column; gap: 14px"></div>
@@ -123,8 +128,31 @@ export function mount(el) {
     for (const [hex, b] of blips) if (!keep.has(hex)) { b.remove(); blips.delete(hex); }
   }
 
+  // Photo of the selected aircraft itself (when one is on file).
+  let photoHex = null;
+  function showPhoto(sel) {
+    const hex = sel && !data?.sample ? sel.hex : null;
+    if (hex === photoHex) return;
+    photoHex = hex;
+    const box = $('[data-s-photo]');
+    box.style.display = 'none';
+    if (!hex) return;
+    getAircraftInfo(hex).then((info) => {
+      if (!alive || photoHex !== hex || !info || !info.photo) return;
+      const img = new Image();
+      img.onload = () => {
+        if (!alive || photoHex !== hex) return;
+        box.style.backgroundImage = `url('${encodeURI(info.photo)}')`;
+        $('[data-s-reg]').textContent = [info.reg, info.owner].filter(Boolean).join(' · ');
+        box.style.display = 'block';
+      };
+      img.src = info.photo;
+    });
+  }
+
   function drawPanel(list, rebuildRows) {
     const sel = list.find((a) => a.hex === selHex);
+    showPhoto(sel);
     if (!sel) {
       $('[data-s-id]').textContent = data ? 'CLEAR SKIES' : 'SCANNING…';
       $('[data-s-airline]').textContent = '';

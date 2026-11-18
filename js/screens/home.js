@@ -7,9 +7,10 @@ import { isTablet, getPhotos, onPhotosChanged } from '../services/tablet-photos.
 import { upcoming, refreshCalendars } from '../services/calendar-data.js';
 import { fmtMinutes } from '../services/recipe-data.js';
 import { tonight } from '../services/meal-plan.js';
+import { unreadCount, onMessagesChanged } from '../services/messages-data.js';
 import { getAlerts, untilText, alertColor } from '../services/weather-alerts.js';
 
-let timer, photoTimer, offPhotos, onCalendar;
+let timer, photoTimer, offPhotos, onCalendar, offNotes;
 
 const fmtHour = (d) => d.toLocaleTimeString('en-US', { hour: 'numeric' });
 
@@ -45,7 +46,10 @@ export function mount(el) {
   <div style="height:100%;padding:40px;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:24px">
     <div style="display:flex;flex-direction:column;gap:24px;min-width:0">
       <div style="display:flex;flex-direction:column;gap:4px;padding:8px 8px 0">
-        <div data-date class="muted" style="font-size:22px;font-weight:500">${c.date}</div>
+        <div style="display:flex;align-items:center;gap:14px;font-size:22px;font-weight:500">
+          <span data-date class="muted">${c.date}</span>
+          <a href="#/messages" data-notes style="display:none;color:${settings.accent};font-weight:600"></a>
+        </div>
         <div class="display" style="font-weight:300;font-size:168px;line-height:1;letter-spacing:-6px">
           <span data-time>${c.time}</span><span data-ampm class="muted" style="font-size:40px;letter-spacing:0;margin-left:12px;font-weight:500">${c.ampm}</span>
         </div>
@@ -104,6 +108,17 @@ export function mount(el) {
   </div>`;
 
   const $ = (s) => el.querySelector(s);
+
+  // "2 new notes" next to the date, until someone opens the message board.
+  const showNotes = () => {
+    if (!el.isConnected) return;
+    const n = unreadCount();
+    const a = $('[data-notes]');
+    a.style.display = n ? '' : 'none';
+    a.textContent = n === 1 ? '· 1 new note' : `· ${n} new notes`;
+  };
+  showNotes();
+  offNotes = onMessagesChanged(showNotes);
 
   // Dinner card: what's planned tonight, else the daily idea.
   tonight().then((t) => {
@@ -186,5 +201,6 @@ export function unmount() {
   clearInterval(timer);
   clearInterval(photoTimer);
   offPhotos?.();
+  offNotes?.();
   window.removeEventListener('calendar-updated', onCalendar);
 }
