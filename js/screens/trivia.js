@@ -4,10 +4,37 @@
 import { QUESTIONS, seeded, shuffle } from '../services/space-trivia.js';
 
 const PER_ROUND = 5;
-const RANKS = ['CADET', 'PILOT', 'CAPTAIN', 'ACE', 'ASTRONAUT', 'ASTRONAUT'];
+// Rank grows with all the wings Tom has ever earned (4+ right in a round).
+const RANKS = [[50, 'ASTRONAUT'], [25, 'ACE'], [10, 'CAPTAIN'], [3, 'PILOT'], [0, 'CADET']];
+const rankFor = (wings) => RANKS.find(([n]) => wings >= n)[1];
+
+const STATS_KEY = 'trivia.stats.v1'; // { wings, rounds, right, asked, streak, lastWingsDay }
+const TODAY_KEY = 'trivia.today.v1'; // today's place, so leaving the screen doesn't lose it
 
 let state;
 let root;
+
+const dayKey = (d = new Date()) => `${d.getFullYear()}-${d.getMonth() + 1}-${d.getDate()}`;
+const read = (k, d) => { try { return JSON.parse(localStorage.getItem(k) || 'null') || d; } catch (e) { return d; } };
+const stats = () => read(STATS_KEY, { wings: 0, rounds: 0, right: 0, asked: 0, streak: 0, lastWingsDay: '' });
+function saveToday() {
+  const s = state;
+  localStorage.setItem(TODAY_KEY, JSON.stringify({ day: dayKey(), round: s.round, i: s.i, score: s.score, chosen: s.chosen, done: s.done }));
+}
+function finishRound() {
+  const st = stats();
+  st.rounds += 1;
+  if (state.score >= 4) {
+    st.wings += 1;
+    const today = dayKey();
+    if (st.lastWingsDay !== today) {
+      const yesterday = dayKey(new Date(Date.now() - 86400000));
+      st.streak = st.lastWingsDay === yesterday ? st.streak + 1 : 1;
+      st.lastWingsDay = today;
+    }
+  }
+  localStorage.setItem(STATS_KEY, JSON.stringify(st));
+}
 
 function dailyOrder() {
   const d = new Date();
@@ -44,8 +71,12 @@ function render() {
     if (last) feedback += s.score >= 4 ? '  ★ ASTRONAUT WINGS EARNED!' : `  ROUND OVER: ${s.score} OF ${PER_ROUND}.`;
   }
 
-  root.querySelector('[data-score]').textContent = s.score;
-  root.querySelector('[data-rank]').textContent = RANKS[Math.min(s.score, 5)];
+  const st = stats();
+  root.querySelector('[data-score]').textContent = `${s.score}/${PER_ROUND}`;
+  root.querySelector('[data-wings]').textContent = st.wings;
+  const alive = st.lastWingsDay === dayKey() || st.lastWingsDay === dayKey(new Date(Date.now() - 86400000));
+  root.querySelector('[data-streak]').textContent = alive && st.streak ? `${st.streak} DAY${st.streak > 1 ? 'S' : ''}` : '—';
+  root.querySelector('[data-rank]').textContent = rankFor(st.wings);
   root.querySelector('[data-num]').textContent = `QUESTION ${s.i + 1} OF ${PER_ROUND}`;
   const qEl = root.querySelector('[data-q]');
   qEl.textContent = cur.q;
@@ -65,6 +96,12 @@ function onClick(e) {
     const cur = s.list[s.round * PER_ROUND + s.i];
     s.chosen = k;
     if (k === cur.a) s.score += 1;
+    const st = stats();
+    st.asked += 1;
+    if (k === cur.a) st.right += 1;
+    localStorage.setItem(STATS_KEY, JSON.stringify(st));
+    if (s.i === PER_ROUND - 1 && !s.done) { s.done = true; finishRound(); }
+    saveToday();
     render();
     return;
   }
@@ -76,14 +113,18 @@ function onClick(e) {
       s.i = 0;
       s.score = 0;
       s.round = (s.round + 1) % Math.floor(s.list.length / PER_ROUND);
+      s.done = false;
     }
     s.chosen = null;
+    saveToday();
     render();
   }
 }
 
 export function mount(el) {
-  state = { list: dailyOrder(), round: 0, i: 0, chosen: null, score: 0 };
+  state = { list: dailyOrder(), round: 0, i: 0, chosen: null, score: 0, done: false };
+  const t = read(TODAY_KEY, null);
+  if (t && t.day === dayKey()) Object.assign(state, { round: t.round || 0, i: t.i || 0, score: t.score || 0, chosen: t.chosen == null ? null : t.chosen, done: !!t.done });
   el.innerHTML = `
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Oxanium:wght@300;500;700&family=JetBrains+Mono:wght@400;600&display=swap">
   <style>
@@ -103,7 +144,9 @@ export function mount(el) {
         <div class="tv-ox" style="font-size:24px;font-weight:700;letter-spacing:6px;color:#5CE1E6">SPACE &amp; FLIGHT TRIVIA</div>
       </div>
       <div style="display:flex;gap:24px;font-size:15px;letter-spacing:3px">
-        <span style="color:#7FA6B8">SCORE <span data-score style="color:#FFB547">0</span></span>
+        <span style="color:#7FA6B8">ROUND <span data-score style="color:#FFB547">0</span></span>
+        <span style="color:#7FA6B8">WINGS ★ <span data-wings style="color:#FFB547">0</span></span>
+        <span style="color:#7FA6B8">STREAK <span data-streak style="color:#FFB547">—</span></span>
         <span style="color:#7FA6B8">RANK <span data-rank style="color:#FFB547">CADET</span></span>
       </div>
     </div>

@@ -40,6 +40,8 @@ export function mount(el) {
       </div>
     </div>
 
+    <div data-f-hours class="card" style="padding:16px 20px;display:none;grid-template-columns:repeat(12,minmax(0,1fr));gap:4px"></div>
+
     <div data-f-days class="skeleton" style="flex-grow:1;min-height:0;display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:16px">
       ${Array.from({ length: 5 }, () => dayCard({ day: '---', sky: '&nbsp;', hi: '--°', lo: '--°' })).join('')}
     </div>
@@ -77,6 +79,18 @@ export function mount(el) {
       $('[data-f-sunrise]').textContent = fmtTime(f.sunrise);
       $('[data-f-sunset]').textContent = fmtTime(f.sunset);
       $('[data-f-wind]').textContent = f.wind;
+      // Next 12 hours: time, sky, temperature, chance of rain or snow.
+      if (f.hours && f.hours.length) {
+        const hrs = $('[data-f-hours]');
+        hrs.style.display = 'grid';
+        hrs.innerHTML = f.hours.map((h, i) => `
+          <div style="display:flex;flex-direction:column;align-items:center;gap:4px">
+            <div class="muted" style="font-size:15px;font-weight:600">${i === 0 ? 'Now' : new Date(h.time).toLocaleTimeString('en-US', { hour: 'numeric' })}</div>
+            ${icon(describe(h.code).icon, 30, 'var(--accent)')}
+            <div class="display" style="font-size:22px;font-weight:500">${h.temp}°</div>
+            <div style="font-size:13px;font-weight:600;color:${h.rain >= 30 ? '#2D5BA8' : '#B7BEC8'}">${h.rain >= 10 ? `${h.rain}%` : '&nbsp;'}</div>
+          </div>`).join('');
+      }
       // Next five days, starting tomorrow.
       $('[data-f-days]').innerHTML = f.days.slice(1, 6).map((d) => dayCard({
         day: dayName(d.date),
@@ -84,6 +98,7 @@ export function mount(el) {
         icon: describe(d.code).icon,
         hi: `${d.hi}°`,
         lo: `${d.lo}°`,
+        rain: d.rain,
       })).join('');
     } catch (err) {
       console.error(err);
@@ -99,13 +114,13 @@ export function mount(el) {
 
 function dayCard(d) {
   return `
-    <div class="card" style="padding:24px;display:flex;flex-direction:column;align-items:center;justify-content:space-between">
+    <div class="card" style="padding:18px 24px;display:flex;flex-direction:column;align-items:center;justify-content:space-between;min-height:0">
       <div style="font-size:20px;font-weight:600">${d.day}</div>
-      <div style="display:flex;flex-direction:column;align-items:center;gap:8px">
-        ${icon(d.icon, 56, 'var(--accent)')}
-        <div class="muted" style="font-size:17px;text-align:center">${d.sky}</div>
+      <div style="display:flex;flex-direction:column;align-items:center;gap:4px">
+        ${icon(d.icon, 48, 'var(--accent)')}
+        <div class="muted" style="font-size:17px;text-align:center">${d.sky}${d.rain >= 20 ? ` · <span style="color:#2D5BA8;font-weight:600">${d.rain}%</span>` : ''}</div>
       </div>
-      <div class="display" style="font-size:44px;font-weight:500">${d.hi}</div>
+      <div class="display" style="font-size:40px;font-weight:500;line-height:1">${d.hi}</div>
       <div class="muted" style="font-size:18px">Low ${d.lo}</div>
     </div>`;
 }

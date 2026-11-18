@@ -4,7 +4,7 @@
 import { settings } from '../config.js';
 import { describe } from './weather.js';
 
-const CACHE_KEY = 'forecast.v1';
+const CACHE_KEY = 'forecast.v2';
 const MAX_AGE = 15 * 60 * 1000;
 
 const COMPASS = ['N', 'NE', 'E', 'SE', 'S', 'SW', 'W', 'NW'];
@@ -63,6 +63,9 @@ export async function getForecast(loc) {
     rainChance,
     slickFrom: slickFrom && slickFrom.toISOString(),
     rainFrom: rainFrom && rainFrom.toISOString(),
+    // The next 12 hours, starting with this one.
+    hours: d.hourly.time.map((t, i) => ({ time: t, temp: Math.round(d.hourly.temperature_2m[i]), code: d.hourly.weather_code[i], rain: d.hourly.precipitation_probability[i] || 0 }))
+      .filter((h) => new Date(h.time).getTime() > now - 3600000).slice(0, 12),
     days: d.daily.time.map((t, i) => ({
       date: t,
       code: d.daily.weather_code[i],
