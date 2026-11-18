@@ -4,7 +4,8 @@
 // One ingredient per line ("2 cups flour"), one step per line ("Bake 25 minutes").
 // Saved on this tablet only. Recipes can also be added from a phone (QR-code page).
 import { savedRecipes, saveRecipe, deleteRecipe, parseStep, MEAL_NAMES } from '../services/my-recipes.js';
-import { esc, kitchenStyles, kitchenTop } from './kitchen-ui.js';
+import { esc, kitchenStyles, kitchenTop, FILL } from './kitchen-ui.js';
+import { spot } from '../art.js';
 
 let armTimer;
 
@@ -44,6 +45,7 @@ export function mount(el, { args = [] } = {}) {
         </div>
         <div><div class="mr-label">Short description (optional)</div><input data-f="blurb" class="mr-in" maxlength="90" value="${esc(r.blurb || '')}" placeholder="Sunday dinner favorite"></div>
         <div data-msg class="mr-msg">${missing ? 'That recipe was deleted. You can type it in again as a new one.' : ''}</div>
+        <div class="k-art" data-art style="min-height:0">${spot.recipeCard().replace(/style="[^"]*"/, `style="display:block;${FILL}max-height:170px"`)}</div>
         <div style="display:flex;gap:10px;margin-top:auto">
           <button data-save class="k-btn solid" style="flex:1">Save recipe</button>
           ${existing ? '<button data-delete class="k-btn line">Delete</button>' : ''}

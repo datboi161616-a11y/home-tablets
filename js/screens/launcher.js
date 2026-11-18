@@ -10,6 +10,7 @@ import { tonight, weekRecipeIds, shoppingCount } from '../services/meal-plan.js'
 import { isTablet, getPhotos, onPhotosChanged } from '../services/tablet-photos.js';
 import { getApps } from '../services/apps.js';
 import { feature } from '../services/features.js';
+import { tileArt, C } from '../art.js';
 
 let timer, offNotes, offPhotos;
 
@@ -22,21 +23,34 @@ function clockParts() {
   };
 }
 
-const svg = (paths, color) => `<svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="${color}" stroke-width="1.6"
-  stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${paths}</svg>`;
+// Is it dark out? Today's sunrise/sunset from the Weather screen's saved forecast
+// when there is one, otherwise a rough guess from the clock.
+function isNight() {
+  const now = Date.now();
+  try {
+    const f = JSON.parse(localStorage.getItem('forecast.v2') || 'null');
+    if (f && f.sunrise && f.sunset && new Date(f.sunset).toDateString() === new Date().toDateString()) {
+      return now < new Date(f.sunrise).getTime() || now > new Date(f.sunset).getTime();
+    }
+  } catch (e) { /* no saved forecast */ }
+  const h = new Date().getHours();
+  return h < 6 || h >= 18;
+}
 
-const ICONS = {
-  home: '<path d="M3 11l9-7 9 7"/><path d="M5 10v10h14V10"/>',
-  photos: '<rect x="3" y="5" width="18" height="14" rx="2"/><circle cx="9" cy="10" r="2"/><path d="M21 16l-5-5-8 8"/>',
-  calendar: '<rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/>',
-  weather: '<path d="M17.5 17H7a5 5 0 1 1 .9-9.9A6 6 0 0 1 19 9.5a3.75 3.75 0 0 1-1.5 7.5z"/>',
-  recipe: '<path d="M4 11h16a8 8 0 0 1-16 0z"/><path d="M9 7c0-1.5 1-2 1-3M13 7c0-1.5 1-2 1-3"/>',
-  messages: '<path d="M4 5h16v11H9l-5 4z"/>',
-  grocery: '<path d="M5 7h14M5 12h14M5 17h9"/>',
-  apps: '<rect x="4" y="4" width="6" height="6" rx="1.5"/><rect x="14" y="4" width="6" height="6" rx="1.5"/><rect x="4" y="14" width="6" height="6" rx="1.5"/><rect x="14" y="14" width="6" height="6" rx="1.5"/>',
-  camera: '<rect x="3" y="7" width="18" height="13" rx="2"/><circle cx="12" cy="13.5" r="3.5"/><path d="M8 7l1.5-2.5h5L16 7"/>',
-  night: '<path d="M20 14.5A8 8 0 1 1 9.5 4a6.5 6.5 0 0 0 10.5 10.5z"/>',
-};
+// The picture at the top of each tile (art.js). The night clock has no scene of its
+// own, so it borrows the weather one with the moon out.
+function artFor(icon) {
+  switch (icon) {
+    case 'recipe': {
+      const a = tileArt.recipes();
+      // The halo is drawn for the house orange; on any other accent, keep it subtle.
+      return settings.accent.toUpperCase() === C.accent ? a : a.replace(`fill="${C.accentSoft}"`, 'fill="rgba(255,255,255,.12)"');
+    }
+    case 'weather': return tileArt.weather('sun', isNight());
+    case 'night': return tileArt.weather('sun', true);
+    default: return (tileArt[icon] || tileArt.apps)();
+  }
+}
 
 const plural = (n, one, many) => `${n} ${n === 1 ? one : many}`;
 
@@ -106,13 +120,12 @@ export function mount(el) {
     const bg = t.style === 'dark' ? '#1D2430' : t.style === 'accent' ? a : '#FFFFFF';
     const fg = t.style ? '#FFFFFF' : '#1D2430';
     const subColor = t.style === 'dark' ? '#C9CFD6' : t.style === 'accent' ? '#FFFFFF' : '#4A5363';
-    const iconColor = t.style ? 'currentColor' : a;
     const tag = t.href ? 'a' : 'div';
     // New notes: a number badge on the tile, easy to spot from across the kitchen.
     const badge = t.badge ? `<span data-badge class="ln-badge" style="background:${a};display:${notes ? 'flex' : 'none'}">${notes}</span>` : '';
     return `<${tag} ${t.href ? `href="${t.href}"` : ''} class="ln-tile" style="background:${bg};color:${fg};position:relative">
-      ${svg(ICONS[t.icon], iconColor)}${badge}
-      <div style="min-width:0">
+      <div class="ln-art"${t.icon === 'weather' ? ' data-weather-art' : ''}>${artFor(t.icon)}</div>${badge}
+      <div class="ln-text">
         <div class="display" style="font-size:30px;font-weight:500">${t.title}</div>
         <div ${t.data || ''} style="font-size:17px;color:${subColor};margin-top:4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${esc(t.sub)}</div>
       </div>
@@ -121,10 +134,13 @@ export function mount(el) {
 
   el.innerHTML = `
   <style>
-    .ln-tile{border-radius:24px;padding:26px;display:flex;flex-direction:column;justify-content:space-between;
+    .ln-tile{border-radius:24px;padding:0;display:flex;flex-direction:column;overflow:hidden;
       min-width:0;transition:transform .12s ease}
+    .ln-art{height:170px;flex:none}
+    .ln-art svg{width:100%;height:100%}
+    .ln-text{min-width:0;padding:0 26px 24px;margin-top:auto}
     a.ln-tile:active{transform:scale(.97)}
-    .ln-badge{position:absolute;top:22px;right:22px;min-width:40px;height:40px;padding:0 12px;border-radius:999px;
+    .ln-badge{position:absolute;top:18px;right:18px;min-width:40px;height:40px;padding:0 12px;border-radius:999px;
       color:#fff;font:600 20px Inter,sans-serif;align-items:center;justify-content:center}
   </style>
   <div style="height:100%;padding:40px;display:flex;flex-direction:column;gap:28px">
@@ -174,6 +190,7 @@ export function mount(el) {
       const loc = await getLocation();
       const w = await getWeather(loc);
       if (!el.isConnected) return;
+      $('[data-weather-art]').innerHTML = tileArt.weather(describe(w.code).icon, isNight());
       const alerts = await getAlerts(loc).catch(() => []);
       if (!el.isConnected) return;
       if (alerts.length) {
@@ -195,6 +212,7 @@ export function mount(el) {
       if (!el.isConnected) return;
       // No internet: today's last forecast beats a blank tile.
       const old = savedWeather();
+      if (old) $('[data-weather-art]').innerHTML = tileArt.weather(describe(old.code).icon, isNight());
       $('[data-weather]').textContent = old
         ? `${old.temp}° at ${new Date(old.at).toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' })}`
         : 'No internet right now';

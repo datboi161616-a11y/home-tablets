@@ -4,9 +4,13 @@ import {
   timers, state, left, fmt, addTimer, pauseTimer, resumeTimer, addMinute, restartTimer, removeTimer, stopRinging,
   onTimersChanged, minutesText,
 } from '../services/timers.js';
+import { spot } from '../art.js';
 
 const PRESETS = [1, 2, 3, 5, 10, 15, 20, 30, 45, 60]; // minutes
 let tickTimer, off, fullTimer;
+
+// Nothing running: the kitchen timer picture on a soft halo instead of the tile's square background.
+const idleArt = () => spot.timer().replace(/<rect width="285" height="170"[^>]*\/>/, '<circle cx="143" cy="92" r="78" fill="#FBF3EE"/>');
 
 const presetLabel = minutesText; // "25 min", "1 hr", "1 hr 30 min"
 const clockText = (ms) => new Date(ms).toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' });
@@ -92,7 +96,11 @@ export function mount(el) {
           <button class="tm-b" data-remove="${t.id}" style="margin-left:auto">${st === 'stopped' || done ? 'Clear' : 'Cancel'}</button>
         </div>
       </div>`;
-    }).join('') : '<div class="card muted" style="padding:28px;font-size:19px;text-align:center">No timers running</div>';
+    }).join('') : `<div class="card" style="flex-grow:1;padding:28px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;text-align:center">
+        ${idleArt()}
+        <div class="display" style="font-size:28px;font-weight:500">No timers running</div>
+        <div class="muted" style="font-size:18px;line-height:1.4;max-width:340px">Tap a time on the left to start one. You can run up to 8 at once.</div>
+      </div>`;
     // Rebuild only when the set of buttons changes; otherwise just update the clocks and bars.
     const shape = html.replace(/data-clock="([^"]+)">[^<]*</g, 'data-clock="$1"><').replace(/width:[\d.]+%/g, '');
     if (shape !== lastHtml) { lastHtml = shape; $('[data-list]').innerHTML = html; }

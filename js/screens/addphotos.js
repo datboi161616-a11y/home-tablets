@@ -1,6 +1,7 @@
 // Family · Add photos: a QR code phones scan to send photos to this tablet.
 import { isTablet, getPhotos, uploadUrl, onPhotosChanged, qrSvg } from '../services/tablet-photos.js';
 import { photos as samplePhotos } from '../services/family-sample.js';
+import { spot } from '../art.js';
 
 let off, flashTimer, wifiTimer;
 
@@ -25,7 +26,10 @@ export function mount(el) {
         <a href="#/photos" class="pill" style="background:var(--card);color:var(--ink)">← Photos</a>
         <a href="#/home" class="pill" style="background:var(--card);color:var(--ink)">Home</a>
       </div>
-      <div class="display" style="font-size:52px;font-weight:500;line-height:1.05">Add photos from your phone</div>
+      <div style="display:flex;align-items:center;gap:20px">
+        <div class="display" style="flex:1;min-width:0;font-size:52px;font-weight:500;line-height:1.05">Add photos from your phone</div>
+        <div style="flex:none;width:250px">${spot.phoneToTablet()}</div>
+      </div>
       <div style="display:flex;flex-direction:column;gap:18px;font-size:22px">
         ${[
           'Connect your phone to the same Wi-Fi as this tablet.',

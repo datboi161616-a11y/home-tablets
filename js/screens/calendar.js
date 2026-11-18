@@ -1,12 +1,23 @@
 // Family · Week calendar (Calendar.dc.html in the design)
 import { settings } from '../config.js';
 import { getWeek, nextBigThing, calendarStatus, refreshCalendars, KINDS } from '../services/calendar-data.js';
+import { eventIcon, spot } from '../art.js';
 
 let timer, onUpdate;
 let weekOffset = 0; // 0 = this week, 1 = next week… (the arrows; back to this week on every visit)
 const MAX_AHEAD = 8; // calendar links are read about two months ahead
 
 const colorOf = (kind) => (kind === 'family' ? settings.accent : KINDS[kind]?.color || '#2D5BA8');
+
+// Little pictures for birthdays, holidays and named occasions (not for every dentist visit).
+const OCCASION = /christmas|xmas|eve|thanksgiving|labor day|birthday|bday|valentine|anniversar|wedding|mother|father|patrick|easter|halloween|independence|memorial|veteran|president|new year/i;
+function iconFor(e, size) {
+  if (e.kind === 'birthday') return eventIcon(OCCASION.test(e.title) ? e.title : 'birthday', size);
+  if (e.kind === 'holiday' || OCCASION.test(e.title)) return eventIcon(e.title, size);
+  return '';
+}
+// The icon on a white disc, so it reads on any event colour.
+const iconBadge = (e) => { const i = iconFor(e, 18); return i ? `<span class="cal-badge">${i}</span>` : ''; };
 
 const esc = (s) => String(s).replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 
@@ -74,6 +85,10 @@ function render(el) {
   el.innerHTML = `
   <style>
     .cal-ev { color:#fff; border-radius:12px; padding:10px 12px; display:flex; flex-direction:column; gap:2px; flex:none; min-width:0; }
+    .cal-ev-top { display:flex; align-items:center; gap:6px; min-width:0; }
+    .cal-badge { flex:none; width:24px; height:24px; border-radius:12px; background:#fff; display:flex; align-items:center; justify-content:center; }
+    .cal-quiet { position:absolute; left:50%; bottom:28px; transform:translateX(-50%); width:560px; background:#fff; border-radius:24px; padding:14px 32px 14px 14px;
+      display:flex; align-items:center; gap:12px; box-shadow:0 12px 36px rgba(29,36,48,.14); pointer-events:none; }
     .cal-ev-time { font-size:13px; font-weight:600; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
     .cal-ev-title { font-size:16px; line-height:1.3; overflow-wrap:anywhere; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden; }
     [data-week][disabled] { opacity:.3; }
@@ -100,7 +115,7 @@ function render(el) {
       </div>
     </div>
 
-    <div style="flex-grow:1;min-height:0;display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:12px">
+    <div style="flex-grow:1;min-height:0;position:relative;display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:12px">
       ${days.map((d) => `
         <div class="cal-day${d.isToday ? ' today' : ''}${!d.isToday && d.date < today ? ' past' : ''}" data-day="${days.indexOf(d)}" style="cursor:pointer;${d.isToday ? 'background:var(--ink);color:#fff' : 'background:#fff'}">
           <div style="display:flex;flex-direction:column;gap:2px">
@@ -109,16 +124,24 @@ function render(el) {
           </div>
           ${d.events.map((e) => `
             <div class="cal-ev" data-kind="${e.kind}" style="background:${colorOf(e.kind)}">
-              <div class="cal-ev-time">${esc(e.time)}</div>
+              <div class="cal-ev-top">${iconBadge(e)}<div class="cal-ev-time">${esc(e.time)}</div></div>
               <div class="cal-ev-title">${esc(e.title)}</div>
             </div>`).join('')}
         </div>`).join('')}
+      ${days.every((d) => !d.events.length) ? `
+        <div class="cal-quiet">
+          <div style="flex:none;width:180px">${spot.quietDay()}</div>
+          <div style="display:flex;flex-direction:column;gap:6px">
+            <div class="display" style="font-size:28px;font-weight:500">A quiet week</div>
+            <div class="muted" style="font-size:17px;line-height:1.35">Nothing on the calendar this week.</div>
+          </div>
+        </div>` : ''}
     </div>
 
     <div data-detail style="display:none;position:absolute;top:0;right:0;bottom:0;left:0;background:rgba(29,36,48,.45);z-index:5;align-items:center;justify-content:center"></div>
 
     <div style="background:#fff;border-radius:20px;padding:18px 24px;display:flex;justify-content:space-between;align-items:center;font-size:18px">
-      <div style="white-space:nowrap;flex:none;max-width:62%;overflow:hidden;text-overflow:ellipsis">${big ? `<span style="font-weight:600">Next big thing:</span> ${esc(big.name)}${big.where ? ` at ${esc(big.where)}` : ''} · ${big.label} · <span style="font-weight:600">${countdown(big)}</span>` : ''}</div>
+      <div style="white-space:nowrap;flex:none;max-width:62%;overflow:hidden;text-overflow:ellipsis">${big ? `<span style="font-weight:600">Next big thing:</span> <span style="display:inline-block;vertical-align:-5px;margin:0 2px">${eventIcon(big.name, 24)}</span> ${esc(big.name)}${big.where ? ` at ${esc(big.where)}` : ''} · ${big.label} · <span style="font-weight:600">${countdown(big)}</span>` : ''}</div>
       <div class="muted" style="text-align:right;margin-left:16px">${esc(footerNote())}</div>
     </div>
   </div>`;
@@ -144,11 +167,11 @@ function showDay(el, d) {
       <div style="overflow-y:auto;display:flex;flex-direction:column;gap:10px">
         ${d.events.length ? d.events.map((e) => `
           <div style="display:flex;gap:14px;align-items:flex-start;padding:12px 0;border-top:1px solid var(--line)">
-            <div style="width:12px;height:12px;border-radius:50%;margin-top:7px;flex:none;background:${colorOf(e.kind)}"></div>
+            ${iconFor(e, 24) ? `<div style="width:24px;flex:none;margin-top:1px">${iconFor(e, 24)}</div>` : `<div style="width:12px;height:12px;border-radius:50%;margin:7px 6px 0;flex:none;background:${colorOf(e.kind)}"></div>`}
             <div style="width:150px;flex:none;font-weight:600;font-size:17px">${esc(e.time)}${e.endTime ? `<div class="muted" style="font-weight:500;font-size:15px">to ${esc(e.endTime)}</div>` : ''}</div>
             <div style="min-width:0"><div style="font-size:19px;font-weight:500;overflow-wrap:anywhere">${esc(e.title)}</div>
               ${e.location ? `<div class="muted" style="font-size:15px;margin-top:2px;overflow-wrap:anywhere">${esc(e.location)}</div>` : ''}</div>
-          </div>`).join('') : '<div class="muted" style="font-size:19px;padding:12px 0">Nothing planned</div>'}
+          </div>`).join('') : `<div style="display:flex;flex-direction:column;align-items:center;gap:8px;padding:4px 0 12px"><div style="width:240px">${spot.quietDay()}</div><div class="muted" style="font-size:19px">Nothing planned</div></div>`}
       </div>
     </div>`;
   box.style.display = 'flex';

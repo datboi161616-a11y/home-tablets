@@ -6,6 +6,16 @@
 // A "Camera on" badge and shutter sound mean nobody is ever filmed unawares.
 import { profile } from '../config.js';
 import { savePhoto, saveVideo, isTablet } from '../services/tablet-photos.js';
+import { C } from '../art.js';
+
+// Camera picture for the screens without a live view (starting, unavailable). Drawn for the black
+// background: a dim halo, a slate camera. Never shown over the live picture.
+const camArt = () => `<svg viewBox="0 0 240 170" aria-hidden="true" focusable="false" style="display:block;width:240px;height:170px">
+  <circle cx="120" cy="88" r="78" fill="#161B23"/>
+  <path d="M90 52l9-15h42l9 15z" fill="${C.ink3}"/><rect x="52" y="50" width="136" height="90" rx="18" fill="${C.ink3}"/>
+  <circle cx="120" cy="95" r="31" fill="${C.ink}"/><circle cx="120" cy="95" r="21" fill="#5B6FA8"/><circle cx="112" cy="87" r="7" fill="#C9D3F0"/>
+  <circle cx="168" cy="68" r="6" fill="${C.accent}"/><rect x="66" y="62" width="18" height="8" rx="4" fill="${C.cloudDark}"/>
+</svg>`;
 
 const MAX_VIDEO_MS = 60 * 1000; // keep clips small enough to store
 // If nobody touches the screen for this long, the camera switches itself off (with a warning first),
@@ -77,6 +87,7 @@ export function mount(el) {
     .cam-wait{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);background:rgba(0,0,0,.55);padding:14px 26px;border-radius:999px;font-size:22px;font-weight:600}
     .cam-idle{position:absolute;left:50%;top:96px;transform:translateX(-50%);background:rgba(0,0,0,.7);padding:14px 26px;border-radius:999px;font-size:20px;font-weight:600;display:none;white-space:nowrap}
     .cam-btn{border:0;background:#fff;color:#111;border-radius:999px;padding:12px 26px;font-size:18px;font-weight:600;min-height:48px;cursor:pointer;font-family:inherit}
+    .cam-art{position:absolute;left:50%;top:50%;margin:-215px 0 0 -120px;pointer-events:none}
     .cam-msg{position:absolute;top:0;right:0;bottom:0;left:0;display:none;flex-direction:column;align-items:center;justify-content:center;gap:16px;text-align:center;padding:40px;background:#000}
   </style>
   <div class="cam-root">
@@ -86,6 +97,7 @@ export function mount(el) {
     <div class="cam-time" data-time>0:00</div>
     <div class="cam-count" data-count></div>
     <div class="cam-flash" data-flash></div>
+    <div class="cam-art" data-wait-art>${camArt()}</div>
     <div class="cam-wait" data-wait>Starting camera…</div>
     <div class="cam-idle" data-idle></div>
     <a class="cam-saved" data-saved href="#/photos"><img data-thumb alt=""><span data-saved-text>Saved to photos</span><span class="cam-see">See it ›</span></a>
@@ -121,6 +133,7 @@ export function mount(el) {
 
   function setWaiting(on) {
     $('[data-wait]').style.display = on ? '' : 'none';
+    $('[data-wait-art]').style.display = on ? '' : 'none';
     $('[data-shutter]').classList.toggle('wait', on);
   }
 
@@ -128,7 +141,8 @@ export function mount(el) {
     setWaiting(false);
     const msg = $('[data-msg]');
     msg.style.display = 'flex';
-    msg.innerHTML = `<div style="font-size:32px;font-weight:600">Camera unavailable</div>
+    msg.innerHTML = `${camArt()}
+      <div style="font-size:32px;font-weight:600">Camera unavailable</div>
       <div style="font-size:20px;color:#bbb">${text}</div>
       <div style="display:flex;gap:16px;margin-top:8px">
         ${isTablet() ? '<button class="cam-btn" data-retry>Try again</button>' : ''}

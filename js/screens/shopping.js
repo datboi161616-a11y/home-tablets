@@ -5,8 +5,27 @@ import {
   buildShoppingList, onKitchenChanged, setHave, setGot, addExtra, setExtraGot, removeExtra, clearChecked,
 } from '../services/meal-plan.js';
 import { esc, kitchenStyles, kitchenTop, fillCounts } from './kitchen-ui.js';
+import { spot, C } from '../art.js';
 
 let off, stopTimers;
+
+// Little aisle pictures for the section headings (flat, app palette, 32 x 32).
+const AISLE_ART = {
+  produce: `<path d="M12 12l6 16 6-16z" fill="#E5772F"/><path d="M18 12q-4-6 0-8M18 12q4-7 8-6" stroke="${C.green}" stroke-width="2.5" fill="none" stroke-linecap="round"/>`,
+  meat: `<ellipse cx="14" cy="15" rx="8" ry="7" fill="${C.accentSoft}"/><path d="M19 19l6 6" stroke="${C.cream}" stroke-width="4" stroke-linecap="round"/><circle cx="26" cy="25" r="2.5" fill="${C.cream}"/>`,
+  seafood: `<ellipse cx="14" cy="16" rx="9" ry="6" fill="${C.blue}"/><path d="M22 16l6-5v10z" fill="${C.blue}"/><circle cx="10" cy="15" r="1.6" fill="#FFF"/>`,
+  dairy: `<path d="M11 12l3-5h6l3 5v15H11z" fill="#FFF" stroke="${C.cloud}" stroke-width="1.5"/><rect x="11" y="17" width="12" height="6" fill="${C.sky}"/>`,
+  bakery: `<path d="M5 20q0-10 13-10t13 10v4H5z" fill="#E2B067"/><path d="M12 13l-2 6M18 12l-1 7M24 13l1 6" stroke="#C98A3E" stroke-width="2" stroke-linecap="round"/>`,
+  frozen: `<path d="M16 6v20M7 11l18 10M7 21l18-10" stroke="${C.blue}" stroke-width="2.5" stroke-linecap="round"/>`,
+  canned: `<rect x="9" y="8" width="14" height="18" rx="2" fill="${C.cloudDark}"/><rect x="9" y="13" width="14" height="8" fill="${C.accent}"/><ellipse cx="16" cy="8" rx="7" ry="2" fill="${C.cloud}"/>`,
+  pantry: `<rect x="9" y="11" width="14" height="16" rx="4" fill="${C.gold}"/><rect x="10" y="6" width="12" height="5" rx="1.5" fill="${C.accent}"/><rect x="12" y="16" width="8" height="6" rx="1" fill="#FFF"/>`,
+  international: `<path d="M6 17h20q-1 9-10 9t-10-9z" fill="#FFF" stroke="${C.cloud}" stroke-width="1.5"/><path d="M14 4l6 13M20 4l2 13" stroke="${C.mustard}" stroke-width="2" stroke-linecap="round"/>`,
+  spices: `<rect x="10" y="12" width="12" height="15" rx="3" fill="${C.accentSoft}"/><rect x="11" y="7" width="10" height="5" rx="1.5" fill="${C.ink3}"/><circle cx="14" cy="9.5" r=".9" fill="#FFF"/><circle cx="18" cy="9.5" r=".9" fill="#FFF"/>`,
+  beverages: `<path d="M13 5h6v5l3 4v13H10V14l3-4z" fill="${C.green}"/><rect x="10" y="16" width="12" height="6" fill="${C.mint}"/>`,
+  extra: `<rect x="8" y="6" width="16" height="21" rx="2" fill="#FCE7A6"/><path d="M11 12h10M11 16h10M11 20h6" stroke="#C9A64A" stroke-width="2" stroke-linecap="round"/>`,
+  other: `<path d="M8 12h16l-2 15H10z" fill="#D9B98C"/><path d="M12 12q0-6 4-6t4 6" stroke="#B8945F" stroke-width="2" fill="none"/>`,
+};
+const aisleIcon = (id) => `<svg width="26" height="26" viewBox="0 0 32 32" aria-hidden="true" focusable="false" style="flex:none"><circle cx="16" cy="16" r="16" fill="#F4F1EC"/>${AISLE_ART[id] || AISLE_ART.other}</svg>`;
 
 export function mount(el) {
   const a = settings.accent;
@@ -15,6 +34,8 @@ export function mount(el) {
     .sl-cols{column-count:3;column-gap:20px}
     .sl-sec{break-inside:avoid;-webkit-column-break-inside:avoid;background:#FFFFFF;border-radius:20px;padding:16px 18px 10px;margin-bottom:20px;display:inline-block;width:100%}
     .sl-h{font-size:14px;font-weight:600;letter-spacing:1px;text-transform:uppercase;color:#4A5363;margin-bottom:4px}
+    .sl-sec .sl-h{display:flex;align-items:center;gap:10px}
+    .sl-sec .sl-h .sl-left{margin-left:auto}
     .sl-row{display:flex;align-items:center;gap:12px;min-height:58px;border-top:1px solid #EEF0F2;padding:6px 0}
     .sl-row:first-of-type{border-top:none}
     .sl-tick{width:30px;height:30px;border-radius:9px;border:2px solid #C9CFD6;flex:none;display:flex;align-items:center;justify-content:center;color:#fff;font-size:18px;cursor:pointer;background:#fff}
@@ -44,9 +65,9 @@ export function mount(el) {
   // Ticked-off things sink to the bottom of their aisle, so what's left to get is on top.
   const byGot = (list) => list.filter((x) => !x.got).concat(list.filter((x) => x.got));
   // Aisle box with a "3 left" / "All got" count; boxes that are all ticked fade back.
-  const section = (title, items, rowsHtml) => {
+  const section = (id, title, items, rowsHtml) => {
     const n = items.filter((x) => !x.got).length;
-    return `<div class="sl-sec${n ? '' : ' done'}"><div class="sl-h">${esc(title)}<span class="sl-left">${n ? `${n} left` : '✓ All got'}</span></div>${rowsHtml}</div>`;
+    return `<div class="sl-sec${n ? '' : ' done'}"><div class="sl-h">${aisleIcon(id)}<span>${esc(title)}</span><span class="sl-left">${n ? `${n} left` : '✓ All got'}</span></div>${rowsHtml}</div>`;
   };
 
   const row = (key, name, amount, from, got, kind) => `
@@ -87,15 +108,16 @@ export function mount(el) {
         ${note ? `<div class="sl-note">${esc(note)}</div>` : ''}
         <div data-body class="k-scroll">
           ${!list.recipes && !list.extras.length ? `
-            <div class="k-empty">
+            <div class="k-empty" style="padding-top:24px">
+              ${spot.groceryBag().replace(/<rect width="285" height="170"[^>]*\/>/, '<circle cx="143" cy="88" r="80" fill="#FFFFFF"/>')}
               <div>Nothing on the list yet.</div>
               <div style="font-size:17px">Add meals to the week plan and their ingredients show up here.</div>
               <a href="#/recipes" class="k-btn solid">Find recipes</a>
             </div>` : `
           <div class="sl-cols">
-            ${list.extras.length ? section('Added by you', list.extras,
+            ${list.extras.length ? section('extra', 'Added by you', list.extras,
               byGot(list.extras).map((x) => row(x.id, x.text, '', '', x.got, 'extra')).join('')) : ''}
-            ${list.sections.map((s) => section(s.name, s.items,
+            ${list.sections.map((s) => section(s.id, s.name, s.items,
               byGot(s.items).map((x) => row(x.key, x.name, x.amount, from(x.from), x.got, 'item')).join(''))).join('')}
           </div>
           ${list.have.length ? `

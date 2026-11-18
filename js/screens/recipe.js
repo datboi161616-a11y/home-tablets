@@ -7,6 +7,7 @@
 import { settings } from '../config.js';
 import { getRecipe, ingredientText, metaLine } from '../services/recipe-data.js';
 import { tonight, servingsFor, scaleFor } from '../services/meal-plan.js';
+import { recipeArt, cropFood, FILL } from './kitchen-ui.js';
 
 const esc = (x) => String(x == null ? '' : x).replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 
@@ -246,6 +247,7 @@ async function start(el, args) {
           </div>
           <div data-steptext class="display" style="font-size:46px;font-weight:500;line-height:1.2"></div>
         </div>
+        <div data-art style="position:relative;flex:1 1 0;min-height:0;display:none">${cropFood(recipeArt(r, `${FILL}max-height:230px`))}</div>
         <div data-timerbox></div>
         <div style="display:flex;flex-direction:column;gap:20px">
           <div data-nextup class="rc-next"></div>
@@ -301,6 +303,10 @@ async function start(el, args) {
           <button data-ttoggle class="rc-tbtn"></button>
         </div>
       </div>` : '';
+    // Steps without a timer leave a gap: the dish fills it (unless the step text needs the room).
+    const art = $('[data-art]');
+    art.style.display = step.timer ? 'none' : '';
+    art.style.visibility = !step.timer && art.clientHeight < 110 ? 'hidden' : '';
     tick();
   }
 

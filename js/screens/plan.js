@@ -3,10 +3,14 @@ import { loadIndex, fmtMinutes, cuisineColor } from '../services/recipe-data.js'
 import {
   weekDays, getPlan, addToPlan, removeFromPlan, onKitchenChanged, weekRecipeIds, MEALS, dayKey,
 } from '../services/meal-plan.js';
-import { esc, kitchenStyles, kitchenTop, fillCounts } from './kitchen-ui.js';
+import { esc, kitchenStyles, kitchenTop, fillCounts, mealArt, cropFood } from './kitchen-ui.js';
+import { spot, C } from '../art.js';
 import { ADD_DAY_KEY } from './dish.js';
 
 let off, dayTimer, undoTimer;
+
+// Empty plate colour for each meal slot nobody has picked yet.
+const PLATE = { breakfast: C.cream, lunch: C.mint, dinner: C.peach };
 
 const DINNER_HOUR = 18; // "Start by" times for long dinners aim for dinner at 6 pm
 const timeText = (d) => d.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' });
@@ -35,6 +39,7 @@ export function mount(el) {
     .wp-meal .by{font-size:13px;font-weight:600;color:var(--accent)}
     .wp-x{width:44px;height:44px;flex:none;border:none;background:transparent;font-size:22px;color:#4A5363;cursor:pointer}
     .wp-add{min-height:44px;border-radius:12px;border:2px dashed #D3D8DE;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:600;color:#4A5363;flex:none}
+    .wp-add.empty{flex-direction:column;gap:2px;padding:8px 0 6px}
     .wp-cook{flex:1;min-width:0;min-height:40px;padding:0 12px;border-radius:999px;background:#1D2430;color:#FFFFFF;font-size:13px;font-weight:600;
       display:flex;align-items:center;justify-content:center;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
     .wp-cook.go{background:var(--accent)}
@@ -70,7 +75,7 @@ export function mount(el) {
       return `
       <div class="wp-meal" style="border-left-color:${cuisineColor(r.c)}">
         <a href="#/dish/${encodeURIComponent(id)}" class="t">${esc(r.t)}</a>
-        <div class="m">${fmtMinutes(r.m)}${rm}</div>
+        <div class="m"><span style="white-space:nowrap">${fmtMinutes(r.m)}</span>${cropFood(mealArt(meal, `${r.c} ${r.ty || ''} ${r.t}`, 'width:34px;height:26px;flex:none;margin:0 auto 0 4px'))}${rm}</div>
       </div>`;
     }
     // Today: the Cook button carries the time, and says where you got to if you've started.
@@ -108,7 +113,8 @@ export function mount(el) {
                 return `
                 <div class="wp-mh">${name}</div>
                 ${ids.map((id) => mealCard(ix, id, d, n, meal)).join('')}
-                ${ids.length < 3 ? `<a href="${browseFor(ix, meal)}" class="wp-add" data-add="${d.key}|${meal}">+ Add</a>` : ''}`;
+                ${!ids.length ? `<a href="${browseFor(ix, meal)}" class="wp-add empty" data-add="${d.key}|${meal}">${spot.plate(PLATE[meal], 44)}<span>+ Add</span></a>`
+                  : ids.length < 3 ? `<a href="${browseFor(ix, meal)}" class="wp-add" data-add="${d.key}|${meal}">+ Add</a>` : ''}`;
               }).join('')}
             </div>
           </div>`;

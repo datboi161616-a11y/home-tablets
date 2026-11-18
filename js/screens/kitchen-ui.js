@@ -1,8 +1,31 @@
 // Shared bits for the kitchen screens: Recipes, a recipe, Week plan, Shopping list.
 import { settings } from '../config.js';
 import { weekRecipeIds, shoppingCount } from '../services/meal-plan.js';
+import { foodArt, foodFor } from '../art.js';
 
 export const esc = (s) => String(s == null ? '' : s).replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+
+// Food pictures for white cards: the same scenes as the Recipes tiles, on a soft halo
+// (the tiles' dark halos are too heavy on white). [halo, plate shadow] per scene.
+const SOFT = {
+  breakfast: ['#F6E3C8', '#EBCB9A'], lunch: ['#D6E6E1', '#B5D1C8'],
+  dinner: ['#F6D9C8', '#E9BFA6'], dessert: ['#F6DCE6', '#E9B9CB'],
+};
+/** <svg> food scene for a meal slot or a recipe ("hint" = cuisine, type and title). */
+export function mealArt(meal, hint = '', style = '') {
+  // foodFor reads "cake"/"bak" as dessert; pancakes, crab cakes and baked dinners aren't.
+  const h = String(hint).toLowerCase().replace(/pancakes?/g, 'breakfast')
+    .replace(/\b(crab|fish|salmon|rice|potato|corn) ?cakes?\b/g, '').replace(/\bbaked?\b/g, '');
+  const k = foodFor(meal, h);
+  const svg = foodArt[k](SOFT[k][0], SOFT[k][1]);
+  return style ? svg.replace('style="display:block;', `style="display:block;${style}`) : svg;
+}
+/** Same, for a full recipe (its cuisine file says breakfast/lunch/desserts; your own recipes keep the meal in type). */
+export const recipeArt = (r, style) => mealArt(r.mine ? r.type : r.cuisine, `${r.cuisine || ''} ${r.type || ''} ${r.title || ''}`, style);
+/** Tighter framing of a food scene (just the dish and its halo), for small spots. */
+export const cropFood = (svg) => svg.replace('viewBox="0 0 386 210"', 'viewBox="56 16 274 204"');
+/** A picture that fills whatever room is left in a flex column (put it in a .k-art box). */
+export const FILL = 'position:absolute;left:0;right:0;top:0;bottom:0;margin:auto;width:100%;height:100%;';
 
 export function kitchenStyles() {
   const a = settings.accent;
@@ -28,6 +51,7 @@ export function kitchenStyles() {
     .k-input{min-height:56px;border-radius:999px;border:2px solid #D9DDE2;background:#FFFFFF;padding:0 24px;font-size:19px;
       font-family:Inter,sans-serif;color:#1D2430;outline:none;min-width:0}
     .k-input:focus{border-color:#1D2430}
+    .k-art{position:relative;flex:1 1 0;min-height:0}
     .k-empty{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;text-align:center;color:#4A5363;font-size:20px;padding:40px}
   </style>`;
 }

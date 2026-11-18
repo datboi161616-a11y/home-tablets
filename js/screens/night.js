@@ -3,6 +3,7 @@
 import { getLocation } from '../services/location.js';
 import { getWeather, describe } from '../services/weather.js';
 import { getWeek } from '../services/calendar-data.js';
+import { spot } from '../art.js';
 
 let timer, refreshTimer;
 
@@ -61,15 +62,17 @@ export function mount(el) {
 
   el.innerHTML = `
   <a href="#/home" aria-label="Back home" style="position:absolute;top:0;right:0;bottom:0;left:0;padding:48px;background:#0B0907;color:#C98A6B;
-     display:flex;flex-direction:column;justify-content:space-between;cursor:pointer">
-    <div style="display:flex;justify-content:space-between;font-size:18px;letter-spacing:2px;text-transform:uppercase;color:#8C6450">
+     display:flex;flex-direction:column;justify-content:space-between;cursor:pointer;overflow:hidden">
+    <!-- Hills along the bottom: near-black on black, so the room stays dark. -->
+    <div style="position:absolute;left:0;right:0;bottom:0;pointer-events:none">${spot.nightHills()}</div>
+    <div style="position:relative;display:flex;justify-content:space-between;font-size:18px;letter-spacing:2px;text-transform:uppercase;color:#8C6450">
       <span data-mode></span><span>Tap anywhere for Home</span>
     </div>
-    <div style="display:flex;flex-direction:column;align-items:center;gap:12px">
+    <div style="position:relative;display:flex;flex-direction:column;align-items:center;gap:12px">
       <div class="display" style="font-size:240px;font-weight:300;line-height:1;letter-spacing:-6px;white-space:nowrap"><span data-time>${c.time}</span><span data-ampm style="font-size:48px;letter-spacing:0;margin-left:16px;font-weight:400;color:#8C6450">${c.ampm}</span></div>
       <div data-date style="font-size:24px">${c.date}</div>
     </div>
-    <div style="display:flex;justify-content:space-between;align-items:flex-end;gap:32px;font-size:20px">
+    <div style="position:relative;display:flex;justify-content:space-between;align-items:flex-end;gap:32px;font-size:20px">
       <div style="display:flex;flex-direction:column;gap:6px;min-width:0"><span data-day style="${label}">Tomorrow</span><span data-forecast style="white-space:nowrap">—</span></div>
       <div style="display:flex;flex-direction:column;gap:6px;align-items:flex-end;min-width:0"><span style="${label}">First up</span>
         <span data-first style="max-width:560px;white-space:pre;overflow:hidden;text-overflow:ellipsis"></span></div>

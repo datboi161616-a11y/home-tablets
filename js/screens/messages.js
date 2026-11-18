@@ -7,6 +7,7 @@ import { settings } from '../config.js';
 import {
   members, loadMessages, postMessage, updateMessage, deleteMessage, when, shrinkPhoto, onMessagesChanged,
 } from '../services/messages-data.js';
+import { spot, C } from '../art.js';
 
 let timer, recognizer, root, onClick, featuredId, offNotes, removeTimer;
 let removeArmed = false; // "Remove" was tapped once; the next tap really removes
@@ -22,12 +23,24 @@ const HEART = '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" strok
 const MIC = '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5 11a7 7 0 0 0 14 0M12 18v3"/></svg>';
 const CAMERA = '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 8h3l2-3h6l2 3h3v11H4z"/><circle cx="12" cy="13" r="3.5"/></svg>';
 
+// Pin colours for the earlier notes, so the list reads like notes on a board.
+const PINS = [C.accent, C.green, C.mustard, C.blue, C.plum];
+// Fills the empty space under a short list: two pinned notes and a pencil, on the house halo.
+const notesArt = () => `<svg viewBox="0 0 280 180" aria-hidden="true" focusable="false" style="display:block;width:260px;max-width:100%;height:auto">
+  <circle cx="140" cy="96" r="80" fill="#F6EFE7"/>
+  <g transform="rotate(-7 104 92)"><rect x="62" y="52" width="84" height="80" rx="4" fill="#FCE7A6"/><path d="M76 78h56M76 94h48M76 110h34" stroke="#C9A64A" stroke-width="4" stroke-linecap="round"/></g>
+  <g transform="rotate(6 178 100)"><rect x="138" y="62" width="84" height="80" rx="4" fill="${C.peach}"/><path d="M180 124c-8-6-12-9-12-14a6 6 0 0 1 12-2a6 6 0 0 1 12 2c0 5-4 8-12 14z" fill="${C.accent}"/><path d="M152 86h52" stroke="#C98A6E" stroke-width="4" stroke-linecap="round"/></g>
+  <circle cx="102" cy="54" r="7" fill="${C.accent}"/><circle cx="180" cy="64" r="7" fill="${C.green}"/>
+  <g transform="rotate(-40 228 134)"><rect x="222" y="94" width="12" height="62" rx="2" fill="${C.gold}"/><path d="M222 156l6 13 6-13z" fill="${C.cream}"/><rect x="222" y="94" width="12" height="9" fill="${C.pink}"/></g>
+</svg>`;
+
 const STYLE = `
   <style>
     .msg-btn { min-height:60px; padding:0 28px; border-radius:999px; font-size:19px; font-weight:600; font-family:Inter,sans-serif; display:flex; align-items:center; gap:10px; cursor:pointer; }
     .msg-btn-primary { border:none; background:${settings.accent}; color:#fff; }
     .msg-btn-outline { border:2px solid var(--ink); background:#fff; color:var(--ink); }
-    .msg-note { background:#fff; border-radius:20px; padding:18px 20px; display:flex; gap:14px; align-items:flex-start; cursor:pointer; flex:none; }
+    .msg-note { position:relative; background:#fff; border-radius:20px; padding:18px 20px; display:flex; gap:14px; align-items:flex-start; cursor:pointer; flex:none; }
+    .msg-pin { position:absolute; top:-5px; left:50%; margin-left:-7px; width:14px; height:14px; border-radius:7px; box-shadow:0 2px 3px rgba(29,36,48,.25); }
     .msg-note.active { box-shadow: inset 0 0 0 3px ${settings.accent}; }
     .msg-scroll { overflow-y:auto; scrollbar-width:none; }
     .msg-scroll::-webkit-scrollbar { display:none; }
@@ -74,6 +87,7 @@ function renderBoard() {
         <button data-act="remove" class="msg-btn-remove${removeArmed ? ' armed' : ''}">${removeArmed ? 'Tap again to remove' : 'Remove'}</button>
       </div>` : `
       <div style="flex-grow:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:20px">
+        ${spot.noteBoard()}
         <div class="display muted" style="font-size:30px">No notes yet</div>
         <button data-act="new" class="msg-btn msg-btn-primary">Write the first one</button>
       </div>`}
@@ -84,16 +98,17 @@ function renderBoard() {
         <div class="eyebrow muted">Earlier</div>
         <button data-act="new" class="pill" style="border:none;background:#fff;color:var(--ink);font-family:Inter,sans-serif;cursor:pointer">+ New note</button>
       </div>
-      <div class="msg-scroll" style="display:flex;flex-direction:column;gap:16px;min-height:0;flex-grow:1">
+      <div class="msg-scroll" style="display:flex;flex-direction:column;gap:16px;min-height:0;flex-grow:1;padding-top:6px;margin-top:-6px">
         ${f && !earlier.length ? '<div class="muted" style="font-size:17px;padding:8px 4px">Older notes will be listed here. Tap one to read it in full.</div>' : ''}
-        ${earlier.map((n) => `
-          <div class="msg-note" data-id="${esc(n.id)}">
+        ${earlier.map((n, i) => `
+          <div class="msg-note" data-id="${esc(n.id)}"><span class="msg-pin" style="background:${PINS[i % PINS.length]}"></span>
             <div style="width:44px;height:44px;flex-shrink:0;border-radius:50%;background:var(--ink);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:600">${initial(n.who)}</div>
             <div style="display:flex;flex-direction:column;gap:4px;min-width:0">
               <div class="muted" style="font-size:15px">${n.seen ? '' : '<span class="msg-new">NEW</span>'}${esc(n.who)} · ${when(n.at)}${n.loved ? ` · <span style="color:${settings.accent}">♥</span>` : ''}</div>
               <div style="font-size:18px;line-height:1.35;overflow-wrap:anywhere;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden">${n.photo ? (n.text ? 'Photo · ' : 'Photo') : ''}${esc(n.text)}</div>
             </div>
           </div>`).join('')}
+        ${f && earlier.length <= 2 ? `<div style="margin:auto 0;flex:none;display:flex;justify-content:center">${notesArt()}</div>` : ''}
       </div>
     </div>`;
 }

@@ -2,7 +2,7 @@
 import { getRecipe, loadIndex, ingredientText, fmtMinutes, cuisineColor } from '../services/recipe-data.js';
 import { weekDays, daysPlanned, addToPlan, removeFromPlan, plannedFor, MEALS, defaultMeal, isFavorite, toggleFavorite, servingsFor, scaleFor, setServings } from '../services/meal-plan.js';
 import { addTimer } from '../services/timers.js';
-import { esc, kitchenStyles, kitchenTop, wireBack, fillCounts } from './kitchen-ui.js';
+import { esc, kitchenStyles, kitchenTop, wireBack, fillCounts, recipeArt, cropFood } from './kitchen-ui.js';
 
 // Set by the Week plan's "+ Add" ("2026-11-20|lunch") so the next recipe picked goes
 // straight onto that day and meal.
@@ -88,12 +88,17 @@ export function mount(el, { args = [] } = {}) {
           extra: `${r.mine ? `<a href="#/myrecipe/${encodeURIComponent(r.id)}" class="k-btn">Edit</a>` : ''}<button data-fav class="k-btn" style="color:#C2491F">${isFavorite(r.id) ? '♥ Saved' : '♡ Save'}</button>` })}
         <div style="flex-grow:1;min-height:0;display:grid;grid-template-columns:400px minmax(0,1fr);gap:24px">
           <div class="card" style="padding:26px 28px;display:flex;flex-direction:column;gap:12px;min-height:0">
-            <div style="display:flex;gap:8px;flex-wrap:wrap">
-              <a href="#/recipes/${r.cuisine}" class="k-tag" style="background:${cuisineColor(r.cuisine)};color:#fff">${esc(cuisine.name)}</a>
-              ${type ? `<a href="#/recipes/${r.cuisine}/${type.id}" class="k-tag">${esc(type.name)}</a>` : ''}
-              ${(r.tags || []).slice(0, 3).map((t) => `<span class="k-tag">${esc(t)}</span>`).join('')}
+            <div style="display:flex;gap:12px;align-items:flex-start">
+              <div style="flex:1;min-width:0;display:flex;flex-direction:column;gap:12px">
+                <div style="display:flex;gap:8px;flex-wrap:wrap">
+                  <a href="#/recipes/${r.cuisine}" class="k-tag" style="background:${cuisineColor(r.cuisine)};color:#fff">${esc(cuisine.name)}</a>
+                  ${type ? `<a href="#/recipes/${r.cuisine}/${type.id}" class="k-tag">${esc(type.name)}</a>` : ''}
+                  ${(r.tags || []).slice(0, 3).map((t) => `<span class="k-tag">${esc(t)}</span>`).join('')}
+                </div>
+                ${r.blurb ? `<div style="font-size:18px;color:#4A5363;line-height:1.35">${esc(r.blurb)}</div>` : ''}
+              </div>
+              <div style="width:118px;flex:none;margin:-8px -8px 0 0">${cropFood(recipeArt(r, 'width:118px;height:88px'))}</div>
             </div>
-            ${r.blurb ? `<div style="font-size:18px;color:#4A5363;line-height:1.35">${esc(r.blurb)}</div>` : ''}
             ${timeLine ? `<div style="font-size:17px;font-weight:600">${esc(timeLine)}</div>` : ''}
             <div style="display:flex;align-items:center;gap:10px;margin-top:4px">
               <div class="eyebrow muted" style="flex:1">Ingredients</div>

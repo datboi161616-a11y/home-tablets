@@ -6,6 +6,7 @@
 import { loadIndex, searchRecipes, cuisineColor, fmtMinutes } from '../services/recipe-data.js';
 import { getPlan, weekDays, dayIds, favorites } from '../services/meal-plan.js';
 import { esc, kitchenStyles, kitchenTop, fillCounts } from './kitchen-ui.js';
+import { foodArt, foodFor, C } from '../art.js';
 
 let searchTimer;
 let favs = [];
@@ -30,6 +31,27 @@ function plannedLabels() {
   const out = {};
   weekDays().forEach((d) => dayIds(plan, d.key).forEach((id) => { if (!out[id]) out[id] = d.label === 'Today' ? 'Today' : d.short; }));
   return out;
+}
+
+// Small cake for the Desserts & baking bar (a cut of art.js's dessert scene, no halo).
+const dessertBarArt = () => `<svg viewBox="0 0 150 120" width="150" height="120" aria-hidden="true" focusable="false" style="display:block;flex:none">
+  <ellipse cx="75" cy="108" rx="60" ry="9" fill="#8C3D5D"/>
+  <path d="M28 100V60l94-16v56z" fill="${C.cream}"/><path d="M28 60l94-16v12L28 72z" fill="#FFF"/>
+  <path d="M28 80l94-12v8l-94 12z" fill="${C.pink}"/><path d="M28 60l66-42 28 26z" fill="#FFF"/>
+  <circle cx="96" cy="16" r="9" fill="${C.accent}"/><path d="M96 7q4-8 10-6" stroke="${C.green}" stroke-width="3" fill="none" stroke-linecap="round"/></svg>`;
+
+// A food picture for a cuisine's own colour: breakfast, lunch and dessert scenes as drawn;
+// dinner cuisines get a bowl or a pot on a soft see-through halo that suits any tile colour.
+const BOWL_CUISINES = /chinese|japanese|thai|korean|indian|mexican|viet|asian|mine/;
+function cuisineArt(c) {
+  const meal = c.meal || 'dinner';
+  if (meal === 'breakfast') return foodArt.breakfast();
+  if (meal === 'lunch') return foodArt.lunch();
+  if (meal === 'dessert') return foodArt.dessert();
+  const halo = 'rgba(255,255,255,.14)';
+  if (BOWL_CUISINES.test(c.id)) return foodArt.bowl(halo);
+  const kind = foodFor('dinner', c.name);
+  return foodArt[kind](halo, 'rgba(0,0,0,.18)');
 }
 
 function recipeCard(r, planned, cuisineName) {
@@ -58,17 +80,29 @@ export function mount(el, { args = [] } = {}) {
   <style>
     .rb-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));grid-auto-rows:minmax(150px,1fr);gap:20px;min-height:100%}
     .rb-cuisine{border-radius:var(--radius);padding:24px;min-height:150px;color:#fff;display:flex;flex-direction:column;justify-content:space-between;
-      transition:transform .1s ease}
+      transition:transform .1s ease;overflow:hidden}
+    .rb-cuisine{position:relative}
+    .rb-cuisine .n,.rb-cuisine .c{position:relative}
+    .rb-cuisine .c{max-width:62%}
+    .rb-cuisine .art{position:absolute;right:-12px;bottom:-14px;width:118px;height:118px;pointer-events:none}
+    .rb-cuisine .art.wide{right:-26px;bottom:-4px;width:160px;height:88px}
+    .rb-cuisine .art svg{width:100%;height:100%}
     .rb-cuisine:active,.rb-card:active{transform:scale(.97)}
     .rb-cuisine .n{font-size:28px;font-weight:500;line-height:1.1}
     .rb-cuisine .c{font-size:16px;opacity:.9}
     .rb-meals{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));grid-template-rows:minmax(0,1fr) 120px;gap:20px;height:100%}
-    .rb-meal{border-radius:var(--radius);padding:32px;color:#fff;display:flex;flex-direction:column;justify-content:space-between;transition:transform .1s ease}
+    .rb-meal{border-radius:var(--radius);padding:32px;color:#fff;display:flex;flex-direction:column;justify-content:space-between;transition:transform .1s ease;overflow:hidden;min-height:0}
+    .rb-meal .art{flex:1 1 0;min-height:0;margin:8px -32px}
+    .rb-meal .art svg{width:100%;height:100%}
     .rb-meal:active{transform:scale(.98)}
     .rb-meal .n{font-size:52px;font-weight:500;line-height:1}
-    .rb-meal .c{font-size:18px;opacity:.92;line-height:1.4}
-    .rb-meal.small{grid-column:1 / 3;flex-direction:row;align-items:center;padding:0 32px}
-    .rb-meal.mine{grid-column:3 / 4;flex-direction:row;align-items:center;padding:0 28px;background:#FFFFFF;color:#1D2430;border:2px dashed #C9CFD6}
+    .rb-meal .c{font-size:18px;line-height:1.4}
+    .rb-meal .c .ty{display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
+    .rb-meal.small{grid-column:1 / 3;flex-direction:row;align-items:center;justify-content:flex-start;gap:24px;padding:0 32px}
+    .rb-meal.small .n{margin-right:auto}
+    .rb-meal.mine{grid-column:3 / 4;flex-direction:row;align-items:center;justify-content:flex-start;gap:18px;padding:0 26px;background:#FFFFFF;color:#1D2430;border:2px dashed #C9CFD6}
+    .rb-meal.mine .mine-art{width:56px;height:64px;flex:none}
+    .rb-meal.mine .mine-art svg{width:100%;height:100%}
     .rb-meal.mine .n{font-size:28px}
     .rb-meal.small .n{font-size:32px}
     .rb-cards{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:18px;align-content:start;padding-bottom:4px}
@@ -76,6 +110,9 @@ export function mount(el, { args = [] } = {}) {
     .rb-t{font-size:23px;font-weight:500;line-height:1.15}
     .rb-b{font-size:16px;color:#4A5363;line-height:1.35;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
     .rb-types{display:flex;flex-direction:column;gap:8px;width:250px;flex:none;overflow-y:auto}
+    .rb-types .rb-type{flex:none}
+    .rb-types-art{flex:1 1 0;min-height:0;max-height:220px;margin-top:auto;border-radius:18px;padding:8px;overflow:hidden;position:relative}
+    .rb-types-art svg{position:absolute;top:8px;left:8px;width:calc(100% - 16px);height:calc(100% - 16px)}
     .rb-type{min-height:56px;padding:0 20px;border-radius:18px;background:#FFFFFF;display:flex;align-items:center;justify-content:space-between;gap:10px;
       font-size:18px;font-weight:600;color:#1D2430}
     .rb-type span{color:#4A5363;font-weight:500;font-size:16px}
@@ -139,10 +176,13 @@ export function mount(el, { args = [] } = {}) {
       const body = root.querySelector('[data-body]');
       const names = {};
       ix.cuisines.forEach((c) => { names[c.id] = c.name; });
+      const mealArt = { breakfast: () => foodArt.breakfast(), lunch: () => foodArt.lunch(), dinner: () => foodArt.dinner() };
       const mealTile = (id, name, list, href, color, small) => (list.length ? `
           <a href="${href}" class="rb-meal${small ? ' small' : ''}" style="background:${color}">
+            ${small ? dessertBarArt() : ''}
             <div class="n display">${esc(name)}</div>
-            <div class="c">${count(list)} recipes${small ? '' : `<br>${esc((list.length > 1 ? list.map((c) => c.name.split(' & ')[0]) : list[0].types.map((t) => t.name)).slice(0, 5).join(' · '))}`}</div>
+            ${!small && mealArt[id] ? `<div class="art">${mealArt[id]()}</div>` : ''}
+            <div class="c">${small ? `${count(list)} recipes` : `<div style="font-weight:600">${count(list)} recipes</div><div class="ty">${esc((list.length > 1 ? list.map((c) => c.name.split(' & ')[0]) : list[0].types.map((t) => t.name)).slice(0, 5).join(' · '))}</div>`}</div>
           </a>` : '');
       const mineCount = (ix.cuisines.find((c) => c.id === 'mine') || { count: 0 }).count;
       const showMeals = () => {
@@ -154,8 +194,11 @@ export function mount(el, { args = [] } = {}) {
           ${mealTile('dinner', 'Dinner', byMeal('dinner'), '#/recipes/dinner', '#1D2430')}
           ${mealTile('dessert', 'Desserts & baking', byMeal('dessert'), one('dessert'), cuisineColor('desserts'), true)}
           <a href="${mineCount ? '#/recipes/mine' : '#/myrecipe'}" class="rb-meal mine">
-            <div class="n display">My recipes</div>
-            <div class="c" style="opacity:1;font-weight:600">${mineCount ? `${mineCount} saved` : '+ Add your own'}</div>
+            <span class="mine-art">${foodArt.myRecipe()}</span>
+            <div style="min-width:0">
+              <div class="n display">My recipes</div>
+              <div class="c" style="font-size:16px;color:#4A5363;margin-top:2px">${mineCount ? `${mineCount} saved` : '+ Add your own'}</div>
+            </div>
           </a>
         </div>`;
       };
@@ -165,6 +208,7 @@ export function mount(el, { args = [] } = {}) {
         body.innerHTML = `<div class="rb-grid">${byMeal('dinner').map((c) => `
           <a href="#/recipes/${c.id}" class="rb-cuisine" style="background:${cuisineColor(c.id)}">
             <div class="n display">${esc(c.name)}</div>
+            <div class="art${BOWL_CUISINES.test(c.id) ? '' : ' wide'}">${cuisineArt(c)}</div>
             <div class="c">${c.count} recipes · ${esc(c.types.slice(0, 3).map((t) => t.name).join(', '))}</div>
           </a>`).join('')}</div>`;
       };
@@ -214,12 +258,16 @@ export function mount(el, { args = [] } = {}) {
             <a href="#/recipes/${cuisine.id}" class="rb-type${type ? '' : ' on'}">All ${esc(cuisine.name)}<span>${cuisine.count}</span></a>
             ${cuisine.types.map((t) => `
               <a href="#/recipes/${cuisine.id}/${t.id}" class="rb-type${type && type.id === t.id ? ' on' : ''}">${esc(t.name)}<span>${t.count}</span></a>`).join('')}
+            <div class="rb-types-art" style="background:${cuisineColor(cuisine.id)}">${cuisineArt(cuisine)}</div>
           </div>
           <div class="k-scroll">${list.length
             ? `<div class="rb-cards">${list.map((r) => recipeCard(r, planned)).join('')}</div>`
             : `<div class="k-empty">${cuisine.id === 'mine' ? 'Your own recipes live here.<a href="#/myrecipe" class="k-btn solid">+ Add a recipe</a>' : 'Nothing here yet.'}</div>`}</div>
         </div>`;
       keepScroll(root.querySelector('.k-scroll'));
+      // The picture only fills spare room under a short list; a long list keeps it all.
+      const pic = root.querySelector('.rb-types-art');
+      if (pic && pic.clientHeight < 110) pic.style.display = 'none';
     }
     fillCounts(root);
   }).catch((err) => {

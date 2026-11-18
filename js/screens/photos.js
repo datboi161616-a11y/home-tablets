@@ -8,6 +8,7 @@ import { getWeather, describe } from '../services/weather.js';
 import { photos as samplePhotos } from '../services/family-sample.js';
 import { isTablet, getPhotos, onPhotosChanged } from '../services/tablet-photos.js';
 import { feature } from '../services/features.js';
+import { framesArt } from '../art.js';
 
 const SLIDE_MS = 60 * 1000;
 let clockTimer, slideTimer, fadeTimer, weatherTimer, offPhotos;
@@ -72,6 +73,7 @@ export function mount(el) {
     <div class="ph-arrow" data-arrow style="left:28px">‹</div>
     <div class="ph-arrow" data-arrow style="right:28px">›</div>
     <div data-empty style="display:none;position:absolute;top:0;left:0;right:0;bottom:220px;align-items:center;justify-content:center;flex-direction:column;gap:20px;text-align:center">
+      <div style="width:380px;height:220px;display:flex;align-items:center;justify-content:center;border-radius:190px/110px;background:rgba(255,255,255,.06)"><div style="width:340px">${framesArt()}</div></div>
       <div class="display" style="font-size:44px;font-weight:500">No photos yet</div>
       <div style="font-size:20px;color:#E6E9ED">Send some from a phone on the same Wi-Fi.</div>
       <a href="#/addphotos" class="pill" style="background:#fff;color:#1D2430;font-size:18px;padding:14px 26px">Add photos</a>

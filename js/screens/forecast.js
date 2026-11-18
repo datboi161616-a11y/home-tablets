@@ -3,7 +3,7 @@ import { settings } from '../config.js';
 import { getLocation } from '../services/location.js';
 import { describe } from '../services/weather.js';
 import { getForecast, outlook, advice, fmtTime } from '../services/forecast-data.js';
-import { icon } from '../icons.js';
+import { weatherScene, wxIcon, wxTint, wearArt } from '../art.js';
 import { getAlerts, untilText, alertColor } from '../services/weather-alerts.js';
 
 let timer, retry;
@@ -14,16 +14,30 @@ const esc = (t) => String(t).replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&l
 const todayIso = () => { const d = new Date(); return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`; };
 const clock = (ms) => new Date(ms).toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' });
 
-// After dark a clear sky gets a moon, not a sun (same 24x24 line style as icons.js).
-const NIGHT = {
-  sun: '<path d="M20 14.5A8 8 0 1 1 9.5 4a6.5 6.5 0 0 0 10.5 10.5z"/>',
-  partly: '<path d="M11.5 3.2A4.2 4.2 0 1 0 15.6 9 3.3 3.3 0 0 1 11.5 3.2z"/><path d="M18 20H8.5a4 4 0 1 1 .8-7.9 5 5 0 0 1 9.2 1.9A3 3 0 0 1 18 20z"/>',
-};
-function skyIcon(code, isDay, size, color, stroke = 1.5) {
-  const name = describe(code).icon;
-  if (isDay !== false || !NIGHT[name]) return icon(name, size, color, stroke);
-  return `<svg width="${size}" height="${size}" viewBox="0 0 24 24" fill="none" stroke="${color}"
-    stroke-width="${stroke}" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${NIGHT[name]}</svg>`;
+// The big picture behind the temperature, filling the card (cropped, never squashed;
+// the hills stay low so the text sits on open sky).
+const scene = (kind, night) => weatherScene(kind, night)
+  .replace('preserveAspectRatio="xMidYMid meet"', 'preserveAspectRatio="xMidYMid slice"');
+
+// Text colours over the scene: dark on a daytime sky, light on the night sky.
+// (Both stay above 4.5:1 against every sky and the far hills.)
+function heroInk(night) {
+  return night ? { main: '#FFFFFF', sub: '#DCE3EE' } : { main: '#13202B', sub: '#13202B' };
+}
+
+// What to wear, read from the advice line (and the feels-like temperature).
+function wearFor(text, f) {
+  const t = String(text).toLowerCase();
+  const w = [];
+  if (/heavy coat|bundle up|coat and boots/.test(t)) w.push('coat');
+  else if (/jacket/.test(t)) w.push('jacket');
+  if (/umbrella/.test(t)) w.push('umbrella');
+  if (/sunglasses|sunscreen/.test(t)) w.push('sunglasses');
+  if (!w.length && f && f.feels != null && !/no coat/.test(t)) {
+    const cold = settings.units === 'fahrenheit' ? f.feels <= 55 : f.feels <= 13;
+    if (cold) w.push('jacket');
+  }
+  return w;
 }
 
 export function mount(el) {
@@ -31,15 +45,17 @@ export function mount(el) {
   <style>
     /* While a warning bar is showing, everything below tightens up so the
        five days still fit on the screen. */
-    .f-tight .f-now { padding:22px 32px !important; }
-    .f-tight .f-now [data-f-icon] svg { width:92px; height:92px; }
+    .f-tight .f-now-text { padding:20px 32px !important; }
     .f-tight [data-f-temp] { font-size:92px !important; }
+    .f-tight .f-wear svg { width:84px !important; height:70px !important; }
     .f-tight .f-advice-card { padding:22px 28px !important; gap:10px !important; }
     .f-tight [data-f-advice] { font-size:26px !important; }
     .f-tight [data-f-hours] { padding:10px 20px !important; }
     .f-tight .f-day { padding:12px 18px !important; }
-    .f-tight .f-day svg { width:36px; height:36px; }
+    .f-tight .f-day svg { width:40px; height:35px; }
     .f-tight .f-day-hi { font-size:32px !important; }
+    .f-scene { position:absolute; top:0; right:0; bottom:0; left:0; }
+    .f-scene svg { width:100%; height:100%; }
   </style>
   <div data-f-page style="height:100%;padding:40px;display:flex;flex-direction:column;gap:24px">
     <div style="display:flex;align-items:center;gap:16px">
@@ -51,17 +67,20 @@ export function mount(el) {
     <div data-f-alert style="display:none;border-radius:20px;padding:16px 24px;color:#fff;flex-direction:column;gap:4px;cursor:pointer"></div>
 
     <div data-f-top class="skeleton" style="display:grid;grid-template-columns:1.3fr 1fr;gap:24px">
-      <div class="f-now" style="background:var(--ink);color:#fff;border-radius:24px;padding:32px;display:flex;align-items:center;gap:28px">
-        <span data-f-icon style="display:flex">${icon('cloud', 120, '#FFFFFF', 1.3)}</span>
-        <div style="display:flex;flex-direction:column;gap:6px;min-width:0">
-          <div data-f-temp class="display" style="font-size:120px;font-weight:300;line-height:1">--°</div>
-          <div data-f-label style="font-size:24px;font-weight:500">Loading weather…</div>
-          <div data-f-outlook style="font-size:18px;color:#C9CFD6">Finding your location</div>
+      <div class="f-now" style="background:#BFD9EA;border-radius:24px;position:relative;overflow:hidden;min-height:0">
+        <div data-f-scene class="f-scene">${scene('cloud', false)}</div>
+        <div data-f-text class="f-now-text" style="position:relative;padding:28px 36px;display:flex;flex-direction:column;gap:4px;min-width:0;color:#13202B">
+          <div data-f-temp class="display" style="font-size:120px;font-weight:400;line-height:.95">--°</div>
+          <div data-f-label style="font-size:24px;font-weight:600;margin-top:6px">Loading weather…</div>
+          <div data-f-outlook style="font-size:18px;color:#13202B">Finding your location</div>
         </div>
       </div>
       <div class="card f-advice-card" style="padding:28px;display:flex;flex-direction:column;gap:14px">
         <div class="eyebrow" style="color:${settings.accent}">Before you head out</div>
-        <div data-f-advice class="display" style="font-size:30px;font-weight:500;line-height:1.2">&nbsp;</div>
+        <div style="display:flex;gap:16px;align-items:center">
+          <div data-f-advice class="display" style="flex:1;min-width:0;font-size:26px;font-weight:500;line-height:1.25">&nbsp;</div>
+          <span data-f-wear class="f-wear" style="display:flex;flex:none"></span>
+        </div>
         <div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin-top:auto;font-size:16px">
           <div><div class="muted">Sunrise</div><div data-f-sunrise style="font-weight:600;font-size:20px">--</div></div>
           <div><div class="muted">Sunset</div><div data-f-sunset style="font-weight:600;font-size:20px">--</div></div>
@@ -138,7 +157,11 @@ export function mount(el) {
       const now = describe(f.code);
       $('[data-f-top]').classList.remove('skeleton');
       $('[data-f-days]').classList.remove('skeleton');
-      $('[data-f-icon]').innerHTML = skyIcon(f.code, f.isDay, 120, '#FFFFFF', 1.3);
+      const night = f.isDay === false;
+      const ink = heroInk(night);
+      $('[data-f-scene]').innerHTML = scene(now.icon, night);
+      $('[data-f-text]').style.color = ink.main;
+      $('[data-f-outlook]').style.color = ink.sub;
       loaded = true;
       // When this forecast is from, and a plain warning if it's an old saved copy.
       const upd = $('[data-f-updated]');
@@ -152,7 +175,9 @@ export function mount(el) {
       $('[data-f-temp]').textContent = `${f.temp}°`;
       $('[data-f-label]').textContent = `${now.label} · feels like ${f.feels}°`;
       $('[data-f-outlook]').textContent = outlook(f);
-      $('[data-f-advice]').textContent = advice(f);
+      const tip = advice(f);
+      $('[data-f-advice]').textContent = tip;
+      $('[data-f-wear]').innerHTML = wearArt(wearFor(tip, f));
       $('[data-f-sunrise]').textContent = fmtTime(f.sunrise);
       $('[data-f-sunset]').textContent = fmtTime(f.sunset);
       $('[data-f-wind]').textContent = f.wind;
@@ -164,7 +189,7 @@ export function mount(el) {
         hrs.innerHTML = hours.map((h, i) => `
           <div style="display:flex;flex-direction:column;align-items:center;gap:4px">
             <div class="muted" style="font-size:15px;font-weight:600">${i === 0 ? 'Now' : new Date(h.time).toLocaleTimeString('en-US', { hour: 'numeric' })}</div>
-            ${skyIcon(h.code, h.isDay, 30, 'var(--accent)')}
+            ${wxIcon(describe(h.code).icon, 30, h.isDay === false)}
             <div class="display" style="font-size:22px;font-weight:500">${h.temp}°</div>
             <div style="font-size:13px;font-weight:600;color:${h.rain >= 30 ? '#2D5BA8' : '#B7BEC8'}">${h.rain >= 10 ? `${h.rain}%` : '&nbsp;'}</div>
           </div>`).join('');
@@ -200,11 +225,11 @@ export function mount(el) {
 
 function dayCard(d) {
   return `
-    <div class="card f-day" style="padding:18px 24px;display:flex;flex-direction:column;align-items:center;justify-content:space-between;min-height:0">
+    <div class="card f-day" style="background:${d.icon ? wxTint(d.icon) : 'var(--card)'};padding:18px 24px;display:flex;flex-direction:column;align-items:center;justify-content:space-between;min-height:0">
       <div style="font-size:20px;font-weight:600">${d.day}</div>
       <div style="display:flex;flex-direction:column;align-items:center;gap:4px">
-        ${icon(d.icon, 48, 'var(--accent)')}
-        <div class="muted" style="font-size:17px;text-align:center">${d.sky}${d.rain >= 20 ? ` · <span style="color:#2D5BA8;font-weight:600">${d.rain}%</span>` : ''}</div>
+        ${d.icon ? wxIcon(d.icon, 56) : '<div style="height:49px"></div>'}
+        <div style="font-size:17px;text-align:center;color:#4A5363">${d.sky}${d.rain >= 20 ? ` · <span style="color:#2D5BA8;font-weight:600">${d.rain}%</span>` : ''}</div>
       </div>
       <div class="display f-day-hi" style="font-size:40px;font-weight:500;line-height:1">${d.hi}</div>
       <div class="muted" style="font-size:18px">Low ${d.lo}</div>

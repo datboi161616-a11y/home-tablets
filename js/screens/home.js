@@ -2,7 +2,7 @@
 import { settings } from '../config.js';
 import { getLocation } from '../services/location.js';
 import { getWeather, describe } from '../services/weather.js';
-import { icon } from '../icons.js';
+import { wxIcon, homeLandscape, framesArt, foodArt, foodFor, eventIcon, C } from '../art.js';
 import { isTablet, getPhotos, onPhotosChanged } from '../services/tablet-photos.js';
 import { upcoming, refreshCalendars } from '../services/calendar-data.js';
 import { fmtMinutes } from '../services/recipe-data.js';
@@ -30,6 +30,29 @@ function savedWeather() {
   } catch (e) { return null; }
 }
 
+// Is it dark out? Today's sunrise/sunset from the Weather screen's saved forecast
+// when there is one, otherwise a rough guess from the clock.
+function isNight() {
+  const now = Date.now();
+  try {
+    const f = JSON.parse(localStorage.getItem('forecast.v2') || 'null');
+    if (f && f.sunrise && f.sunset && new Date(f.sunset).toDateString() === new Date().toDateString()) {
+      return now < new Date(f.sunrise).getTime() || now > new Date(f.sunset).getTime();
+    }
+  } catch (e) { /* no saved forecast */ }
+  const h = new Date().getHours();
+  return h < 6 || h >= 18;
+}
+
+// Picture on the dinner card: a steaming bowl, or the matching food scene when the
+// dish's name says it's really a breakfast, a sandwich or a bake.
+function dinnerArt(title) {
+  const kind = foodFor('dinner', title);
+  const soft = settings.accent.toUpperCase() === C.accent ? C.accentSoft : 'rgba(255,255,255,.12)';
+  if (kind === 'dinner') return `<div class="h-dish-art" style="width:150px;height:150px;right:-30px;bottom:-30px">${foodArt.bowl(soft)}</div>`;
+  return `<div class="h-dish-art" style="width:190px;height:104px;right:-28px;bottom:-6px">${foodArt[kind](soft, 'rgba(0,0,0,.16)')}</div>`;
+}
+
 // "Today 3 PM", "Tomorrow", "Saturday", "8 days"
 function whenText(e) {
   const d = e.date instanceof Date ? e.date : new Date(e.date);
@@ -45,8 +68,9 @@ function comingUpRows() {
   const list = upcoming(3);
   if (!list.length) return '<div class="muted" style="font-size:18px">Nothing coming up</div>';
   return list.map((e) => `
-            <div style="display:flex;justify-content:space-between;gap:12px;font-size:18px">
-              <span style="min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${esc(e.name)}</span>
+            <div style="display:flex;align-items:center;gap:10px;font-size:18px">
+              ${eventIcon(e.name)}
+              <span style="flex-grow:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${esc(e.name)}</span>
               <span style="font-weight:600;flex:none">${whenText(e)}</span>
             </div>`).join('');
 }
@@ -67,6 +91,10 @@ export function mount(el) {
   const c = clockParts();
 
   el.innerHTML = `
+  <style>
+    .h-dish-art{position:absolute;pointer-events:none}
+    .h-dish-art svg{width:100%;height:100%}
+  </style>
   <div style="height:100%;padding:40px;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:24px">
     <div style="display:flex;flex-direction:column;gap:24px;min-width:0">
       <div style="display:flex;flex-direction:column;gap:4px;padding:8px 8px 0">
@@ -92,10 +120,10 @@ export function mount(el) {
         </div>
       </div>
 
-      <a href="#/forecast" data-weather class="card skeleton" style="padding:28px;display:flex;flex-direction:column;gap:22px">
-        <div data-w-alert style="display:none;margin:-8px -8px 0;border-radius:14px;padding:10px 16px;color:#fff;font-size:17px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis"></div>
-        <div style="display:flex;align-items:center;gap:20px">
-          <span data-w-icon>${icon('cloud', 72, settings.accent)}</span>
+      <a href="#/forecast" data-weather class="card skeleton" style="flex-grow:1;min-height:0;padding:0;display:flex;flex-direction:column;overflow:hidden">
+        <div data-w-alert style="display:none;margin:20px 20px 0;border-radius:14px;padding:10px 16px;color:#fff;font-size:17px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis"></div>
+        <div style="display:flex;align-items:center;gap:20px;padding:26px 28px 0">
+          <span data-w-icon style="display:flex;flex:none">${wxIcon('cloud', 80)}</span>
           <div data-w-temp class="display" style="font-size:80px;font-weight:500;line-height:1">--°</div>
           <div style="display:flex;flex-direction:column;gap:4px;margin-left:8px;min-width:0">
             <div data-w-label style="font-size:22px;font-weight:600">Loading weather…</div>
@@ -103,30 +131,33 @@ export function mount(el) {
             <div data-w-note class="muted" style="display:none;font-size:15px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis"></div>
           </div>
         </div>
-        <div data-w-hours style="display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:8px;border-top:1px solid var(--line);padding-top:18px;min-height:82px"></div>
+        <div data-w-hours style="display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:8px;padding:20px 28px 0;min-height:82px"></div>
+        <div data-w-land style="margin-top:auto;flex:none">${homeLandscape(isNight())}</div>
       </a>
     </div>
 
-    <div style="display:flex;flex-direction:column;gap:24px;min-width:0">
-      <div style="flex-grow:1;border-radius:var(--radius);background:#C9CFD6;display:flex;align-items:flex-end;justify-content:space-between;padding:24px;position:relative;overflow:hidden">
+    <div style="display:grid;grid-template-rows:minmax(0,1fr) 168px;gap:24px;min-width:0">
+      <div style="border-radius:var(--radius);background:#F6EFE7;display:flex;align-items:flex-end;justify-content:space-between;padding:24px;position:relative;overflow:hidden">
         <div data-photo-bg style="position:absolute;top:0;right:0;bottom:0;left:0;background-position:center;background-size:cover;transition:opacity .8s"></div>
-        <div data-photo-empty style="position:absolute;top:0;right:0;bottom:0;left:0;display:flex;flex-direction:column;gap:16px;align-items:center;justify-content:center;font-size:20px;color:#3A4352;text-align:center;padding:40px">
-          <div>Family photos will show here</div>
+        <div data-photo-empty style="position:absolute;top:0;right:0;bottom:0;left:0;display:flex;flex-direction:column;gap:14px;align-items:center;justify-content:center;font-size:22px;color:#4A5363;text-align:center;padding:32px">
+          ${framesArt()}
+          <div style="margin-top:4px">Family photos will show here</div>
           <a href="#/addphotos" class="pill" style="background:var(--ink);color:#fff">Add photos from a phone</a>
         </div>
         <div data-photo-label style="position:relative;background:rgba(255,255,255,.92);border-radius:999px;padding:10px 18px;font-size:16px;font-weight:500;max-width:60%;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">Photo frame</div>
         <a data-photo-full href="#/photos" class="pill" style="position:relative;background:var(--ink);color:#fff;margin-left:auto">Full screen</a>
       </div>
 
-      <div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:24px">
-        <a data-dinner href="#/recipes" style="background:${settings.accent};color:#fff;border-radius:var(--radius);padding:24px;display:flex;flex-direction:column;gap:8px">
-          <div data-d-eyebrow class="eyebrow">Tonight's dinner idea</div>
-          <div data-d-title class="display" style="font-size:28px;font-weight:500;line-height:1.15;overflow-wrap:anywhere;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden">Pick a recipe</div>
-          <div data-d-sub style="font-size:16px">Tap to browse recipes</div>
+      <div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:24px;min-height:0">
+        <a data-dinner href="#/recipes" style="background:${settings.accent};color:#fff;border-radius:var(--radius);padding:22px 24px;display:flex;flex-direction:column;gap:6px;position:relative;overflow:hidden;min-width:0">
+          <span data-d-art>${dinnerArt('')}</span>
+          <div data-d-eyebrow class="eyebrow" style="position:relative">Tonight's dinner idea</div>
+          <div data-d-title class="display" style="position:relative;max-width:150px;font-size:26px;font-weight:500;line-height:1.15;overflow-wrap:anywhere;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden">Pick a recipe</div>
+          <div data-d-sub style="position:relative;max-width:150px;font-size:15px;color:#FBE3D8;margin-top:auto">Tap to browse recipes</div>
         </a>
-        <a href="#/calendar" class="card" style="padding:24px;display:flex;flex-direction:column;gap:12px;min-width:0">
+        <a href="#/calendar" class="card" style="padding:22px 24px;display:flex;flex-direction:column;gap:10px;min-width:0;overflow:hidden">
           <div class="eyebrow muted">Coming up</div>
-          <div data-coming style="display:flex;flex-direction:column;gap:12px">${comingUpRows()}</div>
+          <div data-coming style="display:flex;flex-direction:column;gap:10px">${comingUpRows()}</div>
         </a>
       </div>
     </div>
@@ -153,8 +184,23 @@ export function mount(el) {
     $('[data-d-eyebrow]').textContent = t.planned ? "Tonight's dinner" : "Tonight's dinner idea";
     $('[data-d-title]').textContent = t.entry.t;
     $('[data-d-sub]').textContent = `${fmtMinutes(t.entry.m)} · ${t.planned ? 'Tap to cook' : 'Tap to see it'}`;
+    $('[data-d-art]').innerHTML = dinnerArt(t.entry.t);
+    fitDinner();
   }).catch(() => {});
   loadDinner();
+
+  // Long dish names: a smaller size on three lines rather than cut off.
+  function fitDinner() {
+    const d = $('[data-d-title]');
+    d.style.fontSize = '26px';
+    d.style.webkitLineClamp = '2';
+    d.style.maxWidth = '150px';
+    if (d.scrollHeight > d.clientHeight + 2) {
+      d.style.fontSize = '21px';
+      d.style.webkitLineClamp = '3';
+      d.style.maxWidth = '160px';
+    }
+  }
 
   // Calendar links download in the background; redraw "Coming up" when they arrive.
   const renderComing = () => { if (el.isConnected) $('[data-coming]').innerHTML = comingUpRows(); };
@@ -227,7 +273,9 @@ export function mount(el) {
   function showWeather(w, loc, offline) {
     const d = describe(w.code);
     $('[data-weather]').classList.remove('skeleton');
-    $('[data-w-icon]').innerHTML = icon(d.icon, 72, settings.accent);
+    const night = isNight();
+    $('[data-w-icon]').innerHTML = wxIcon(d.icon, 80, night);
+    $('[data-w-land]').innerHTML = homeLandscape(night);
     $('[data-w-temp]').textContent = `${w.temp}°`;
     $('[data-w-label]').textContent = d.label;
     $('[data-w-sub]').textContent = `H ${w.high}° · L ${w.low}°${loc && loc.town ? ` · ${loc.town}` : ''}`;
