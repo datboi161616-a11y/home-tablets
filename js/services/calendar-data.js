@@ -2,7 +2,8 @@
 //   1. the calendar links saved in Tablet settings (Google Calendar / iCloud
 //      iCal addresses), downloaded by the tablet app and read with ics.js;
 //   2. the birthdays and dates typed into Tablet settings (repeat yearly);
-//   3. the holidays in config.js (repeat yearly).
+//   3. the holidays in config.js (repeat yearly);
+//   4. events typed on this tablet (Calendar → "+ Add", my-events.js).
 //
 // Calendar links are slow and may be offline, so the events found there are
 // kept in localStorage (this week plus the next ~60 days) and every function
@@ -12,11 +13,13 @@
 import { events as holidays } from '../config.js';
 import { getFamily, fetchCalendarFeeds } from './family.js';
 import { expandEvents } from './ics.js';
+import { myEventsOn } from './my-events.js';
 
 // Calendar kinds -> colour. 'family' uses the accent colour from settings.
 export const KINDS = {
   family: { label: 'Calendar' },
   house: { label: 'Other calendars', color: '#2D5BA8' },
+  tablet: { label: 'Added here', color: '#3E7D6E' },
   birthday: { label: 'Birthdays', color: '#1D2430' },
   holiday: { label: 'Holidays', color: '#7A8594' },
 };
@@ -127,6 +130,12 @@ function itemsOn(d, feeds) {
     list.push({ title: e.title, time, kind: e.kind, sort, start: e.start, end: e.end, allDay: time === 'All day', location: e.location || '',
       endTime: !e.allDay && e.end > e.start && e.end <= dayEnd ? fmtTime(e.end) : '' });
   });
+  // Typed on this tablet.
+  myEventsOn(dayStart).forEach((e) => {
+    list.push({ id: e.id, title: e.title, time: e.allDay ? 'All day' : fmtTime(e.start), kind: 'tablet',
+      sort: e.allDay ? -1 : e.start.getHours() * 60 + e.start.getMinutes(), start: e.start, end: e.end, allDay: e.allDay, location: '',
+      endTime: e.allDay ? '' : fmtTime(e.end) });
+  });
   datedOn(d, list.map((x) => x.title)).forEach((x) => {
     list.push({ title: x.title, time: 'All day', kind: x.kind, sort: -1, start: dayStart, end: dayEnd, allDay: true });
   });
@@ -149,7 +158,7 @@ export function getWeek(date = new Date()) {
       num: d.getDate(),
       isToday: d.getTime() === today.getTime(),
       // Settings dates that aren't birthdays use the main calendar colour.
-      events: itemsOn(d, feeds).map((e) => ({ time: e.time, endTime: e.endTime || '', title: e.title, location: e.location || '', kind: e.kind === 'event' ? 'family' : e.kind })),
+      events: itemsOn(d, feeds).map((e) => ({ id: e.id || '', time: e.time, endTime: e.endTime || '', title: e.title, location: e.location || '', kind: e.kind === 'event' ? 'family' : e.kind })),
     });
   }
   return out;
@@ -195,7 +204,7 @@ export function thisWeekCount() {
   const end = addDays(startOfWeek(today), 7);
   const feeds = feedEvents();
   let count = feeds.filter((e) => e.start < end && e.end > today).length;
-  for (let d = today; d < end; d = addDays(d, 1)) count += datedOn(d, feeds.map((e) => e.title)).length;
+  for (let d = today; d < end; d = addDays(d, 1)) count += datedOn(d, feeds.map((e) => e.title)).length + myEventsOn(d).length;
   return count;
 }
 
