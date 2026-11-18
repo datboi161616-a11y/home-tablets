@@ -5,12 +5,14 @@ const N = () => window.TabletNative;
 export const hasApps = () => !!(N() && N().appList);
 
 // Shown when previewing in a normal browser (no tablet), so the screen can be designed.
+// The icons are the apps' own (from their Google Play pages), saved in data/app-icons/.
+// On a tablet, Android supplies each installed app's real icon instead.
 const SAMPLE = [
-  { pkg: 'com.google.android.youtube', label: 'YouTube', color: '#FF0033' },
-  { pkg: 'com.spotify.music', label: 'Spotify', color: '#1DB954' },
-  { pkg: 'com.netflix.mediaclient', label: 'Netflix', color: '#E50914' },
-  { pkg: 'us.zoom.videomeetings', label: 'Zoom', color: '#0B5CFF' },
-  { pkg: 'com.whatsapp', label: 'WhatsApp', color: '#25D366' },
+  { pkg: 'com.google.android.youtube', label: 'YouTube', color: '#FF0033', icon: 'data/app-icons/youtube.png' },
+  { pkg: 'com.spotify.music', label: 'Spotify', color: '#1DB954', icon: 'data/app-icons/spotify.png' },
+  { pkg: 'com.netflix.mediaclient', label: 'Netflix', color: '#E50914', icon: 'data/app-icons/netflix.png' },
+  { pkg: 'us.zoom.videomeetings', label: 'Zoom', color: '#0B5CFF', icon: 'data/app-icons/zoom.png' },
+  { pkg: 'com.whatsapp', label: 'WhatsApp', color: '#25D366', icon: 'data/app-icons/whatsapp.png' },
 ];
 
 // An app that was allowed but later uninstalled comes back with no name (and no icon).
