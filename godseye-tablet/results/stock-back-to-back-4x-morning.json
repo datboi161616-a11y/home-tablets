@@ -1,0 +1,182 @@
+{
+ "label": "baseline-4x",
+ "cpuSlowdown": 4,
+ "url": "http://localhost:4174/?welcome=0",
+ "scenes": {
+  "globe": {
+   "setupAndSettleMs": 17285,
+   "tilesLoaded": true,
+   "frameMs": {
+    "median": 8.9,
+    "p90": 25.5,
+    "min": 5.4,
+    "max": 46.4
+   },
+   "drawsPerFrame": 22,
+   "trianglesPerFrame": 226305,
+   "tiles": 12,
+   "canvas": [
+    1280,
+    800
+   ],
+   "resolutionScale": 1,
+   "msaa": 4,
+   "sse": 2,
+   "heapMB": 100,
+   "layers": [],
+   "holds": []
+  },
+  "planes": {
+   "setupAndSettleMs": 59110,
+   "tilesLoaded": true,
+   "frameMs": {
+    "median": 66.8,
+    "p90": 83.2,
+    "min": 18.3,
+    "max": 96.7
+   },
+   "drawsPerFrame": 64,
+   "trianglesPerFrame": 485614,
+   "tiles": 41,
+   "canvas": [
+    1280,
+    800
+   ],
+   "resolutionScale": 1,
+   "msaa": 4,
+   "sse": 2,
+   "heapMB": 171,
+   "layers": [
+    "flights",
+    "military",
+    "ais-live-vessels",
+    "military-installations",
+    "military-awareness"
+   ],
+   "holds": [
+    "camera",
+    "flights",
+    "military",
+    "military-awareness",
+    "tracked-entity"
+   ]
+  },
+  "flightsWide": {
+   "setupAndSettleMs": 51507,
+   "tilesLoaded": true,
+   "frameMs": {
+    "median": 21.8,
+    "p90": 46.5,
+    "min": 15.9,
+    "max": 54.1
+   },
+   "drawsPerFrame": 62,
+   "trianglesPerFrame": 295563,
+   "tiles": 50,
+   "canvas": [
+    1280,
+    800
+   ],
+   "resolutionScale": 1,
+   "msaa": 4,
+   "sse": 2,
+   "heapMB": 144,
+   "layers": [
+    "flights"
+   ],
+   "holds": [
+    "flights"
+   ]
+  },
+  "space": {
+   "setupAndSettleMs": 14921,
+   "tilesLoaded": true,
+   "frameMs": {
+    "median": 9.7,
+    "p90": 40.3,
+    "min": 5.5,
+    "max": 56.6
+   },
+   "drawsPerFrame": 25,
+   "trianglesPerFrame": 191832,
+   "tiles": 7,
+   "canvas": [
+    1280,
+    800
+   ],
+   "resolutionScale": 1,
+   "msaa": 4,
+   "sse": 2,
+   "heapMB": 200,
+   "layers": [
+    "satellites",
+    "rocket-launches"
+   ],
+   "holds": [
+    "rocket-launches",
+    "satellites"
+   ]
+  },
+  "satellites": {
+   "setupAndSettleMs": 18699,
+   "tilesLoaded": true,
+   "frameMs": {
+    "median": 24.8,
+    "p90": 37.3,
+    "min": 17.1,
+    "max": 89.9
+   },
+   "drawsPerFrame": 31,
+   "trianglesPerFrame": 236749,
+   "tiles": 13,
+   "canvas": [
+    1280,
+    800
+   ],
+   "resolutionScale": 1,
+   "msaa": 4,
+   "sse": 2,
+   "heapMB": 200,
+   "layers": [
+    "satellites"
+   ],
+   "holds": [
+    "satellites"
+   ]
+  },
+  "quakes": {
+   "setupAndSettleMs": 13505,
+   "tilesLoaded": true,
+   "frameMs": {
+    "median": 11.9,
+    "p90": 18.6,
+    "min": 9.1,
+    "max": 46.4
+   },
+   "drawsPerFrame": 29,
+   "trianglesPerFrame": 334113,
+   "tiles": 13,
+   "canvas": [
+    1280,
+    800
+   ],
+   "resolutionScale": 1,
+   "msaa": 4,
+   "sse": 2,
+   "heapMB": 159,
+   "layers": [
+    "earthquakes"
+   ],
+   "holds": []
+  }
+ },
+ "bootMs": 3325,
+ "gpu": "ANGLE (NVIDIA, NVIDIA GeForce RTX 4070 Ti (0x00002782) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+ "processMemoryMB": {
+  "browser": 247,
+  "crashpad-handler": 13,
+  "gpu-process": 206,
+  "utility": 99,
+  "renderer": 894
+ }
+}

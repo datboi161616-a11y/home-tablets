@@ -1,0 +1,2889 @@
+diff --git a/build/vite.js b/build/vite.js
+index 883c0db..88ca9af 100644
+--- a/build/vite.js
++++ b/build/vite.js
+@@ -174,6 +174,7 @@ export function createBrowserViteConfig({
+   host = 'localhost',
+   port = 4173,
+   allowedHosts = DEFAULT_ALLOWED_HOSTS,
++  tabletEdition = false,
+   command,
+ } = {}) {
+   const photonSetting = photonEndpointSetting(photonUrl);
+@@ -245,6 +246,8 @@ export function createBrowserViteConfig({
+       __VUE_I18N_LEGACY_API__: 'false',
+       __INTLIFY_PROD_DEVTOOLS__: 'false',
+       __INTLIFY_DROP_MESSAGE_COMPILER__: 'true',
++      // The tablet edition (src/tablet) is on by default in a tablet build.
++      'import.meta.env.GEV_TABLET': JSON.stringify(Boolean(tabletEdition)),
+       'import.meta.env.GOOGLE_MAPS_API_KEY': JSON.stringify(googleApiKey),
+       'import.meta.env.CESIUM_ION_TOKEN': JSON.stringify(cesiumToken),
+       // Only expose a validated URL or the explicit disabled sentinel.
+diff --git a/scripts/i18n.mjs b/scripts/i18n.mjs
+index 06464b1..191edd9 100644
+--- a/scripts/i18n.mjs
++++ b/scripts/i18n.mjs
+@@ -484,7 +484,13 @@ function readMarkup(file) {
+ // Text that never reaches the page as UI: tool results and descriptions for
+ // AI clients (MCP and the voice model).
+ // The conformance suite's check titles are developer output, not UI.
+-const NOT_UI = [/^src\/tools\//, /^src\/render\/conformance\//];
++// The tablet edition's own screens (src/tablet) are English only: it is a
++// build for one household's kitchen screen, and its words are kept as written.
++const NOT_UI = [
++  /^src\/tools\//,
++  /^src\/render\/conformance\//,
++  /^src\/tablet\//,
++];
+ 
+ function sourceFiles() {
+   return trackedFiles(
+diff --git a/server/standalone/vite.config.js b/server/standalone/vite.config.js
+index f660bfb..7095b35 100644
+--- a/server/standalone/vite.config.js
++++ b/server/standalone/vite.config.js
+@@ -42,6 +42,7 @@ export function standaloneConfig(
+     host: process.env.HOST,
+     port: process.env.PORT,
+     allowedHosts: resolveAllowedHosts(process.env.GEV_ALLOWED_HOSTS),
++    tabletEdition: process.env.GEV_TABLET === '1',
+     command,
+   });
+ }
+diff --git a/src/app/tools.js b/src/app/tools.js
+index 0825869..1024ea8 100644
+--- a/src/app/tools.js
++++ b/src/app/tools.js
+@@ -43,6 +43,7 @@ import {
+ } from '../renderGovernor.js';
+ import { entityRecord, readEntityRecord } from '../data/entityRecords.js';
+ import { overlayHost } from './layers/overlayHost.js';
++import { installTabletEdition } from '../tablet/index.js';
+ 
+ /**
+  * Attach scene tools, rendering listeners and the application debug handle.
+@@ -368,6 +369,22 @@ export function createApplicationTools({
+       terrain: operations.requests.terrain,
+     }),
+   );
++  // The tablet edition (src/tablet): the quality governor, lighter starting
++  // values and the Missions menu. `?tablet=0` leaves it out.
++  defer(
++    installTabletEdition({
++      viewer,
++      renderer,
++      dataManager,
++      run: (name, args, options = {}) =>
++        voiceCommands.runner(name, args, { ...options, signal }),
++      stories: {
++        isOpen: () => storiesStore.mode !== 'closed',
++        close: () => stories.close(),
++      },
++      signal,
++    }),
++  );
+   // Any other tool takes the pointer as Draw does (the newest
+   // claim takes over; `claim(owner, {onLost})` tells the tool it replaces),
+   // and its own click handlers yield while a tool holds it, as the layers' do
+diff --git a/src/firstRunExperience.js b/src/firstRunExperience.js
+index 79d5460..c3151a5 100644
+--- a/src/firstRunExperience.js
++++ b/src/firstRunExperience.js
+@@ -26,6 +26,7 @@ import { EXCLUSIVE_SURFACE_CLASSES } from './exclusiveSurfaces.js';
+ import { FIRST_RUN_TIP, environmentalLabel } from './firstRunCopy.js';
+ import { useFirstRunStore } from './ui/stores/firstRun.js';
+ import { applicationPinia } from './ui/vueRuntime.js';
++import { tabletEdition } from './tablet/profile.js';
+ 
+ export {
+   ENVIRONMENTAL_LABEL_CHOICE,
+@@ -204,6 +205,8 @@ export function shouldShowFirstRun({
+     return false;
+   // The demo/support escape hatch outranks both suppressions on purpose.
+   if (params.get('welcome') === '1') return true;
++  // The tablet edition's Missions menu takes the launcher's place.
++  if (tabletEdition(location)) return false;
+   if (readStored('local', storage, FIRST_RUN_STORAGE_KEY) === 'suppressed')
+     return false;
+   if (
+diff --git a/src/main.js b/src/main.js
+index 99de9cc..4981ba5 100644
+--- a/src/main.js
++++ b/src/main.js
+@@ -2,6 +2,11 @@ import { createStandaloneApplication } from './standalone/application.js';
+ import { describeError } from './standalone/errors.js';
+ import { t } from './i18n/index.js';
+ import { PHOTON_SETTING as photonSetting } from './search/photonSetting.js';
++import { clearStartRetries, retryStart } from './tablet/startRetry.js';
++import { markDocument } from './tablet/profile.js';
++
++// The tablet edition restyles the stock chrome from the first paint.
++markDocument();
+ 
+ const application = createStandaloneApplication({
+   googleApiKey: import.meta.env.GOOGLE_MAPS_API_KEY,
+@@ -11,13 +16,21 @@ const application = createStandaloneApplication({
+   allowQaRegistration: import.meta.env.DEV,
+ });
+ 
+-application.start().catch((error) => {
+-  console.error("God's Eye View initialization failed:", error);
+-  const loaderStatus = document.querySelector('#loading-screen .loader-status');
+-  loaderStatus.textContent = t('Error: {message}', {
+-    message: describeError(error),
+-  });
+-  loaderStatus.style.color = '#ff4444';
+-});
++application.start().then(
++  () => clearStartRetries(),
++  (error) => {
++    console.error("God's Eye View initialization failed:", error);
++    // On the tablet there is nobody to press reload: try again a couple of
++    // times before leaving the error on screen.
++    if (retryStart()) return;
++    const loaderStatus = document.querySelector(
++      '#loading-screen .loader-status',
++    );
++    loaderStatus.textContent = t('Error: {message}', {
++      message: describeError(error),
++    });
++    loaderStatus.style.color = '#ff4444';
++  },
++);
+ 
+ export { application };
+diff --git a/src/render/cesium/applicationViewer.js b/src/render/cesium/applicationViewer.js
+index 31e2622..e9af7be 100644
+--- a/src/render/cesium/applicationViewer.js
++++ b/src/render/cesium/applicationViewer.js
+@@ -3,6 +3,10 @@ import { applyModelAtmosphereWorkaround } from '../../app/atmosphereCompat.js';
+ import { IDLE_FRAME_RATE } from '../../renderGovernor.js';
+ import { preloadImageryAhead } from './imageryLookAhead.js';
+ import { StarrySky } from './starrySky.js';
++import { startingMsaa, tabletEdition } from '../../tablet/profile.js';
++
++/** Tiles the tablet edition keeps after they leave the view. */
++const TABLET_TILE_CACHE_SIZE = 48;
+ 
+ /**
+  * At the farthest a hand can zoom out, the globe is this share of the
+@@ -60,7 +64,7 @@ if (typeof window !== 'undefined' && !window.__CESIUM__)
+  */
+ export function applicationViewerOptions(
+   creditContainer,
+-  { showRenderLoopErrors = true, msaa = 4 } = {},
++  { showRenderLoopErrors = true, msaa = startingMsaa() } = {},
+ ) {
+   return {
+     timeline: false,
+@@ -81,7 +85,19 @@ export function applicationViewerOptions(
+     creditContainer,
+     // Cesium's 1 is no multisampling.
+     msaaSamples: msaa || 1,
+-    contextOptions: { webgl: { preserveDrawingBuffer: true } },
++    contextOptions: {
++      webgl: {
++        preserveDrawingBuffer: true,
++        // The scene is drawn into Cesium's own buffers and copied to the
++        // canvas, so the canvas's own antialiasing smooths nothing; on the
++        // tablet it only costs memory and a resolve each frame.
++        ...(tabletEdition() ? { antialias: false } : {}),
++      },
++    },
++    // See-through things blended in draw order instead of through two extra
++    // full-screen buffers of floats and a pass to combine them: where a small
++    // graphics chip can do the latter at all, it pays for it every frame.
++    ...(tabletEdition() ? { orderIndependentTranslucency: false } : {}),
+     showRenderLoopErrors,
+   };
+ }
+@@ -110,6 +126,13 @@ export function createApplicationViewer({
+     // by src/app/scene.js), tick at the idle rate so the startup load does
+     // not compete with drawing at 240 fps.
+     viewer.targetFrameRate = IDLE_FRAME_RATE;
++    if (tabletEdition()) {
++      // A 2 GB device: fewer terrain and imagery tiles kept once they leave
++      // the view (Cesium's 100 suits a desktop; fewer costs a reload now and
++      // then), and none loaded for the neighbours of what is on screen.
++      viewer.scene.globe.tileCacheSize = TABLET_TILE_CACHE_SIZE;
++      viewer.scene.globe.preloadSiblings = false;
++    }
+     // No double-click follow or zoom: the Viewer's own (it tracked or
+     // zoomed to the entity picked) is off. Following is a layer's click.
+     viewer.screenSpaceEventHandler.removeInputAction(
+diff --git a/src/tablet/defaults.js b/src/tablet/defaults.js
+new file mode 100644
+index 0000000..dcd031b
+--- /dev/null
++++ b/src/tablet/defaults.js
+@@ -0,0 +1,36 @@
++/**
++ * @module tablet/defaults
++ * @description Lighter starting values for a small tablet. Each is a setting
++ * the app already has, set through the app's own actions at a fresh start, so
++ * every one can be changed back from the app's own panels: nothing is taken
++ * away.
++ */
++import { startedFresh } from './profile.js';
++
++/**
++ * The starting values, applied on a fresh start. The app keeps these in the
++ * page's link rather than in storage, so a fresh start has its desktop
++ * defaults again.
++ * @param {object} options
++ * @param {(name: string, args?: object) => Promise<object>} options.run The
++ *   app's action runner.
++ * @param {boolean} [options.fresh] Whether this is a fresh start (see
++ *   `startedFresh` in `profile.js`).
++ * @returns {Promise<boolean>} Whether they were applied.
++ */
++export async function applyStartingValues({ run, fresh = startedFresh }) {
++  if (!fresh) return false;
++  const act = async (name, args) => {
++    try {
++      return await run(name, args);
++    } catch {
++      return null;
++    }
++  };
++  // A full-screen sharpening pass costs a weak graphics chip a second trip
++  // over every pixel, each frame.
++  await act('set_post_processing', { sharpen: { enabled: false } });
++  // The calmer of the app's two heads-up displays.
++  await act('set_hud', { layout: 'minimal' });
++  return true;
++}
+diff --git a/src/tablet/governor.js b/src/tablet/governor.js
+new file mode 100644
+index 0000000..badc0bd
+--- /dev/null
++++ b/src/tablet/governor.js
+@@ -0,0 +1,505 @@
++/**
++ * @module tablet/governor
++ * @description Keeps the globe moving smoothly on a weak graphics chip by
++ * trading sharpness for frame rate, through the renderer's own quality port
++ * (`src/render/contract/quality.d.ts`). The stock app never turns those
++ * knobs; on a desktop GPU it has no need to.
++ *
++ * How it decides. While something animates (the loop is in `continuous`
++ * mode) it measures the time between drawn frames, once a second. Whether a
++ * slow picture is the graphics chip's doing (fewer pixels help) or the
++ * processor's (they do not) cannot be read off a tablet, so every step is a
++ * trial that has to earn its keep:
++ *
++ * - slower than `SLOW` of the target for a few seconds: step DOWN the ladder
++ *   (a lower internal resolution, and terrain to match it) and see what it
++ *   buys. A step that does not make the picture faster is taken back, and the
++ *   rungs below are left alone for a while: sharpness is not thrown away for
++ *   nothing.
++ * - slow, and stepping down does not help: step UP instead. If the rate holds,
++ *   the sharper picture was free, and it climbs again.
++ * - at the target with processor time to spare for a good while: step UP one
++ *   rung to see whether the chip can afford it (a frame-rate cap hides how
++ *   much room it has).
++ * - a step up that costs frame rate is taken back, and that rung left alone
++ *   for a while, longer each time it fails.
++ *
++ * Frames drawn on demand (a parked camera, nothing moving) say nothing about
++ * speed and are ignored. The rung it settles on is remembered for next start.
++ * What was learned about one scene says little about the next: whoever
++ * changes the scene says so (`newScene`), and the rungs left alone are open
++ * again.
++ *
++ * Sharp when still. A picture that is not moving has all the time it needs, so
++ * once the animation has stopped for `STILL_AFTER_MS` (the loop's last frame
++ * was one drawn on demand: on a slow chip an animation's frames can be further
++ * apart than that, and are still an animation) the governor gives it
++ * the stock app's resolution and full terrain detail (the finer tiles load in
++ * as they would in the stock app), and drops back to the rung on the first
++ * frame of the next movement; the coarser tiles are still in memory, so that
++ * costs no loading. Should sharpening ever set the picture moving again by
++ * itself (movement comes straight after it, several times within seconds), it
++ * is left off for a while. Whoever is busy changing the view (a mission being
++ * set up) can ask for no sharpening meanwhile (`allowStills`).
++ *
++ * The decision logic keeps no clock or storage of its own (both are passed
++ * in), so it runs under Node in `governor.test.mjs`.
++ */
++
++/**
++ * Best to worst. `pixelRatio` scales the drawing buffer; detail is 0..1.
++ *
++ * Cesium picks tiles for the screen's size whatever the buffer's, so a lower
++ * pixel ratio alone draws more map detail than its pixels can show. Down to
++ * the fourth rung the terrain detail is the one that matches the pixel ratio
++ * (an error `1 / pixelRatio` times the stock one, see `errorFactor` in
++ * `src/render/cesium/quality.js`): the picture loses what the lower
++ * resolution loses and nothing more, for fewer tiles to draw, load and keep.
++ * The last two rungs go further, for a chip that still cannot keep up.
++ */
++export const LADDER = Object.freeze([
++  Object.freeze({ pixelRatio: 1, terrainDetail: 1 }),
++  Object.freeze({ pixelRatio: 0.85, terrainDetail: 0.92 }),
++  Object.freeze({ pixelRatio: 0.75, terrainDetail: 0.86 }),
++  Object.freeze({ pixelRatio: 0.65, terrainDetail: 0.79 }),
++  Object.freeze({ pixelRatio: 0.55, terrainDetail: 0.66 }),
++  Object.freeze({ pixelRatio: 0.5, terrainDetail: 0.52 }),
++]);
++
++export const QUALITY_STORAGE_KEY = 'gev:tablet:quality:v1';
++
++/** Below this share of the target rate counts as slow. */
++const SLOW = 0.72;
++/** At or above this share of the target rate counts as on target. */
++const FAST = 0.93;
++/** Slow seconds in a row before stepping down. */
++const DOWN_AFTER = 3;
++/** Slow seconds in a row, with no rung below to try, before stepping up. */
++const UP_AFTER_SLOW = 10;
++/** On-target seconds in a row before trying a better rung. */
++const UP_AFTER = 20;
++/** No decision this soon after a change: tiles reload and frames stutter. */
++const COOLDOWN_MS = 5_000;
++/** Seconds measured, after the cooldown, to judge a step. */
++const TRIAL_SECONDS = 3;
++/** A step down has helped when the rate is this many times what it was. */
++const HELPED = 1.08;
++/** A step up from a rate on target has cost too much below this share of it. */
++const HELD = 0.93;
++/** A step up from a slow rate must cost next to nothing. */
++const HELD_WHEN_SLOW = 0.95;
++/** A gap this long between frames is a pause, not a slow frame. */
++const PAUSE_MS = 400;
++/** Frames in a second needed to judge it. */
++const MIN_SAMPLES = 5;
++/** Seconds of frame rate remembered, to compare a step against. */
++const RECENT_SECONDS = 3;
++/** Processor share of a frame's budget above which a better rung is not tried. */
++const BUSY = 0.7;
++/** Stillness before the picture is redrawn sharp. */
++export const STILL_AFTER_MS = 900;
++/** Movement this soon after sharpening may have been caused by it. */
++const ECHO_MS = 400;
++/**
++ * That many times within the window, and sharpening is left off for a while.
++ * A loop the sharpening itself drives comes round every second or two;
++ * movement that only happens to follow a sharpening does not keep that up.
++ */
++const ECHO_LIMIT = 3;
++const ECHO_WINDOW_MS = 8_000;
++const STILL_OFF_MS = 5 * 60_000;
++/** How long rungs are left alone after a failed step; doubles to the longest. */
++const BACKOFF_MS = 5 * 60_000;
++const LONGEST_BACKOFF_MS = 40 * 60_000;
++
++const WORST = LADDER.length - 1;
++const mean = (list) => list.reduce((sum, n) => sum + n, 0) / list.length;
++const clampLevel = (n) =>
++  Math.min(WORST, Math.max(0, Math.round(Number(n) || 0)));
++
++/** The rung remembered from an earlier run, or null. */
++export function readStoredLevel(storage) {
++  try {
++    const parsed = JSON.parse(
++      storage?.getItem?.(QUALITY_STORAGE_KEY) || 'null',
++    );
++    return Number.isInteger(parsed?.level) ? clampLevel(parsed.level) : null;
++  } catch {
++    return null;
++  }
++}
++
++/**
++ * @param {object} options
++ * @param {import('../render/contract/quality').QualityPort} options.quality
++ * @param {number} [options.targetFps] The rate to hold, and the loop's cap.
++ * @param {number} [options.startLevel] The rung to start on with none remembered.
++ * @param {() => number} [options.now] Milliseconds, monotonic.
++ * @param {{getItem: Function, setItem: Function}|null} [options.storage]
++ * @param {(change: object) => void} [options.onChange] Told of each change:
++ *   a step on the ladder (`reason` 'start', 'slow', 'probe', 'no-gain',
++ *   'too-much', 'new-scene' or 'pinned'), a still picture sharpened
++ *   ('still'), and
++ *   movement after one ('moving', with how soon it came and what was holding
++ *   the loop).
++ * @param {number} [options.stillPixelRatio] The resolution a still picture is
++ *   redrawn at: 1 is the stock app's (one pixel per CSS pixel). The rung's own
++ *   or less turns sharp-when-still off.
++ * @param {(fn: Function, ms: number) => unknown} [options.schedule] A timer.
++ * @param {(timer: unknown) => void} [options.cancel]
++ */
++export function createQualityGovernor({
++  quality,
++  targetFps = 30,
++  startLevel = 2,
++  now = () => performance.now(),
++  storage = null,
++  onChange = null,
++  stillPixelRatio = 1,
++  schedule = (fn, ms) => setTimeout(fn, ms),
++  cancel = (timer) => clearTimeout(timer),
++}) {
++  if (!quality?.set || !quality?.signals?.on)
++    throw new TypeError('A quality port is required');
++
++  let level = readStoredLevel(storage) ?? clampLevel(startLevel);
++  /** The best rung allowed while a failed step up's back-off runs. */
++  let ceiling = 0;
++  let ceilingUntil = 0;
++  let ceilingBackoff = BACKOFF_MS;
++  /** The worst rung allowed while a failed step down's back-off runs. */
++  let floor = WORST;
++  let floorUntil = 0;
++  let floorBackoff = BACKOFF_MS;
++  /** The step being judged: {kind: 'down'|'up', from, fpsBefore, slow, seconds}. */
++  let trial = null;
++  let lastChangeAt = now();
++  let lastContinuousAt = null;
++  let windowStart = now();
++  let intervals = [];
++  let work = [];
++  /** The frame rate of the last few judged seconds, newest last. */
++  let recent = [];
++  let slowStreak = 0;
++  let fastStreak = 0;
++  let measured = { fps: null, cpuMs: null, gpuMs: null };
++  let changes = 0;
++  let stopped = false;
++  /** Whether the picture on screen is the sharp still. */
++  let sharp = false;
++  let sharpenedAt = 0;
++  let lastMotionAt = null;
++  /** The mode of the last frame drawn: 'continuous', 'demand', or none yet. */
++  let lastMode = null;
++  let stillTimer = null;
++  /** When movement last came straight after a sharpening, oldest first. */
++  let echoes = [];
++  let stillOffUntil = 0;
++  let stillsAllowed = true;
++  /** Whether the rung is held where it was put, for measuring one. */
++  let held = false;
++
++  const budgetMs = 1000 / targetFps;
++  const ceilingNow = (t) => (t < ceilingUntil ? ceiling : 0);
++  const floorNow = (t) => (t < floorUntil ? floor : WORST);
++
++  function apply(reason) {
++    const rung = LADDER[level];
++    sharp = false;
++    quality.set({
++      pixelRatio: rung.pixelRatio,
++      terrainDetail: rung.terrainDetail,
++      tiles3dDetail: rung.terrainDetail,
++      msaa: 0,
++      targetFps,
++    });
++    try {
++      storage?.setItem?.(QUALITY_STORAGE_KEY, JSON.stringify({ level }));
++    } catch {
++      /* storage full or off: the rung is simply not remembered */
++    }
++    changes += 1;
++    onChange?.({ level, reason, ...rung, ...measured });
++  }
++
++  /** Move to `next` and start counting afresh from `t`. */
++  function moveTo(next, t, reason) {
++    level = next;
++    slowStreak = 0;
++    fastStreak = 0;
++    recent = [];
++    lastChangeAt = t;
++    apply(reason);
++  }
++
++  /** Take one step and judge it once the picture has settled. */
++  function startTrial(kind, t) {
++    trial = {
++      kind,
++      from: level,
++      fpsBefore: mean(recent),
++      slow: slowStreak > 0,
++      seconds: [],
++    };
++    moveTo(
++      level + (kind === 'down' ? 1 : -1),
++      t,
++      kind === 'down' ? 'slow' : 'probe',
++    );
++  }
++
++  /** The step has been measured for long enough: keep it or take it back. */
++  function judgeTrial(t) {
++    const { kind, from, fpsBefore, slow, seconds } = trial;
++    const after = mean(seconds);
++    trial = null;
++    if (kind === 'down') {
++      if (after >= fpsBefore * HELPED) {
++        floorBackoff = BACKOFF_MS;
++        return;
++      }
++      // Fewer pixels bought nothing: the processor is what is slow.
++      floor = from;
++      floorUntil = t + floorBackoff;
++      floorBackoff = Math.min(floorBackoff * 2, LONGEST_BACKOFF_MS);
++      moveTo(from, t, 'no-gain');
++      return;
++    }
++    const held =
++      after >= fpsBefore * (slow ? HELD_WHEN_SLOW : HELD) &&
++      (slow || after >= targetFps * SLOW);
++    if (held) {
++      ceilingBackoff = BACKOFF_MS;
++      // Going back down from here is known not to help.
++      if (slow && t < floorUntil) floor = level;
++      return;
++    }
++    ceiling = from;
++    ceilingUntil = t + ceilingBackoff;
++    ceilingBackoff = Math.min(ceilingBackoff * 2, LONGEST_BACKOFF_MS);
++    moveTo(from, t, 'too-much');
++  }
++
++  function evaluate(t) {
++    const samples = intervals;
++    const cpu = work;
++    intervals = [];
++    work = [];
++    windowStart = t;
++    if (samples.length < MIN_SAMPLES) return;
++    const fps = 1000 / mean(samples);
++    const cpuMs = mean(cpu.map((w) => w.cpuMs));
++    const gpu = cpu.map((w) => w.gpuMs).filter((n) => Number.isFinite(n));
++    const gpuMs = gpu.length ? mean(gpu) : null;
++    measured = { fps, cpuMs, gpuMs };
++    if (held || t - lastChangeAt < COOLDOWN_MS) return;
++    if (trial) {
++      trial.seconds.push(fps);
++      if (trial.seconds.length >= TRIAL_SECONDS) judgeTrial(t);
++      return;
++    }
++    recent.push(fps);
++    if (recent.length > RECENT_SECONDS) recent.shift();
++    if (fps < targetFps * SLOW) {
++      fastStreak = 0;
++      slowStreak += 1;
++      if (slowStreak >= DOWN_AFTER && level < floorNow(t)) {
++        startTrial('down', t);
++      } else if (
++        slowStreak >= UP_AFTER_SLOW &&
++        level >= floorNow(t) &&
++        level > ceilingNow(t)
++      ) {
++        // No rung below is worth trying: is a sharper one free?
++        startTrial('up', t);
++      }
++      return;
++    }
++    slowStreak = 0;
++    if (fps < targetFps * FAST) {
++      fastStreak = 0;
++      return;
++    }
++    fastStreak += 1;
++    const spent = cpuMs + (gpuMs ?? 0);
++    if (
++      fastStreak >= UP_AFTER &&
++      level > ceilingNow(t) &&
++      spent < budgetMs * BUSY
++    )
++      startTrial('up', t);
++  }
++
++  /** Starts the wait for stillness, unless one is already running. */
++  function watchForStill(delay = STILL_AFTER_MS) {
++    if (stopped || stillTimer !== null) return;
++    stillTimer = schedule(onStillTimer, delay);
++  }
++
++  /** The wait is over: redraw the picture sharp if nothing moved meanwhile. */
++  function onStillTimer() {
++    stillTimer = null;
++    if (stopped || sharp) return;
++    // Still animating when it last drew, however far apart its frames come:
++    // the next frame starts the wait again.
++    if (lastMode === 'continuous') return;
++    const t = now();
++    const quietFor = lastMotionAt === null ? Infinity : t - lastMotionAt;
++    if (quietFor < STILL_AFTER_MS) {
++      // Never a wait of next to nothing: a clock's rounding must not spin it.
++      watchForStill(Math.max(50, STILL_AFTER_MS - quietFor));
++      return;
++    }
++    if (!stillsAllowed || t < stillOffUntil) return;
++    if (stillPixelRatio <= LADDER[level].pixelRatio) return;
++    sharp = true;
++    sharpenedAt = t;
++    quality.set({
++      pixelRatio: stillPixelRatio,
++      terrainDetail: 1,
++      tiles3dDetail: 1,
++    });
++    onChange?.({ level, reason: 'still', pixelRatio: stillPixelRatio });
++  }
++
++  /** Movement again: back to the rung's resolution. */
++  function unsharpen(t, signal) {
++    sharp = false;
++    if (t - sharpenedAt < ECHO_MS) {
++      echoes = echoes.filter((at) => t - at < ECHO_WINDOW_MS);
++      echoes.push(t);
++      if (echoes.length >= ECHO_LIMIT) {
++        echoes = [];
++        stillOffUntil = t + STILL_OFF_MS;
++      }
++    }
++    const rung = LADDER[level];
++    quality.set({
++      pixelRatio: rung.pixelRatio,
++      terrainDetail: rung.terrainDetail,
++      tiles3dDetail: rung.terrainDetail,
++    });
++    onChange?.({
++      level,
++      reason: 'moving',
++      ...rung,
++      afterMs: Math.round(t - sharpenedAt),
++      holds: signal?.holds ?? [],
++      sharpStillOff: t < stillOffUntil,
++    });
++  }
++
++  /**
++   * Forget the frames timed so far: a steady spell is unbroken animation, and
++   * a step is judged against the same animation it was taken in.
++   */
++  function startOver(t) {
++    intervals = [];
++    work = [];
++    windowStart = t;
++    slowStreak = 0;
++    fastStreak = 0;
++    recent = [];
++    if (trial) trial.seconds = [];
++  }
++
++  function onFrame(signal) {
++    if (stopped) return;
++    const t = now();
++    const continuous = signal?.mode === 'continuous';
++    lastMode = continuous ? 'continuous' : 'demand';
++    watchForStill();
++    if (continuous) {
++      lastMotionAt = t;
++      if (sharp) {
++        // This frame was the sharp one and the next one resizes: neither
++        // says anything about the rung's speed.
++        unsharpen(t, signal);
++        startOver(t);
++        lastContinuousAt = null;
++        return;
++      }
++    }
++    const gap = lastContinuousAt === null ? Infinity : t - lastContinuousAt;
++    if (continuous && gap < PAUSE_MS) {
++      intervals.push(gap);
++      work.push({ cpuMs: Number(signal.cpuMs) || 0, gpuMs: signal.gpuMs });
++    } else {
++      // The animation stopped and started again (or only drew on demand).
++      startOver(t);
++    }
++    lastContinuousAt = continuous ? t : null;
++    if (t - windowStart >= 1000) evaluate(t);
++  }
++
++  apply('start');
++  const off = quality.signals.on('frame', onFrame);
++  // Nothing may ever move (a parked globe): the first still is sharp too.
++  watchForStill();
++
++  return {
++    /** What the governor is doing, for the diagnostics readout and QA. */
++    state: () => ({
++      level,
++      rungs: LADDER.length,
++      ...LADDER[level],
++      targetFps,
++      ...measured,
++      probing: trial?.kind === 'up',
++      trying: trial?.kind ?? null,
++      held,
++      sharpStill: sharp,
++      sharpStillOff: now() < stillOffUntil,
++      ceiling: ceilingNow(now()),
++      floor: floorNow(now()),
++      changes,
++    }),
++    /**
++     * Put the governor on a rung (QA and the device test). With `hold` it
++     * stays there, measuring and deciding nothing, until the next call
++     * without it.
++     */
++    setLevel(next, { hold = false } = {}) {
++      trial = null;
++      held = Boolean(hold);
++      moveTo(clampLevel(next), now(), 'pinned');
++      watchForStill();
++    },
++    /**
++     * The scene is another one (a mission was picked): what the last one
++     * taught about which rungs are worth trying no longer holds.
++     */
++    newScene() {
++      const t = now();
++      ceilingUntil = 0;
++      floorUntil = 0;
++      ceilingBackoff = BACKOFF_MS;
++      floorBackoff = BACKOFF_MS;
++      if (trial) {
++        // An unjudged step is not kept on trust.
++        const { from } = trial;
++        trial = null;
++        moveTo(from, t, 'new-scene');
++      }
++      startOver(t);
++    },
++    /**
++     * Whether a still picture may be sharpened. Turned off while something
++     * is changing the view in steps, so the pauses between its steps are not
++     * taken for stillness; turned back on, the wait for stillness starts over.
++     */
++    allowStills(allowed) {
++      stillsAllowed = Boolean(allowed);
++      if (stillsAllowed) {
++        lastMotionAt = now();
++        watchForStill();
++      }
++    },
++    stop() {
++      stopped = true;
++      if (stillTimer !== null) cancel(stillTimer);
++      stillTimer = null;
++      off?.();
++    },
++  };
++}
+diff --git a/src/tablet/governor.test.mjs b/src/tablet/governor.test.mjs
+new file mode 100644
+index 0000000..6fb0e70
+--- /dev/null
++++ b/src/tablet/governor.test.mjs
+@@ -0,0 +1,518 @@
++import test from 'node:test';
++import assert from 'node:assert/strict';
++import {
++  LADDER,
++  QUALITY_STORAGE_KEY,
++  STILL_AFTER_MS,
++  createQualityGovernor,
++  readStoredLevel,
++} from './governor.js';
++
++/**
++ * A quality port that records what it is set to, a clock and timers to drive,
++ * and a device to draw on: `run` draws frames as far apart as the device takes
++ * at the resolution the governor has set. A device's frame costs `cpuMs`
++ * whatever the resolution, plus `gpuMs` at full resolution, less with fewer
++ * pixels; no frame comes sooner than the 30 fps cap allows.
++ */
++function harness({
++  startLevel = 2,
++  stored = null,
++  targetFps = 30,
++  stillPixelRatio = 1,
++  device = { cpuMs: 5, gpuMs: 10 },
++} = {}) {
++  let t = 0;
++  let listener = null;
++  const sets = [];
++  let pixelRatio = 1;
++  let timers = [];
++  let scene = { ...device };
++  /** Moves the clock to `to`, running the timers that fall due on the way. */
++  const moveTo = (to) => {
++    for (;;) {
++      const due = timers
++        .filter((timer) => timer.at <= to)
++        .sort((a, b) => a.at - b.at)[0];
++      if (!due) break;
++      timers = timers.filter((timer) => timer !== due);
++      t = Math.max(t, due.at);
++      due.fn();
++    }
++    t = to;
++  };
++  const store = new Map(stored === null ? [] : [[QUALITY_STORAGE_KEY, stored]]);
++  const storage = {
++    getItem: (k) => (store.has(k) ? store.get(k) : null),
++    setItem: (k, v) => store.set(k, v),
++  };
++  const quality = {
++    set: (s) => {
++      sets.push(s);
++      if (s.pixelRatio !== undefined) pixelRatio = s.pixelRatio;
++    },
++    signals: {
++      on: (event, cb) => {
++        listener = cb;
++        return () => {
++          listener = null;
++        };
++      },
++    },
++  };
++  const changes = [];
++  const governor = createQualityGovernor({
++    quality,
++    targetFps,
++    startLevel,
++    now: () => t,
++    storage,
++    stillPixelRatio,
++    onChange: (change) => changes.push(change.reason),
++    schedule: (fn, ms) => {
++      const timer = { at: t + ms, fn };
++      timers.push(timer);
++      return timer;
++    },
++    cancel: (timer) => {
++      timers = timers.filter((other) => other !== timer);
++    },
++  });
++  /** How far apart the device's frames come at the resolution now set. */
++  const frameMs = () =>
++    Math.max(1000 / targetFps, scene.cpuMs + scene.gpuMs * pixelRatio ** 2);
++  /**
++   * Animate for `seconds`: frames `ms` apart when given, else as the device
++   * draws them.
++   */
++  const run = (seconds, ms = null, { mode = 'continuous' } = {}) => {
++    const end = t + seconds * 1000;
++    while (t < end) {
++      moveTo(t + (ms ?? frameMs()));
++      listener?.({ mode, cpuMs: scene.cpuMs });
++    }
++  };
++  /** One frame now, as the loop draws one when asked to. */
++  const frame = (mode = 'demand') => listener?.({ mode, cpuMs: scene.cpuMs });
++  return {
++    governor,
++    sets,
++    changes,
++    storage,
++    store,
++    run,
++    frame,
++    advance: (ms) => moveTo(t + ms),
++    /** Swap the device's load, as another scene would. */
++    load: (next) => (scene = { ...next }),
++    fps: () => 1000 / frameMs(),
++    pendingTimers: () => timers.length,
++  };
++}
++
++/** A chip that draws everything at the cap. */
++const STRONG = { cpuMs: 4, gpuMs: 8 };
++/** A graphics chip too slow for full resolution: fewer pixels help a lot. */
++const WEAK_GPU = { cpuMs: 8, gpuMs: 80 };
++/** A processor too slow, whatever the resolution. */
++const WEAK_CPU = { cpuMs: 75, gpuMs: 4 };
++
++/** What a still picture is set to: the stock app's own quality. */
++const STILL = { pixelRatio: 1, terrainDetail: 1, tiles3dDetail: 1 };
++/** What a rung sets while the picture moves. */
++const moving = (level) => ({
++  pixelRatio: LADDER[level].pixelRatio,
++  terrainDetail: LADDER[level].terrainDetail,
++  tiles3dDetail: LADDER[level].terrainDetail,
++});
++
++// --- The ladder and its memory ---------------------------------------------
++
++test('each rung is no sharper and no more detailed than the one above', () => {
++  for (let i = 1; i < LADDER.length; i++) {
++    assert.ok(LADDER[i].pixelRatio < LADDER[i - 1].pixelRatio);
++    assert.ok(LADDER[i].terrainDetail < LADDER[i - 1].terrainDetail);
++  }
++  assert.deepEqual({ ...LADDER[0] }, { pixelRatio: 1, terrainDetail: 1 });
++});
++
++test('starts on the starting rung with multisampling off and the frame cap on', () => {
++  const { governor, sets } = harness({ startLevel: 2 });
++  assert.equal(governor.state().level, 2);
++  assert.deepEqual(sets[0], {
++    pixelRatio: LADDER[2].pixelRatio,
++    terrainDetail: LADDER[2].terrainDetail,
++    tiles3dDetail: LADDER[2].terrainDetail,
++    msaa: 0,
++    targetFps: 30,
++  });
++});
++
++test('starts on the remembered rung', () => {
++  const { governor } = harness({ stored: JSON.stringify({ level: 4 }) });
++  assert.equal(governor.state().level, 4);
++});
++
++test('a broken or out-of-range memory is ignored or clamped', () => {
++  assert.equal(readStoredLevel({ getItem: () => '{nope' }), null);
++  assert.equal(
++    readStoredLevel({ getItem: () => '{"level":99}' }),
++    LADDER.length - 1,
++  );
++  assert.equal(readStoredLevel(null), null);
++});
++
++test('a pinned rung is applied and remembered', () => {
++  const { governor, sets, store } = harness({ startLevel: 2 });
++  governor.setLevel(5);
++  assert.equal(governor.state().level, 5);
++  assert.equal(sets.at(-1).pixelRatio, LADDER[5].pixelRatio);
++  assert.deepEqual(JSON.parse(store.get(QUALITY_STORAGE_KEY)), { level: 5 });
++});
++
++test('a rung that is held stays put, and one let go is tuned again', () => {
++  const { governor, run } = harness({ device: WEAK_GPU });
++  governor.setLevel(0, { hold: true });
++  run(120);
++  assert.equal(governor.state().level, 0);
++  assert.equal(governor.state().held, true);
++  governor.setLevel(0);
++  run(60);
++  assert.ok(governor.state().level > 0);
++});
++
++test('stopped, it changes nothing more', () => {
++  const { governor, run, sets } = harness({ device: WEAK_GPU });
++  governor.stop();
++  const before = sets.length;
++  run(60);
++  assert.equal(sets.length, before);
++});
++
++test('needs a quality port', () => {
++  assert.throws(() => createQualityGovernor({ quality: null }), TypeError);
++});
++
++// --- A graphics chip that is too slow: fewer pixels help --------------------
++
++test('steps down when frames stay slow, and remembers the rung', () => {
++  const { governor, run, store } = harness({ device: WEAK_GPU });
++  run(9); // past the start cooldown, then slow for long enough
++  assert.equal(governor.state().level, 3);
++  assert.deepEqual(JSON.parse(store.get(QUALITY_STORAGE_KEY)), { level: 3 });
++});
++
++test('a step down that makes the picture faster is kept', () => {
++  const { governor, run, changes, fps } = harness({ device: WEAK_GPU });
++  run(60);
++  assert.ok(governor.state().level >= 3);
++  assert.ok(!changes.includes('no-gain'));
++  assert.ok(fps() >= 30 * 0.72, `${fps()} fps`);
++});
++
++test('keeps stepping down while it helps, to the last rung at most', () => {
++  const { governor, run } = harness({ device: { cpuMs: 5, gpuMs: 400 } });
++  run(240);
++  assert.equal(governor.state().level, LADDER.length - 1);
++});
++
++test('one slow second is not enough to step down', () => {
++  const { governor, run } = harness({ device: STRONG });
++  run(6);
++  run(1.5, 70);
++  run(6);
++  assert.equal(governor.state().level, 2);
++});
++
++// --- A processor that is too slow: fewer pixels do not help -----------------
++
++test('a step down that buys nothing is taken back', () => {
++  const { governor, run, changes } = harness({ device: WEAK_CPU });
++  run(30);
++  assert.ok(changes.includes('no-gain'));
++  assert.ok(governor.state().level <= 2, `rung ${governor.state().level}`);
++  assert.ok(governor.state().floor <= 2);
++});
++
++test('where fewer pixels do not help, the picture is made sharper for free', () => {
++  const { governor, run, fps } = harness({ device: WEAK_CPU });
++  const before = fps();
++  run(240);
++  assert.equal(governor.state().level, 0);
++  assert.ok(fps() >= before * 0.9, `${before} -> ${fps()} fps`);
++});
++
++test('sharpness is not thrown away on a slow processor', () => {
++  const { governor, run } = harness({ device: WEAK_CPU });
++  let worst = 0;
++  for (let i = 0; i < 300; i++) {
++    run(1);
++    worst = Math.max(worst, governor.state().level);
++  }
++  assert.ok(worst <= 3, `went down to rung ${worst}`);
++});
++
++test('a step up that slows a slow picture further is taken back', () => {
++  // The processor is the main trouble, but pixels are not free either.
++  const { governor, run, changes } = harness({
++    device: { cpuMs: 50, gpuMs: 60 },
++    startLevel: 5,
++  });
++  run(300);
++  assert.ok(changes.includes('too-much'));
++  assert.ok(governor.state().level >= 3, `rung ${governor.state().level}`);
++});
++
++// --- A chip with room to spare ----------------------------------------------
++
++test('tries a better rung after a long steady spell with time to spare', () => {
++  const { governor, run } = harness({ startLevel: 3, device: STRONG });
++  run(30);
++  assert.equal(governor.state().level, 2);
++  assert.equal(governor.state().probing, true);
++});
++
++test('a better rung that holds is kept, and it can climb again', () => {
++  const { governor, run } = harness({ startLevel: 3, device: STRONG });
++  run(120);
++  assert.ok(governor.state().level <= 1, `rung ${governor.state().level}`);
++});
++
++test('never climbs past the best rung', () => {
++  const { governor, run } = harness({ startLevel: 1, device: STRONG });
++  run(400);
++  assert.equal(governor.state().level, 0);
++});
++
++test('does not try a better rung while the processor is nearly spent', () => {
++  const { governor, run } = harness({
++    startLevel: 3,
++    device: { cpuMs: 28, gpuMs: 2 },
++  });
++  run(60);
++  assert.equal(governor.state().level, 3);
++});
++
++test('a better rung that costs frame rate is taken back, and left alone for longer each time', () => {
++  // On target at rung 3, too slow at rung 2.
++  const { governor, run, changes } = harness({
++    startLevel: 3,
++    device: { cpuMs: 4, gpuMs: 72 },
++  });
++  run(40);
++  assert.ok(changes.includes('too-much'));
++  assert.equal(governor.state().level, 3);
++  assert.equal(governor.state().ceiling, 3);
++  const tries = () => changes.filter((reason) => reason === 'probe').length;
++  assert.equal(tries(), 1);
++  run(240); // inside the first back-off (5 minutes)
++  assert.equal(tries(), 1);
++  run(120); // past it: tried again, and failed again
++  assert.equal(tries(), 2);
++  run(420); // the back-off has doubled (10 minutes)
++  assert.equal(tries(), 2);
++  assert.equal(governor.state().level, 3);
++});
++
++// --- Pauses, and scenes that change -----------------------------------------
++
++test('frames drawn on demand are ignored', () => {
++  const { governor, run } = harness({ startLevel: 2 });
++  run(60, 200, { mode: 'demand' });
++  assert.equal(governor.state().level, 2);
++  assert.equal(governor.state().fps, null);
++});
++
++test('a pause between frames is not a slow frame', () => {
++  const { governor, run, advance } = harness({ device: STRONG });
++  run(6);
++  for (let i = 0; i < 20; i++) {
++    advance(3000); // the screen was off, or nothing moved
++    run(0.3);
++  }
++  assert.equal(governor.state().level, 2);
++});
++
++test('a new scene opens the rungs the last one closed', () => {
++  const { governor, run, load } = harness({ device: WEAK_CPU });
++  run(30); // learns that stepping down does not help here
++  assert.ok(governor.state().floor < LADDER.length - 1);
++  load(WEAK_GPU);
++  governor.newScene();
++  assert.equal(governor.state().floor, LADDER.length - 1);
++  const from = governor.state().level;
++  run(60);
++  assert.ok(governor.state().level > from, 'steps down where it now helps');
++});
++
++test('a step not yet judged is not kept across a change of scene', () => {
++  const { governor, run } = harness({ device: WEAK_GPU });
++  run(9);
++  assert.equal(governor.state().level, 3);
++  assert.equal(governor.state().trying, 'down');
++  governor.newScene();
++  assert.equal(governor.state().level, 2);
++  assert.equal(governor.state().trying, null);
++});
++
++// --- Sharp when still --------------------------------------------------------
++
++test('a still picture is redrawn at the stock resolution and detail', () => {
++  const { governor, sets, advance } = harness({ startLevel: 2 });
++  assert.equal(governor.state().sharpStill, false);
++  advance(STILL_AFTER_MS + 1);
++  assert.equal(governor.state().sharpStill, true);
++  assert.deepEqual(sets.at(-1), STILL);
++  assert.equal(governor.state().level, 2); // the rung itself has not moved
++});
++
++test('movement brings the rung resolution back, and stillness the sharp one', () => {
++  const { governor, sets, run, advance, frame } = harness({ device: STRONG });
++  advance(2000);
++  assert.equal(governor.state().sharpStill, true);
++  run(3);
++  assert.equal(governor.state().sharpStill, false);
++  assert.deepEqual(sets.at(-1), moving(2));
++  const setsWhileMoving = sets.length;
++  run(3);
++  assert.equal(sets.length, setsWhileMoving); // nothing is set frame by frame
++  frame(); // the loop's settling frame, drawn on demand
++  advance(STILL_AFTER_MS + 1);
++  assert.equal(governor.state().sharpStill, true);
++  assert.deepEqual(sets.at(-1), STILL);
++});
++
++test('an animation whose frames come far apart is not stillness', () => {
++  const { governor, run } = harness({ startLevel: 2 });
++  run(60, 1200); // under one frame a second, and still animating
++  assert.equal(governor.state().sharpStill, false);
++  assert.equal(governor.state().sharpStillOff, false);
++});
++
++test('an animation that just stops, with no frame after it, is left alone', () => {
++  const { governor, run, advance } = harness({ device: STRONG });
++  run(2);
++  advance(10_000);
++  assert.equal(governor.state().sharpStill, false);
++});
++
++test('a short pause in the movement is not stillness', () => {
++  const { governor, run, advance } = harness({ device: STRONG });
++  run(2);
++  for (let i = 0; i < 10; i++) {
++    advance(STILL_AFTER_MS - 200);
++    run(0.5);
++    assert.equal(governor.state().sharpStill, false);
++  }
++});
++
++test('frames drawn on demand do not undo the sharp still', () => {
++  const { governor, run, advance } = harness({ startLevel: 2 });
++  advance(2000);
++  run(5, 250, { mode: 'demand' });
++  assert.equal(governor.state().sharpStill, true);
++});
++
++test('the sharp frame and the resize after it are not timed', () => {
++  const { governor, run, advance, frame } = harness({ device: STRONG });
++  run(6); // past the start cooldown
++  for (let i = 0; i < 12; i++) {
++    frame(); // the settling frame
++    advance(2000); // still: sharp
++    assert.equal(governor.state().sharpStill, true);
++    run(0.27, 90); // slow frames as movement starts on the sharp picture
++    run(2); // then on target
++  }
++  assert.equal(governor.state().level, 2);
++});
++
++test('the best rung has nothing sharper to redraw at', () => {
++  const { governor, sets, advance } = harness({ startLevel: 0 });
++  const before = sets.length;
++  advance(5000);
++  assert.equal(governor.state().sharpStill, false);
++  assert.equal(sets.length, before);
++});
++
++test('sharp-when-still can be turned off', () => {
++  const { governor, advance } = harness({ startLevel: 3, stillPixelRatio: 0 });
++  advance(5000);
++  assert.equal(governor.state().sharpStill, false);
++});
++
++test('a rung pinned while still is sharpened again', () => {
++  const { governor, sets, advance } = harness({ startLevel: 2 });
++  advance(2000);
++  governor.setLevel(4);
++  assert.equal(governor.state().sharpStill, false);
++  assert.equal(sets.at(-1).pixelRatio, LADDER[4].pixelRatio);
++  advance(STILL_AFTER_MS + 1);
++  assert.equal(governor.state().sharpStill, true);
++});
++
++test('sharpening that keeps setting the picture moving is left off for a while', () => {
++  const { governor, run, advance, frame } = harness({ device: STRONG });
++  run(1);
++  frame(); // it settles
++  for (let i = 0; i < 3; i++) {
++    advance(STILL_AFTER_MS + 1);
++    assert.equal(governor.state().sharpStill, true);
++    advance(50);
++    frame('continuous'); // movement right after sharpening
++    assert.equal(governor.state().sharpStill, false);
++    frame(); // and it settles again
++  }
++  assert.equal(governor.state().sharpStillOff, true);
++  advance(60_000);
++  assert.equal(governor.state().sharpStill, false);
++  advance(5 * 60_000);
++  frame('continuous');
++  frame();
++  advance(STILL_AFTER_MS + 1);
++  assert.equal(governor.state().sharpStill, true);
++});
++
++test('movement that now and then follows a sharpening is not a fault', () => {
++  const { governor, advance, frame } = harness({ startLevel: 2 });
++  for (let i = 0; i < 12; i++) {
++    advance(STILL_AFTER_MS + 1);
++    assert.equal(governor.state().sharpStill, true);
++    advance(50);
++    frame('continuous'); // straight after, as a mission's next step might be
++    frame();
++    advance(20_000); // but not again for a good while
++  }
++  assert.equal(governor.state().sharpStillOff, false);
++});
++
++test('nothing is sharpened while stills are not allowed', () => {
++  const { governor, run, advance, frame } = harness({ device: STRONG });
++  run(1);
++  frame();
++  governor.allowStills(false);
++  advance(10_000);
++  assert.equal(governor.state().sharpStill, false);
++  governor.allowStills(true);
++  advance(STILL_AFTER_MS - 100);
++  assert.equal(governor.state().sharpStill, false); // the wait starts over
++  advance(200);
++  assert.equal(governor.state().sharpStill, true);
++});
++
++test('movement a while after sharpening is only movement', () => {
++  const { governor, advance, frame } = harness({ startLevel: 2 });
++  for (let i = 0; i < 8; i++) {
++    advance(STILL_AFTER_MS + 600);
++    assert.equal(governor.state().sharpStill, true);
++    frame('continuous');
++    frame();
++  }
++  assert.equal(governor.state().sharpStillOff, false);
++});
++
++test('stopped, it leaves no timer waiting', () => {
++  const { governor, run, pendingTimers } = harness({ device: STRONG });
++  run(1);
++  governor.stop();
++  assert.equal(pendingTimers(), 0);
++});
+diff --git a/src/tablet/index.js b/src/tablet/index.js
+new file mode 100644
+index 0000000..5c89da3
+--- /dev/null
++++ b/src/tablet/index.js
+@@ -0,0 +1,159 @@
++/**
++ * @module tablet
++ * @description The tablet edition, installed once the application's scene and
++ * tools exist (`createApplicationTools` in `src/app/tools.js` calls it):
++ *
++ * - lighter starting values (`defaults.js`; the limits a 2 GB device needs
++ *   are set where the viewer is made, `render/cesium/applicationViewer.js`);
++ * - the quality governor (`governor.js`), over the renderer's quality port;
++ * - the Missions menu and simple mode (`missions/`), unless another page
++ *   frames the app as a bare globe.
++ *
++ * Everything is additive: `?tablet=0` gives the stock app.
++ */
++import './tablet.css';
++import { applyStartingValues } from './defaults.js';
++import { createQualityGovernor } from './governor.js';
++import { installMissions } from './missions/index.js';
++import {
++  framedGlobe,
++  markDocument,
++  tabletDiagnostics,
++  tabletEdition,
++} from './profile.js';
++
++/** `localStorage`, or null where reading it throws (private modes). */
++function safeStorage() {
++  try {
++    return globalThis.localStorage ?? null;
++  } catch {
++    return null;
++  }
++}
++
++/** The page's script memory, where the browser says (Chromium does). */
++function memoryNote() {
++  const memory = globalThis.performance?.memory;
++  if (!memory?.usedJSHeapSize) return '';
++  const mb = (bytes) => Math.round(bytes / 1048576);
++  return ` · mem ${mb(memory.usedJSHeapSize)} of ${mb(memory.jsHeapSizeLimit)} MB`;
++}
++
++/** A small corner readout of what the governor is doing (`?tabletdiag=1`). */
++function installReadout(governor, doc = globalThis.document) {
++  const el = doc.createElement('div');
++  el.className = 'tablet-diag';
++  el.setAttribute('aria-hidden', 'true');
++  doc.body.appendChild(el);
++  const words = (s) => {
++    const n = (v, d = 0) => (Number.isFinite(v) ? v.toFixed(d) : '--');
++    const trying = { up: ' · trying sharper', down: ' · trying softer' };
++    return (
++      `quality ${s.level + 1}/${s.rungs} · ${Math.round(s.pixelRatio * 100)}% sharp · ` +
++      `${n(s.fps)} fps · cpu ${n(s.cpuMs, 1)} ms` +
++      (Number.isFinite(s.gpuMs) ? ` · gpu ${n(s.gpuMs, 1)} ms` : '') +
++      (trying[s.trying] ?? '') +
++      (s.sharpStill ? ' · still: full quality' : '') +
++      memoryNote()
++    );
++  };
++  const draw = () => {
++    el.textContent = words(governor.state());
++  };
++  const timer = setInterval(draw, 1000);
++  draw();
++  return () => {
++    clearInterval(timer);
++    el.remove();
++  };
++}
++
++/**
++ * @param {object} options
++ * @param {object} options.viewer The Cesium viewer.
++ * @param {object} options.renderer The scene's renderer (its `quality` port).
++ * @param {object} options.dataManager
++ * @param {(name: string, args?: object, options?: object) => Promise<object>}
++ *   options.run The app's action runner.
++ * @param {{isOpen: () => boolean, close: () => void}|null} [options.stories]
++ *   The app's Stories screens, for a mission to close them on the way in.
++ * @param {AbortSignal} [options.signal]
++ * @returns {() => void} Remove everything the edition added.
++ */
++export function installTabletEdition({
++  viewer,
++  renderer,
++  dataManager,
++  run,
++  stories = null,
++  signal,
++}) {
++  if (!tabletEdition()) return () => {};
++  markDocument();
++  const storage = safeStorage();
++  const cleanups = [];
++
++  let governor = null;
++  /** The governor's latest changes, for QA and the device test. */
++  const changes = [];
++  if (renderer?.quality?.signals) {
++    try {
++      governor = createQualityGovernor({
++        quality: renderer.quality,
++        storage,
++        onChange: (change) => {
++          changes.push({ at: Math.round(performance.now()), ...change });
++          if (changes.length > 60) changes.shift();
++        },
++      });
++      cleanups.push(() => governor.stop());
++      if (tabletDiagnostics()) cleanups.push(installReadout(governor));
++    } catch (error) {
++      console.warn('Tablet quality governor unavailable:', error);
++    }
++  }
++
++  let missions = null;
++  if (!framedGlobe()) {
++    missions = installMissions({
++      dataManager,
++      run,
++      stories,
++      storage,
++      signal,
++      // The pauses between a mission's steps are not a still picture, and
++      // the mission it ends on is another scene to tune for.
++      onBusy: (busy) => {
++        governor?.allowStills(!busy);
++        if (!busy) governor?.newScene();
++      },
++    });
++    cleanups.push(missions.remove);
++  }
++
++  // The starting values (on a fresh start), then the menu: the menu's own settings
++  // (simple mode hides the HUD) come after them.
++  applyStartingValues({ run })
++    .catch(() => false)
++    .then(() => missions?.ready());
++
++  // For QA and the device test: what the edition is doing.
++  const handle = { governor, missions, changes };
++  globalThis.__gevTablet = handle;
++  cleanups.push(() => {
++    if (globalThis.__gevTablet === handle) delete globalThis.__gevTablet;
++  });
++
++  let removed = false;
++  return () => {
++    if (removed) return;
++    removed = true;
++    for (const cleanup of cleanups.reverse()) {
++      try {
++        cleanup();
++      } catch {
++        /* one failing must not keep the rest */
++      }
++    }
++  };
++}
+diff --git a/src/tablet/missions/catalog.js b/src/tablet/missions/catalog.js
+new file mode 100644
+index 0000000..7e740d6
+--- /dev/null
++++ b/src/tablet/missions/catalog.js
+@@ -0,0 +1,287 @@
++/**
++ * @module tablet/missions/catalog
++ * @description The Missions menu's choices: things to see, in plain words.
++ * Each one sets the app up through the app's own actions (the same ones voice
++ * and share links use), so a mission is exactly what a person could do by hand
++ * in the full controls, and nothing in the app is changed or left out.
++ *
++ * A mission says what it needs, and the runner (`./index.js`) does it in order:
++ *
++ * - `before(ctx)`: steps to take first (fly somewhere).
++ * - `context`: one of the app's own modes that picks its layers and camera
++ *   (`contacts`, `space-missions`); or
++ * - `layers`: exactly the data layers to show.
++ * - `after(ctx)`: any further steps (fly somewhere, follow something). One
++ *   that resolves to `false` could not do what the mission is for.
++ * - `takesOver`: the mission opens one of the app's full-screen experiences;
++ *   the value is the class the app puts on the body while it runs.
++ * - `then`: the mission the app is left in when that experience is closed by
++ *   its own controls (none: the menu opens again).
++ * - `sorry`: what to say when the mission could not do its part.
++ * - `card: false`: the app's card about what is in view stays shut.
++ * - `changesLook`: the experience restyles the app and leaves it restyled
++ *   (a film's recipe does); the runner puts the look back afterwards.
++ *
++ * `ctx` is:
++ * - `run(name, args)`: the app's action runner. It resolves to the action's
++ *   result, never throws, and does nothing once another mission was picked.
++ * - `home`: `{lat, lon}` of the tablet when the launcher passed it; else the
++ *   place the app itself starts over; null when neither is known.
++ * - `until(test, {tries, everyMs})`: wait for something to become true.
++ */
++
++/** The camera over the tablet's own spot, when it is known. */
++const overHome = (home, rangeM) =>
++  home
++    ? { latitude: home.lat, longitude: home.lon, rangeM, waitForArrival: true }
++    : null;
++
++/** Somewhere sensible to look at radar and radio when home is not known. */
++const NORTH_AMERICA = Object.freeze({
++  latitude: 39,
++  longitude: -96,
++  rangeM: 5_500_000,
++  waitForArrival: true,
++});
++
++/** Where to turn the Earth to when home is not known: the Pacific's rim. */
++const PACIFIC_RIM = Object.freeze({ lat: 35, lon: -150 });
++
++/**
++ * The whole Earth, turned to a place. The app's globe view shows the side the
++ * camera is over, so the camera goes there first.
++ */
++async function wholeEarthOver(run, place) {
++  await run('fly_to_location', {
++    latitude: place.lat,
++    longitude: place.lon,
++    rangeM: 3_000_000,
++    waitForArrival: true,
++  });
++  await run('zoom_to_globe', {});
++}
++
++export const MISSIONS = Object.freeze([
++  {
++    id: 'planes',
++    art: 'plane',
++    title: 'Planes in the sky',
++    blurb: 'Every aircraft near you, live. Follow one across the map.',
++    tip: 'Each plane is a real aircraft, a few seconds behind real life. Tap a plane to follow it. Drag to look around, pinch to zoom.',
++    context: 'contacts',
++    async before({ run, home }) {
++      const near = overHome(home, 250_000);
++      if (near) await run('fly_to_location', near);
++    },
++  },
++  {
++    id: 'cockpit',
++    card: false,
++    art: 'cockpit',
++    title: 'Ride in the cockpit',
++    blurb: 'See the view from a real flight that is in the air right now.',
++    tip: 'You are riding along with a real flight. The dials show its real speed and height. Open Missions to pick something else.',
++    sorry:
++      'No flight to ride along with just now. Try again in a minute, or pick Planes in the sky.',
++    context: 'contacts',
++    takesOver: 'cockpit-mode',
++    then: 'planes',
++    async before({ run, home }) {
++      const near = overHome(home, 250_000);
++      if (near) await run('fly_to_location', near);
++    },
++    async after({ run, until }) {
++      // The cockpit opens once a plane is being followed: an airliner for
++      // choice, and whatever is being followed when there is none.
++      const enter = async (args) =>
++        (await run('control_cockpit', { action: 'enter', ...args }))?.ok ===
++        true;
++      return (
++        (await until(() => enter({ targetLayer: 'flights' }), {
++          tries: 6,
++          everyMs: 1500,
++        })) || until(() => enter({}), { tries: 6, everyMs: 1500 })
++      );
++    },
++  },
++  {
++    id: 'station',
++    art: 'station',
++    title: 'The space station',
++    blurb: 'Follow the International Space Station around the Earth.',
++    tip: 'Astronauts live aboard. It circles the Earth every 90 minutes at about 17,500 mph. The line shows where it is heading.',
++    sorry:
++      'The space station could not be found just now. Check the Wi-Fi, then pick it again.',
++    layers: ['satellites'],
++    async after({ run, until }) {
++      await run('zoom_to_globe', {});
++      return until(
++        async () =>
++          (await run('track_entity', { query: 'ISS', layerId: 'satellites' }))
++            ?.ok === true,
++        { tries: 15, everyMs: 1500 },
++      );
++    },
++  },
++  {
++    id: 'launches',
++    art: 'rocket',
++    title: 'Rocket launches',
++    blurb: 'Recent launches and the ones coming up, at their launch pads.',
++    tip: 'Each marker is a rocket launch from the last month or one coming up. Tap one in the list to read about it.',
++    context: 'space-missions',
++    async before({ run, home }) {
++      // The side of the Earth with the launch pads nearest home.
++      if (home) await wholeEarthOver(run, home);
++    },
++  },
++  {
++    id: 'quakes',
++    art: 'quake',
++    title: 'Earthquakes today',
++    blurb: 'Every sizeable earthquake of the last 24 hours, worldwide.',
++    tip: 'Each marker is an earthquake from the last day. The number is its strength: M5 is strong. The card on the right counts them by size.',
++    layers: ['earthquakes'],
++    async after({ run, home }) {
++      await wholeEarthOver(run, home ?? PACIFIC_RIM);
++    },
++  },
++  {
++    id: 'weather',
++    art: 'storm',
++    title: 'Storms and rain',
++    blurb: 'Live rain radar, clouds from space, and named storms.',
++    tip: 'Colours show where it is raining now. Named storms show the path they are forecast to take.',
++    layers: ['weather-radar', 'weather-satellite', 'weather-cyclones'],
++    async after({ run, home }) {
++      await run('fly_to_location', overHome(home, 2_500_000) ?? NORTH_AMERICA);
++    },
++  },
++  {
++    id: 'military',
++    art: 'jet',
++    title: 'Military aircraft',
++    blurb: 'Tankers, transports and trainers that broadcast where they are.',
++    tip: 'These are military aircraft that share their position publicly. Tap one to follow it.',
++    layers: ['military'],
++    async after({ run, home }) {
++      await run('fly_to_location', overHome(home, 2_500_000) ?? NORTH_AMERICA);
++    },
++  },
++  {
++    id: 'cameras',
++    card: false,
++    art: 'camera',
++    title: 'Live street cameras',
++    blurb: 'Look through public traffic cameras in cities around the world.',
++    tip: 'This is a public traffic camera. Use Prev and Next for others nearby, or tap a camera marker on the map. It can take a little while to load.',
++    sorry: 'No camera answered just now. Pick it again in a minute.',
++    layers: ['cctv'],
++    async after({ run, until }) {
++      await run('fly_to_location', {
++        locationId: 'nyc',
++        viewMode: 'close',
++        waitForArrival: true,
++      });
++      // The camera list fills in a while after the layer turns on.
++      return until(
++        async () =>
++          (await run('control_cctv', { action: 'nearest' }))?.ok === true,
++        { tries: 20, everyMs: 2000 },
++      );
++    },
++  },
++  {
++    id: 'radio',
++    art: 'radio',
++    title: 'Radio around the world',
++    blurb: 'Listen to live local radio stations anywhere on Earth.',
++    tip: 'Each marker is a radio station. Tap one to listen. Spin the globe to try another country.',
++    layers: ['radio'],
++    async after({ run, home }) {
++      await run('fly_to_location', overHome(home, 2_500_000) ?? NORTH_AMERICA);
++      // The player, ready before a station is picked.
++      await run('set_panel_open', { panelId: 'radio-panel', open: true });
++    },
++  },
++  {
++    id: 'stories',
++    card: false,
++    art: 'story',
++    title: 'Guided stories',
++    blurb: 'Sit back: short guided tours of things happening on Earth.',
++    tip: '',
++    layers: [],
++    takesOver: 'stories-mode',
++    async after({ run }) {
++      await run('open_stories', {});
++    },
++  },
++  {
++    id: 'show',
++    card: false,
++    art: 'show',
++    title: 'Sit back and watch',
++    blurb: 'A short film made live from real flights around the world.',
++    tip: 'This plays by itself. Open Missions when you want to take over.',
++    layers: [],
++    takesOver: 'scene-playback-mode',
++    changesLook: true,
++    async after({ run }) {
++      await run('control_scene', { action: 'play', sceneId: 'flights-radar' });
++    },
++  },
++  {
++    id: 'explore',
++    card: false,
++    art: 'globe',
++    title: 'Just explore',
++    blurb: 'A clean globe. Spin it, zoom in, or search for any place.',
++    tip: 'Drag to spin the globe and pinch to zoom. Use the search box at the bottom to fly to any place.',
++    layers: [],
++    async after({ run, home }) {
++      if (home) await wholeEarthOver(run, home);
++      else await run('zoom_to_globe', {});
++    },
++  },
++]);
++
++/** The words on the stock screens, in plain English. */
++export const GLOSSARY = Object.freeze([
++  [
++    'FL390',
++    'Flight level: the height in hundreds of feet. FL390 is 39,000 feet.',
++  ],
++  ['kts', 'Knots, the speed aircraft and ships use. 480 kts is about 550 mph.'],
++  [
++    'STALE',
++    'The last position report is a little old. The plane is still there.',
++  ],
++  [
++    'B38M, A320…',
++    'A short code for the type of aircraft. B38M is a Boeing 737 MAX 8.',
++  ],
++  [
++    'SQUAWK',
++    'A four-digit code a plane sends so controllers can tell it apart.',
++  ],
++  [
++    'ADS-B',
++    'The radio signal aircraft send out with their position. It is public.',
++  ],
++  ['AIS', 'The same idea for ships.'],
++  ['ISS', 'The International Space Station.'],
++  [
++    'M 4.5',
++    'An earthquake’s strength. Above 4 can be felt; above 6 does damage.',
++  ],
++  ['CCTV', 'Public street and traffic cameras.'],
++  [
++    'TOP SECRET…',
++    'Decoration, for the spy-movie look. Everything shown here is public.',
++  ],
++  [
++    'MGRS, GSD, NIIRS',
++    'Map-maker readouts about the spot under the crosshair. Safe to ignore.',
++  ],
++]);
+diff --git a/src/tablet/missions/icons.js b/src/tablet/missions/icons.js
+new file mode 100644
+index 0000000..5e5777e
+--- /dev/null
++++ b/src/tablet/missions/icons.js
+@@ -0,0 +1,46 @@
++/**
++ * @module tablet/missions/icons
++ * @description Line icons for the Missions menu, drawn here so the menu
++ * needs no extra font or image. 48x48, stroked in the current colour.
++ */
++
++const PATHS = {
++  plane:
++    '<path d="M24 5c2 0 3 2 3 5v9l15 9v4l-15-4v9l5 4v3l-8-2-8 2v-3l5-4v-9L6 32v-4l15-9v-9c0-3 1-5 3-5z"/>',
++  cockpit:
++    '<path d="M6 30a18 18 0 0 1 36 0"/><path d="M6 30v8h36v-8"/><path d="M24 30l7-9"/><circle cx="24" cy="30" r="2.5"/><path d="M12 30h3M33 30h3M24 15v3"/>',
++  station:
++    '<rect x="19" y="19" width="10" height="10" rx="2"/><path d="M19 24H7M29 24h12"/><rect x="5" y="15" width="6" height="18"/><rect x="37" y="15" width="6" height="18"/><path d="M24 19v-7M24 29v7M20 12h8M20 36h8"/>',
++  rocket:
++    '<path d="M24 4c7 6 9 15 7 26H17C15 19 17 10 24 4z"/><circle cx="24" cy="17" r="3.5"/><path d="M17 26l-6 9 7-2M31 26l6 9-7-2"/><path d="M21 34v6M27 34v6M24 35v9"/>',
++  quake: '<path d="M3 26h8l4-12 6 24 5-18 4 10 3-4h12"/>',
++  storm:
++    '<path d="M14 30a9 9 0 0 1 2-17.6A12 12 0 0 1 39 16a8 8 0 0 1-2 14"/><path d="M25 24l-6 9h8l-5 10"/>',
++  jet: '<path d="M24 4l4 16 16 12v4l-16-5-1 7 5 4v2h-16v-2l5-4-1-7-16 5v-4l16-12z"/>',
++  camera:
++    '<rect x="5" y="14" width="26" height="20" rx="3"/><path d="M31 21l12-6v18l-12-6"/><circle cx="14" cy="24" r="3"/>',
++  radio:
++    '<rect x="6" y="18" width="36" height="22" rx="3"/><path d="M12 18L34 7"/><circle cx="17" cy="29" r="5"/><path d="M28 25h9M28 30h9M28 35h5"/>',
++  story:
++    '<path d="M8 9h13a4 4 0 0 1 3 2 4 4 0 0 1 3-2h13v28H27a4 4 0 0 0-3 2 4 4 0 0 0-3-2H8z"/><path d="M24 11v28"/>',
++  show: '<rect x="5" y="9" width="38" height="26" rx="3"/><path d="M20 16l10 6-10 6z"/><path d="M16 41h16"/>',
++  globe:
++    '<circle cx="24" cy="24" r="18"/><path d="M6 24h36M24 6c-9 9-9 27 0 36M24 6c9 9 9 27 0 36"/>',
++  menu: '<path d="M8 13h32M8 24h32M8 35h32"/>',
++  help: '<circle cx="24" cy="24" r="18"/><path d="M18 19a6 6 0 1 1 9 5c-2 1-3 2-3 5"/><circle cx="24" cy="35" r="1.5" fill="currentColor"/>',
++  close: '<path d="M11 11l26 26M37 11L11 37"/>',
++  sliders:
++    '<path d="M8 14h32M8 24h32M8 34h32"/><circle cx="17" cy="14" r="4" fill="var(--tm-panel)"/><circle cx="31" cy="24" r="4" fill="var(--tm-panel)"/><circle cx="21" cy="34" r="4" fill="var(--tm-panel)"/>',
++};
++
++/** An icon as an SVG element. */
++export function icon(name, size = 48, doc = globalThis.document) {
++  // A mission names its drawing `art` (`catalog.js`): in this app `icon:` is
++  // a glyph of the icon font, checked against the font's subset.
++  const holder = doc.createElement('span');
++  holder.className = 'tm-icon';
++  holder.setAttribute('aria-hidden', 'true');
++  // Fixed strings from this file only; no outside text reaches the markup.
++  holder.innerHTML = `<svg viewBox="0 0 48 48" width="${size}" height="${size}" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" focusable="false">${PATHS[name] || PATHS.globe}</svg>`;
++  return holder;
++}
+diff --git a/src/tablet/missions/index.js b/src/tablet/missions/index.js
+new file mode 100644
+index 0000000..b482baf
+--- /dev/null
++++ b/src/tablet/missions/index.js
+@@ -0,0 +1,512 @@
++/**
++ * @module tablet/missions
++ * @description The Missions menu and simple mode: a plain-language front door
++ * for someone who thinks the globe is cool and has no idea where to start.
++ *
++ * - **Missions**: a screen of big choices ("Planes in the sky", "The space
++ *   station"…). Picking one sets the app up through its own actions and puts
++ *   a one-line explanation of what is on screen in the mission bar.
++ * - **Simple mode** (on by default): the stock cockpit's rails, readouts and
++ *   toolbars are hidden, leaving the globe, its labels, the search box, the
++ *   mission bar and the app's own card about what was tapped or is followed.
++ *   **All controls** brings every stock control back; nothing is removed,
++ *   only tucked away (`../tablet.css`).
++ * - The full-screen experiences (the cockpit, Stories, a film) have their own
++ *   ways out; the bar follows them, and puts back the look a film changed.
++ * - **What does this mean?**: the jargon on the stock screens, in plain words.
++ *
++ * The view is plain DOM (no framework state to keep in step with the app's).
++ */
++import { GLOSSARY, MISSIONS } from './catalog.js';
++import { icon } from './icons.js';
++
++export const SIMPLE_STORAGE_KEY = 'gev:tablet:simple:v1';
++export const HOME_STORAGE_KEY = 'gev:tablet:home:v1';
++
++const sleep = (ms, signal) =>
++  new Promise((resolve) => {
++    const timer = setTimeout(resolve, ms);
++    signal?.addEventListener(
++      'abort',
++      () => {
++        clearTimeout(timer);
++        resolve();
++      },
++      { once: true },
++    );
++  });
++
++/**
++ * The tablet's own position, when the page that opened the app passed it
++ * (`?home=<lat>,<lon>`); remembered, so a later start without it still knows.
++ * @returns {{lat: number, lon: number}|null}
++ */
++export function readHome(location = globalThis.location, storage = null) {
++  const parse = (text) => {
++    const [lat, lon] = String(text || '')
++      .split(',')
++      .map(Number);
++    return Number.isFinite(lat) &&
++      Number.isFinite(lon) &&
++      Math.abs(lat) <= 90 &&
++      Math.abs(lon) <= 180
++      ? { lat, lon }
++      : null;
++  };
++  let fromLink = null;
++  try {
++    fromLink = parse(new URLSearchParams(location?.search || '').get('home'));
++  } catch {
++    /* no location */
++  }
++  try {
++    if (fromLink)
++      storage?.setItem?.(HOME_STORAGE_KEY, `${fromLink.lat},${fromLink.lon}`);
++    return fromLink ?? parse(storage?.getItem?.(HOME_STORAGE_KEY));
++  } catch {
++    return fromLink;
++  }
++}
++
++/** A mission named in the link (`?mission=planes`), to start without the menu. */
++function linkedMission(location = globalThis.location) {
++  try {
++    const id = new URLSearchParams(location?.search || '').get('mission');
++    return MISSIONS.find((m) => m.id === id) ?? null;
++  } catch {
++    return null;
++  }
++}
++
++function el(doc, tag, className, text) {
++  const node = doc.createElement(tag);
++  if (className) node.className = className;
++  if (text !== undefined) node.textContent = text;
++  return node;
++}
++
++/**
++ * @param {object} options
++ * @param {object} options.dataManager
++ * @param {(name: string, args?: object) => Promise<object>} options.run
++ * @param {{isOpen: () => boolean, close: () => void}|null} [options.stories]
++ * @param {(busy: boolean) => void} [options.onBusy] Told when a mission
++ *   starts setting the app up, and when the last one to start has finished.
++ * @param {{getItem: Function, setItem: Function}|null} [options.storage]
++ * @param {AbortSignal} [options.signal]
++ * @returns {{ready: () => void, remove: () => void, open: () => void,
++ *   choose: (id: string) => Promise<void>, state: () => object}}
++ */
++export function installMissions({
++  dataManager,
++  run,
++  stories = null,
++  onBusy = null,
++  storage = null,
++  signal,
++  doc = globalThis.document,
++}) {
++  const root = doc.documentElement;
++  const linkedHome = readHome(globalThis.location, storage);
++  /** Where the app itself starts over, read once it is up (`ready`). */
++  let startPlace = null;
++  const homePlace = () => linkedHome ?? startPlace;
++  let current = null;
++  let sequence = 0;
++  let simple = true;
++  try {
++    simple = storage?.getItem?.(SIMPLE_STORAGE_KEY) !== 'off';
++  } catch {
++    /* keep simple mode */
++  }
++
++  // --- Running a mission -----------------------------------------------------
++  /** The app's action runner: resolves to the result and never throws. */
++  const act = async (name, args = {}) => {
++    try {
++      return (await run(name, args)) ?? { ok: true };
++    } catch (error) {
++      return { ok: false, error: error?.message || String(error) };
++    }
++  };
++
++  /**
++   * A film dresses the app up (its recipe picks a visual style, glow,
++   * sharpening and so on) and leaves it that way when it ends. This is the
++   * look from just before one started, put back when the film is over or left.
++   * `restoreLook` resolves to the look it put back, or null with none to.
++   */
++  let lookBefore = null;
++  const lookOf = (state) =>
++    state?.controls
++      ? {
++          style: state.style,
++          bloom: state.controls.bloom,
++          sharpen: state.controls.sharpen,
++          detection: state.controls.detection,
++          hud: state.controls.hud?.layout,
++        }
++      : null;
++  async function restoreLook(step = act) {
++    const was = lookBefore;
++    lookBefore = null;
++    if (!was) return null;
++    if (was.style) await step('set_visual_style', { style: was.style });
++    await step('set_post_processing', {
++      bloom: {
++        enabled: Boolean(was.bloom?.enabled),
++        intensityPct: was.bloom?.intensityPct ?? 0,
++      },
++      sharpen: { enabled: Boolean(was.sharpen?.enabled) },
++    });
++    const mode = String(was.detection?.detectionMode ?? '').toLowerCase();
++    await step('set_detection', {
++      enabled: mode !== 'off',
++      ...(['sparse', 'balanced', 'dense'].includes(mode) ? { mode } : {}),
++      ...(Number.isFinite(was.detection?.densityPct)
++        ? { densityPct: was.detection.densityPct }
++        : {}),
++    });
++    if (was.hud) await step('set_hud', { layout: was.hud });
++    return was;
++  }
++
++  /**
++   * Set the app up for `mission`, a step at a time. Every step checks `alive`
++   * first, so a mission that was replaced while it was still setting up (they
++   * can take a while: flights, cameras loading) stops where it is instead of
++   * carrying on underneath the new one. `leaving` is the mission before it.
++   * @returns {Promise<boolean>} False when the mission could not do its part.
++   */
++  async function setUp(mission, alive, leaving) {
++    const step = (name, args) =>
++      alive()
++        ? act(name, args)
++        : Promise.resolve({ ok: false, superseded: true });
++    const until = async (test, { tries = 10, everyMs = 1000 } = {}) => {
++      for (let i = 0; i < tries; i++) {
++        if (!alive()) return false;
++        if (await test()) return true;
++        await sleep(everyMs, signal);
++      }
++      return false;
++    };
++    const ctx = { run: step, until, home: homePlace(), signal };
++
++    // Leave whatever the last mission left running.
++    if (leaving?.id === 'radio')
++      await step('control_radio', { action: 'stop' });
++    if (stories?.isOpen()) {
++      stories.close();
++      // Closed at once, but the app goes on putting its own view back for a
++      // moment, and would undo a step taken meanwhile.
++      await until(
++        () => !stories.isOpen() && !doc.body.classList.contains('stories-mode'),
++        { tries: 24, everyMs: 250 },
++      );
++      await sleep(300, signal);
++    }
++    const state = await step('get_current_view_state', {});
++    if (state?.cockpit?.active)
++      await step('control_cockpit', { action: 'exit' });
++    if (state?.scenePlayback?.running)
++      await step('control_scene', { action: 'stop' });
++    // The look to come back to is the one from before any film: `state` was
++    // read while the last film's look was still on.
++    const restored = await restoreLook(step);
++    if (mission.changesLook) lookBefore = restored ?? lookOf(state);
++
++    // One of the app's own modes that is already on stays as it is, with the
++    // plane it follows: the cockpit and the planes it flies among share one.
++    const sameContext =
++      Boolean(mission.context) &&
++      state?.context?.active === true &&
++      state.context.mode === mission.context;
++    if (!sameContext) {
++      if (state?.context?.active)
++        await step('set_context_mode', { mode: 'off' });
++      await step('stop_tracking', {});
++      await mission.before?.(ctx);
++
++      // The data on the map: exactly the mission's layers, or none before one
++      // of the app's modes, which then brings its own.
++      const wanted = new Set(mission.context ? [] : (mission.layers ?? []));
++      for (const layer of dataManager.getAll())
++        if (alive() && layer.enabled && !wanted.has(layer.id))
++          await step('set_layer_visibility', {
++            layerId: layer.id,
++            enabled: false,
++          });
++      for (const layerId of wanted)
++        if (alive() && !dataManager.isEnabled(layerId))
++          await step('set_layer_visibility', { layerId, enabled: true });
++      if (mission.context)
++        await step('set_context_mode', { mode: mission.context });
++    }
++
++    const done = (await mission.after?.(ctx)) !== false;
++    // The app's own card about what is in view or being followed, beside
++    // the map: open where it has something to say, shut for a clean screen.
++    await step('set_panel_open', {
++      panelId: 'global-context-panel',
++      open: mission.card !== false,
++    });
++    return done;
++  }
++
++  // --- The view --------------------------------------------------------------
++  const host = el(doc, 'div', 'tm-root');
++  host.setAttribute('data-tablet-missions', '');
++
++  const bar = el(doc, 'div', 'tm-bar');
++  const menuButton = el(doc, 'button', 'tm-button tm-button-main');
++  menuButton.type = 'button';
++  menuButton.append(icon('menu', 26, doc), el(doc, 'span', '', 'Missions'));
++  const now = el(doc, 'div', 'tm-now');
++  now.setAttribute('role', 'status');
++  now.setAttribute('aria-live', 'polite');
++  const nowTitle = el(doc, 'div', 'tm-now-title', 'God’s Eye View');
++  const nowTip = el(doc, 'div', 'tm-now-tip', '');
++  now.append(nowTitle, nowTip);
++  const controlsButton = el(doc, 'button', 'tm-button');
++  controlsButton.type = 'button';
++  const controlsLabel = el(doc, 'span', '');
++  controlsButton.append(icon('sliders', 24, doc), controlsLabel);
++  const helpButton = el(doc, 'button', 'tm-button tm-button-round');
++  helpButton.type = 'button';
++  helpButton.setAttribute('aria-label', 'What do the words on screen mean?');
++  helpButton.append(icon('help', 26, doc));
++  bar.append(menuButton, now, controlsButton, helpButton);
++
++  const menu = el(doc, 'div', 'tm-sheet tm-menu');
++  menu.setAttribute('role', 'dialog');
++  menu.setAttribute('aria-modal', 'true');
++  menu.setAttribute('aria-label', 'Missions');
++  menu.hidden = true;
++  const menuHead = el(doc, 'div', 'tm-sheet-head');
++  const menuTitles = el(doc, 'div', '');
++  menuTitles.append(
++    el(doc, 'div', 'tm-eyebrow', 'God’s Eye View'),
++    el(doc, 'h2', 'tm-sheet-title', 'What would you like to see?'),
++  );
++  const menuClose = el(doc, 'button', 'tm-button tm-button-round');
++  menuClose.type = 'button';
++  menuClose.setAttribute('aria-label', 'Close the menu');
++  menuClose.append(icon('close', 24, doc));
++  menuHead.append(menuTitles, menuClose);
++  const grid = el(doc, 'div', 'tm-grid');
++  for (const mission of MISSIONS) {
++    const card = el(doc, 'button', 'tm-card');
++    card.type = 'button';
++    card.dataset.mission = mission.id;
++    const words = el(doc, 'span', 'tm-card-words');
++    words.append(
++      el(doc, 'span', 'tm-card-title', mission.title),
++      el(doc, 'span', 'tm-card-blurb', mission.blurb),
++    );
++    card.append(icon(mission.art, 44, doc), words);
++    grid.append(card);
++  }
++  const menuFoot = el(
++    doc,
++    'div',
++    'tm-sheet-foot',
++    'Everything here is real and live. Come back to this menu any time with the Missions button.',
++  );
++  menu.append(menuHead, grid, menuFoot);
++
++  const help = el(doc, 'div', 'tm-sheet tm-help');
++  help.setAttribute('role', 'dialog');
++  help.setAttribute('aria-modal', 'true');
++  help.setAttribute('aria-label', 'What the words mean');
++  help.hidden = true;
++  const helpHead = el(doc, 'div', 'tm-sheet-head');
++  const helpTitles = el(doc, 'div', '');
++  helpTitles.append(
++    el(doc, 'div', 'tm-eyebrow', 'Plain English'),
++    el(doc, 'h2', 'tm-sheet-title', 'What do the words mean?'),
++  );
++  const helpClose = el(doc, 'button', 'tm-button tm-button-round');
++  helpClose.type = 'button';
++  helpClose.setAttribute('aria-label', 'Close');
++  helpClose.append(icon('close', 24, doc));
++  helpHead.append(helpTitles, helpClose);
++  const list = el(doc, 'dl', 'tm-glossary');
++  for (const [term, meaning] of GLOSSARY) {
++    const row = el(doc, 'div', 'tm-glossary-row');
++    row.append(el(doc, 'dt', '', term), el(doc, 'dd', '', meaning));
++    list.append(row);
++  }
++  const moving = el(doc, 'div', 'tm-sheet-foot');
++  moving.textContent =
++    'Getting around: drag to move, pinch to zoom, two fingers to tilt and turn. Tap anything on the map to learn about it.';
++  help.append(helpHead, list, moving);
++
++  host.append(bar, menu, help);
++
++  // --- Behaviour -------------------------------------------------------------
++  function drawSimple() {
++    root.classList.toggle('tablet-simple', simple);
++    controlsLabel.textContent = simple ? 'All controls' : 'Simple view';
++    controlsButton.setAttribute('aria-pressed', String(!simple));
++  }
++  function setSimple(next) {
++    simple = Boolean(next);
++    try {
++      storage?.setItem?.(SIMPLE_STORAGE_KEY, simple ? 'on' : 'off');
++    } catch {
++      /* not remembered */
++    }
++    drawSimple();
++  }
++  const sheetOpen = () => !menu.hidden || !help.hidden;
++  function show(sheet) {
++    menu.hidden = sheet !== menu;
++    help.hidden = sheet !== help;
++    root.classList.toggle('tablet-sheet-open', sheetOpen());
++    if (sheet)
++      (
++        sheet.querySelector('.tm-card') ?? sheet.querySelector('button')
++      )?.focus();
++  }
++
++  /** Put `mission` (or none) in the bar, without setting the app up for it. */
++  function adopt(mission, tip = mission?.tip ?? '') {
++    current = mission;
++    if (mission) root.setAttribute('data-tm-mission', mission.id);
++    else root.removeAttribute('data-tm-mission');
++    nowTitle.textContent = mission?.title ?? 'God’s Eye View';
++    nowTip.textContent = tip;
++  }
++
++  let busy = false;
++  /**
++   * The stock full-screen experience the current mission opened (the cockpit,
++   * Stories, the film), marked by a class on the body. Each has its own way
++   * out, and the film ends by itself: the bar follows.
++   */
++  let takeover = null;
++  function followTakeover() {
++    if (busy) return;
++    if (!takeover) {
++      // Opened from the app's own screens (the Cockpit button on a plane's
++      // card): the bar says so, and knows the way back.
++      const entered = MISSIONS.find(
++        (m) =>
++          m.takesOver &&
++          m.then === current?.id &&
++          doc.body.classList.contains(m.takesOver),
++      );
++      if (entered) {
++        adopt(entered);
++        takeover = { mission: entered, mark: entered.takesOver, seen: true };
++      }
++      return;
++    }
++    if (doc.body.classList.contains(takeover.mark)) {
++      takeover.seen = true;
++      return;
++    }
++    if (!takeover.seen) return;
++    const ended = takeover.mission;
++    takeover = null;
++    if (current !== ended) return;
++    if (ended.changesLook) restoreLook();
++    const next = MISSIONS.find((m) => m.id === ended.then) ?? null;
++    adopt(next);
++    if (!next) show(menu);
++  }
++  const bodyWatch =
++    typeof MutationObserver === 'function'
++      ? new MutationObserver(followTakeover)
++      : null;
++  bodyWatch?.observe(doc.body, {
++    attributes: true,
++    attributeFilter: ['class'],
++  });
++
++  async function choose(id) {
++    const mission = MISSIONS.find((m) => m.id === id);
++    if (!mission) return;
++    const mine = ++sequence;
++    const leaving = current;
++    show(null);
++    adopt(mission, 'Setting up…');
++    takeover = null;
++    busy = true;
++    bar.classList.add('tm-busy');
++    onBusy?.(true);
++    const alive = () => mine === sequence && !signal?.aborted;
++    let ok = false;
++    try {
++      ok = await setUp(mission, alive, leaving);
++    } catch {
++      /* told below */
++    }
++    if (!alive()) return; // another mission was picked meanwhile
++    busy = false;
++    bar.classList.remove('tm-busy');
++    onBusy?.(false);
++    nowTip.textContent = ok
++      ? mission.tip
++      : (mission.sorry ??
++        'That did not start. Check the Wi-Fi, then pick it again from Missions.');
++    if (ok && mission.takesOver) {
++      takeover = { mission, mark: mission.takesOver, seen: false };
++      followTakeover();
++    }
++  }
++
++  const onClick = (event) => {
++    const card = event.target.closest?.('.tm-card');
++    if (card) {
++      choose(card.dataset.mission);
++      return;
++    }
++    if (event.target === menu || event.target === help) show(null);
++  };
++  const onKey = (event) => {
++    if (event.key === 'Escape' && sheetOpen()) show(null);
++  };
++  menuButton.addEventListener('click', () => show(menu.hidden ? menu : null));
++  menuClose.addEventListener('click', () => show(null));
++  helpButton.addEventListener('click', () => show(help.hidden ? help : null));
++  helpClose.addEventListener('click', () => show(null));
++  controlsButton.addEventListener('click', () => setSimple(!simple));
++  host.addEventListener('click', onClick);
++  doc.addEventListener('keydown', onKey);
++
++  drawSimple();
++  doc.body.appendChild(host);
++
++  return {
++    /** The app has finished its own start: open the menu, or a linked mission. */
++    async ready() {
++      const view = await act('get_current_view_state', {});
++      const { latitude, longitude } = view?.camera ?? {};
++      if (Number.isFinite(latitude) && Number.isFinite(longitude))
++        startPlace = { lat: latitude, lon: longitude };
++      const linked = linkedMission();
++      if (linked) choose(linked.id);
++      else show(menu);
++    },
++    open: () => show(menu),
++    choose,
++    setSimple,
++    state: () => ({
++      mission: current?.id ?? null,
++      simple,
++      menuOpen: !menu.hidden,
++      home: homePlace(),
++    }),
++    remove() {
++      sequence += 1;
++      takeover = null;
++      bodyWatch?.disconnect();
++      doc.removeEventListener('keydown', onKey);
++      host.remove();
++      root.classList.remove('tablet-simple', 'tablet-sheet-open');
++      root.removeAttribute('data-tm-mission');
++    },
++  };
++}
+diff --git a/src/tablet/profile.js b/src/tablet/profile.js
+new file mode 100644
+index 0000000..92ec7c8
+--- /dev/null
++++ b/src/tablet/profile.js
+@@ -0,0 +1,77 @@
++/**
++ * @module tablet/profile
++ * @description The tablet edition's switch. This fork exists to run the whole app
++ * on a small kitchen-counter tablet (Lenovo Tab M10 FHD Plus class: eight
++ * Cortex-A53 cores, a PowerVR GE8320, 2 GB of memory, 1920x1200 shown as
++ * 1280x800 CSS pixels). The tablet build turns the edition on; `?tablet=0`
++ * gives the stock app for comparison, and `?tablet=1` turns it on in any build.
++ *
++ * Nothing here removes a feature. The edition changes starting values (lighter
++ * graphics, a calmer HUD), adds a quality governor that keeps the frame rate up
++ * by trading sharpness, and adds a plain-language Missions menu.
++ */
++
++/**
++ * Whether this build is the tablet build (`GEV_TABLET=1 vite build`, see
++ * `build/vite.js`). A stock build, the dev server without the variable and
++ * the unit tests under Node all read false, and behave as the stock app.
++ */
++const BUILT_FOR_TABLET =
++  typeof import.meta.env !== 'undefined' && import.meta.env.GEV_TABLET === true;
++
++/** Whether the tablet edition is on for this page. */
++export function tabletEdition(location = globalThis.location) {
++  // A panel page that loads the app into itself keeps the stock behaviour.
++  if (globalThis.GEV_EMBED_INLINE === true) return false;
++  try {
++    const flag = new URLSearchParams(location?.search || '').get('tablet');
++    if (flag === '0') return false;
++    if (flag === '1') return true;
++  } catch {
++    /* no location: the build decides */
++  }
++  return BUILT_FOR_TABLET;
++}
++
++/**
++ * Whether the page was opened fresh, read as this module loads and before the
++ * app writes its own state into the link. A link that already carries display
++ * settings (a share link, or a reload of a page in use) holds someone's
++ * choices; a fresh start gets the tablet's lighter starting values.
++ */
++export const startedFresh = (() => {
++  try {
++    return !/(?:^|[#&])sharpen=/.test(String(globalThis.location?.hash || ''));
++  } catch {
++    return true;
++  }
++})();
++
++/** Whether the page was asked to show the governor's numbers (`?tabletdiag=1`). */
++export function tabletDiagnostics(location = globalThis.location) {
++  try {
++    return (
++      new URLSearchParams(location?.search || '').get('tabletdiag') === '1'
++    );
++  } catch {
++    return false;
++  }
++}
++
++/** Whether another page frames the app as a bare globe (`?embed=1`). */
++export function framedGlobe(location = globalThis.location) {
++  try {
++    return new URLSearchParams(location?.search || '').get('embed') === '1';
++  } catch {
++    return false;
++  }
++}
++
++/** Mark the document, so `tablet.css` can restyle the stock chrome. */
++export function markDocument(doc = globalThis.document) {
++  if (!tabletEdition() || !doc?.documentElement) return;
++  doc.documentElement.classList.add('tablet-edition');
++}
++
++/** Multisampling the viewer starts with: none on the tablet, the app's 4 otherwise. */
++export const startingMsaa = () => (tabletEdition() ? 0 : 4);
+diff --git a/src/tablet/startRetry.js b/src/tablet/startRetry.js
+new file mode 100644
+index 0000000..901040d
+--- /dev/null
++++ b/src/tablet/startRetry.js
+@@ -0,0 +1,54 @@
++/**
++ * @module tablet/startRetry
++ * @description A start that fails (a file that did not arrive over weak
++ * Wi-Fi, say) leaves the stock app on its loading screen with an error, which
++ * is fine at a desk where someone presses reload. A tablet on a kitchen
++ * counter has no reload button, so the tablet edition reloads by itself, at
++ * most `MAX_RETRIES` times in a row, waiting a little longer each time.
++ */
++import { tabletEdition } from './profile.js';
++
++export const START_RETRY_KEY = 'gev:tablet:start-retries:v1';
++export const MAX_RETRIES = 3;
++const FIRST_WAIT_MS = 2000;
++
++function session() {
++  try {
++    return globalThis.sessionStorage ?? null;
++  } catch {
++    return null;
++  }
++}
++
++/**
++ * Schedule a reload after a failed start.
++ * @returns {boolean} Whether a reload is on its way (false: show the error).
++ */
++export function retryStart({
++  storage = session(),
++  reload = () => globalThis.location?.reload(),
++  schedule = (fn, ms) => setTimeout(fn, ms),
++  enabled = tabletEdition(),
++} = {}) {
++  if (!enabled || !storage) return false;
++  let tries = 0;
++  try {
++    tries = Number(storage.getItem(START_RETRY_KEY)) || 0;
++    if (tries >= MAX_RETRIES) return false;
++    storage.setItem(START_RETRY_KEY, String(tries + 1));
++  } catch {
++    // Without a count there is no stopping, so do not start.
++    return false;
++  }
++  schedule(reload, FIRST_WAIT_MS * (tries + 1));
++  return true;
++}
++
++/** A start that worked: the next failure gets its full set of retries. */
++export function clearStartRetries({ storage = session() } = {}) {
++  try {
++    storage?.removeItem(START_RETRY_KEY);
++  } catch {
++    /* nothing to clear */
++  }
++}
+diff --git a/src/tablet/tablet.css b/src/tablet/tablet.css
+new file mode 100644
+index 0000000..5ab1455
+--- /dev/null
++++ b/src/tablet/tablet.css
+@@ -0,0 +1,402 @@
++/* ── Tablet edition ─────────────────────────────────────────────────────────
++   Everything here hangs off `html.tablet-edition` (set by src/tablet/profile.js),
++   so the stock app is untouched when the edition is off.
++
++   1. Cheaper compositing for a weak graphics chip.
++   2. Simple mode: the stock cockpit tucked away behind "All controls".
++   3. The Missions menu, the mission bar and the plain-English sheet.
++   ─────────────────────────────────────────────────────────────────────────── */
++
++/* ── 1. Cheaper compositing ──────────────────────────────────────────────────
++   The stock panels are frosted glass: each one blurs the globe behind it
++   (`backdrop-filter: blur(24px)`), which a desktop GPU does without noticing.
++   A PowerVR GE8320 has to re-blur every panel each time the globe redraws, so
++   the tablet gets solid panels instead: the same shape and colour, no blur. */
++html.tablet-edition {
++  --glass-bg: rgba(12, 14, 22, 0.94);
++  --glass-strong: rgba(12, 14, 22, 0.97);
++  --tm-panel: #0c1018;
++  --tm-panel-edge: rgba(0, 212, 255, 0.34);
++  --tm-ink: #e8eaed;
++  --tm-ink-soft: #a9b6c2;
++  --tm-accent: var(--accent, #00d4ff);
++  --tm-accent-ink: #04141b;
++}
++
++html.tablet-edition *,
++html.tablet-edition *::before,
++html.tablet-edition *::after {
++  -webkit-backdrop-filter: none !important;
++  backdrop-filter: none !important;
++}
++
++/* A kitchen screen in kiosk mode has no browser to go to: a link that leads
++   off the app (a photo's credit, a station's home page, a map provider) would
++   leave it stranded on a page with no way back. The names stay readable. */
++html.tablet-edition a[href^='http'] {
++  pointer-events: none !important;
++}
++
++/* ── 2. Simple mode ──────────────────────────────────────────────────────────
++   Hidden the way the app's own clean view hides things (still laid out, so
++   nothing that measures them breaks), and brought back by "All controls". */
++html.tablet-simple #title-bar,
++html.tablet-simple #style-indicator,
++html.tablet-simple #top-center-actions,
++html.tablet-simple #pp-toggles,
++html.tablet-simple #param-slider-panel,
++html.tablet-simple #control-panel,
++html.tablet-simple #left-panel-stack,
++html.tablet-simple #left-panel-rail,
++html.tablet-simple #intel-hud,
++html.tablet-simple #corner-actions,
++html.tablet-simple #gev-voice-control,
++html.tablet-simple #view-switcher,
++html.tablet-simple #orbit-indicator,
++html.tablet-simple #safe-frame-overlay,
++html.tablet-simple #hStories,
++html.tablet-simple #hPop {
++  opacity: 0 !important;
++  visibility: hidden !important;
++  pointer-events: none !important;
++}
++
++/* The right-hand rail stays. The app opens a panel there when it has
++   something to say about what was tapped or is being followed (a plane's
++   card, a camera's picture, the radio), and that is the part worth reading.
++   It sits below the mission bar and above the search box, without the
++   switcher between its panels. */
++html.tablet-simple body:not(.cockpit-mode) #right-context-rail {
++  top: 104px !important;
++  right: 12px !important;
++  max-height: calc(100vh - 104px - 124px) !important;
++  max-height: calc(100dvh - 104px - 124px) !important;
++}
++
++html.tablet-simple #right-context-rail > .gev-panel-rail,
++html.tablet-simple #right-context-rail > #weather-panel,
++html.tablet-simple #right-context-rail > #news-panel,
++html.tablet-simple #right-context-rail > #recent-imagery-panel,
++html.tablet-simple #right-context-rail > #street-level-panel,
++/* Of the Context panel: the card and the lists, not the tools around them. */
++html.tablet-simple #global-context-panel .context-dock-btn,
++html.tablet-simple #right-context-rail .panel-edge-btn,
++html.tablet-simple #global-context-panel .context-tabs,
++html.tablet-simple #global-context-panel .global-context-modes,
++html.tablet-simple #global-context-panel #context-mode-standby,
++html.tablet-simple #global-context-panel #installations-search-btn,
++html.tablet-simple #global-context-panel #tr3b-toggle,
++/* The assistant needs an account key the tablet does not have. */
++html.tablet-simple #global-context-panel .entity-card__action--ask,
++/* Of the radio: the station, the dial and the buttons that play it; and
++   only where the radio is what is being looked at. */
++html.tablet-simple:not([data-tm-mission='radio']) #radio-panel,
++/* The radio's own card names the station; the map's card for it only has
++   the station's catalogue number. */
++html.tablet-simple[data-tm-mission='radio'] #entity-card,
++html.tablet-simple #radio-panel .radio-directory-row,
++html.tablet-simple #radio-panel .radio-links,
++html.tablet-simple #radio-panel .radio-privacy,
++html.tablet-simple #radio-panel #sdr-radio-card,
++/* Of the camera panel: the picture, where it is, and the buttons that move
++   between cameras; the calibration tools stay behind "All controls". */
++html.tablet-simple #cctv-panel .cctv-controls ~ .cctv-controls ~ .cctv-controls,
++html.tablet-simple #cctv-panel .cctv-calibration-block,
++html.tablet-simple #cctv-panel .cctv-summary-label,
++html.tablet-simple #cctv-panel #cctv-summary {
++  display: none !important;
++}
++
++/* ── 3. Missions ─────────────────────────────────────────────────────────── */
++.tm-root {
++  font-family: var(--font-sans, 'Inter', sans-serif);
++  color: var(--tm-ink);
++}
++
++.tm-root [hidden] {
++  display: none !important;
++}
++
++.tm-icon {
++  display: inline-flex;
++  flex: none;
++}
++
++/* The mission bar. In simple mode it is the top of the screen; with all
++   controls showing it shrinks to a pill above the stock toolbar. */
++.tm-bar {
++  position: fixed;
++  top: 12px;
++  left: 12px;
++  right: 12px;
++  z-index: 1150;
++  display: flex;
++  align-items: stretch;
++  gap: 10px;
++  pointer-events: none;
++}
++
++.tm-bar > * {
++  pointer-events: auto;
++}
++
++.tm-button {
++  display: inline-flex;
++  align-items: center;
++  justify-content: center;
++  gap: 10px;
++  min-height: 56px;
++  padding: 0 20px;
++  border: 1px solid var(--tm-panel-edge);
++  border-radius: 14px;
++  background: var(--tm-panel);
++  color: var(--tm-ink);
++  font: 600 17px/1 var(--font-sans, 'Inter', sans-serif);
++  letter-spacing: 0.01em;
++  white-space: nowrap;
++  flex: none;
++  cursor: pointer;
++  -webkit-tap-highlight-color: transparent;
++  touch-action: manipulation;
++}
++
++.tm-button:active {
++  background: #142230;
++}
++
++.tm-button-main {
++  border-color: transparent;
++  background: var(--tm-accent);
++  color: var(--tm-accent-ink);
++  font-size: 18px;
++}
++
++.tm-button-main:active {
++  background: #6fe6ff;
++}
++
++.tm-button-round {
++  width: 56px;
++  padding: 0;
++}
++
++.tm-button[aria-pressed='true'] {
++  border-color: var(--tm-accent);
++  color: var(--tm-accent);
++}
++
++.tm-now {
++  flex: 1 1 auto;
++  min-width: 0;
++  display: flex;
++  flex-direction: column;
++  justify-content: center;
++  gap: 3px;
++  padding: 8px 18px;
++  border: 1px solid var(--tm-panel-edge);
++  border-radius: 14px;
++  background: var(--tm-panel);
++}
++
++.tm-now-title {
++  font: 600 17px/1.2 var(--font-sans, 'Inter', sans-serif);
++  color: var(--tm-accent);
++  white-space: nowrap;
++  overflow: hidden;
++  text-overflow: ellipsis;
++}
++
++.tm-now-tip {
++  font: 400 15px/1.3 var(--font-sans, 'Inter', sans-serif);
++  color: var(--tm-ink);
++  display: -webkit-box;
++  -webkit-box-orient: vertical;
++  -webkit-line-clamp: 2;
++  overflow: hidden;
++}
++
++.tm-now-tip:empty {
++  display: none;
++}
++
++.tm-busy .tm-now-tip {
++  color: var(--tm-ink-soft);
++}
++
++/* All controls showing: the stock title, toolbar and panels own the edges, so
++   the bar becomes a small pill in the empty strip at the very top. */
++html.tablet-edition:not(.tablet-simple) .tm-bar {
++  top: 6px;
++  left: 50%;
++  right: auto;
++  transform: translateX(-50%);
++  gap: 6px;
++}
++
++html.tablet-edition:not(.tablet-simple) .tm-now {
++  display: none;
++}
++
++html.tablet-edition:not(.tablet-simple) .tm-button {
++  min-height: 44px;
++  padding: 0 14px;
++  border-radius: 22px;
++  font-size: 15px;
++}
++
++html.tablet-edition:not(.tablet-simple) .tm-button-round {
++  width: 44px;
++  padding: 0;
++}
++
++/* The film plays on a clean screen: only the way back to the menu stays.
++   Stories has its own screens and its own way back, and a recording is of
++   the globe alone; a sheet covers the bar. */
++body.scene-playback-mode .tm-bar > :not(.tm-button-main),
++body.recording-mode:not(.scene-playback-mode) .tm-bar,
++body.stories-mode .tm-bar {
++  display: none;
++}
++
++html.tablet-sheet-open .tm-bar {
++  visibility: hidden;
++}
++
++/* Sheets: the menu and the plain-English page. */
++.tm-sheet {
++  position: fixed;
++  inset: 0;
++  z-index: 1300;
++  display: flex;
++  flex-direction: column;
++  gap: 18px;
++  padding: 28px max(28px, calc((100vw - 1180px) / 2)) 22px;
++  /* Solid: nothing behind a sheet has to be blended, or shows through. */
++  background: #05080d;
++  overflow-y: auto;
++  overscroll-behavior: contain;
++}
++
++.tm-sheet-head {
++  display: flex;
++  align-items: flex-end;
++  justify-content: space-between;
++  gap: 16px;
++}
++
++.tm-eyebrow {
++  font: 500 13px/1 var(--font-mono, monospace);
++  letter-spacing: 0.22em;
++  text-transform: uppercase;
++  color: var(--tm-accent);
++}
++
++.tm-sheet-title {
++  margin-top: 10px;
++  font: 600 38px/1.1 var(--font-sans, 'Inter', sans-serif);
++  letter-spacing: -0.01em;
++  color: var(--tm-ink);
++}
++
++.tm-grid {
++  display: grid;
++  grid-template-columns: repeat(4, minmax(0, 1fr));
++  gap: 14px;
++}
++
++.tm-card {
++  display: flex;
++  flex-direction: column;
++  align-items: flex-start;
++  gap: 12px;
++  min-height: 158px;
++  padding: 18px 18px 16px;
++  border: 1px solid rgba(255, 255, 255, 0.1);
++  border-radius: 18px;
++  background: #0f1620;
++  color: var(--tm-ink);
++  text-align: left;
++  cursor: pointer;
++  -webkit-tap-highlight-color: transparent;
++  touch-action: manipulation;
++}
++
++.tm-card .tm-icon {
++  color: var(--tm-accent);
++}
++
++.tm-card:active {
++  border-color: var(--tm-accent);
++  background: #13222f;
++}
++
++.tm-card-words {
++  display: flex;
++  flex-direction: column;
++  gap: 6px;
++}
++
++.tm-card-title {
++  font: 600 20px/1.2 var(--font-sans, 'Inter', sans-serif);
++}
++
++.tm-card-blurb {
++  font: 400 15px/1.35 var(--font-sans, 'Inter', sans-serif);
++  color: var(--tm-ink-soft);
++}
++
++.tm-sheet-foot {
++  font: 400 15px/1.4 var(--font-sans, 'Inter', sans-serif);
++  color: var(--tm-ink-soft);
++}
++
++.tm-glossary {
++  display: grid;
++  grid-template-columns: repeat(2, minmax(0, 1fr));
++  gap: 10px 28px;
++}
++
++.tm-glossary-row {
++  display: grid;
++  grid-template-columns: 150px 1fr;
++  gap: 14px;
++  align-items: baseline;
++  padding: 10px 0;
++  border-top: 1px solid rgba(255, 255, 255, 0.09);
++}
++
++.tm-glossary dt {
++  font: 500 15px/1.3 var(--font-mono, monospace);
++  color: var(--tm-accent);
++}
++
++.tm-glossary dd {
++  font: 400 16px/1.4 var(--font-sans, 'Inter', sans-serif);
++  color: var(--tm-ink);
++}
++
++/* The governor's numbers (`?tabletdiag=1`). */
++.tablet-diag {
++  position: fixed;
++  left: 12px;
++  bottom: 12px;
++  z-index: 370;
++  padding: 6px 10px;
++  border-radius: 8px;
++  background: rgba(0, 0, 0, 0.78);
++  color: #9ef0b4;
++  font: 500 13px/1.2 var(--font-mono, monospace);
++  pointer-events: none;
++}
++
++@media (max-width: 900px) {
++  .tm-grid {
++    grid-template-columns: repeat(2, minmax(0, 1fr));
++  }
++  .tm-glossary {
++    grid-template-columns: 1fr;
++  }
++  .tm-sheet-title {
++    font-size: 28px;
++  }
++}
+diff --git a/src/tooling/viteBuild.test.mjs b/src/tooling/viteBuild.test.mjs
+index 1854885..9c24778 100644
+--- a/src/tooling/viteBuild.test.mjs
++++ b/src/tooling/viteBuild.test.mjs
+@@ -75,7 +75,15 @@ test('explicit build inputs preserve browser-only defines, plugin order and loop
+     'import.meta.env.GOOGLE_MAPS_API_KEY': '"browser-fixture"',
+     'import.meta.env.CESIUM_ION_TOKEN': '"ion-fixture"',
+     'import.meta.env.MAPILLARY_CLIENT_TOKEN': '""',
++    'import.meta.env.GEV_TABLET': 'false',
+   });
++  assert.equal(
++    createBrowserViteConfig({ tabletEdition: true }).define[
++      'import.meta.env.GEV_TABLET'
++    ],
++    'true',
++    'the tablet build turns the tablet edition on',
++  );
+   assert.equal(
+     createBrowserViteConfig({ photonUrl: '' }).define[
+       'import.meta.env.PHOTON_URL'

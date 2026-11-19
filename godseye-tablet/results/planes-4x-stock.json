@@ -1,0 +1,854 @@
+{
+ "ok": true,
+ "url": "http://localhost:4176/?tablet=0&welcome=0",
+ "cpuSlowdown": 4,
+ "bootMs": 2766,
+ "label": "stock-planes",
+ "hz": 60,
+ "wallMs": 20129,
+ "paced": {
+  "turns": 811,
+  "frames": 811,
+  "frameMs": {
+   "median": 14.8,
+   "p90": 32.7,
+   "max": 83
+  },
+  "gapMs": {
+   "median": 19.6,
+   "p90": 40.1
+  },
+  "drawsPerFrame": 63,
+  "trianglesPerFrame": 476416,
+  "canvas": [
+   1280,
+   800
+  ],
+  "msaa": 4,
+  "sse": 2,
+  "tiles": 40,
+  "holds": [
+   "camera",
+   "flights",
+   "military",
+   "military-awareness",
+   "tracked-entity"
+  ],
+  "layers": [
+   "flights",
+   "military",
+   "ais-live-vessels",
+   "military-installations",
+   "military-awareness"
+  ],
+  "governor": null,
+  "heapMB": 213,
+  "error": null
+ },
+ "load": {
+  "layers": [
+   [
+    "flights",
+    1136,
+    null
+   ],
+   [
+    "military",
+    322,
+    null
+   ],
+   [
+    "ais-live-vessels",
+    0,
+    null
+   ],
+   [
+    "military-installations",
+    0,
+    null
+   ],
+   [
+    "military-awareness",
+    1,
+    null
+   ]
+  ],
+  "tracked": [
+   "N535TP"
+  ],
+  "camera": {
+   "latitude": 35.41117541785124,
+   "longitude": -82.38357476162902,
+   "heightM": 22836.64022835052
+  }
+ },
+ "fps": 40.3,
+ "memory": {
+  "browser": 233,
+  "crashpad-handler": 13,
+  "gpu-process": 244,
+  "utility": 99,
+  "renderer": 958
+ },
+ "busyPct": 84.4,
+ "busyMsPerFrame": 22.8,
+ "gcPctOfBusy": 0.5,
+ "programPctOfBusy": 11.7,
+ "topSelf": [
+  {
+   "key": "fo.resize @ Cesium.js:16526",
+   "ms": 2596,
+   "pctOfBusy": 14
+  },
+  {
+   "key": "(program) @ :0",
+   "ms": 2167,
+   "pctOfBusy": 11.7
+  },
+  {
+   "key": "xc.worldWithEyeOffsetToWindowCoordinates @ Cesium.js:6781",
+   "ms": 812,
+   "pctOfBusy": 4.4
+  },
+  {
+   "key": "motionPosition @ index-By5Zh_KA.js:91344",
+   "ms": 591,
+   "pctOfBusy": 3.2
+  },
+  {
+   "key": "getDetectableObjects @ index-By5Zh_KA.js:99872",
+   "ms": 497,
+   "pctOfBusy": 2.7
+  },
+  {
+   "key": "eastNorthUp @ index-By5Zh_KA.js:68102",
+   "ms": 452,
+   "pctOfBusy": 2.4
+  },
+  {
+   "key": "nl @ Cesium.js:11513",
+   "ms": 304,
+   "pctOfBusy": 1.6
+  },
+  {
+   "key": "Bre @ Cesium.js:5017",
+   "ms": 288,
+   "pctOfBusy": 1.6
+  },
+  {
+   "key": "_aboveHorizon @ index-By5Zh_KA.js:96038",
+   "ms": 236,
+   "pctOfBusy": 1.3
+  },
+  {
+   "key": "getDetectableObjects @ index-By5Zh_KA.js:104850",
+   "ms": 204,
+   "pctOfBusy": 1.1
+  },
+  {
+   "key": "IBe @ Cesium.js:3948",
+   "ms": 197,
+   "pctOfBusy": 1.1
+  },
+  {
+   "key": "_drawOverlay @ index-By5Zh_KA.js:174896",
+   "ms": 177,
+   "pctOfBusy": 1
+  },
+  {
+   "key": "getBoundingClientRect @ :0",
+   "ms": 176,
+   "pctOfBusy": 1
+  },
+  {
+   "key": "_collectDetectableObjects @ index-By5Zh_KA.js:174603",
+   "ms": 170,
+   "pctOfBusy": 0.9
+  },
+  {
+   "key": "get @ Cesium.js:26",
+   "ms": 149,
+   "pctOfBusy": 0.8
+  },
+  {
+   "key": "gA._setUniforms @ Cesium.js:94",
+   "ms": 146,
+   "pctOfBusy": 0.8
+  },
+  {
+   "key": "fh.getDerivedShaderProgram @ Cesium.js:3948",
+   "ms": 143,
+   "pctOfBusy": 0.8
+  },
+  {
+   "key": "_focusIcons @ index-By5Zh_KA.js:96239",
+   "ms": 140,
+   "pctOfBusy": 0.8
+  },
+  {
+   "key": "Fbt @ Cesium.js:11281",
+   "ms": 139,
+   "pctOfBusy": 0.8
+  },
+  {
+   "key": "layoutRightPanelRail @ index-By5Zh_KA.js:257668",
+   "ms": 126,
+   "pctOfBusy": 0.7
+  },
+  {
+   "key": "Zt.pack @ Cesium.js:73",
+   "ms": 122,
+   "pctOfBusy": 0.7
+  },
+  {
+   "key": "iF @ Cesium.js:6781",
+   "ms": 115,
+   "pctOfBusy": 0.6
+  },
+  {
+   "key": "ju.computeVisibility @ Cesium.js:3948",
+   "ms": 107,
+   "pctOfBusy": 0.6
+  },
+  {
+   "key": "vRe @ Cesium.js:79",
+   "ms": 103,
+   "pctOfBusy": 0.6
+  },
+  {
+   "key": "querySelectorAll @ :0",
+   "ms": 99,
+   "pctOfBusy": 0.5
+  },
+  {
+   "key": "$i.distanceSquaredTo @ Cesium.js:4764",
+   "ms": 99,
+   "pctOfBusy": 0.5
+  },
+  {
+   "key": "rt.clone @ Cesium.js:76",
+   "ms": 97,
+   "pctOfBusy": 0.5
+  },
+  {
+   "key": "bindVertexArray @ :0",
+   "ms": 94,
+   "pctOfBusy": 0.5
+  },
+  {
+   "key": "_fleetPass @ index-By5Zh_KA.js:94856",
+   "ms": 94,
+   "pctOfBusy": 0.5
+  },
+  {
+   "key": "(garbage collector) @ :0",
+   "ms": 83,
+   "pctOfBusy": 0.5
+  },
+  {
+   "key": "advanceSpriteFocus @ index-By5Zh_KA.js:101800",
+   "ms": 78,
+   "pctOfBusy": 0.4
+  },
+  {
+   "key": "jf.isIon @ Cesium.js:5948",
+   "ms": 73,
+   "pctOfBusy": 0.4
+  },
+  {
+   "key": "oie.set @ Cesium.js:91",
+   "ms": 73,
+   "pctOfBusy": 0.4
+  },
+  {
+   "key": "ya.replaceMain @ Cesium.js:3931",
+   "ms": 73,
+   "pctOfBusy": 0.4
+  },
+  {
+   "key": "fillRect @ :0",
+   "ms": 72,
+   "pctOfBusy": 0.4
+  },
+  {
+   "key": "layoutLeftPanelRail @ index-By5Zh_KA.js:257421",
+   "ms": 70,
+   "pctOfBusy": 0.4
+  },
+  {
+   "key": "position @ index-By5Zh_KA.js:95159",
+   "ms": 67,
+   "pctOfBusy": 0.4
+  },
+  {
+   "key": "isOccluded @ application-BjRy3dMr.js:12341",
+   "ms": 65,
+   "pctOfBusy": 0.4
+  },
+  {
+   "key": "Jr._modifyShaderPosition @ Cesium.js:4918",
+   "ms": 65,
+   "pctOfBusy": 0.4
+  },
+  {
+   "key": "Tbt @ Cesium.js:11281",
+   "ms": 63,
+   "pctOfBusy": 0.3
+  },
+  {
+   "key": "Zr.computeTileVisibility @ Cesium.js:11281",
+   "ms": 63,
+   "pctOfBusy": 0.3
+  },
+  {
+   "key": "URe @ Cesium.js:79",
+   "ms": 61,
+   "pctOfBusy": 0.3
+  },
+  {
+   "key": "fillText @ :0",
+   "ms": 61,
+   "pctOfBusy": 0.3
+  },
+  {
+   "key": "vTe @ Cesium.js:11513",
+   "ms": 60,
+   "pctOfBusy": 0.3
+  },
+  {
+   "key": "mR.raiseEvent @ Cesium.js:80",
+   "ms": 60,
+   "pctOfBusy": 0.3
+  },
+  {
+   "key": "yi.render @ Cesium.js:15530",
+   "ms": 58,
+   "pctOfBusy": 0.3
+  },
+  {
+   "key": "bufferData @ :0",
+   "ms": 58,
+   "pctOfBusy": 0.3
+  },
+  {
+   "key": "pRe @ Cesium.js:72",
+   "ms": 56,
+   "pctOfBusy": 0.3
+  },
+  {
+   "key": "bindTexture @ :0",
+   "ms": 55,
+   "pctOfBusy": 0.3
+  },
+  {
+   "key": "cachedGroundFloor2 @ index-By5Zh_KA.js:519",
+   "ms": 54,
+   "pctOfBusy": 0.3
+  }
+ ],
+ "topFiles": [
+  {
+   "key": "Cesium.js",
+   "ms": 9251,
+   "pctOfBusy": 50
+  },
+  {
+   "key": "index-By5Zh_KA.js",
+   "ms": 4854,
+   "pctOfBusy": 26.3
+  },
+  {
+   "key": "[(program)]",
+   "ms": 2167,
+   "pctOfBusy": 11.7
+  },
+  {
+   "key": "application-BjRy3dMr.js",
+   "ms": 765,
+   "pctOfBusy": 4.1
+  },
+  {
+   "key": "[getBoundingClientRect]",
+   "ms": 176,
+   "pctOfBusy": 1
+  },
+  {
+   "key": "[querySelectorAll]",
+   "ms": 99,
+   "pctOfBusy": 0.5
+  },
+  {
+   "key": "[bindVertexArray]",
+   "ms": 94,
+   "pctOfBusy": 0.5
+  },
+  {
+   "key": "[(garbage collector)]",
+   "ms": 83,
+   "pctOfBusy": 0.5
+  },
+  {
+   "key": "[fillRect]",
+   "ms": 72,
+   "pctOfBusy": 0.4
+  },
+  {
+   "key": "[fillText]",
+   "ms": 61,
+   "pctOfBusy": 0.3
+  },
+  {
+   "key": "[bufferData]",
+   "ms": 58,
+   "pctOfBusy": 0.3
+  },
+  {
+   "key": "[bindTexture]",
+   "ms": 55,
+   "pctOfBusy": 0.3
+  },
+  {
+   "key": "[bindBuffer]",
+   "ms": 45,
+   "pctOfBusy": 0.2
+  },
+  {
+   "key": "[matchMedia]",
+   "ms": 42,
+   "pctOfBusy": 0.2
+  },
+  {
+   "key": "[bindFramebuffer]",
+   "ms": 40,
+   "pctOfBusy": 0.2
+  },
+  {
+   "key": "[texImage2D]",
+   "ms": 30,
+   "pctOfBusy": 0.2
+  },
+  {
+   "key": "[useProgram]",
+   "ms": 27,
+   "pctOfBusy": 0.1
+  },
+  {
+   "key": "[createBuffer]",
+   "ms": 27,
+   "pctOfBusy": 0.1
+  },
+  {
+   "key": "[drawElements]",
+   "ms": 25,
+   "pctOfBusy": 0.1
+  },
+  {
+   "key": "[bufferSubData]",
+   "ms": 24,
+   "pctOfBusy": 0.1
+  },
+  {
+   "key": "[drawBuffers]",
+   "ms": 22,
+   "pctOfBusy": 0.1
+  },
+  {
+   "key": "[clear]",
+   "ms": 22,
+   "pctOfBusy": 0.1
+  },
+  {
+   "key": "[uniformMatrix4fv]",
+   "ms": 21,
+   "pctOfBusy": 0.1
+  },
+  {
+   "key": "[stroke]",
+   "ms": 20,
+   "pctOfBusy": 0.1
+  },
+  {
+   "key": "[deleteVertexArray]",
+   "ms": 19,
+   "pctOfBusy": 0.1
+  },
+  {
+   "key": "[uniform4fv]",
+   "ms": 19,
+   "pctOfBusy": 0.1
+  },
+  {
+   "key": "[clearRect]",
+   "ms": 18,
+   "pctOfBusy": 0.1
+  },
+  {
+   "key": "[roundRect]",
+   "ms": 18,
+   "pctOfBusy": 0.1
+  },
+  {
+   "key": "[deleteBuffer]",
+   "ms": 17,
+   "pctOfBusy": 0.1
+  },
+  {
+   "key": "[setTimeout]",
+   "ms": 17,
+   "pctOfBusy": 0.1
+  }
+ ],
+ "topInclusive": [
+  {
+   "key": "(root) @ :0",
+   "ms": 21897,
+   "pctOfBusy": 118.4
+  },
+  {
+   "key": "pump @ :15",
+   "ms": 15066,
+   "pctOfBusy": 81.5
+  },
+  {
+   "key": "qo.render @ Cesium.js:15910",
+   "ms": 12466,
+   "pctOfBusy": 67.4
+  },
+  {
+   "key": "guarded2 @ application-BjRy3dMr.js:18072",
+   "ms": 12436,
+   "pctOfBusy": 67.3
+  },
+  {
+   "key": "fo.render @ Cesium.js:16526",
+   "ms": 12434,
+   "pctOfBusy": 67.3
+  },
+  {
+   "key": "yi.render @ Cesium.js:15530",
+   "ms": 12067,
+   "pctOfBusy": 65.3
+  },
+  {
+   "key": "mR.raiseEvent @ Cesium.js:80",
+   "ms": 7151,
+   "pctOfBusy": 38.7
+  },
+  {
+   "key": "(anonymous) @ application-BjRy3dMr.js:17353",
+   "ms": 6483,
+   "pctOfBusy": 35.1
+  },
+  {
+   "key": "fire @ application-BjRy3dMr.js:1892",
+   "ms": 6432,
+   "pctOfBusy": 34.8
+  },
+  {
+   "key": "CT @ Cesium.js:15530",
+   "ms": 4893,
+   "pctOfBusy": 26.5
+  },
+  {
+   "key": "lGt @ Cesium.js:15530",
+   "ms": 4856,
+   "pctOfBusy": 26.3
+  },
+  {
+   "key": "yi.updateAndExecuteCommands @ Cesium.js:15530",
+   "ms": 4376,
+   "pctOfBusy": 23.7
+  },
+  {
+   "key": "zy @ Cesium.js:15530",
+   "ms": 4265,
+   "pctOfBusy": 23.1
+  },
+  {
+   "key": "(idle) @ :0",
+   "ms": 3408,
+   "pctOfBusy": 18.4
+  },
+  {
+   "key": "(anonymous) @ index-By5Zh_KA.js:73629",
+   "ms": 2991,
+   "pctOfBusy": 16.2
+  },
+  {
+   "key": "drawWorldOverlay @ index-By5Zh_KA.js:73553",
+   "ms": 2990,
+   "pctOfBusy": 16.2
+  },
+  {
+   "key": "paintFrame @ index-By5Zh_KA.js:73488",
+   "ms": 2783,
+   "pctOfBusy": 15.1
+  },
+  {
+   "key": "paintCustomLane @ index-By5Zh_KA.js:73343",
+   "ms": 2627,
+   "pctOfBusy": 14.2
+  },
+  {
+   "key": "fo.resize @ Cesium.js:16526",
+   "ms": 2614,
+   "pctOfBusy": 14.1
+  },
+  {
+   "key": "_paintDetectionLane @ index-By5Zh_KA.js:174551",
+   "ms": 2532,
+   "pctOfBusy": 13.7
+  },
+  {
+   "key": "_drawOverlay @ index-By5Zh_KA.js:174896",
+   "ms": 2479,
+   "pctOfBusy": 13.4
+  },
+  {
+   "key": "V_e @ Cesium.js:15530",
+   "ms": 2413,
+   "pctOfBusy": 13.1
+  },
+  {
+   "key": "_fleetTick @ index-By5Zh_KA.js:94829",
+   "ms": 2389,
+   "pctOfBusy": 12.9
+  },
+  {
+   "key": "_fleetPass @ index-By5Zh_KA.js:94856",
+   "ms": 2240,
+   "pctOfBusy": 12.1
+  },
+  {
+   "key": "(program) @ :0",
+   "ms": 2167,
+   "pctOfBusy": 11.7
+  },
+  {
+   "key": "(anonymous) @ index-By5Zh_KA.js:99157",
+   "ms": 1834,
+   "pctOfBusy": 9.9
+  },
+  {
+   "key": "_collectDetectableObjects @ index-By5Zh_KA.js:174603",
+   "ms": 1815,
+   "pctOfBusy": 9.8
+  },
+  {
+   "key": "_focusIcons @ index-By5Zh_KA.js:96239",
+   "ms": 1665,
+   "pctOfBusy": 9
+  },
+  {
+   "key": "F$ @ Cesium.js:15530",
+   "ms": 1564,
+   "pctOfBusy": 8.5
+  },
+  {
+   "key": "tc.update @ Cesium.js:10168",
+   "ms": 1541,
+   "pctOfBusy": 8.3
+  },
+  {
+   "key": "host.update @ application-BjRy3dMr.js:4788",
+   "ms": 1446,
+   "pctOfBusy": 7.8
+  },
+  {
+   "key": "od.draw @ Cesium.js:3948",
+   "ms": 1443,
+   "pctOfBusy": 7.8
+  },
+  {
+   "key": "eh @ Cesium.js:15530",
+   "ms": 1357,
+   "pctOfBusy": 7.3
+  },
+  {
+   "key": "IBe @ Cesium.js:3948",
+   "ms": 1303,
+   "pctOfBusy": 7
+  },
+  {
+   "key": "Jr.update @ Cesium.js:5044",
+   "ms": 1264,
+   "pctOfBusy": 6.8
+  },
+  {
+   "key": "CR.execute @ Cesium.js:90",
+   "ms": 1219,
+   "pctOfBusy": 6.6
+  },
+  {
+   "key": "getDetectableObjects @ index-By5Zh_KA.js:99872",
+   "ms": 1197,
+   "pctOfBusy": 6.5
+  },
+  {
+   "key": "project @ application-BjRy3dMr.js:12318",
+   "ms": 1135,
+   "pctOfBusy": 6.1
+  },
+  {
+   "key": "xc.worldToWindowCoordinates @ Cesium.js:6781",
+   "ms": 1092,
+   "pctOfBusy": 5.9
+  },
+  {
+   "key": "xc.worldWithEyeOffsetToWindowCoordinates @ Cesium.js:6781",
+   "ms": 1084,
+   "pctOfBusy": 5.9
+  },
+  {
+   "key": "motionPosition @ index-By5Zh_KA.js:91344",
+   "ms": 1051,
+   "pctOfBusy": 5.7
+  },
+  {
+   "key": "N @ Cesium.js:15530",
+   "ms": 1049,
+   "pctOfBusy": 5.7
+  },
+  {
+   "key": "gA._setUniforms @ Cesium.js:94",
+   "ms": 880,
+   "pctOfBusy": 4.8
+  },
+  {
+   "key": "Zf.render @ Cesium.js:11281",
+   "ms": 871,
+   "pctOfBusy": 4.7
+  },
+  {
+   "key": "zm.render @ Cesium.js:11281",
+   "ms": 870,
+   "pctOfBusy": 4.7
+  },
+  {
+   "key": "handle.<computed> @ application-BjRy3dMr.js:7586",
+   "ms": 600,
+   "pctOfBusy": 3.2
+  },
+  {
+   "key": "handle.<computed> @ application-BjRy3dMr.js:7514",
+   "ms": 588,
+   "pctOfBusy": 3.2
+  },
+  {
+   "key": "upsert @ application-BjRy3dMr.js:7379",
+   "ms": 575,
+   "pctOfBusy": 3.1
+  },
+  {
+   "key": "Dbt @ Cesium.js:11281",
+   "ms": 566,
+   "pctOfBusy": 3.1
+  },
+  {
+   "key": "(anonymous) @ index-By5Zh_KA.js:104277",
+   "ms": 561,
+   "pctOfBusy": 3
+  },
+  {
+   "key": "fYe @ Cesium.js:5044",
+   "ms": 548,
+   "pctOfBusy": 3
+  },
+  {
+   "key": "_c @ Cesium.js:11281",
+   "ms": 540,
+   "pctOfBusy": 2.9
+  },
+  {
+   "key": "vbt @ Cesium.js:11281",
+   "ms": 527,
+   "pctOfBusy": 2.9
+  },
+  {
+   "key": "kbt @ Cesium.js:11281",
+   "ms": 524,
+   "pctOfBusy": 2.8
+  },
+  {
+   "key": "_drawTrailHead @ index-By5Zh_KA.js:98156",
+   "ms": 493,
+   "pctOfBusy": 2.7
+  },
+  {
+   "key": "eastNorthUp @ index-By5Zh_KA.js:68102",
+   "ms": 452,
+   "pctOfBusy": 2.4
+  },
+  {
+   "key": "setHead @ index-By5Zh_KA.js:101075",
+   "ms": 440,
+   "pctOfBusy": 2.4
+  },
+  {
+   "key": "getDetectableObjects @ index-By5Zh_KA.js:104850",
+   "ms": 436,
+   "pctOfBusy": 2.4
+  },
+  {
+   "key": "draw2 @ index-By5Zh_KA.js:100987",
+   "ms": 434,
+   "pctOfBusy": 2.3
+  },
+  {
+   "key": "Zr.computeTileVisibility @ Cesium.js:11281",
+   "ms": 426,
+   "pctOfBusy": 2.3
+  },
+  {
+   "key": "handle.upsert @ application-BjRy3dMr.js:7551",
+   "ms": 415,
+   "pctOfBusy": 2.2
+  },
+  {
+   "key": "position @ index-By5Zh_KA.js:95746",
+   "ms": 397,
+   "pctOfBusy": 2.1
+  },
+  {
+   "key": "patchLines @ application-BjRy3dMr.js:9385",
+   "ms": 396,
+   "pctOfBusy": 2.1
+  },
+  {
+   "key": "nl @ Cesium.js:11513",
+   "ms": 364,
+   "pctOfBusy": 2
+  },
+  {
+   "key": "position @ index-By5Zh_KA.js:95159",
+   "ms": 357,
+   "pctOfBusy": 1.9
+  },
+  {
+   "key": "(anonymous) @ index-By5Zh_KA.js:258191",
+   "ms": 328,
+   "pctOfBusy": 1.8
+  },
+  {
+   "key": "_syncRightPanelAdaptiveLayout @ index-By5Zh_KA.js:258205",
+   "ms": 328,
+   "pctOfBusy": 1.8
+  },
+  {
+   "key": "mYe @ Cesium.js:5044",
+   "ms": 320,
+   "pctOfBusy": 1.7
+  },
+  {
+   "key": "xA.fromGeometry @ Cesium.js:97",
+   "ms": 312,
+   "pctOfBusy": 1.7
+  },
+  {
+   "key": "Bre @ Cesium.js:5017",
+   "ms": 307,
+   "pctOfBusy": 1.7
+  }
+ ],
+ "consoleErrors": []
+}

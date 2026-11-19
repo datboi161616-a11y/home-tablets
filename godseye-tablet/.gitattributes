@@ -1,0 +1,4 @@
+# The patch must stay byte for byte as git wrote it: with its line endings
+# converted on checkout (Windows does that by default) it no longer applies.
+*.patch -text
+*.jpg binary

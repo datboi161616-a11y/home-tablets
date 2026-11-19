@@ -1,0 +1,1573 @@
+{
+ "ok": true,
+ "url": "http://localhost:4175/",
+ "cpuSlowdown": 1,
+ "bootMs": 1277,
+ "steps": [
+  {
+   "id": "explore",
+   "chosen": {
+    "out": "done",
+    "ms": 6187
+   },
+   "snap": {
+    "mission": {
+     "mission": "explore",
+     "simple": true,
+     "menuOpen": false,
+     "home": {
+      "lat": 34.99999999999999,
+      "lon": -82.5
+     }
+    },
+    "title": "Just explore",
+    "tip": "Drag to spin the globe and pinch to zoom. Use the search box at the bottom to fly to any place.",
+    "layers": [],
+    "holds": [],
+    "htmlAttrs": "tablet-edition tablet-simple | explore",
+    "bodyClass": "",
+    "visible": [
+     "#gev-omnibar",
+     ".tm-bar",
+     ".tm-now"
+    ],
+    "boxes": {
+     "rail": null,
+     "bar": [
+      12,
+      12,
+      1256,
+      61
+     ]
+    },
+    "governor": {
+     "level": 2,
+     "rungs": 6,
+     "pixelRatio": 0.75,
+     "terrainDetail": 0.86,
+     "targetFps": 30,
+     "fps": null,
+     "cpuMs": null,
+     "gpuMs": null,
+     "probing": false,
+     "sharpStill": true,
+     "sharpStillOff": false,
+     "ceiling": 0,
+     "changes": 1
+    },
+    "canvas": [
+     1280,
+     800
+    ],
+    "camera": {
+     "lat": 18.06,
+     "lon": -82.5,
+     "heightKm": 18000
+    },
+    "cockpit": false,
+    "context": "off",
+    "tracked": [],
+    "scene": false,
+    "heapMB": 99
+   }
+  },
+  {
+   "id": "quakes",
+   "chosen": {
+    "out": "done",
+    "ms": 6001
+   },
+   "snap": {
+    "mission": {
+     "mission": "quakes",
+     "simple": true,
+     "menuOpen": false,
+     "home": {
+      "lat": 34.99999999999999,
+      "lon": -82.5
+     }
+    },
+    "title": "Earthquakes today",
+    "tip": "Each marker is an earthquake from the last day. The number is its strength: M5 is strong. Tap one for details.",
+    "layers": [
+     "earthquakes"
+    ],
+    "holds": [],
+    "htmlAttrs": "tablet-edition tablet-simple | quakes",
+    "bodyClass": "ctx-tab-labels",
+    "visible": [
+     "#right-context-rail",
+     "#global-context-panel",
+     "#gev-omnibar",
+     ".tm-bar",
+     ".tm-now"
+    ],
+    "boxes": {
+     "rail": [
+      938,
+      104,
+      330,
+      641
+     ],
+     "bar": [
+      12,
+      12,
+      1256,
+      61
+     ]
+    },
+    "governor": {
+     "level": 2,
+     "rungs": 6,
+     "pixelRatio": 0.75,
+     "terrainDetail": 0.86,
+     "targetFps": 30,
+     "fps": null,
+     "cpuMs": null,
+     "gpuMs": null,
+     "probing": false,
+     "sharpStill": true,
+     "sharpStillOff": false,
+     "ceiling": 0,
+     "changes": 1
+    },
+    "canvas": [
+     1280,
+     800
+    ],
+    "camera": {
+     "lat": 18.06,
+     "lon": -82.5,
+     "heightKm": 18000
+    },
+    "cockpit": false,
+    "context": "off",
+    "tracked": [],
+    "scene": false,
+    "heapMB": 110
+   }
+  },
+  {
+   "id": "planes",
+   "chosen": {
+    "out": "done",
+    "ms": 3250
+   },
+   "snap": {
+    "mission": {
+     "mission": "planes",
+     "simple": true,
+     "menuOpen": false,
+     "home": {
+      "lat": 34.99999999999999,
+      "lon": -82.5
+     }
+    },
+    "title": "Planes in the sky",
+    "tip": "Each plane is a real aircraft, a few seconds behind real life. Tap a plane to follow it. Drag to look around, pinch to zoom.",
+    "layers": [
+     "flights",
+     "military",
+     "ais-live-vessels",
+     "military-installations",
+     "military-awareness"
+    ],
+    "holds": [
+     "camera",
+     "flights",
+     "military",
+     "military-awareness",
+     "tracked-entity"
+    ],
+    "htmlAttrs": "tablet-edition tablet-simple | planes",
+    "bodyClass": "ctx-tab-labels ctx-tab-aircraft",
+    "visible": [
+     "#right-context-rail",
+     "#global-context-panel",
+     "#entity-card",
+     "#gev-omnibar",
+     ".tm-bar",
+     ".tm-now"
+    ],
+    "boxes": {
+     "rail": [
+      938,
+      104,
+      330,
+      641
+     ],
+     "bar": [
+      12,
+      12,
+      1256,
+      80
+     ]
+    },
+    "governor": {
+     "level": 2,
+     "rungs": 6,
+     "pixelRatio": 0.75,
+     "terrainDetail": 0.86,
+     "targetFps": 30,
+     "fps": null,
+     "cpuMs": null,
+     "gpuMs": null,
+     "probing": false,
+     "sharpStill": false,
+     "sharpStillOff": false,
+     "ceiling": 0,
+     "changes": 1
+    },
+    "canvas": [
+     960,
+     600
+    ],
+    "camera": {
+     "lat": 33.23,
+     "lon": -82.21,
+     "heightKm": 19
+    },
+    "cockpit": false,
+    "context": "contacts",
+    "tracked": [
+     "WJA2712"
+    ],
+    "scene": false,
+    "heapMB": 152
+   }
+  },
+  {
+   "id": "cockpit",
+   "chosen": {
+    "out": "done",
+    "ms": 46
+   },
+   "snap": {
+    "mission": {
+     "mission": "cockpit",
+     "simple": true,
+     "menuOpen": false,
+     "home": {
+      "lat": 34.99999999999999,
+      "lon": -82.5
+     }
+    },
+    "title": "Ride in the cockpit",
+    "tip": "You are riding along with a real flight. The dials show its real speed and height. Open Missions to pick something else.",
+    "layers": [
+     "flights",
+     "military",
+     "ais-live-vessels",
+     "military-installations",
+     "military-awareness"
+    ],
+    "holds": [
+     "camera",
+     "cockpit",
+     "flights",
+     "military",
+     "military-awareness"
+    ],
+    "htmlAttrs": "tablet-edition tablet-simple | cockpit",
+    "bodyClass": "ctx-tab-labels ctx-tab-aircraft cockpit-mode",
+    "visible": [
+     "#cockpit-hud",
+     ".tm-bar",
+     ".tm-now"
+    ],
+    "boxes": {
+     "rail": null,
+     "bar": [
+      12,
+      12,
+      1256,
+      80
+     ]
+    },
+    "governor": {
+     "level": 2,
+     "rungs": 6,
+     "pixelRatio": 0.75,
+     "terrainDetail": 0.86,
+     "targetFps": 30,
+     "fps": null,
+     "cpuMs": null,
+     "gpuMs": null,
+     "probing": false,
+     "sharpStill": false,
+     "sharpStillOff": false,
+     "ceiling": 0,
+     "changes": 1
+    },
+    "canvas": [
+     960,
+     600
+    ],
+    "camera": {
+     "lat": 33.31,
+     "lon": -82.21,
+     "heightKm": 11
+    },
+    "cockpit": true,
+    "context": "contacts",
+    "tracked": [
+     "WJA2712"
+    ],
+    "scene": false,
+    "heapMB": 152
+   },
+   "afterOwnExit": {
+    "mission": "planes",
+    "simple": true,
+    "menuOpen": false,
+    "home": {
+     "lat": 34.99999999999999,
+     "lon": -82.5
+    }
+   }
+  },
+  {
+   "id": "station",
+   "chosen": {
+    "out": "done",
+    "ms": 3295
+   },
+   "snap": {
+    "mission": {
+     "mission": "station",
+     "simple": true,
+     "menuOpen": false,
+     "home": {
+      "lat": 34.99999999999999,
+      "lon": -82.5
+     }
+    },
+    "title": "The space station",
+    "tip": "Astronauts live aboard. It circles the Earth every 90 minutes at about 17,500 mph. The line shows where it is heading.",
+    "layers": [
+     "satellites"
+    ],
+    "holds": [
+     "camera",
+     "satellites",
+     "tracked-entity"
+    ],
+    "htmlAttrs": "tablet-edition tablet-simple | station",
+    "bodyClass": "ctx-tab-labels",
+    "visible": [
+     "#right-context-rail",
+     "#global-context-panel",
+     "#gev-omnibar",
+     ".tm-bar",
+     ".tm-now"
+    ],
+    "boxes": {
+     "rail": [
+      938,
+      104,
+      330,
+      641
+     ],
+     "bar": [
+      12,
+      12,
+      1256,
+      80
+     ]
+    },
+    "governor": {
+     "level": 2,
+     "rungs": 6,
+     "pixelRatio": 0.75,
+     "terrainDetail": 0.86,
+     "targetFps": 30,
+     "fps": null,
+     "cpuMs": null,
+     "gpuMs": null,
+     "probing": false,
+     "sharpStill": false,
+     "sharpStillOff": false,
+     "ceiling": 0,
+     "changes": 1
+    },
+    "canvas": [
+     960,
+     600
+    ],
+    "camera": {
+     "lat": -43.55,
+     "lon": 156.85,
+     "heightKm": 814
+    },
+    "cockpit": false,
+    "context": "off",
+    "tracked": [
+     "ISS (ZARYA)"
+    ],
+    "scene": false,
+    "heapMB": 172
+   }
+  },
+  {
+   "id": "launches",
+   "chosen": {
+    "out": "done",
+    "ms": 163
+   },
+   "snap": {
+    "mission": {
+     "mission": "launches",
+     "simple": true,
+     "menuOpen": false,
+     "home": {
+      "lat": 34.99999999999999,
+      "lon": -82.5
+     }
+    },
+    "title": "Rocket launches",
+    "tip": "Each marker is a rocket launch from the last month or one coming up. Tap one in the list to read about it.",
+    "layers": [
+     "satellites",
+     "rocket-launches"
+    ],
+    "holds": [
+     "rocket-launches",
+     "satellites"
+    ],
+    "htmlAttrs": "tablet-edition tablet-simple | launches",
+    "bodyClass": "ctx-tab-labels",
+    "visible": [
+     "#right-context-rail",
+     "#global-context-panel",
+     "#gev-omnibar",
+     ".tm-bar",
+     ".tm-now"
+    ],
+    "boxes": {
+     "rail": [
+      938,
+      104,
+      330,
+      641
+     ],
+     "bar": [
+      12,
+      12,
+      1256,
+      61
+     ]
+    },
+    "governor": {
+     "level": 2,
+     "rungs": 6,
+     "pixelRatio": 0.75,
+     "terrainDetail": 0.86,
+     "targetFps": 30,
+     "fps": null,
+     "cpuMs": null,
+     "gpuMs": null,
+     "probing": false,
+     "sharpStill": false,
+     "sharpStillOff": false,
+     "ceiling": 0,
+     "changes": 1
+    },
+    "canvas": [
+     960,
+     600
+    ],
+    "camera": {
+     "lat": -43.78,
+     "lon": 157.22,
+     "heightKm": 21946
+    },
+    "cockpit": false,
+    "context": "space-missions",
+    "tracked": [],
+    "scene": false,
+    "heapMB": 229
+   }
+  },
+  {
+   "id": "weather",
+   "chosen": {
+    "out": "done",
+    "ms": 9027
+   },
+   "snap": {
+    "mission": {
+     "mission": "weather",
+     "simple": true,
+     "menuOpen": false,
+     "home": {
+      "lat": 34.99999999999999,
+      "lon": -82.5
+     }
+    },
+    "title": "Storms and rain",
+    "tip": "Colours show where it is raining now. Named storms show the path they are forecast to take.",
+    "layers": [
+     "weather-radar",
+     "weather-satellite",
+     "weather-cyclones"
+    ],
+    "holds": [],
+    "htmlAttrs": "tablet-edition tablet-simple | weather",
+    "bodyClass": "ctx-tab-labels",
+    "visible": [
+     "#right-context-rail",
+     "#global-context-panel",
+     "#gev-omnibar",
+     ".tm-bar",
+     ".tm-now"
+    ],
+    "boxes": {
+     "rail": [
+      938,
+      104,
+      330,
+      641
+     ],
+     "bar": [
+      12,
+      12,
+      1256,
+      61
+     ]
+    },
+    "governor": {
+     "level": 2,
+     "rungs": 6,
+     "pixelRatio": 0.75,
+     "terrainDetail": 0.86,
+     "targetFps": 30,
+     "fps": null,
+     "cpuMs": null,
+     "gpuMs": null,
+     "probing": false,
+     "sharpStill": true,
+     "sharpStillOff": false,
+     "ceiling": 0,
+     "changes": 1
+    },
+    "canvas": [
+     1280,
+     800
+    ],
+    "camera": {
+     "lat": 20.26,
+     "lon": -82.5,
+     "heightKm": 1699
+    },
+    "cockpit": false,
+    "context": "off",
+    "tracked": [],
+    "scene": false,
+    "heapMB": 181
+   }
+  },
+  {
+   "id": "military",
+   "chosen": {
+    "out": "done",
+    "ms": 4559
+   },
+   "snap": {
+    "mission": {
+     "mission": "military",
+     "simple": true,
+     "menuOpen": false,
+     "home": {
+      "lat": 34.99999999999999,
+      "lon": -82.5
+     }
+    },
+    "title": "Military aircraft",
+    "tip": "These are military aircraft that share their position publicly. Tap one to follow it.",
+    "layers": [
+     "military"
+    ],
+    "holds": [
+     "military"
+    ],
+    "htmlAttrs": "tablet-edition tablet-simple | military",
+    "bodyClass": "ctx-tab-aircraft",
+    "visible": [
+     "#right-context-rail",
+     "#global-context-panel",
+     "#gev-omnibar",
+     ".tm-bar",
+     ".tm-now"
+    ],
+    "boxes": {
+     "rail": [
+      938,
+      104,
+      330,
+      641
+     ],
+     "bar": [
+      12,
+      12,
+      1256,
+      61
+     ]
+    },
+    "governor": {
+     "level": 2,
+     "rungs": 6,
+     "pixelRatio": 0.75,
+     "terrainDetail": 0.86,
+     "targetFps": 30,
+     "fps": null,
+     "cpuMs": null,
+     "gpuMs": null,
+     "probing": false,
+     "sharpStill": false,
+     "sharpStillOff": false,
+     "ceiling": 0,
+     "changes": 1
+    },
+    "canvas": [
+     960,
+     600
+    ],
+    "camera": {
+     "lat": 20.26,
+     "lon": -82.5,
+     "heightKm": 1699
+    },
+    "cockpit": false,
+    "context": "off",
+    "tracked": [],
+    "scene": false,
+    "heapMB": 174
+   }
+  },
+  {
+   "id": "cameras",
+   "chosen": {
+    "out": "done",
+    "ms": 11214
+   },
+   "snap": {
+    "mission": {
+     "mission": "cameras",
+     "simple": true,
+     "menuOpen": false,
+     "home": {
+      "lat": 34.99999999999999,
+      "lon": -82.5
+     }
+    },
+    "title": "Live street cameras",
+    "tip": "This is a public traffic camera. Use Prev and Next for others nearby, or tap a camera marker on the map. It can take a little while to load.",
+    "layers": [
+     "cctv"
+    ],
+    "holds": [
+     "cctv-projection"
+    ],
+    "htmlAttrs": "tablet-edition tablet-simple | cameras",
+    "bodyClass": "ctx-tab-labels",
+    "visible": [
+     "#right-context-rail",
+     "#cctv-panel",
+     "#gev-omnibar",
+     ".tm-bar",
+     ".tm-now"
+    ],
+    "boxes": {
+     "rail": [
+      938,
+      104,
+      330,
+      641
+     ],
+     "bar": [
+      12,
+      12,
+      1256,
+      80
+     ]
+    },
+    "governor": {
+     "level": 2,
+     "rungs": 6,
+     "pixelRatio": 0.75,
+     "terrainDetail": 0.86,
+     "targetFps": 30,
+     "fps": null,
+     "cpuMs": null,
+     "gpuMs": null,
+     "probing": false,
+     "sharpStill": false,
+     "sharpStillOff": false,
+     "ceiling": 0,
+     "changes": 1
+    },
+    "canvas": [
+     960,
+     600
+    ],
+    "camera": {
+     "lat": 39.82,
+     "lon": -75.45,
+     "heightKm": 0
+    },
+    "cockpit": false,
+    "context": "off",
+    "tracked": [],
+    "scene": false,
+    "heapMB": 203
+   }
+  },
+  {
+   "id": "radio",
+   "chosen": {
+    "out": "done",
+    "ms": 4380
+   },
+   "snap": {
+    "mission": {
+     "mission": "radio",
+     "simple": true,
+     "menuOpen": false,
+     "home": {
+      "lat": 34.99999999999999,
+      "lon": -82.5
+     }
+    },
+    "title": "Radio around the world",
+    "tip": "Each marker is a radio station. Tap one to listen. Spin the globe to try another country.",
+    "layers": [
+     "radio"
+    ],
+    "holds": [],
+    "htmlAttrs": "tablet-edition tablet-simple | radio",
+    "bodyClass": "ctx-tab-labels",
+    "visible": [
+     "#right-context-rail",
+     "#global-context-panel",
+     "#radio-panel",
+     "#gev-omnibar",
+     ".tm-bar",
+     ".tm-now"
+    ],
+    "boxes": {
+     "rail": [
+      938,
+      104,
+      330,
+      641
+     ],
+     "bar": [
+      12,
+      12,
+      1256,
+      61
+     ]
+    },
+    "governor": {
+     "level": 2,
+     "rungs": 6,
+     "pixelRatio": 0.75,
+     "terrainDetail": 0.86,
+     "targetFps": 30,
+     "fps": null,
+     "cpuMs": null,
+     "gpuMs": null,
+     "probing": false,
+     "sharpStill": true,
+     "sharpStillOff": false,
+     "ceiling": 0,
+     "changes": 1
+    },
+    "canvas": [
+     1280,
+     800
+    ],
+    "camera": {
+     "lat": 30.8,
+     "lon": -82.5,
+     "heightKm": 362
+    },
+    "cockpit": false,
+    "context": "off",
+    "tracked": [],
+    "scene": false,
+    "heapMB": 221
+   }
+  },
+  {
+   "id": "stories",
+   "chosen": {
+    "out": "done",
+    "ms": 44
+   },
+   "snap": {
+    "mission": {
+     "mission": "stories",
+     "simple": true,
+     "menuOpen": false,
+     "home": {
+      "lat": 34.99999999999999,
+      "lon": -82.5
+     }
+    },
+    "title": "Guided stories",
+    "tip": "",
+    "layers": [],
+    "holds": [
+     "stories-tiles"
+    ],
+    "htmlAttrs": "tablet-edition tablet-simple | stories",
+    "bodyClass": "stories-mode",
+    "visible": [],
+    "boxes": {
+     "rail": null,
+     "bar": null
+    },
+    "governor": {
+     "level": 2,
+     "rungs": 6,
+     "pixelRatio": 0.75,
+     "terrainDetail": 0.86,
+     "targetFps": 30,
+     "fps": null,
+     "cpuMs": null,
+     "gpuMs": null,
+     "probing": false,
+     "sharpStill": false,
+     "sharpStillOff": false,
+     "ceiling": 0,
+     "changes": 1
+    },
+    "canvas": [
+     960,
+     600
+    ],
+    "camera": {
+     "lat": 28.13,
+     "lon": 85.32,
+     "heightKm": 2500
+    },
+    "tracked": [],
+    "heapMB": 204
+   },
+   "backClicked": true,
+   "afterOwnExit": {
+    "mission": null,
+    "simple": true,
+    "menuOpen": true,
+    "home": {
+     "lat": 34.99999999999999,
+     "lon": -82.5
+    }
+   }
+  },
+  {
+   "id": "show",
+   "chosen": {
+    "out": "done",
+    "ms": 609
+   },
+   "snap": {
+    "mission": {
+     "mission": "show",
+     "simple": true,
+     "menuOpen": false,
+     "home": {
+      "lat": 34.99999999999999,
+      "lon": -82.5
+     }
+    },
+    "title": "Sit back and watch",
+    "tip": "This plays by itself. Open Missions when you want to take over.",
+    "layers": [
+     "flights"
+    ],
+    "holds": [
+     "camera",
+     "flights"
+    ],
+    "htmlAttrs": "tablet-edition tablet-simple | show",
+    "bodyClass": "scene-playback-mode recording-mode ctx-tab-aircraft",
+    "visible": [
+     ".tm-bar"
+    ],
+    "boxes": {
+     "rail": null,
+     "bar": [
+      12,
+      12,
+      1256,
+      56
+     ]
+    },
+    "governor": {
+     "level": 2,
+     "rungs": 6,
+     "pixelRatio": 0.75,
+     "terrainDetail": 0.86,
+     "targetFps": 30,
+     "fps": null,
+     "cpuMs": null,
+     "gpuMs": null,
+     "probing": false,
+     "sharpStill": false,
+     "sharpStillOff": false,
+     "ceiling": 0,
+     "changes": 1
+    },
+    "canvas": [
+     960,
+     600
+    ],
+    "camera": {
+     "lat": 21.65,
+     "lon": -38.02,
+     "heightKm": 16154
+    },
+    "cockpit": false,
+    "context": "off",
+    "tracked": [],
+    "scene": true,
+    "heapMB": 213
+   },
+   "afterFilmEnded": {
+    "mission": null,
+    "simple": true,
+    "menuOpen": true,
+    "home": {
+     "lat": 34.99999999999999,
+     "lon": -82.5
+    }
+   }
+  },
+  {
+   "id": "explore",
+   "chosen": {
+    "out": "done",
+    "ms": 6182
+   },
+   "snap": {
+    "mission": {
+     "mission": "explore",
+     "simple": true,
+     "menuOpen": false,
+     "home": {
+      "lat": 34.99999999999999,
+      "lon": -82.5
+     }
+    },
+    "title": "Just explore",
+    "tip": "Drag to spin the globe and pinch to zoom. Use the search box at the bottom to fly to any place.",
+    "layers": [],
+    "holds": [],
+    "htmlAttrs": "tablet-edition tablet-simple | explore",
+    "bodyClass": "",
+    "visible": [
+     "#gev-omnibar",
+     ".tm-bar",
+     ".tm-now"
+    ],
+    "boxes": {
+     "rail": null,
+     "bar": [
+      12,
+      12,
+      1256,
+      61
+     ]
+    },
+    "governor": {
+     "level": 2,
+     "rungs": 6,
+     "pixelRatio": 0.75,
+     "terrainDetail": 0.86,
+     "targetFps": 30,
+     "fps": null,
+     "cpuMs": null,
+     "gpuMs": null,
+     "probing": false,
+     "sharpStill": true,
+     "sharpStillOff": false,
+     "ceiling": 0,
+     "changes": 1
+    },
+    "canvas": [
+     1280,
+     800
+    ],
+    "camera": {
+     "lat": 18.06,
+     "lon": -82.5,
+     "heightKm": 18000
+    },
+    "cockpit": false,
+    "context": "off",
+    "tracked": [],
+    "scene": false,
+    "heapMB": 220
+   }
+  }
+ ],
+ "start": {
+  "mission": {
+   "mission": null,
+   "simple": true,
+   "menuOpen": true,
+   "home": {
+    "lat": 34.99999999999999,
+    "lon": -82.5
+   }
+  },
+  "title": "God\u2019s Eye View",
+  "tip": "",
+  "layers": [],
+  "holds": [],
+  "htmlAttrs": "tablet-edition tablet-simple tablet-sheet-open | -",
+  "bodyClass": "",
+  "visible": [
+   "#gev-omnibar",
+   ".tm-menu"
+  ],
+  "boxes": {
+   "rail": null,
+   "bar": null
+  },
+  "governor": {
+   "level": 2,
+   "rungs": 6,
+   "pixelRatio": 0.75,
+   "terrainDetail": 0.86,
+   "targetFps": 30,
+   "fps": null,
+   "cpuMs": null,
+   "gpuMs": null,
+   "probing": false,
+   "sharpStill": true,
+   "sharpStillOff": false,
+   "ceiling": 0,
+   "changes": 1
+  },
+  "canvas": [
+   1280,
+   800
+  ],
+  "camera": {
+   "lat": 35,
+   "lon": -82.5,
+   "heightKm": 23000
+  },
+  "cockpit": false,
+  "context": "off",
+  "tracked": [],
+  "scene": false,
+  "heapMB": 89
+ },
+ "rapid": {
+  "quick": {
+   "out": "done",
+   "ms": 7304
+  },
+  "snap": {
+   "mission": {
+    "mission": "quakes",
+    "simple": true,
+    "menuOpen": false,
+    "home": {
+     "lat": 34.99999999999999,
+     "lon": -82.5
+    }
+   },
+   "title": "Earthquakes today",
+   "tip": "Each marker is an earthquake from the last day. The number is its strength: M5 is strong. Tap one for details.",
+   "layers": [
+    "earthquakes"
+   ],
+   "holds": [],
+   "htmlAttrs": "tablet-edition tablet-simple | quakes",
+   "bodyClass": "ctx-tab-labels",
+   "visible": [
+    "#right-context-rail",
+    "#global-context-panel",
+    "#gev-omnibar",
+    ".tm-bar",
+    ".tm-now"
+   ],
+   "boxes": {
+    "rail": [
+     938,
+     104,
+     330,
+     641
+    ],
+    "bar": [
+     12,
+     12,
+     1256,
+     61
+    ]
+   },
+   "governor": {
+    "level": 2,
+    "rungs": 6,
+    "pixelRatio": 0.75,
+    "terrainDetail": 0.86,
+    "targetFps": 30,
+    "fps": null,
+    "cpuMs": null,
+    "gpuMs": null,
+    "probing": false,
+    "sharpStill": true,
+    "sharpStillOff": false,
+    "ceiling": 0,
+    "changes": 1
+   },
+   "canvas": [
+    1280,
+    800
+   ],
+   "camera": {
+    "lat": 18.06,
+    "lon": -82.5,
+    "heightKm": 18000
+   },
+   "cockpit": false,
+   "context": "off",
+   "tracked": [],
+   "scene": false,
+   "heapMB": 230
+  }
+ },
+ "taps": [
+  {
+   "mission": "quakes",
+   "how": "touch",
+   "pick": null,
+   "card": null,
+   "visible": [
+    "#global-context-panel"
+   ]
+  },
+  {
+   "mission": "quakes",
+   "how": "touch",
+   "pick": null,
+   "card": null,
+   "visible": [
+    "#global-context-panel"
+   ]
+  },
+  {
+   "mission": "military",
+   "how": "touch",
+   "pick": {
+    "x": 344,
+    "y": 214,
+    "id": "c0204c"
+   },
+   "card": null,
+   "visible": [
+    "#global-context-panel"
+   ]
+  },
+  {
+   "mission": "military",
+   "how": "touch",
+   "pick": {
+    "x": 392,
+    "y": 226,
+    "id": "ae56df"
+   },
+   "card": null,
+   "visible": [
+    "#global-context-panel"
+   ]
+  },
+  {
+   "mission": "radio",
+   "how": "touch",
+   "pick": {
+    "x": 332,
+    "y": 538,
+    "id": "radio:d25564da-40fa-484d-a05b-97de1456b256"
+   },
+   "card": null,
+   "visible": [
+    "#global-context-panel",
+    "#radio-panel"
+   ]
+  },
+  {
+   "mission": "radio",
+   "how": "touch",
+   "pick": null,
+   "card": null,
+   "visible": [
+    "#global-context-panel",
+    "#radio-panel"
+   ]
+  }
+ ],
+ "allControls": {
+  "mission": {
+   "mission": "planes",
+   "simple": false,
+   "menuOpen": false,
+   "home": {
+    "lat": 34.99999999999999,
+    "lon": -82.5
+   }
+  },
+  "title": "Planes in the sky",
+  "tip": "Each plane is a real aircraft, a few seconds behind real life. Tap a plane to follow it. Drag to look around, pinch to zoom.",
+  "layers": [
+   "flights",
+   "military",
+   "ais-live-vessels",
+   "military-installations",
+   "military-awareness"
+  ],
+  "holds": [
+   "camera",
+   "flights",
+   "military",
+   "military-awareness",
+   "tracked-entity"
+  ],
+  "htmlAttrs": "tablet-edition | planes",
+  "bodyClass": "ctx-tab-labels ctx-tab-aircraft",
+  "visible": [
+   "#title-bar",
+   "#right-context-rail",
+   "#global-context-panel",
+   "#entity-card",
+   "#radio-panel",
+   "#left-panel-stack",
+   "#top-center-actions",
+   "#gev-omnibar",
+   "#hStories",
+   ".tm-bar",
+   ".gev-panel-rail--right",
+   ".context-tabs",
+   ".global-context-modes"
+  ],
+  "boxes": {
+   "rail": [
+    850,
+    32,
+    330,
+    593
+   ],
+   "bar": [
+    470,
+    6,
+    341,
+    44
+   ]
+  },
+  "governor": {
+   "level": 2,
+   "rungs": 6,
+   "pixelRatio": 0.75,
+   "terrainDetail": 0.86,
+   "targetFps": 30,
+   "fps": null,
+   "cpuMs": null,
+   "gpuMs": null,
+   "probing": false,
+   "sharpStill": false,
+   "sharpStillOff": false,
+   "ceiling": 0,
+   "changes": 1
+  },
+  "canvas": [
+   960,
+   600
+  ],
+  "camera": {
+   "lat": 33.04,
+   "lon": -82.44,
+   "heightKm": 19
+  },
+  "cockpit": false,
+  "context": "contacts",
+  "tracked": [
+   "LXJ355"
+  ],
+  "scene": false,
+  "heapMB": 222
+ },
+ "changes": [
+  {
+   "at": 1144,
+   "level": 2,
+   "reason": "start",
+   "pixelRatio": 0.75,
+   "terrainDetail": 0.86,
+   "fps": null,
+   "cpuMs": null,
+   "gpuMs": null
+  },
+  {
+   "at": 3835,
+   "level": 2,
+   "reason": "still",
+   "pixelRatio": 1
+  },
+  {
+   "at": 10002,
+   "level": 2,
+   "reason": "moving",
+   "pixelRatio": 0.75,
+   "terrainDetail": 0.86,
+   "afterMs": 6167,
+   "holds": [
+    "camera"
+   ],
+   "sharpStillOff": false
+  },
+  {
+   "at": 17063,
+   "level": 2,
+   "reason": "still",
+   "pixelRatio": 1
+  },
+  {
+   "at": 32937,
+   "level": 2,
+   "reason": "moving",
+   "pixelRatio": 0.75,
+   "terrainDetail": 0.86,
+   "afterMs": 15873,
+   "holds": [
+    "camera"
+   ],
+   "sharpStillOff": false
+  },
+  {
+   "at": 39676,
+   "level": 2,
+   "reason": "still",
+   "pixelRatio": 1
+  },
+  {
+   "at": 50544,
+   "level": 2,
+   "reason": "moving",
+   "pixelRatio": 0.75,
+   "terrainDetail": 0.86,
+   "afterMs": 10868,
+   "holds": [
+    "camera"
+   ],
+   "sharpStillOff": false
+  },
+  {
+   "at": 114982,
+   "level": 2,
+   "reason": "still",
+   "pixelRatio": 1
+  },
+  {
+   "at": 123874,
+   "level": 2,
+   "reason": "moving",
+   "pixelRatio": 0.75,
+   "terrainDetail": 0.86,
+   "afterMs": 8892,
+   "holds": [
+    "military"
+   ],
+   "sharpStillOff": false
+  },
+  {
+   "at": 166085,
+   "level": 2,
+   "reason": "still",
+   "pixelRatio": 1
+  },
+  {
+   "at": 175988,
+   "level": 2,
+   "reason": "moving",
+   "pixelRatio": 0.75,
+   "terrainDetail": 0.86,
+   "afterMs": 9903,
+   "holds": [
+    "camera"
+   ],
+   "sharpStillOff": false
+  },
+  {
+   "at": 177926,
+   "level": 2,
+   "reason": "still",
+   "pixelRatio": 1
+  },
+  {
+   "at": 178000,
+   "level": 2,
+   "reason": "moving",
+   "pixelRatio": 0.75,
+   "terrainDetail": 0.86,
+   "afterMs": 74,
+   "holds": [
+    "stories-tiles"
+   ],
+   "sharpStillOff": false
+  },
+  {
+   "at": 185908,
+   "level": 2,
+   "reason": "still",
+   "pixelRatio": 1
+  },
+  {
+   "at": 186081,
+   "level": 2,
+   "reason": "moving",
+   "pixelRatio": 0.75,
+   "terrainDetail": 0.86,
+   "afterMs": 174,
+   "holds": [
+    "camera"
+   ],
+   "sharpStillOff": false
+  },
+  {
+   "at": 187997,
+   "level": 2,
+   "reason": "still",
+   "pixelRatio": 1
+  },
+  {
+   "at": 193337,
+   "level": 2,
+   "reason": "moving",
+   "pixelRatio": 0.75,
+   "terrainDetail": 0.86,
+   "afterMs": 5340,
+   "holds": [
+    "camera"
+   ],
+   "sharpStillOff": false
+  },
+  {
+   "at": 195246,
+   "level": 2,
+   "reason": "still",
+   "pixelRatio": 1
+  },
+  {
+   "at": 195346,
+   "level": 2,
+   "reason": "moving",
+   "pixelRatio": 0.75,
+   "terrainDetail": 0.86,
+   "afterMs": 100,
+   "holds": [
+    "stories-tiles"
+   ],
+   "sharpStillOff": false
+  },
+  {
+   "at": 243383,
+   "level": 2,
+   "reason": "still",
+   "pixelRatio": 1
+  },
+  {
+   "at": 259434,
+   "level": 2,
+   "reason": "moving",
+   "pixelRatio": 0.75,
+   "terrainDetail": 0.86,
+   "afterMs": 16051,
+   "holds": [
+    "cctv-projection"
+   ],
+   "sharpStillOff": false
+  },
+  {
+   "at": 269105,
+   "level": 2,
+   "reason": "still",
+   "pixelRatio": 1
+  },
+  {
+   "at": 285986,
+   "level": 2,
+   "reason": "moving",
+   "pixelRatio": 0.75,
+   "terrainDetail": 0.86,
+   "afterMs": 16881,
+   "holds": [
+    "camera"
+   ],
+   "sharpStillOff": false
+  },
+  {
+   "at": 292084,
+   "level": 2,
+   "reason": "still",
+   "pixelRatio": 1
+  },
+  {
+   "at": 305476,
+   "level": 2,
+   "reason": "moving",
+   "pixelRatio": 0.75,
+   "terrainDetail": 0.86,
+   "afterMs": 13392,
+   "holds": [
+    "military"
+   ],
+   "sharpStillOff": false
+  },
+  {
+   "at": 339759,
+   "level": 2,
+   "reason": "still",
+   "pixelRatio": 1
+  },
+  {
+   "at": 360670,
+   "level": 2,
+   "reason": "moving",
+   "pixelRatio": 0.75,
+   "terrainDetail": 0.86,
+   "afterMs": 20911,
+   "holds": [
+    "camera"
+   ],
+   "sharpStillOff": false
+  }
+ ],
+ "env": {
+  "coarse": true,
+  "hoverNone": true,
+  "touchPoints": 5,
+  "cores": 8,
+  "mem": 2,
+  "ua": "Mozilla/5.0 (Linux; Android 10; Lenovo TB-X606FA Build/QP1A.",
+  "inner": [
+   1280,
+   800
+  ],
+  "dpr": 1.5
+ },
+ "memory": {
+  "browser": 240,
+  "crashpad-handler": 13,
+  "gpu-process": 371,
+  "utility": 141,
+  "renderer": 982
+ },
+ "consoleErrors": [
+  "AbortError: Flights update aborted"
+ ]
+}
