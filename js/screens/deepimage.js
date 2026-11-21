@@ -103,7 +103,7 @@ function loadToday() {
 
 export function mount(el) {
   el.innerHTML = `
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Oxanium:wght@300;500;700&family=JetBrains+Mono:wght@400;600&display=swap">
+  <link rel="stylesheet" crossorigin href="https://fonts.googleapis.com/css2?family=Oxanium:wght@300;500;700&family=JetBrains+Mono:wght@400;600&display=swap">
   <style>
     .di-root{width:1280px;height:800px;box-sizing:border-box;background:#0E1424;color:#D7E6F0;font-family:'JetBrains Mono',monospace;position:relative;overflow:hidden}
     .di-root a{color:#5CE1E6}

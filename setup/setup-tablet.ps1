@@ -4,7 +4,8 @@
 # What it does, in order:
 #   1. Checks the tablet is connected and USB debugging is allowed
 #   2. Downloads the newest app from GitHub and installs it
-#   3. Turns on kiosk mode (needs a tablet with NO Google account yet)
+#   3. Turns on kiosk mode (needs a tablet with NO Google account yet) and switches
+#      off the built-in Alexa, which otherwise slows the whole tablet down
 #   4. Asks Family or Tom, and a grown-up PIN, then starts the home screen
 # Safe to run again on a tablet that's already set up (it just updates it).
 
@@ -73,8 +74,9 @@ Say '  App installed.' 'Green'
 
 # ---------------------------------------------------------------- 3. kiosk mode
 Step 3 'Turning on kiosk mode...'
-$owners = Adb 'shell dpm list-owners'
-if ($owners -match $Pkg) {
+# (Not "dpm list-owners": the tablets' Android 10 doesn't have that command.)
+$owners = Adb 'shell dumpsys device_policy'
+if ($owners -match "(?s)Device Owner:.{0,200}?package=$([regex]::Escape($Pkg))") {
     Say '  Already on (this tablet was set up before).' 'Green'
 } else {
     $dpm = Adb "shell dpm set-device-owner $Pkg/.AdminReceiver"
@@ -91,6 +93,15 @@ connect to Wi-Fi but SKIP signing in to Google. Then run this again.
         Stop-Setup "Couldn't turn on kiosk mode:`n$dpm"
     }
 }
+
+# Lenovo builds Amazon Alexa into these tablets. With no Amazon account signed in, its
+# background service retries without a pause and keeps one to two of the processor's
+# cores busy for good, which makes everything else sluggish. The home screen doesn't use
+# it, so switch it off. (To bring one back: adb shell pm enable <name>.)
+foreach ($extra in @('amazon.speech.sim', 'com.lenovo.smart_tab_m10_alexa', 'com.amazon.dee.app')) {
+    $null = Adb "shell pm disable-user --user 0 $extra"
+}
+Say '  Switched off the built-in Alexa (it slows the tablet down and is not used here).' 'Green'
 
 # ---------------------------------------------------------------- 4. profile + PIN
 Step 4 'Which screens should this tablet show?'

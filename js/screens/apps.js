@@ -125,7 +125,7 @@ export function mount(el) {
     const rows = Math.max(1, Math.ceil(apps.length / g.cols));
     const spare = GRID_H - rows * g.h - (rows - 1) * GAP; // empty height under the grid
     el.innerHTML = `
-    ${tom ? '<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Oxanium:wght@300;500;700&family=JetBrains+Mono:wght@400;600&display=swap">' : ''}
+    ${tom ? '<link rel="stylesheet" crossorigin href="https://fonts.googleapis.com/css2?family=Oxanium:wght@300;500;700&family=JetBrains+Mono:wght@400;600&display=swap">' : ''}
     <style>
       .ap-root{position:absolute;top:0;right:0;bottom:0;left:0;background:${t.bg};color:${t.ink};padding:40px;display:flex;flex-direction:column;gap:28px}
       .ap-grid{display:grid;grid-template-columns:repeat(${g.cols},minmax(0,1fr));grid-auto-rows:${g.h}px;gap:${GAP}px;align-content:start;overflow:hidden}

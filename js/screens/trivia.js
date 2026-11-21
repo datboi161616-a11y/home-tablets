@@ -197,7 +197,7 @@ export function mount(el) {
   if (resume) Object.assign(state, { round: t.round || 0, i: t.i || 0, score: t.score || 0, chosen: t.chosen == null ? null : t.chosen, done: !!t.done, marks: t.marks || [] });
   else saveToday();
   el.innerHTML = `
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Oxanium:wght@300;500;700&family=JetBrains+Mono:wght@400;600&display=swap">
+  <link rel="stylesheet" crossorigin href="https://fonts.googleapis.com/css2?family=Oxanium:wght@300;500;700&family=JetBrains+Mono:wght@400;600&display=swap">
   <style>
     .tv-root{width:1280px;height:800px;box-sizing:border-box;padding:28px 40px;background:#05070D;color:#D7E6F0;font-family:'JetBrains Mono',monospace;display:flex;flex-direction:column;gap:22px}
     .tv-root a{color:#5CE1E6}

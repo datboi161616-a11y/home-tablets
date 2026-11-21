@@ -53,13 +53,14 @@ function dinnerArt(title) {
   return `<div class="h-dish-art" style="width:190px;height:104px;right:-28px;bottom:-6px">${foodArt[kind](soft, 'rgba(0,0,0,.16)')}</div>`;
 }
 
-// "Today 3 PM", "Tomorrow", "Saturday", "8 days"
-function whenText(e) {
+// "Today 3 PM", "Tomorrow", "Saturday", "8 days". `short` gives the weekday as "Sat",
+// for when a long name needs the room (see fitComing).
+function whenText(e, short) {
   const d = e.date instanceof Date ? e.date : new Date(e.date);
   const timed = d.getHours() || d.getMinutes();
   if (e.days === 0) return timed ? `Today ${fmtClock(d)}` : 'Today';
   if (e.days === 1) return 'Tomorrow';
-  if (e.days < 7) return d.toLocaleDateString('en-US', { weekday: 'long' });
+  if (e.days < 7) return d.toLocaleDateString('en-US', { weekday: short ? 'short' : 'long' });
   return `${e.days} days`;
 }
 
@@ -70,8 +71,8 @@ function comingUpRows() {
   return list.map((e) => `
             <div style="display:flex;align-items:center;gap:10px;font-size:18px">
               ${eventIcon(e.name)}
-              <span style="flex-grow:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${esc(e.name)}</span>
-              <span style="font-weight:600;flex:none">${whenText(e)}</span>
+              <span data-name style="flex-grow:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${esc(e.name)}</span>
+              <span data-when data-short="${whenText(e, true)}" style="font-weight:600;flex:none">${whenText(e)}</span>
             </div>`).join('');
 }
 
@@ -202,8 +203,22 @@ export function mount(el) {
     }
   }
 
+  // "Thanksgiving" beside "Thursday" does not fit the card: a name that would be cut
+  // off gets the short day ("Thu") instead.
+  const fitComing = () => {
+    for (const when of el.querySelectorAll('[data-coming] [data-when]')) {
+      const name = when.parentElement.querySelector('[data-name]');
+      if (name && name.scrollWidth > name.clientWidth) when.textContent = when.dataset.short;
+    }
+  };
+  fitComing();
+
   // Calendar links download in the background; redraw "Coming up" when they arrive.
-  const renderComing = () => { if (el.isConnected) $('[data-coming]').innerHTML = comingUpRows(); };
+  const renderComing = () => {
+    if (!el.isConnected) return;
+    $('[data-coming]').innerHTML = comingUpRows();
+    fitComing();
+  };
   onCalendar = renderComing;
   window.addEventListener('calendar-updated', onCalendar);
   refreshCalendars();
@@ -242,15 +257,27 @@ export function mount(el) {
   }
 
   // "Good afternoon, Family" stays on one line: shrink the text a little if it's too long.
+  // Measured with the cut-off switched off and by where the buttons end up: with it on,
+  // the tablet's older browser says the text fits while it is showing "Good afternoon, Fam...".
   const fitGreeting = () => {
     const h = $('[data-hello]');
-    for (let size = 30; size >= 22; size -= 2) {
+    const row = h.parentElement;
+    h.style.overflow = 'visible';
+    h.style.flexShrink = '0';
+    for (let size = 30; size >= 20; size -= 2) {
       h.style.fontSize = `${size}px`;
-      if (h.scrollWidth <= h.clientWidth) break;
+      if (row.lastElementChild.getBoundingClientRect().right <= row.getBoundingClientRect().right + 0.5) break;
     }
+    h.style.overflow = 'hidden';
+    h.style.flexShrink = '';
   };
   fitGreeting();
-  if (document.fonts && document.fonts.ready) document.fonts.ready.then(() => { if (el.isConnected) fitGreeting(); });
+  // Again once the real letters are in (they are wider than the stand-in font).
+  if (document.fonts && document.fonts.ready) {
+    const refit = () => { if (el.isConnected) { fitGreeting(); renderComing(); } };
+    document.fonts.ready.then(refit);
+    if (document.fonts.load) document.fonts.load('500 30px Outfit').then(refit, () => {});
+  }
 
   // Clock: tick every 10s. At midnight, the day's cards move on too.
   let day = new Date().toDateString();

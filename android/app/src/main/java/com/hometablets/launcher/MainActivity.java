@@ -101,6 +101,10 @@ public class MainActivity extends Activity {
     private static PhotoServer photoServer;
     private static FamilyStore family;          // settings + message-board notes (set up from a phone)
     private String pendingScreen;
+    // The page's process dying (see restartScreens): how often lately.
+    private static final long PAGE_RESTART_WINDOW_MS = 2 * 60 * 1000L;
+    private long lastPageRestart;
+    private int pageRestarts;
     private final Handler handler = new Handler(Looper.getMainLooper());
     private final Runnable cornerHold = this::askPin;
     private final Runnable updateCheck = new Runnable() {
@@ -258,7 +262,57 @@ public class MainActivity extends Activity {
                 // No Wi-Fi on the very first start (before anything is cached): retry.
                 if (req.isForMainFrame() && !isGhost) handler.postDelayed(() -> web.loadUrl(siteUrl()), 15000);
             }
+            @Override
+            public boolean onRenderProcessGone(WebView view, android.webkit.RenderProcessGoneDetail detail) {
+                // The page runs in a process of its own. Android closes that process when
+                // memory runs short (these tablets have 2 GB), and it can crash by itself.
+                // Unless this answers "handled", the whole app goes down with it.
+                android.util.Log.w("HomeTablet", "Page process gone ("
+                        + (detail.didCrash() ? "it crashed" : "Android closed it to free memory") + "); "
+                        + (isGhost ? "dropping the hidden copy" : "starting the screens again"));
+                // Not from inside this call: the dead page is still being taken apart.
+                handler.post(() -> {
+                    if (view == ghost) destroyGhost();
+                    else if (view == web) restartScreens();
+                });
+                return true;
+            }
         });
+    }
+
+    /**
+     * The page's process is gone (see onRenderProcessGone): throw the dead page away and
+     * start the screens again on a fresh one, back where they were. Timers, lists, notes
+     * and photos are kept on the tablet, so nothing is lost.
+     */
+    private void restartScreens() {
+        if (isDestroyed()) return;
+        long now = SystemClock.elapsedRealtime();
+        if (now - lastPageRestart > PAGE_RESTART_WINDOW_MS) pageRestarts = 0;
+        lastPageRestart = now;
+        pageRestarts++;
+
+        WebView dead = web;
+        // Back to the screen they were on; if it has only just died there, to Home instead.
+        String back = null;
+        if (pageRestarts == 1) {
+            try {
+                String url = dead.getUrl();
+                if (url != null && url.startsWith(BuildConfig.SITE_URL)) back = url;
+            } catch (Exception ignored) { }
+        }
+        int at = root.indexOfChild(dead);
+        root.removeView(dead);
+        dead.destroy();
+
+        web = new WebView(this);
+        configureWebView(web, false);
+        root.addView(web, Math.max(at, 0),
+                new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
+        if (!resumed) web.onPause(); // they are in another app (YouTube...): stay quiet until they come back
+        final String url = back != null ? back : siteUrl();
+        // Dying again and again means memory is still short: give Android a moment between tries.
+        handler.postDelayed(() -> { if (!isDestroyed()) web.loadUrl(url); }, pageRestarts > 2 ? 15000 : 300);
     }
 
     @Override
@@ -358,6 +412,11 @@ public class MainActivity extends Activity {
         if (screen != null && screen.matches("[a-z]{1,20}")) {
             pendingScreen = screen;
             changed = true;
+        }
+        // Automated emulator test only: make the page's process die the way it does when
+        // memory runs out, to check the app brings the screens back (--es test page-crash).
+        if ("page-crash".equals(intent.getStringExtra("test"))) {
+            handler.postDelayed(() -> { if (web != null) web.loadUrl("chrome://crash"); }, 500);
         }
         return changed;
     }

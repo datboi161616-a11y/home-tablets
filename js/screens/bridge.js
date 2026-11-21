@@ -73,7 +73,7 @@ export function mount(el) {
   const chip = 'min-height: 44px; padding: 10px 12px; box-sizing: border-box; border: 1px solid #1E3A4A; font-size: 13px; letter-spacing: 2px; display: flex; align-items: center; white-space: nowrap';
 
   el.innerHTML = `
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Oxanium:wght@300;500;700&family=JetBrains+Mono:wght@400;600&display=swap">
+  <link rel="stylesheet" crossorigin href="https://fonts.googleapis.com/css2?family=Oxanium:wght@300;500;700&family=JetBrains+Mono:wght@400;600&display=swap">
   <style>
     .tbb a{color:#5CE1E6}.tbb a:hover{color:#A8F2F4}
     @keyframes tbb-blink{50%{opacity:.25}}

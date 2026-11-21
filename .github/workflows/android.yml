@@ -182,6 +182,20 @@ jobs:
           adb shell am start -n com.hometablets.launcher/.MainActivity --es screen camera
           sleep 6
           adb exec-out screencap -p > shot-camera.png
+
+          # --- The page's own process dies (Android closes it when memory runs short on a
+          # 2 GB tablet): the app must stay up and bring the same screen back by itself. ---
+          adb shell am start -n com.hometablets.launcher/.MainActivity --es screen shopping
+          sleep 6
+          pid_before=$(adb shell pidof com.hometablets.launcher)
+          adb shell am start -n com.hometablets.launcher/.MainActivity --es test page-crash
+          sleep 20
+          pid_after=$(adb shell pidof com.hometablets.launcher)
+          echo "app process before / after the page died: $pid_before / $pid_after"
+          [ -n "$pid_before" ] && [ "$pid_before" = "$pid_after" ]
+          adb logcat -d | grep "HomeTablet: Page process gone"
+          adb exec-out screencap -p > shot-after-page-died.png
+
           adb shell am start -n com.hometablets.launcher/.MainActivity --es profile tom
           sleep 35
           adb exec-out screencap -p > shot-tom.png

@@ -84,7 +84,7 @@ async function skyLine(token) {
 export function mount(el) {
   const c = clockVals();
   el.innerHTML = `
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Oxanium:wght@300;500;700&family=JetBrains+Mono:wght@400;600&display=swap">
+  <link rel="stylesheet" crossorigin href="https://fonts.googleapis.com/css2?family=Oxanium:wght@300;500;700&family=JetBrains+Mono:wght@400;600&display=swap">
   <style>
     .vs-root{width:1280px;height:800px;box-sizing:border-box;background:#020308;color:#D7E6F0;font-family:'JetBrains Mono',monospace;position:relative;overflow:hidden}
     .vs-root a{color:#5CE1E6}

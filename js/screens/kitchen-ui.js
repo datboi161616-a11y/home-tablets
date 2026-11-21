@@ -47,6 +47,9 @@ export function kitchenStyles() {
     .k-btn.sm{min-height:44px;padding:0 16px;font-size:16px}
     .k-scroll{flex-grow:1;min-height:0;overflow-y:auto;-webkit-overflow-scrolling:touch}
     .k-tag{display:inline-flex;align-items:center;border-radius:999px;padding:4px 12px;font-size:14px;font-weight:600;background:#F1F2F4;color:#1D2430;white-space:nowrap}
+    /* A tag that is a link keeps its small look but takes a finger-sized touch. */
+    a.k-tag{position:relative}
+    a.k-tag::after{content:"";position:absolute;top:-9px;bottom:-9px;left:-4px;right:-4px}
     .k-badge{display:inline-flex;align-items:center;border-radius:999px;padding:4px 12px;font-size:14px;font-weight:600;background:${a};color:#FFFFFF;white-space:nowrap}
     .k-input{min-height:56px;border-radius:999px;border:2px solid #D9DDE2;background:#FFFFFF;padding:0 24px;font-size:19px;
       font-family:Inter,sans-serif;color:#1D2430;outline:none;min-width:0}

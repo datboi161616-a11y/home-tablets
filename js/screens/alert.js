@@ -35,7 +35,7 @@ const chipKind = (kind) => (kind === 'rare' || kind === 'overhead' ? 'plane' : k
 export function mount(el) {
   alive = true;
   el.innerHTML = `
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Oxanium:wght@300;500;700&family=JetBrains+Mono:wght@400;600&display=swap">
+  <link rel="stylesheet" crossorigin href="https://fonts.googleapis.com/css2?family=Oxanium:wght@300;500;700&family=JetBrains+Mono:wght@400;600&display=swap">
   <style>
     .tba a,.tba button.tba-btn{color:#FFD2CB}.tba a:hover{color:#FFFFFF}
     @keyframes tba-pulse{0%,100%{opacity:1}50%{opacity:.35}}

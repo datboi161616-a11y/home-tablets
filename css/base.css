@@ -52,3 +52,8 @@ a { color: inherit; text-decoration: none; }
   min-height: 44px; display: inline-flex; align-items: center;
 }
 .skeleton { opacity: .45; }
+
+/* A finger is on it: app.js adds these the moment something tappable is touched. */
+.is-pressed { opacity: .78; transition: transform 70ms ease-out, opacity 70ms ease-out; }
+.is-pressed-small { transform: scale(.95); }
+.is-pressed-big { transform: scale(.98); }

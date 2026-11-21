@@ -18,8 +18,9 @@ has `adb`) and a USB-C cable that carries data.
 2. Double-click **`setup\Setup tablet.bat`** in this project.
 3. Pick **1** (Family) or **2** (Tom), and a grown-up PIN (Enter = `2512`).
 
-The script downloads the newest app, installs it, turns on kiosk mode, starts the
-right screens, then switches USB debugging off again. If anything is wrong it tells you exactly
+The script downloads the newest app, installs it, turns on kiosk mode, switches off the
+tablet's built-in Alexa (see below), starts the right screens, then switches USB
+debugging off again. If anything is wrong it tells you exactly
 what to do (most often: the tablet already has a Google account → go back to step 1).
 
 ## 3. Optional: Apps and Camera
@@ -87,6 +88,15 @@ Hold the **top-left corner** for 5 seconds, enter the PIN:
 Turn USB debugging back on (grown-up menu → **Unlock tablet** → Settings → System →
 Developer options), plug in, run the script. It updates the app and keeps everything.
 
+## The built-in Alexa is switched off
+
+Lenovo ships these tablets with Amazon Alexa. With no Amazon account signed in, its
+background service (`amazon.speech.sim`) retries without a pause and keeps one to two of
+the tablet's eight processor cores busy for good; measured on a real tablet, that was the
+main thing making it feel slow. The home screen doesn't use Alexa, so setup disables it
+(with `com.lenovo.smart_tab_m10_alexa` and `com.amazon.dee.app`). To bring it back on a
+tablet: `adb shell pm enable amazon.speech.sim` (and the same for the other two).
+
 ## Doing it by hand (if the script can't run)
 
 ```
@@ -95,6 +105,10 @@ adb install -r home-tablets.apk
 
 ```
 adb shell dpm set-device-owner com.hometablets.launcher/.AdminReceiver
+```
+
+```
+adb shell pm disable-user --user 0 amazon.speech.sim
 ```
 
 ```

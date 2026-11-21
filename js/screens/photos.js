@@ -35,7 +35,7 @@ function loadAlbum() {
 
 const MAX_DOTS = 12;
 
-export function mount(el) {
+export function mount(el, { homeRoute = 'home' } = {}) {
   const c = clockParts();
   let photos = loadAlbum();
   let index = 0;
@@ -81,7 +81,7 @@ export function mount(el) {
     <div style="position:absolute;top:32px;right:32px;display:flex;gap:12px">
       ${feature('camera') ? '<a href="#/camera" class="pill" style="min-width:44px;background:rgba(10,12,16,.55);color:#fff">📷 Camera</a>' : ''}
       <a href="#/addphotos" class="pill" style="min-width:44px;background:rgba(10,12,16,.55);color:#fff">+ Add photos</a>
-      <a href="#/home" class="pill" style="min-width:44px;background:rgba(10,12,16,.55);color:#fff">Home</a>
+      <a href="#/${homeRoute}" class="pill" style="min-width:44px;background:rgba(10,12,16,.55);color:#fff">Home</a>
     </div>
   </div>`;
 
@@ -200,7 +200,7 @@ export function mount(el) {
     const x = (e.clientX - r.left) / r.width;
     if (photos.length > 1 && x < 0.22) show((index - 1 + photos.length) % photos.length);
     else if (photos.length > 1 && x > 0.78) next();
-    else location.hash = '#/home';
+    else location.hash = `#/${homeRoute}`;
   };
   $('[data-root]').addEventListener('click', onTap);
 

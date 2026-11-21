@@ -112,6 +112,7 @@ function ensureRoot() {
     root.addEventListener('click', onClick);
     screen.appendChild(root);
     lastKey = ''; // a fresh box: draw the bubble again
+    dimsHtml = null; ringCss = null;
   } else if (root !== screen.lastElementChild) {
     screen.appendChild(root); // stay on top of anything a screen adds later
   }
@@ -125,16 +126,28 @@ function rectOf(el) {
   return { x: (r.left - screen.left) / s, y: (r.top - screen.top) / s, w: r.width / s, h: r.height / s };
 }
 
+// The dimming is looked at five times a second but only written when it changes: writing
+// it again makes the tablet redraw the whole screen each time, for nothing.
+let dimsHtml = null, ringCss = null;
+function setDims(html) {
+  if (html === dimsHtml) return;
+  dimsHtml = html;
+  root.querySelector('[data-tu-dims]').innerHTML = html;
+}
 function dims(hole) {
-  const box = root.querySelector('[data-tu-dims]');
-  if (!hole) { box.innerHTML = '<div class="tu-dim" style="left:0;top:0;width:1280px;height:800px"></div>'; return; }
+  if (!hole) { setDims('<div class="tu-dim" style="left:0;top:0;width:1280px;height:800px"></div>'); return; }
   const p = 10, x = Math.max(0, hole.x - p), y = Math.max(0, hole.y - p), r = Math.min(1280, hole.x + hole.w + p), b = Math.min(800, hole.y + hole.h + p);
-  box.innerHTML = `<div class="tu-dim" style="left:0;top:0;width:1280px;height:${y}px"></div>
+  setDims(`<div class="tu-dim" style="left:0;top:0;width:1280px;height:${y}px"></div>
     <div class="tu-dim" style="left:0;top:${b}px;width:1280px;height:${800 - b}px"></div>
     <div class="tu-dim" style="left:0;top:${y}px;width:${x}px;height:${b - y}px"></div>
-    <div class="tu-dim" style="left:${r}px;top:${y}px;width:${1280 - r}px;height:${b - y}px"></div>`;
-  const ring = root.querySelector('[data-tu-ring]');
-  ring.style.cssText = `display:block;left:${x - 4}px;top:${y - 4}px;width:${r - x}px;height:${b - y}px`;
+    <div class="tu-dim" style="left:${r}px;top:${y}px;width:${1280 - r}px;height:${b - y}px"></div>`);
+  const css = `display:block;left:${x - 4}px;top:${y - 4}px;width:${r - x}px;height:${b - y}px`;
+  if (css !== ringCss) { ringCss = css; root.querySelector('[data-tu-ring]').style.cssText = css; }
+}
+function hideRing() {
+  if (ringCss === 'none') return;
+  ringCss = 'none';
+  root.querySelector('[data-tu-ring]').style.display = 'none';
 }
 
 let lastKey = '';
@@ -170,9 +183,8 @@ function bubble(step, hole, extra) {
 
 // A paused tutorial (they went somewhere else): a small bar to get back on track.
 function paused(step) {
-  dims(null);
-  root.querySelector('[data-tu-dims]').innerHTML = '';
-  root.querySelector('[data-tu-ring]').style.display = 'none';
+  setDims('');
+  hideRing();
   const bub = root.querySelector('[data-tu-bub]');
   const key = `paused${idx}`;
   if (lastKey === key) return;
@@ -216,7 +228,7 @@ function update() {
     const to = typeof step.go === 'function' ? step.go() : step.go;
     if (to && hash() !== to) { location.hash = `#/${to}`; return; }
   }
-  if (step.center && !step.route) { dims(null); root.querySelector('[data-tu-ring]').style.display = 'none'; bubble(step, null); return; }
+  if (step.center && !step.route) { dims(null); hideRing(); bubble(step, null); return; }
   // Done already? (A tap that opens another screen finishes its step before anything else.)
   if (typeof step.wait === 'function' && step.wait() === true) { advance(); update(); return; }
   if (step.route && !step.route.test(hash())) {
@@ -226,14 +238,14 @@ function update() {
     return;
   }
   if (step.corner) {
-    root.querySelector('[data-tu-dims]').innerHTML = '<div class="tu-dim" style="left:0;top:0;width:1280px;height:800px;background:transparent"></div>';
-    root.querySelector('[data-tu-ring]').style.display = 'none';
+    setDims('<div class="tu-dim" style="left:0;top:0;width:1280px;height:800px;background:transparent"></div>');
+    hideRing();
     bubble(step, null, 'next');
     root.querySelector('[data-tu-bub]').className = 'tu-bub corner';
     return;
   }
   if (step.center) {
-    dims(null); root.querySelector('[data-tu-ring]').style.display = 'none';
+    dims(null); hideRing();
     bubble(step, null, step.wait === 'next' ? 'next' : '');
     if (typeof step.wait === 'function' && step.wait()) advance();
     return;
@@ -241,8 +253,8 @@ function update() {
   const el = find(step.target);
   if (!el) {
     if (step.optional && Date.now() - waitingSince > 3000) { advance(); return; }
-    root.querySelector('[data-tu-dims]').innerHTML = '';
-    root.querySelector('[data-tu-ring]').style.display = 'none';
+    setDims('');
+    hideRing();
     root.querySelector('[data-tu-bub]').style.display = 'none';
     lastKey = '';
     return;

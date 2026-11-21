@@ -3,6 +3,10 @@ import { profile } from './config.js';
 import * as placeholder from './screens/placeholder.js';
 import { welcomeDone } from './services/welcome-state.js';
 import { tutorialRunning } from './services/tutorial.js';
+import { siteAnswers } from './services/online.js';
+
+// Was sw.js already keeping copies when this page started? (Not on the very first start.)
+const startedWithCopies = !!(navigator.serviceWorker && navigator.serviceWorker.controller);
 
 const screenEl = document.getElementById('screen');
 installCompat(screenEl);
@@ -15,25 +19,143 @@ function fit() {
 addEventListener('resize', fit);
 fit();
 
+// ---- Touch: every tap is felt, and every tap counts ----
+// 1. Whatever can be tapped reacts the moment a finger lands on it (css/base.css,
+//    .is-pressed), so nobody wonders whether the tap was felt while the next screen is
+//    being put together.
+// 2. The browser only counts a tap when the finger hardly moves (about 1.5 mm on this
+//    screen) and lifts within half a second. A firm press on a kitchen screen often does
+//    neither, and the tap was simply lost: measured on a real tablet, nothing happened at
+//    all. Those taps are counted here instead.
+const PRESS_MIN_MS = 140; // even the quickest tap shows for this long
+const PRESS_WAIT_MS = 70; // inside a list that scrolls: wait a moment, it may be a swipe
+const TAP_MAX_MS = 1500;  // held longer than this it is no tap (the grown-up menu is a 5 s hold)
+const TAP_ROOM_PX = 24;   // how far the finger may roll; inside a list that scrolls, 8
+let pressed = null;       // the element showing as pressed
+let pressedAt = 0;
+let pressTimer = 0;
+let finger = null;        // the touch in progress: { el, target, x, y, at, room, scrollers }
+let lastRealClick = 0;    // when the browser last delivered a click of its own
+let stoodIn = false;      // we clicked for the browser: should its own click still turn up, drop it
+
+// The thing a tap on `target` would work: a link or button, or whatever was given the
+// pointing-hand cursor (that is inherited, so climb to the element that set it).
+function tappable(target) {
+  let found = null;
+  for (let el = target instanceof Element ? target : null; el && el !== screenEl && el !== document.body; el = el.parentElement) {
+    if (el.matches('a[href], button, summary, label, select, [role="button"]')) { found = el; break; }
+    if (getComputedStyle(el).cursor === 'pointer') found = el;
+    else if (found) break;
+  }
+  if (!found || found.disabled || found.getAttribute('aria-disabled') === 'true') return null;
+  // Not a whole screen: the night clock and the photo frame are one big "tap anywhere".
+  const r = found.getBoundingClientRect();
+  return r.width * r.height > innerWidth * innerHeight * 0.45 ? null : found;
+}
+// The lists around `el` that can scroll, with where each one is now.
+function scrollersOf(el) {
+  const list = [];
+  for (let p = el.parentElement; p && p !== screenEl && p !== document.body; p = p.parentElement) {
+    if (p.scrollHeight <= p.clientHeight + 4 && p.scrollWidth <= p.clientWidth + 4) continue;
+    const style = getComputedStyle(p);
+    if (/auto|scroll/.test(style.overflowY + style.overflowX)) list.push([p, p.scrollTop, p.scrollLeft]);
+  }
+  return list;
+}
+function showPress(el) {
+  pressed = el;
+  pressedAt = performance.now();
+  el.classList.add('is-pressed');
+  // Shrink it a touch too, unless it is already placed with a transform of its own.
+  if (getComputedStyle(el).transform === 'none') el.classList.add(Math.max(el.offsetWidth, el.offsetHeight) > 260 ? 'is-pressed-big' : 'is-pressed-small');
+}
+function endPress(atOnce) {
+  clearTimeout(pressTimer);
+  const el = pressed;
+  pressed = null;
+  if (!el) return;
+  const off = () => el.classList.remove('is-pressed', 'is-pressed-big', 'is-pressed-small');
+  if (atOnce) off(); else setTimeout(off, Math.max(0, PRESS_MIN_MS - (performance.now() - pressedAt)));
+}
+function dropFinger() { finger = null; endPress(true); }
+const QUIET = { capture: true, passive: true }; // only watching: never holds up scrolling
+
+addEventListener('touchstart', (e) => {
+  dropFinger();
+  stoodIn = false;
+  if (e.touches.length !== 1) return;
+  const el = tappable(e.target);
+  if (!el) return;
+  const t = e.touches[0];
+  const scrollers = scrollersOf(el);
+  finger = { el, target: e.target, x: t.clientX, y: t.clientY, at: performance.now(), room: scrollers.length ? 8 : TAP_ROOM_PX, scrollers };
+  if (!scrollers.length) showPress(el);
+  else pressTimer = setTimeout(() => { if (finger && finger.el === el) showPress(el); }, PRESS_WAIT_MS);
+}, QUIET);
+addEventListener('touchmove', (e) => {
+  if (!finger) return;
+  const t = e.touches[0];
+  if (e.touches.length !== 1 || Math.hypot(t.clientX - finger.x, t.clientY - finger.y) > finger.room) dropFinger(); // a swipe
+}, QUIET);
+addEventListener('touchend', (e) => {
+  const f = finger;
+  if (!f) return;
+  finger = null;
+  const t = e.changedTouches[0];
+  const tap = e.touches.length === 0 && performance.now() - f.at <= TAP_MAX_MS
+    && Math.hypot(t.clientX - f.x, t.clientY - f.y) <= f.room
+    && f.scrollers.every(([list, top, left]) => list.scrollTop === top && list.scrollLeft === left);
+  if (!tap) { endPress(true); return; }
+  if (pressed !== f.el) showPress(f.el); // lifted before the wait was over: a tap after all
+  endPress(false);
+  // The browser's own click normally follows at once. When it doesn't (see 2. above), click for it.
+  setTimeout(() => {
+    if (lastRealClick >= f.at || !f.target.isConnected) return;
+    stoodIn = true;
+    f.target.dispatchEvent(new MouseEvent('click', { bubbles: true, cancelable: true, view: window, clientX: f.x, clientY: f.y }));
+  }, 80);
+}, QUIET);
+addEventListener('touchcancel', dropFinger, QUIET);
+addEventListener('click', (e) => {
+  if (!e.isTrusted) return;
+  if (stoodIn) { stoodIn = false; e.preventDefault(); e.stopImmediatePropagation(); return; } // already done
+  lastRealClick = performance.now();
+}, true);
+// A long press is a tap here, not a request for the browser's own menu (typing boxes keep theirs).
+addEventListener('contextmenu', (e) => { if (!(e.target instanceof Element && e.target.closest('input, textarea'))) e.preventDefault(); }, true);
+// With a mouse (previewing on a PC): only the pressed look.
+addEventListener('pointerdown', (e) => {
+  if (e.pointerType !== 'mouse' || e.button !== 0) return;
+  endPress(true);
+  const el = tappable(e.target);
+  if (el) showPress(el);
+}, true);
+addEventListener('pointerup', (e) => { if (e.pointerType === 'mouse') endPress(false); }, true);
+
 // ---- Screens, loaded on demand. Add a new screen = add one line here. ----
-const SCREENS = {
-  // Family
-  home: 'Home dashboard', launcher: 'Apps', photos: 'Photo frame', recipe: 'Cooking mode',
-  recipes: 'Recipes', dish: 'Recipe', plan: 'Week plan', shopping: 'Shopping list', timers: 'Timers', myrecipe: 'My recipe',
-  addphotos: 'Add photos', apps: 'Apps', camera: 'Camera', calendar: 'Calendar', forecast: 'Weather', messages: 'Messages', night: 'Night clock',
-  // Tom · Space & Flight
+const FAMILY = {
+  home: 'Home', launcher: 'Menu', recipes: 'Recipes', calendar: 'Calendar', forecast: 'Weather',
+  messages: 'Messages', shopping: 'Shopping list', timers: 'Timers', plan: 'Week plan', dish: 'Recipe',
+  recipe: 'Cooking mode', myrecipe: 'My recipe', night: 'Night clock',
+};
+// Tom · Space & Flight
+const TOM = {
   bridge: 'Flight deck', flights: 'Planes overhead', departures: 'Departures', trivia: 'Trivia',
   alert: 'Sky alert', missions: 'Space missions', sky: "Tonight's sky",
   deepimage: 'Space image', viewscreen: 'Starfield',
-  // Both
-  welcome: 'Welcome',
 };
+// Both (Tom's only when its extras are switched on)
+const BOTH = { photos: 'Photo frame', apps: 'Apps', camera: 'Camera', addphotos: 'Add photos', welcome: 'Welcome' };
+const SCREENS = { ...FAMILY, ...TOM, ...BOTH };
+// The screens this tablet can get to, most used first (see "Keep every screen on the device").
+const OWN_SCREENS = Object.keys({ ...(profile === 'tom' ? TOM : FAMILY), ...BOTH });
 
 export const homeRoute = profile === 'tom' ? 'bridge' : 'home';
 
 let current = null;
 let navId = 0;
 let timerSvc = null; // kitchen timers (family tablets): the countdown chip on every screen
+let lastBrightness = null; // what the backlight was last asked for
 
 async function navigate() {
   const id = ++navId;
@@ -46,16 +168,30 @@ async function navigate() {
   if (name === homeRoute && !ghost && !welcomeDone() && !tutorialRunning()) name = 'welcome';
   const args = parts.slice(1).filter(Boolean);
   let mod = placeholder;
+  let failed = false; // its code couldn't be fetched: the placeholder says so and brings it back
   if (SCREENS[name]) {
     try { mod = await import(`./screens/${name}.js`); }
-    catch (err) { console.error(`Screen "${name}" failed to load`, err); }
+    catch (err) { console.error(`Screen "${name}" failed to load`, err); failed = true; }
+  }
+  // A tap brought us here: let its pressed look reach the screen before the next screen is
+  // built (building one keeps the tablet busy, and nothing is drawn meanwhile).
+  if (performance.now() - pressedAt < 50) {
+    await new Promise((done) => {
+      const giveUp = setTimeout(done, 80); // no frames while the screen is off
+      requestAnimationFrame(() => setTimeout(() => { clearTimeout(giveUp); done(); }, 0));
+    });
   }
   if (id !== navId) return; // user navigated again while loading
   // Let the Android app know (shown as "Showing now" in the admin dashboard).
   try { window.TabletNative?.screenChanged?.(name); } catch { /* not on a tablet */ }
   // Night screens turn the real backlight down; everything else uses normal brightness.
+  // (Only when it changes: every call makes Android lay the whole window out again.)
   const nightScreen = name === (profile === 'tom' ? 'viewscreen' : 'night');
-  try { window.TabletNative?.setBrightness?.(nightScreen ? 0.05 : -1); } catch { /* not on a tablet */ }
+  const brightness = nightScreen ? 0.05 : -1;
+  if (brightness !== lastBrightness) {
+    lastBrightness = brightness;
+    try { window.TabletNative?.setBrightness?.(brightness); } catch { /* not on a tablet */ }
+  }
 
   try { current?.unmount?.(); } catch (err) { console.error(err); }
   // Each visit gets its own container. When you leave, it's removed, so a screen's
@@ -66,13 +202,17 @@ async function navigate() {
   screenEl.appendChild(host);
   if (timerSvc && timerSvc.chip) { timerSvc.setRoute(name); screenEl.appendChild(timerSvc.chip); }
   current = mod;
-  try { mod.mount(host, { name, args, title: SCREENS[name], homeRoute }); }
+  try { mod.mount(host, { name, args, title: SCREENS[name], homeRoute, failed }); }
   catch (err) {
     console.error(err);
+    // It stopped part-way: let it put away whatever it had already started.
+    try { if (mod.unmount) mod.unmount(); } catch (e) { /* it never got that far */ }
     current = placeholder;
     host.innerHTML = '';
-    placeholder.mount(host, { name });
+    placeholder.mount(host, { name, title: SCREENS[name], homeRoute, broken: true });
   }
+  // A screen opened, so the next one that can't may start the page over again (placeholder.js).
+  if (current !== placeholder) { try { sessionStorage.removeItem('screen-retry'); } catch (e) { /* storage off */ } }
 }
 addEventListener('hashchange', navigate);
 navigate();
@@ -100,6 +240,61 @@ const screenName = () => location.hash.replace(/^#\/?/, '').split('/')[0] || hom
 const isGhost = (() => { try { return !!(window.TabletNative && window.TabletNative.isGhost && window.TabletNative.isGhost()); } catch { return false; } })();
 // Never yank someone out of these.
 const BUSY = ['camera', 'recipe', 'myrecipe'];
+
+// ---- Keep every screen on the device ----
+// A screen's code is fetched the first time it is opened, and sw.js keeps a copy of
+// whatever was fetched. Fetching the rest quietly after every start means each screen
+// opens at once, opens when the Wi-Fi is down, and matches the version that is running.
+const pause = (ms) => new Promise((done) => setTimeout(done, ms));
+const LOOK_AGAIN_MS = 5 * 60 * 1000;
+
+// The very first start ran before sw.js was keeping copies, so nothing it loaded was
+// kept: the page, the styles, the fonts, the first screen. Fetch those once more.
+async function keepFirstFiles() {
+  if (startedWithCopies || !window.caches || !navigator.serviceWorker || !navigator.serviceWorker.controller) return;
+  const urls = [location.href.split('#')[0]];
+  for (const entry of performance.getEntriesByType('resource')) urls.push(entry.name);
+  for (const url of new Set(urls)) {
+    try {
+      const u = new URL(url);
+      const ours = u.origin === location.origin ? !u.pathname.includes('/__tablet/') : u.host.includes('fonts.g');
+      if (/^https?:$/.test(u.protocol) && ours && !(await caches.match(url))) await fetch(url);
+    } catch (err) { /* it is fetched and kept on the next start anyway */ }
+  }
+}
+
+async function keepScreens() {
+  // Only while the site answers. A screen that fails to fetch stays failed until the
+  // page starts over, so with the Wi-Fi down it is better not to ask at all.
+  if (!(await siteAnswers())) { setTimeout(keepScreens, LOOK_AGAIN_MS); return; }
+  await keepFirstFiles();
+  for (const name of OWN_SCREENS) {
+    while (!idleFor(4000)) await pause(2000); // someone is using the screen: stay out of the way
+    try { await import(`./screens/${name}.js`); }
+    catch (err) {
+      // The Wi-Fi went mid-way? Then stop here and pick it up again later.
+      if (!(await siteAnswers())) { setTimeout(keepScreens, LOOK_AGAIN_MS); return; }
+    }
+    await pause(1500);
+  }
+  // ...and the letters: a font is only fetched when some screen first shows it.
+  const fonts = new Set();
+  for (const face of document.fonts) fonts.add(`${String(face.weight).split(' ')[0]} 16px "${face.family.replace(/["']/g, '')}"`);
+  for (const font of fonts) { try { await document.fonts.load(font); } catch (err) { /* next start */ } }
+}
+if (!isGhost) setTimeout(keepScreens, 20 * 1000);
+
+// Family tablets keep the forecast too. The Weather screen shows its last one when the
+// Wi-Fi is down (and says from when), but only had one if somebody opened it lately.
+function keepForecast() {
+  Promise.all([import('./services/location.js'), import('./services/forecast-data.js')])
+    .then(([place, forecast]) => place.getLocation().then((loc) => forecast.getForecast(loc)))
+    .catch(() => { /* offline: the one it has stays */ });
+}
+if (profile !== 'tom' && !isGhost) {
+  setTimeout(keepForecast, 90 * 1000);
+  setInterval(keepForecast, 3 * 60 * 60 * 1000);
+}
 
 // Check for a new version every 30 minutes. A new deploy is applied the next time
 // the tablet is idle (2 minutes untouched), never in the middle of the camera or a recipe.

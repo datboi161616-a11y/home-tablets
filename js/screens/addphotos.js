@@ -8,7 +8,7 @@ let off, flashTimer, wifiTimer;
 const ALBUM_MAX = 500; // the tablet app's limit (PhotoStore.MAX_ITEMS)
 const esc = (s) => String(s).replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' })[c]);
 
-export function mount(el) {
+export function mount(el, { homeRoute = 'home' } = {}) {
   el.innerHTML = `
   <style>
     .ad-thumb{flex:none;width:96px;height:96px;border-radius:14px;background:#2A3038 center/cover no-repeat;position:relative;overflow:hidden}
@@ -24,7 +24,7 @@ export function mount(el) {
     <div style="display:flex;flex-direction:column;gap:24px;min-width:0">
       <div style="display:flex;justify-content:space-between;align-items:center;gap:16px">
         <a href="#/photos" class="pill" style="background:var(--card);color:var(--ink)">← Photos</a>
-        <a href="#/home" class="pill" style="background:var(--card);color:var(--ink)">Home</a>
+        <a href="#/${homeRoute}" class="pill" style="background:var(--card);color:var(--ink)">Home</a>
       </div>
       <div style="display:flex;align-items:center;gap:20px">
         <div class="display" style="flex:1;min-width:0;font-size:52px;font-weight:500;line-height:1.05">Add photos from your phone</div>
@@ -78,7 +78,8 @@ export function mount(el) {
       $('[data-url]').innerHTML = '<span class="muted" style="font-weight:400">Ask a grown-up: hold the top-left corner for 5 seconds → Wi-Fi settings. The code appears here by itself once it’s connected.</span>';
     } else {
       $('[data-qr]').innerHTML = qrSvg(url, 360);
-      $('[data-url]').textContent = url.replace(/\?k=.*/, '');
+      // The whole address, key and all: without the key the screen answers "this link has expired".
+      $('[data-url]').textContent = url;
     }
   }
 
