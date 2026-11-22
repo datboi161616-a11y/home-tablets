@@ -1,3 +1,5 @@
+import { display } from './services/display.js';
+
 // Compatibility for older Android WebViews (the tablets ship with Chrome 81).
 // Modern engines skip most of this. JavaScript syntax is handled separately:
 // the deploy step translates the code for older engines with esbuild.
@@ -42,7 +44,8 @@ if (typeof AbortSignal !== 'undefined' && !AbortSignal.timeout) {
     // Anything unusual (a list of locales, options that aren't a plain object): the browser's own way.
     if (locales !== undefined && typeof locales !== 'string') return null;
     if (options !== undefined && (options === null || typeof options !== 'object')) return null;
-    const key = `${kind}|${locales || ''}|${JSON.stringify(options || {})}`;
+    const clock24 = display().clock24;
+    const key = `${kind}|${locales || ''}|${clock24 ? 24 : 12}|${JSON.stringify(options || {})}`;
     let f = kept.get(key);
     if (!f) {
       const o = Object.assign({}, options);
@@ -53,6 +56,11 @@ if (typeof AbortSignal !== 'undefined' && !AbortSignal.timeout) {
         if (kind === 'date' && !has(o, DATE)) Object.assign(o, all);
         if (kind === 'time' && !has(o, TIME)) Object.assign(o, clock);
         if (kind === 'any' && !has(o, DATE) && !has(o, TIME)) Object.assign(o, all, clock);
+      }
+      // The owner's 24-hour clock (Settings) goes for every time the app words.
+      if (clock24 && o.hour12 === undefined && o.hourCycle === undefined && (o.hour !== undefined || o.timeStyle !== undefined)) {
+        o.hourCycle = 'h23';
+        if (o.hour !== undefined && o.minute === undefined) o.minute = '2-digit'; // "15:00", not a bare "15"
       }
       f = new Intl.DateTimeFormat(locales, o);
       kept.set(key, f);

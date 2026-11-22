@@ -4,6 +4,7 @@
 // From 10 PM to 6 AM the whole screen is dimmed.
 // Under the clock: the date, and a line worked out on the tablet with the next
 // sunrise/sunset, the Moon's phase and the next ISS flyover (if one is coming soon).
+import { clockTime, clockAmPm, isNightNow } from '../services/display.js';
 import { getLocation } from '../services/location.js';
 import { sunAlt, moonPhase, compass } from '../services/astro.js';
 import { getIssPasses, passDay, fmtTime } from '../services/space.js';
@@ -37,11 +38,11 @@ function clockVals() {
   const frac = (now - start) / (new Date(now.getFullYear() + 1, 0, 1) - start);
   return {
     stardate: ((now.getFullYear() - 2000) * 1000 + frac * 1000).toFixed(1),
-    // 12-hour time like the rest of the tablet: "6:05" + "PM".
-    time: `${((now.getHours() + 11) % 12) + 1}:${String(now.getMinutes()).padStart(2, '0')}`,
-    ampm: now.getHours() < 12 ? 'AM' : 'PM',
+    // The same clock as the rest of the screens: "6:05" + "PM", or "18:05".
+    time: clockTime(now),
+    ampm: clockAmPm(now),
     date: now.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' }).toUpperCase(),
-    night: now.getHours() >= 22 || now.getHours() < 6,
+    night: isNightNow(now),
   };
 }
 

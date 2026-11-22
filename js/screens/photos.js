@@ -1,6 +1,7 @@
 // Family · Full-screen photo frame (Photos.dc.html in the design)
 // Slow pan on each photo, cross-fade to the next one every minute.
 // Tap anywhere to go back home.
+import { display, clockTime } from '../services/display.js';
 import { getLocation } from '../services/location.js';
 import { getWeather, describe } from '../services/weather.js';
 // On the tablet: its own album (sent from phones, see addphotos.js).
@@ -10,13 +11,14 @@ import { isTablet, getPhotos, onPhotosChanged, canRemovePhotos, removePhoto } fr
 import { feature } from '../services/features.js';
 import { framesArt } from '../art.js';
 
-const SLIDE_MS = 60 * 1000;
+// How long each picture stays: a minute, or what the owner chose (Settings → Photo frame).
+const slideMs = () => Math.max(10, +display().slideSecs || 60) * 1000;
 let clockTimer, slideTimer, fadeTimer, weatherTimer, offPhotos;
 
 function clockParts() {
   const now = new Date();
   return {
-    time: `${((now.getHours() + 11) % 12) + 1}:${String(now.getMinutes()).padStart(2, '0')}`,
+    time: clockTime(now),
     date: now.toLocaleDateString('en-US', { weekday: 'long', month: 'short', day: 'numeric' }),
   };
 }
@@ -29,14 +31,22 @@ const slideBg = (p) => (p.src
   : `background:${p.art}`);
 
 function loadAlbum() {
-  if (isTablet()) return getPhotos();
-  return samplePhotos.map((p) => ({ ...p, line: `${p.caption} · Added by ${p.addedBy}` }));
+  const list = isTablet() ? getPhotos() : samplePhotos.map((p) => ({ ...p, line: `${p.caption} · Added by ${p.addedBy}` }));
+  if (!display().photoShuffle || list.length < 3) return list;
+  // "Mixed up": the newest one still comes first (somebody just sent it), the rest in any order.
+  const rest = list.slice(1);
+  for (let i = rest.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    const t = rest[i]; rest[i] = rest[j]; rest[j] = t;
+  }
+  return [list[0]].concat(rest);
 }
 
 const MAX_DOTS = 12;
 
 export function mount(el, { homeRoute = 'home' } = {}) {
   const c = clockParts();
+  const prefs = display();
   let photos = loadAlbum();
   let index = 0;
   let weatherText = '';
@@ -57,8 +67,8 @@ export function mount(el, { homeRoute = 'home' } = {}) {
     /* In 300 small steps, not 60 times a second: the picture moves under half a pixel per
        step either way, and the tablet draws about five frames a second instead of sixty
        (measured: the smooth version kept a processor core and a half busy all day). */
-    .ph-slide.pan-a{animation:ph-pan-a ${SLIDE_MS + 3000}ms steps(300, end) forwards}
-    .ph-slide.pan-b{animation:ph-pan-b ${SLIDE_MS + 3000}ms steps(300, end) forwards}
+    .ph-slide.pan-a{animation:ph-pan-a 63s steps(300, end) forwards}
+    .ph-slide.pan-b{animation:ph-pan-b 63s steps(300, end) forwards}
     @keyframes ph-pan-a{from{transform:scale(1) translate(0,0)}to{transform:scale(1.08) translate(-2%,-1.5%)}}
     @keyframes ph-pan-b{from{transform:scale(1.08) translate(-2%,1%)}to{transform:scale(1) translate(1.5%,0)}}
     .ph-dot{height:8px;width:8px;border-radius:4px;background:rgba(255,255,255,.5);transition:width .4s,background .4s}
@@ -133,7 +143,8 @@ export function mount(el, { homeRoute = 'home' } = {}) {
     // Never more than the old picture and the new one (tapping through quickly used to pile them up).
     while (slidesEl.children.length > 1) slidesEl.firstChild.remove();
     const slide = document.createElement('div');
-    slide.className = `ph-slide ${quick ? 'quick ' : ''}${p.video ? '' : i % 2 ? 'pan-b' : 'pan-a'}`;
+    const pan = !p.video && prefs.photoZoom;
+    slide.className = `ph-slide ${quick ? 'quick ' : ''}${pan ? (i % 2 ? 'pan-b' : 'pan-a') : ''}`;
     if (p.video) {
       // Play the clip (muted), full-frame over black. Advance when it ends.
       slide.style.background = '#000';
@@ -172,6 +183,12 @@ export function mount(el, { homeRoute = 'home' } = {}) {
     } else {
       slide.style.cssText = slideBg(p);
     }
+    if (pan) {
+      // The drift lasts as long as the picture stays, still at about five small steps a second.
+      const ms = slideMs() + 3000;
+      slide.style.animationDuration = `${ms}ms`;
+      slide.style.animationTimingFunction = `steps(${Math.max(40, Math.min(300, Math.round(ms / 210)))}, end)`;
+    }
     slidesEl.appendChild(slide);
     // Fade in on the next frame, then drop older slides once the fade is done.
     requestAnimationFrame(() => requestAnimationFrame(() => slide.classList.add('on')));
@@ -181,8 +198,9 @@ export function mount(el, { homeRoute = 'home' } = {}) {
     }, quick ? 600 : 3000);
     showRemove();
 
-    $('[data-title]').textContent = p.title;
-    $('[data-caption]').innerHTML = esc(p.line || '');
+    // (Settings can hide who sent it and when, for a frame that is only pictures.)
+    $('[data-title]').textContent = prefs.photoCaptions ? p.title : '';
+    $('[data-caption]').innerHTML = prefs.photoCaptions ? esc(p.line || '') : '';
     const dots = $('[data-dots]');
     if (photos.length <= MAX_DOTS) {
       if (dots.children.length !== photos.length) dots.innerHTML = photos.map(() => '<div class="ph-dot"></div>').join('');
@@ -191,10 +209,10 @@ export function mount(el, { homeRoute = 'home' } = {}) {
       dots.textContent = `${i + 1} / ${photos.length}`;
     }
 
-    // Auto-advance: photos after SLIDE_MS; videos set their own timing above.
+    // Auto-advance: photos after their time is up; videos set their own timing above.
     if (!p.video) {
       clearTimeout(slideTimer);
-      if (photos.length > 1) slideTimer = setTimeout(next, SLIDE_MS);
+      if (photos.length > 1) slideTimer = setTimeout(next, slideMs());
     }
 
     // Load the next photo in the background so it fades in whole, not half-drawn.
@@ -214,7 +232,7 @@ export function mount(el, { homeRoute = 'home' } = {}) {
   function closeAsk(carryOn) {
     askEl.style.display = 'none';
     // The pictures stood still while the question was up.
-    if (carryOn && photos.length > 1 && photos[index] && !photos[index].video) { clearTimeout(slideTimer); slideTimer = setTimeout(next, SLIDE_MS); }
+    if (carryOn && photos.length > 1 && photos[index] && !photos[index].video) { clearTimeout(slideTimer); slideTimer = setTimeout(next, slideMs()); }
   }
   $('[data-remove]').addEventListener('click', (e) => {
     e.stopPropagation();
@@ -265,9 +283,15 @@ export function mount(el, { homeRoute = 'home' } = {}) {
 
   // A phone just sent photos (or one was removed): reload, newest first.
   offPhotos = onPhotosChanged(() => {
-    photos = loadAlbum();
     const stay = keepPlace;
     keepPlace = null;
+    const fresh = loadAlbum();
+    if (stay != null && prefs.photoShuffle) {
+      // One was removed here: keep the mixed-up order the others were already in.
+      const still = {};
+      fresh.forEach((p) => { still[p.id] = true; });
+      photos = photos.filter((p) => still[p.id]);
+    } else photos = fresh;
     closeAsk(false);
     if (stay == null || !photos.length) start();
     else show(Math.min(stay, photos.length - 1), true); // one was removed here: carry on from the same place

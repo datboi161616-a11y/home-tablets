@@ -6,7 +6,7 @@ import { tutorialRunning } from './services/tutorial.js';
 import { siteAnswers } from './services/online.js';
 import { BUILD } from './build.js';
 import { cameFrom } from './services/nav.js';
-import { isNightNow, dayBrightness } from './services/display.js';
+import { display, isNightNow, dayBrightness, nightBrightness } from './services/display.js';
 
 // Was sw.js already keeping copies when this page started? (Not on the very first start.)
 const startedWithCopies = !!(navigator.serviceWorker && navigator.serviceWorker.controller);
@@ -200,7 +200,7 @@ async function navigate() {
   // Night screens turn the real backlight down; everything else uses normal brightness.
   // (Only when it changes: every call makes Android lay the whole window out again.)
   const nightScreen = name === (profile === 'tom' ? 'viewscreen' : 'night');
-  const brightness = nightScreen ? 0.05 : dayBrightness(); // the owner's choice (Settings)
+  const brightness = nightScreen ? nightBrightness() : dayBrightness(); // the owner's choices (Settings)
   if (brightness !== lastBrightness) {
     lastBrightness = brightness;
     try { window.TabletNative?.setBrightness?.(brightness); } catch { /* not on a tablet */ }
@@ -399,11 +399,15 @@ setInterval(checkForUpdate, 30 * 60 * 1000);
 const nightRoute = profile === 'tom' ? 'viewscreen' : 'night';
 let beforeNight = null;
 
-// ---- Back to Home after a while ----
+// ---- Back to the resting screen after a while ----
 // A menu, the calendar or the shopping list that somebody looked at and walked away
-// from shouldn't stay up all day: after ten untouched minutes it is Home again. Screens
-// people watch without touching (photo frame, a recipe, timers, cooking) are left alone.
-const REST_AFTER_MS = 10 * 60 * 1000;
+// from shouldn't stay up all day: after ten untouched minutes (Settings: 5, 10, 30 or
+// never) it is Home again, or the photo frame if the owner prefers that. Screens people
+// watch without touching (a recipe, timers, cooking) are left alone.
+function restingScreen() {
+  // (Tom's flight deck is its own resting screen.)
+  return profile !== 'tom' && display().restScreen === 'photos' ? 'photos' : homeRoute;
+}
 // A half-written note or calendar entry is never thrown away by the clock: not while the
 // cursor is in a box, and not while a box on the screen has something typed in it.
 const typing = () => {
@@ -425,14 +429,18 @@ setInterval(() => {
     // Morning: the photo frame again if that is what the night interrupted, otherwise Home.
     location.hash = `#/${beforeNight === 'photos' ? 'photos' : homeRoute}`;
     beforeNight = null;
-  } else if (WANDERED.includes(here) && idleFor(REST_AFTER_MS) && !tutorialRunning() && !typing()) {
-    location.hash = `#/${homeRoute}`;
+  } else {
+    const rest = restingScreen();
+    const after = display().restMinutes * 60 * 1000;
+    // With the photo frame as the resting screen, Home gives way to it too.
+    const wandered = WANDERED.includes(here) || (rest !== homeRoute && here === homeRoute);
+    if (after > 0 && wandered && here !== rest && idleFor(after) && !tutorialRunning() && !typing()) location.hash = `#/${rest}`;
   }
 }, 30 * 1000);
 
 // The owner moved the brightness slider (Settings): apply it now, not at the next screen.
 addEventListener('display-changed', () => {
-  const brightness = screenName() === nightRoute ? 0.05 : dayBrightness();
+  const brightness = screenName() === nightRoute ? nightBrightness() : dayBrightness();
   if (brightness === lastBrightness) return;
   lastBrightness = brightness;
   try { window.TabletNative?.setBrightness?.(brightness); } catch { /* not on a tablet */ }

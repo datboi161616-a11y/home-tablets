@@ -10,6 +10,7 @@
 // below reads that copy instantly. refreshCalendars() updates it at most every
 // 30 minutes (or right away when the settings change) and then fires the
 // window event 'calendar-updated' so open screens can redraw.
+import { timeText } from './display.js';
 import { events as holidays } from '../config.js';
 import { getFamily, fetchCalendarFeeds } from './family.js';
 import { expandEvents } from './ics.js';
@@ -38,8 +39,7 @@ const sameName = (a, b) => String(a).toLowerCase().replace(/[’'`]/g, '') === S
 
 /** "6:30 PM" */
 export function fmtTime(d) {
-  const h = d.getHours();
-  return `${((h + 11) % 12) + 1}:${String(d.getMinutes()).padStart(2, '0')} ${h < 12 ? 'AM' : 'PM'}`;
+  return timeText(d);
 }
 
 export function startOfWeek(date = new Date()) {

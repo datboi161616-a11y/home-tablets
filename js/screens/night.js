@@ -1,6 +1,6 @@
 // Family · Night clock (Night.dc.html in the design)
 // Dim warm-on-black clock. Tap anywhere to go back home.
-import { isNightNow, hourText, display } from '../services/display.js';
+import { isNightNow, hourText, display, clockTime, clockAmPm } from '../services/display.js';
 import { getLocation } from '../services/location.js';
 import { getWeather, describe } from '../services/weather.js';
 import { getWeek } from '../services/calendar-data.js';
@@ -18,8 +18,8 @@ const isNight = () => isNightNow(); // the hours are the owner's choice (Setting
 function clockParts() {
   const now = new Date();
   return {
-    time: `${((now.getHours() + 11) % 12) + 1}:${String(now.getMinutes()).padStart(2, '0')}`,
-    ampm: now.getHours() < 12 ? 'AM' : 'PM',
+    time: clockTime(now),
+    ampm: clockAmPm(now),
     date: now.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' }),
   };
 }

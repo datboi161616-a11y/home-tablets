@@ -1,4 +1,5 @@
 // Family · Home dashboard (Main.dc.html in the design)
+import { clockTime, clockAmPm } from '../services/display.js';
 import { settings } from '../config.js';
 import { getLocation } from '../services/location.js';
 import { getWeather, describe } from '../services/weather.js';
@@ -81,8 +82,8 @@ function clockParts() {
   const now = new Date();
   const h = now.getHours();
   return {
-    time: `${((h + 11) % 12) + 1}:${String(now.getMinutes()).padStart(2, '0')}`,
-    ampm: h < 12 ? 'AM' : 'PM',
+    time: clockTime(now),
+    ampm: clockAmPm(now),
     date: now.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' }),
     greeting: h < 12 ? 'Good morning' : h < 18 ? 'Good afternoon' : 'Good evening',
   };

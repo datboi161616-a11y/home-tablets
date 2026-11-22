@@ -1,4 +1,5 @@
 // Family · Week calendar (Calendar.dc.html in the design)
+import { minutesText } from '../services/display.js';
 import { backHref, backLabel } from '../services/nav.js';
 import { settings } from '../config.js';
 import { getWeek, nextBigThing, calendarStatus, refreshCalendars, KINDS } from '../services/calendar-data.js';
@@ -201,7 +202,7 @@ function showDay(el, d) {
 
 // ---------- Adding / changing an event typed on this tablet ----------
 
-const fmtMin = (m) => { const h = Math.floor(m / 60), mm = m % 60; return `${((h + 11) % 12) + 1}:${String(mm).padStart(2, '0')} ${h < 12 ? 'AM' : 'PM'}`; };
+const fmtMin = (m) => minutesText(m);
 const LENGTHS = [[30, '30 min'], [60, '1 hr'], [90, '1½ hr'], [120, '2 hr'], [180, '3 hr']];
 const REPEATS = [['none', 'Just once'], ['weekly', 'Every week'], ['yearly', 'Every year']];
 const midnightOf = (d) => new Date(d.getFullYear(), d.getMonth(), d.getDate());

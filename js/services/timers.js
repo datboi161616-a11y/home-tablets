@@ -3,8 +3,11 @@
 //   { id, label, secs, end }            running
 //   { id, label, secs, left }           paused (ms left)
 //   { id, label, secs, end, ack: true } finished and stopped (removed shortly after)
+import { display } from './display.js';
+
 const KEY = 'kitchen.timers.v1';
-const RING_MS = 2 * 60 * 1000; // ring for up to 2 minutes if nobody taps
+// An alarm nobody stops rings for two minutes, or as long as the owner chose (Settings).
+const ringMs = () => Math.max(1, +display().alarmMinutes || 2) * 60 * 1000;
 const MAX = 8;
 
 const read = () => { try { return JSON.parse(localStorage.getItem(KEY) || '[]') || []; } catch (e) { return []; } };
@@ -25,7 +28,8 @@ export function timers() {
 }
 export const left = (t) => (t.end != null ? Math.max(0, t.end - Date.now()) : t.left);
 export const state = (t) => (t.end == null ? 'paused' : t.end <= Date.now() ? (t.ack ? 'stopped' : 'done') : 'running');
-export const ringing = () => timers().some((t) => state(t) === 'done' && Date.now() - t.end < RING_MS);
+const ringingNow = () => timers().filter((t) => state(t) === 'done' && Date.now() - t.end < ringMs());
+export const ringing = () => ringingNow().length > 0;
 
 /** "25 min", "1 hr", "1 hr 30 min" */
 export function minutesText(m) {
@@ -81,26 +85,40 @@ function ensureAudio() {
     if (audio.state === 'suspended') audio.resume();
   } catch (e) { /* no audio */ }
 }
-function beep() {
+// One note: it swells in a blink and dies away over `len` seconds.
+function note(at, hz, len, peak) {
+  const o = audio.createOscillator();
+  const g = audio.createGain();
+  o.type = 'sine';
+  o.frequency.value = hz;
+  g.gain.setValueAtTime(0.0001, at);
+  g.gain.exponentialRampToValueAtTime(peak, at + 0.02);
+  g.gain.exponentialRampToValueAtTime(0.0001, at + len);
+  o.connect(g);
+  g.connect(audio.destination);
+  o.start(at);
+  o.stop(at + len + 0.02);
+}
+// The three alarms an owner can pick from (Settings → Timers). Each is about two seconds
+// long, because a ringing alarm plays it again every two and a half.
+const SOUNDS = {
+  // Two bursts of three sharp pips: the classic kitchen timer.
+  beeps: (t0) => [0, 0.22, 0.44, 0.9, 1.12, 1.34].forEach((d) => note(t0 + d, 988, 0.16, 0.45)),
+  // Three rising notes, twice: gentler, like a doorbell.
+  chime: (t0) => [[0, 784], [0.26, 988], [0.52, 1175], [1.1, 784], [1.36, 988], [1.62, 1175]].forEach(([d, hz]) => note(t0 + d, hz, 0.5, 0.36)),
+  // Two struck bells with their overtones ringing out.
+  bell: (t0) => [0, 1.05].forEach((d) => { note(t0 + d, 660, 1.0, 0.4); note(t0 + d, 1320, 0.7, 0.16); note(t0 + d, 1980, 0.4, 0.08); }),
+};
+function beep(sound) {
   ensureAudio();
   if (!audio) return;
-  const t0 = audio.currentTime;
-  [0, 0.22, 0.44, 0.9, 1.12, 1.34].forEach((d) => {
-    const o = audio.createOscillator();
-    const g = audio.createGain();
-    o.type = 'sine';
-    o.frequency.value = 988;
-    g.gain.setValueAtTime(0.0001, t0 + d);
-    g.gain.exponentialRampToValueAtTime(0.45, t0 + d + 0.02);
-    g.gain.exponentialRampToValueAtTime(0.0001, t0 + d + 0.16);
-    o.connect(g).connect(audio.destination);
-    o.start(t0 + d);
-    o.stop(t0 + d + 0.18);
-  });
+  try { (SOUNDS[sound || display().alarmSound] || SOUNDS.beeps)(audio.currentTime); } catch (e) { /* no sound this time */ }
 }
 
-/** The alarm sound once, so someone setting the volume can hear how loud it will be. */
-export function testBeep() { beep(); }
+/** The alarm once, so someone setting the volume (or choosing a sound) can hear it. */
+export function testBeep(sound) { beep(sound); }
+/** The owner's alarm, for anything else that rings (cooking mode's step timers). */
+export function alarmBeep() { beep(); }
 
 // ---- Cooking mode's step timers ----------------------------------------------------------
 // They are kept with each recipe's progress (recipe.v1.<id>, see screens/recipe.js), and
@@ -156,7 +174,7 @@ export function startTimers() {
   // What cooking mode has going, when it isn't on screen to show and ring it itself.
   const cooking = () => {
     const now = Date.now();
-    return route === 'recipe' ? [] : cookingTimers().filter((c) => c.end > now || now - c.end < RING_MS);
+    return route === 'recipe' ? [] : cookingTimers().filter((c) => c.end > now || now - c.end < ringMs());
   };
   chip.addEventListener('click', () => {
     ensureAudio();
@@ -185,8 +203,11 @@ export function startTimers() {
       const running = list.filter((t) => state(t) === 'running').map((t) => t.end)
         .concat(cooks.filter((c) => c.end > now).map((c) => c.end)).sort((a, b) => a - b);
       const more = count > 1 ? ` · +${count - 1}` : '';
+      // Say which one: with three timers going, "time's up" alone sends people to look.
+      const rung = ringingNow();
       const text = ring
-        ? (cookDone.length && !ringing() ? `⏰ Time’s up! ${cookDone[0].label} · Tap to stop` : '⏰ Time’s up! Tap to stop')
+        ? (rung.length === 1 ? `⏰ Time’s up! ${rung[0].label} · Tap to stop`
+          : cookDone.length && !rung.length ? `⏰ Time’s up! ${cookDone[0].label} · Tap to stop` : '⏰ Time’s up! Tap to stop')
         : running.length ? `⏱ ${fmt(running[0] - now)}${more}` : `⏱ ${fmt(left(list[0]))} (paused)${more}`;
       if (chip.textContent !== text) chip.textContent = text;
       chip.style.background = ring ? 'var(--accent)' : '#1D2430';

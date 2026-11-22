@@ -1,5 +1,5 @@
 // Family · App menu (Launcher.dc.html in the design)
-import { display, hourText } from '../services/display.js';
+import { display, hourText, clockTime, clockAmPm } from '../services/display.js';
 import { settings } from '../config.js';
 import { getLocation } from '../services/location.js';
 import { getWeather, describe } from '../services/weather.js';
@@ -18,8 +18,8 @@ let timer, offNotes, offPhotos;
 function clockParts() {
   const now = new Date();
   return {
-    time: `${((now.getHours() + 11) % 12) + 1}:${String(now.getMinutes()).padStart(2, '0')}`,
-    ampm: now.getHours() < 12 ? 'AM' : 'PM',
+    time: clockTime(now),
+    ampm: clockAmPm(now),
     date: now.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' }),
   };
 }

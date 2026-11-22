@@ -5,6 +5,7 @@
 // "All recipes" goes to the recipe browser; the recipe being cooked is remembered in localStorage.
 // #/recipe/<id> opens that recipe; plain #/recipe opens the one in progress, else tonight's.
 import { settings } from '../config.js';
+import { alarmBeep } from '../services/timers.js';
 import { getRecipe, ingredientText, metaLine } from '../services/recipe-data.js';
 import { tonight, servingsFor, scaleFor } from '../services/meal-plan.js';
 import { recipeArt, cropFood, FILL } from './kitchen-ui.js';
@@ -71,21 +72,9 @@ function ensureAudio() {
     if (audio.state === 'suspended') audio.resume();
   } catch (e) { /* no audio available */ }
 }
+// The same alarm as the kitchen timers: the one the owner picked in Settings.
 function beep() {
-  if (!audio) return;
-  const t0 = audio.currentTime;
-  [0, 0.25, 0.5].forEach((d) => {
-    const o = audio.createOscillator();
-    const g = audio.createGain();
-    o.type = 'sine';
-    o.frequency.value = 880;
-    g.gain.setValueAtTime(0.0001, t0 + d);
-    g.gain.exponentialRampToValueAtTime(0.4, t0 + d + 0.02);
-    g.gain.exponentialRampToValueAtTime(0.0001, t0 + d + 0.18);
-    o.connect(g).connect(audio.destination);
-    o.start(t0 + d);
-    o.stop(t0 + d + 0.2);
-  });
+  if (audio) alarmBeep();
 }
 
 // Short name for chips about another recipe's timer ("Slow-cooker white…").
