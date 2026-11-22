@@ -525,3 +525,6 @@ from are counted.
 462. Publishing also runs the calendar-file and sky-maths tests first, and stops if one fails.
 463. A printable one-page guide for the kitchen screens (`guide/kitchen-screen.html`), to slip in with the gift: the words match what the screen says, with a blank for the PIN.
 464. The same for Tom's flight deck (`guide/flight-deck.html`).
+465. The screen's diary notes when the Wi-Fi or the internet was gone for more than ten minutes: from when, and for how long ("the weather was old all afternoon" has its answer there).
+466. The diary notes time spent on the battery too: from when, for how long, and how low it got.
+467. For whoever looks after the code: `node tools/sim/device-visit.mjs` puts the working copy on a plugged-in tablet, opens every screen there, reports how long each took and any error, and puts the tablet back.

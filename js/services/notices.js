@@ -4,6 +4,8 @@
 //   - the Wi-Fi or the internet has been gone for a while (weather and calendars go stale).
 // app.js puts `bar` back on the screen after each screen change, like the timer chip.
 import { worthAWord } from './whatsnew.js';
+import { noteTrouble } from './trouble.js';
+import { timeText } from './display.js';
 
 const N = () => window.TabletNative;
 const ON_A_SCREEN = /Android/.test(navigator.userAgent); // a laptop on its battery is not news
@@ -11,6 +13,12 @@ const UNPLUGGED_AFTER = 10 * 60 * 1000; // moved to another socket? no need to s
 const OFFLINE_AFTER = 3 * 60 * 1000;    // routers restart; a short gap isn't worth a word
 const LOW = 0.2;
 const QUIET_SCREENS = ['night', 'viewscreen', 'photos']; // only a really low battery speaks up here
+
+// Worth a line in the screen's diary afterwards: "the weather was old all afternoon" and
+// "it was dead this morning" both have their answer there for whoever looks after it.
+const WORTH_NOTING = 10 * 60 * 1000;
+const span = (ms) => { const m = Math.round(ms / 60000); return m < 60 ? `${m} min` : `${Math.floor(m / 60)} hr${m % 60 ? ` ${m % 60} min` : ''}`; };
+let lowest = 1; // how far the battery got down while unplugged
 
 export let bar = null;
 let route = '';
@@ -67,8 +75,12 @@ function makeRoom() {
 function lookAtNetwork() {
   let state = navigator.onLine === false ? 'off' : 'online';
   try { if (N() && N().network) state = N().network(); } catch (e) { /* keep the guess */ }
-  if (state === 'online') offlineAt = 0;
-  else { offlineKind = state; if (!offlineAt) offlineAt = Date.now(); }
+  if (state === 'online') {
+    if (offlineAt && Date.now() - offlineAt > WORTH_NOTING) {
+      noteTrouble(`${offlineKind === 'connected' ? 'The internet didn’t answer' : 'No Wi-Fi'} for ${span(Date.now() - offlineAt)}, from ${timeText(new Date(offlineAt))}. It is back.`, '');
+    }
+    offlineAt = 0;
+  } else { offlineKind = state; if (!offlineAt) offlineAt = Date.now(); }
   render();
   makeRoom();
 }
@@ -96,9 +108,21 @@ export function startNotices({ settingsRoute = '', homeRoutes: homes = [] } = {}
   if (navigator.getBattery) {
     navigator.getBattery().then((b) => {
       battery = b;
-      const plug = () => { unpluggedAt = b.charging ? 0 : (unpluggedAt || Date.now()); render(); };
+      const plug = () => {
+        if (b.charging) {
+          if (ON_A_SCREEN && unpluggedAt && Date.now() - unpluggedAt > WORTH_NOTING) {
+            noteTrouble(`Ran on its battery for ${span(Date.now() - unpluggedAt)}, from ${timeText(new Date(unpluggedAt))}, down to ${Math.round(Math.min(lowest, b.level) * 100)}%. It is plugged in again.`, '');
+          }
+          unpluggedAt = 0;
+          lowest = 1;
+        } else {
+          unpluggedAt = unpluggedAt || Date.now();
+          lowest = Math.min(lowest, b.level);
+        }
+        render();
+      };
       b.addEventListener('chargingchange', plug);
-      b.addEventListener('levelchange', render);
+      b.addEventListener('levelchange', () => { if (!b.charging) lowest = Math.min(lowest, b.level); render(); });
       plug();
     }).catch(() => { /* this engine doesn't say */ });
   }
