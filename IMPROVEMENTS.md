@@ -179,3 +179,139 @@ from are counted.
 152. The setup makes sure the home screen is really up and locked before it says "Done".
 153. The setup uses last time's download when the PC is offline, and refuses a broken download.
 154. Each tablet set up gets a line in setup-log.txt (date, serial number, which screens, app version; never the PIN).
+
+## 8 · Recipes and cooking
+
+155. Searching "berry" finds "berries" and "sandwiches" finds "sandwich" (it only worked one way round).
+156. Search understands other words for the same thing: veggie, crockpot, prawn, courgette, aubergine, coriander, BBQ; "pasta" also finds spaghetti, penne and lasagna.
+157. Short words no longer match the middle of other words ("ham" doesn't find "graham"), and a dish with the whole word in its name comes first.
+158. When no recipe has every word typed, Recipes says so and shows the closest ones instead of an empty screen.
+159. Search looks through what recipes use as well as their names, so "zucchini" or "chicken rice" finds dishes that don't mention it in the name.
+160. Tapping the search box offers your last searches and some ideas as big buttons, so there is less to type.
+161. Enter on the keyboard puts the keyboard away so the results can be seen.
+162. "Nothing found" offers words to tap and "Clear the search", not just advice.
+163. Recipe lists have filter buttons taken from the recipe data (30 min or less, Vegetarian, Slow cooker, One pot, Kids like it…), and the choice is still there on coming back from a dish.
+164. "Pick one for me" opens a random dish from the list on screen.
+165. A "Cooked lately" list, one tap from Favorites, shows what the family finished cooking, newest first.
+166. Recipe cards say "Cooked yesterday", or "Cooking · step 3" for a dish in progress.
+167. While something is being cooked, the Recipes page shows a bar with "Carry on cooking".
+168. Deleting one of your own recipes can be undone.
+169. Empty Favorites and Cooked lately pages explain how to fill them and have a "Browse recipes" button.
+170. Changing servings rounds counted things to amounts that can be used (1½ eggs, not 1⅓).
+171. Changed amounts switch to a natural measure when it comes out even (6 tsp becomes 2 tbsp, 8 tbsp becomes ½ cup).
+172. Changed amounts make the words agree ("1 large egg", "2 yellow onions").
+173. An eighth shows as ⅛ instead of "0.13".
+174. Ingredients ticked on a dish's page are kept for twelve hours, through leaving the page or a restart.
+175. "+ Shopping list" on a dish's page puts the ingredients you haven't ticked onto the shopping list, and says how many.
+176. The dish page's buttons are bigger for wet hands (servings −/+ 56 px, ingredient rows 52 px).
+177. On a dish in progress, "Cook now" becomes "Continue · step 3".
+178. A dish says when it was last cooked.
+179. The steps heading shows how many steps and the total time, and says when amounts in the steps are for the original number of servings.
+180. After changing servings there is a "Back to 8" button.
+181. "Make my own version" copies a library recipe into the My recipe editor, ready to change; the original stays.
+182. About 350 recipe steps that mention a time but had no timer ("Rest 10 minutes") now have a timer button.
+183. A step-timer button on the dish page says so when all eight timers are in use (it used to say the timer had started).
+184. Cooking mode's step timers ring even when nobody has tapped a button on that screen since coming back to it.
+185. Step timers ring for as long as was chosen in Settings, instead of a fixed two minutes.
+186. A finished step timer blinks in two steps instead of an endless smooth animation the slow chip struggles with.
+187. "Done cooking" shows an "Enjoy your meal!" screen with Back to recipes, Cook it again and Home (it used to drop to Home).
+188. Timer buttons for other steps are named for what they time ("Crisp the pork · 7:58") instead of "Step 3".
+189. A step timer has "+1 min" while it counts or rings.
+190. A very long step shrinks its text to fit the card instead of running off the bottom.
+191. Coming back to cooking left half-finished hours ago asks "Start from the beginning" or "Carry on from step 4".
+192. Opening cooking mode for a recipe that has been deleted says so (it quietly opened a different recipe).
+193. With changed servings, cooking mode says which amounts are for the new number and which are as written.
+194. Cooking mode no longer highlights "vegetable oil" when a step says "sesame oil".
+195. Cooking mode has bigger ingredient checkboxes and taller step dots.
+196. In the My recipe editor, Serves, Prep and Cook have big −/+ buttons, so no keyboard is needed.
+197. What is typed for a recipe of your own is kept as you go, so a restart mid-typing doesn't lose it.
+198. Saving a second recipe with the same name as an existing one asks first.
+199. Timers in your own steps understand "1 hour 30 minutes", "1½ hours", "half an hour" and "45 seconds".
+200. Ingredient lines like "a pinch of salt", "an onion" and "half a cup of milk" are read as amounts.
+
+## 9 · Home and the Menu
+
+201. Home's clock changes exactly on the minute (it could be ten seconds late) and is right the moment the screen wakes.
+202. With the 24-hour clock, Home has no empty gap where AM/PM used to be.
+203. On a family birthday Home says "Happy birthday, Ava!".
+204. On holidays Home says "Happy Thanksgiving", "Merry Christmas" and so on.
+205. Home's weather card warns of rain, snow or storms in the next few hours ("Rain around 11 PM"), or says when it will be dry again.
+206. Home's weather card shows tomorrow's forecast.
+207. Coming back to Home shows the weather and tonight's dinner at once, without a flash of "Loading weather…".
+208. Weather saved earlier says "as of 7:21 PM" when the Wi-Fi is down or it is over an hour old, and saved weather for another town or in the other degrees is not shown.
+209. The weather is fetched the moment the Wi-Fi comes back or another town is chosen, instead of up to fifteen minutes later.
+210. The note link on Home names the writer ("New note from Mom") and no longer runs past the card with a long name.
+211. Tapping anywhere on Home's photo opens the photo frame, not only the small "Full screen" button.
+212. A photo that won't load is skipped on Home instead of leaving the card blank.
+213. When the week plan says "Eating out" or "Leftovers" tonight, Home's dinner card and the Menu's Recipes tile say so.
+214. From 8 PM Home's dinner card shows tomorrow's planned dinner, so it can be thawed or prepared.
+215. "Coming up" says "Now" for something under way, and is checked every five minutes.
+216. Home's buttons (Timers, Menu, Full screen, Add photos) are bigger.
+217. The Menu has a "Wipe the screen" button.
+218. The Menu's clock changes exactly on the minute and leaves no gap with the 24-hour clock.
+219. The Menu's top buttons are taller and still fit on one row.
+220. Long hints on the Menu's tiles wrap to a second line instead of being cut off.
+221. The Calendar tile says what is next and when, not only a count.
+222. The Messages tile names the writer of the newest note.
+223. The Shopping list tile's count changes while the Menu is open (when something is added from a phone, say).
+224. The Weather tile shows saved weather at once instead of "Loading…", and its warning colour clears when a warning ends.
+225. With no photos yet, the Photos tile goes straight to "Add photos".
+
+## 10 · Night clock and Apps
+
+226. The night clock changes exactly on the minute and does nothing in between (it redrew every ten seconds all night).
+227. Every few minutes the night clock shifts a few pixels, so the screen doesn't keep a ghost of it after many nights.
+228. The night clock is easier to read when dimmed: heavier strokes, a bigger date, brighter and larger lines for tomorrow.
+229. A timer that rings while the night clock is up shows a big "Time's up · Pasta", and a tap anywhere stops it (a tap used to leave for Home with the timer still ringing).
+230. Tomorrow's weather and first calendar entry sit under the date, leaving the corners free, so a running timer no longer covers them.
+231. Opened by hand in the daytime, the night clock says "Tap anywhere to go back" and goes back to where you came from.
+232. The night clock's top line says what is happening: "Dimmed until 6 AM", "Good morning", or when it will come on.
+233. In the morning its "Today" line skips appointments that are already over.
+234. A long calendar entry no longer pushes its time off the night clock.
+235. With no forecast saved and no internet, the night clock says "No forecast just now" instead of a dash.
+236. When the screen wakes, the night clock catches up at once instead of showing an old time.
+237. With the 24-hour clock the night clock's time is properly centred.
+238. A timer ringing at night brings the backlight up enough to find the screen and read which timer it is, and back down when it is stopped.
+239. A timer counting down on the night clock is shown warm and dim instead of being the brightest thing in a dark room.
+240. The Apps screen puts the most-used apps first.
+241. If an app doesn't come up after a tap, the Apps screen says so plainly and what to try (it used to sit there saying "Opening…").
+242. "Update apps" first says what will happen: it is for a grown-up, the PIN comes next, the Play Store stays open for fifteen minutes.
+243. Coming back from the Play Store, the list refreshes by itself and marks what is new.
+244. With no apps yet, the Apps screen explains how they get there, with the button for a grown-up.
+245. After an app is used, its tile no longer still says "Opening…", and apps added or removed meanwhile show right away.
+246. The Apps screen's back and "Update apps" buttons are bigger.
+247. Long app names get a smaller font so more of the name shows.
+248. A screen whose Android side is too old to list its apps no longer shows a made-up list that does nothing.
+249. The app list is read from Android once per visit instead of for every tile (each read takes 30-44 ms on the tablet).
+250. A switch saved as the text "false" can no longer turn a feature on by mistake.
+
+## 11 · Weather
+
+251. Owners on Celsius get wind in km/h, rain in mm and snow in cm everywhere on the Weather screen.
+252. Wind has its direction in words ("from the southeast") and adds gusts when they are much stronger.
+253. Humidity is shown, with "damp" or "dry air" at the extremes.
+254. Sun strength (UV) is shown as a plain word with the number underneath.
+255. A "Rain, next 12 hrs" box gives the chance and the expected amount (snow when snow is due).
+256. After sunset the sunrise, sunset and sun-strength boxes switch to tomorrow's instead of times already past.
+257. Today's high and low read the useful way for the time of day ("Today's high 64° · Tonight's low 44°" in the evening).
+258. The summary line is plainer and covers more cases ("Rain until about 1 PM", "Dry tonight · frost likely"), and no longer says "Dry today" at 9 PM.
+259. "Before you head out" has better tips: frost and the car, an umbrella for the morning, strong gusts, sunscreen.
+260. The hour strip covers the next 24 hours instead of 12 and slides sideways.
+261. Night hours sit on a darker band and a new day is named at midnight.
+262. Sunrise and sunset appear as their own markers between the hours.
+263. The week shows six days instead of five.
+264. Weekend days are marked.
+265. Each day has a bar showing its low-to-high range against the whole week's.
+266. Tapping a day opens it in detail: hour by hour, rain or snow, wind, sun strength, sunrise and sunset.
+267. "Today hour by hour" opens the whole of today, with the past hours faded and now marked.
+268. With the Wi-Fi down, the saved forecast still describes the right hours, and an old one labels its temperature "expected about now".
+269. With no internet the Weather screen says how old the forecast is, and has a big "Try again".
+270. When the town is changed in Settings the Weather screen starts over for the new town at once, never showing the old town's weather under the new name.
+271. Warning colours follow how serious the warning is, on the Weather screen, Home and the Menu.
+272. Warnings say when they start as well as when they end, and the detail explains what a warning, a watch or an advisory means.
+273. Several warnings at once are counted and all listed.
+274. Warnings that have ended vanish by themselves while the screen is open.
+275. A quiet "No weather warnings" line appears only where the warning service really covers the area.
+276. For a town picked by hand in another time zone, "today", the hours and sunrise are right (today could show "--°").
+277. A damaged saved copy or full storage no longer stops the weather on Home, the Menu, the night clock and the photo frame, and a missing temperature is no longer shown as "0°".
+278. Missing numbers show "--", never "undefined°".

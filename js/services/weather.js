@@ -23,13 +23,21 @@ export function describe(code) {
   return { label, icon };
 }
 
+function zone() {
+  try { return Intl.DateTimeFormat().resolvedOptions().timeZone || 'auto'; } catch (e) { return 'auto'; }
+}
+
 export async function getWeather(loc) {
-  const cached = JSON.parse(localStorage.getItem(CACHE_KEY) || 'null');
-  if (cached && Date.now() - cached.at < MAX_AGE && cached.lat === loc.lat && cached.units === settings.units) return cached;
+  // A damaged saved copy (or storage switched off) must not stop the weather showing.
+  let cached = null;
+  try { cached = JSON.parse(localStorage.getItem(CACHE_KEY) || 'null'); } catch (e) { cached = null; }
+  if (cached && Date.now() - cached.at < MAX_AGE && cached.lat === loc.lat
+    && (cached.lon === undefined || cached.lon === loc.lon) && cached.units === settings.units) return cached;
 
   const url = new URL('https://api.open-meteo.com/v1/forecast');
   url.search = new URLSearchParams({
-    latitude: loc.lat, longitude: loc.lon, timezone: 'auto',
+    // Times in the display's own zone, so "tomorrow" and the hours match its clock.
+    latitude: loc.lat, longitude: loc.lon, timezone: zone(),
     temperature_unit: settings.units,
     current: 'temperature_2m,weather_code,is_day',
     hourly: 'temperature_2m,weather_code',
@@ -39,19 +47,22 @@ export async function getWeather(loc) {
   const res = await fetch(url, { signal: AbortSignal.timeout(10000) });
   if (!res.ok) throw new Error('weather failed');
   const d = await res.json();
+  // A reply with the temperature missing would otherwise read "0°": treat it as no answer,
+  // so the screens keep what they had.
+  if (!d || !d.current || typeof d.current.temperature_2m !== 'number' || !d.hourly || !d.daily) throw new Error('weather incomplete');
 
-  // Next 5 hours starting with the coming hour
+  // Next 5 hours starting with the coming hour (none if the list has run out)
   const now = Date.now();
   const start = d.hourly.time.findIndex((t) => new Date(t).getTime() > now);
-  const hours = d.hourly.time.slice(start, start + 5).map((t, i) => ({
-    time: new Date(t),
-    temp: Math.round(d.hourly.temperature_2m[start + i]),
-    code: d.hourly.weather_code[start + i],
-  }));
+  const hours = start < 0 ? [] : d.hourly.time.slice(start, start + 5)
+    .map((t, i) => ({ t, raw: d.hourly.temperature_2m[start + i], code: d.hourly.weather_code[start + i] }))
+    .filter((h) => typeof h.raw === 'number') // an hour with no temperature is left out, not shown as 0°
+    .map((h) => ({ time: new Date(h.t), temp: Math.round(h.raw), code: h.code }));
 
   const result = {
     at: Date.now(),
     lat: loc.lat,
+    lon: loc.lon,
     units: settings.units,
     temp: Math.round(d.current.temperature_2m),
     code: d.current.weather_code,
@@ -60,6 +71,6 @@ export async function getWeather(loc) {
     hours,
     daily: d.daily,
   };
-  localStorage.setItem(CACHE_KEY, JSON.stringify(result));
+  try { localStorage.setItem(CACHE_KEY, JSON.stringify(result)); } catch (e) { /* storage full: still show it */ }
   return result;
 }

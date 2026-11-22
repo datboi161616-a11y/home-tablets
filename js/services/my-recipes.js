@@ -9,7 +9,10 @@ const LOCAL_KEY = 'my.recipes.v1'; // browser preview only; the tablet keeps the
 
 const native = () => (window.TabletNative && window.TabletNative.myRecipes ? window.TabletNative : null);
 
-export const MEAL_NAMES = { breakfast: 'Breakfast', lunch: 'Lunch', dinner: 'Dinner', dessert: 'Dessert' };
+/** sessionStorage: { at, recipe } for a just-deleted recipe, so My recipes can offer "Undo". */
+export const UNDO_KEY = 'myrecipe.undo';
+
+export const MEAL_NAMES ={ breakfast: 'Breakfast', lunch: 'Lunch', dinner: 'Dinner', dessert: 'Dessert' };
 
 /** Saved recipes as typed, newest first. */
 export function savedRecipes() {
@@ -86,7 +89,9 @@ const guessAisle = (item) => (AISLE_WORDS.find(([, re]) => re.test(item)) || ['p
 
 /** "1 1/2 cups milk, warm" -> { q: 1.5, u: 'cup', item: 'milk', note: 'warm', aisle: 'dairy' } */
 export function parseIngredient(line) {
-  let s = String(line).trim().replace(/^[-•*]\s*/, '');
+  // "a pinch of salt", "an onion", "half a cup of milk": words for numbers count as numbers.
+  let s = String(line).trim().replace(/^[-•*]\s*/, '')
+    .replace(/^half an?\s+/i, '½ ').replace(/^an?\s+(?!(few|little|bit|couple|handful|splash|drizzle|knob|squeeze)\b)(?=[a-z])/i, '1 ');
   let q = null;
   const num = s.match(/^(\d+)\s+(\d+)\/(\d+)|^(\d+)\/(\d+)|^(\d*\.?\d+)\s*([½⅓⅔¼¾⅛])?|^([½⅓⅔¼¾⅛])/);
   if (num) {
@@ -114,13 +119,23 @@ export function parseIngredient(line) {
 
 const VERBS = /\b(preheat|bake|roast|broil|grill|simmer|boil|cook|fry|sauté|saute|brown|steam|microwave|rest|chill|cool|freeze|marinate|soak|rise|proof|toast|heat|stir|whisk|knead|blend|steep)\b/;
 
+/** How long a step says to wait, in seconds, or 0: "25 minutes", "1 hour 30 minutes",
+ *  "1½ hours", "half an hour", "an hour", "45 seconds", "20-25 min" (the first number). */
+export function stepSeconds(text) {
+  const t = String(text).toLowerCase().replace(/half an? hour/g, '30 minutes').replace(/\ban hour\b/g, '1 hour')
+    .replace(/(\d+)\s*½/g, '$1.5').replace(/½/g, '0.5').replace(/(\d+)\s+1\/2/g, '$1.5');
+  const m = t.match(/(\d+(?:\.\d+)?)\s*(?:(?:-|–|to)\s*\d+(?:\.\d+)?\s*)?(minutes?|mins?|hours?|hrs?|seconds?|secs?)\b(?:\s*(?:and\s*)?(\d+)\s*(minutes?|mins?))?/);
+  if (!m) return 0;
+  const unit = /^h/.test(m[2]) ? 3600 : /^s/.test(m[2]) ? 1 : 60;
+  return Math.round(parseFloat(m[1]) * unit + (m[3] && unit === 3600 ? +m[3] * 60 : 0));
+}
+
 /** "Bake 25 minutes until golden" -> { text, timer: 1500, timerLabel: 'Bake' } */
 export function parseStep(line) {
   const text = String(line).trim().replace(/^(\d+[.)]|step\s*\d+[:.]?)\s*/i, '');
   const step = { text };
-  const m = text.match(/(\d+(?:\.\d+)?)\s*(?:(?:-|to)\s*\d+(?:\.\d+)?\s*)?(minutes?|mins?|hours?|hrs?)\b/i);
-  if (m) {
-    const secs = Math.round(parseFloat(m[1]) * (/^h/i.test(m[2]) ? 3600 : 60));
+  const secs = stepSeconds(text);
+  if (secs) {
     if (secs >= 30 && secs <= 24 * 3600) {
       step.timer = secs;
       const verb = (text.toLowerCase().match(VERBS) || ['timer'])[0];

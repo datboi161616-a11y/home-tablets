@@ -1,7 +1,7 @@
 // Family · One recipe (#/dish/<id>): ingredients, steps, add to the week plan, cook it.
-import { getRecipe, loadIndex, ingredientText, fmtMinutes, cuisineColor } from '../services/recipe-data.js';
-import { weekDays, daysPlanned, addToPlan, removeFromPlan, plannedFor, MEALS, defaultMeal, isFavorite, toggleFavorite, servingsFor, scaleFor, setServings } from '../services/meal-plan.js';
-import { addTimer } from '../services/timers.js';
+import { getRecipe, loadIndex, ingredientText, fmtMinutes, cuisineColor, withStepTimers, lastCooked, cookedWhen, cookingProgress } from '../services/recipe-data.js';
+import { weekDays, daysPlanned, addToPlan, removeFromPlan, plannedFor, MEALS, defaultMeal, isFavorite, toggleFavorite, servingsFor, scaleFor, setServings, addExtra, weekRecipeIds } from '../services/meal-plan.js';
+import { addTimer, MAX } from '../services/timers.js';
 import { esc, kitchenStyles, kitchenTop, wireBack, fillCounts, recipeArt, cropFood } from './kitchen-ui.js';
 
 // Set by the Week plan's "+ Add" ("2026-11-20|lunch") so the next recipe picked goes
@@ -9,8 +9,23 @@ import { esc, kitchenStyles, kitchenTop, wireBack, fillCounts, recipeArt, cropFo
 export const ADD_DAY_KEY = 'kitchen.addDay';
 const MAX_PER_MEAL = 3; // same limit as the week plan
 
-// Ingredients ticked off while gathering them, per recipe (kept while the tablet is on).
-const ticked = {};
+// Ingredients ticked off while gathering them, per recipe. Kept for half a day, so a
+// restart or a trip to another screen doesn't lose them, but tomorrow starts clean.
+const TICK_KEY = 'dish.ticked.v1';
+const TICK_MS = 12 * 60 * 60 * 1000;
+function tickedFor(id) {
+  let all = {};
+  try { all = JSON.parse(localStorage.getItem(TICK_KEY) || '{}') || {}; } catch (e) { all = {}; }
+  const t = all[id];
+  return t && Date.now() - t.at < TICK_MS ? (t.got || {}) : {};
+}
+function saveTicked(id, got) {
+  let all = {};
+  try { all = JSON.parse(localStorage.getItem(TICK_KEY) || '{}') || {}; } catch (e) { all = {}; }
+  Object.keys(all).forEach((k) => { if (!all[k] || Date.now() - all[k].at > TICK_MS) delete all[k]; });
+  if (Object.keys(got).length) all[id] = { at: Date.now(), got }; else delete all[id];
+  try { localStorage.setItem(TICK_KEY, JSON.stringify(all)); } catch (e) { /* storage full */ }
+}
 
 const pending = () => { const [key, meal] = String(sessionStorage.getItem(ADD_DAY_KEY) || '').split('|'); return key ? { key, meal: meal || 'dinner' } : null; };
 
@@ -28,14 +43,16 @@ export function mount(el, { args = [] } = {}) {
     .dz-day .s{font-size:14px;color:#4A5363}
     .dz-day.on{background:#1D2430;border-color:#1D2430;color:#FFFFFF}
     .dz-day.on .s{color:#C9CFD6}
-    .dz-meal{min-height:44px;padding:0 18px;border-radius:999px;border:2px solid #D9DDE2;background:#FFFFFF;font-size:16px;font-weight:600;
+    .dz-meal{min-height:52px;min-width:52px;padding:0 18px;border-radius:999px;border:2px solid #D9DDE2;background:#FFFFFF;font-size:16px;font-weight:600;
       font-family:Inter,sans-serif;color:#1D2430;cursor:pointer}
     .dz-meal.on{background:#1D2430;border-color:#1D2430;color:#FFFFFF}
     .dz-meal:disabled{opacity:.35;cursor:default}
-    .dz-ing{cursor:pointer;min-height:44px;align-items:flex-start}
+    .dz-ing{cursor:pointer;min-height:52px;align-items:center;padding:4px 0}
+    .dz-ing::before{margin-top:0}
     .dz-ing.got{color:#8A93A3;text-decoration:line-through}
     .dz-ing.got::before{content:'✓';width:12px;height:auto;border-radius:0;background:none;color:#2E6B45;font-weight:700;margin-top:0;font-size:16px}
-    .dz-timer{display:inline-flex;align-items:center;gap:6px;min-height:44px;margin-top:6px;padding:0 16px;border-radius:999px;border:2px solid #D9DDE2;background:#FFFFFF;
+    .dz-sv{width:56px;height:56px;min-width:56px;padding:0;font-size:24px}
+    .dz-timer{display:inline-flex;align-items:center;gap:6px;min-height:52px;margin-top:6px;padding:0 16px;border-radius:999px;border:2px solid #D9DDE2;background:#FFFFFF;
       font:600 16px Inter,sans-serif;color:#1D2430;cursor:pointer}
     .dz-timer.on{background:#2E6B45;border-color:#2E6B45;color:#FFFFFF}
     .dz-note{font-size:15px;line-height:1.35;color:#4A5363}
@@ -48,20 +65,25 @@ export function mount(el, { args = [] } = {}) {
   const root = el.querySelector('[data-root]');
   wireBack(el, '#/recipes');
 
-  const load = () => Promise.all([getRecipe(id), loadIndex()]).then(([r, ix]) => {
+  const load = () => Promise.all([getRecipe(id), loadIndex()]).then(([r0, ix]) => {
     if (!el.isConnected) return;
-    if (!r) {
+    if (!r0) {
       root.querySelector('.k-empty').innerHTML = 'That recipe isn’t here any more.<a href="#/recipes" class="k-btn solid">Browse recipes</a>';
       return;
     }
+    // Steps that say "rest 10 minutes" get a timer button too.
+    const r = withStepTimers(r0);
     const cuisine = ix.cuisines.find((c) => c.id === r.cuisine) || { name: '', types: [] };
     const type = cuisine.types.find((t) => t.id === r.type);
     const p0 = pending();
     let meal = p0 ? p0.meal : defaultMeal(r.mine ? r.type : cuisine.meal);
     const mealName = (m) => MEALS.find((x) => x[0] === m)[1].toLowerCase();
-    const got = ticked[r.id] || (ticked[r.id] = {});
+    const got = tickedFor(r.id);
     let note = null; // { text, warn } shown under the days after a tap that couldn't be done
+    let listNote = ''; // what "Add to shopping list" did
     const timeLine = r.meta || [r.prep ? `${fmtMinutes(r.prep)} prep` : '', r.cook ? `${fmtMinutes(r.cook)} cook` : ''].filter(Boolean).join(' · ');
+    const total = (r.prep || 0) + (r.cook || 0);
+    const cooked = lastCooked(r.id);
     const secsText = (secs) => (secs < 60 ? `${secs} sec` : fmtMinutes(Math.round(secs / 60)));
     const dayWord = (d) => (d.label === 'Today' || d.label === 'Tomorrow' ? d.label : d.short);
     // "Also on the week plan: Fri lunch" for the other meals (the day buttons show only the chosen meal).
@@ -93,28 +115,38 @@ export function mount(el, { args = [] } = {}) {
                 <div style="display:flex;gap:8px;flex-wrap:wrap">
                   <a href="#/recipes/${r.cuisine}" class="k-tag" style="background:${cuisineColor(r.cuisine)};color:#fff">${esc(cuisine.name)}</a>
                   ${type ? `<a href="#/recipes/${r.cuisine}/${type.id}" class="k-tag">${esc(type.name)}</a>` : ''}
-                  ${(r.tags || []).slice(0, 3).map((t) => `<span class="k-tag">${esc(t)}</span>`).join('')}
+                  ${(r.tags || []).slice(0, 2).map((t) => `<span class="k-tag">${esc(t)}</span>`).join('')}
                 </div>
                 ${r.blurb ? `<div style="font-size:18px;color:#4A5363;line-height:1.35">${esc(r.blurb)}</div>` : ''}
               </div>
               <div style="width:118px;flex:none;margin:-8px -8px 0 0">${cropFood(recipeArt(r, 'width:118px;height:88px'))}</div>
             </div>
             ${timeLine ? `<div style="font-size:17px;font-weight:600">${esc(timeLine)}</div>` : ''}
+            ${cooked ? `<div class="dz-note">You last cooked this ${cookedWhen(cooked)}.</div>` : ''}
             <div style="display:flex;align-items:center;gap:10px;margin-top:4px">
               <div class="eyebrow muted" style="flex:1">Ingredients</div>
-              <button class="dz-meal" data-serves="-1" aria-label="Fewer servings"${servingsFor(r) <= 1 ? ' disabled' : ''}>−</button>
-              <div style="font-size:16px;font-weight:600;min-width:84px;text-align:center">Serves ${servingsFor(r)}</div>
-              <button class="dz-meal" data-serves="1" aria-label="More servings"${servingsFor(r) >= 24 ? ' disabled' : ''}>+</button>
+              <button class="dz-meal dz-sv" data-serves="-1" aria-label="Fewer servings"${servingsFor(r) <= 1 ? ' disabled' : ''}>−</button>
+              <div style="font-size:17px;font-weight:600;min-width:84px;text-align:center">Serves ${servingsFor(r)}</div>
+              <button class="dz-meal dz-sv" data-serves="1" aria-label="More servings"${servingsFor(r) >= 24 ? ' disabled' : ''}>+</button>
             </div>
-            ${servingsFor(r) !== r.serves ? `<div class="dz-note" style="margin-top:-4px">Amounts changed for ${servingsFor(r)} (the recipe makes ${r.serves}).</div>` : ''}
-            <div class="k-scroll" data-ings>${r.ingredients.map((i, n) => `<div class="dz-ing${got[n] ? ' got' : ''}" data-ing="${n}">${esc(ingredientText(i, scaleFor(r)))}</div>`).join('')}</div>
-            ${r.ingredients.length > 1 ? `<div class="dz-note" style="display:flex;align-items:center;gap:10px;min-height:44px">${Object.keys(got).length
-              ? `<span style="flex:1">${Object.keys(got).length} of ${r.ingredients.length} ticked off</span><button data-untick class="k-btn sm line">Untick all</button>`
-              : 'Tap an ingredient to tick it off as you get it out.'}</div>` : ''}
+            ${servingsFor(r) !== r.serves ? `<div class="dz-note" style="margin-top:-4px;display:flex;align-items:center;gap:10px"><span style="flex:1">Amounts changed (the recipe makes ${r.serves}).</span><button data-sreset class="k-btn sm line">Back to ${r.serves}</button></div>` : ''}
+            <div class="k-scroll" data-ings>${r.ingredients.length
+              ? r.ingredients.map((i, n) => `<div class="dz-ing${got[n] ? ' got' : ''}" data-ing="${n}">${esc(ingredientText(i, scaleFor(r)))}</div>`).join('')
+              : '<div class="dz-note">This recipe doesn’t list its ingredients.</div>'}</div>
+            ${r.ingredients.length ? `<div class="dz-note${listNote ? '' : ''}" style="${listNote ? 'color:#2E6B45;font-weight:600' : ''}">${listNote ? esc(listNote)
+              : Object.keys(got).length ? `${Object.keys(got).length} of ${r.ingredients.length} ticked off. The rest can go on the shopping list.`
+                : 'Tap what you already have to tick it off.'}</div>
+            <div style="display:flex;gap:10px">
+              ${Object.keys(got).length ? '<button data-untick class="k-btn sm line">Untick all</button>' : ''}
+              ${Object.keys(got).length < r.ingredients.length ? `<button data-tolist class="k-btn sm line" style="flex:1">+ Shopping list${Object.keys(got).length ? ` (${r.ingredients.length - Object.keys(got).length})` : ''}</button>` : ''}
+            </div>` : ''}
           </div>
           <div style="display:flex;flex-direction:column;gap:20px;min-height:0;min-width:0">
             <div class="card" style="padding:26px 30px;flex-grow:1;min-height:0;display:flex;flex-direction:column;gap:10px">
-              <div class="eyebrow muted">Steps · ${fmtMinutes(r.prep + r.cook)} total</div>
+              <div style="display:flex;align-items:center;gap:12px;margin-top:-8px">
+                <div class="eyebrow muted" style="flex:1;min-width:0">${r.steps.length} step${r.steps.length === 1 ? '' : 's'}${total ? ` · ${fmtMinutes(total)} in all` : ''}${servingsFor(r) !== r.serves ? ` · amounts in the steps are for ${r.serves}` : ''}</div>
+                ${r.mine ? '' : `<a href="#/myrecipe/from/${encodeURIComponent(r.id)}" class="k-btn sm line" title="Copy it into My recipes to change it">Make my own version</a>`}
+              </div>
               <div class="k-scroll" data-steps>${r.steps.map((s, n) => `<div class="dz-step"><b>${n + 1}</b><span>${esc(s.text)}${s.timer ? `<br><button class="dz-timer" data-timer="${n}">⏱ Start ${secsText(s.timer)} timer</button>` : ''}</span></div>`).join('')}</div>
             </div>
             <div class="card" style="padding:20px 24px;display:flex;flex-direction:column;gap:14px">
@@ -122,7 +154,10 @@ export function mount(el, { args = [] } = {}) {
                 <div style="font-size:18px;font-weight:600;white-space:nowrap">Plan it for</div>
                 ${MEALS.map(([m, name]) => `<button class="dz-meal${m === meal ? ' on' : ''}" data-meal="${m}">${name}</button>`).join('')}
                 <div style="flex:1"></div>
-                <a href="#/recipe/${encodeURIComponent(r.id)}" class="k-btn dark">Cook now</a>
+                ${(() => {
+                  const prog = cookingProgress(r.id);
+                  return `<a href="#/recipe/${encodeURIComponent(r.id)}" class="k-btn dark">${prog ? `Continue · step ${prog.step}` : 'Cook now'}</a>`;
+                })()}
               </div>
               ${target && daysPlanned(r.id, p.meal).indexOf(target.key) < 0 ? `<button data-addto="${target.key}" data-addmeal="${p.meal}" class="k-btn solid" style="width:100%">Add to ${esc(target.label)} ${mealName(p.meal)}</button>` : ''}
               <div style="display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:10px">
@@ -156,20 +191,54 @@ export function mount(el, { args = [] } = {}) {
       if (ing) {
         const n = ing.dataset.ing;
         if (got[n]) delete got[n]; else got[n] = true;
+        saveTicked(r.id, got);
+        listNote = '';
         const sc = root.querySelector('[data-ings]').scrollTop;
         render();
         root.querySelector('[data-ings]').scrollTop = sc;
         return;
       }
-      if (e.target.closest('[data-untick]')) { Object.keys(got).forEach((k) => { delete got[k]; }); render(); return; }
+      if (e.target.closest('[data-untick]')) { Object.keys(got).forEach((k) => { delete got[k]; }); saveTicked(r.id, got); listNote = ''; render(); return; }
+      if (e.target.closest('[data-sreset]')) { setServings(r, r.serves); render(); return; }
+      if (e.target.closest('[data-tolist]')) {
+        // A recipe on this week's plan is on the shopping list already, amounts and all.
+        if (weekRecipeIds().indexOf(r.id) >= 0) {
+          listNote = 'It’s on the week plan, so the shopping list has these already.';
+        } else {
+          let added = 0;
+          let there = 0;
+          r.ingredients.forEach((ing, n) => {
+            // Tap water, salt and pepper aren't things anyone needs reminding to buy.
+            if (got[n] || (typeof ing !== 'string' && /^(water|ice|hot water|cold water|warm water|salt|black pepper|salt and pepper|kosher salt)$/i.test(String(ing.item).trim()))) return;
+            const res = addExtra(ingredientText(ing, scaleFor(r)));
+            if (res === 'added' || res === 'back') added++; else if (res === 'there') there++;
+          });
+          listNote = added ? `${added} added to the shopping list.${there ? ` ${there} ${there === 1 ? 'was' : 'were'} on it already.` : ''}`
+            : 'They’re all on the shopping list already.';
+        }
+        render();
+        fillCounts(root);
+        return;
+      }
       const tb = e.target.closest('[data-timer]');
       if (tb) {
         const st = r.steps[+tb.dataset.timer];
         const name = r.title.length > 22 ? `${r.title.slice(0, 21)}…` : r.title;
-        addTimer(st.timer, `${st.timerLabel || 'Step'} · ${name}`);
-        tb.classList.add('on');
-        tb.textContent = '✓ Timer started';
-        setTimeout(() => { if (tb.isConnected) { tb.classList.remove('on'); tb.textContent = `⏱ Start ${secsText(st.timer)} timer`; } }, 3000);
+        const ok = addTimer(st.timer, `${st.timerLabel || 'Step'} · ${name}`);
+        // All the kitchen timers busy: say so, instead of claiming one started.
+        if (ok === false) {
+          tb.style.borderColor = '#B3261E';
+          tb.style.color = '#B3261E';
+          tb.textContent = `All ${MAX} timers are in use. Stop one in Timers first.`;
+        } else {
+          tb.classList.add('on');
+          tb.textContent = '✓ Timer started';
+        }
+        setTimeout(() => {
+          if (!tb.isConnected) return;
+          tb.classList.remove('on'); tb.style.borderColor = ''; tb.style.color = '';
+          tb.textContent = `⏱ Start ${secsText(st.timer)} timer`;
+        }, ok === false ? 5000 : 3000);
         return;
       }
       const sv = e.target.closest('[data-serves]');

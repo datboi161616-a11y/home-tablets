@@ -298,6 +298,23 @@ function place() {
 }
 function placeSoon(ms) { clearTimeout(placeTimer); placeTimer = setTimeout(place, ms); }
 
+// What cooking mode has going, when it isn't on screen to show and ring it itself.
+function cookingNow() {
+  const now = Date.now();
+  return route === 'recipe' ? [] : cookingTimers().filter((c) => c.end > now || now - c.end < ringMs());
+}
+/** The names of everything ringing right now, kitchen timers and cooking steps alike ([] when quiet). */
+export function ringingNames() {
+  const now = Date.now();
+  return ringingNow().map((t) => t.label).concat(cookingNow().filter((c) => c.end <= now).map((c) => c.label));
+}
+/** ...worded for a person: "Pasta", "Pasta and Oven", "Pasta, Oven and 1 more". */
+export const ringingText = () => namesText(ringingNames());
+/** Stop all of it. */
+export function stopAllRinging() { stopRinging(); stopCooking(); }
+
+let wasRinging = false;
+
 export function startTimers() {
   chip = document.createElement('button');
   chip.setAttribute('data-timer-chip', '');
@@ -305,11 +322,7 @@ export function startTimers() {
   chip.style.cssText = 'position:absolute;right:24px;bottom:24px;z-index:50;display:none;align-items:center;gap:12px;'
     + 'min-height:64px;max-width:620px;padding:0 26px;border:none;border-radius:999px;font:600 22px Inter,sans-serif;cursor:pointer;'
     + 'box-shadow:0 6px 20px rgba(0,0,0,.18);font-variant-numeric:tabular-nums;white-space:nowrap;overflow:hidden';
-  // What cooking mode has going, when it isn't on screen to show and ring it itself.
-  const cooking = () => {
-    const now = Date.now();
-    return route === 'recipe' ? [] : cookingTimers().filter((c) => c.end > now || now - c.end < ringMs());
-  };
+  const cooking = cookingNow;
   chip.addEventListener('click', () => {
     ensureAudio();
     const cooks = cooking();
@@ -365,11 +378,15 @@ export function startTimers() {
         chip.innerHTML = html;
         if (longer && !/^<span>⏱/.test(html)) placeSoon(50); // its width changed: check its corner again
       }
-      chip.style.background = ring || full ? 'var(--accent)' : '#1D2430';
-      chip.style.color = '#FFFFFF';
+      // On the night clock a countdown is the brightest thing in a dark room: warm and dim there.
+      const dim = route === 'night' && !ring && !full;
+      chip.style.background = ring || full ? 'var(--accent)' : dim ? '#231B12' : '#1D2430';
+      chip.style.color = dim ? '#D2B48C' : '#FFFFFF';
+      chip.style.boxShadow = dim ? 'none' : '0 6px 20px rgba(0,0,0,.18)';
       chip.style.opacity = ring && Math.floor(Date.now() / 500) % 2 ? '.75' : '1';
     }
     wasHidden = hide;
+    if (ring !== wasRinging) { wasRinging = ring; window.dispatchEvent(new Event('alarm-changed')); }
     if (ring && Date.now() - lastBeep > 2500) { lastBeep = Date.now(); beep(); }
   };
   setInterval(tick, 250);

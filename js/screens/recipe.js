@@ -6,15 +6,21 @@
 // #/recipe/<id> opens that recipe; plain #/recipe opens the one in progress, else tonight's.
 import { settings } from '../config.js';
 import { alarmBeep } from '../services/timers.js';
-import { getRecipe, ingredientText, metaLine } from '../services/recipe-data.js';
+import { display } from '../services/display.js';
+import { getRecipe as getRecipeRaw, ingredientText, metaLine, withStepTimers, markCooked } from '../services/recipe-data.js';
 import { tonight, servingsFor, scaleFor } from '../services/meal-plan.js';
 import { recipeArt, cropFood, FILL } from './kitchen-ui.js';
 
 const esc = (x) => String(x == null ? '' : x).replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+// Steps that say "rest 10 minutes" get a timer too, here as on the recipe page.
+const getRecipe = (id) => getRecipeRaw(id).then(withStepTimers);
 
-const ALARM_MAX_MS = 2 * 60 * 1000; // stop ringing after 2 minutes if nobody taps
+// An alarm nobody stops rings as long as the owner chose for the kitchen timers (Settings).
+const alarmMaxMs = () => Math.max(1, +display().alarmMinutes || 2) * 60 * 1000;
 const CURRENT_KEY = 'recipe.current';
-let tickTimer, audio;
+// Progress left alone longer than this is from another day's cooking: ask before carrying on.
+const STALE_MS = 6 * 60 * 60 * 1000;
+let tickTimer;
 
 // ---- Saved state ----------------------------------------------------------
 const keyFor = (id) => `recipe.v1.${id}`;
@@ -28,9 +34,13 @@ function load(r) {
     checked: r.ingredients.map((_, i) => !!checked[i]),
     // timers[i]: { end } running · { left } paused · { end, ack } finished and dismissed
     timers: s.timers || {},
+    at: s.at || 0, // last saved (to spot yesterday's half-finished cooking)
   };
 }
-const save = (r, s) => localStorage.setItem(keyFor(r.id), JSON.stringify(s));
+const save = (r, s) => {
+  s.at = Date.now();
+  try { localStorage.setItem(keyFor(r.id), JSON.stringify(s)); } catch (e) { /* storage full: keeps going on screen */ }
+};
 
 // ---- Timer helpers --------------------------------------------------------
 function remaining(r, s, i) {
@@ -65,20 +75,16 @@ function fmt(ms) {
   return h ? `${h}:${String(m).padStart(2, '0')}:${sec}` : `${m}:${sec}`;
 }
 
-// ---- Alarm sound (Web Audio, no files needed) ------------------------------
-function ensureAudio() {
-  try {
-    if (!audio) audio = new (window.AudioContext || window.webkitAudioContext)();
-    if (audio.state === 'suspended') audio.resume();
-  } catch (e) { /* no audio available */ }
-}
-// The same alarm as the kitchen timers: the one the owner picked in Settings.
-function beep() {
-  if (audio) alarmBeep();
-}
+// ---- Alarm sound -------------------------------------------------------------
+// The same alarm as the kitchen timers: the one the owner picked in Settings. (It used
+// to ring only after a button on this screen had been tapped, so coming back here from
+// the timer chip and waiting left a finished step timer silent.)
+function beep() { alarmBeep(); }
 
 // Short name for chips about another recipe's timer ("Slow-cooker white…").
 const shortTitle = (t) => (t.length > 18 ? `${t.slice(0, 17)}…` : t);
+// What a step's timer is for ("Crisp the pork"), or "Step 3" when the recipe doesn't say.
+const timerName = (step, i) => step.timerLabel || `Step ${i + 1}`;
 // Long steps get slightly smaller type so they always fit the card.
 const stepSize = (text) => (text.length <= 90 ? 46 : text.length <= 130 ? 40 : 34);
 
@@ -93,9 +99,20 @@ function ingredientWords(ing) {
     .filter((w) => w.length >= 3 && PLAIN.indexOf(w) < 0)
     .map((w) => w.replace(/oes$/, 'o').replace(/([^s])s$/, '$1')); // "eggs" -> "egg", "tomatoes" -> "tomato"
 }
+// A word several ingredients share ("oil" in vegetable oil and sesame oil) only points at
+// one of them when nothing more telling does: "sesame oil" in a step lights up the sesame
+// oil, not the vegetable oil as well.
 function usedIn(r, stepText) {
   const text = ` ${String(stepText).toLowerCase()} `;
-  return r.ingredients.map((ing) => ingredientWords(ing).some((w) => new RegExp(`[^a-z]${w}(es|s)?[^a-z]`).test(text)));
+  const lists = r.ingredients.map(ingredientWords);
+  const owners = {};
+  lists.forEach((ws) => ws.forEach((w) => { owners[w] = (owners[w] || 0) + 1; }));
+  const said = (w) => new RegExp(`[^a-z]${w}(es|s)?[^a-z]`).test(text);
+  const hits = lists.map((ws) => ws.filter(said));
+  const sure = lists.map((ws, i) => hits[i].length > 0 && (hits[i].length === ws.length || hits[i].some((w) => owners[w] === 1)));
+  const claimed = {};
+  lists.forEach((ws, i) => { if (sure[i]) hits[i].forEach((w) => { claimed[w] = true; }); });
+  return lists.map((ws, i) => sure[i] || hits[i].some((w) => !claimed[w]));
 }
 
 // ---- Screen -----------------------------------------------------------------
@@ -124,7 +141,19 @@ async function start(el, args) {
   // The recipe asked for, else the one in progress, else tonight's.
   let r = null;
   let s = null;
-  if (args[0]) r = await getRecipe(args[0]);
+  if (args[0]) {
+    r = await getRecipe(args[0]);
+    // A recipe that has gone (your own, deleted): say so, rather than quietly opening another one.
+    if (!r) {
+      if (el.isConnected) {
+        el.innerHTML = `<div style="height:100%;display:flex;flex-direction:column;gap:24px;align-items:center;justify-content:center;font-size:24px;color:#4A5363;text-align:center;padding:40px">
+          That recipe isn’t here any more.
+          <a href="#/recipes" class="pill" style="background:#1D2430;color:#fff;min-height:56px;padding:0 32px;display:inline-flex;align-items:center">All recipes</a></div>`;
+      }
+      try { if (localStorage.getItem(CURRENT_KEY) === args[0]) localStorage.removeItem(CURRENT_KEY); } catch (e) { /* storage off */ }
+      return;
+    }
+  }
   if (!r) {
     r = await getRecipe(localStorage.getItem(CURRENT_KEY));
     s = r ? load(r) : null;
@@ -159,21 +188,27 @@ async function start(el, args) {
     .rc-btn[disabled]{opacity:.35;pointer-events:none}
     .rc-ghost{padding:0 32px;border:2px solid #1D2430;background:#FFFFFF;color:#1D2430}
     .rc-solid{padding:0 40px;border:none;background:${a};color:#FFFFFF}
-    .rc-ing{display:flex;align-items:center;gap:12px;font-size:19px;min-height:44px;cursor:pointer}
-    .rc-ing input{width:22px;height:22px;accent-color:${a};flex:none;margin:0}
+    .rc-ing{display:flex;align-items:center;gap:14px;font-size:19px;min-height:52px;cursor:pointer;line-height:1.3}
+    .rc-ing input{width:28px;height:28px;accent-color:${a};flex:none;margin:0}
     .rc-ing.on span{color:#4A5363;text-decoration:line-through}
     .rc-ing{border-radius:12px;margin:0 -12px;padding:0 12px;flex:none}
     .rc-ing.use{background:${a}1A;font-weight:600}
     .rc-dots{display:flex;align-items:center;flex:1;min-width:0;justify-content:flex-end}
-    .rc-dot{flex:0 1 40px;min-width:22px;height:44px;border:none;background:transparent;cursor:pointer;display:flex;align-items:center;justify-content:center;padding:0}
+    .rc-dot{flex:0 1 44px;min-width:24px;height:56px;border:none;background:transparent;cursor:pointer;display:flex;align-items:center;justify-content:center;padding:0}
     .rc-dot i{width:14px;height:14px;border-radius:50%;background:#D9DDE2;display:block}
     .rc-dot.past i{background:${a};opacity:.45}
     .rc-dot.on i{background:${a};width:20px;height:20px}
     .rc-next{font-size:20px;color:#4A5363;line-height:1.35;overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical}
     .rc-next b{color:#1D2430;font-weight:600}
     .rc-timer{display:flex;align-items:center;gap:20px;border-radius:20px;background:#F4F5F7;padding:18px 18px 18px 26px}
-    .rc-timer.done{background:${a};color:#FFFFFF;animation:rc-pulse 1s ease-in-out infinite alternate}
-    @keyframes rc-pulse{from{opacity:1}to{opacity:.8}}
+    /* Two-frame blink (steps), not a smooth 60-frames-a-second pulse the slow chip can't keep up with. */
+    .rc-timer.done{background:${a};color:#FFFFFF;animation:rc-pulse 1s steps(1) infinite}
+    @keyframes rc-pulse{0%{opacity:1}50%{opacity:.8}}
+    .rc-done{position:absolute;top:0;right:0;bottom:0;left:0;background:var(--bg);padding:40px;z-index:2;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:22px;text-align:center}
+    .rc-done .big{font-size:64px;font-weight:500;line-height:1.1}
+    .rc-done .sub{font-size:24px;color:#4A5363;max-width:820px;line-height:1.35}
+    .rc-done .row{display:flex;gap:18px;flex-wrap:wrap;justify-content:center;margin-top:8px}
+    .rc-scale{font-size:16px;color:#4A5363}
     .rc-tbtn{min-height:56px;min-width:56px;padding:0 24px;border-radius:999px;border:none;font-size:18px;font-weight:600;
       font-family:Inter,sans-serif;cursor:pointer;background:#1D2430;color:#FFFFFF}
     .rc-tbtn.light{background:#FFFFFF;color:#1D2430;border:2px solid #D9DDE2}
@@ -223,12 +258,13 @@ async function start(el, args) {
     <div style="flex-grow:1;display:grid;grid-template-columns:380px minmax(0,1fr);gap:24px;min-height:0">
       <div data-ings class="card" style="padding:28px;display:flex;flex-direction:column;gap:14px;overflow:auto">
         <div data-ingcount class="eyebrow muted"></div>
+        ${servingsFor(r) !== r.serves ? `<div class="rc-scale">Amounts below are for ${servingsFor(r)}. Amounts in the steps are for ${r.serves}, as the recipe was written.</div>` : ''}
         ${r.ingredients.map((ing, i) => `
           <label class="rc-ing${s.checked[i] ? ' on' : ''}">
             <input type="checkbox" data-ing="${i}"${s.checked[i] ? ' checked' : ''}><span>${esc(ingredientText(ing, scaleFor(r)))}</span>
           </label>`).join('')}
       </div>
-      <div class="card" style="padding:40px;display:flex;flex-direction:column;justify-content:space-between;gap:24px;min-width:0">
+      <div data-stepcard class="card" style="padding:40px;display:flex;flex-direction:column;justify-content:space-between;gap:24px;min-width:0;min-height:0;overflow:hidden">
         <div style="display:flex;flex-direction:column;gap:14px">
           <div style="display:flex;align-items:center;gap:16px;margin:-12px 0 -6px">
             <div data-stepnum style="font-size:18px;font-weight:600;color:${a};flex:none"></div>
@@ -292,6 +328,7 @@ async function start(el, args) {
           <div data-tclock class="display" style="font-size:52px;font-weight:500;line-height:1;font-variant-numeric:tabular-nums"></div>
         </div>
         <div style="margin-left:auto;display:flex;gap:10px">
+          <button data-tplus class="rc-tbtn light" aria-label="One more minute">+1 min</button>
           <button data-treset class="rc-tbtn light">Reset</button>
           <button data-ttoggle class="rc-tbtn"></button>
         </div>
@@ -301,6 +338,18 @@ async function start(el, args) {
     art.style.display = step.timer ? 'none' : '';
     art.style.visibility = !step.timer && art.clientHeight < 110 ? 'hidden' : '';
     tick();
+    // A very long step (or one with a timer and the next-step line under it) could run
+    // past the bottom of the card: make the words smaller until everything fits.
+    Promise.resolve().then(() => {
+      const card = $('[data-stepcard]');
+      if (!card || s.step !== i || text.textContent !== step.text) return;
+      let size = stepSize(step.text);
+      while (card.scrollHeight > card.clientHeight + 1 && size > 26) {
+        size -= 4;
+        text.style.fontSize = `${size}px`;
+      }
+      art.style.visibility = !step.timer && art.clientHeight < 110 ? 'hidden' : '';
+    });
   }
 
   // Updates the countdowns, the "other timers" chips and the alarm.
@@ -314,21 +363,24 @@ async function start(el, args) {
       const box = $('[data-timer]');
       box.classList.toggle('done', st === 'done' && !s.timers[i].ack);
       $('[data-tclock]').textContent = fmt(remaining(r, s, i));
+      const name = timerName(step, i);
       $('[data-tlabel]').textContent = st === 'done'
-        ? (s.timers[i].ack ? `${step.timerLabel} · finished` : `${step.timerLabel} · Time’s up!`)
-        : st === 'paused' ? `${step.timerLabel} · paused` : step.timerLabel;
+        ? (s.timers[i].ack ? `${name} · finished` : `${name} · Time’s up!`)
+        : st === 'paused' ? `${name} · paused` : name;
       const toggle = $('[data-ttoggle]');
       const label = st === 'running' ? 'Pause' : st === 'paused' ? 'Resume' : st === 'done' ? (s.timers[i].ack ? 'Restart' : 'Stop') : 'Start';
       if (toggle.textContent !== label) toggle.textContent = label;
       $('[data-treset]').style.display = st === 'idle' ? 'none' : '';
+      // "Just one more minute": while it counts, or the moment it rings.
+      $('[data-tplus]').style.display = st === 'running' || st === 'paused' || (st === 'done' && !s.timers[i].ack) ? '' : 'none';
     }
 
-    // Chips for timers on other steps (tap to jump there).
+    // Chips for timers on other steps (tap to jump there), named for what they time.
     let chips = r.steps.map((stp, j) => {
       if (j === i || !stp.timer || !isActive(s, j)) return '';
       const st = status(s, j);
       const done = st === 'done';
-      return `<button class="rc-chip${done ? ' done' : ''}" data-jump="${j}">Step ${j + 1} · ${done ? 'Time’s up!' : fmt(remaining(r, s, j))}${st === 'paused' ? ' (paused)' : ''}</button>`;
+      return `<button class="rc-chip${done ? ' done' : ''}" data-jump="${j}">${esc(shortTitle(timerName(stp, j)))} · ${done ? 'Time’s up!' : fmt(remaining(r, s, j))}${st === 'paused' ? ' (paused)' : ''}</button>`;
     }).join('');
     // ...and for timers still going in other recipes (tap to switch back).
     others.forEach((o) => {
@@ -336,7 +388,7 @@ async function start(el, args) {
         const st = status(o.s, j);
         const done = st === 'done';
         chips += `<button class="rc-chip${done ? ' done' : ''}" data-other="${o.r.id}" data-ostep="${j}">${shortTitle(o.r.title)} · ${done ? 'Time’s up!' : fmt(remaining(o.r, o.s, j))}${st === 'paused' ? ' (paused)' : ''}</button>`;
-        if (done && Date.now() - o.s.timers[j].end < ALARM_MAX_MS) ringing = true;
+        if (done && Date.now() - o.s.timers[j].end < alarmMaxMs()) ringing = true;
       });
     });
     const side = $('[data-side]');
@@ -346,7 +398,7 @@ async function start(el, args) {
     // Ring while any finished timer hasn't been acknowledged.
     r.steps.forEach((stp, j) => {
       if (stp.timer && status(s, j) === 'done' && !s.timers[j].ack) {
-        if (Date.now() - s.timers[j].end < ALARM_MAX_MS) ringing = true;
+        if (Date.now() - s.timers[j].end < alarmMaxMs()) ringing = true;
       }
     });
     if (ringing && Date.now() - lastBeep > 2500) { lastBeep = Date.now(); beep(); }
@@ -373,11 +425,45 @@ async function start(el, args) {
     }
   }
 
+  // "Done cooking": a clear finish instead of being dropped on Home, with the ways on from here.
+  function showDone() {
+    const still = activeTimers(r, s).length;
+    const panel = document.createElement('div');
+    panel.className = 'rc-done';
+    panel.setAttribute('data-donepanel', '');
+    panel.innerHTML = `
+      <div style="width:260px;height:150px;position:relative">${cropFood(recipeArt(r, `${FILL}`))}</div>
+      <div class="big display">Enjoy your meal!</div>
+      <div class="sub">${esc(r.title)} is done.${still ? ` ${still === 1 ? 'A timer is' : `${still} timers are`} still going: you’ll hear ${still === 1 ? 'it' : 'them'} on any screen.` : ''}</div>
+      <div class="row">
+        <a href="#/recipes" class="rc-btn rc-solid" style="text-decoration:none">Back to recipes</a>
+        <button data-again class="rc-btn rc-ghost">Cook it again</button>
+        <a href="#/home" class="rc-btn rc-ghost" style="text-decoration:none">Home</a>
+      </div>`;
+    $('[data-root]').appendChild(panel);
+  }
+
+  // Coming back to half-finished cooking from hours ago (yesterday's dinner?): ask, don't assume.
+  function askIfStale() {
+    if (!s.at || Date.now() - s.at < STALE_MS || !inProgress(r, s) || activeTimers(r, s).length) return;
+    const panel = document.createElement('div');
+    panel.className = 'rc-done';
+    panel.setAttribute('data-stale', '');
+    const when = new Date(s.at).toDateString() === new Date().toDateString() ? 'earlier today' : 'on an earlier day';
+    panel.innerHTML = `
+      <div class="big display" style="font-size:52px">${esc(r.title)}</div>
+      <div class="sub">This was left at step ${s.step + 1} of ${r.steps.length} ${when}.</div>
+      <div class="row">
+        <button data-fresh class="rc-btn rc-solid">Start from the beginning</button>
+        <button data-carry class="rc-btn rc-ghost">Carry on from step ${s.step + 1}</button>
+      </div>`;
+    $('[data-root]').appendChild(panel);
+  }
+
   const root = $('[data-root]');
   function onClick(e) {
     const t = e.target.closest('button');
     if (!t) return;
-    ensureAudio(); // unlock sound on the first tap so alarms can play later
     const i = s.step;
     if (t.matches('[data-other]')) {
       const j = +t.dataset.ostep;
@@ -412,7 +498,31 @@ async function start(el, args) {
         localStorage.removeItem(keyFor(r.id));
       }
       if (localStorage.getItem(CURRENT_KEY) === r.id) localStorage.removeItem(CURRENT_KEY);
-      location.hash = '#/home';
+      markCooked(r.id); // for "Cooked lately" in Recipes
+      showDone();
+    } else if (t.matches('[data-again]')) {
+      // Same recipe from the top (timers still going are kept).
+      $('[data-donepanel]').remove();
+      s = load(r);
+      s.step = 0;
+      save(r, s);
+      localStorage.setItem(CURRENT_KEY, r.id);
+      renderCook();
+    } else if (t.matches('[data-carry]')) {
+      $('[data-stale]').remove();
+    } else if (t.matches('[data-fresh]')) {
+      // Yesterday's half-finished cooking: start this recipe from the top.
+      $('[data-stale]').remove();
+      s.checked = s.checked.map(() => false);
+      s.timers = {};
+      s.step = 0;
+      save(r, s);
+      renderCook();
+    } else if (t.matches('[data-tplus]')) {
+      const tm = s.timers[i];
+      if (tm && tm.end != null) { tm.end = Math.max(tm.end, Date.now()) + 60000; delete tm.ack; }
+      else if (tm && tm.left != null) tm.left += 60000;
+      save(r, s); tick();
     } else if (t.matches('[data-goto]')) {
       setStep(+t.dataset.goto);
     } else if (t.matches('[data-ttoggle]')) {
@@ -445,6 +555,7 @@ async function start(el, args) {
   root.addEventListener('change', onChange);
 
   renderCook();
+  askIfStale();
   clearInterval(tickTimer);
   tickTimer = setInterval(() => { if (el.isConnected) tick(); }, 250);
 }

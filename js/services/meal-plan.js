@@ -476,11 +476,19 @@ export async function shoppingCount() {
 export function setHave(key, have) { const s = getListState(); s.have[key] = have; if (have) delete s.got[key]; saveList(s); }
 export function setGot(key, got) { const s = getListState(); if (got) s.got[key] = true; else delete s.got[key]; saveList(s); }
 
+// Words that make a leading number an amount ("5 tbsp butter"), not a count of things.
+const MEASURE = /^(?:tsp|teaspoons?|tbsp|tablespoons?|cups?|oz|ounces?|lbs?|pounds?|g|grams?|kg|ml|l|lit(?:er|re)s?|pints?|quarts?|gallons?|fl|cans?|cloves?|sticks?|slices?|pieces?|bunch(?:es)?|heads?|sprigs?|stalks?|packages?|pkgs?|packs?|packets?|jars?|bottles?|bags?|box(?:es)?|dozen|pinch(?:es)?|dash(?:es)?|inch(?:es)?|cm)\b/i;
+
 /** "2 x milk", "milk x2", "3 lemons" -> { qty: 2, text: 'milk' }; plain text -> qty 0. */
 export function splitQty(text) {
   const t = String(text || '').replace(/\s+/g, ' ').trim();
-  let m = t.match(/^(\d{1,2})\s*(?:x|×|\*)?\s+(\S.*)$/i) || t.match(/^(\d{1,2})\s*(?:x|×|\*)\s*(\S.*)$/i);
+  // "2 x milk", "2x milk": said outright.
+  let m = t.match(/^(\d{1,2})\s*(?:x|×|\*)\s*(\S.*)$/i);
   if (m && Number(m[1]) > 0) return { qty: Number(m[1]), text: m[2] };
+  // "3 lemons" is three of something; "5 tbsp butter" or "1 1/2 cups milk" (a recipe's
+  // ingredient, sent over from a dish's page) is an amount and stays as it is written.
+  m = t.match(/^(\d{1,2})\s+(\S.*)$/);
+  if (m && Number(m[1]) > 0 && !MEASURE.test(m[2]) && !/^[\d½⅓⅔¼¾⅛⅜⅝⅞]/.test(m[2])) return { qty: Number(m[1]), text: m[2] };
   m = t.match(/^(.*\S)\s*(?:x|×|\*)\s*(\d{1,2})$/i);
   if (m && Number(m[2]) > 0) return { qty: Number(m[2]), text: m[1] };
   return { qty: 0, text: t };

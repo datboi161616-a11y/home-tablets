@@ -180,6 +180,19 @@ let navId = 0;
 let timerSvc = null; // kitchen timers (family tablets): the countdown chip on every screen
 let lastBrightness = null; // what the backlight was last asked for
 
+// The backlight for a screen: the owner's choices (Settings), night screens dimmed.
+// A timer ringing on the night clock brings the light up enough to find the screen and
+// read which one it is; it goes back down when the alarm is stopped.
+function setBacklight(name) {
+  const nightScreen = name === (profile === 'tom' ? 'viewscreen' : 'night');
+  let brightness = nightScreen ? nightBrightness() : dayBrightness();
+  if (nightScreen && timerSvc && timerSvc.ringingNames().length) brightness = Math.max(0.3, brightness);
+  if (brightness === lastBrightness) return;
+  lastBrightness = brightness;
+  try { window.TabletNative?.setBrightness?.(brightness); } catch { /* not on a tablet */ }
+}
+addEventListener('alarm-changed', () => setBacklight(location.hash.replace(/^#\/?/, '').split('/')[0] || homeRoute));
+
 async function navigate() {
   const id = ++navId;
   // "#/recipes/chinese/noodles" -> screen "recipes", args ['chinese', 'noodles']
@@ -209,12 +222,7 @@ async function navigate() {
   try { window.TabletNative?.screenChanged?.(name); } catch { /* not on a tablet */ }
   // Night screens turn the real backlight down; everything else uses normal brightness.
   // (Only when it changes: every call makes Android lay the whole window out again.)
-  const nightScreen = name === (profile === 'tom' ? 'viewscreen' : 'night');
-  const brightness = nightScreen ? nightBrightness() : dayBrightness(); // the owner's choices (Settings)
-  if (brightness !== lastBrightness) {
-    lastBrightness = brightness;
-    try { window.TabletNative?.setBrightness?.(brightness); } catch { /* not on a tablet */ }
-  }
+  setBacklight(name);
 
   cameFrom(shownName); // so "back" on the next screen leads to where they came from
   shownName = name;
@@ -489,9 +497,4 @@ setInterval(() => {
 }, 30 * 1000);
 
 // The owner moved the brightness slider (Settings): apply it now, not at the next screen.
-addEventListener('display-changed', () => {
-  const brightness = screenName() === nightRoute ? nightBrightness() : dayBrightness();
-  if (brightness === lastBrightness) return;
-  lastBrightness = brightness;
-  try { window.TabletNative?.setBrightness?.(brightness); } catch { /* not on a tablet */ }
-});
+addEventListener('display-changed', () => setBacklight(screenName()));
