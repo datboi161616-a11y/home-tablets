@@ -10,6 +10,7 @@
 import { profile, settings } from '../config.js';
 import { setWelcomeDone } from './welcome-state.js';
 import { myEvents } from './my-events.js';
+import { markSeen as newThingsSeen } from './whatsnew.js';
 
 let script = null, idx = 0, root = null, tick = null, waitingSince = 0, startCount = 0, goneFor = -1;
 let wentTo = {};     // beat number -> the screen that beat went to (for Back and "Carry on")
@@ -319,7 +320,8 @@ export function startTutorial() {
 }
 
 export function stop(markDone) {
-  if (markDone) setWelcomeDone(true);
+  // (Whoever has just had the tour doesn't need a "new things have arrived" on top of it.)
+  if (markDone) { setWelcomeDone(true); newThingsSeen(); }
   script = null;
   clearInterval(tick);
   removeEventListener('pointerdown', touched, true);

@@ -3,6 +3,8 @@
 //   - the charger has come out (it runs for a few hours on its battery, then goes dark), and
 //   - the Wi-Fi or the internet has been gone for a while (weather and calendars go stale).
 // app.js puts `bar` back on the screen after each screen change, like the timer chip.
+import { worthAWord } from './whatsnew.js';
+
 const N = () => window.TabletNative;
 const ON_A_SCREEN = /Android/.test(navigator.userAgent); // a laptop on its battery is not news
 const UNPLUGGED_AFTER = 10 * 60 * 1000; // moved to another socket? no need to say anything yet
@@ -18,6 +20,7 @@ let offlineAt = 0;
 let offlineKind = 'off';
 let hushedUntil = 0; // "I know" was tapped
 let showing = '';
+let homeRoutes = []; // where a word about new things may show (the home screens only)
 
 function what() {
   const now = Date.now();
@@ -31,6 +34,8 @@ function what() {
   if (offlineAt && now - offlineAt > OFFLINE_AFTER && !QUIET_SCREENS.includes(route)) {
     return { kind: 'offline', text: offlineKind === 'connected' ? 'The internet isn’t answering · showing what was saved' : 'No Wi-Fi · showing what was saved' };
   }
+  // Nothing wrong: then, on the home screen only and for a week, a word about new things.
+  if (homeRoutes.indexOf(route) >= 0 && worthAWord()) return { kind: 'new', text: '✨ New things have arrived · See what’s new', fresh: true };
   return null;
 }
 
@@ -44,7 +49,7 @@ function render() {
   if (!n) return;
   bar.dataset.kind = n.kind;
   bar.textContent = n.text;
-  bar.style.background = n.urgent ? '#C2491F' : '#1D2430';
+  bar.style.background = n.urgent ? '#C2491F' : n.fresh ? '#2F6B4F' : '#1D2430';
   makeRoom();
 }
 
@@ -69,7 +74,8 @@ function lookAtNetwork() {
 }
 
 /** `settingsRoute`: where a tap on "No Wi-Fi" leads (the screen that shows the Wi-Fi), or '' for nowhere. */
-export function startNotices({ settingsRoute = '' } = {}) {
+export function startNotices({ settingsRoute = '', homeRoutes: homes = [] } = {}) {
+  homeRoutes = homes;
   bar = document.createElement('button');
   bar.setAttribute('data-notice', '');
   bar.style.cssText = 'position:absolute;left:24px;bottom:24px;z-index:50;display:none;align-items:center;'
@@ -79,6 +85,8 @@ export function startNotices({ settingsRoute = '' } = {}) {
     if (bar.dataset.kind === 'offline' && settingsRoute) {
       try { sessionStorage.setItem('settings.section', 'about'); } catch (e) { /* storage off */ }
       location.hash = `#/${settingsRoute}`;
+    } else if (bar.dataset.kind === 'new') {
+      location.hash = '#/whatsnew'; // (opening it is what puts the word away)
     } else if (bar.dataset.kind === 'unplugged') {
       hushedUntil = Date.now() + 60 * 60 * 1000; // seen: not again for an hour
       render();

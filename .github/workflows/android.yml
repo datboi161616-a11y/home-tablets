@@ -119,7 +119,10 @@ jobs:
           done
           code=$(curl -s -o /dev/null -w "%{http_code}" "http://127.0.0.1:8080/?k=wrong-key")
           echo "wrong key -> $code"; [ "$code" = "403" ]
-          curl -sf "http://127.0.0.1:8080/?k=ci-test-key" | grep -q "<h1>Your kitchen screen</h1>"
+          # (The page a wrong or old code gets says where to scan again, and never says "tablet".)
+          curl -s "http://127.0.0.1:8080/?k=wrong-key" | tee expired.html | grep -q "kitchen screen"
+          if grep -qi "tablet" expired.html; then echo "the expired-link page says tablet"; exit 1; fi
+          curl -sf "http://127.0.0.1:8080/?k=ci-test-key" | grep -q "Your kitchen screen</h1>"
           curl -sf -X POST --data-binary @shot-family.png -H "Content-Type: image/png" \
             "http://127.0.0.1:8080/api/upload?k=ci-test-key&name=CI%20robot&caption=Emulator%20test" | tee upload.json
           grep -q '"ok":true' upload.json
@@ -127,6 +130,13 @@ jobs:
           echo "non-photo -> $code"; [ "$code" = "400" ]
           curl -sf "http://127.0.0.1:8080/api/photos?k=ci-test-key" | tee photos.json
           grep -q '"name":"CI robot"' photos.json
+          # A small copy for the phone's album grid: a JPEG, and smaller than the photo itself.
+          PHOTO_ID=$(python3 -c "import json; print(json.load(open('photos.json'))['photos'][0]['id'])")
+          curl -sf "http://127.0.0.1:8080/api/photo/$PHOTO_ID?k=ci-test-key" -o photo-full.bin
+          curl -sf "http://127.0.0.1:8080/api/photo/$PHOTO_ID?k=ci-test-key&w=320" -o photo-small.jpg
+          ls -l photo-full.bin photo-small.jpg
+          [ "$(head -c 3 photo-small.jpg | od -An -tx1 | tr -d ' \n')" = "ffd8ff" ]
+          [ "$(stat -c %s photo-small.jpg)" -lt "$(stat -c %s photo-full.bin)" ]
           adb shell am start -n com.hometablets.launcher/.MainActivity --es screen photos
           sleep 15
           adb exec-out screencap -p > shot-photos.png
@@ -135,10 +145,12 @@ jobs:
           HOLIDAYS='https://calendar.google.com/calendar/ical/en.usa%23holiday%40group.v.calendar.google.com/public/basic.ics'
           curl -sf "http://127.0.0.1:8080/api/calendar-check?k=ci-test-key&url=$(printf %s "$HOLIDAYS" | sed 's/%/%25/g; s/#/%23/g; s/@/%40/g')" | tee calcheck.json
           grep -q '"ok":true' calcheck.json
-          printf '%s' '{"familyName":"The Test Family","units":"fahrenheit","people":["Alex","Sam"],"dates":[{"name":"Alex birthday","month":12,"day":3,"kind":"birthday"}],"calendars":[{"name":"US holidays","url":"'"$HOLIDAYS"'"}]}' > settings.json
+          printf '%s' '{"familyName":"The Test Family","units":"fahrenheit","people":["Alex","Sam"],"dates":[{"name":"Alex birthday","month":12,"day":3,"kind":"birthday","year":2015}],"calendars":[{"name":"US holidays","url":"'"$HOLIDAYS"'"}]}' > settings.json
           curl -sf -X POST --data-binary @settings.json -H "Content-Type: application/json" "http://127.0.0.1:8080/api/settings?k=ci-test-key" | tee settings-saved.json
           grep -q '"ok":true' settings-saved.json
           grep -q 'The Test Family' settings-saved.json
+          # A birthday keeps the year it was given (the screens then say "Turns 11").
+          curl -sf "http://127.0.0.1:8080/api/settings?k=ci-test-key" | tee settings-read.json | grep -q '"year":2015'
           curl -sf -X POST -H "Content-Type: application/json" --data '{"who":"Sam","text":"Pizza night Friday?"}' "http://127.0.0.1:8080/api/notes?k=ci-test-key" | tee note.json
           grep -q '"ok":true' note.json
           curl -sf "http://127.0.0.1:8080/api/notes?k=ci-test-key" | grep -q 'Pizza night'
@@ -148,6 +160,12 @@ jobs:
           curl -sf -X POST -H "Content-Type: application/json" --data '{"act":"add","text":"CI milk"}' "http://127.0.0.1:8080/api/shopping?k=ci-test-key" | grep -q '"ok":true'
           sleep 4
           curl -sf "http://127.0.0.1:8080/api/shopping?k=ci-test-key" | tee shopping-after.json | grep -q 'CI milk'
+          # ...and taken off again from the phone: through the tablet's screens and gone from the copy.
+          MILK_ID=$(python3 -c "import json; print([x['id'] for x in json.load(open('shopping-after.json'))['extras'] if 'milk' in x['text'].lower()][0])")
+          curl -sf -X POST -H "Content-Type: application/json" --data '{"act":"remove","key":"'"$MILK_ID"'"}' "http://127.0.0.1:8080/api/shopping?k=ci-test-key" | grep -q '"ok":true'
+          sleep 4
+          curl -sf "http://127.0.0.1:8080/api/shopping?k=ci-test-key" | tee shopping-removed.json
+          if grep -qi 'CI milk' shopping-removed.json; then echo "the item is still on the list"; exit 1; fi
           # The family's own recipes: saved from the phone page, kept on the tablet.
           curl -sf -X POST -H "Content-Type: application/json" --data '{"title":"CI pot roast","meal":"dinner","serves":6,"ingredients":["3 lb chuck roast","2 cups beef broth"],"steps":["Cook on low for 8 hours."]}' "http://127.0.0.1:8080/api/recipes?k=ci-test-key" | tee myrecipe.json | grep -q '"ok":true'
           curl -sf "http://127.0.0.1:8080/api/recipes?k=ci-test-key" | grep -q 'CI pot roast'

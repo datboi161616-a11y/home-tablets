@@ -165,7 +165,7 @@ const TOM = {
   deepimage: 'Space image', viewscreen: 'Starfield', settings: 'Settings',
 };
 // Both (Tom's only when its extras are switched on)
-const BOTH = { photos: 'Photo frame', apps: 'Apps', camera: 'Camera', addphotos: 'Add photos', welcome: 'Welcome' };
+const BOTH = { photos: 'Photo frame', apps: 'Apps', camera: 'Camera', addphotos: 'Add photos', welcome: 'Welcome', whatsnew: 'What’s new' };
 const SCREENS = { ...FAMILY, ...TOM, ...BOTH };
 // The screens this tablet can get to, most used first (see "Keep every screen on the device").
 const OWN_SCREENS = Object.keys({ ...(profile === 'tom' ? TOM : FAMILY), ...BOTH });
@@ -295,7 +295,7 @@ addEventListener('tablet-family', () => {
 
 // The charger came out, or the Wi-Fi has been gone a while: a quiet word in the corner.
 if (!isGhostCopy()) {
-  notices.startNotices({ settingsRoute: 'settings' });
+  notices.startNotices({ settingsRoute: 'settings', homeRoutes: [homeRoute, 'launcher'] });
   notices.setRoute(location.hash.replace(/^#\/?/, '').split('/')[0] || homeRoute);
   screenEl.appendChild(notices.bar);
 }
@@ -471,7 +471,7 @@ const typing = () => {
   if (at && (at.tagName === 'INPUT' || at.tagName === 'TEXTAREA')) return true;
   return Array.from(screenEl.querySelectorAll('textarea, input[type="text"], input:not([type])')).some((box) => box.value.trim());
 };
-const WANDERED = ['launcher', 'calendar', 'forecast', 'messages', 'recipes', 'plan', 'shopping', 'apps', 'addphotos', 'settings'];
+const WANDERED = ['launcher', 'calendar', 'forecast', 'messages', 'recipes', 'plan', 'shopping', 'apps', 'addphotos', 'settings', 'whatsnew'];
 
 setInterval(() => {
   const here = screenName();

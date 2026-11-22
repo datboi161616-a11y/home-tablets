@@ -512,3 +512,9 @@ from are counted.
 455. List: the things added by hand can be taken off the list from the phone (it could only tick them).
 456. The album on a phone loads small copies made by the kitchen screen, instead of downloading every full-size photo to draw the grid.
 457. A birthday can carry the year (the phone page asks, if you like), and the calendar and night clock then say how old they turn ("Turns 9").
+
+## 18 · Finding out what is new
+
+458. A "What's new" page shows the highlights of what has arrived by itself, each with "Show me", in the kitchen's look and in the deck's.
+459. For a week after new things arrive, the home screen mentions it quietly ("New things have arrived"); a brand-new screen never sees it, because the tour is its introduction.
+460. The app's automatic test on GitHub now checks what was added to the screen's little server: small album copies, removing a list item from a phone, a birthday's year, and the expired-link page.
