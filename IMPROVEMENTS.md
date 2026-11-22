@@ -559,3 +559,21 @@ from are counted.
 490. On the two days a year the clocks change, Home says so ("Clocks went back last night"), so nobody wonders whether this clock is the right one.
 491. The printable guides are published with the site, so they can be opened and printed from any computer or phone.
 492. "Check tablet" says whether a newer app is out than the one on the tablet (which fetches it by itself within six hours, or at once after being switched off and on).
+493. Settings → Your family shows the code for the phone page right there (it opens on the phone's Settings tab), instead of sending people to another screen to find it.
+494. Choosing a chime in Settings plays it once, so people know what to listen for.
+
+## 22 · A second pass over Tom's deck
+
+495. When the Space Station's orbit figures are too old to trust, the deck says its pass times are unavailable (it used to say, wrongly, "not visible this week"), and a pass it can see says how bright it will be.
+496. A rare-plane alert, and a tap on the deck's "closest plane" line, open the radar with that exact plane picked.
+497. Deep image says honestly what is showing (today's NASA picture, an earlier day's, or one of the built-in famous ones) and offers today's when it arrives, without swapping the one he is looking at.
+498. A departures board with no airport traffic nearby explains itself (how many planes are about, which airports they are using, when it will look again) and offers a clearly labelled example board, instead of empty rows.
+499. The deck no longer runs a second set of timers, fetching everything twice over, after the tour reloads it.
+500. With no Wi-Fi since it was switched on, the deck's panels say why instead of showing "--", and the example launch no longer runs a ticking countdown.
+501. Screens that haven't found the town say they are showing New York (or Philadelphia) instead of passing it off as home, and keep looking.
+502. "◂ DECK" is in the same place, at the same size, on every one of Tom's screens.
+503. The Missions screen's Voyager card agrees with the deck's figure for how long its messages take.
+504. The title of Tonight's Sky is no longer cut off.
+505. The radar's header line fits again when the feed is away.
+506. The trivia streak says "0 days" instead of a bare dash, and the score line fits in its longest case.
+507. Tom's deck opens in about a third of the time on the real tablet (measured: 0.8 s down to 0.2-0.35 s): the Space Station sums wait until the deck is drawn, and screens share one answer.

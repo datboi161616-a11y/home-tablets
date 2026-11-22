@@ -331,8 +331,8 @@ function render() {
   const iss = issFor(sky, passes, day);
 
   // Title and the day button
-  const town = loc.town ? ` OVER ${loc.town.toUpperCase()}` : '';
-  $('[data-title]').textContent = `${day ? 'TOMORROW NIGHT' : "TONIGHT'S SKY"}${town}${ctx.sample ? ' · SAMPLE PLACE' : ''}`;
+  const town = loc.town && !ctx.sample ? ` OVER ${loc.town.toUpperCase()}` : '';
+  $('[data-title]').textContent = `${day ? 'TOMORROW NIGHT' : "TONIGHT'S SKY"}${town}`;
   $('[data-day]').textContent = day ? '◂ TONIGHT' : 'TOMORROW NIGHT ▸';
 
   // Header: clouds, with their age when the forecast is old
@@ -342,7 +342,10 @@ function render() {
     sub = `${skyWords(cloudAvg)} ${day ? 'FORECAST' : 'TONIGHT'}`;
     if (clouds.at && Date.now() - clouds.at > 3 * 3600000) sub += ` · AS OF ${passDay(new Date(clouds.at)).replace(/^(TODAY|TONIGHT) /, '')}`;
   }
+  // The town isn't known: say whose sky this is (it used to be cut off at the end of the title).
+  if (ctx.sample) sub = `TOWN NOT FOUND · SHOWING ${loc.town.toUpperCase()}`;
   $('[data-sub]').textContent = sub;
+  $('[data-sub]').style.color = ctx.sample ? '#FFB547' : '#9CC3D5';
 
   // The Sun's evening, and the Moon's month
   const s = sky.sun, m = sky.morning;
@@ -464,7 +467,7 @@ export function mount(el) {
   <div class="sk-root">
     <div style="display:flex;align-items:center;justify-content:space-between;gap:20px;border-bottom:1px solid #1E3A4A;padding-bottom:12px">
       <div style="display:flex;align-items:center;gap:16px;min-width:0">
-        <a href="#/bridge" class="sk-btn">◂ DECK</a>
+        <a href="#/bridge" class="sk-btn" style="padding:0 22px">◂ DECK</a>
         <div data-title class="sk-ox sk-ell" style="font-size:24px;font-weight:700;letter-spacing:5px;color:#5CE1E6">TONIGHT'S SKY</div>
       </div>
       <div style="display:flex;align-items:center;gap:16px;flex:none">

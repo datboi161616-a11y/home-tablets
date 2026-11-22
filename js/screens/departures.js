@@ -2,7 +2,7 @@
 // Rows come from real planes in the air near the nearest airport — see
 // services/departures.js for how, and why there is a sample fallback.
 import { getLocation } from '../services/location.js';
-import { getBoard, setBoardAirport, boardAirportPin } from '../services/departures.js';
+import { getBoard, setBoardAirport, boardAirportPin, exampleBoard } from '../services/departures.js';
 import { typeName, feedStatus } from '../services/aircraft.js';
 import { clockTime, clockAmPm, timeText } from '../services/display.js';
 
@@ -44,10 +44,10 @@ export function mount(el) {
     .tbd-row > span{background:#1B1C1F;padding:3px 8px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-height:1.4em;box-sizing:border-box}
     .tbd-sub{display:block;font-size:12px;letter-spacing:2px;color:#8A8270;line-height:14px;overflow:hidden;text-overflow:ellipsis}
   </style>
-  <div class="tbd" style="width: 1280px; height: 800px; box-sizing: border-box; padding: 22px 40px; background: #05070D; color: #F4E9C8; font-family: 'JetBrains Mono', monospace; display: flex; flex-direction: column; gap: 12px">
+  <div class="tbd" style="width: 1280px; height: 800px; box-sizing: border-box; padding: 24px 40px 20px; background: #05070D; color: #F4E9C8; font-family: 'JetBrains Mono', monospace; display: flex; flex-direction: column; gap: 12px">
     <div style="display: flex; align-items: center; justify-content: space-between; gap: 16px">
       <div style="display: flex; align-items: center; gap: 16px; min-width: 0">
-        <a href="#/bridge" style="min-height: 56px; padding: 0 18px; box-sizing: border-box; border: 1px solid #1E3A4A; text-decoration: none; font-size: 15px; letter-spacing: 3px; display: flex; align-items: center; flex-shrink: 0">◂ DECK</a>
+        <a href="#/bridge" style="min-height: 56px; padding: 0 22px; box-sizing: border-box; border: 1px solid #1E3A4A; text-decoration: none; font-size: 16px; letter-spacing: 3px; display: flex; align-items: center; flex-shrink: 0">◂ DECK</a>
         <div data-title style="font-family: Oxanium, sans-serif; font-size: 24px; font-weight: 700; letter-spacing: 5px; color: #FFD25A; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">DEPARTURES · LOADING…</div>
       </div>
       <div style="display: flex; align-items: center; gap: 16px; flex-shrink: 0">
@@ -76,12 +76,18 @@ export function mount(el) {
 
   const $ = (s) => el.querySelector(s);
   let loc = null;
-  let board = null;
+  let real = null;     // the latest board from the service
+  let example = null;  // the example board, while he has asked to see it (only when there's no real one)
+  let board = null;    // what is on the screen: example || real
   let failed = false;
   let mode = 'departures';
   let page = 0;
   let gen = 0;
+  let nextLook = 0;    // when the board looks again (for "LOOKING AGAIN AT …")
 
+  const setBoard = () => { board = example || real; };
+  // A live board with no airport near enough: say so usefully instead of showing empty rows.
+  const quiet = () => !!(board && board.live && !board.sample && !board.airport);
   const rowsFor = (m) => (!board ? [] : m === 'departures' ? [...(board.taxiing || []), ...board.departures] : board.arrivals);
 
   function drawClock() {
@@ -96,16 +102,19 @@ export function mount(el) {
     const box = $('[data-airports]');
     if (!board) { why.textContent = failed ? 'THE BOARD ISN’T ANSWERING · TRYING AGAIN IN A MINUTE' : 'FINDING YOUR NEAREST AIRPORT…'; box.innerHTML = ''; return; }
     if (board.sample) {
-      why.textContent = 'AN EXAMPLE BOARD · NOT REAL FLIGHTS · THE LIVE PLANE FEED ISN’T REACHABLE';
+      why.textContent = example ? 'AN EXAMPLE BOARD · NOT REAL FLIGHTS · NOTHING NEARBY RIGHT NOW'
+        : 'AN EXAMPLE BOARD · NOT REAL FLIGHTS · THE LIVE PLANE FEED ISN’T REACHABLE';
       why.style.color = '#FFB547';
-      box.innerHTML = '';
+      // Back to the real (empty) board whenever he likes; it also goes back by itself.
+      box.innerHTML = example ? '<button class="tbd-tab on" data-live>◂ BACK TO THE LIVE BOARD</button>' : '';
       return;
     }
-    why.style.color = '#C9BE9C';
+    why.style.color = loc && loc.guessed ? '#FFB547' : '#C9BE9C';
     const ap = board.airport;
-    why.textContent = ap
+    // Town not found yet: the board is New York's, and it says so first.
+    why.textContent = (loc && loc.guessed ? 'TOWN NOT FOUND YET · SHOWING NEW YORK · ' : '') + (ap
       ? `${ap.name ? ap.name.toUpperCase().replace(/ (INTERNATIONAL|INTL|REGIONAL|MUNICIPAL)\b/g, '').replace(/ AIRPORT$/, '') : ap.city} AIRPORT · ${ap.mi < 1 ? 'UNDER 1' : ap.mi} MI ${ap.side} OF YOU · ${ap.why}`
-      : 'NO AIRPORT WITH FLIGHTS WITHIN 30 MILES RIGHT NOW';
+      : 'NO AIRPORT WITH FLIGHTS WITHIN 30 MILES RIGHT NOW');
     // Choose between the nearest few airports seen in the air right now (or go back to automatic).
     const cands = board.candidates || [];
     const pinned = !!boardAirportPin();
@@ -114,16 +123,42 @@ export function mount(el) {
       + `<button class="tbd-tab${pinned ? '' : ' on'}" data-ap="" aria-label="Choose the airport by itself">AUTO</button>`;
   }
 
+  // No airport within 30 miles has flights in the air right now (a small town in the evening,
+  // say): what it does know, when it looks again, and somewhere to go meanwhile.
+  function drawQuiet() {
+    const b = board;
+    const h = new Date().getHours();
+    const near = (b.nearby || []).map((a) => `<div>${esc((a.city || a.name || a.iata).toUpperCase())} (${esc(a.iata)}) · ${a.mi} MI ${esc(a.side)}</div>`).join('');
+    const up = b.overhead || 0;
+    $('[data-board]').innerHTML = `<div data-quiet style="background:#111214;border-top:1px solid #26272B;padding:22px 26px;display:flex;flex-direction:column;gap:14px;cursor:default;min-height:483px;box-sizing:border-box">
+      <div style="font-family:Oxanium,sans-serif;font-size:30px;letter-spacing:3px;color:#FFD25A">NO FLIGHTS TO SHOW RIGHT NOW</div>
+      <div style="font-size:19px;line-height:1.45;color:#F4E9C8">${up ? `NONE OF THE ${up} PLANE${up === 1 ? '' : 'S'} IN THE AIR AROUND YOU ${up === 1 ? 'IS' : 'ARE'} FLYING TO OR FROM AN AIRPORT WITHIN 30 MILES.` : 'NO PLANES ARE IN THE AIR AROUND YOU RIGHT NOW.'}</div>
+      ${near ? `<div style="font-size:19px;line-height:1.5;color:#C9BE9C"><div style="font-size:14px;letter-spacing:3px;color:#8A8270">AIRPORTS THE PLANES NEAR YOU ARE USING</div>${near}</div>` : ''}
+      ${h >= 19 || h < 6 ? '<div style="font-size:19px;line-height:1.45;color:#C9BE9C">SMALL AIRPORTS GO QUIET IN THE EVENING. FLIGHTS USUALLY PICK UP AGAIN IN THE MORNING.</div>' : ''}
+      <div style="font-size:17px;letter-spacing:2px;color:#8A8270">THE BOARD LOOKS AGAIN EVERY MINUTE${nextLook ? ` · NEXT AT ${esc(timeText(new Date(nextLook)))}` : ''}</div>
+      <div style="margin-top:auto;display:flex;gap:14px">
+        <button class="tbd-tab" data-example style="min-height:64px;font-size:17px">SEE AN EXAMPLE BOARD</button>
+        <a href="#/flights" class="tbd-tab" style="min-height:64px;font-size:17px;display:flex;align-items:center;text-decoration:none;color:#5CE1E6;border-color:#1E3A4A">PLANES OVERHEAD ▸</a>
+      </div>
+    </div>`;
+    $('[data-pager]').style.visibility = 'hidden';
+    const foot = $('[data-foot]');
+    foot.textContent = `LIVE · CHECKED ${timeText(new Date(b.at))}`;
+    foot.style.color = '#8A8270';
+  }
+
   function render() {
     if (!alive()) return;
     const dep = mode === 'departures';
     const label = dep ? 'DEPARTURES' : 'ARRIVALS';
     const where = !board ? (failed ? 'NOT ANSWERING' : 'LOADING…')
+      : example ? 'EXAMPLE, NOT REAL'
       : board.sample ? 'SAMPLE BOARD'
       : board.airport ? `${board.airport.city} (${board.airport.iata})` : 'NO AIRPORT NEARBY';
     $('[data-title]').textContent = `${label} · ${where}`;
-    $('[data-heads]').innerHTML = `<span>TIME</span><span>FLIGHT</span><span>${dep ? 'DESTINATION' : 'FROM'}</span><span>${board?.live ? 'PLANE' : 'GATE'}</span><span>STATUS</span>`;
+    $('[data-heads]').innerHTML = quiet() ? '' : `<span>TIME</span><span>FLIGHT</span><span>${dep ? 'DESTINATION' : 'FROM'}</span><span>${board?.live ? 'PLANE' : 'GATE'}</span><span>STATUS</span>`;
     drawAirportLine();
+    if (quiet()) { drawQuiet(); return; }
 
     const all = rowsFor(mode);
     const pages = Math.max(1, Math.ceil(all.length / ROWS));
@@ -161,7 +196,7 @@ export function mount(el) {
     const old = board && !board.sample && (age >= 3 || board.stale);
     const fs = feedStatus();
     foot.textContent = !board ? (fs.offline ? 'NO INTERNET RIGHT NOW · THE BOARD WILL FILL IN WHEN IT’S BACK' : 'CHECKING THE PLANES IN THE AIR…')
-      : board.sample ? 'SAMPLE BOARD · TAP THE BOARD TO SWITCH DEPARTURES / ARRIVALS'
+      : board.sample ? `${example ? 'EXAMPLE BOARD · NOT REAL FLIGHTS' : 'SAMPLE BOARD'} · TAP THE BOARD TO SWITCH DEPARTURES / ARRIVALS`
       : `LIVE · TIMES ARE ESTIMATES · ${old ? `AS OF ${timeText(new Date(board.at))}${fs.offline ? ' · NO INTERNET' : ''}` : `UPDATED ${timeText(new Date(board.at))}`} · TAP A FLIGHT TO SEE IT ON THE RADAR`;
     foot.style.color = old ? '#FFB547' : '#8A8270';
   }
@@ -171,8 +206,12 @@ export function mount(el) {
     try {
       const b = await getBoard(loc);
       if (!alive() || mine !== gen) return;
-      board = b;
+      real = b;
+      // A real airport has flights again (or the feed is gone): the example steps aside.
+      if (example && (b.airport || b.sample)) { example = null; page = 0; }
+      setBoard();
       failed = false;
+      nextLook = Date.now() + 60 * 1000;
       render();
     } catch (e) {
       console.error(e);
@@ -196,6 +235,8 @@ export function mount(el) {
     flipTimer = setInterval(() => { page = 0; mode = mode === 'departures' ? 'arrivals' : 'departures'; render(); }, FLIP_MS);
   }
   $('[data-board]').addEventListener('click', (e) => {
+    if (e.target.closest('[data-example]')) { example = exampleBoard(); setBoard(); page = 0; render(); restartFlip(); return; }
+    if (e.target.closest('[data-quiet]')) return; // the words, or the link to the radar
     const row = e.target.closest('[data-hex]');
     if (row) { location.hash = `#/flights/${row.dataset.hex}`; return; }
     show(mode === 'departures' ? 'arrivals' : 'departures');
@@ -204,6 +245,7 @@ export function mount(el) {
   $('[data-prev]').addEventListener('click', () => { if (page > 0) { page -= 1; render(); restartFlip(); } });
   $('[data-next]').addEventListener('click', () => { page += 1; render(); restartFlip(); });
   $('[data-airports]').addEventListener('click', (e) => {
+    if (e.target.closest('[data-live]')) { example = null; setBoard(); page = 0; render(); restartFlip(); return; }
     const b = e.target.closest('[data-ap]');
     if (!b || !board) return;
     const c = (board.candidates || []).find((x) => x.iata === b.dataset.ap);
@@ -221,13 +263,13 @@ export function mount(el) {
       loc = await getLocation();
     } catch (e) {
       console.error(e);
-      loc = { lat: 40.7128, lon: -74.006, town: '' };
+      loc = { lat: 40.7128, lon: -74.006, town: 'New York', guessed: true };
     }
     if (!alive() || mine !== gen) return;
     await load();
   }
   // The owner chose another town in Settings: a new nearest airport, chosen by itself again.
-  const onPlace = () => { board = null; failed = false; page = 0; setBoardAirport(null); render(); start(); };
+  const onPlace = () => { board = real = example = null; failed = false; page = 0; setBoardAirport(null); render(); start(); };
   window.addEventListener('place-changed', onPlace);
   // The owner switched the 12/24-hour clock: the times on the board follow at once.
   const onDisplay = () => { drawClock(); if (board) { gen += 1; load(); } };

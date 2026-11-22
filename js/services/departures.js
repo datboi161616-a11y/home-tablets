@@ -78,6 +78,28 @@ function pickAirport(home, list, routes) {
   return { ap: { ...where(ap), why, pinned: !!(pin && pin.iata === ap.iata) }, candidates: near.map(where).sort((a, b) => a.dst - b.dst) };
 }
 
+/**
+ * Airports within ~100 miles that the flights in the air around the house are flying to or
+ * from (real routes only), nearest first: [{ iata, city, name, mi, side }] (at most 3).
+ */
+function nearbyAirports(home, list, routes) {
+  const seen = {};
+  for (const ac of list) {
+    const r = routes[ac.callsign];
+    if (!r) continue;
+    for (const ap of [r.from, r.to]) {
+      if (!ap?.iata || ap.lat == null || seen[ap.iata]) continue;
+      const g = distBearing(home, ap.lat, ap.lon);
+      if (g.dst > 87) continue; // nautical miles: about 100 miles
+      seen[ap.iata] = { iata: ap.iata, city: ap.city || '', name: ap.name || '', dst: g.dst, mi: Math.max(1, Math.round(g.dst * 1.15078)), side: compass(g.dir) };
+    }
+  }
+  return Object.values(seen).sort((a, b) => a.dst - b.dst).slice(0, 3);
+}
+
+/** The design's example board, for looking at when there is nothing real to show (flagged sample). */
+export const exampleBoard = () => sampleBoard();
+
 export async function getBoard(loc) {
   const data = await getAircraft(loc);
   if (data.sample) return sampleBoard();
@@ -88,7 +110,13 @@ export async function getBoard(loc) {
     .sort((a, b) => a.onGround - b.onGround || a.dst - b.dst);
   const routes = await getRoutes(airline, 40);
   const picked = pickAirport(loc, airline, routes);
-  if (!picked) return { live: true, airport: null, departures: [], arrivals: [], taxiing: [], candidates: [], at: data.at, stale: !!data.stale };
+  if (!picked) {
+    return {
+      live: true, airport: null, departures: [], arrivals: [], taxiing: [], candidates: [], at: data.at, stale: !!data.stale,
+      // For the empty board: the airports the planes around here are really using, and how many are up.
+      nearby: nearbyAirports(loc, airline, routes), overhead: data.list.filter((a) => !a.onGround).length,
+    };
+  }
   const ap = picked.ap;
 
   const now = Date.now();

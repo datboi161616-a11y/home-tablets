@@ -211,9 +211,14 @@ export async function getPasses(loc, opts) {
   return predictPasses(el, loc, opts);
 }
 
-// The predictions take a moment on the slow chip and several screens ask for the same
-// thing, so the last answer is kept for 10 minutes (per place and look-ahead).
-let passMemo = null;
+// The predictions take a while on the slow chip (measured on a real tablet: over a quarter
+// of a second for six days ahead, all of it before the deck could draw), and several
+// screens ask for the same thing. So: answers are kept for half an hour, one for each
+// place and look-ahead (the deck and the alert check ask for different ones and used to
+// push each other's answer out), and the sums wait a moment first so that the screen that
+// asked gets drawn before they start.
+const passMemo = {};
+const afterDrawing = () => new Promise((done) => setTimeout(done, 60));
 
 // Next pass you can actually see with your eyes (or null), looking `hours` ahead.
 export async function nextVisiblePass(loc, hours = 48) {
@@ -224,11 +229,15 @@ export async function nextVisiblePass(loc, hours = 48) {
 export async function visiblePasses(loc, hours = 48) {
   const key = `${loc.lat.toFixed(3)},${loc.lon.toFixed(3)},${hours}`;
   let list;
-  if (passMemo && passMemo.key === key && Date.now() - passMemo.at < 10 * 60000) list = passMemo.list;
+  const kept = passMemo[key];
+  if (kept && Date.now() - kept.at < 30 * 60000) list = kept.list;
   else {
+    await afterDrawing();
     const all = await getPasses(loc, { from: Date.now() - 10 * 60000, hours });
     list = all.filter((p) => p.visible);
-    passMemo = { key, at: Date.now(), list };
+    // (Only the newest few places are kept: the town rarely changes.)
+    if (Object.keys(passMemo).length > 6) Object.keys(passMemo).forEach((k) => delete passMemo[k]);
+    passMemo[key] = { key, at: Date.now(), list };
   }
   return list.filter((p) => p.visEnd > Date.now());
 }

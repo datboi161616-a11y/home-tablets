@@ -162,14 +162,14 @@ async function planeAlert(loc) {
       id: `rare-${ac.hex}`, kind: 'rare', big: RARE[ac.type] || 'AF ONE',
       label: 'RARE PLANE OVERHEAD', headline: `GO OUTSIDE · ${look}`,
       sub: `${typeName(ac)} · ${fmtAlt(ac)} · ${miles} miles away · ${flightLabel(ac, route)}`,
-      link: { href: '#/flights', label: 'SEE IT ON THE RADAR' },
+      link: { href: `#/flights/${encodeURIComponent(ac.hex)}`, label: 'SEE IT ON THE RADAR' },
     };
   }
   return {
     id: `over-${ac.hex}`, kind: 'overhead', big: flightLabel(ac, route),
     label: 'PLANE PASSING RIGHT OVER YOUR HOUSE', headline: `${look} · ${fmtAlt(ac)}`,
     sub: `${typeName(ac)} · ${routeText(ac, route)}`,
-    link: { href: '#/flights', label: 'SEE IT ON THE RADAR' },
+    link: { href: `#/flights/${encodeURIComponent(ac.hex)}`, label: 'SEE IT ON THE RADAR' },
   };
 }
 

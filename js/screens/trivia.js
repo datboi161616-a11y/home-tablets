@@ -178,7 +178,7 @@ function render() {
   root.querySelector('[data-score]').textContent = `${s.score}/${s.qs.length}`;
   root.querySelector('[data-wings]').textContent = st.wings;
   const alive = st.lastWingsDay === dayKey() || st.lastWingsDay === dayKey(new Date(Date.now() - 86400000));
-  root.querySelector('[data-streak]').textContent = alive && st.streak ? `${st.streak} DAY${st.streak > 1 ? 'S' : ''}` : '—';
+  root.querySelector('[data-streak]').textContent = alive && st.streak ? `${st.streak} DAY${st.streak > 1 ? 'S' : ''}` : '0 DAYS';
   root.querySelector('[data-run]').textContent = st.run;
   root.querySelector('[data-rank]').textContent = rankFor(st.wings);
   const qotd = read(QOTD_KEY, {});
@@ -292,11 +292,11 @@ export function mount(el) {
         <a href="#/bridge" style="min-height:56px;padding:0 22px;box-sizing:border-box;border:1px solid #1E3A4A;font-size:16px;letter-spacing:3px;display:flex;align-items:center">◂ DECK</a>
         <div class="tv-ox" style="font-size:24px;font-weight:700;letter-spacing:5px;color:#5CE1E6;white-space:nowrap">SPACE &amp; FLIGHT TRIVIA</div>
       </div>
-      <div style="display:flex;gap:20px;font-size:16px;letter-spacing:2px;white-space:nowrap">
+      <div style="display:flex;gap:12px;font-size:16px;letter-spacing:1px;white-space:nowrap">
         <span class="tv-stat">ROUND <b data-score>0</b></span>
         <span class="tv-stat">IN A ROW <b data-run>0</b></span>
         <span class="tv-stat">WINGS ★ <b data-wings>0</b></span>
-        <span class="tv-stat">STREAK <b data-streak>—</b></span>
+        <span class="tv-stat">STREAK <b data-streak>0 DAYS</b></span>
         <span class="tv-stat">RANK <b data-rank>CADET</b></span>
       </div>
     </div>

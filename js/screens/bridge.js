@@ -7,7 +7,7 @@ import { feature } from '../services/features.js';
 import {
   getAircraft, getRoutes, advance, flightLabel, typeName, fmtAlt, compass, compassShort, fmtMiles, trend, RADIUS_NM,
 } from '../services/aircraft.js';
-import { nextVisiblePass, getCrew, getElements } from '../services/iss.js';
+import { nextVisiblePass, getCrew, orbitStatus, brightnessWords } from '../services/iss.js';
 import { getBoard } from '../services/departures.js';
 import { checkAlerts, wasSeen, markSeen, heightWords } from '../services/skyalert.js';
 
@@ -22,6 +22,7 @@ let timers = [];
 let alive = false;
 let onOnline = null;
 let issTimer = 0; // the Space Station panel's next change (start or end of a pass)
+let visit = 0;    // counts mounts, so a slow start from an earlier visit doesn't add its timers
 
 const pad = (n) => String(n).padStart(2, '0');
 // Times in words follow the owner's 12/24-hour choice (compat.js); the big clock is 24-hour on purpose.
@@ -80,7 +81,11 @@ function vals() {
 }
 
 export function mount(el) {
+  // Mounted again without being left first (the tour reloads the deck under itself):
+  // stop the last visit's timers so the panels aren't fetched twice over.
+  if (alive) unmount();
   alive = true;
+  const me = ++visit;
   let glow = GLOWS[0];
   try { glow = localStorage.getItem('bridge.glow') || GLOWS[0]; } catch (e) { /* storage off */ }
   const v = vals();
@@ -130,7 +135,7 @@ export function mount(el) {
     </div>
 
     <div style="flex-grow: 1; display: grid; grid-template-columns: 1fr 1.35fr 1fr; gap: 20px; min-height: 0">
-      <a href="#/flights" style="border: 1px solid #1E3A4A; background: #0A1220; padding: 20px 22px; text-decoration: none; color: #D7E6F0; display: flex; flex-direction: column; gap: 12px; min-width: 0">
+      <a href="#/flights" data-planes style="border: 1px solid #1E3A4A; background: #0A1220; padding: 20px 22px; text-decoration: none; color: #D7E6F0; display: flex; flex-direction: column; gap: 12px; min-width: 0">
         <div data-over style="${label}">OVER YOUR HOUSE NOW</div>
         <div style="align-self: center; position: relative; width: 200px; height: 200px; border-radius: 50%; border: 2px solid var(--glow); box-sizing: border-box; overflow: hidden; flex-shrink: 0">
           <div class="sweep"></div>
@@ -280,10 +285,12 @@ export function mount(el) {
     sm.style.color = warn ? '#FFB547' : '#8FB0C0';
   }
 
-  function showPlanes(count, flight, sub) {
+  // hex: the closest plane, so a tap opens the radar with that very plane picked.
+  function showPlanes(count, flight, sub, hex) {
     $('[data-count]').textContent = `${count} PLANE${count === 1 ? '' : 'S'}`;
     $('[data-c-flight]').textContent = flight;
     $('[data-c-sub]').textContent = sub;
+    $('[data-planes]').setAttribute('href', hex ? `#/flights/${encodeURIComponent(hex)}` : '#/flights');
   }
 
   async function loadPlanes() {
@@ -314,7 +321,7 @@ export function mount(el) {
         if (!alive) return;
         const codes = route?.from && route?.to ? ` · ${route.from.iata || route.from.city} → ${route.to.iata || route.to.city}` : '';
         showPlanes(air.length, flightLabel(c, route) + codes, `${typeName(c)}
-${fmtAlt(c)}${trend(c) ? ' ' + trend(c) : ''} · ${fmtMiles(c.dst)} ${compassShort(c.dir)}`);
+${fmtAlt(c)}${trend(c) ? ' ' + trend(c) : ''} · ${fmtMiles(c.dst)} ${compassShort(c.dir)}`, c.hex);
       }
       if (!data.sample && !guessed) {
         write(LAST_PLANES, { at: data.at, count: air.length, flight: $('[data-c-flight]').textContent, sub: $('[data-c-sub]').textContent });
@@ -333,6 +340,15 @@ ${fmtAlt(c)}${trend(c) ? ' ' + trend(c) : ''} · ${fmtMiles(c.dst)} ${compassSho
     if (!iss || !alive) return;
     const p = iss.p;
     const now = Date.now();
+    if (!p && !iss.orbitOk) {
+      // No times because the newest orbit is too old to trust, not because there are none.
+      $('[data-iss-title]').textContent = 'PASS TIMES UNAVAILABLE';
+      $('[data-iss-time]').textContent = '--:--';
+      $('[data-iss-sub]').textContent = `ITS LATEST ORBIT IS ${iss.ageDays} DAYS OLD, TOO OLD TO GIVE TIMES · `
+        + (offline() ? 'THE WI-FI IS OFF' : 'CHECKING AGAIN EVERY 15 MIN');
+      $('[data-iss-tip]').style.display = 'none';
+      return;
+    }
     if (!p) {
       $('[data-iss-title]').textContent = 'NOT VISIBLE THIS WEEK';
       $('[data-iss-time]').textContent = '--:--';
@@ -351,20 +367,29 @@ ${fmtAlt(c)}${trend(c) ? ' ' + trend(c) : ''} · ${fmtMiles(c.dst)} ${compassSho
     else title = 'VISIBLE ' + start.toLocaleDateString('en-US', { weekday: 'long' }).toUpperCase();
     $('[data-iss-title]').textContent = title;
     $('[data-iss-time]').textContent = fmtTime(p.visStart);
-    $('[data-iss-sub]').textContent = `LOOK ${compass(p.visAz)} · ${heightWords(p.visMaxEl || 0).toUpperCase()} · ${mins} MIN`
-      + (iss.oldOrbit ? ' · ORBIT FIGURES OLD, TIME MAY BE A FEW MINUTES OFF' : '');
-    $('[data-iss-tip]').style.display = iss.oldOrbit ? 'none' : 'block';
+    $('[data-iss-sub]').textContent = `LOOK ${compass(p.visAz)} · ${brightnessWords(p).replace(', LOW DOWN', '')} ·${heightWords(p.visMaxEl || 0).toUpperCase()} · ${mins} MIN`;
+    $('[data-iss-tip]').style.display = 'block';
+  }
+
+  function drawCrew(c) {
+    const cell = $('[data-iss-crew]');
+    if (c && c.onIss) { cell.textContent = String(c.onIss); cell.style.fontSize = '21px'; return; }
+    // Never fetched (no Wi-Fi since it was switched on): say so instead of a bare "--".
+    cell.textContent = offline() ? 'NO WI-FI' : 'NOT YET';
+    cell.style.fontSize = '15px';
   }
 
   async function loadIss() {
-    getCrew().then((c) => { if (alive && c.onIss) $('[data-iss-crew]').textContent = String(c.onIss); }).catch(() => {});
+    getCrew().then((c) => { if (alive) drawCrew(c); }).catch(() => { if (alive) drawCrew(null); });
     try {
       // Look up to 6 days ahead (the day name is only clear within a week).
-      const p = await nextVisiblePass(loc, 144);
-      let oldOrbit = false;
-      try { const e = await getElements(); oldOrbit = !e || Date.now() - e.epoch > 10 * 86400000; } catch (err) { /* keep quiet */ }
+      // Two days ahead first (the same sums the alert check shares); six days only when
+      // those two have nothing to see, which is three times the work.
+      const p = await nextVisiblePass(loc, 48) || await nextVisiblePass(loc, 144);
+      let st = { ok: true, ageDays: 0 };
+      try { st = await orbitStatus(); } catch (err) { /* keep quiet */ }
       if (!alive) return;
-      iss = { p, oldOrbit };
+      iss = { p, orbitOk: st.ok, ageDays: st.ageDays };
       drawIss();
       // Turn to "OVERHEAD NOW" as it starts, and on to the next pass once it's gone.
       clearTimeout(issTimer);
@@ -405,7 +430,9 @@ ${fmtAlt(c)}${trend(c) ? ' ' + trend(c) : ''} · ${fmtMiles(c.dst)} ${compassSho
         const next = b.departures.find((r) => r.s !== 'DEPARTED') || b.departures[0];
         board = { title: 'SAMPLE DEPARTURES', line: next ? `NEXT OUT: ${next.f} TO ${next.d} · ${fmtTime(next.time)}` : 'NO SAMPLE FLIGHTS', live: true, sample: true, at: Date.now() };
       } else if (!b.airport) {
-        board = { title: 'DEPARTURES', line: 'NO AIRPORT TRAFFIC NEARBY RIGHT NOW', live: true, at: b.at || Date.now() };
+        // Nothing within 30 miles: name the nearest airport the planes overhead are using.
+        const n = (b.nearby || [])[0];
+        board = { title: 'DEPARTURES', line: n ? `NONE WITHIN 30 MI RIGHT NOW · NEAREST IN USE: ${(n.city || n.iata).toUpperCase()} (${n.iata}), ${n.mi} MI ${n.side}` : 'NO AIRPORT TRAFFIC NEARBY RIGHT NOW', live: true, at: b.at || Date.now() };
       } else {
         const lastOut = b.departures[0];
         board = { title: `${b.airport.iata} DEPARTURES`, line: lastOut ? `LATEST OUT: ${lastOut.f} TO ${lastOut.d} · ${fmtTime(lastOut.time)}` : 'NO DEPARTURES IN THE AIR RIGHT NOW', live: true, at: b.at || Date.now() };
@@ -460,7 +487,7 @@ ${fmtAlt(c)}${trend(c) ? ' ' + trend(c) : ''} · ${fmtMiles(c.dst)} ${compassSho
   triviaBadge();
   (async () => {
     await findHome();
-    if (!alive) return;
+    if (!alive || me !== visit) return;
     loadAll();
     watchAlerts();
     timers.push(setInterval(drawRadar, 2000));

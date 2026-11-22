@@ -7,7 +7,8 @@
 import { backHref, backLabel } from '../services/nav.js';
 import { getFamily, saveFamily, canSaveFamily } from '../services/family.js';
 import { display, setDisplay, hourText, timeText } from '../services/display.js';
-import { testBeep } from '../services/timers.js';
+import { testBeep, softChime } from '../services/timers.js';
+import { uploadUrl, qrSvg } from '../services/tablet-photos.js';
 import { manualPlace, knownPlace, findPlaces, setPlace } from '../services/location.js';
 import { BUILD } from '../build.js';
 import { settings, profile } from '../config.js';
@@ -58,8 +59,9 @@ const CHOICES = {
   alarmSound: { get: () => display().alarmSound, set: (v) => { setDisplay({ alarmSound: v }); testBeep(v); } },
   alarmMinutes: { get: () => String(display().alarmMinutes), set: (v) => setDisplay({ alarmMinutes: +v }) },
   alarmInsist: { get: () => (display().alarmInsist ? '1' : '0'), set: (v) => setDisplay({ alarmInsist: v === '1' }) },
-  alarmHeadsUp: { get: () => (display().alarmHeadsUp ? '1' : '0'), set: (v) => setDisplay({ alarmHeadsUp: v === '1' }) },
-  noteChime: { get: () => (display().noteChime ? '1' : '0'), set: (v) => setDisplay({ noteChime: v === '1' }) },
+  // (Choosing either chime plays it once, so people know what to listen for.)
+  alarmHeadsUp: { get: () => (display().alarmHeadsUp ? '1' : '0'), set: (v) => { setDisplay({ alarmHeadsUp: v === '1' }); if (v === '1') softChime(); } },
+  noteChime: { get: () => (display().noteChime ? '1' : '0'), set: (v) => { setDisplay({ noteChime: v === '1' }); if (v === '1') softChime(); } },
   weekStart: { get: () => String(display().weekStart === 0 ? 0 : 1), set: (v) => setDisplay({ weekStart: +v }) },
   nightStyle: { get: () => (display().nightStyle === 'clock' ? 'clock' : 'full'), set: (v) => setDisplay({ nightStyle: v }) },
   photoClock: { get: () => (display().photoClock ? '1' : '0'), set: (v) => setDisplay({ photoClock: v === '1' }) },
@@ -160,8 +162,24 @@ export function mount(el) {
             placeholder="e.g. The Smiths" value="${esc(fam.familyName || '')}"${canSave ? '' : ' disabled'}>
           <button data-save-name class="st-btn" disabled>Save</button>
         </div>`, `Shows as “Good morning, <span data-name-echo>${esc(fam.familyName || 'Family')}</span>”.`)
-        + `<div class="st-hint" style="margin-top:auto">${canSave ? '' : 'For now the name is changed from a phone as well. '}Birthdays, the people who leave notes and Google or iPhone calendars are added from a phone:
-          <b>Photos → Add photos</b>, scan the code, then <b>Settings</b>.</div>`;
+        + (() => {
+          // Birthdays, people and calendars need real typing: they are entered on a phone.
+          // The code for that page is shown right here (it opens on the phone's Settings tab).
+          let url = null;
+          try { url = uploadUrl(); } catch (e) { url = null; }
+          const what = 'Birthdays, the people who leave notes and Google or iPhone calendars are added from a phone';
+          if (!url) {
+            return `<div class="st-hint" style="margin-top:auto">${canSave ? '' : 'For now the name is changed from a phone as well. '}${what}:
+              <b>Photos → Add photos</b>, scan the code, then <b>Settings</b>.</div>`;
+          }
+          return `<div class="st-line" style="margin-top:auto;gap:24px;align-items:center">
+              <div style="flex:none;padding:10px;background:#fff;border-radius:14px;line-height:0">${qrSvg(`${url}#settings`, 190)}</div>
+              <div>
+                <div class="st-label">Birthdays, people and calendars</div>
+                <div class="st-hint" style="margin-top:6px">${what}, because they need real typing. Point a phone’s camera at this code (the phone has to be on your home Wi-Fi); it opens straight on <b>Settings</b>.</div>
+              </div>
+            </div>`;
+        })();
     },
     screen: () => {
       const d = display();

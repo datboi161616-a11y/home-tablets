@@ -50,16 +50,19 @@ export function mount(el) {
     .tba.calm [data-big]{color:#FFB547 !important}
     .tba [data-chips] > div.on{border-color:#FF6B57;background:rgba(255,59,46,.18);color:#FFFFFF}
   </style>
-  <div class="tba calm" style="width: 1280px; height: 800px; box-sizing: border-box; padding: 40px; background: #160606; color: #FFE7E2; font-family: 'JetBrains Mono', monospace; display: flex; flex-direction: column; gap: 24px; position: relative">
+  <div class="tba calm" style="width: 1280px; height: 800px; box-sizing: border-box; padding: 24px 40px 40px; background: #160606; color: #FFE7E2; font-family: 'JetBrains Mono', monospace; display: flex; flex-direction: column; gap: 24px; position: relative">
     <div data-bar class="pulse" style="position: absolute; left: 0; right: 0; top: 0; height: 14px; background: #FF3B2E"></div>
     <div data-bar class="pulse" style="position: absolute; left: 0; right: 0; bottom: 0; height: 14px; background: #FF3B2E"></div>
-    <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 12px">
-      <div data-head class="pulse" style="font-family: Oxanium, sans-serif; font-size: 28px; font-weight: 700; letter-spacing: 10px; color: #FF6B57">SKY ALERT</div>
-      <div style="display: flex; gap: 12px">
+    <div style="display: flex; justify-content: space-between; align-items: center; gap: 16px">
+      <div style="display: flex; align-items: center; gap: 16px; min-width: 0">
+        <a data-deck href="#/bridge" class="tba-btn" style="padding: 0 22px; font-size: 16px; flex: none">◂ DECK</a>
+        <div data-head class="pulse" style="font-family: Oxanium, sans-serif; font-size: 28px; font-weight: 700; letter-spacing: 10px; color: #FF6B57; white-space: nowrap">SKY ALERT</div>
+      </div>
+      <div style="display: flex; gap: 12px; flex: none">
         <a data-link href="#/bridge" class="tba-btn" style="display: none"></a>
         <button data-seen class="tba-btn" style="display: none">SEEN IT ✓</button>
         <button data-test class="tba-btn">TEST ALERT</button>
-        <a data-dismiss href="#/bridge" class="tba-btn">◂ DECK</a>
+        <a data-dismiss href="#/bridge" class="tba-btn" style="display: none">DISMISS</a>
       </div>
     </div>
     <div style="flex-grow: 1; display: flex; flex-direction: column; justify-content: center; gap: 18px; min-width: 0">
@@ -79,6 +82,7 @@ export function mount(el) {
   const $ = (s) => el.querySelector(s);
   const root = $('.tba');
   let loc = null;
+  let guessed = false; // the town isn't known yet: New York stands in, and the times say so
   let alert = null;   // active alert (real or test)
   let calm = null;    // { pass } when nothing is happening
 
@@ -119,7 +123,7 @@ export function mount(el) {
       $('[data-headline]').textContent = alert.headline;
       $('[data-sub]').textContent = alert.sub;
       el.querySelectorAll('[data-chip]').forEach((c) => c.classList.toggle('on', c.dataset.chip === chipKind(alert.kind)));
-      $('[data-dismiss]').textContent = 'DISMISS';
+      $('[data-dismiss]').style.display = '';
       // A way to the screen with more about it (launch details, the plane radar).
       const link = $('[data-link]');
       if (alert.link) {
@@ -138,7 +142,7 @@ export function mount(el) {
     $('[data-test]').style.display = '';
     $('[data-seen]').style.display = 'none';
     $('[data-link]').style.display = 'none';
-    $('[data-dismiss]').textContent = '◂ DECK';
+    $('[data-dismiss]').style.display = 'none';
     el.querySelectorAll('[data-chip]').forEach((c) => c.classList.remove('on'));
     const sh = nextShower();
     if (sh) {
@@ -155,7 +159,8 @@ export function mount(el) {
       const bright = brightnessWords(p) === 'VERY BRIGHT' ? 'very bright' : brightnessWords(p) === 'BRIGHT' ? 'bright' : 'fainter';
       const path = p.visMaxAz != null && p.visEndAz != null ? ` · Highest ${compass(p.visMaxAz).toLowerCase()}, fades ${compass(p.visEndAz).toLowerCase()}` : '';
       const mins = Math.max(1, Math.round((p.visEnd - p.visStart) / 60000));
-      $('[data-sub]').textContent = `About ${mins} minute${mins > 1 ? 's' : ''} of ${bright} steady light, ${heightWords(p.visMaxEl)}${path} · This screen goes red 10 minutes before`;
+      $('[data-sub]').textContent = `About ${mins} minute${mins > 1 ? 's' : ''} of ${bright} steady light, ${heightWords(p.visMaxEl)}${path} · `
+        + (guessed ? 'Worked out for New York until the screen finds your town' : 'This screen goes red 10 minutes before');
     } else if (calm) {
       $('[data-label]').textContent = 'NOTHING RIGHT NOW';
       setBig('CLEAR');
@@ -200,6 +205,8 @@ export function mount(el) {
     if (alert && !alert.test) { markSeen(alert.id); dismiss(alert.id); }
     stopTest();
   });
+  // Back to the deck: a test that is playing stops (a real alert stays seen, so it won't jump back).
+  $('[data-deck]').addEventListener('click', () => { if (alert && alert.test) stopTest(); });
   $('[data-seen]').addEventListener('click', () => {
     if (alert && !alert.test) { markSeen(alert.id); dismiss(alert.id); }
     alert = null;
@@ -214,19 +221,25 @@ export function mount(el) {
     try {
       loc = await getLocation();
     } catch (e) {
-      console.error(e);
+      console.warn('alert: no location yet', e);
       loc = { lat: 40.7128, lon: -74.006, town: '' };
+      guessed = true;
     }
     if (!alive) return;
     await refresh();
     timers.push(setInterval(refresh, 30 * 1000));
-    timers.push(setInterval(async () => { if (loc) { const c = await calmInfo(); if (alive) calm = c; } }, 15 * 60 * 1000));
+    timers.push(setInterval(async () => {
+      // Still standing in for the town: look for it again first.
+      if (guessed) { try { loc = await getLocation(); guessed = false; } catch (e) { /* still not found */ } }
+      if (loc && alive) { const c = await calmInfo(); if (alive) calm = c; }
+    }, 15 * 60 * 1000));
   })();
 
   // The town changed in Settings: passes and night-time checks are for the new place.
   onPlace = async () => {
     try { loc = await getLocation(); } catch (e) { return; }
     if (!alive) return;
+    guessed = false;
     calm = null;
     refresh();
   };

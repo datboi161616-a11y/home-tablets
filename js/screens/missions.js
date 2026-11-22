@@ -24,13 +24,17 @@ const HOUR = 3600000;
 // [distance from the Sun on 2025-01-01 in AU, speed in AU per year] (NASA/JPL mission status, approx.)
 const PROBES = { voyager1: [166.1, 3.58], voyager2: [138.8, 3.25], newHorizons: [61.5, 2.9] };
 const probeKm = ([d0, v]) => (d0 + (v * (Date.now() - REF)) / YEAR) * AU;
+// Voyager 1's distance from Earth, worked out the same way as on the deck (one light-day on
+// Nov 18 2026, then 17 km a second), so the two screens give the same message time.
+const VGR1_LIGHT_DAY = Date.UTC(2026, 10, 18, 6, 16, 7);
+const voyager1FromEarthKm = () => 86400 * LIGHT_KMS + ((Date.now() - VGR1_LIGHT_DAY) / 1000) * 17;
 // Miles, like the rest of the deck (planes, Space Station speed).
 const billions = (km) => `~${(km / KM_PER_MI / 1e9).toFixed(1)} BILLION MILES`;
 
 // How long a radio message takes to reach the probe, in plain words.
 function signalTime(km) {
   const min = Math.round(km / LIGHT_KMS / 60);
-  if (min >= 24 * 60) return 'MESSAGES TAKE A FULL DAY';
+  if (min >= 24 * 60 && min < 24 * 60 + 5) return 'MESSAGES TAKE A FULL DAY';
   return `MESSAGES TAKE ${Math.floor(min / 60)} HR ${min % 60} MIN`;
 }
 
@@ -41,7 +45,7 @@ const exact = (x) => ['MIN', 'SEC', 'HR'].includes(x.precision);
 
 function craftCards() {
   const on = '#7CF29A', far = '#FFB547';
-  const v1 = probeKm(PROBES.voyager1), v2 = probeKm(PROBES.voyager2), nh = probeKm(PROBES.newHorizons);
+  const v1 = voyager1FromEarthKm(), v2 = probeKm(PROBES.voyager2), nh = probeKm(PROBES.newHorizons);
   return [
     { name: 'VOYAGER 1', tag: 'INTERSTELLAR', tagColor: far, what: 'Launched 1977. Left the solar system in 2012.', dist: billions(v1), sub: signalTime(v1) },
     { name: 'VOYAGER 2', tag: 'INTERSTELLAR', tagColor: far, what: 'Only craft to visit Uranus and Neptune.', dist: billions(v2), sub: signalTime(v2) },
@@ -167,7 +171,10 @@ function countdown() {
   const net = new Date(l.net);
   const ms = net - Date.now();
   const st = (l.statusAbbrev || '').toLowerCase();
-  if (!exact(l)) {
+  if (l.sample) {
+    // The built-in example launch is not real: a ticking clock would pretend it is.
+    set('EXAMPLE ONLY', 'NO CLOCK');
+  } else if (!exact(l)) {
     // Only a rough date is known — a ticking clock would be misleading.
     set('NO EXACT TIME YET', l.precision === 'MONTH' ? net.toLocaleDateString('en-US', { month: 'short' }).toUpperCase() : shortDate(net));
   } else if (st === 'hold' && ms > 0) {
@@ -240,7 +247,7 @@ export function mount(el) {
   <div class="ms-root">
     <div style="display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid #1E3A4A;padding-bottom:12px">
       <div style="display:flex;align-items:center;gap:16px">
-        <a href="#/bridge" class="ms-btn">◂ DECK</a>
+        <a href="#/bridge" class="ms-btn" style="padding:0 22px">◂ DECK</a>
         <div class="ms-ox" style="font-size:24px;font-weight:700;letter-spacing:6px;color:#5CE1E6">ACTIVE MISSIONS</div>
       </div>
       <div data-updated style="font-size:16px;letter-spacing:2px;color:#9CC3D5">REAL SPACECRAFT · UPDATED HOURLY</div>

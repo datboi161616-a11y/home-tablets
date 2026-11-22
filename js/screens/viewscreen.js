@@ -78,18 +78,23 @@ function again(token, at) {
 }
 
 async function skyLine(token) {
-  let loc;
-  try { loc = await getLocation(); } catch { if (live === token) again(token); return; } // no location: leave the lines out for now
-  if (live !== token) return;
   const now = new Date();
-  const parts = [];
-  const sun = nextSunEvent(now, loc.lat, loc.lon);
-  if (sun) parts.push(`${sun.name} ${fmtTime(sun.t)}`);
   const ph = moonPhase(now);
-  parts.push(ph.name.toUpperCase().replace(/ MOON$/, '') + ` MOON · ${Math.round(ph.fraction * 100)}% LIT`);
+  const moon = ph.name.toUpperCase().replace(/ MOON$/, '') + ` MOON · ${Math.round(ph.fraction * 100)}% LIT`;
   const info = token.el.querySelector('[data-info]');
   const iss = token.el.querySelector('[data-iss]');
   if (!info || !iss) return;
+  let loc;
+  try { loc = await getLocation(); } catch {
+    // Town not known yet: the Moon's phase is the same everywhere, so that line still shows.
+    if (live === token) { info.textContent = moon; again(token); }
+    return;
+  }
+  if (live !== token) return;
+  const parts = [];
+  const sun = nextSunEvent(now, loc.lat, loc.lon);
+  if (sun) parts.push(`${sun.name} ${fmtTime(sun.t)}`);
+  parts.push(moon);
   info.textContent = parts.join(' · ');
   let next = sun ? sun.t.getTime() : 0;
   try {
@@ -128,7 +133,7 @@ export function mount(el) {
     </div>
     <div data-watch style="position:absolute;left:40px;bottom:36px;font-size:16px;letter-spacing:3px;color:#6F8FA0">${watchLine()}</div>
     <div class="vs-dim"></div>
-    <a href="#/bridge" style="position:absolute;right:32px;bottom:22px;min-height:56px;padding:0 24px;box-sizing:border-box;border:1px solid #1E3A4A;font-size:16px;letter-spacing:3px;display:flex;align-items:center;text-decoration:none">RETURN TO CONSOLE</a>
+    <a href="#/bridge" style="position:absolute;left:40px;top:24px;min-height:56px;padding:0 22px;box-sizing:border-box;border:1px solid #1E3A4A;font-size:16px;letter-spacing:3px;display:flex;align-items:center;text-decoration:none">◂ DECK</a>
   </div>`;
 
   const root = el.querySelector('.vs-root');

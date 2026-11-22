@@ -68,10 +68,10 @@ export function mount(el, ctx = {}) {
     .tbf-k{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
     .tbf-v{font-size:17px;line-height:21px;max-height:42px;margin-top:3px;overflow:hidden;white-space:pre-line}
   </style>
-  <div class="tbf" style="width: 1280px; height: 800px; box-sizing: border-box; padding: 20px 36px; background: #05070D; color: #D7E6F0; font-family: 'JetBrains Mono', monospace; display: flex; flex-direction: column; gap: 14px">
+  <div class="tbf" style="width: 1280px; height: 800px; box-sizing: border-box; padding: 24px 36px 16px 40px; background: #05070D; color: #D7E6F0; font-family: 'JetBrains Mono', monospace; display: flex; flex-direction: column; gap: 14px">
     <div style="display: flex; align-items: center; justify-content: space-between; gap: 16px; border-bottom: 1px solid #1E3A4A; padding-bottom: 12px">
       <div style="display: flex; align-items: center; gap: 16px; flex-shrink: 0">
-        <a href="#/bridge" class="tbf-btn" style="text-decoration: none; display: flex; align-items: center; letter-spacing: 3px">◂ DECK</a>
+        <a href="#/bridge" class="tbf-btn" style="text-decoration: none; display: flex; align-items: center; padding: 0 22px; font-size: 16px; letter-spacing: 3px">◂ DECK</a>
         <div style="font-family: Oxanium, sans-serif; font-size: 24px; font-weight: 700; letter-spacing: 6px; color: #5CE1E6">PLANES OVER YOUR HOUSE</div>
       </div>
       <div data-status style="font-size: 15px; letter-spacing: 2px; color: #7FA6B8; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; min-width: 0">SCANNING…</div>
@@ -377,8 +377,10 @@ export function mount(el, ctx = {}) {
     const n = `${k} PLANE${k === 1 ? '' : 'S'} WITHIN ${range} MI`;
     const age = Math.round((Date.now() - data.at) / 60000);
     let words, warn = true;
-    if (data.sample) words = `SAMPLE · NO LIVE FEED${fs.offline ? ' (NO INTERNET)' : ''} · ${n}`;
-    else if (age >= 2) words = `AS OF ${timeText(new Date(data.at))} · ${fs.offline ? 'NO INTERNET' : 'FEED NOT ANSWERING'} · ${n}`;
+    // (Kept short: the longer wording ran off the end of the header.)
+    const few = `${k} PLANE${k === 1 ? '' : 'S'} IN RANGE`;
+    if (data.sample) words = `SAMPLE · ${fs.offline ? 'NO INTERNET' : 'NO LIVE FEED'} · ${few}`;
+    else if (age >= 2) words = `AS OF ${timeText(new Date(data.at))} · ${fs.offline ? 'NO INTERNET' : 'FEED DOWN'} · ${few}`;
     else { words = `LIVE · ${n} · TAP A PLANE`; warn = false; }
     setText(st, words);
     st.style.color = warn ? '#FFB547' : '#7FA6B8';
@@ -450,10 +452,11 @@ export function mount(el, ctx = {}) {
       loc = await getLocation();
     } catch (e) {
       console.error(e);
-      loc = { lat: 40.7128, lon: -74.006, town: '' };
+      loc = { lat: 40.7128, lon: -74.006, town: 'New York', guessed: true };
     }
     if (!alive() || mine !== gen) return;
-    setText($('[data-home]'), loc.town ? `HOME · ${String(loc.town).toUpperCase()}` : 'HOME');
+    // Town not found yet: the radar is centred on New York, and says so rather than "HOME".
+    setText($('[data-home]'), loc.guessed ? 'NEW YORK · TOWN NOT FOUND YET' : loc.town ? `HOME · ${String(loc.town).toUpperCase()}` : 'HOME');
     await poll();
   }
 

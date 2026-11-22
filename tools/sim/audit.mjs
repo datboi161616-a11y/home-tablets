@@ -4,7 +4,7 @@
 //   ROUTES  comma-separated starting routes (default: the profile's own)
 //   SOAK    rounds of the walk after the audit (default 4)
 const FAMILY = 'home,launcher,photos,recipes,plan,shopping,timers,myrecipe,addphotos,apps,camera,calendar,forecast,messages,night,recipe,dish';
-const TOM = 'bridge,flights,departures,trivia,alert,missions,sky,deepimage,viewscreen,apps,camera,photos,addphotos';
+const TOM = 'bridge,flights,departures,trivia,alert,missions,sky,deepimage,viewscreen,apps,camera,photos,addphotos,settings';
 const SOAK = Number(process.env.SOAK ?? 4);
 const DWELL = Number(process.env.DWELL_MS || 2600);
 

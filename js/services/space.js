@@ -294,8 +294,10 @@ function firstSentences(text, max = 230) {
 export async function getSpaceImage() {
   const key = 'space.image.v1';
   const c = readCache(key);
-  // A real APOD is kept all day; a fallback picture only 3 hours, then APOD is retried.
-  if (c && c.day === todayKey() && (!c.data.id || Date.now() - c.at < 3 * HOUR)) return c.data;
+  // Today's APOD is kept all day; a fallback picture, or NASA's previous day (today's not
+  // posted yet), only 3 hours, then APOD is asked again.
+  const isToday = (d) => !d.id && (!d.date || d.date >= todayKey());
+  if (c && c.day === todayKey() && (isToday(c.data) || Date.now() - c.at < 3 * HOUR)) return c.data;
   let data;
   try {
     const d = await getJSON(`https://api.nasa.gov/planetary/apod?api_key=${NASA_API_KEY}&thumbs=true`);
@@ -316,7 +318,9 @@ export async function getSpaceImage() {
     };
   } catch (err) {
     console.warn('apod', err);
-    data = fallbackImage();
+    // NASA didn't answer: an earlier answer from today (even yesterday's picture) beats a
+    // built-in one.
+    data = c && c.day === todayKey() && !c.data.id ? c.data : fallbackImage();
   }
   try { localStorage.setItem(key, JSON.stringify({ at: Date.now(), day: todayKey(), data })); } catch { /* full */ }
   return data;

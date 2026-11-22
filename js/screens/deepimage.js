@@ -86,6 +86,9 @@ function spotAt(i) {
   return { data: fallbackImage(st.today.id ? k : k - 1) };
 }
 
+/** NASA's picture for today (not an earlier day's, not a built-in famous one). */
+const isToday = (data) => !!data && !data.id && (!data.date || data.date >= todayKey());
+
 // A picture from a video day is a still from the video: say so.
 const isVideo = (data) => data.video || /youtube|ytimg|vimeo|vumbnail/i.test(data.url || '');
 
@@ -101,10 +104,16 @@ function caption(el, data, idx) {
     $('[data-v]').textContent = dateWords(data.date || todayKey(), { month: 'short', day: 'numeric' });
   }
   const who = data.copyright ? `© ${data.copyright}` : data.credit || 'NASA';
-  $('[data-credit]').textContent = `PHOTO: ${who.toUpperCase()}${isVideo(data) ? ' · A STILL FROM THE DAY’S VIDEO' : ''}`;
+  // Say honestly what this is: a built-in famous picture is not NASA's picture of the day.
+  const what = data.id ? ' · ONE OF THE SCREEN’S BUILT-IN FAMOUS PICTURES'
+    : idx === 0 && !isToday(data) ? ` · NASA’S PICTURE FOR ${dateWords(data.date, { month: 'short', day: 'numeric' })}` : '';
+  $('[data-credit]').textContent = `PHOTO: ${who.toUpperCase()}${what}${isVideo(data) ? ' · A STILL FROM THE DAY’S VIDEO' : ''}`;
   let label;
-  if (idx === 0) label = "VIEWSCREEN · TODAY'S PICTURE";
-  else if (idx < firstFamous) label = `VIEWSCREEN · NASA’S PICTURE FOR ${dateWords(data.date, { weekday: 'long', month: 'short', day: 'numeric' })}`;
+  if (idx === 0) {
+    label = data.id ? 'VIEWSCREEN · A FAMOUS PICTURE · TODAY’S HASN’T ARRIVED'
+      : isToday(data) ? "VIEWSCREEN · TODAY'S PICTURE"
+        : `NASA’S PICTURE FOR ${dateWords(data.date, { weekday: 'short', month: 'short', day: 'numeric' })} · TODAY’S ISN’T IN YET`;
+  } else if (idx < firstFamous) label = `VIEWSCREEN · NASA’S PICTURE FOR ${dateWords(data.date, { weekday: 'long', month: 'short', day: 'numeric' })}`;
   else label = `VIEWSCREEN · FAMOUS PICTURES · ${idx - DAYS} OF ${famousCount()}`;
   $('[data-label]').textContent = label;
   // The whole write-up, when NASA's is longer than what fits here.
@@ -191,7 +200,8 @@ function show(idx) {
   $('[data-wait]').style.display = 'flex';
   $('[data-retry]').style.display = 'none';
   $('[data-wait-text]').innerHTML = idx === 0
-    ? "RECEIVING TODAY'S DEEP-SPACE IMAGE…<br>FROM NASA'S PICTURE OF THE DAY AND THE WEBB TELESCOPE"
+    ? (spot.data.id ? `RECEIVING ${spot.data.title.toUpperCase()}…<br>NASA’S PICTURE FOR TODAY HASN’T ARRIVED YET`
+      : "RECEIVING TODAY'S DEEP-SPACE IMAGE…<br>FROM NASA'S PICTURE OF THE DAY")
     : spot.date ? `RECEIVING NASA’S PICTURE FOR ${dateWords(spot.date, { weekday: 'long', month: 'short', day: 'numeric' })}…`
       : `RECEIVING ${spot.data.title.toUpperCase()}…`;
 
@@ -276,6 +286,46 @@ function loadToday() {
     });
 }
 
+/** The newer picture waiting to be looked at: a button, so the one he's reading stays put. */
+function drawOffer() {
+  const $ = (s) => st.el.querySelector(s);
+  const on = !!st.pending;
+  $('[data-newer]').style.display = on ? '' : 'none';
+  $('[data-label]').style.right = on ? '380px' : '40px';
+}
+
+/**
+ * Every 15 minutes: has today's NASA picture come in since? (space.js only asks NASA again
+ * once its copy has gone stale, so this never asks more often than before.) If so it is
+ * offered, not swapped in. The words on the one showing are brought up to date too
+ * ("TODAY'S" becomes yesterday's after midnight).
+ */
+function checkToday() {
+  getSpaceImage().catch(() => null).then((data) => {
+    if (!st || !root?.isConnected || !data) return;
+    st.day = todayKey();
+    const cap = st.el.querySelector('[data-caption]');
+    if (cap.style.visibility === 'visible' && st.data) caption(st.el, st.data, st.idx);
+    const has = (d) => d && d.url === data.url;
+    if (has(st.today) || has(st.pending) || !isToday(data)) return;
+    // Nothing on the screen yet (still waiting, or "no signal"): just show it.
+    if (cap.style.visibility !== 'visible' && st.idx === 0) { adoptToday(data); return; }
+    st.pending = data;
+    drawOffer();
+  });
+}
+
+function adoptToday(data) {
+  st.today = data;
+  st.pending = null;
+  drawOffer();
+  st.tries = 0;
+  st.dir = 1;
+  st.wanted = 0;
+  root.classList.remove('di-hide');
+  show(0);
+}
+
 export function mount(el) {
   el.innerHTML = `
   <link rel="stylesheet" crossorigin href="https://fonts.googleapis.com/css2?family=Oxanium:wght@300;500;700&family=JetBrains+Mono:wght@400;600&display=swap">
@@ -302,12 +352,11 @@ export function mount(el) {
     </div>
     <canvas data-bg class="di-bg" width="64" height="40" aria-hidden="true"></canvas>
     <img data-img class="di-img" alt="" decoding="async">
-    <div class="di-c" style="top:28px;left:28px;border-top:2px solid #5CE1E6;border-left:2px solid #5CE1E6"></div>
-    <div class="di-c" style="top:28px;right:28px;border-top:2px solid #5CE1E6;border-right:2px solid #5CE1E6"></div>
     <div class="di-c" style="bottom:28px;left:28px;border-bottom:2px solid #5CE1E6;border-left:2px solid #5CE1E6"></div>
     <div class="di-c" style="bottom:28px;right:28px;border-bottom:2px solid #5CE1E6;border-right:2px solid #5CE1E6"></div>
-    <div data-label style="position:absolute;top:46px;left:110px;right:300px;font-size:16px;letter-spacing:3px;color:#5CE1E6;text-shadow:0 1px 4px #05070D,0 0 8px #05070D;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">VIEWSCREEN · MAGNIFICATION MAX</div>
-    <a href="#/bridge" class="di-btn" style="position:absolute;top:30px;right:110px;text-decoration:none">◂ DECK</a>
+    <a href="#/bridge" class="di-btn" style="position:absolute;top:24px;left:40px;text-decoration:none">◂ DECK</a>
+    <div data-label style="position:absolute;top:42px;left:184px;right:40px;font-size:16px;letter-spacing:3px;color:#5CE1E6;text-shadow:0 1px 4px #05070D,0 0 8px #05070D;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">VIEWSCREEN · MAGNIFICATION MAX</div>
+    <button data-newer class="di-btn" style="display:none;position:absolute;top:24px;right:40px;border-color:#FFB547;color:#FFB547">TODAY’S PICTURE IS IN ▸</button>
     <button data-prev class="di-nav" style="left:24px" aria-label="Previous picture">◂</button>
     <button data-next class="di-nav" style="right:24px" aria-label="Next picture">▸</button>
     <div data-caption class="di-cap" style="visibility:hidden">
@@ -335,13 +384,14 @@ export function mount(el) {
   </div>`;
 
   root = el.querySelector('.di-root');
-  st = { el, today: null, day: '', idx: 0, wanted: 0, dir: 1, tries: 0, reading: null, data: null };
+  st = { el, today: null, day: '', idx: 0, wanted: 0, dir: 1, tries: 0, reading: null, data: null, pending: null };
   // Try again with the picture he asked for (not wherever the failures had moved on to).
   const retry = () => { st.tries = 0; if (st.today) show(st.wanted); else loadToday(); };
   onTap = (e) => {
     if (e.target.closest('a')) return;
     const t = e.target;
     if (t.closest('[data-retry]')) { retry(); return; }
+    if (t.closest('[data-newer]')) { if (st.pending) adoptToday(st.pending); return; }
     if (t.closest('[data-more]')) { openReader(); return; }
     if (t.closest('[data-read-close]')) { closeReader(); return; }
     if (t.closest('[data-read-next]')) { if (st.reading && st.reading.page < st.reading.pages.length - 1) { st.reading.page += 1; drawPage(); } return; }
@@ -368,9 +418,9 @@ export function mount(el) {
   window.addEventListener('online', onOnline);
 
   loadToday();
-  // Left on all night? Bring up the new day's picture after midnight.
+  // Left open (all night, or since before NASA posted today's): offer today's when it comes.
   dayTimer = setInterval(() => {
-    if (st?.today && st.day !== todayKey()) loadToday();
+    if (st?.today) checkToday();
   }, 15 * 60000);
 }
 
