@@ -2,12 +2,13 @@
 //   - Launch Library 2 (thespacedevs.com): upcoming rocket launches. ~15 calls/hour limit.
 //   - NASA APOD (api.nasa.gov): picture of the day. DEMO_KEY allows ~30/hour, 50/day.
 //   - NASA Image Library (images-assets.nasa.gov): fallback deep-space pictures.
-//   - CelesTrak: ISS orbit elements, used to work out flyovers locally (astro.js).
+//   - ISS orbit elements via iss.js (CelesTrak / wheretheiss.at), flyovers worked out locally (astro.js).
 //   - corquaid "people in space" JSON on GitHub Pages: ISS crew count.
 //   - Open-Meteo: tonight's cloud cover.
 // Everything is cached in localStorage. When a source fails we use the last
 // cached copy (however old), and if there is none, built-in sample data.
 import { issPasses } from './astro.js';
+import { getElements } from './iss.js';
 
 // Swap in a free personal key from https://api.nasa.gov for higher limits.
 export const NASA_API_KEY = 'DEMO_KEY';
@@ -21,16 +22,24 @@ function writeCache(key, data, extra = {}) {
   try { localStorage.setItem(key, JSON.stringify({ at: Date.now(), data, ...extra })); } catch { /* storage full */ }
 }
 
+// When a feed fails it is left alone for 5 minutes: several screens ask every minute, and
+// asking a busy server again and again (Launch Library allows ~15 calls an hour) only
+// keeps it refusing.
+const failedAt = {};
+const RETRY_MS = 5 * 60000;
+
 /** Fresh cache -> network -> stale cache -> fallback(). Returns { data, source }. */
 async function cachedFetch(key, maxAge, load, fallback, valid = () => true) {
   const c = readCache(key);
   if (c && Date.now() - c.at < maxAge && valid(c)) return { data: c.data, source: 'cache' };
   try {
+    if (Date.now() - (failedAt[key] || 0) < RETRY_MS) throw new Error('failed a moment ago; waiting before asking again');
     const data = await load();
     writeCache(key, data);
+    delete failedAt[key];
     return { data, source: 'live' };
   } catch (err) {
-    console.warn(key, err);
+    if (!failedAt[key] || Date.now() - failedAt[key] >= RETRY_MS) { failedAt[key] = Date.now(); console.warn(key, err); }
     if (c) return { data: c.data, source: 'stale' };
     return { data: fallback(), source: 'sample' };
   }
@@ -47,27 +56,87 @@ async function getJSON(url) {
 const SAMPLE_LAUNCHES = () => {
   const t = new Date(); t.setDate(t.getDate() + 1); t.setHours(14, 30, 0, 0);
   return [{ name: 'Starlink Group', rocket: 'Falcon 9', site: 'Cape Canaveral, FL, USA',
-    net: t.toISOString(), precision: 'MIN', status: 'Sample data · offline' }];
+    net: t.toISOString(), precision: 'MIN', status: 'Sample, not a real launch', sample: true }];
 };
 
-export async function getLaunches() {
-  const r = await cachedFetch('space.launches.v1', 3 * HOUR, async () => {
+// People are aboard: said only when the name makes it certain.
+const CREWED = /\b(crew-\d|crew flight|shenzhou|soyuz ms|axiom|ax-\d|artemis ii|polaris|gaganyaan h)/i;
+const NET_KEY = 'space.launchnet.v1'; // { [launch id]: { net, was } } to notice a date that moved
+
+function mapLaunch(l) {
+  const [rocketPart, missionPart] = (l.name || '').split('|').map((s) => s.trim());
+  const lat = Number(l.pad?.latitude), lon = Number(l.pad?.longitude);
+  const name = l.mission?.name || missionPart || l.name;
+  return {
+    id: l.id || null,
+    name,
+    rocket: l.rocket?.configuration?.name || rocketPart || '',
+    site: l.pad?.location?.name || l.pad?.name || '',
+    net: l.net,
+    precision: l.net_precision?.abbrev || 'MIN',
+    status: l.status?.name || '',
+    // Added fields (older cached copies may not have them):
+    statusAbbrev: l.status?.abbrev || '',       // Go, TBC, TBD, Hold, Success, Failure, Partial Failure, In Flight
+    provider: l.launch_service_provider?.name || '',
+    mission: (l.mission?.description || '').replace(/\s+/g, ' ').trim(),
+    orbit: l.mission?.orbit?.name || '',
+    type: l.mission?.type || '',
+    crewed: CREWED.test(`${l.name || ''} ${name || ''}`) && !/tianzhou|cargo|crs-/i.test(l.name || ''),
+    padLat: Number.isFinite(lat) ? lat : null,
+    padLon: Number.isFinite(lon) ? lon : null,
+    windowEnd: l.window_end || null,
+    probability: typeof l.probability === 'number' && l.probability >= 0 ? l.probability : null, // weather chance, %
+    failReason: l.failreason || '',
+  };
+}
+
+/** Remembers each launch's date between checks, so a launch that slipped can say "WAS ...". */
+function noteSlips(list) {
+  let seen = {};
+  try { seen = JSON.parse(localStorage.getItem(NET_KEY) || '{}') || {}; } catch { seen = {}; }
+  const next = {};
+  for (const l of list) {
+    if (!l.id) continue;
+    const old = seen[l.id];
+    let was = old?.was || null;
+    if (old && Math.abs(Date.parse(old.net) - Date.parse(l.net)) > 30 * 60000) was = old.net;
+    if (was && Math.abs(Date.parse(was) - Date.parse(l.net)) <= 30 * 60000) was = null; // moved back again
+    next[l.id] = { net: l.net, was };
+    l.slippedFrom = was;
+  }
+  try { localStorage.setItem(NET_KEY, JSON.stringify(next)); } catch { /* full */ }
+  return list;
+}
+
+/** maxAge: how old a kept list may be (default 3 hours; the screen asks sooner near a launch). */
+export async function getLaunches({ maxAge = 3 * HOUR } = {}) {
+  const r = await cachedFetch('space.launches.v1', Math.max(10 * 60000, maxAge), async () => {
     const d = await getJSON('https://ll.thespacedevs.com/2.3.0/launches/upcoming/?limit=10&mode=normal');
-    return d.results.map((l) => {
-      const [rocketPart, missionPart] = (l.name || '').split('|').map((s) => s.trim());
-      return {
-        name: l.mission?.name || missionPart || l.name,
-        rocket: l.rocket?.configuration?.name || rocketPart || '',
-        site: l.pad?.location?.name || l.pad?.name || '',
-        net: l.net,
-        precision: l.net_precision?.abbrev || 'MIN',
-        status: l.status?.name || '',
-      };
-    });
+    return noteSlips(d.results.map(mapLaunch));
   }, SAMPLE_LAUNCHES,
   // Refetch early if every cached launch has already gone.
   (c) => c.data.some((l) => new Date(l.net) > Date.now()));
-  return { ...r, launches: r.data };
+  // at: when this list was fetched (for "AS OF 3:05 PM"); null for the sample.
+  const c = r.source === 'sample' ? null : readCache('space.launches.v1');
+  return { ...r, launches: r.data, at: c ? c.at : null };
+}
+
+/**
+ * The most recent launch that has happened, with how it went:
+ * { name, rocket, site, net, status, result: 'success' | 'failure' | 'partial' | null } or null.
+ */
+export async function getLastLaunch() {
+  const r = await cachedFetch('space.lastlaunch.v1', 3 * HOUR, async () => {
+    const d = await getJSON('https://ll.thespacedevs.com/2.3.0/launches/previous/?limit=1&mode=normal');
+    const l = d.results && d.results[0];
+    if (!l) throw new Error('no previous launch');
+    return mapLaunch(l);
+  }, () => null);
+  const l = r.data;
+  if (!l) return null;
+  const a = (l.statusAbbrev || l.status || '').toLowerCase();
+  const result = /partial/.test(a) ? 'partial' : /fail/.test(a) ? 'failure' : /success/.test(a) ? 'success' : null;
+  return { ...l, result, source: r.source };
 }
 
 /** First launch that hasn't happened yet (keeps one for 30 min after T-0 for a "LIFTOFF" moment). */
@@ -84,22 +153,36 @@ export async function getIssCrew() {
   return r.data;
 }
 
+const epochMs = (omm) => new Date(String(omm.EPOCH).replace(/(\.\d{3})\d*/, '$1') + 'Z').getTime();
+
+// The orbit comes from the Space Station service (iss.js): CelesTrak, then wheretheiss.at,
+// then a built-in one. One orbit for every screen, so the sky chart, the deck and the
+// alerts all give the same pass times (they used to fetch and keep separate copies).
 async function getIssElements() {
-  const r = await cachedFetch('space.isstle.v1', 12 * HOUR, async () => {
-    const d = await getJSON('https://celestrak.org/NORAD/elements/gp.php?CATNR=25544&FORMAT=json');
-    if (!d?.[0]?.MEAN_MOTION) throw new Error('bad TLE');
-    return d[0];
-  }, () => null);
+  let omm = null;
+  try {
+    const el = await getElements();
+    omm = { EPOCH: new Date(el.epoch).toISOString().slice(0, 23), MEAN_MOTION: el.n, MEAN_MOTION_DOT: el.ndot,
+      ECCENTRICITY: el.e, INCLINATION: el.i, RA_OF_ASC_NODE: el.raan, ARG_OF_PERICENTER: el.argp, MEAN_ANOMALY: el.M };
+  } catch (e) { return null; }
   // Elements older than ~10 days are too stale to predict passes.
-  if (r.data && Date.now() - new Date(r.data.EPOCH + 'Z').getTime() > 10 * 24 * HOUR) return null;
-  return r.data;
+  if (Date.now() - epochMs(omm) > 10 * 24 * HOUR) return null;
+  return omm;
 }
 
 /** Visible ISS flyovers for the next `hours`. Returns [] if the orbit is unavailable. */
 export async function getIssPasses(loc, hours = 72) {
+  return (await getIssPassInfo(loc, hours)).passes;
+}
+
+/**
+ * Same, with whether the orbit was known at all: { passes, known }. known = false means
+ * "we can't say" (no recent orbit), which is different from "none you can see".
+ */
+export async function getIssPassInfo(loc, hours = 72) {
   const omm = await getIssElements();
-  if (!omm) return [];
-  return issPasses(omm, loc.lat, loc.lon, new Date(), hours);
+  if (!omm) return { passes: [], known: false };
+  return { passes: issPasses(omm, loc.lat, loc.lon, new Date(), hours), known: true };
 }
 
 /** "TONIGHT 6:42 PM", "TOMORROW 7:05 PM", "THU 6:42 PM" */
@@ -117,11 +200,17 @@ export const fmtTime = (d) =>
   d.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' }).toUpperCase();
 
 // ------------------------------------------------------------ Cloud cover
-/** Hourly cloud cover (%) from Open-Meteo. Returns { time: [...ms], cloud: [...] } or null. */
+/**
+ * Hourly cloud cover (%) from Open-Meteo. Returns { time: [...ms], cloud: [...], at } or null
+ * (at: when the forecast was fetched). A forecast kept for another place is never used:
+ * after the town is changed in Settings it would describe someone else's sky.
+ */
 export async function getCloudCover(loc) {
   const key = 'space.clouds.v1';
-  const c = readCache(key);
-  if (c && Date.now() - c.at < HOUR && c.lat === loc.lat) return c.data;
+  const raw = readCache(key);
+  const c = raw && raw.lat === loc.lat && raw.lon === loc.lon ? raw : null;
+  if (c) c.data.at = c.at;
+  if (c && Date.now() - c.at < HOUR) return c.data;
   try {
     const url = new URL('https://api.open-meteo.com/v1/forecast');
     url.search = new URLSearchParams({
@@ -130,8 +219,8 @@ export async function getCloudCover(loc) {
     });
     const d = await getJSON(url);
     const data = { time: d.hourly.time.map((t) => new Date(t + 'Z').getTime()), cloud: d.hourly.cloud_cover };
-    writeCache(key, data, { lat: loc.lat });
-    return data;
+    writeCache(key, data, { lat: loc.lat, lon: loc.lon });
+    return { ...data, at: Date.now() };
   } catch (err) {
     console.warn('clouds', err);
     return c?.data || null;

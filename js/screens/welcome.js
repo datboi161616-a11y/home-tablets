@@ -1,6 +1,6 @@
 // #/welcome: starts the hands-on tutorial (services/tutorial.js) on top of the real
 // home screen. A brand-new screen lands here until the tutorial is finished or skipped;
-// "Tour" on the App menu (TOUR on Tom's flight deck) brings it back.
+// "Tour" on the App menu, or Settings → Wi-Fi & about on either kind of screen, brings it back.
 import { profile } from '../config.js';
 import { startTutorial } from '../services/tutorial.js';
 

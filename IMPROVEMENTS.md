@@ -350,3 +350,119 @@ from are counted.
 308. When photos arrive, "Add photos" shows a big message with "See them now" or "Stay here to send more".
 309. The newest pictures on "Add photos" can be tapped to open them in the frame.
 310. When the album is full or nearly full, "Add photos" has a "Choose photos to remove" button that opens the grid.
+
+## 13 · The first-start tour
+
+311. The tour has a "Back" button, for a Next tapped too fast.
+312. A tour left half-watched goes back to its first card after ten minutes and waits there for the next person.
+313. When the night clock takes over, the tour steps aside instead of sitting bright on top of it, and is offered again in the morning.
+314. The tour shows off the timers ("name each one with a tap; they ring on whatever screen is up").
+315. The tour ends on "Make it yours": the town, the clock, the alarm sound, on the kitchen screens and on Tom's deck.
+316. "Carry on" after wandering off mid-tour returns to the right screen for every step (it only knew a few and otherwise stayed stuck).
+
+## 14 · Tom's deck: planes overhead and departures
+
+317. Planes Overhead opens with one sentence about the plane it has picked ("A Delta Boeing 737-900 from Atlanta to Boston is passing 3 miles northeast at 34,000 ft").
+318. It says where to look from the window: a compass direction and how high in the sky, worked out from distance and altitude.
+319. It says whether the plane is coming his way, moving away or passing by, and which way it is heading.
+320. A plane squawking an emergency code gets a red banner that says what the code means.
+321. Each plane has a badge for what it is: heavy jet, helicopter, business jet, military, cargo, small plane, glider, balloon.
+322. Helicopters are drawn as helicopters, and one standing still says "hovering" instead of "0 mph".
+323. On opening, the screen picks the most interesting plane in range, not simply the closest.
+324. Routes give cities with their codes and, for flights abroad, the country.
+325. About 100 more aircraft types and 35 more airlines are named in words, and the feed's uneven spellings no longer show.
+326. A Range button switches the radar between 25 and 10 miles, for a crowded sky.
+327. The radar is marked N, E, S, W, with the town under "Home" and distances on the rings.
+328. The list reaches every plane on the radar, in pages with big buttons (it showed only the first seven); tapping a plane on the radar jumps to it.
+329. Each row in the list says how far away the plane is and in which direction.
+330. With nothing overhead, the screen says when the last plane was seen and what it was.
+331. A strip keeps the day's count of aircraft seen from the house and the day's most unusual visitor.
+332. When the live feed stops answering, the header says how old the planes are, and after ten minutes falls back to clearly marked sample planes.
+333. The screens go easier on the free plane feeds: they wait longer after each failure, don't try at all with the Wi-Fi off, and share one request between screens.
+334. After the town is changed, a feed failure can no longer show planes from the old town.
+335. A full or damaged store on the screen can no longer throw away good live data or show an error.
+336. Odd values from the feed (a missing speed or position) can no longer produce "NaN" or a broken row.
+337. Planes Overhead and Departures follow a town change in Settings straight away.
+338. Leaving either screen while it was still loading no longer leaves its once-a-minute checks running in the background.
+339. The radar no longer animates continuously: planes step every four seconds and the sweep ticks four times a second instead of sixty.
+340. On a metric screen, distances also show km and speeds km/h (altitude stays in feet).
+341. The departure board's clock and times follow the 12/24-hour choice.
+342. The board says which airport it is showing and why.
+343. Tom can switch the board between the nearest few airports, and the deck follows his choice.
+344. Board statuses are in plain words ("Just took off", "Due in 4 min", "Taxiing out").
+345. Each board row shows the airline's name and the airport's code, and marks a flight after midnight.
+346. Tapping a flight on the board opens it on the radar, already picked out.
+347. Longer boards turn pages with big buttons instead of being cut at nine rows.
+348. A board that cannot load says so instead of "Loading…" for ever, and the sample board is labelled as an example.
+
+## 15 · Tom's deck: the flight deck, starfield, deep image and trivia
+
+349. Settings, Viewscreen and Deep image stay in the deck's header in every setup (two were dropped when Apps and Camera were on).
+350. The deck's header links and bottom buttons are bigger.
+351. When the plane feed goes down, the deck's planes panel keeps the last real count and closest plane with its age, instead of switching to made-up planes.
+352. The deck's departures line does the same, and can use three lines instead of being cut off on one.
+353. With the Wi-Fi off, the deck's panels say so in plain words, and everything refreshes the moment it returns.
+354. A deck that hasn't found its town says so instead of presenting New York's planes as "over your house".
+355. The Space Station panel switches to "Overhead now · look up" when the pass starts (it could be fifteen minutes late) and is right after midnight.
+356. The Space Station panel says how high the pass climbs, and warns when its orbit figures are old.
+357. The Trivia button on the deck shows "Today's question" until it has been answered.
+358. The deck does less work while it sits there: the radar sweep steps instead of running at 60 frames a second, and only the two Voyager numbers change each second.
+359. The deck's small grey labels are larger and lighter.
+360. The night starfield is drawn four times a second with plain timers instead of sixty, all night, and not at all while the screen is off.
+361. Tapping anywhere on the starfield goes back to the deck.
+362. The starfield's "dimmed" line shows the hours chosen in Settings and follows changes at once.
+363. The starfield's sunrise, moon and Space Station lines no longer run off the edge.
+364. Deep image: the arrows step back through NASA's pictures of the past seven days, then the famous ones.
+365. Deep image: "Read more" opens NASA's whole write-up in a large reading panel with pages.
+366. Deep image: on a video day the credit says the picture is a still from the day's video.
+367. Deep image: when no picture arrives there is a big "Try again", and a picture that hangs for thirty seconds counts as failed instead of "Receiving…" for ever.
+368. Deep image: the credit and caption are bigger and wrap instead of being cut off.
+369. Deep image: at midnight the new day's picture no longer pulls away the one he is looking at.
+370. Trivia: a choice of Everything, Flight, Space, or Weather and navigation questions.
+371. Trivia: a question of the day, picked from the ones he has met least.
+372. Trivia: no repeats until the whole bank has been asked.
+373. Trivia: a running "in a row" count, and his best run kept.
+374. Trivia: the end of a round shows today's tally, his best run, his all-time score and how many of the questions he has met.
+375. Trivia: the explanation after each answer and the answer buttons are bigger.
+376. Trivia: a round open at midnight finishes properly, and a full store can no longer stop the game.
+
+## 16 · Tom's deck: tonight's sky, missions and alerts
+
+377. The sky maths works out when the Sun, Moon and planets rise, set and are highest, on daylight-saving days and where the Sun never rises or sets.
+378. Tonight's Sky says when the Sun sets and when it is fully dark.
+379. Tonight's Sky shows the next full moon and new moon.
+380. The Moon's row says when it rises or sets tonight.
+381. One big sentence names the best thing to look at tonight ("Saturn is bright in the southwest all evening").
+382. Planets are listed by how bright they really are tonight, and ones that only rise near bedtime go last (Mars after midnight used to push Saturn off the list).
+383. A planet too close to the Sun to be seen is no longer listed.
+384. Every row says how high to look in plain words (low, a third up, halfway up, high up, overhead).
+385. When a brilliant planet is up only in the morning, a "Before dawn" line says so.
+386. Near a meteor shower's peak, Tonight's Sky shows it, with how many an hour and whether the Moon will hide the faint ones.
+387. A "Tomorrow night" button previews the next evening.
+388. Tapping the Space Station row lists the next visible passes: when, how long, how bright, where it appears and fades, and who is aboard by name.
+389. The Space Station row tells apart "still working it out", "none visible in the next three days" and "times unavailable".
+390. Times on Tonight's Sky follow the 12/24-hour choice.
+391. Changing the town in Settings makes Tonight's Sky, Space Missions and Sky Alert work everything out again.
+392. Tonight's Sky is marked "Sample place" when it can't find where the screen is, instead of quietly showing Philadelphia's sky.
+393. The cloud forecast is only used for the town it was fetched for, and says its age when old.
+394. No more tiny grey text on the sky, missions and alert screens, and every button is 56 px.
+395. Labels on the sky chart no longer overlap.
+396. A thirty-second glimpse of the Space Station low on the horizon no longer sets off an alert.
+397. Pass times worked out from an orbit more than ten days old are no longer shown as if they were right.
+398. Every screen uses the same Space Station orbit, so they all give the same pass times, and it keeps working for three days without the internet.
+399. Space Missions changes only the countdown each second instead of rebuilding the whole panel.
+400. Launch status is in plain words ("Go for launch", "Date not confirmed", "On hold"), and "Liftoff!" shows only when a launch is confirmed.
+401. A launch whose date has moved says so ("Moved from tonight 11:29 PM").
+402. Rough launch dates are said honestly ("Sometime in December").
+403. The launch panel says how the most recent launch went.
+404. Tapping the launch panel lists every upcoming launch; tapping one explains the mission and says how far away the launch pad is.
+405. Launches with people aboard are tagged, with a "Crewed only" filter.
+406. The Space Station card no longer shows a made-up crew count when the crew feed is down.
+407. Within an hour of a launch the schedule is rechecked every ten minutes, so scrubs and holds show up.
+408. The Space Station alert says how bright the pass will be, where it appears and fades, and whether cloud may hide it.
+409. Northern-lights and meteor alerts only go off once the sky is dark, and not under an overcast sky.
+410. "Seen it" and "Dismiss" on Sky Alert put an alert away for good.
+411. The rocket-launch alert uses the same launch list as Space Missions, and never fires on sample data.
+412. A feed that fails is left alone for five minutes instead of being asked again every minute.
+413. Small fixes: "1 minute" not "1 minutes"; the pulsing dots blink in two steps instead of animating endlessly.
+414. For whoever looks after the code: `node tools/sim/astro-test.mjs` checks the sky maths against 51 published values.

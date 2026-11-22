@@ -130,14 +130,43 @@ function helio(name, date) {
   ];
 }
 
-function planetAltAz(name, date, lat, lon) {
+/**
+ * Where a planet is as seen from Earth: ecliptic longitude/latitude (of date, degrees),
+ * its distance from Earth and from the Sun (AU), and its brightness (magnitude: smaller
+ * is brighter; Venus about -4, Jupiter about -2, Saturn about +1).
+ */
+export function planetEcliptic(name, date) {
   const p = helio(name, date);
   const g = helio('earth', date);
   const x = p[0] - g[0], y = p[1] - g[1], z = p[2] - g[2];
   const T = dJ2000(date) / 36525;
-  const elon = Math.atan2(y, x) * DEG + 1.396971 * T; // + precession since J2000
-  const elat = Math.atan2(z, Math.hypot(x, y)) * DEG;
-  return altAz(eclToEq(elon, elat, date), date, lat, lon);
+  const lon = norm360(Math.atan2(y, x) * DEG + 1.396971 * T); // + precession since J2000
+  const lat = Math.atan2(z, Math.hypot(x, y)) * DEG;
+  const delta = Math.hypot(x, y, z), r = Math.hypot(p[0], p[1], p[2]), R = Math.hypot(g[0], g[1], g[2]);
+  // Phase angle (Sun-planet-Earth) and the simple magnitude formulas (Meeus, Astronomical
+  // Algorithms ch. 41; Saturn without its rings, which are nearly edge-on in 2025-2027).
+  const i = Math.acos(Math.max(-1, Math.min(1, (r * r + delta * delta - R * R) / (2 * r * delta)))) * DEG;
+  const k = 5 * Math.log10(r * delta);
+  const mag = {
+    mercury: -0.42 + k + 0.0380 * i - 0.000273 * i * i + 0.000002 * i * i * i,
+    venus: -4.40 + k + 0.0009 * i + 0.000239 * i * i - 0.00000065 * i * i * i,
+    mars: -1.52 + k + 0.016 * i,
+    jupiter: -9.40 + k + 0.005 * i,
+    saturn: -8.88 + k,
+  }[name];
+  return { lon, lat, au: delta, sunAu: r, mag };
+}
+
+function planetAltAz(name, date, lat, lon) {
+  const e = planetEcliptic(name, date);
+  return altAz(eclToEq(e.lon, e.lat, date), date, lat, lon);
+}
+
+/** Angle between a planet (or the Moon) and the Sun, degrees: under ~15° it is lost in the glare. */
+export function sunDistance(body, date) {
+  const s = sunEcliptic(date);
+  const b = body === 'moon' ? moonEcliptic(date) : planetEcliptic(body, date);
+  return Math.acos(Math.max(-1, Math.min(1, cos(b.lat) * cos(b.lon - s.lon)))) * DEG;
 }
 
 /** Where a body is in the sky. body: 'sun' | 'moon' | planet name | {ra, dec} star/constellation */
@@ -146,6 +175,133 @@ export function position(body, date, lat, lon) {
   if (body === 'moon') return moonAltAz(date, lat, lon);
   if (typeof body === 'string') return planetAltAz(body, date, lat, lon);
   return altAz(body, date, lat, lon);
+}
+
+// ---------------------------------------------------------------- Rising and setting
+// The altitude of a body's middle at the moment it rises or sets (refraction lifts things
+// about half a degree; the Sun and Moon also count from their top edge).
+const HORIZON = { sun: -0.833, moon: -0.833 };
+const horizonFor = (body) => (typeof body === 'string' && HORIZON[body] != null ? HORIZON[body] : -0.567);
+
+/**
+ * Every time between `from` and `to` when the body crosses altitude h (degrees), going up
+ * (rise) or down (set): [{ t: Date, up: boolean }]. Scans every 10 minutes, then narrows
+ * each crossing to a few seconds.
+ */
+export function crossings(body, from, to, lat, lon, h = horizonFor(body)) {
+  const f = (ms) => position(body, new Date(ms), lat, lon).alt - h;
+  const out = [];
+  const STEPMS = 10 * 60000;
+  let t0 = from.getTime(), f0 = f(t0);
+  const end = to.getTime();
+  while (t0 < end) {
+    const t1 = Math.min(end, t0 + STEPMS), f1 = f(t1);
+    if ((f0 < 0) !== (f1 < 0)) {
+      let a = t0, b = t1, fa = f0;
+      while (b - a > 5000) {
+        const m = (a + b) / 2, fm = f(m);
+        if ((fa < 0) === (fm < 0)) { a = m; fa = fm; } else b = m;
+      }
+      out.push({ t: new Date(Math.round((a + b) / 2)), up: f0 < 0 });
+    }
+    t0 = t1; f0 = f1;
+  }
+  return out;
+}
+
+/** Local midnight at the start of the calendar day that holds `date` (daylight saving safe). */
+export const dayStart = (date) => new Date(date.getFullYear(), date.getMonth(), date.getDate());
+const nextDay = (date) => new Date(date.getFullYear(), date.getMonth(), date.getDate() + 1);
+
+/**
+ * Rise, set and highest point of a body on the local calendar day that holds `date`.
+ * { rise, set, transit, transitAlt, alwaysUp, neverUp } — rise/set are null when it
+ * doesn't happen that day (the Moon skips one rise or set each month; near the poles the
+ * Sun can stay up or down all day: then alwaysUp / neverUp says which).
+ */
+export function riseSet(body, date, lat, lon) {
+  const a = dayStart(date), b = nextDay(date);
+  const xs = crossings(body, a, b, lat, lon);
+  const rise = xs.find((x) => x.up)?.t || null;
+  const set = xs.find((x) => !x.up)?.t || null;
+  // Highest point: the best 10-minute sample, then narrowed by golden-section search.
+  let best = a.getTime(), bestAlt = -99;
+  for (let t = a.getTime(); t <= b.getTime(); t += 10 * 60000) {
+    const alt = position(body, new Date(t), lat, lon).alt;
+    if (alt > bestAlt) { bestAlt = alt; best = t; }
+  }
+  let lo = Math.max(a.getTime(), best - 10 * 60000), hi = Math.min(b.getTime(), best + 10 * 60000);
+  while (hi - lo > 5000) {
+    const m1 = lo + (hi - lo) * 0.382, m2 = lo + (hi - lo) * 0.618;
+    if (position(body, new Date(m1), lat, lon).alt > position(body, new Date(m2), lat, lon).alt) hi = m2; else lo = m1;
+  }
+  const transit = new Date(Math.round((lo + hi) / 2));
+  const transitAlt = position(body, transit, lat, lon).alt;
+  const h = horizonFor(body);
+  const upAtStart = position(body, a, lat, lon).alt > h;
+  return {
+    rise, set, transit, transitAlt,
+    alwaysUp: !xs.length && upAtStart,
+    neverUp: !xs.length && !upAtStart,
+  };
+}
+
+/** The next time after `from` (within `hours`) the body rises, and the next time it sets. */
+export function nextRiseSet(body, from, lat, lon, hours = 30) {
+  const xs = crossings(body, from, new Date(from.getTime() + hours * 3600000), lat, lon);
+  return { rise: xs.find((x) => x.up)?.t || null, set: xs.find((x) => !x.up)?.t || null };
+}
+
+/**
+ * The Sun's day and its twilights for the local calendar day holding `date`.
+ * Each is a Date or null when it doesn't happen (summer nights far north never get dark):
+ *   sunrise / sunset          the top edge of the Sun on the horizon
+ *   civilDawn / civilDusk     Sun 6° down: too dark to read outside, bright planets show
+ *   nauticalDusk              Sun 12° down: most stars are out
+ *   darkStart / darkEnd       Sun 18° down: the sky is fully dark (astronomical twilight ends)
+ */
+export function sunTimes(date, lat, lon) {
+  const a = dayStart(date), b = nextDay(date);
+  const at = (h) => {
+    const xs = crossings('sun', a, b, lat, lon, h);
+    return { up: xs.find((x) => x.up)?.t || null, down: xs.find((x) => !x.up)?.t || null };
+  };
+  const r = at(-0.833), c = at(-6), n = at(-12), d = at(-18);
+  return {
+    sunrise: r.up, sunset: r.down,
+    civilDawn: c.up, civilDusk: c.down,
+    nauticalDawn: n.up, nauticalDusk: n.down,
+    darkEnd: d.up, darkStart: d.down,
+  };
+}
+
+// ---------------------------------------------------------------- Moon phases ahead
+const PHASES = { new: 0, first: 90, full: 180, last: 270 };
+
+/** When the Moon next reaches a phase ('new' | 'first' | 'full' | 'last') after `from`. */
+export function nextMoonPhase(kind, from = new Date()) {
+  const target = PHASES[kind];
+  const off = (ms) => { const x = norm360(moonPhase(new Date(ms)).elongation - target); return x > 180 ? x - 360 : x; };
+  let t0 = from.getTime(), f0 = off(t0);
+  for (let k = 0; k < 4 * 32; k++) { // 6-hour steps, at most 32 days
+    const t1 = t0 + 6 * 3600000, f1 = off(t1);
+    if (f0 < 0 && f1 >= 0) { // crossing upwards (not the jump from +180 to -180)
+      let a = t0, b = t1;
+      while (b - a > 30000) { const m = (a + b) / 2; if (off(m) < 0) a = m; else b = m; }
+      return new Date(Math.round((a + b) / 2));
+    }
+    t0 = t1; f0 = f1;
+  }
+  return null;
+}
+
+/** How high something is, in words a person can use: LOW, A THIRD UP, HALFWAY UP, HIGH, OVERHEAD. */
+export function altWords(alt) {
+  if (alt >= 75) return 'OVERHEAD';
+  if (alt >= 55) return 'HIGH UP';
+  if (alt >= 35) return 'HALFWAY UP';
+  if (alt >= 18) return 'A THIRD UP';
+  return 'LOW';
 }
 
 // Famous, easy-to-find star patterns: RA (degrees) / Dec of their middle, and a
@@ -207,7 +363,8 @@ function lookAngles(sat, date, lat, lon) {
   const s = sin(lat) * Math.cos(th) * r[0] + sin(lat) * Math.sin(th) * r[1] - cos(lat) * r[2];
   const ea = -Math.sin(th) * r[0] + Math.cos(th) * r[1];
   const z = cos(lat) * Math.cos(th) * r[0] + cos(lat) * Math.sin(th) * r[1] + sin(lat) * r[2];
-  return { alt: Math.asin(z / Math.hypot(...r)) * DEG, az: norm360(Math.atan2(ea, -s) * DEG) };
+  const range = Math.hypot(...r);
+  return { alt: Math.asin(z / range) * DEG, az: norm360(Math.atan2(ea, -s) * DEG), range };
 }
 
 function sunlit(sat, date) {
@@ -221,7 +378,8 @@ function sunlit(sat, date) {
 
 /**
  * Visible ISS passes: ISS above 10°, lit by the Sun, while the sky is dark
- * (Sun below -6°). Returns [{start, end, maxAlt, startAz, endAz, path:[{alt,az}]}].
+ * (Sun below -6°). Returns [{start, end, maxAlt, maxAz, startAz, endAz, minRange, path:[{alt,az,range}]}]
+ * (minRange: the closest it comes while visible, km; closer = brighter).
  */
 export function issPasses(omm, lat, lon, from = new Date(), hours = 72, stepSec = 30) {
   const pos = makeOrbit(omm);
@@ -234,9 +392,10 @@ export function issPasses(omm, lat, lon, from = new Date(), hours = 72, stepSec 
     const la = lookAngles(sat, t, lat, lon);
     const visible = la.alt > 10 && sunlit(sat, t) && sunAlt(t, lat, lon) < -6;
     if (visible) {
-      if (!cur) cur = { start: t, path: [], maxAlt: 0, startAz: la.az };
+      if (!cur) cur = { start: t, path: [], maxAlt: 0, maxAz: la.az, startAz: la.az, minRange: la.range };
       cur.end = t; cur.endAz = la.az;
-      cur.maxAlt = Math.max(cur.maxAlt, la.alt);
+      if (la.alt > cur.maxAlt) { cur.maxAlt = la.alt; cur.maxAz = la.az; }
+      cur.minRange = Math.min(cur.minRange, la.range);
       cur.path.push(la);
     } else if (cur) {
       if (cur.end - cur.start >= 60000) passes.push(cur);

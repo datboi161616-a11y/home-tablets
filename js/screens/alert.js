@@ -4,10 +4,10 @@
 // it shows an "all clear" panel counting down to the next visible Space Station
 // pass, plus a TEST ALERT button that plays the design's 3:00 example.
 import { getLocation } from '../services/location.js';
-import { nextVisiblePass } from '../services/iss.js';
-import { compass } from '../services/aircraft.js';
+import { nextVisiblePass, orbitStatus, brightnessWords } from '../services/iss.js';
+import { compass } from '../services/astro.js';
 import { passDay } from '../services/space.js';
-import { checkAlerts, testAlert, startTest, stopTest, testActive, markSeen, nextShower, heightWords } from '../services/skyalert.js';
+import { checkAlerts, testAlert, startTest, stopTest, testActive, markSeen, dismiss, nextShower, heightWords } from '../services/skyalert.js';
 
 let timers = [];
 let alive = false;
@@ -38,9 +38,9 @@ export function mount(el) {
   <link rel="stylesheet" crossorigin href="https://fonts.googleapis.com/css2?family=Oxanium:wght@300;500;700&family=JetBrains+Mono:wght@400;600&display=swap">
   <style>
     .tba a,.tba button.tba-btn{color:#FFD2CB}.tba a:hover{color:#FFFFFF}
-    @keyframes tba-pulse{0%,100%{opacity:1}50%{opacity:.35}}
-    .tba .pulse{animation:tba-pulse 1.6s ease-in-out infinite}
-    .tba-btn{min-height:44px;padding:10px 18px;box-sizing:border-box;border:1px solid #7A2A20;background:none;font-family:inherit;text-decoration:none;font-size:14px;letter-spacing:3px;display:flex;align-items:center;cursor:pointer}
+    @keyframes tba-pulse{0%{opacity:1}100%{opacity:.35}}
+    .tba .pulse{animation:tba-pulse 1.6s steps(2) infinite}
+    .tba-btn{min-height:56px;padding:10px 20px;box-sizing:border-box;border:1px solid #7A2A20;background:none;font-family:inherit;text-decoration:none;font-size:14px;letter-spacing:3px;display:flex;align-items:center;cursor:pointer}
     .tba.calm{background:#05070D !important;color:#D7E6F0 !important}
     .tba.calm .pulse{animation:none}
     .tba.calm [data-bar]{background:#1E3A4A !important}
@@ -57,6 +57,7 @@ export function mount(el) {
       <div data-head class="pulse" style="font-family: Oxanium, sans-serif; font-size: 28px; font-weight: 700; letter-spacing: 10px; color: #FF6B57">SKY ALERT</div>
       <div style="display: flex; gap: 12px">
         <a data-link href="#/bridge" class="tba-btn" style="display: none"></a>
+        <button data-seen class="tba-btn" style="display: none">SEEN IT ✓</button>
         <button data-test class="tba-btn">TEST ALERT</button>
         <a data-dismiss href="#/bridge" class="tba-btn">◂ DECK</a>
       </div>
@@ -94,6 +95,7 @@ export function mount(el) {
       root.classList.remove('calm');
       $('[data-head]').textContent = alert.test ? 'SKY ALERT · TEST' : 'SKY ALERT';
       $('[data-test]').style.display = alert.test ? 'none' : '';
+      $('[data-seen]').style.display = alert.test ? 'none' : '';
       if (alert.until) {
         if (alert.until > now) {
           $('[data-label]').textContent = alert.label;
@@ -134,6 +136,7 @@ export function mount(el) {
     root.classList.add('calm');
     $('[data-head]').textContent = 'SKY ALERT · ALL CLEAR';
     $('[data-test]').style.display = '';
+    $('[data-seen]').style.display = 'none';
     $('[data-link]').style.display = 'none';
     $('[data-dismiss]').textContent = '◂ DECK';
     el.querySelectorAll('[data-chip]').forEach((c) => c.classList.remove('on'));
@@ -149,12 +152,17 @@ export function mount(el) {
       $('[data-label]').textContent = 'NOTHING RIGHT NOW · NEXT VISIBLE SPACE STATION PASS IN';
       setBig(countdown(p.visStart - now));
       $('[data-headline]').textContent = `${passDay(new Date(p.visStart))} · LOOK ${compass(p.visAz)}`;
-      $('[data-sub]').textContent = `About ${Math.max(1, Math.round((p.visEnd - p.visStart) / 60000))} minutes of bright steady light, ${heightWords(p.visMaxEl)} · This screen goes red 10 minutes before`;
+      const bright = brightnessWords(p) === 'VERY BRIGHT' ? 'very bright' : brightnessWords(p) === 'BRIGHT' ? 'bright' : 'fainter';
+      const path = p.visMaxAz != null && p.visEndAz != null ? ` · Highest ${compass(p.visMaxAz).toLowerCase()}, fades ${compass(p.visEndAz).toLowerCase()}` : '';
+      const mins = Math.max(1, Math.round((p.visEnd - p.visStart) / 60000));
+      $('[data-sub]').textContent = `About ${mins} minute${mins > 1 ? 's' : ''} of ${bright} steady light, ${heightWords(p.visMaxEl)}${path} · This screen goes red 10 minutes before`;
     } else if (calm) {
       $('[data-label]').textContent = 'NOTHING RIGHT NOW';
       setBig('CLEAR');
-      $('[data-headline]').textContent = 'NO SPACE STATION PASSES IN THE DARK FOR 2 DAYS';
-      $('[data-sub]').textContent = 'We keep watching the sky every minute';
+      // "None" and "we can't tell" are different things: say which.
+      $('[data-headline]').textContent = calm.orbitOk === false ? 'SPACE STATION TIMES UNAVAILABLE RIGHT NOW' : 'NO SPACE STATION PASSES IN THE DARK FOR 2 DAYS';
+      $('[data-sub]').textContent = calm.orbitOk === false ? 'Its latest orbit could not be fetched · Rockets, planes and the night sky are still watched every minute'
+        : 'We keep watching the sky every minute';
     }
   }
 
@@ -166,7 +174,8 @@ export function mount(el) {
       if (!alive || testActive()) return;
       alert = a;
       if (a) markSeen(a.id);
-      if (!a && !calm) calm = { pass: await nextVisiblePass(loc) };
+      if (!a && !calm) calm = await calmInfo();
+      if (!alive) return;
     } catch (e) {
       console.error(e);
       if (!calm) calm = { pass: null };
@@ -174,14 +183,28 @@ export function mount(el) {
     tick();
   }
 
+  async function calmInfo() {
+    const pass = await nextVisiblePass(loc);
+    let orbitOk = true;
+    try { orbitOk = (await orbitStatus()).ok; } catch (e) { /* keep true */ }
+    return { pass, orbitOk };
+  }
+
   $('[data-test]').addEventListener('click', () => {
     startTest();
     alert = testAlert();
     tick();
   });
+  // Put a real alert away for good (until the next one): it won't come back here or on the deck.
   $('[data-dismiss]').addEventListener('click', () => {
-    if (alert && !alert.test) markSeen(alert.id);
+    if (alert && !alert.test) { markSeen(alert.id); dismiss(alert.id); }
     stopTest();
+  });
+  $('[data-seen]').addEventListener('click', () => {
+    if (alert && !alert.test) { markSeen(alert.id); dismiss(alert.id); }
+    alert = null;
+    tick();
+    refresh();
   });
 
   if (testActive()) { alert = testAlert(); tick(); }
@@ -197,12 +220,25 @@ export function mount(el) {
     if (!alive) return;
     await refresh();
     timers.push(setInterval(refresh, 30 * 1000));
-    timers.push(setInterval(async () => { if (loc) { calm = { pass: await nextVisiblePass(loc) }; } }, 15 * 60 * 1000));
+    timers.push(setInterval(async () => { if (loc) { const c = await calmInfo(); if (alive) calm = c; } }, 15 * 60 * 1000));
   })();
+
+  // The town changed in Settings: passes and night-time checks are for the new place.
+  onPlace = async () => {
+    try { loc = await getLocation(); } catch (e) { return; }
+    if (!alive) return;
+    calm = null;
+    refresh();
+  };
+  window.addEventListener('place-changed', onPlace);
 }
+
+let onPlace = null;
 
 export function unmount() {
   alive = false;
   timers.forEach(clearInterval);
   timers = [];
+  if (onPlace) window.removeEventListener('place-changed', onPlace);
+  onPlace = null;
 }

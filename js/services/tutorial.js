@@ -12,7 +12,20 @@ import { setWelcomeDone } from './welcome-state.js';
 import { myEvents } from './my-events.js';
 
 let script = null, idx = 0, root = null, tick = null, waitingSince = 0, startCount = 0, goneFor = -1;
+let wentTo = {};     // beat number -> the screen that beat went to (for Back and "Carry on")
+let lastTouch = 0;   // when the screen was last touched while the tour was up
 export const tutorialRunning = () => !!script;
+// Unwrapped, half-watched, then everybody went to dinner: after this long untouched the
+// tour goes back to its first card and waits there for the next person.
+const LEFT_ALONE_MS = 10 * 60 * 1000;
+const touched = () => { lastTouch = Date.now(); };
+const homeScreen = () => (profile === 'tom' ? 'bridge' : 'home');
+const nightScreen = () => (profile === 'tom' ? 'viewscreen' : 'night');
+// The screen beat `i` happens on: where it (or the nearest beat before it) went.
+function placeFor(i) {
+  for (let j = i; j >= 0; j--) if (wentTo[j]) return wentTo[j];
+  return homeScreen();
+}
 
 const hash = () => location.hash.replace(/^#\/?/, '');
 const q = (s) => document.querySelector(s);
@@ -40,6 +53,8 @@ const FAMILY = [
     say: H('“What’s for dinner?” Solved.', 'A new idea every night, from over 1,000 recipes built right in.') },
   { route: /^recipe\//, go: () => dinnerHref(), corner: true, wait: 'next',
     say: H('Cooking mode', 'Big steps you can read from across the kitchen, and timers that ring on any screen.') },
+  { route: /^timers/, go: 'timers', corner: true, wait: 'next',
+    say: H('A timer for everything', 'Pasta, eggs, the oven: name each one with a tap. They ring on whatever screen is up.') },
   { route: /^recipes/, go: 'recipes', corner: true, wait: 'next',
     say: H('Plan the week, skip the list', 'Tap dinners onto the week and the shopping list writes itself, sorted by aisle. It even goes to the store with you on your phone.') },
   { route: /^calendar/, go: 'calendar', corner: true, wait: 'next',
@@ -48,6 +63,8 @@ const FAMILY = [
     say: H('Notes on the fridge, upgraded', 'Leave a message for whoever walks by next, from here or from any phone.') },
   { route: /^night/, go: 'night', corner: true, wait: 'next',
     say: H('Goodnight mode', 'At night it dims to a soft clock, then wakes up with you in the morning.') },
+  { route: /^settings/, go: 'settings', corner: true, wait: 'next',
+    say: H('Make it yours', 'Your town, your clock, your alarm sound, what it shows when nobody’s looking. It’s all in Settings.') },
   { center: true, go: 'home', wait: 'finish',
     say: H('And it keeps getting better', 'New features show up on their own, no updates to install. Enjoy! (Want to see this again? Menu → Tour.)') },
 ];
@@ -69,8 +86,10 @@ const TOM = [
     say: H('Earn your wings', 'Over 300 space and flight questions. How far can you get?') },
   { route: /^viewscreen/, go: 'viewscreen', corner: true, wait: 'next',
     say: H('Night watch', 'After dark, the deck turns into a drifting starfield.') },
+  { route: /^settings/, go: 'settings', corner: true, wait: 'next',
+    say: H('Set it up your way', 'Your town for the sky and the planes, the clock, how bright it is. SETTINGS on the deck.') },
   { center: true, go: 'bridge', wait: 'finish',
-    say: H('All systems go', 'New missions show up on their own. Clear skies, Captain! (TOUR on the deck runs this again.)') },
+    say: H('All systems go', 'New missions show up on their own. Clear skies, Captain! (SETTINGS on the deck has this tour.)') },
 ];
 
 function festiveHello() {
@@ -163,7 +182,7 @@ function bubble(step, hole, extra) {
   bub.innerHTML = `${!isStart && !isFinish ? `<div class="tu-step">${idx} / ${n - 2}</div>` : ''}
     <div style="margin-top:${isStart || isFinish ? 0 : 6}px">${step.say}</div>
     <div class="tu-row" style="${hole ? '' : 'justify-content:center;gap:24px'}">
-      ${isFinish ? '' : `<button class="tu-end" data-tu="end">${isStart ? 'Skip for now' : 'Skip the tour'}</button>`}
+      ${isFinish ? '' : `<span><button class="tu-end" data-tu="end">${isStart ? 'Skip for now' : 'Skip the tour'}</button>${!isStart && idx > 1 ? '<button class="tu-end" data-tu="back" style="margin-left:10px">← Back</button>' : ''}</span>`}
       ${isStart ? '<button class="tu-btn" data-tu="next">Show me</button>' : isFinish ? '<button class="tu-btn" data-tu="done">Start using it</button>' : showNext ? '<button class="tu-btn" data-tu="next">Next →</button>' : '<span></span>'}
     </div>`;
   bub.style.display = 'block';
@@ -190,7 +209,7 @@ function paused(step) {
   if (lastKey === key) return;
   lastKey = key;
   bub.className = 'tu-bub';
-  bub.innerHTML = `<div>The tutorial is waiting for you.</div><div class="tu-row"><button class="tu-end" data-tu="end">End tutorial</button><button class="tu-btn" data-tu="resume">Carry on</button></div>`;
+  bub.innerHTML = `<div>The tour is waiting for you.</div><div class="tu-row"><button class="tu-end" data-tu="end">End the tour</button><button class="tu-btn" data-tu="resume">Carry on</button></div>`;
   bub.style.display = 'block'; bub.style.left = '820px'; bub.style.top = '600px';
   bub.dataset.resume = step.resume || '';
 }
@@ -199,15 +218,16 @@ function onClick(e) {
   const b = e.target.closest('[data-tu]');
   if (!b) return;
   const a = b.dataset.tu;
-  if (a === 'end' || a === 'done') { stop(true); const home = tom() ? 'bridge' : 'home'; if (hash() !== home) location.hash = `#/${home}`; }
+  if (a === 'end' || a === 'done') { stop(true); const home = homeScreen(); if (hash() !== home) location.hash = `#/${home}`; }
   else if (a === 'next') advance();
-  else if (a === 'resume') {
-    // Go back to where this step happens.
-    const r = script[idx].route;
-    const guess = { '^home': 'home', '^launcher': 'launcher', '^calendar': 'calendar', '^shopping': 'shopping', '^addphotos': 'addphotos', '^bridge': 'bridge', '^flights': 'flights', '^trivia': 'trivia' };
-    const src = r ? r.source : '';
-    const k = Object.keys(guess).find((g) => src.indexOf(g) === 0);
-    location.hash = `#/${k ? guess[k] : (tom() ? 'bridge' : 'home')}`;
+  else if (a === 'back' || a === 'resume') {
+    // The beat before (tapped Next too fast), or back to where this beat happens.
+    if (a === 'back') idx = Math.max(1, idx - 1);
+    goneFor = idx;
+    lastKey = '';
+    waitingSince = Date.now();
+    const to = placeFor(idx);
+    if (hash() !== to) location.hash = `#/${to}`;
   }
 }
 
@@ -222,12 +242,22 @@ function advance() {
 function update() {
   if (!script) return;
   if (!ensureRoot()) return;
-  const step = script[idx];
+  let step = script[idx];
+  // Left half-watched: back to the first card, on the home screen, for the next person.
+  if (idx > 0 && Date.now() - lastTouch > LEFT_ALONE_MS) {
+    idx = 0; goneFor = -1; lastKey = ''; wentTo = {};
+    step = script[0];
+    if (hash() !== homeScreen()) { location.hash = `#/${homeScreen()}`; return; }
+  }
   if (step.go && goneFor !== idx) {
     goneFor = idx;
-    const to = typeof step.go === 'function' ? step.go() : step.go;
+    const to = wentTo[idx] || (typeof step.go === 'function' ? step.go() : step.go);
+    wentTo[idx] = to;
     if (to && hash() !== to) { location.hash = `#/${to}`; return; }
   }
+  // The night clock has taken over (nobody is here): the tour steps aside rather than sit
+  // bright on top of it. Not finished, so Home offers it again in the morning.
+  if (hash().split('/')[0] === nightScreen() && !(step.route && step.route.test(hash()))) { stop(false); return; }
   if (step.center && !step.route) { dims(null); hideRing(); bubble(step, null); return; }
   // Done already? (A tap that opens another screen finishes its step before anything else.)
   if (typeof step.wait === 'function' && step.wait() === true) { advance(); update(); return; }
@@ -277,7 +307,11 @@ export function startTutorial() {
   idx = 0;
   goneFor = -1;
   lastKey = '';
+  wentTo = {};
   waitingSince = Date.now();
+  lastTouch = Date.now();
+  removeEventListener('pointerdown', touched, true);
+  addEventListener('pointerdown', touched, true);
   startCount = myEvents().length;
   clearInterval(tick);
   tick = setInterval(update, 200);
@@ -288,6 +322,7 @@ export function stop(markDone) {
   if (markDone) setWelcomeDone(true);
   script = null;
   clearInterval(tick);
+  removeEventListener('pointerdown', touched, true);
   if (root) root.remove();
   root = null;
 }
