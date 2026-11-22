@@ -23,7 +23,7 @@ jobs:
     runs-on: ubuntu-latest
     environment:
       name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
+      url: ${{ steps.deployment.outputs.page_url || steps.deployment2.outputs.page_url }}
     steps:
       - uses: actions/checkout@v4
 
@@ -100,4 +100,15 @@ jobs:
           path: _site
 
       - id: deployment
+        uses: actions/deploy-pages@v4
+        continue-on-error: true
+
+      # GitHub's side sometimes can't find the file it was handed a moment ago ("No
+      # artifacts named github-pages were found"). Nothing is wrong with the site; a
+      # second try a little later goes through. Only if that fails too does the run fail.
+      - name: Publish, second try
+        if: steps.deployment.outcome == 'failure'
+        run: sleep 45
+      - id: deployment2
+        if: steps.deployment.outcome == 'failure'
         uses: actions/deploy-pages@v4
