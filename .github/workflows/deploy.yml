@@ -31,6 +31,10 @@ jobs:
         run: |
           echo "{ \"version\": \"${GITHUB_SHA::7}\", \"deployed\": \"$(date -u +%Y-%m-%dT%H:%M:%SZ)\" }" > version.json
           cat version.json
+          # The same id goes into the code, so a tablet can tell which version it is really
+          # running (see js/build.js and "Picking up a published update" in js/app.js).
+          echo "export const BUILD = '${GITHUB_SHA::7}';" > js/build.js
+          cat js/build.js
 
       # The tablets' built-in WebView can be old (Chrome 7x). Translate the
       # JavaScript to syntax it understands; the source stays modern.

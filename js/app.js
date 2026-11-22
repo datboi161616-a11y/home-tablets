@@ -4,6 +4,7 @@ import * as placeholder from './screens/placeholder.js';
 import { welcomeDone } from './services/welcome-state.js';
 import { tutorialRunning } from './services/tutorial.js';
 import { siteAnswers } from './services/online.js';
+import { BUILD } from './build.js';
 import { cameFrom } from './services/nav.js';
 import { isNightNow, dayBrightness } from './services/display.js';
 
@@ -211,6 +212,7 @@ async function navigate() {
   // Each visit gets its own container. When you leave, it's removed, so a screen's
   // late callbacks can check `el.isConnected` and stop touching a screen that's gone.
   screenEl.innerHTML = '';
+  lifted = 0; // (see "Typing": the new screen starts where it belongs)
   const host = document.createElement('div');
   host.style.cssText = 'position:absolute;top:0;right:0;bottom:0;left:0';
   screenEl.appendChild(host);
@@ -230,6 +232,40 @@ async function navigate() {
 }
 addEventListener('hashchange', navigate);
 navigate();
+
+// ---- Typing: keep the box above the on-screen keyboard ----
+// The tablet's keyboard slides up over the lower half of the screen, and nothing tells
+// the page (seen on a real tablet: a new note's text box and its Post button were both
+// underneath it). So when a box to type in gets the cursor, the whole screen is moved up
+// until that box, and room for a row of buttons under it, sit in the part that stays visible.
+const KEYBOARD = /Android/.test(navigator.userAgent); // only where a keyboard covers the screen
+const KEYBOARD_CLEAR = 0.46; // the share of the screen's height that stays visible above it
+let lifted = 0;              // how far up the screen has been moved, in its own pixels
+function placeForTyping() {
+  const host = screenEl.firstElementChild;
+  if (!host) return;
+  const at = document.activeElement;
+  const typingIn = KEYBOARD && at && host.contains(at)
+    && (at.tagName === 'TEXTAREA' || (at.tagName === 'INPUT' && !/^(range|checkbox|radio|button|file)$/.test(at.type)));
+  let want = 0;
+  if (typingIn) {
+    const scale = screenEl.getBoundingClientRect().height / 800 || 1;
+    const box = at.getBoundingClientRect();
+    // Where the box would be with the screen in its usual place, in the screen's own pixels.
+    const top = box.top / scale + lifted;
+    const bottom = box.bottom / scale + lifted;
+    const clear = (innerHeight * KEYBOARD_CLEAR) / scale;
+    // Up far enough to show the box and about one row of buttons below it, but never so
+    // far that the top of the box leaves the screen.
+    want = Math.max(0, Math.min(top - 12, bottom + 130 - clear));
+  }
+  if (Math.abs(want - lifted) < 1) return;
+  lifted = want;
+  // (At once, no sliding: the keyboard is already on its way up.)
+  host.style.transform = lifted ? `translateY(${-Math.round(lifted)}px)` : '';
+}
+addEventListener('focusin', placeForTyping);
+addEventListener('focusout', () => setTimeout(placeForTyping, 80)); // the cursor may be moving to another box
 
 // Settings were just saved on a phone (the family's name, degrees C or F...): draw the
 // screens that show them again, so the phone's "updates right away" is true.
@@ -316,16 +352,43 @@ if (profile !== 'tom' && !isGhost) {
   setInterval(keepForecast, 3 * 60 * 60 * 1000);
 }
 
-// Check for a new version every 30 minutes. A new deploy is applied the next time
-// the tablet is idle (2 minutes untouched), never in the middle of the camera or a recipe.
-let knownVersion = null;
+// ---- Picking up a published update ----
+// Every 30 minutes: does the site have a newer version (version.json) than the code that
+// is running here (js/build.js)? If so the page starts over once the tablet has been left
+// alone for 2 minutes, never in the middle of the camera or a recipe.
+//
+// It used to remember the version it had last *seen* instead. Seen on a real tablet: for
+// a few minutes after publishing, a page that starts over can still be handed old files.
+// It had then "seen" the new version, so it stayed on the old code until the next one
+// came out. Comparing with what is really running fixes that: still old means try again.
+// And it waits ten minutes after first noticing, so it rarely starts over too early.
+const SETTLE_MS = 10 * 60 * 1000;
+const TRIES_KEY = 'update-tries'; // { n, at }: how often this page has started over for an update
 let updateWaiting = false;
+let updateSeenAt = 0;
+function updateTries() {
+  try { return JSON.parse(sessionStorage.getItem(TRIES_KEY) || 'null') || { n: 0, at: 0 }; } catch (e) { return { n: 0, at: 0 }; }
+}
 async function checkForUpdate() {
   try {
-    const v = await (await fetch('./version.json', { cache: 'no-store' })).text();
-    if (knownVersion && v !== knownVersion) updateWaiting = true;
-    knownVersion = knownVersion || v;
+    const live = JSON.parse(await (await fetch('./version.json', { cache: 'no-store' })).text()).version;
+    // ('dev' is the project folder on a PC: nothing to update to.)
+    const newer = BUILD !== 'dev' && !!live && live !== BUILD;
+    if (newer && !updateWaiting) updateSeenAt = Date.now();
+    if (!newer) { try { sessionStorage.removeItem(TRIES_KEY); } catch (e) { /* storage off */ } }
+    updateWaiting = newer;
   } catch { /* offline: try again later */ }
+}
+/** Start the page over for the update, if this is a good moment. */
+function applyUpdate(here) {
+  if (!updateWaiting || Date.now() - updateSeenAt < SETTLE_MS || !idleFor(2 * 60 * 1000) || BUSY.includes(here)) return false;
+  // Should the files simply not arrive, don't start over every ten minutes for ever:
+  // six goes, then once every six hours.
+  const tries = updateTries();
+  if (tries.n >= 6 && Date.now() - tries.at < 6 * 60 * 60 * 1000) return false;
+  try { sessionStorage.setItem(TRIES_KEY, JSON.stringify({ n: tries.n + 1, at: Date.now() })); } catch (e) { /* storage off */ }
+  location.reload();
+  return true;
 }
 checkForUpdate();
 setInterval(checkForUpdate, 30 * 60 * 1000);
@@ -352,7 +415,7 @@ const WANDERED = ['launcher', 'calendar', 'forecast', 'messages', 'recipes', 'pl
 
 setInterval(() => {
   const here = screenName();
-  if (updateWaiting && idleFor(2 * 60 * 1000) && !BUSY.includes(here)) { location.reload(); return; }
+  if (applyUpdate(here)) return;
   if (isGhost) return; // the hidden admin copy doesn't follow the clock
   const night = isNightNow();
   if (night && here !== nightRoute && idleFor(5 * 60 * 1000) && !BUSY.includes(here)) {

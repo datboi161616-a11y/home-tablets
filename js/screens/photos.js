@@ -54,8 +54,11 @@ export function mount(el, { homeRoute = 'home' } = {}) {
     .ph-back{position:absolute;top:0;left:0;width:100%;height:100%}
     .ph-ask{display:none;position:absolute;top:0;right:0;bottom:0;left:0;background:rgba(10,12,16,.62);align-items:center;justify-content:center;cursor:default}
     .ph-ask button{border:0;font-family:inherit;cursor:pointer;font-size:18px;padding:14px 28px}
-    .ph-slide.pan-a{animation:ph-pan-a ${SLIDE_MS + 3000}ms linear forwards}
-    .ph-slide.pan-b{animation:ph-pan-b ${SLIDE_MS + 3000}ms linear forwards}
+    /* In 600 small steps, not 60 times a second: the picture moves a fifth of a pixel per
+       step either way, and the tablet draws about ten frames a second instead of sixty
+       (measured: the smooth version kept a processor core and a half busy all day). */
+    .ph-slide.pan-a{animation:ph-pan-a ${SLIDE_MS + 3000}ms steps(600, end) forwards}
+    .ph-slide.pan-b{animation:ph-pan-b ${SLIDE_MS + 3000}ms steps(600, end) forwards}
     @keyframes ph-pan-a{from{transform:scale(1) translate(0,0)}to{transform:scale(1.08) translate(-2%,-1.5%)}}
     @keyframes ph-pan-b{from{transform:scale(1.08) translate(-2%,1%)}to{transform:scale(1) translate(1.5%,0)}}
     .ph-dot{height:8px;width:8px;border-radius:4px;background:rgba(255,255,255,.5);transition:width .4s,background .4s}
