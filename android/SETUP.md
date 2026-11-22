@@ -18,10 +18,20 @@ has `adb`) and a USB-C cable that carries data.
 2. Double-click **`setup\Setup tablet.bat`** in this project.
 3. Pick **1** (Family) or **2** (Tom), and a grown-up PIN (Enter = `2512`).
 
-The script downloads the newest app, installs it, turns on kiosk mode, switches off the
-tablet's built-in Alexa (see below), starts the right screens, then switches USB
-debugging off again. If anything is wrong it tells you exactly
+The script first looks the tablet over (Android and browser-engine versions, battery,
+Wi-Fi, clock, free space) and marks anything worth a look with `!`. Then it downloads
+the newest app, installs it, turns on kiosk mode, switches off the tablet's built-in
+Alexa (see below), starts the right screens, makes sure the home screen really is up and
+locked, then switches USB debugging off again. If anything is wrong it tells you exactly
 what to do (most often: the tablet already has a Google account → go back to step 1).
+
+It finds `adb` by itself if Google's platform-tools are unzipped in your Downloads
+folder, on the Desktop, or next to the script. Each tablet it sets up gets a line in
+`setup\setup-log.txt` (date, serial number, which screens, app version; never the PIN),
+so you can tell later which of the six got what.
+
+**Just looking:** `setup\Check tablet.bat` does only the looking-over and changes
+nothing on the tablet. Handy before wrapping one, or when one is back on your desk.
 
 ## 3. Optional: Apps and Camera
 
@@ -85,10 +95,24 @@ Play Store also updates apps by itself overnight.
 
 ## Settings on the screen itself
 
-**Menu → Settings**: the family's name on the Home screen, °F or °C, brightness, sound
-volume, when the night clock starts and ends (or never), and whether the Wi-Fi is
-connected, with a **Wi-Fi settings** button that asks for the grown-up PIN. Birthdays,
-the people who leave notes and calendar links are still added from a phone.
+**Menu → Settings** (on Tom's deck: **SETTINGS** in the header), in sections:
+
+- **Your family:** the name on the Home screen.
+- **Screen & sound:** brightness, volume, what the screen goes back to when nobody is
+  using it (Home or the photo frame) and after how long, and **Wipe the screen**
+  (touches off for 30 seconds, for cleaning the glass).
+- **Clock & night:** 12 or 24-hour clock, when the night clock starts and ends (or
+  never), and how dim it is.
+- **Photo frame:** how long each picture stays, the slow zoom, captions, the order.
+- **Weather:** °F or °C, and the town (typed by name or ZIP code when the screen's own
+  guess is off).
+- **Timers:** the alarm sound and how long it rings.
+- **Wi-Fi & about:** whether the Wi-Fi is connected, with a **Wi-Fi settings** button
+  that asks for the grown-up PIN; checking for an update; starting the screens again;
+  putting the settings back the way they came; and, for whoever looks after the screen,
+  how it is doing and a short list of anything that went wrong lately.
+
+Birthdays, the people who leave notes and calendar links are still added from a phone.
 
 ## Automatic behaviour
 
@@ -100,6 +124,11 @@ the people who leave notes and calendar links are still added from a phone.
   and the timers stay up.
 - **Updates:** screen changes you push reach the tablet the next time it's idle;
   app updates install themselves within 6 hours.
+- **A fresh start each night:** between 3 and 5 AM, when nobody has touched it for half
+  an hour, the page starts over and comes back on the same screen, so weeks of running
+  don't add up.
+- **A word in the corner** when the charger has come out ("Not plugged in · 42% left"),
+  when the battery is low, or when the Wi-Fi has been gone for a few minutes.
 
 ## Their photos: removing one
 
@@ -109,7 +138,8 @@ screen, after asking once. The phone page can remove them too.
 ## Running setup again later
 
 Turn USB debugging back on (grown-up menu → **Unlock tablet** → Settings → System →
-Developer options), plug in, run the script. It updates the app and keeps everything.
+Developer options), plug in, run the script. It updates the app and keeps everything;
+pick **3** at the last question to leave the tablet's screens and PIN as they are.
 
 ## The built-in Alexa is switched off
 

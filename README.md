@@ -29,15 +29,22 @@ no longer runs in CI. To bring it back: deploy `admin/`, put the hub address in
 ## Pushing an update to every tablet
 
 1. Edit the files.
-2. Commit and push to `main`.
-3. GitHub Actions publishes the site (about a minute) and stamps `version.json`.
-4. Each tablet checks `version.json` every 30 minutes and reloads itself when it changes.
+2. Run `bash tools/check.sh` (a few seconds; the deploy runs it too and refuses to
+   publish if it fails).
+3. Commit and push to `main`.
+4. GitHub Actions publishes the site (about a minute) and stamps `version.json`.
+5. Each tablet checks `version.json` every 30 minutes and reloads itself when it changes.
+
+`IMPROVEMENTS.md` is the numbered list of what has been added since November 2026.
 
 ## Running it locally
 
 ```
-python -m http.server 5173
+python tools/sim/serve.py
 ```
+
+(Not `python -m http.server`: with that, a reload right after an edit can quietly reuse
+the old files.)
 
 Then open http://localhost:5173 (Family) or http://localhost:5173/?profile=tom (Tom).
 
@@ -57,13 +64,17 @@ Each tablet remembers its profile. Open the site once with `?profile=tom` or
 - `sw.js`: offline cache (network first, so updates always win when online).
 - `android/`: the launcher app (kiosk mode, photo and settings pages for phones on the
   home Wi-Fi, self-update). Built and tested on emulators by GitHub Actions.
-- `setup/`: the double-click USB setup for a new tablet.
+- `setup/`: the double-click USB setup for a new tablet, and `Check tablet.bat`, which
+  looks a plugged-in tablet over without changing it.
 - `data/recipes/`, `tools/`: the recipe collection and the scripts that check it.
 - `tools/sim/`: scripts that open the site in a pretend tablet (headless Edge, tablet
   screen size and touch, slowed processor) to walk every screen, time them, and test
   working without Wi-Fi: `node tools/sim/offline-test.mjs . my-run`. `serve.py` serves the site for
   trying changes out (also to a real tablet over USB); `device-pass.sh` times taps on
-  a real tablet plugged in over USB.
+  a real tablet plugged in over USB. `node tools/sim/try.mjs <screen> [steps.js]` opens
+  one screen, taps what you tell it to, and gives back what the screen says, any
+  errors and a picture (`--tom` for the flight deck, `--phone=<page>` for the phone page).
+- `tools/check.sh`: the checks to run before publishing.
 - `godseye-tablet/`: a custom build of God's Eye View for Tom's tablet. Not wired in
   yet; see its README.
 
