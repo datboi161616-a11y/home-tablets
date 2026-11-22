@@ -53,7 +53,11 @@ a { color: inherit; text-decoration: none; }
 }
 .skeleton { opacity: .45; }
 
-/* A finger is on it: app.js adds these the moment something tappable is touched. */
-.is-pressed { opacity: .78; transition: transform 70ms ease-out, opacity 70ms ease-out; }
-.is-pressed-small { transform: scale(.95); }
-.is-pressed-big { transform: scale(.98); }
+/* A finger is on it: app.js adds these the moment something tappable is touched.
+   It has to be plain to see from arm's length: light things go clearly darker, dark things
+   clearly lighter, and everything sinks in a little. (The first version dimmed by a fifth
+   and shrank by 2%; on the real screen nobody could tell.) */
+.is-pressed { filter: brightness(.8); transition: transform 60ms ease-out, filter 60ms ease-out; }
+.is-pressed.is-pressed-dark { filter: brightness(1.7); }
+.is-pressed-small { transform: scale(.92); }
+.is-pressed-big { transform: scale(.955); }

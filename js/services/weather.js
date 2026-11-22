@@ -25,7 +25,7 @@ export function describe(code) {
 
 export async function getWeather(loc) {
   const cached = JSON.parse(localStorage.getItem(CACHE_KEY) || 'null');
-  if (cached && Date.now() - cached.at < MAX_AGE && cached.lat === loc.lat) return cached;
+  if (cached && Date.now() - cached.at < MAX_AGE && cached.lat === loc.lat && cached.units === settings.units) return cached;
 
   const url = new URL('https://api.open-meteo.com/v1/forecast');
   url.search = new URLSearchParams({
@@ -52,6 +52,7 @@ export async function getWeather(loc) {
   const result = {
     at: Date.now(),
     lat: loc.lat,
+    units: settings.units,
     temp: Math.round(d.current.temperature_2m),
     code: d.current.weather_code,
     high: Math.round(d.daily.temperature_2m_max[0]),

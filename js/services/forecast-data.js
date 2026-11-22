@@ -17,7 +17,7 @@ const STALE_MAX = 2 * 24 * 3600 * 1000;
 export async function getForecast(loc) {
   let cached = null;
   try { cached = JSON.parse(localStorage.getItem(CACHE_KEY) || 'null'); } catch (e) { cached = null; }
-  const samePlace = cached && cached.lat === loc.lat && cached.lon === loc.lon;
+  const samePlace = cached && cached.lat === loc.lat && cached.lon === loc.lon && cached.units === settings.units;
   if (samePlace && Date.now() - cached.at < MAX_AGE) return cached;
   try {
     return await download(loc);
@@ -61,6 +61,7 @@ async function download(loc) {
     at: Date.now(),
     lat: loc.lat,
     lon: loc.lon,
+    units: settings.units,
     temp: Math.round(d.current.temperature_2m),
     feels: Math.round(d.current.apparent_temperature),
     code: d.current.weather_code,

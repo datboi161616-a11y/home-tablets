@@ -3,6 +3,7 @@
 //   #/recipes/dinner             dinner cuisines
 //   #/recipes/chinese            every Chinese recipe
 //   #/recipes/chinese/noodles    just the noodles
+import { backHref, backLabel } from '../services/nav.js';
 import { loadIndex, searchRecipes, cuisineColor, fmtMinutes } from '../services/recipe-data.js';
 import { getPlan, weekDays, dayIds, favorites } from '../services/meal-plan.js';
 import { esc, kitchenStyles, kitchenTop, fillCounts } from './kitchen-ui.js';
@@ -170,7 +171,7 @@ export function mount(el, { args = [] } = {}) {
       // ---- Breakfast / Lunch / Dinner (or the dinner cuisines) + search ----
       root.innerHTML = `
         ${kitchenTop({ title: dinnerView ? 'Dinner' : 'Recipes', active: 'recipes',
-          back: dinnerView ? '#/recipes' : '#/home', backLabel: dinnerView ? '← Recipes' : '← Home',
+          back: dinnerView ? '#/recipes' : backHref(), backLabel: dinnerView ? '← Recipes' : backLabel(),
           extra: `<a href="#/recipes/favorites" class="k-btn" style="color:#C2491F">♥ Favorites${favs.length ? ` · ${favs.length}` : ''}</a><div class="rb-search"><input data-search class="k-input" placeholder="Search recipes" autocomplete="off"><button data-clear class="rb-clear" aria-label="Clear search">×</button></div>` })}
         <div data-body class="k-scroll"></div>`;
       const body = root.querySelector('[data-body]');

@@ -6,7 +6,8 @@
 import { spawn, execFileSync } from 'node:child_process';
 import { mkdirSync, rmSync, writeFileSync } from 'node:fs';
 import { fileURLToPath, pathToFileURL } from 'node:url';
-import { dirname, resolve } from 'node:path';
+import { basename, dirname, resolve } from 'node:path';
+import { tmpdir } from 'node:os';
 
 const HERE = dirname(fileURLToPath(import.meta.url)).replace(/\\/g, '/');
 const [url, modulePath, rateArg = '1'] = process.argv.slice(2);
@@ -42,7 +43,9 @@ const PROBE = `(() => {
   window.addEventListener('unhandledrejection', (e) => P.errors.push('unhandled: ' + String(e.reason && (e.reason.message || e.reason)).slice(0, 200)));
 })();`;
 
-const prof = `${HERE}/prof-${Date.now()}`;
+// In the system's temp folder: from a long project path the browser's own nested folders
+// run past Windows' 260-character limit.
+const prof = resolve(tmpdir(), `ht-sim-${Date.now()}`);
 mkdirSync(prof, { recursive: true });
 const shots = `${HERE}/shots`;
 mkdirSync(shots, { recursive: true });
@@ -109,7 +112,7 @@ try {
   /** Memory the browser's processes hold right now, by kind, in MB. */
   const memory = () => {
     try {
-      const ps = `Get-CimInstance Win32_Process -Filter "Name='msedge.exe'" | Where-Object { $_.CommandLine -match '${prof.split('/').pop()}' } | ForEach-Object { $t = if ($_.CommandLine -match '--type=([a-z-]+)') { $Matches[1] } else { 'browser' }; '{0} {1}' -f $t, [math]::Round($_.WorkingSetSize/1MB) }`;
+      const ps = `Get-CimInstance Win32_Process -Filter "Name='msedge.exe'" | Where-Object { $_.CommandLine -match '${basename(prof)}' } | ForEach-Object { $t = if ($_.CommandLine -match '--type=([a-z-]+)') { $Matches[1] } else { 'browser' }; '{0} {1}' -f $t, [math]::Round($_.WorkingSetSize/1MB) }`;
       const lines = execFileSync('powershell', ['-NoProfile', '-Command', ps], { encoding: 'utf8' }).trim().split(/\r?\n/);
       const mem = {};
       for (const l of lines) { const [t, mb] = l.trim().split(' '); if (t) mem[t] = (mem[t] || 0) + Number(mb || 0); }

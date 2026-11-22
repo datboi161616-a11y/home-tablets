@@ -115,7 +115,7 @@ export function mount(el) {
           </a>
           <a href="#/launcher" class="pill" style="background:var(--card);color:var(--ink);gap:8px">
             <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><rect x="3" y="3" width="7" height="7" rx="2"/><rect x="14" y="3" width="7" height="7" rx="2"/><rect x="3" y="14" width="7" height="7" rx="2"/><rect x="14" y="14" width="7" height="7" rx="2"/></svg>
-            All apps
+            Menu
           </a>
           </div>
         </div>

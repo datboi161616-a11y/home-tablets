@@ -49,7 +49,7 @@ const FAMILY = [
   { route: /^night/, go: 'night', corner: true, wait: 'next',
     say: H('Goodnight mode', 'At night it dims to a soft clock, then wakes up with you in the morning.') },
   { center: true, go: 'home', wait: 'finish',
-    say: H('And it keeps getting better', 'New features show up on their own, no updates to install. Enjoy! (Want to see this again? All apps → Tour.)') },
+    say: H('And it keeps getting better', 'New features show up on their own, no updates to install. Enjoy! (Want to see this again? Menu → Tour.)') },
 ];
 
 const TOM = [

@@ -13,6 +13,7 @@ import { readFile, stat } from 'node:fs/promises';
 import { mkdirSync, rmSync, writeFileSync } from 'node:fs';
 import { dirname, extname, join, normalize } from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { tmpdir } from 'node:os';
 
 const HERE = dirname(fileURLToPath(import.meta.url)).replace(/\\/g, '/');
 const [siteDir, label = 'run'] = process.argv.slice(2);
@@ -45,7 +46,10 @@ const sitePort = server.address().port;
 const url = `http://localhost:${sitePort}/${PROFILE === 'tom' ? '?profile=tom' : ''}`;
 
 // ---- the browser ----
-const prof = `${HERE}/prof-off-${Date.now()}-${Math.floor(Math.random() * 1e6)}`;
+// In the system's temp folder, not beside this file: the browser nests its own folders
+// deep inside, and from a long project path that runs past Windows' 260-character limit
+// (the offline copy then fails with "Unexpected internal error").
+const prof = join(tmpdir(), `ht-off-${Date.now()}-${Math.floor(Math.random() * 1e6)}`);
 mkdirSync(prof, { recursive: true });
 mkdirSync(`${HERE}/shots`, { recursive: true });
 const port = 9800 + Math.floor(Math.random() * 150);
@@ -186,7 +190,8 @@ try {
   } else {
     log('running online for', WAIT_S, 's');
     await sleep(WAIT_S * 1000);
-    const keys = (await kept()) || [];
+    let keys = await kept();
+    if (!Array.isArray(keys)) { log('could not list what was kept:', JSON.stringify(keys)); out.keptProblem = keys; keys = []; }
     out.keptCount = keys.length;
     out.keptScreens = keys.filter((k) => k.includes('/js/screens/')).length;
     out.keptFonts = keys.filter((k) => k.includes('fonts.g')).map((k) => k.slice(0, 60));

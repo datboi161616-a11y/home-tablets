@@ -4,6 +4,8 @@ import * as placeholder from './screens/placeholder.js';
 import { welcomeDone } from './services/welcome-state.js';
 import { tutorialRunning } from './services/tutorial.js';
 import { siteAnswers } from './services/online.js';
+import { cameFrom } from './services/nav.js';
+import { isNightNow, dayBrightness } from './services/display.js';
 
 // Was sw.js already keeping copies when this page started? (Not on the very first start.)
 const startedWithCopies = !!(navigator.serviceWorker && navigator.serviceWorker.controller);
@@ -27,7 +29,7 @@ fit();
 //    screen) and lifts within half a second. A firm press on a kitchen screen often does
 //    neither, and the tap was simply lost: measured on a real tablet, nothing happened at
 //    all. Those taps are counted here instead.
-const PRESS_MIN_MS = 140; // even the quickest tap shows for this long
+const PRESS_MIN_MS = 180; // even the quickest tap shows for this long
 const PRESS_WAIT_MS = 70; // inside a list that scrolls: wait a moment, it may be a swipe
 const TAP_MAX_MS = 1500;  // held longer than this it is no tap (the grown-up menu is a 5 s hold)
 const TAP_ROOM_PX = 24;   // how far the finger may roll; inside a list that scrolls, 8
@@ -62,19 +64,28 @@ function scrollersOf(el) {
   }
   return list;
 }
+// Is this colour dark? ("rgb(29, 36, 48)" yes, white or see-through no.)
+function isDark(color) {
+  const m = /rgba?\((\d+), ?(\d+), ?(\d+)(?:, ?([\d.]+))?/.exec(color);
+  if (!m || (m[4] !== undefined && +m[4] < 0.5)) return false;
+  return 0.299 * m[1] + 0.587 * m[2] + 0.114 * m[3] < 90;
+}
 function showPress(el) {
   pressed = el;
   pressedAt = performance.now();
+  const style = getComputedStyle(el);
   el.classList.add('is-pressed');
-  // Shrink it a touch too, unless it is already placed with a transform of its own.
-  if (getComputedStyle(el).transform === 'none') el.classList.add(Math.max(el.offsetWidth, el.offsetHeight) > 260 ? 'is-pressed-big' : 'is-pressed-small');
+  // Dark buttons light up instead of going darker, or nothing would show.
+  if (isDark(style.backgroundColor)) el.classList.add('is-pressed-dark');
+  // And it sinks in, unless it is already placed with a transform of its own.
+  if (style.transform === 'none') el.classList.add(Math.max(el.offsetWidth, el.offsetHeight) > 260 ? 'is-pressed-big' : 'is-pressed-small');
 }
 function endPress(atOnce) {
   clearTimeout(pressTimer);
   const el = pressed;
   pressed = null;
   if (!el) return;
-  const off = () => el.classList.remove('is-pressed', 'is-pressed-big', 'is-pressed-small');
+  const off = () => el.classList.remove('is-pressed', 'is-pressed-dark', 'is-pressed-big', 'is-pressed-small');
   if (atOnce) off(); else setTimeout(off, Math.max(0, PRESS_MIN_MS - (performance.now() - pressedAt)));
 }
 function dropFinger() { finger = null; endPress(true); }
@@ -136,7 +147,7 @@ addEventListener('pointerup', (e) => { if (e.pointerType === 'mouse') endPress(f
 const FAMILY = {
   home: 'Home', launcher: 'Menu', recipes: 'Recipes', calendar: 'Calendar', forecast: 'Weather',
   messages: 'Messages', shopping: 'Shopping list', timers: 'Timers', plan: 'Week plan', dish: 'Recipe',
-  recipe: 'Cooking mode', myrecipe: 'My recipe', night: 'Night clock',
+  recipe: 'Cooking mode', myrecipe: 'My recipe', night: 'Night clock', settings: 'Settings',
 };
 // Tom · Space & Flight
 const TOM = {
@@ -153,6 +164,7 @@ const OWN_SCREENS = Object.keys({ ...(profile === 'tom' ? TOM : FAMILY), ...BOTH
 export const homeRoute = profile === 'tom' ? 'bridge' : 'home';
 
 let current = null;
+let shownName = null; // the screen that is up now
 let navId = 0;
 let timerSvc = null; // kitchen timers (family tablets): the countdown chip on every screen
 let lastBrightness = null; // what the backlight was last asked for
@@ -187,12 +199,14 @@ async function navigate() {
   // Night screens turn the real backlight down; everything else uses normal brightness.
   // (Only when it changes: every call makes Android lay the whole window out again.)
   const nightScreen = name === (profile === 'tom' ? 'viewscreen' : 'night');
-  const brightness = nightScreen ? 0.05 : -1;
+  const brightness = nightScreen ? 0.05 : dayBrightness(); // the owner's choice (Settings)
   if (brightness !== lastBrightness) {
     lastBrightness = brightness;
     try { window.TabletNative?.setBrightness?.(brightness); } catch { /* not on a tablet */ }
   }
 
+  cameFrom(shownName); // so "back" on the next screen leads to where they came from
+  shownName = name;
   try { current?.unmount?.(); } catch (err) { console.error(err); }
   // Each visit gets its own container. When you leave, it's removed, so a screen's
   // late callbacks can check `el.isConnected` and stop touching a screen that's gone.
@@ -216,6 +230,12 @@ async function navigate() {
 }
 addEventListener('hashchange', navigate);
 navigate();
+
+// Settings were just saved on a phone (the family's name, degrees C or F...): draw the
+// screens that show them again, so the phone's "updates right away" is true.
+addEventListener('tablet-family', () => {
+  if (['home', 'launcher', 'forecast', 'photos'].includes(screenName())) setTimeout(navigate, 50);
+});
 
 // Family tablets: kitchen timers that ring on any screen.
 if (profile !== 'tom') import('./services/timers.js').then((m) => {
@@ -310,19 +330,47 @@ async function checkForUpdate() {
 checkForUpdate();
 setInterval(checkForUpdate, 30 * 60 * 1000);
 
-// ---- Night mode: 10 PM to 6 AM ----
+// ---- Night mode (10 PM to 6 AM unless the owner chose other hours in Settings) ----
 // Family tablets move to the night clock, Tom's to the starfield, once nobody has
-// touched the screen for 5 minutes. At 6 AM they go back home.
+// touched the screen for 5 minutes. In the morning they go back to what was up before.
 const nightRoute = profile === 'tom' ? 'viewscreen' : 'night';
-const isNight = () => { const h = new Date().getHours(); return h >= 22 || h < 6; };
+let beforeNight = null;
+
+// ---- Back to Home after a while ----
+// A menu, the calendar or the shopping list that somebody looked at and walked away
+// from shouldn't stay up all day: after ten untouched minutes it is Home again. Screens
+// people watch without touching (photo frame, a recipe, timers, cooking) are left alone.
+const REST_AFTER_MS = 10 * 60 * 1000;
+// A half-written note or calendar entry is never thrown away by the clock: not while the
+// cursor is in a box, and not while a box on the screen has something typed in it.
+const typing = () => {
+  const at = document.activeElement;
+  if (at && (at.tagName === 'INPUT' || at.tagName === 'TEXTAREA')) return true;
+  return Array.from(screenEl.querySelectorAll('textarea, input[type="text"], input:not([type])')).some((box) => box.value.trim());
+};
+const WANDERED = ['launcher', 'calendar', 'forecast', 'messages', 'recipes', 'plan', 'shopping', 'apps', 'addphotos', 'settings'];
 
 setInterval(() => {
   const here = screenName();
   if (updateWaiting && idleFor(2 * 60 * 1000) && !BUSY.includes(here)) { location.reload(); return; }
   if (isGhost) return; // the hidden admin copy doesn't follow the clock
-  if (isNight() && here !== nightRoute && idleFor(5 * 60 * 1000) && !BUSY.includes(here)) {
+  const night = isNightNow();
+  if (night && here !== nightRoute && idleFor(5 * 60 * 1000) && !BUSY.includes(here)) {
+    beforeNight = here;
     location.hash = `#/${nightRoute}`;
-  } else if (!isNight() && here === nightRoute && idleFor(5 * 60 * 1000)) {
+  } else if (!night && here === nightRoute && idleFor(5 * 60 * 1000)) {
+    // Morning: the photo frame again if that is what the night interrupted, otherwise Home.
+    location.hash = `#/${beforeNight === 'photos' ? 'photos' : homeRoute}`;
+    beforeNight = null;
+  } else if (WANDERED.includes(here) && idleFor(REST_AFTER_MS) && !tutorialRunning() && !typing()) {
     location.hash = `#/${homeRoute}`;
   }
 }, 30 * 1000);
+
+// The owner moved the brightness slider (Settings): apply it now, not at the next screen.
+addEventListener('display-changed', () => {
+  const brightness = screenName() === nightRoute ? 0.05 : dayBrightness();
+  if (brightness === lastBrightness) return;
+  lastBrightness = brightness;
+  try { window.TabletNative?.setBrightness?.(brightness); } catch { /* not on a tablet */ }
+});

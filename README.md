@@ -61,7 +61,8 @@ Each tablet remembers its profile. Open the site once with `?profile=tom` or
 - `data/recipes/`, `tools/`: the recipe collection and the scripts that check it.
 - `tools/sim/`: scripts that open the site in a pretend tablet (headless Edge, tablet
   screen size and touch, slowed processor) to walk every screen, time them, and test
-  working without Wi-Fi: `node tools/sim/offline-test.mjs . my-run`. `device-pass.sh` times taps on
+  working without Wi-Fi: `node tools/sim/offline-test.mjs . my-run`. `serve.py` serves the site for
+  trying changes out (also to a real tablet over USB); `device-pass.sh` times taps on
   a real tablet plugged in over USB.
 - `godseye-tablet/`: a custom build of God's Eye View for Tom's tablet. Not wired in
   yet; see its README.

@@ -6,7 +6,7 @@ import { getWeather, describe } from '../services/weather.js';
 // On the tablet: its own album (sent from phones, see addphotos.js).
 // In a normal browser: sample pictures, so the screen can still be previewed.
 import { photos as samplePhotos } from '../services/family-sample.js';
-import { isTablet, getPhotos, onPhotosChanged } from '../services/tablet-photos.js';
+import { isTablet, getPhotos, onPhotosChanged, canRemovePhotos, removePhoto } from '../services/tablet-photos.js';
 import { feature } from '../services/features.js';
 import { framesArt } from '../art.js';
 
@@ -46,8 +46,14 @@ export function mount(el, { homeRoute = 'home' } = {}) {
   el.innerHTML = `
   <style>
     .ph-root{position:absolute;top:0;right:0;bottom:0;left:0;background:#2A3038;color:#fff;overflow:hidden;cursor:pointer}
-    .ph-slide{position:absolute;top:-6%;right:-6%;bottom:-6%;left:-6%;opacity:0;transition:opacity 2.5s ease}
+    /* will-change: the slide is drawn once and then only moved. Without it the tablet drew
+       the whole picture again for every step of the slow zoom: under one frame a second. */
+    .ph-slide{position:absolute;top:-6%;right:-6%;bottom:-6%;left:-6%;opacity:0;transition:opacity 2.5s ease;will-change:transform,opacity}
+    .ph-slide.quick{transition-duration:.35s}
     .ph-slide.on{opacity:1}
+    .ph-back{position:absolute;top:0;left:0;width:100%;height:100%}
+    .ph-ask{display:none;position:absolute;top:0;right:0;bottom:0;left:0;background:rgba(10,12,16,.62);align-items:center;justify-content:center;cursor:default}
+    .ph-ask button{border:0;font-family:inherit;cursor:pointer;font-size:18px;padding:14px 28px}
     .ph-slide.pan-a{animation:ph-pan-a ${SLIDE_MS + 3000}ms linear forwards}
     .ph-slide.pan-b{animation:ph-pan-b ${SLIDE_MS + 3000}ms linear forwards}
     @keyframes ph-pan-a{from{transform:scale(1) translate(0,0)}to{transform:scale(1.08) translate(-2%,-1.5%)}}
@@ -80,8 +86,19 @@ export function mount(el, { homeRoute = 'home' } = {}) {
     </div>
     <div style="position:absolute;top:32px;right:32px;display:flex;gap:12px">
       ${feature('camera') ? '<a href="#/camera" class="pill" style="min-width:44px;background:rgba(10,12,16,.55);color:#fff">📷 Camera</a>' : ''}
+      <button data-remove class="pill" style="display:none;border:0;font-family:inherit;cursor:pointer;min-width:44px;background:rgba(10,12,16,.55);color:#fff">Remove</button>
       <a href="#/addphotos" class="pill" style="min-width:44px;background:rgba(10,12,16,.55);color:#fff">+ Add photos</a>
       <a href="#/${homeRoute}" class="pill" style="min-width:44px;background:rgba(10,12,16,.55);color:#fff">Home</a>
+    </div>
+    <div class="ph-ask" data-ask>
+      <div style="background:#fff;color:#1D2430;border-radius:24px;padding:34px 40px;max-width:540px;text-align:center">
+        <div data-ask-title class="display" style="font-size:32px;font-weight:500">Remove this photo?</div>
+        <div data-ask-line style="font-size:18px;line-height:1.4;color:#4A5363;margin-top:10px">It comes off this screen for good.</div>
+        <div style="display:flex;gap:12px;justify-content:center;margin-top:24px">
+          <button data-keep class="pill" style="background:#ECEEF0;color:#1D2430">Keep it</button>
+          <button data-really class="pill" style="background:#C2491F;color:#fff">Remove</button>
+        </div>
+      </div>
     </div>
   </div>`;
 
@@ -94,11 +111,26 @@ export function mount(el, { homeRoute = 'home' } = {}) {
     $('[data-date]').textContent = weatherText ? `${n.date} · ${weatherText}` : n.date;
   }
 
-  function show(i) {
+  // The soft, dark copy of the photo behind it. It used to be the photo itself with a live
+  // blur, which this tablet's graphics chip can't keep up with. A tiny drawing stretched
+  // over the screen looks the same and costs nothing.
+  function softBackdrop(canvas, img) {
+    const c = canvas.getContext('2d');
+    const s = Math.max(canvas.width / img.naturalWidth, canvas.height / img.naturalHeight);
+    const w = img.naturalWidth * s, h = img.naturalHeight * s;
+    c.drawImage(img, (canvas.width - w) / 2, (canvas.height - h) / 2, w, h);
+    c.fillStyle = 'rgba(14,17,22,.5)';
+    c.fillRect(0, 0, canvas.width, canvas.height);
+  }
+
+  /** Show photo `i`. `quick`: somebody tapped, so change at once instead of the slow fade. */
+  function show(i, quick) {
     index = i;
     const p = photos[i];
+    // Never more than the old picture and the new one (tapping through quickly used to pile them up).
+    while (slidesEl.children.length > 1) slidesEl.firstChild.remove();
     const slide = document.createElement('div');
-    slide.className = `ph-slide ${p.video ? '' : i % 2 ? 'pan-b' : 'pan-a'}`;
+    slide.className = `ph-slide ${quick ? 'quick ' : ''}${p.video ? '' : i % 2 ? 'pan-b' : 'pan-a'}`;
     if (p.video) {
       // Play the clip (muted), full-frame over black. Advance when it ends.
       slide.style.background = '#000';
@@ -121,11 +153,14 @@ export function mount(el, { homeRoute = 'home' } = {}) {
       const u = `url('${encodeURI(p.src)}')`;
       slide.style.background = '#2A3038';
       slide.innerHTML = `
-        <div style="position:absolute;top:0;right:0;bottom:0;left:0;background:${u} center/cover no-repeat;filter:blur(28px) brightness(.55);transform:scale(1.1)"></div>
+        <canvas class="ph-back" width="64" height="40"></canvas>
         <div style="position:absolute;top:6%;right:6%;bottom:6%;left:6%;background:${u} center/contain no-repeat"></div>`;
       // A missing or damaged file would leave a blank grey screen for a whole minute: skip it.
       const probe = new Image();
-      probe.onload = () => { broken = 0; };
+      probe.onload = () => {
+        broken = 0;
+        try { softBackdrop(slide.firstElementChild, probe); } catch (err) { /* plain dark is fine */ }
+      };
       probe.onerror = () => {
         if (!el.isConnected || slidesEl.lastChild !== slide || photos.length < 2) return;
         if (++broken < photos.length) next();
@@ -140,7 +175,8 @@ export function mount(el, { homeRoute = 'home' } = {}) {
     clearTimeout(fadeTimer);
     fadeTimer = setTimeout(() => {
       while (slidesEl.children.length > 1 && slidesEl.firstChild !== slide) slidesEl.firstChild.remove();
-    }, 3000);
+    }, quick ? 600 : 3000);
+    showRemove();
 
     $('[data-title]').textContent = p.title;
     $('[data-caption]').innerHTML = esc(p.line || '');
@@ -166,6 +202,39 @@ export function mount(el, { homeRoute = 'home' } = {}) {
 
   function next() { show((index + 1) % photos.length); }
 
+  // ---- Taking a picture off the screen ----
+  const askEl = $('[data-ask]');
+  let keepPlace = null; // after removing one, stay where we were instead of jumping to the newest
+  function showRemove() {
+    $('[data-remove]').style.display = canRemovePhotos() && photos[index] && photos[index].id ? '' : 'none';
+  }
+  function closeAsk(carryOn) {
+    askEl.style.display = 'none';
+    // The pictures stood still while the question was up.
+    if (carryOn && photos.length > 1 && photos[index] && !photos[index].video) { clearTimeout(slideTimer); slideTimer = setTimeout(next, SLIDE_MS); }
+  }
+  $('[data-remove]').addEventListener('click', (e) => {
+    e.stopPropagation();
+    const p = photos[index];
+    if (!p) return;
+    clearTimeout(slideTimer);
+    $('[data-ask-title]').textContent = p.video ? 'Remove this video?' : 'Remove this photo?';
+    $('[data-ask-line]').textContent = 'It comes off this screen for good.';
+    askEl.style.display = 'flex';
+  });
+  askEl.addEventListener('click', (e) => {
+    e.stopPropagation(); // not a tap on the photo
+    if (e.target.closest('[data-really]')) {
+      const p = photos[index];
+      keepPlace = index;
+      if (p && removePhoto(p.id)) return; // the album tells us it changed (below)
+      keepPlace = null;
+      $('[data-ask-line]').textContent = 'That didn\u2019t work. Try again in a moment.';
+    } else if (e.target.closest('[data-keep]') || e.target === askEl) {
+      closeAsk(true);
+    }
+  });
+
   function badge(text) {
     const b = document.createElement('div');
     b.textContent = text;
@@ -182,6 +251,7 @@ export function mount(el, { homeRoute = 'home' } = {}) {
       $('[data-caption]').textContent = '';
       $('[data-dots]').innerHTML = '';
       el.querySelectorAll('[data-arrow]').forEach((a) => { a.style.display = 'none'; });
+      showRemove();
       return;
     }
     show(0); // newest first
@@ -191,15 +261,22 @@ export function mount(el, { homeRoute = 'home' } = {}) {
   clockTimer = setInterval(renderDate, 10000);
 
   // A phone just sent photos (or one was removed): reload, newest first.
-  offPhotos = onPhotosChanged(() => { photos = loadAlbum(); start(); });
+  offPhotos = onPhotosChanged(() => {
+    photos = loadAlbum();
+    const stay = keepPlace;
+    keepPlace = null;
+    closeAsk(false);
+    if (stay == null || !photos.length) start();
+    else show(Math.min(stay, photos.length - 1), true); // one was removed here: carry on from the same place
+  });
 
   // Tap the left or right side to go back / forward a photo; tap the middle to go home.
   const onTap = (e) => {
-    if (e.target.closest('a')) return;
+    if (e.target.closest('a, button')) return;
     const r = $('[data-root]').getBoundingClientRect();
     const x = (e.clientX - r.left) / r.width;
-    if (photos.length > 1 && x < 0.22) show((index - 1 + photos.length) % photos.length);
-    else if (photos.length > 1 && x > 0.78) next();
+    if (photos.length > 1 && x < 0.22) show((index - 1 + photos.length) % photos.length, true);
+    else if (photos.length > 1 && x > 0.78) show((index + 1) % photos.length, true);
     else location.hash = `#/${homeRoute}`;
   };
   $('[data-root]').addEventListener('click', onTap);

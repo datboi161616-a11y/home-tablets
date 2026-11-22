@@ -1,5 +1,6 @@
 // Family · Night clock (Night.dc.html in the design)
 // Dim warm-on-black clock. Tap anywhere to go back home.
+import { isNightNow, hourText, display } from '../services/display.js';
 import { getLocation } from '../services/location.js';
 import { getWeather, describe } from '../services/weather.js';
 import { getWeek } from '../services/calendar-data.js';
@@ -12,7 +13,7 @@ const REFRESH_MS = 30 * 60 * 1000;
 const esc = (s) => String(s).replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 const pad = (n) => String(n).padStart(2, '0');
 const dayKey = (d) => `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
-const isNight = () => { const h = new Date().getHours(); return h >= 22 || h < 6; };
+const isNight = () => isNightNow(); // the hours are the owner's choice (Settings)
 
 function clockParts() {
   const now = new Date();
@@ -86,7 +87,7 @@ export function mount(el) {
   function renderDay() {
     if (!el.isConnected) return;
     const day = comingDay();
-    $('[data-mode]').textContent = isNight() ? 'Night mode · dimmed until 6 AM' : 'Night clock';
+    $('[data-mode]').textContent = isNight() ? `Night mode · dimmed until ${hourText(display().nightTo)}` : 'Night clock';
     $('[data-day]').textContent = day.word;
     $('[data-first]').textContent = firstUp(day.date);
     const f = dayForecast(lastWeather, day.date) || dayForecast(savedWeather(), day.date);

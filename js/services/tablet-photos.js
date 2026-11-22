@@ -22,12 +22,20 @@ function fmtDay(ms) {
 }
 const cap = (s) => s.charAt(0).toUpperCase() + s.slice(1);
 
+// Asking the app for the album makes it open a small file for every photo (up to 500), and
+// Home, the Menu, the notes and the frame all ask. So the answer is kept until the album
+// changes (the app says so), or for half a minute at most.
+let album = null;
+let albumAt = 0;
+window.addEventListener('tablet-photos', () => { album = null; });
+
 /** Newest first: [{ id, src, video, title, line, name, added }] — or [] when not on a tablet. */
 export function getPhotos() {
   if (!isTablet()) return [];
+  if (album && Date.now() - albumAt < 30000) return album.slice();
   try {
     const base = N().photoBase();
-    return JSON.parse(N().photoList()).map((p) => ({
+    album = JSON.parse(N().photoList()).map((p) => ({
       id: p.id,
       src: base + p.id,
       video: !!p.video,
@@ -36,6 +44,8 @@ export function getPhotos() {
       title: p.caption || `Added ${fmtDay(p.added)}`,
       line: [p.name && `Added by ${p.name}`, p.caption && cap(fmtDay(p.added))].filter(Boolean).join(' · '),
     }));
+    albumAt = Date.now();
+    return album.slice();
   } catch (err) {
     console.error(err);
     return [];
@@ -51,13 +61,28 @@ export function uploadUrl() {
 export function savePhoto(jpeg, caption = 'Camera') {
   if (!isTablet() || !N().savePhoto) return false;
   const base64 = String(jpeg).replace(/^data:[^,]+,/, '');
+  album = null;
   try { return N().savePhoto(base64, caption); } catch { return false; }
 }
 
 /** Save a video clip (bare base64) into this tablet's album. Returns true on a tablet. */
 export function saveVideo(base64, caption = 'Video') {
   if (!isTablet() || !N().saveVideo) return false;
+  album = null;
   try { return N().saveVideo(String(base64).replace(/^data:[^,]+,/, ''), caption); } catch { return false; }
+}
+
+/** Can pictures be removed on this screen itself? (Only on a tablet.) */
+export const canRemovePhotos = () => !!(isTablet() && N().deletePhoto);
+
+/** Take a photo or video out of this tablet's album for good. True when it is gone. */
+export function removePhoto(id) {
+  if (!canRemovePhotos()) return false;
+  let gone = false;
+  try { gone = !!N().deletePhoto(id); } catch { gone = false; }
+  // The app only announces changes that come from phones: tell the screens about this one.
+  if (gone) window.dispatchEvent(new Event('tablet-photos'));
+  return gone;
 }
 
 /** Calls cb() whenever photos are added or removed. Returns an unsubscribe function. */

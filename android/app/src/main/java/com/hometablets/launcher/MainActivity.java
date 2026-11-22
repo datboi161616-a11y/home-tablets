@@ -150,6 +150,10 @@ public class MainActivity extends Activity {
 
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 
+        // While USB debugging is on (setup, testing), the screens can be inspected from the PC
+        // the tablet is plugged into. The setup script switches USB debugging off at the end.
+        WebView.setWebContentsDebuggingEnabled(usbDebugging());
+
         root = new FrameLayout(this);
         root.setBackgroundColor(Color.BLACK);
         web = new WebView(this);
@@ -240,7 +244,7 @@ public class MainActivity extends Activity {
             @Override
             public boolean shouldOverrideUrlLoading(WebView view, WebResourceRequest req) {
                 // Stay inside our site; never wander off to other websites.
-                Uri site = Uri.parse(BuildConfig.SITE_URL);
+                Uri site = Uri.parse(siteBase());
                 return !site.getHost().equals(req.getUrl().getHost());
             }
             @Override
@@ -298,7 +302,7 @@ public class MainActivity extends Activity {
         if (pageRestarts == 1) {
             try {
                 String url = dead.getUrl();
-                if (url != null && url.startsWith(BuildConfig.SITE_URL)) back = url;
+                if (url != null && url.startsWith(siteBase())) back = url;
             } catch (Exception ignored) { }
         }
         int at = root.indexOfChild(dead);
@@ -367,8 +371,26 @@ public class MainActivity extends Activity {
 
     // ---------------------------------------------------------------- helpers
 
+    /** Is USB debugging on right now? (Setup switches it off again when it is done.) */
+    private boolean usbDebugging() {
+        return Settings.Global.getInt(getContentResolver(), Settings.Global.ADB_ENABLED, 0) == 1;
+    }
+
+    /**
+     * Where the screens are loaded from: the real site. Or, only while USB debugging is on,
+     * a copy served by the PC the tablet is plugged into, so a change can be tried on a real
+     * tablet before it is published:
+     *   adb reverse tcp:5173 tcp:5173
+     *   adb shell am start -n com.hometablets.launcher/.MainActivity --es site http://localhost:5173/
+     * and "--es site off" to go back.
+     */
+    String siteBase() {
+        String dev = usbDebugging() ? prefs.getString("devSite", null) : null;
+        return dev != null ? dev : BuildConfig.SITE_URL;
+    }
+
     String siteUrl() {
-        String url = BuildConfig.SITE_URL + "?profile=" + Uri.encode(prefs.getString("profile", "family"));
+        String url = siteBase() + "?profile=" + Uri.encode(prefs.getString("profile", "family"));
         if (pendingScreen != null) {
             url += "#/" + pendingScreen;
             pendingScreen = null;
@@ -411,6 +433,15 @@ public class MainActivity extends Activity {
         String screen = intent.getStringExtra("screen");
         if (screen != null && screen.matches("[a-z]{1,20}")) {
             pendingScreen = screen;
+            changed = true;
+        }
+        // Load the screens from the PC this tablet is plugged into (see siteBase), or "off".
+        String site = intent.getStringExtra("site");
+        if (site != null && site.matches("http://(127\\.0\\.0\\.1|localhost):\\d{2,5}/")) {
+            prefs.edit().putString("devSite", site).apply();
+            changed = true;
+        } else if ("off".equals(site)) {
+            prefs.edit().remove("devSite").apply();
             changed = true;
         }
         // Automated emulator test only: make the page's process die the way it does when
@@ -473,19 +504,50 @@ public class MainActivity extends Activity {
         return super.dispatchTouchEvent(e);
     }
 
-    private void askPin() {
+    private void askPin() { askPin("Grown-up menu", this::showAdminMenu); }
+
+    /** Asks for the grown-up PIN, then does `then`. */
+    private void askPin(String title, Runnable then) {
         EditText input = new EditText(this);
         input.setInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_VARIATION_PASSWORD);
         input.setHint("PIN");
         new AlertDialog.Builder(this)
-                .setTitle("Grown-up menu")
+                .setTitle(title)
                 .setView(input)
                 .setPositiveButton("OK", (d, w) -> {
-                    if (input.getText().toString().equals(prefs.getString("pin", "2512"))) showAdminMenu();
+                    if (input.getText().toString().equals(prefs.getString("pin", "2512"))) then.run();
                     else Toast.makeText(this, "Wrong PIN", Toast.LENGTH_SHORT).show();
                 })
                 .setNegativeButton("Cancel", null)
                 .show();
+    }
+
+    private static final long PLAY_STORE_MS = 15 * 60 * 1000L;
+
+    /**
+     * Opens the Play Store for a grown-up, to update apps or add one. Kiosk mode keeps the
+     * Play Store shut, so an app's own "Update" button (YouTube asks for one now and then)
+     * leads nowhere. Here it is let in for 15 minutes, and locked out again after that;
+     * while it is in, those "Update" buttons work too.
+     */
+    private void openPlayStore() {
+        prefs.edit().putLong("playStoreUntil", System.currentTimeMillis() + PLAY_STORE_MS).apply();
+        Kiosk.allowApps(this);
+        handler.postDelayed(() -> Kiosk.allowApps(this), PLAY_STORE_MS + 2000); // shut again
+        Intent[] ways = {
+                new Intent("com.google.android.finsky.VIEW_MY_DOWNLOADS"),               // "My apps": Update all
+                getPackageManager().getLaunchIntentForPackage("com.android.vending"),   // or just the Play Store
+        };
+        for (Intent store : ways) {
+            if (store == null) continue;
+            try {
+                startActivity(store.setPackage("com.android.vending").addFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
+                foregroundApp = "Play Store";
+                Toast.makeText(this, "The Play Store is open for 15 minutes. Press Home when you are done.", Toast.LENGTH_LONG).show();
+                return;
+            } catch (Exception ignored) { }
+        }
+        Toast.makeText(this, "The Play Store isn't available on this tablet", Toast.LENGTH_LONG).show();
     }
 
     private void showAdminMenu() {
@@ -501,6 +563,7 @@ public class MainActivity extends Activity {
                 "Apps screen: " + (featureOn("apps") ? "ON (tap to hide)" : "OFF (tap to show)"),
                 "Camera: " + (featureOn("camera") ? "ON (tap to hide)" : "OFF (tap to show)"),
                 "Tutorial: show again (for a new owner)",
+                "Update or add apps (Play Store, 15 minutes)",
                 "About: app " + BuildConfig.VERSION_NAME + (Kiosk.isOwner(this) ? ", kiosk on" : ", kiosk off")
                         + ", WebView " + webViewVersion(),
         };
@@ -553,6 +616,9 @@ public class MainActivity extends Activity {
                             // Starts the hands-on tutorial now, and again at every start until someone finishes or skips it.
                             web.evaluateJavascript("localStorage.removeItem('welcome.done.v1');location.hash='#/welcome'", null);
                             Toast.makeText(this, "The tutorial will show until someone finishes it", Toast.LENGTH_LONG).show();
+                            break;
+                        case 10:
+                            openPlayStore();
                             break;
                         default:
                             break;
@@ -1061,6 +1127,13 @@ public class MainActivity extends Activity {
         }
 
         /** True in the hidden remote-control copy (the web app keeps it silent). */
+        /** Apps screen, "Update apps": the Play Store for a grown-up (asks for the PIN first). */
+        @JavascriptInterface
+        public void updateApps() {
+            if (isGhost) return;
+            runOnUiThread(() -> askPin("Update apps (grown-ups)", MainActivity.this::openPlayStore));
+        }
+
         @JavascriptInterface
         public boolean isGhost() { return isGhost; }
 
@@ -1120,6 +1193,70 @@ public class MainActivity extends Activity {
         /** {familyName, people, dates, calendars, units} */
         @JavascriptInterface
         public String familySettings() { return family.settings().toString(); }
+
+        /**
+         * Change some of the family settings on the screen itself, e.g. {"familyName":"The Smiths"}
+         * or {"units":"celsius"}. Whatever isn't named stays as it is. True when saved.
+         */
+        @JavascriptInterface
+        public boolean saveFamilySettings(String json) {
+            if (isGhost) return false;
+            try {
+                JSONObject all = family.settings();
+                JSONObject in = new JSONObject(json);
+                for (java.util.Iterator<String> it = in.keys(); it.hasNext();) {
+                    String k = it.next();
+                    all.put(k, in.get(k));
+                }
+                family.saveSettings(all);
+                runOnUiThread(() -> web.evaluateJavascript("window.dispatchEvent(new Event('tablet-family'))", null));
+                return true;
+            } catch (Exception e) {
+                return false;
+            }
+        }
+
+        /** How loud timers, videos and apps are, 0-100. */
+        @JavascriptInterface
+        public int volume() {
+            android.media.AudioManager am = getSystemService(android.media.AudioManager.class);
+            int max = am == null ? 0 : am.getStreamMaxVolume(android.media.AudioManager.STREAM_MUSIC);
+            return max <= 0 ? 0 : Math.round(100f * am.getStreamVolume(android.media.AudioManager.STREAM_MUSIC) / max);
+        }
+
+        @JavascriptInterface
+        public void setVolume(int percent) {
+            if (isGhost) return;
+            android.media.AudioManager am = getSystemService(android.media.AudioManager.class);
+            if (am == null) return;
+            int max = am.getStreamMaxVolume(android.media.AudioManager.STREAM_MUSIC);
+            int level = Math.round(max * Math.max(0, Math.min(100, percent)) / 100f);
+            try { am.setStreamVolume(android.media.AudioManager.STREAM_MUSIC, level, 0); } catch (SecurityException ignored) { }
+        }
+
+        /** "online" (the internet answers), "connected" (a network, but no internet) or "off". */
+        @JavascriptInterface
+        public String network() {
+            try {
+                android.net.ConnectivityManager cm = getSystemService(android.net.ConnectivityManager.class);
+                android.net.Network n = cm == null ? null : cm.getActiveNetwork();
+                android.net.NetworkCapabilities caps = n == null ? null : cm.getNetworkCapabilities(n);
+                if (caps == null) return "off";
+                return caps.hasCapability(android.net.NetworkCapabilities.NET_CAPABILITY_VALIDATED) ? "online" : "connected";
+            } catch (Exception e) {
+                return "off";
+            }
+        }
+
+        /** Android's Wi-Fi settings, for a grown-up: asks for the PIN, like the grown-up menu does. */
+        @JavascriptInterface
+        public void wifiSettings() {
+            if (isGhost) return;
+            runOnUiThread(() -> askPin("Wi-Fi settings (grown-ups)", () -> {
+                Kiosk.pause(MainActivity.this, 10);
+                startActivity(new Intent(Settings.ACTION_WIFI_SETTINGS));
+            }));
+        }
 
         /** Message-board notes, newest first. */
         @JavascriptInterface

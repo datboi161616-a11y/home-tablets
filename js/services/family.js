@@ -25,11 +25,12 @@ const PREVIEW = {
 };
 
 let cached = null;
+let preview = PREVIEW; // what a PC preview shows (Settings there changes it for the visit)
 
 /** Current settings, with every field present. */
 export function getFamily() {
   if (cached) return cached;
-  let s = PREVIEW;
+  let s = preview;
   if (onTablet()) {
     try { s = { ...EMPTY, ...JSON.parse(N().familySettings()) }; } catch { s = EMPTY; }
   }
@@ -39,6 +40,26 @@ export function getFamily() {
 
 /** "The Smiths" or "Family" if not set yet. */
 export const familyName = () => getFamily().familyName || 'Family';
+
+/** Can the name and the temperature unit be changed on the screen itself? (Needs launcher app 1.27 or later.) */
+export const canSaveFamily = () => !onTablet() || !!N().saveFamilySettings;
+
+/**
+ * Change some of the settings on the screen itself, e.g. saveFamily({ familyName: 'The Smiths' })
+ * or saveFamily({ units: 'celsius' }). Whatever isn't named stays. True when saved.
+ */
+export function saveFamily(change) {
+  if (onTablet()) {
+    // The app saves it and then announces 'tablet-family', like a change from a phone.
+    try { if (!N().saveFamilySettings || !N().saveFamilySettings(JSON.stringify(change))) return false; } catch { return false; }
+    cached = null;
+    return true;
+  }
+  preview = { ...preview, ...change };
+  cached = null;
+  window.dispatchEvent(new Event('tablet-family'));
+  return true;
+}
 
 /** Settings were changed from a phone. */
 export function onFamilyChanged(cb) {

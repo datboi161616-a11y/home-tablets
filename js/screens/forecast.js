@@ -1,4 +1,5 @@
 // Family · Weather forecast (Forecast.dc.html in the design)
+import { backHref, backLabel } from '../services/nav.js';
 import { settings } from '../config.js';
 import { getLocation } from '../services/location.js';
 import { describe } from '../services/weather.js';
@@ -59,7 +60,7 @@ export function mount(el) {
   </style>
   <div data-f-page style="height:100%;padding:40px;display:flex;flex-direction:column;gap:24px">
     <div style="display:flex;align-items:center;gap:16px">
-      <a href="#/launcher" class="pill" style="background:#fff">← Menu</a>
+      <a href="${backHref()}" class="pill" style="background:#fff">${backLabel()}</a>
       <div data-f-title class="display" style="font-size:40px;font-weight:500;flex-grow:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">Weather</div>
       <div data-f-updated class="muted" style="font-size:16px;text-align:right;flex:none"></div>
     </div>

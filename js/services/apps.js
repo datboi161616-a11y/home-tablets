@@ -40,6 +40,14 @@ export function openApp(pkg) {
   try { return !!N().openApp(pkg); } catch { return false; }
 }
 
+/** Can the Play Store be opened from here to update apps? (Needs a recent launcher app.) */
+export const canUpdateApps = () => !!(N() && N().updateApps);
+
+/** Opens the Play Store for a grown-up (the launcher asks for the PIN first). */
+export function updateApps() {
+  try { N().updateApps(); return true; } catch { return false; }
+}
+
 export function onAppsChanged(cb) {
   window.addEventListener('tablet-apps', cb);
   return () => window.removeEventListener('tablet-apps', cb);

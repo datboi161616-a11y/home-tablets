@@ -1,4 +1,5 @@
 // Family · Week calendar (Calendar.dc.html in the design)
+import { backHref, backLabel } from '../services/nav.js';
 import { settings } from '../config.js';
 import { getWeek, nextBigThing, calendarStatus, refreshCalendars, KINDS } from '../services/calendar-data.js';
 import { eventIcon, spot } from '../art.js';
@@ -7,7 +8,10 @@ import { saveMyEvent, removeMyEvent, getMyEvent, myEvents, isoDay, fromIso } fro
 let timer, onUpdate;
 let weekOffset = 0;
 let form = null; // the add / change form while it's open (see showForm) // 0 = this week, 1 = next week… (the arrows; back to this week on every visit)
-const MAX_AHEAD = 8; // calendar links are read about two months ahead
+// How many weeks ahead the arrows go. It was 8 (calendar links are only read about two
+// months ahead), but something added here for a later date then saved without a trace:
+// the week it was in could never be shown, so it could not be seen, changed or removed.
+const MAX_AHEAD = 52;
 
 const colorOf = (kind) => (kind === 'family' ? settings.accent : KINDS[kind]?.color || '#2D5BA8');
 
@@ -112,19 +116,19 @@ function render(el) {
   <div style="height:100%;padding:40px;display:flex;flex-direction:column;gap:24px">
     <div style="display:flex;align-items:center;justify-content:space-between">
       <div style="display:flex;align-items:center;gap:16px">
-        <a href="#/launcher" class="pill" style="background:#fff">← Menu</a>
-        <div style="min-width:250px;display:flex;flex-direction:column">
-          <div class="display" style="font-size:40px;font-weight:500;line-height:1.1">${weekTitle(days)}</div>
+        <a href="${backHref()}" class="pill" style="background:#fff;flex:none;white-space:nowrap">${backLabel()}</a>
+        <div style="min-width:250px;flex:none;display:flex;flex-direction:column">
+          <div class="display" style="font-size:40px;font-weight:500;line-height:1.1;white-space:nowrap">${weekTitle(days)}</div>
           <div class="muted" style="font-size:16px;font-weight:500">${weekRange(days)}</div>
         </div>
-        <button data-week="-1" class="pill" style="background:#fff;border:none;font-size:22px;padding:0 18px;cursor:pointer"${weekOffset <= 0 ? ' disabled' : ''} aria-label="Earlier week">‹</button>
-        <button data-week="1" class="pill" style="background:#fff;border:none;font-size:22px;padding:0 18px;cursor:pointer"${weekOffset >= MAX_AHEAD ? ' disabled' : ''} aria-label="Later week">›</button>
-        ${weekOffset ? '<button data-week="0" class="pill" style="background:var(--ink);color:#fff;border:none;cursor:pointer">Today</button>' : ''}
-        <button data-add class="pill" style="background:${settings.accent};color:#fff;border:none;cursor:pointer;font-size:18px;padding:0 24px">+ Add</button>
+        <button data-week="-1" class="pill" style="background:#fff;border:none;font-size:22px;padding:0 18px;cursor:pointer;flex:none"${weekOffset <= 0 ? ' disabled' : ''} aria-label="Earlier week">‹</button>
+        <button data-week="1" class="pill" style="background:#fff;border:none;font-size:22px;padding:0 18px;cursor:pointer;flex:none"${weekOffset >= MAX_AHEAD ? ' disabled' : ''} aria-label="Later week">›</button>
+        ${weekOffset ? '<button data-week="0" class="pill" style="background:var(--ink);color:#fff;border:none;cursor:pointer;flex:none;white-space:nowrap">Today</button>' : ''}
+        <button data-add class="pill" style="background:${settings.accent};color:#fff;border:none;cursor:pointer;font-size:18px;padding:0 24px;flex:none;white-space:nowrap">+ Add</button>
       </div>
-      <div class="muted" style="display:flex;gap:16px;font-size:16px">
+      <div class="muted" style="display:flex;flex-wrap:wrap;justify-content:flex-end;gap:4px 16px;font-size:16px;min-width:0;margin-left:16px">
         ${Object.entries(KINDS).filter(([k]) => k !== 'tablet' || myEvents().length).map(([k, v]) => `
-          <div style="display:flex;align-items:center;gap:8px"><div style="width:12px;height:12px;border-radius:50%;background:${colorOf(k)}"></div>${v.label}</div>`).join('')}
+          <div style="display:flex;align-items:center;gap:8px;white-space:nowrap"><div style="width:12px;height:12px;border-radius:50%;background:${colorOf(k)}"></div>${v.label}</div>`).join('')}
       </div>
     </div>
 
@@ -246,6 +250,7 @@ function drawForm(el, focus) {
           <div class="cf-val" style="min-width:300px">${esc(dayLabel(f.date))}</div>
           <button data-f="date+1" class="cf-step" aria-label="Day after">›</button>
           <button data-f="date+7" class="cf-chip">+1 week</button>
+          <button data-f="date+28" class="cf-chip">+4 weeks</button>
           <button data-f="today" class="cf-chip">Today</button>
         </div>
       </div>
@@ -285,6 +290,13 @@ function closeForm(el) {
   form = null;
   el.querySelector('[data-detail]').style.display = 'none';
   return back;
+}
+
+// The days an event can be put on: from this week's Monday to the last week the arrows reach.
+function clampDay(d) {
+  const first = midnightOf(new Date()); first.setDate(first.getDate() - ((first.getDay() + 6) % 7));
+  const last = new Date(first); last.setDate(last.getDate() + MAX_AHEAD * 7 + 6);
+  return d < first ? first : d > last ? last : d;
 }
 
 // Jump the week view to the week holding `d` (within the weeks the arrows allow).
@@ -328,7 +340,7 @@ function formAction(el, act) {
     return;
   }
   if (act === 'today') f.date = midnightOf(new Date());
-  else if (act.indexOf('date') === 0) f.date = shiftDay(f.date, +act.slice(4));
+  else if (act.indexOf('date') === 0) f.date = clampDay(shiftDay(f.date, +act.slice(4)));
   else if (act === 'allday') f.allDay = true;
   else if (act === 'timed') f.allDay = false;
   else if (act.indexOf('len:') === 0) f.minutes = +act.slice(4);

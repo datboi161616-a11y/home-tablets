@@ -69,7 +69,17 @@ function show(idx) {
     const ar = img.naturalWidth / (img.naturalHeight || 1);
     const whole = ar < 1.3 || ar > 2.1;
     img.style.objectFit = whole ? 'contain' : 'cover';
-    if (whole) { bg.src = img.src; bg.style.opacity = '1'; } else bg.removeAttribute('src');
+    if (whole) {
+      try {
+        const pen = bg.getContext('2d');
+        const s = Math.max(bg.width / img.naturalWidth, bg.height / img.naturalHeight);
+        const w = img.naturalWidth * s, h = img.naturalHeight * s;
+        pen.drawImage(img, (bg.width - w) / 2, (bg.height - h) / 2, w, h);
+        pen.fillStyle = 'rgba(5,7,13,.58)';
+        pen.fillRect(0, 0, bg.width, bg.height);
+        bg.style.opacity = '1';
+      } catch (err) { /* plain dark is fine */ }
+    }
     img.style.opacity = '1';
     wait.style.display = 'none';
     caption(el, data, idx);
@@ -110,14 +120,16 @@ export function mount(el) {
     .di-ox{font-family:Oxanium,sans-serif}
     .di-c{position:absolute;width:60px;height:60px;pointer-events:none}
     .di-img{position:absolute;top:0;right:0;bottom:0;left:0;width:100%;height:100%;object-fit:cover;opacity:0;transition:opacity .6s}
-    .di-bg{position:absolute;top:-40px;right:-40px;bottom:-40px;left:-40px;width:1360px;height:880px;object-fit:cover;opacity:0;filter:blur(28px) brightness(.45);transition:opacity .6s}
+    /* The soft copy behind a tall or wide picture: a tiny drawing stretched over the screen.
+       (A live blur of the full picture is more than the tablet's graphics chip can do.) */
+    .di-bg{position:absolute;top:0;left:0;width:100%;height:100%;opacity:0;transition:opacity .6s}
     .di-cap{position:absolute;left:110px;right:110px;bottom:50px;background:rgba(5,7,13,0.78);border-left:4px solid #FFB547;padding:20px 24px;display:grid;grid-template-columns:minmax(0,1fr) auto;gap:24px;align-items:end;transition:opacity .3s}
     .di-nav{position:absolute;top:50%;width:64px;height:112px;margin-top:-56px;border:1px solid #1E3A4A;background:rgba(5,7,13,0.7);color:#5CE1E6;font-size:28px;font-family:Oxanium,sans-serif;display:flex;align-items:center;justify-content:center;padding:0;cursor:pointer;transition:opacity .3s}
     .di-root.di-hide .di-cap,.di-root.di-hide .di-nav{opacity:0;pointer-events:none}
   </style>
   <div class="di-root">
     <div data-wait style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);font-size:20px;color:#7FA6B8;text-align:center;letter-spacing:2px;white-space:nowrap">RECEIVING TODAY'S DEEP-SPACE IMAGE…<br>FROM NASA'S PICTURE OF THE DAY AND THE WEBB TELESCOPE</div>
-    <img data-bg class="di-bg" alt="" aria-hidden="true">
+    <canvas data-bg class="di-bg" width="64" height="40" aria-hidden="true"></canvas>
     <img data-img class="di-img" alt="" decoding="async">
     <div class="di-c" style="top:28px;left:28px;border-top:2px solid #5CE1E6;border-left:2px solid #5CE1E6"></div>
     <div class="di-c" style="top:28px;right:28px;border-top:2px solid #5CE1E6;border-right:2px solid #5CE1E6"></div>

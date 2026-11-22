@@ -254,6 +254,7 @@ async function start(el, args) {
           <div style="display:flex;align-items:center;gap:16px">
             <button data-prev class="rc-btn rc-ghost">Back</button>
             <button data-next class="rc-btn rc-solid"></button>
+            <button data-finish class="rc-btn rc-solid" style="display:none">Done cooking</button>
             <div data-side style="margin-left:auto;display:flex;gap:10px;align-items:center;justify-content:flex-end;flex-wrap:wrap;min-width:0"></div>
           </div>
         </div>
@@ -274,7 +275,10 @@ async function start(el, args) {
     $('[data-prev]').disabled = i === 0;
     armed = false;
     clearTimeout(armTimer);
+    // The last step: "Done cooking" is the big button, "Start over" the quiet one.
     $('[data-next]').textContent = last ? 'Start over' : 'Next step';
+    $('[data-next]').className = last ? 'rc-btn rc-ghost' : 'rc-btn rc-solid';
+    $('[data-finish]').style.display = last ? '' : 'none';
     // Where you are: a dot per step (tap one to jump there).
     el.querySelectorAll('[data-goto]').forEach((d, j) => { d.className = `rc-dot${j === i ? ' on' : j < i ? ' past' : ''}`; });
     // A peek at what's coming, so nobody gets caught out.
@@ -408,14 +412,28 @@ async function start(el, args) {
         showIngCount();
         setStep(0);
       } else setStep(i + 1);
+    } else if (t.matches('[data-finish]')) {
+      // Finished: put the recipe away, so the week plan stops saying "Continue · step 5".
+      // Timers still going stay (and still ring, on any screen).
+      if (activeTimers(r, s).length) {
+        s.step = 0;
+        s.checked = s.checked.map(() => false);
+        save(r, s);
+      } else {
+        localStorage.removeItem(keyFor(r.id));
+      }
+      if (localStorage.getItem(CURRENT_KEY) === r.id) localStorage.removeItem(CURRENT_KEY);
+      location.hash = '#/home';
     } else if (t.matches('[data-goto]')) {
       setStep(+t.dataset.goto);
     } else if (t.matches('[data-ttoggle]')) {
       const st = status(s, i);
-      if (st === 'running') s.timers[i] = { left: remaining(r, s, i) };
-      else if (st === 'paused') s.timers[i] = { end: Date.now() + s.timers[i].left };
+      // The name goes along so the timer chip on the other screens can say what is ready.
+      const label = `${r.steps[i].timerLabel || `Step ${i + 1}`} · ${shortTitle(r.title)}`;
+      if (st === 'running') s.timers[i] = { left: remaining(r, s, i), label };
+      else if (st === 'paused') s.timers[i] = { end: Date.now() + s.timers[i].left, label };
       else if (st === 'done' && !s.timers[i].ack) s.timers[i].ack = true;
-      else s.timers[i] = { end: Date.now() + r.steps[i].timer * 1000 };
+      else s.timers[i] = { end: Date.now() + r.steps[i].timer * 1000, label };
       save(r, s); tick();
     } else if (t.matches('[data-treset]')) {
       delete s.timers[i];

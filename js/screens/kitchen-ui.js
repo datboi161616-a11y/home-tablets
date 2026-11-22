@@ -1,4 +1,5 @@
 // Shared bits for the kitchen screens: Recipes, a recipe, Week plan, Shopping list.
+import { backHref, backLabel as hubLabel } from '../services/nav.js';
 import { settings } from '../config.js';
 import { weekRecipeIds, shoppingCount } from '../services/meal-plan.js';
 import { foodArt, foodFor } from '../art.js';
@@ -60,7 +61,7 @@ export function kitchenStyles() {
 }
 
 /** Top bar: back link, title, and the three kitchen tabs. */
-export function kitchenTop({ title, back = '#/home', backLabel = '← Home', active = '', extra = '' }) {
+export function kitchenTop({ title, back = backHref(), backLabel = hubLabel(), active = '', extra = '' }) {
   const tab = (id, href, label) => `<a href="${href}" class="k-tab${active === id ? ' on' : ''}">${label}<span data-kcount="${id}" style="display:none" class="k-count"></span></a>`;
   return `
     <div class="k-top">

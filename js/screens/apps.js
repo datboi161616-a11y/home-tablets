@@ -1,7 +1,8 @@
 // Apps: YouTube, Spotify, etc. as big tiles. Pressing Home inside an app
 // always comes back to our system (kiosk mode).
+import { backHref, backLabel } from '../services/nav.js';
 import { profile } from '../config.js';
-import { getApps, openApp, onAppsChanged, hasApps } from '../services/apps.js';
+import { getApps, openApp, onAppsChanged, hasApps, canUpdateApps, updateApps } from '../services/apps.js';
 import { C } from '../art.js';
 
 let off, msgTimer, busyTimer;
@@ -143,8 +144,9 @@ export function mount(el) {
     </style>
     <div class="ap-root">
       <div style="display:flex;align-items:center;gap:24px">
-        <a href="${t.back}" class="pill" style="background:${tom ? 'transparent' : t.tile};color:${tom ? '#5CE1E6' : t.ink};${tom ? 'border:1px solid #1E3A4A;letter-spacing:3px;font-family:JetBrains Mono,monospace;font-size:14px' : ''}">${t.backLabel}</a>
+        <a href="${tom ? t.back : backHref()}" class="pill" style="background:${tom ? 'transparent' : t.tile};color:${tom ? '#5CE1E6' : t.ink};${tom ? 'border:1px solid #1E3A4A;letter-spacing:3px;font-family:JetBrains Mono,monospace;font-size:14px' : ''}">${tom ? t.backLabel : backLabel()}</a>
         <div style="font-family:${t.font};font-size:${tom ? '22px' : '44px'};font-weight:500;${tom ? 'letter-spacing:6px;color:#5CE1E6' : ''}">${t.title}</div>
+        ${canUpdateApps() ? `<button data-update class="pill" style="margin-left:auto;border:${tom ? '1px solid #1E3A4A' : '0'};cursor:pointer;background:${tom ? 'transparent' : t.tile};color:${tom ? '#5CE1E6' : t.ink};${tom ? 'border-radius:0;letter-spacing:3px;font-family:JetBrains Mono,monospace;font-size:14px' : 'font-family:inherit'}">${tom ? 'UPDATE APPS' : 'Update apps'}</button>` : ''}
       </div>
       ${apps.length ? `
         <div class="ap-grid">
@@ -173,6 +175,10 @@ export function mount(el) {
         img.outerHTML = letterIcon(a, g.icon);
       });
     });
+
+    // An app says it needs an update (YouTube does now and then): the Play Store, for a grown-up.
+    const update = el.querySelector('[data-update]');
+    if (update) update.addEventListener('click', () => { if (!updateApps()) say(tom ? 'THE PLAY STORE WON\u2019T OPEN' : 'The Play Store won\u2019t open right now.'); });
 
     el.querySelectorAll('[data-pkg]').forEach((tile) => {
       tile.addEventListener('click', () => {

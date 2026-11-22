@@ -1,4 +1,5 @@
 // Family · App menu (Launcher.dc.html in the design)
+import { display, hourText } from '../services/display.js';
 import { settings } from '../config.js';
 import { getLocation } from '../services/location.js';
 import { getWeather, describe } from '../services/weather.js';
@@ -109,11 +110,11 @@ export function mount(el) {
     { href: '#/forecast', icon: 'weather', title: 'Weather', sub: 'Loading…', data: 'data-weather' },
     { href: '#/recipes', icon: 'recipe', title: 'Recipes', sub: planSub(), style: 'accent', data: 'data-recipes' },
     { href: '#/messages', icon: 'messages', title: 'Messages', sub: notesSub(), data: 'data-notes', badge: true },
-    { href: '#/shopping', icon: 'grocery', title: 'Grocery list', sub: 'From your week plan', data: 'data-grocery' },
+    { href: '#/shopping', icon: 'grocery', title: 'Shopping list', sub: 'From your week plan', data: 'data-grocery' },
     // The night clock comes on by itself at 10 PM, so its tile gives way to Apps when Apps is on.
     feature('apps')
       ? { href: '#/apps', icon: 'apps', title: 'Apps', sub: appsSub() }
-      : { href: '#/night', icon: 'night', title: 'Night clock', sub: 'Starts at 10 PM' },
+      : { href: '#/night', icon: 'night', title: 'Night clock', sub: display().night ? `Starts at ${hourText(display().nightFrom)}` : 'Tap to show it' },
   ];
 
   const tile = (t) => {
@@ -144,14 +145,21 @@ export function mount(el) {
       color:#fff;font:600 20px Inter,sans-serif;align-items:center;justify-content:center}
   </style>
   <div style="height:100%;padding:40px;display:flex;flex-direction:column;gap:28px">
-    <div style="display:flex;align-items:flex-end;justify-content:space-between">
-      <div style="display:flex;flex-direction:column;gap:4px">
+    <div style="display:flex;flex-direction:column;gap:2px">
+      <div style="display:flex;align-items:center;justify-content:space-between;gap:20px">
         <div data-date class="muted" style="font-size:20px">${c.date}</div>
-        <div class="display" style="font-size:48px;font-weight:500">What would you like to see?</div>
+        <!-- Quick ways to what the eight tiles don't reach. -->
+        <div style="display:flex;gap:10px;flex:none">
+          <a href="#/timers" class="pill" style="background:#fff;color:var(--ink)">Timers</a>
+          ${feature('camera') ? '<a href="#/camera" class="pill" style="background:#fff;color:var(--ink)">Camera</a>' : ''}
+          ${feature('apps') ? '<a href="#/night" class="pill" style="background:#fff;color:var(--ink)">Night clock</a>' : ''}
+          <a href="#/settings" class="pill" style="background:#fff;color:var(--ink)">Settings</a>
+          <a href="#/welcome" class="pill" style="background:#fff;color:var(--ink)" aria-label="Show the welcome tour again">Tour</a>
+        </div>
       </div>
-      <div style="display:flex;align-items:center;gap:20px">
-      <a href="#/welcome" class="pill" style="background:#fff;color:var(--ink);font-size:16px" aria-label="Show the welcome tour again">Tour</a>
-      <div class="display" style="font-size:56px;font-weight:300;white-space:nowrap"><span data-time>${c.time}</span><span data-ampm class="muted" style="font-size:24px;font-weight:500;margin-left:8px">${c.ampm}</span></div>
+      <div style="display:flex;align-items:flex-end;justify-content:space-between;gap:20px">
+        <div class="display" style="font-size:48px;font-weight:500;white-space:nowrap">What would you like to see?</div>
+        <div class="display" style="font-size:56px;font-weight:300;white-space:nowrap"><span data-time>${c.time}</span><span data-ampm class="muted" style="font-size:24px;font-weight:500;margin-left:8px">${c.ampm}</span></div>
       </div>
     </div>
     <div style="flex-grow:1;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));grid-template-rows:repeat(2,minmax(0,1fr));gap:20px">
@@ -161,7 +169,7 @@ export function mount(el) {
 
   const $ = (s) => el.querySelector(s);
 
-  // Recipes: tonight's dinner; Grocery list: how many things to get.
+  // Recipes: tonight's dinner; Shopping list: how many things to get.
   tonight().then((t) => {
     if (!el.isConnected || !t) return;
     if (t.planned || !weekRecipeIds().length) $('[data-recipes]').textContent = `${t.planned ? 'Tonight' : 'Idea'}: ${t.entry.t}`;

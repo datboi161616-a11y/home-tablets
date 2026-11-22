@@ -74,14 +74,37 @@ Hold the **top-left corner** for 5 seconds, enter the PIN:
 - **Wi-Fi settings** (unlocks for 10 minutes), **Switch profile**, **Reload**,
   **Check for app update**, **Unlock tablet for 10 minutes**,
   **Turn off kiosk mode permanently**, **New photo upload code**,
-  **Apps screen ON/OFF**, **Camera ON/OFF**, **Tutorial: show again**.
+  **Apps screen ON/OFF**, **Camera ON/OFF**, **Tutorial: show again**,
+  **Update or add apps (Play Store, 15 minutes)**.
+
+**When an app says it needs an update** (YouTube does now and then): its own "Update"
+button leads nowhere, because kiosk mode keeps the Play Store shut. Open the Play Store
+from the grown-up menu, or with **Update apps** on the Apps screen (it asks for the PIN).
+It stays open for 15 minutes, then locks again. With a Google account on the tablet the
+Play Store also updates apps by itself overnight.
+
+## Settings on the screen itself
+
+**Menu → Settings**: the family's name on the Home screen, °F or °C, brightness, sound
+volume, when the night clock starts and ends (or never), and whether the Wi-Fi is
+connected, with a **Wi-Fi settings** button that asks for the grown-up PIN. Birthdays,
+the people who leave notes and calendar links are still added from a phone.
 
 ## Automatic behaviour
 
 - **Night:** from 10 PM, once nobody has touched it for 5 minutes, it switches to the
-  night clock (Tom: starfield) and dims the screen. At 6 AM it goes back home.
+  night clock (Tom: starfield) and dims the screen. At 6 AM it goes back to what was
+  showing. The hours can be changed, or the night clock switched off, in Settings.
+- **Back to Home:** a menu, the calendar, the weather or the shopping list left
+  untouched for 10 minutes goes back to Home. The photo frame, a recipe, cooking mode
+  and the timers stay up.
 - **Updates:** screen changes you push reach the tablet the next time it's idle;
   app updates install themselves within 6 hours.
+
+## Their photos: removing one
+
+On the photo frame, **Remove** (top right) takes the picture that is showing off the
+screen, after asking once. The phone page can remove them too.
 
 ## Running setup again later
 
@@ -96,6 +119,25 @@ the tablet's eight processor cores busy for good; measured on a real tablet, tha
 main thing making it feel slow. The home screen doesn't use Alexa, so setup disables it
 (with `com.lenovo.smart_tab_m10_alexa` and `com.amazon.dee.app`). To bring it back on a
 tablet: `adb shell pm enable amazon.speech.sim` (and the same for the other two).
+
+## Trying a change on a real tablet before publishing it
+
+While USB debugging is on, the app can load the screens from this PC instead of the
+website, and the page can be inspected from the PC (chrome://inspect):
+
+```
+python tools/sim/serve.py
+```
+
+```
+adb reverse tcp:5173 tcp:5173
+```
+
+```
+adb shell am start -n com.hometablets.launcher/.MainActivity --es site http://localhost:5173/
+```
+
+`--es site off` goes back to the real site. With USB debugging off the app ignores all of this.
 
 ## Doing it by hand (if the script can't run)
 

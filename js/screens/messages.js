@@ -3,6 +3,7 @@
 // "Record a reply" / "+ New note" open a composer (typing or voice dictation,
 // optional photo). Notes are kept on this tablet; phones on the home Wi-Fi can
 // leave notes too (Photos → Add photos → scan the QR code → "Leave a note").
+import { backHref, backLabel } from '../services/nav.js';
 import { settings } from '../config.js';
 import {
   members, loadMessages, postMessage, updateMessage, deleteMessage, when, shrinkPhoto, onMessagesChanged,
@@ -137,9 +138,9 @@ function openComposer(replyTo) {
       <div data-c="hint" class="muted" style="font-size:16px;min-height:20px;margin-top:-10px"></div>
       <div style="display:flex;align-items:center;gap:12px">
         ${Speech ? `<button data-c="speak" class="msg-btn msg-btn-outline">${MIC}<span>Speak</span></button>` : ''}
-        <label class="msg-btn msg-btn-outline" style="position:relative">${CAMERA}<span data-c="photo-label">Add photo</span>
+        ${window.TabletNative ? '' : `<label class="msg-btn msg-btn-outline" style="position:relative">${CAMERA}<span data-c="photo-label">Add photo</span>
           <input data-c="file" type="file" accept="image/*" style="position:absolute;top:0;right:0;bottom:0;left:0;opacity:0;cursor:pointer">
-        </label>
+        </label>`}
         <div data-c="thumb" style="width:60px;height:60px;border-radius:12px;background:center/cover #C9CFD6;display:none"></div>
         <button data-c="post" class="msg-btn msg-btn-primary" style="margin-left:auto" disabled>Post</button>
       </div>
@@ -163,7 +164,9 @@ function openComposer(replyTo) {
   sync();
   text.addEventListener('input', () => { trouble = ''; sync(); });
 
-  $('[data-c="file"]').addEventListener('change', async (e) => {
+  // (No "Add photo" on the kitchen screen itself: it has no file chooser, so the button did
+  // nothing there. Notes with a photo come from a phone.)
+  ($('[data-c="file"]') || document.createElement('input')).addEventListener('change', async (e) => {
     const file = e.target.files?.[0];
     if (!file) return;
     try {
@@ -221,7 +224,10 @@ function openComposer(replyTo) {
       return;
     }
     const act = e.target.closest('[data-c]')?.dataset.c;
-    if (act === 'cancel' || e.target === box) return closeComposer();
+    if (act === 'cancel') return closeComposer();
+    // A tap beside the note only closes it while it is still empty: nobody loses a
+    // half-written note to a stray finger.
+    if (e.target === box) { if (!text.value.trim() && !photo) closeComposer(); return; }
     if (act === 'speak') return recognizer ? stopSpeech() : startSpeech();
     if (act === 'post' && !postBtn.disabled) {
       stopSpeech();
@@ -254,7 +260,7 @@ export function mount(el) {
   <div style="height:100%;padding:40px;display:flex;flex-direction:column;gap:24px">
     <div style="display:flex;align-items:center;justify-content:space-between">
       <div style="display:flex;align-items:center;gap:16px">
-        <a href="#/launcher" class="pill" style="background:#fff">← Menu</a>
+        <a href="${backHref()}" class="pill" style="background:#fff">${backLabel()}</a>
         <div class="display" style="font-size:40px;font-weight:500">Message board</div>
       </div>
       <div class="muted" style="font-size:17px">Leave a note here, or from a phone on your Wi-Fi</div>

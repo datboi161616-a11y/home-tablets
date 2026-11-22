@@ -99,6 +99,48 @@ function beep() {
   });
 }
 
+/** The alarm sound once, so someone setting the volume can hear how loud it will be. */
+export function testBeep() { beep(); }
+
+// ---- Cooking mode's step timers ----------------------------------------------------------
+// They are kept with each recipe's progress (recipe.v1.<id>, see screens/recipe.js), and
+// only that screen used to look at them: leave it, and a finished timer never rang. The
+// chip below counts and rings them too, on every screen except cooking mode itself.
+const COOK_KEY = 'recipe.v1.';
+let cook = [];
+let cookAt = 0;
+function cookingTimers() {
+  if (Date.now() - cookAt < 1000) return cook; // looked a moment ago
+  cookAt = Date.now();
+  cook = [];
+  try {
+    for (let k = 0; k < localStorage.length; k++) {
+      const key = localStorage.key(k);
+      if (!key || key.indexOf(COOK_KEY) !== 0) continue;
+      const saved = JSON.parse(localStorage.getItem(key) || 'null');
+      const steps = (saved && saved.timers) || {};
+      Object.keys(steps).forEach((i) => {
+        const t = steps[i];
+        // Running or finished and not yet stopped (paused ones just wait).
+        if (t && t.end != null && !t.ack) cook.push({ recipe: key.slice(COOK_KEY.length), step: i, end: t.end, label: t.label || 'Cooking timer' });
+      });
+    }
+  } catch (e) { cook = []; }
+  return cook;
+}
+/** Stop the finished cooking timers ringing (the recipe shows them as finished). */
+function stopCooking() {
+  try {
+    cook.filter((c) => c.end <= Date.now()).forEach((c) => {
+      const saved = JSON.parse(localStorage.getItem(COOK_KEY + c.recipe) || 'null');
+      if (!saved || !saved.timers || !saved.timers[c.step]) return;
+      saved.timers[c.step].ack = true;
+      localStorage.setItem(COOK_KEY + c.recipe, JSON.stringify(saved));
+    });
+  } catch (e) { /* storage off */ }
+  cookAt = 0;
+}
+
 // ---- The little countdown chip shown on every screen ------------------------------------
 // app.js puts `chip` back on the screen after each screen change.
 export let chip = null;
@@ -111,25 +153,41 @@ export function startTimers() {
   chip.style.cssText = 'position:absolute;right:24px;bottom:24px;z-index:50;display:none;align-items:center;gap:10px;'
     + 'min-height:56px;padding:0 22px;border:none;border-radius:999px;font:600 20px Inter,sans-serif;cursor:pointer;'
     + 'box-shadow:0 6px 20px rgba(0,0,0,.18);font-variant-numeric:tabular-nums';
+  // What cooking mode has going, when it isn't on screen to show and ring it itself.
+  const cooking = () => {
+    const now = Date.now();
+    return route === 'recipe' ? [] : cookingTimers().filter((c) => c.end > now || now - c.end < RING_MS);
+  };
   chip.addEventListener('click', () => {
     ensureAudio();
-    if (ringing()) stopRinging();
-    else location.hash = '#/timers';
+    const cooks = cooking();
+    const cookRing = cooks.some((c) => c.end <= Date.now());
+    if (ringing() || cookRing) { stopRinging(); stopCooking(); }
+    else if (timers().some((t) => state(t) !== 'stopped')) location.hash = '#/timers';
+    else if (cooks.length) location.hash = `#/recipe/${encodeURIComponent(cooks[0].recipe)}`;
   });
   // Unlock sound on the first touch anywhere, so alarms can play later.
   addEventListener('pointerdown', ensureAudio, true);
 
   const tick = () => {
+    const now = Date.now();
     const list = timers().filter((t) => state(t) !== 'stopped');
-    const ring = ringing();
-    // The Timers screen shows everything itself; cooking mode has its own timers,
-    // so the chip only appears there when something is ringing.
-    const hide = !list.length || ((route === 'timers' || route === 'recipe') && !ring);
+    const cooks = cooking();
+    const cookDone = cooks.filter((c) => c.end <= now);
+    const ring = ringing() || cookDone.length > 0;
+    const count = list.length + cooks.length;
+    // The Timers screen shows the kitchen timers itself, and cooking mode its own, so the
+    // chip only appears there for what they don't show, or when something is ringing.
+    const hide = !count || (route === 'recipe' && !ring) || (route === 'timers' && !ring && !cooks.length);
     chip.style.display = hide ? 'none' : 'inline-flex';
     if (!hide) {
-      const soonest = list.filter((t) => state(t) === 'running').sort((a, b) => a.end - b.end)[0] || list[0];
-      const more = list.length > 1 ? ` · +${list.length - 1}` : '';
-      const text = ring ? '⏰ Time’s up! Tap to stop' : `⏱ ${fmt(left(soonest))}${state(soonest) === 'paused' ? ' (paused)' : ''}${more}`;
+      // Whatever runs out first, kitchen timer or cooking step.
+      const running = list.filter((t) => state(t) === 'running').map((t) => t.end)
+        .concat(cooks.filter((c) => c.end > now).map((c) => c.end)).sort((a, b) => a - b);
+      const more = count > 1 ? ` · +${count - 1}` : '';
+      const text = ring
+        ? (cookDone.length && !ringing() ? `⏰ Time’s up! ${cookDone[0].label} · Tap to stop` : '⏰ Time’s up! Tap to stop')
+        : running.length ? `⏱ ${fmt(running[0] - now)}${more}` : `⏱ ${fmt(left(list[0]))} (paused)${more}`;
       if (chip.textContent !== text) chip.textContent = text;
       chip.style.background = ring ? 'var(--accent)' : '#1D2430';
       chip.style.color = '#FFFFFF';

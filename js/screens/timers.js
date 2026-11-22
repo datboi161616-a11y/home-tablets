@@ -1,4 +1,5 @@
 // Family · Kitchen timers: big presets, several at once, ring on any screen.
+import { backHref, backLabel } from '../services/nav.js';
 import { settings } from '../config.js';
 import {
   timers, state, left, fmt, addTimer, pauseTimer, resumeTimer, addMinute, restartTimer, removeTimer, stopRinging,
@@ -44,7 +45,7 @@ export function mount(el) {
   <div class="tm-wrap">
     <div style="display:flex;flex-direction:column;gap:22px;min-width:0">
       <div style="display:flex;align-items:center;gap:16px">
-        <a href="#/home" class="pill" style="background:#FFFFFF">← Home</a>
+        <a href="${backHref()}" class="pill" style="background:#FFFFFF">${backLabel()}</a>
         <div class="display" style="font-size:34px;font-weight:500">Timers</div>
       </div>
       <div class="eyebrow muted">Tap to start</div>
