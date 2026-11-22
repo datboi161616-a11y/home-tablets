@@ -1,18 +1,25 @@
 // Kitchen timers that run on any screen (separate from cooking-mode step timers).
 // Saved with their end time, so they keep counting through screen changes and reloads.
-//   { id, label, secs, end }            running
-//   { id, label, secs, left }           paused (ms left)
-//   { id, label, secs, end, ack: true } finished and stopped (removed shortly after)
-import { display } from './display.js';
+//   { id, label, secs, end }                    running
+//   { id, label, secs, left }                   paused (ms left)
+//   { id, label, secs, end }  end in the past   finished: rings for a while, then waits ("missed")
+//   { id, label, secs, end, ack: true, ackAt }  finished and stopped (removed a few minutes later)
+// `named: true` marks a timer someone gave a name ("Pasta"), not just "5 min timer".
+import { display, timeText } from './display.js';
 
 const KEY = 'kitchen.timers.v1';
 // An alarm nobody stops rings for two minutes, or as long as the owner chose (Settings).
 const ringMs = () => Math.max(1, +display().alarmMinutes || 2) * 60 * 1000;
-const MAX = 8;
+export const MAX = 8;
+// A stopped timer stays on the Timers screen this long after it was stopped, so "+1 min"
+// and "Again" are still there when someone comes back to the counter.
+const KEEP_STOPPED = 3 * 60 * 1000;
+// A finished timer nobody stopped is cleared away after half a day.
+const KEEP_MISSED = 12 * 60 * 60 * 1000;
 
 const read = () => { try { return JSON.parse(localStorage.getItem(KEY) || '[]') || []; } catch (e) { return []; } };
 function write(list) {
-  localStorage.setItem(KEY, JSON.stringify(list));
+  try { localStorage.setItem(KEY, JSON.stringify(list)); } catch (e) { /* storage off: still counts until reload */ }
   window.dispatchEvent(new Event('timers-changed'));
 }
 
@@ -21,15 +28,29 @@ export function onTimersChanged(cb) {
   return () => window.removeEventListener('timers-changed', cb);
 }
 
-/** Timers to show: finished ones disappear a minute after they're stopped. */
+/** Timers to show: stopped ones disappear a few minutes after they're stopped. */
 export function timers() {
   const now = Date.now();
-  return read().filter((t) => !(t.ack && now - t.end > 60 * 1000));
+  let fixed = false;
+  const list = read().filter((t) => t && t.id && !(t.ack && now - Math.max(t.end || 0, t.ackAt || 0) > KEEP_STOPPED)
+    && !(!t.ack && t.end != null && now - t.end > KEEP_MISSED))
+    .map((t) => {
+      // The clock was put back (the screen set its time after starting up): a timer can never
+      // have more time left than it was set for, so it doesn't suddenly run for hours.
+      if (t.end != null && t.end - now > (t.secs || 0) * 1000 + 5000) { fixed = true; return Object.assign({}, t, { end: now + t.secs * 1000 }); }
+      return t;
+    });
+  if (fixed) { try { localStorage.setItem(KEY, JSON.stringify(list)); } catch (e) { /* storage off */ } }
+  return list;
 }
 export const left = (t) => (t.end != null ? Math.max(0, t.end - Date.now()) : t.left);
 export const state = (t) => (t.end == null ? 'paused' : t.end <= Date.now() ? (t.ack ? 'stopped' : 'done') : 'running');
+/** Finished, nobody stopped it, and it has stopped ringing on its own (or ended while the screen was off). */
+export const missed = (t) => state(t) === 'done' && Date.now() - t.end >= ringMs();
 const ringingNow = () => timers().filter((t) => state(t) === 'done' && Date.now() - t.end < ringMs());
 export const ringing = () => ringingNow().length > 0;
+/** The timers ringing right now (for saying which ones). */
+export const ringingTimers = ringingNow;
 
 /** "25 min", "1 hr", "1 hr 30 min" */
 export function minutesText(m) {
@@ -39,34 +60,103 @@ export function minutesText(m) {
 }
 export const labelFor = (secs) => `${minutesText(Math.round(secs / 60))} timer`;
 
+/** "6:40 PM", "tomorrow 7:05 AM", "Sat 9:00 AM" (follows the owner's 12/24-hour clock). */
+export function whenText(ms) {
+  const d = new Date(ms);
+  const today = new Date();
+  const days = Math.round((new Date(d.getFullYear(), d.getMonth(), d.getDate()) - new Date(today.getFullYear(), today.getMonth(), today.getDate())) / 864e5);
+  if (days === 0) return timeText(d);
+  if (days === 1) return `tomorrow ${timeText(d)}`;
+  if (days === -1) return `yesterday ${timeText(d)}`;
+  return `${d.toLocaleDateString('en-US', { weekday: 'short' })} ${timeText(d)}`;
+}
+/** "just now", "3 min ago", "1 hr 20 min ago" */
+export function agoText(ms) {
+  const m = Math.floor((Date.now() - ms) / 60000);
+  return m < 1 ? 'just now' : `${minutesText(m)} ago`;
+}
+
+let fullUntil = 0; // the chip says "all 8 are in use" until then
 /** Start a timer. Returns false if all MAX timers are still going (nothing is dropped). */
 export function addTimer(secs, label) {
   const list = timers();
-  // Make room by clearing finished-and-stopped timers, oldest first; never drop one that's
-  // still counting or ringing.
+  // Make room by clearing finished timers, oldest first: stopped ones, then ones that rang
+  // out with nobody there. Never drop one that's still counting, paused or ringing.
   while (list.length >= MAX) {
-    const i = list.findIndex((t) => state(t) === 'stopped');
-    if (i < 0) return false;
+    let i = list.findIndex((t) => state(t) === 'stopped');
+    if (i < 0) i = list.findIndex((t) => missed(t));
+    if (i < 0) {
+      // Say so on every screen too: a recipe's "Start timer" button can't show it itself.
+      fullUntil = Date.now() + 6000;
+      window.dispatchEvent(new Event('timers-changed'));
+      return false;
+    }
     list.splice(i, 1);
   }
-  list.push({ id: `t${Date.now()}${Math.floor(Math.random() * 1000)}`, label: label || labelFor(secs), secs, end: Date.now() + secs * 1000 });
+  const t = { id: `t${Date.now()}${Math.floor(Math.random() * 1000)}`, label: label || labelFor(secs), secs, end: Date.now() + secs * 1000 };
+  if (label) t.named = true;
+  list.push(t);
   write(list);
   return true;
 }
+/** How many more timers can start now (finished ones make room). */
+export const room = () => MAX - timers().filter((t) => state(t) !== 'stopped' && !missed(t)).length;
+
+const base = (t) => (t.named ? { id: t.id, label: t.label, secs: t.secs, named: true } : { id: t.id, label: t.label, secs: t.secs });
 function change(id, fn) { write(timers().map((t) => (t.id === id ? fn(Object.assign({}, t)) : t))); }
-export const pauseTimer = (id) => change(id, (t) => ({ id: t.id, label: t.label, secs: t.secs, left: left(t) }));
-export const resumeTimer = (id) => change(id, (t) => ({ id: t.id, label: t.label, secs: t.secs, end: Date.now() + t.left }));
+export const pauseTimer = (id) => change(id, (t) => (state(t) === 'running' ? Object.assign(base(t), { left: left(t) }) : t));
+export const resumeTimer = (id) => change(id, (t) => (t.end == null ? Object.assign(base(t), { end: Date.now() + t.left }) : t));
+/** Pause every running timer (someone is called away from the stove). */
+export const pauseAll = () => write(timers().map((t) => (state(t) === 'running' ? Object.assign(base(t), { left: left(t) }) : t)));
+/** Start every paused timer again. */
+export const resumeAll = () => write(timers().map((t) => (t.end == null ? Object.assign(base(t), { end: Date.now() + t.left }) : t)));
 // +1 min also works on a ringing or finished timer ("just one more minute"): it counts again.
 // `secs` grows too, so the progress bar stays right.
 export const addMinute = (id) => change(id, (t) => (t.end != null
-  ? { id: t.id, label: t.label, secs: Math.max(t.secs, Math.ceil(left(t) / 1000)) + 60, end: Math.max(t.end, Date.now()) + 60000 }
+  ? Object.assign(base(t), { secs: Math.max(t.secs, Math.ceil(left(t) / 1000)) + 60, end: Math.max(t.end, Date.now()) + 60000 })
   : Object.assign(t, { left: t.left + 60000, secs: t.secs + 60 })));
 /** Run a finished timer again for its full time. */
-export const restartTimer = (id) => change(id, (t) => ({ id: t.id, label: t.label, secs: t.secs, end: Date.now() + t.secs * 1000 }));
-export const removeTimer = (id) => write(timers().filter((t) => t.id !== id));
-/** Stop every timer that's ringing. */
-export function stopRinging() {
-  write(timers().map((t) => (state(t) === 'done' ? Object.assign(t, { ack: true }) : t)));
+export const restartTimer = (id) => change(id, (t) => Object.assign(base(t), { end: Date.now() + t.secs * 1000 }));
+
+// ---- Taking it back ------------------------------------------------------------------------
+// The last timers removed, kept for a little while so a mistaken "Cancel" can be undone.
+let removed = [];
+let removedAt = 0;
+const UNDO_MS = 10000;
+export const removeTimer = (id) => {
+  const list = timers();
+  const gone = list.filter((t) => t.id === id);
+  if (gone.length) { removed = gone; removedAt = Date.now(); }
+  write(list.filter((t) => t.id !== id));
+};
+/** Clear every finished timer (stopped, ringing or missed) at once. Returns how many. */
+export function clearFinished() {
+  const list = timers();
+  const gone = list.filter((t) => state(t) === 'done' || state(t) === 'stopped');
+  if (!gone.length) return 0;
+  removed = gone.map((t) => (state(t) === 'done' ? Object.assign({}, t, { ack: true, ackAt: Date.now() }) : t));
+  removedAt = Date.now();
+  write(list.filter((t) => gone.indexOf(t) < 0));
+  return gone.length;
+}
+/** What can still be taken back: the removed timers, or [] once the moment has passed. */
+export const undoable = () => (Date.now() - removedAt < UNDO_MS ? removed : []);
+/** Put the last removed timers back, just as they were (a running one kept counting). */
+export function undoRemove() {
+  const back = undoable();
+  if (!back.length) return false;
+  const list = timers();
+  back.forEach((t) => { if (list.length < MAX && !list.some((x) => x.id === t.id)) list.push(t); });
+  removed = [];
+  removedAt = 0;
+  write(list);
+  return true;
+}
+
+/** Stop the timer that's ringing (or every one that is, with no id). */
+export function stopRinging(id) {
+  const now = Date.now();
+  write(timers().map((t) => (state(t) === 'done' && (id == null || t.id === id) ? Object.assign(t, { ack: true, ackAt: now }) : t)));
 }
 
 export function fmt(ms) {
@@ -164,13 +254,57 @@ function stopCooking() {
 export let chip = null;
 let lastBeep = 0;
 let route = '';
+let placeTimer = 0;
+let wasHidden = true;
+
+const esc = (s) => String(s).replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+// "Pasta", "Pasta and Oven", "Pasta, Oven and 2 more"
+function namesText(names) {
+  if (names.length <= 1) return names[0] || '';
+  if (names.length === 2) return `${names[0]} and ${names[1]}`;
+  return `${names[0]}, ${names[1]} and ${names.length - 2} more`;
+}
+
+// The chip sits in a bottom corner. Some screens have a button just there, so it moves to the
+// other bottom corner (or the top right) when it would cover one. Checked when a screen opens
+// and when the chip appears, not every tick: measuring is slow on the tablet.
+const SPOTS = [
+  { right: '24px', left: 'auto', bottom: '24px', top: 'auto' },
+  { right: 'auto', left: '24px', bottom: '24px', top: 'auto' },
+  { right: '24px', left: 'auto', bottom: 'auto', top: '24px' },
+];
+function covers(r) {
+  const host = chip && chip.parentNode;
+  if (!host) return false;
+  const els = host.querySelectorAll('button,a[href],input,select,textarea,[data-tap],[role="button"]');
+  for (let i = 0; i < els.length; i++) {
+    const e = els[i];
+    if (e === chip || chip.contains(e)) continue;
+    const b = e.getBoundingClientRect();
+    if (!b.width || !b.height) continue;
+    if (b.left < r.right - 4 && b.right > r.left + 4 && b.top < r.bottom - 4 && b.bottom > r.top + 4) return true;
+  }
+  return false;
+}
+function place() {
+  if (!chip || chip.style.display === 'none' || !chip.isConnected) return;
+  // On the Timers screen the list of timers (and their buttons) fills the right-hand side.
+  const order = route === 'timers' ? [SPOTS[1], SPOTS[0], SPOTS[2]] : SPOTS;
+  for (let i = 0; i < order.length; i++) {
+    Object.assign(chip.style, order[i]);
+    if (!covers(chip.getBoundingClientRect())) return;
+  }
+  Object.assign(chip.style, order[0]); // covers something everywhere: the usual corner
+}
+function placeSoon(ms) { clearTimeout(placeTimer); placeTimer = setTimeout(place, ms); }
 
 export function startTimers() {
   chip = document.createElement('button');
   chip.setAttribute('data-timer-chip', '');
-  chip.style.cssText = 'position:absolute;right:24px;bottom:24px;z-index:50;display:none;align-items:center;gap:10px;'
-    + 'min-height:56px;padding:0 22px;border:none;border-radius:999px;font:600 20px Inter,sans-serif;cursor:pointer;'
-    + 'box-shadow:0 6px 20px rgba(0,0,0,.18);font-variant-numeric:tabular-nums';
+  // Big enough to read from across the kitchen.
+  chip.style.cssText = 'position:absolute;right:24px;bottom:24px;z-index:50;display:none;align-items:center;gap:12px;'
+    + 'min-height:64px;max-width:620px;padding:0 26px;border:none;border-radius:999px;font:600 22px Inter,sans-serif;cursor:pointer;'
+    + 'box-shadow:0 6px 20px rgba(0,0,0,.18);font-variant-numeric:tabular-nums;white-space:nowrap;overflow:hidden';
   // What cooking mode has going, when it isn't on screen to show and ring it itself.
   const cooking = () => {
     const now = Date.now();
@@ -181,39 +315,61 @@ export function startTimers() {
     const cooks = cooking();
     const cookRing = cooks.some((c) => c.end <= Date.now());
     if (ringing() || cookRing) { stopRinging(); stopCooking(); }
-    else if (timers().some((t) => state(t) !== 'stopped')) location.hash = '#/timers';
+    else if (timers().some((t) => state(t) !== 'stopped') || Date.now() < fullUntil) location.hash = '#/timers';
     else if (cooks.length) location.hash = `#/recipe/${encodeURIComponent(cooks[0].recipe)}`;
   });
   // Unlock sound on the first touch anywhere, so alarms can play later.
   addEventListener('pointerdown', ensureAudio, true);
 
+  const big = (s) => `<span style="font-size:28px;font-weight:700">${s}</span>`;
+  const small = (s) => `<span style="opacity:.85;overflow:hidden;text-overflow:ellipsis">${esc(s)}</span>`;
   const tick = () => {
     const now = Date.now();
-    const list = timers().filter((t) => state(t) !== 'stopped');
+    // (One that finished with nobody there is mentioned for an hour; the Timers screen keeps it longer.)
+    const list = timers().filter((t) => state(t) !== 'stopped' && !(missed(t) && now - t.end > 60 * 60 * 1000));
     const cooks = cooking();
     const cookDone = cooks.filter((c) => c.end <= now);
-    const ring = ringing() || cookDone.length > 0;
+    const rung = ringingNow();
+    const ring = rung.length > 0 || cookDone.length > 0;
+    const full = now < fullUntil && route !== 'timers'; // (the Timers screen says it itself)
     const count = list.length + cooks.length;
     // The Timers screen shows the kitchen timers itself, and cooking mode its own, so the
     // chip only appears there for what they don't show, or when something is ringing.
-    const hide = !count || (route === 'recipe' && !ring) || (route === 'timers' && !ring && !cooks.length);
+    const hide = !full && (!count || (route === 'recipe' && !ring) || (route === 'timers' && !ring && !cooks.length));
     chip.style.display = hide ? 'none' : 'inline-flex';
     if (!hide) {
+      if (wasHidden) placeSoon(0);
       // Whatever runs out first, kitchen timer or cooking step.
-      const running = list.filter((t) => state(t) === 'running').map((t) => t.end)
-        .concat(cooks.filter((c) => c.end > now).map((c) => c.end)).sort((a, b) => a - b);
-      const more = count > 1 ? ` · +${count - 1}` : '';
-      // Say which one: with three timers going, "time's up" alone sends people to look.
-      const rung = ringingNow();
-      const text = ring
-        ? (rung.length === 1 ? `⏰ Time’s up! ${rung[0].label} · Tap to stop`
-          : cookDone.length && !rung.length ? `⏰ Time’s up! ${cookDone[0].label} · Tap to stop` : '⏰ Time’s up! Tap to stop')
-        : running.length ? `⏱ ${fmt(running[0] - now)}${more}` : `⏱ ${fmt(left(list[0]))} (paused)${more}`;
-      if (chip.textContent !== text) chip.textContent = text;
-      chip.style.background = ring ? 'var(--accent)' : '#1D2430';
+      const running = list.filter((t) => state(t) === 'running').map((t) => ({ end: t.end, label: t.named ? t.label : '' }))
+        .concat(cooks.filter((c) => c.end > now).map((c) => ({ end: c.end, label: c.label }))).sort((a, b) => a.end - b.end);
+      const paused = list.filter((t) => state(t) === 'paused');
+      const done = list.filter((t) => state(t) === 'done'); // rang out with nobody there
+      const more = (n) => (n > 0 ? small(`· ${n} more`) : '');
+      let html;
+      if (ring) {
+        // Say which one: with three timers going, "time's up" alone sends people to look.
+        const names = rung.map((t) => t.label).concat(cookDone.map((c) => c.label));
+        html = `<span>⏰ Time’s up!</span>${small(namesText(names))}<span>· Tap to stop</span>`;
+      } else if (full) {
+        html = `<span>All ${MAX} timers are in use.</span>${small('Tap to see them')}`;
+      } else if (running.length) {
+        html = `<span>⏱</span>${big(fmt(running[0].end - now))}${running[0].label ? small(running[0].label) : ''}${more(count - 1)}`;
+      } else if (paused.length) {
+        html = `<span>⏸</span>${big(fmt(left(paused[0])))}${small(paused[0].named ? `${paused[0].label} · paused` : 'paused')}${more(count - 1)}`;
+      } else if (done.length) {
+        html = `<span>✓</span><span>${esc(done[0].named ? done[0].label : 'Timer')} finished at ${esc(whenText(done[0].end))}</span>${more(count - 1)}`;
+      } else html = '';
+      if (chip.__html !== html) {
+        const longer = !chip.__html || html.length !== chip.__html.length;
+        chip.__html = html;
+        chip.innerHTML = html;
+        if (longer && !/^<span>⏱/.test(html)) placeSoon(50); // its width changed: check its corner again
+      }
+      chip.style.background = ring || full ? 'var(--accent)' : '#1D2430';
       chip.style.color = '#FFFFFF';
       chip.style.opacity = ring && Math.floor(Date.now() / 500) % 2 ? '.75' : '1';
     }
+    wasHidden = hide;
     if (ring && Date.now() - lastBeep > 2500) { lastBeep = Date.now(); beep(); }
   };
   setInterval(tick, 250);
@@ -221,4 +377,8 @@ export function startTimers() {
   tick();
 }
 /** app.js tells us which screen is showing. */
-export function setRoute(name) { route = name; }
+export function setRoute(name) {
+  route = name;
+  // The new screen is built just after this: look for buttons under the chip once it's there.
+  placeSoon(500);
+}

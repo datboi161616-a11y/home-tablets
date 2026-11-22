@@ -45,3 +45,30 @@ from are counted.
 33. On the flight deck the town can be set by hand, so tonight's sky, the planes overhead and the weather are for the right place.
 34. Publishing stops by itself when a check fails, so a mistake that the checks can catch never reaches a kitchen.
 35. For whoever looks after the code: `node tools/sim/try.mjs <screen> [steps.js]` opens one screen in a pretend tablet, taps what you tell it to, and gives back what the screen says, any errors, and a picture.
+
+## 3 · Kitchen timers
+
+36. A timer can be named with one tap (Pasta, Rice, Eggs, Oven, Potatoes) or a typed name; the name shows on its card, on the chip and when it rings.
+37. Names you type yourself are remembered and offered first next time.
+38. Cancelling or clearing a timer by mistake can be undone for ten seconds, and the timer comes back exactly as it was.
+39. When all eight timers are in use the Timers screen says so, and why, instead of behaving as if a new one had started.
+40. Starting a timer from another screen when all eight are in use no longer fails silently: the chip says so on whatever screen is up.
+41. Longer presets for roasts and slow cooking: 1½ hours and 2 hours.
+42. "Other time" has −1 hr and +1 hr steps and goes up to 12 hours, so a long time is a few taps.
+43. The last "Other time" used is remembered instead of always starting from 25 minutes.
+44. Recently used other times appear as one-tap buttons.
+45. Each ringing timer has its own Stop; before, Stop silenced every ringing timer at once.
+46. A finished timer says how long ago it rang, and one that rang out with nobody there shows quietly as "Rang at 6:07 PM" instead of flashing for ever.
+47. A timer that was stopped stays for three minutes with "+1 min" and "Again", instead of sometimes vanishing the moment it was stopped.
+48. A long timer says the day when it will ring tomorrow ("Rings tomorrow at 5:04 AM").
+49. "Pause all", "Resume all" and "Clear finished" above the list, with a count of how many of the eight are in use.
+50. Starting a timer shows a short confirmation with the time it will ring.
+51. A double tap with wet fingers no longer starts two identical timers.
+52. The countdown chip is bigger: readable from across the room.
+53. The chip moves to another corner rather than cover a button on the screen underneath.
+54. With several timers the chip names the next one and counts the rest ("4:10 Pasta · 2 more"), and when two ring at once it names both.
+55. A timer that rang out unattended no longer shows as "0:00 (paused)" on the chip; it says when it finished.
+56. Finished timers nobody cleared no longer use up the eight places, and clear themselves after twelve hours.
+57. If the clock is corrected after a timer starts, the timer can no longer suddenly show hours left.
+58. With four or more timers the cards get more compact so more fit, and a ringing card flashes once a second instead of animating all the time (lighter work for the screen).
+59. A typed name with unusual characters can't break the card or the chip, and timers keep working when the screen's storage is unavailable.

@@ -21,6 +21,11 @@
 //
 // --stub=bridge.js runs before the app's own code: for a pretend window.TabletNative, or
 // to put things in localStorage first.
+//
+// --phone=<path> opens another page instead, phone-sized (390x844, touch): the page the
+// screen serves to people's phones, e.g.
+//   node tools/sim/try.mjs --phone=android/app/src/main/assets/upload.html steps.js --stub=pretend-server.js
+// (its stub has to stand in for the screen's little web server: replace window.fetch).
 import { spawnSync } from 'node:child_process';
 import { readFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
@@ -30,11 +35,12 @@ const ME = fileURLToPath(import.meta.url);
 
 // ---- as a site-drive module ----
 export default async function drive({ ev, shot, sleep, log }) {
+  const phone = process.env.PHONE === '1';
   const route = process.env.TRY_ROUTE || 'home';
-  const label = process.env.TRY_NAME || route.replace(/[^a-z0-9]+/gi, '-');
-  await ev(`(location.hash = '#/' + ${JSON.stringify(route)}, 'ok')`);
-  await sleep(Number(process.env.TRY_WAIT || 1800));
-  const out = { screen: route };
+  const label = process.env.TRY_NAME || (phone ? 'phone' : route.replace(/[^a-z0-9]+/gi, '-'));
+  if (!phone) await ev(`(location.hash = '#/' + ${JSON.stringify(route)}, 'ok')`);
+  await sleep(Number(process.env.TRY_WAIT || (phone ? 800 : 1800)));
+  const out = phone ? { page: 'phone' } : { screen: route };
   if (process.env.TRY_STEPS) {
     const body = readFileSync(process.env.TRY_STEPS, 'utf8');
     // shot() inside the page: asks this side for a picture and waits for it.
@@ -53,7 +59,7 @@ export default async function drive({ ev, shot, sleep, log }) {
     out.steps = await pending;
   }
   await sleep(400);
-  out.says = await ev(`document.querySelector('#screen').innerText.replace(/\\s+/g, ' ').trim().slice(0, 900)`);
+  out.says = await ev(`(document.querySelector('#screen') || document.body).innerText.replace(/\\s+/g, ' ').trim().slice(0, 900)`);
   out.hash = await ev(`location.hash`);
   out.pageErrors = await ev(`(window.__probe && window.__probe.errors) || []`);
   out.picture = await shot(`try-${label}`, { scale: 0.5 });
@@ -65,17 +71,19 @@ export default async function drive({ ev, shot, sleep, log }) {
 if (process.argv[1] && resolve(process.argv[1]) === ME) {
   const args = process.argv.slice(2);
   const flags = args.filter((a) => a.startsWith('--'));
-  const [route = 'home', steps] = args.filter((a) => !a.startsWith('--'));
+  const phonePage = (flags.find((x) => x.startsWith('--phone=')) || '').slice(8);
+  const plain = args.filter((a) => !a.startsWith('--'));
+  const [route = 'home', steps] = phonePage ? ['phone', plain[0]] : plain;
   const flag = (name) => { const f = flags.find((x) => x.startsWith(`--${name}=`)); return f ? f.slice(name.length + 3) : ''; };
   const tom = flags.includes('--tom');
   let init = `try{localStorage.setItem('welcome.done.v1','1');localStorage.setItem('profile','${tom ? 'tom' : 'family'}')}catch(e){}`;
   if (flag('stub')) init += `\n;${readFileSync(flag('stub'), 'utf8')}`;
-  const site = process.env.SITE || 'http://localhost:5173/';
+  const site = (process.env.SITE || 'http://localhost:5173/') + phonePage;
   const run = spawnSync(process.execPath, [resolve(dirname(ME), 'site-drive.mjs'), site, ME], {
     encoding: 'utf8',
     env: Object.assign({}, process.env, {
       TRY_ROUTE: route, TRY_STEPS: steps ? resolve(steps) : '', TRY_NAME: flag('name'), TRY_WAIT: flag('wait'), INIT_SCRIPT: init,
-    }),
+    }, phonePage ? { PHONE: '1', READY: `document.readyState === 'complete'` } : {}),
   });
   let result;
   try { result = JSON.parse(run.stdout.trim().split('\n').pop()); } catch (e) { result = { ok: false, error: (run.stderr || run.stdout || '').slice(-600) }; }

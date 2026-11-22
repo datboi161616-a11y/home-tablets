@@ -45,6 +45,18 @@ function render() {
   bar.dataset.kind = n.kind;
   bar.textContent = n.text;
   bar.style.background = n.urgent ? '#C2491F' : '#1D2430';
+  makeRoom();
+}
+
+// The timer chip sometimes sits in this corner too (it moves away from buttons): go above it.
+function makeRoom() {
+  if (!bar || bar.style.display === 'none') return;
+  bar.style.bottom = '24px';
+  const chip = document.querySelector('[data-timer-chip]');
+  if (!chip || chip.style.display === 'none') return;
+  const a = bar.getBoundingClientRect();
+  const b = chip.getBoundingClientRect();
+  if (a.left < b.right && b.left < a.right && a.top < b.bottom && b.top < a.bottom) bar.style.bottom = '104px';
 }
 
 function lookAtNetwork() {
@@ -53,6 +65,7 @@ function lookAtNetwork() {
   if (state === 'online') offlineAt = 0;
   else { offlineKind = state; if (!offlineAt) offlineAt = Date.now(); }
   render();
+  makeRoom();
 }
 
 /** `settingsRoute`: where a tap on "No Wi-Fi" leads (the screen that shows the Wi-Fi), or '' for nowhere. */
@@ -88,7 +101,7 @@ export function startNotices({ settingsRoute = '' } = {}) {
 }
 
 /** app.js tells us which screen is showing. */
-export function setRoute(name) { route = name; render(); }
+export function setRoute(name) { route = name; render(); setTimeout(makeRoom, 600); }
 
 /** For Settings: { level: 0-1, charging } or null when the engine doesn't say. */
 export const batteryNow = () => (battery ? { level: battery.level, charging: battery.charging } : null);

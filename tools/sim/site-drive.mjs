@@ -13,6 +13,11 @@ const HERE = dirname(fileURLToPath(import.meta.url)).replace(/\\/g, '/');
 const [url, modulePath, rateArg = '1'] = process.argv.slice(2);
 const rate = Number(rateArg);
 const log = (...a) => console.error(new Date().toISOString().slice(11, 19), ...a);
+// PHONE=1: a phone-sized page (390x844) instead of the tablet; READY: the expression that
+// says the page is up (default: the kitchen app has drawn a screen).
+const PHONE = process.env.PHONE === '1';
+const VIEW = PHONE ? { w: 390, h: 844, dpr: 2 } : { w: 1280, h: 800, dpr: 1.5 };
+const READY = process.env.READY || `!!(document.querySelector('#screen > div') && document.querySelector('#screen > div').children.length)`;
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 
 // Timers, animation frames and listeners the page asks for, noted before any of
@@ -101,7 +106,7 @@ try {
     await ev(`(() => { if (document.getElementById('__tick')) return 1; const d = document.createElement('div'); d.id = '__tick'; d.style.cssText = 'position:fixed;right:0;bottom:0;width:2px;height:2px;pointer-events:none;z-index:2147483647;background:#000'; document.body.appendChild(d); let on = false; d.__timer = (window.__probe && window.__probe.rawSetInterval ? window.__probe.rawSetInterval : setInterval)(() => { on = !on; d.style.background = on ? '#0a0a0a' : '#000'; }, 30); return 1; })()`);
     const r = await send('Page.captureScreenshot', {
       format, ...(format === 'jpeg' ? { quality } : {}),
-      clip: { x: 0, y: 0, width: 1280, height: 800, scale }, captureBeyondViewport: false,
+      clip: { x: 0, y: 0, width: VIEW.w, height: VIEW.h, scale }, captureBeyondViewport: false,
     }, 15000);
     await ev(`(() => { const e = document.getElementById('__tick'); if (e) { clearInterval(e.__timer); e.remove(); } return 1; })()`);
     if (!r.result || !r.result.data) { log('no screenshot', name); return null; }
@@ -127,8 +132,16 @@ try {
     return { heapMB: +(heap.result.usedSize / 1048576).toFixed(2), nodes: dom.result.nodes, listeners: dom.result.jsEventListeners, documents: dom.result.documents };
   };
 
-  const asTablet = process.env.TABLET !== '0';
-  await send('Emulation.setDeviceMetricsOverride', { width: 1280, height: 800, deviceScaleFactor: 1.5, mobile: asTablet });
+  const asTablet = process.env.TABLET !== '0' && !PHONE;
+  await send('Emulation.setDeviceMetricsOverride', { width: VIEW.w, height: VIEW.h, deviceScaleFactor: VIEW.dpr, mobile: asTablet || PHONE });
+  if (PHONE) {
+    // Somebody's own phone (the page the screen serves to phones on the same Wi-Fi).
+    await send('Emulation.setTouchEmulationEnabled', { enabled: true, maxTouchPoints: 5 });
+    await send('Emulation.setUserAgentOverride', {
+      userAgent: 'Mozilla/5.0 (iPhone; CPU iPhone OS 17_5 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.5 Mobile/15E148 Safari/604.1',
+      platform: 'iPhone',
+    });
+  }
   if (asTablet) {
     await send('Emulation.setTouchEmulationEnabled', { enabled: true, maxTouchPoints: 5 });
     await send('Emulation.setUserAgentOverride', {
@@ -153,7 +166,7 @@ try {
   let ready = false;
   for (let i = 0; i < 240 && !ready; i++) {
     await sleep(250);
-    ready = (await ev(`!!(document.querySelector('#screen > div') && document.querySelector('#screen > div').children.length)`, 20000)) === true;
+    ready = (await ev(READY, 20000)) === true;
   }
   const bootMs = ready ? Date.now() - t0 : null;
   log('boot', bootMs);
