@@ -583,6 +583,36 @@ export function clearChecked() {
 /** Fresh list: forget ticks, extras and "have" choices. */
 export function resetList() { saveList({ have: {}, got: {}, extras: [] }); }
 
+// ---- Who said they'd go to the store ----------------------------------------------------
+// Only a note on this screen ("Alex is going"): nothing is sent anywhere. It is forgotten
+// after eighteen hours, or when "Done shopping" clears the ticks.
+const GOING_KEY = 'kitchen.listgoing.v1';
+const GOING_MS = 18 * 60 * 60 * 1000;
+/** { name, at } or null. */
+export function getGoing() {
+  const g = read(GOING_KEY, null);
+  return isObj(g) && typeof g.name === 'string' && g.name && Date.now() - Number(g.at) < GOING_MS && Number(g.at) <= Date.now() + 60000
+    ? { name: g.name.slice(0, 40), at: Number(g.at) } : null;
+}
+/** Say who is going (a name), or nobody (null / ''). */
+export function setGoing(name) {
+  if (name) { write(GOING_KEY, { name: String(name).slice(0, 40), at: Date.now() }); return; }
+  try { localStorage.removeItem(GOING_KEY); } catch (e) { /* nothing to forget */ }
+  window.dispatchEvent(new Event('kitchen-changed'));
+}
+
+// ---- Changes that came from a phone ----------------------------------------------------
+const phoneSubs = [];
+/**
+ * Hear about each change a phone makes to the list, just after it is saved:
+ * cb({ act: 'add'|'got'|'remove', kind: 'extra'|'item', key, name, got, result? }).
+ * Returns a function that stops it.
+ */
+export function onPhoneChange(cb) {
+  phoneSubs.push(cb);
+  return () => { const i = phoneSubs.indexOf(cb); if (i >= 0) phoneSubs.splice(i, 1); };
+}
+
 // ---- The phone's copy of the list ----------------------------------------------------
 // The phone page (QR code on the tablet) shows this list so you can take it to the store.
 // The tablet saves a copy whenever the list changes; ticks and new items made on the
@@ -609,9 +639,26 @@ export function startShoppingSync() {
   onKitchenChanged(push);
   window.addEventListener('tablet-shopping', (e) => {
     const a = e.detail || {};
-    if (a.act === 'got') { if (a.kind === 'extra') setExtraGot(a.key, !!a.got); else setGot(a.key, !!a.got); }
-    else if (a.act === 'add') addExtra(a.text);
-    else if (a.act === 'remove') removeExtra(a.key);
+    // What changed, in words the Shopping list screen can show ("Limes came from a phone").
+    const told = { act: a.act, kind: a.kind === 'extra' ? 'extra' : 'item', key: String(a.key || ''), got: !!a.got, name: '' };
+    const extraNamed = (id) => (getListState().extras.filter((x) => x.id === id)[0] || {}).text || '';
+    if (a.act === 'got') {
+      told.name = a.kind === 'extra' ? extraNamed(a.key) : String(a.key || '');
+      if (a.kind === 'extra') setExtraGot(a.key, !!a.got); else setGot(a.key, !!a.got);
+    } else if (a.act === 'add') {
+      const t = splitQty(String(a.text || '').slice(0, 60)).text;
+      told.result = addExtra(a.text);
+      const k = norm(t);
+      const x = getListState().extras.filter((y) => norm(y.text) === k)[0];
+      told.kind = x ? 'extra' : 'item';
+      told.key = x ? x.id : k;
+      told.name = t;
+    } else if (a.act === 'remove') {
+      told.kind = 'extra';
+      told.name = extraNamed(a.key) || String(a.text || '');
+      removeExtra(a.key);
+    } else return;
+    phoneSubs.forEach((cb) => { try { cb(told); } catch (err) { /* a screen's own trouble */ } });
   });
   push();
   setInterval(push, 60 * 60 * 1000); // the week moves on by itself

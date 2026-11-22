@@ -12,7 +12,7 @@ const ON_A_SCREEN = /Android/.test(navigator.userAgent); // a laptop on its batt
 const UNPLUGGED_AFTER = 10 * 60 * 1000; // moved to another socket? no need to say anything yet
 const OFFLINE_AFTER = 3 * 60 * 1000;    // routers restart; a short gap isn't worth a word
 const LOW = 0.2;
-const QUIET_SCREENS = ['night', 'viewscreen', 'photos']; // only a really low battery speaks up here
+const QUIET_SCREENS = ['night', 'viewscreen']; // only a really low battery speaks up here ('photos' is the Gallery now, an ordinary screen)
 
 // Worth a line in the screen's diary afterwards: "the weather was old all afternoon" and
 // "it was dead this morning" both have their answer there for whoever looks after it.

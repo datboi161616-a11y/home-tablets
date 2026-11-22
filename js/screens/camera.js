@@ -1,4 +1,5 @@
-// Camera: full-screen live viewfinder, Photo/Video. Saves to this tablet's album.
+// Camera: its own app (not part of the Gallery). Full-screen live viewfinder, Photo/Video.
+// What it takes is saved to this screen's Gallery.
 //
 // The point of this screen is the remote group photo: your dashboard opens it on
 // the tablet (so your "their screen" picture shows the live camera), everyone gets
@@ -8,9 +9,10 @@ import { profile } from '../config.js';
 import { savePhoto, saveVideo, isTablet, albumFull, ALBUM_MAX } from '../services/tablet-photos.js';
 import { C } from '../art.js';
 import { timeText } from '../services/display.js';
+import { backHref } from '../services/nav.js';
 
 // The self-timer for "Take photo": off, 3 or 10 seconds, so people can step back into the
-// picture. Remembered on this screen (it is the same family taking the next one).
+// picture. Remembered on this screen (it is the same household taking the next one).
 const TIMERS = [0, 3, 10];
 const TIMER_KEY = 'camera.timer';
 const rememberedTimer = () => { try { const n = +localStorage.getItem(TIMER_KEY); return TIMERS.indexOf(n) >= 0 ? n : 0; } catch (e) { return 0; } };
@@ -35,7 +37,6 @@ const IDLE_WARN_S = 10;
 let visit = null;
 let beepCtx;
 
-const back = () => `#/${profile === 'tom' ? 'bridge' : 'home'}`;
 const log = (m) => {
   console.log('[camera] ' + m);
   try { window.TabletNative && window.TabletNative.log && window.TabletNative.log(m); } catch { /* not on tablet */ }
@@ -66,7 +67,11 @@ function blobToBase64(blob) {
   });
 }
 
-export function mount(el) {
+export function mount(el, { args = [] } = {}) {
+  // Back to where the person came from: the Gallery when its Camera button opened this
+  // (#/camera/gallery), otherwise Home or the Menu (services/nav.js).
+  const fromGallery = args[0] === 'gallery' && profile !== 'tom';
+  const back = () => (fromGallery ? '#/photos' : backHref());
   el.innerHTML = `
   <style>
     .cam-root{position:absolute;top:0;right:0;bottom:0;left:0;background:#000;color:#fff;overflow:hidden;font-family:Inter,system-ui,sans-serif}
@@ -74,18 +79,18 @@ export function mount(el) {
     .cam-badge{position:absolute;top:28px;left:28px;display:flex;align-items:center;gap:10px;background:rgba(0,0,0,.5);padding:10px 18px;border-radius:999px;font-size:18px;font-weight:600}
     .cam-rec{width:12px;height:12px;border-radius:50%;background:#FF3B30;animation:cam-pulse 1.4s infinite}
     @keyframes cam-pulse{0%,100%{opacity:1}50%{opacity:.3}}
-    .cam-done{position:absolute;top:28px;right:28px;background:rgba(0,0,0,.5);color:#fff;border-radius:999px;padding:0 28px;font-size:18px;font-weight:600;text-decoration:none;min-height:56px;display:flex;align-items:center}
+    .cam-done{position:absolute;top:28px;right:28px}
     .cam-shutter{position:absolute;left:50%;bottom:32px;transform:translateX(-50%);width:88px;height:88px;border-radius:50%;background:#fff;border:6px solid rgba(255,255,255,.5);cursor:pointer}
     .cam-shutter:active{transform:translateX(-50%) scale(.92)}
     .cam-shutter.rec{background:#FF3B30}
     .cam-shutter.vid:not(.rec)::after{content:'';position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:40px;height:40px;border-radius:50%;background:#FF3B30}
     .cam-shutter.wait{opacity:.4;pointer-events:none}
     .cam-shutter.rec::after{content:'';position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:28px;height:28px;border-radius:5px;background:#fff}
-    .cam-mode{position:absolute;left:50%;bottom:140px;transform:translateX(-50%);display:flex;gap:8px;background:rgba(0,0,0,.5);border-radius:999px;padding:5px}
-    .cam-mode button{border:0;background:transparent;color:#ccc;font-size:18px;font-weight:600;padding:0 26px;border-radius:999px;cursor:pointer;min-height:52px;font-family:inherit}
+    .cam-mode{position:absolute;left:50%;bottom:138px;transform:translateX(-50%);display:flex;gap:8px;background:rgba(0,0,0,.5);border-radius:999px;padding:5px}
+    .cam-mode button{border:0;background:transparent;color:#ccc;font-size:18px;font-weight:600;padding:0 28px;border-radius:999px;cursor:pointer;min-height:56px;font-family:inherit}
     .cam-mode button.on{background:#fff;color:#111}
-    .cam-timer{position:absolute;left:50%;bottom:48px;margin-left:84px;border:0;background:rgba(0,0,0,.55);color:#fff;border-radius:999px;padding:0 22px;
-      min-height:56px;font-size:18px;font-weight:600;cursor:pointer;font-family:inherit;white-space:nowrap}
+    .cam-timer{position:absolute;left:50%;bottom:44px;margin-left:84px;border:0;background:rgba(0,0,0,.55);color:#fff;border-radius:999px;padding:0 22px;
+      min-height:64px;font-size:19px;font-weight:600;cursor:pointer;font-family:inherit;white-space:nowrap}
     .cam-timer.on{background:#fff;color:#111}
     .cam-time{position:absolute;left:50%;top:28px;transform:translateX(-50%);background:rgba(0,0,0,.5);padding:8px 16px;border-radius:999px;font-size:18px;font-weight:600;display:none}
     .cam-time.soon{background:#C2491F}
@@ -97,19 +102,18 @@ export function mount(el) {
     .cam-flash.go{animation:cam-flash .35s ease-out}
     @keyframes cam-flash{0%{opacity:.9}100%{opacity:0}}
     .cam-count{position:absolute;top:0;right:0;bottom:0;left:0;display:none;align-items:center;justify-content:center;font-size:220px;font-weight:700;text-shadow:0 4px 30px rgba(0,0,0,.6)}
-    .cam-saved{position:absolute;bottom:36px;left:28px;max-width:420px;background:rgba(0,0,0,.7);color:#fff;text-decoration:none;border-radius:18px;padding:12px 18px 12px 12px;display:none;gap:14px;align-items:center;font-size:18px;line-height:1.3;min-height:84px}
+    .cam-saved{position:absolute;bottom:36px;left:28px;max-width:460px;background:rgba(0,0,0,.7);color:#fff;text-decoration:none;border-radius:18px;padding:12px 18px 12px 12px;display:none;gap:14px;align-items:center;font-size:18px;line-height:1.3;min-height:84px}
     .cam-see{font-weight:700;text-decoration:underline;white-space:nowrap}
     .cam-saved img{width:96px;height:72px;object-fit:cover;border-radius:10px;flex:none}
     .cam-wait{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);background:rgba(0,0,0,.55);padding:14px 26px;border-radius:999px;font-size:22px;font-weight:600}
     .cam-idle{position:absolute;left:50%;top:96px;transform:translateX(-50%);background:rgba(0,0,0,.7);padding:14px 26px;border-radius:999px;font-size:20px;font-weight:600;display:none;white-space:nowrap}
-    .cam-btn{border:0;background:#fff;color:#111;border-radius:999px;padding:0 30px;font-size:18px;font-weight:600;min-height:56px;cursor:pointer;font-family:inherit}
     .cam-art{position:absolute;left:50%;top:50%;margin:-215px 0 0 -120px;pointer-events:none}
     .cam-msg{position:absolute;top:0;right:0;bottom:0;left:0;display:none;flex-direction:column;align-items:center;justify-content:center;gap:16px;text-align:center;padding:40px;background:#000}
   </style>
   <div class="cam-root">
     <video class="cam-video" data-video autoplay playsinline muted poster="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7"></video>
     <div class="cam-badge"><span class="cam-rec"></span>Camera on</div>
-    <a class="cam-done" href="${back()}">Done</a>
+    <a class="cam-done x-btn glass" href="${back()}">Done</a>
     <div class="cam-time" data-time>0:00</div>
     <div class="cam-count" data-count></div>
     <div class="cam-hint" data-count-hint>Tap the round button to stop</div>
@@ -118,7 +122,7 @@ export function mount(el) {
     <div class="cam-art" data-wait-art>${camArt()}</div>
     <div class="cam-wait" data-wait>Starting camera…</div>
     <div class="cam-idle" data-idle></div>
-    <a class="cam-saved" data-saved href="#/photos"><img data-thumb alt=""><span data-saved-text>Saved to photos</span><span class="cam-see" data-see>See it ›</span></a>
+    <a class="cam-saved" data-saved href="#/photos/show/newest"><img data-thumb alt=""><span data-saved-text>Saved to the Gallery</span><span class="cam-see" data-see>See it in the Gallery ›</span></a>
     <div class="cam-mode"><button data-m="photo" class="on">Photo</button><button data-m="video">Video</button></div>
     <button class="cam-shutter wait" data-shutter aria-label="Take photo"></button>
     <button class="cam-timer" data-timer></button>
@@ -137,7 +141,7 @@ export function mount(el) {
   let savedTimer = 0, okTimer = 0;
   /**
    * The box in the corner after a photo or video: what happened, a small copy, and a link.
-   * `link`: { href, label } (default: "See it" in the photo frame), or null for none.
+   * `link`: { href, label } (default: "See it in the Gallery"), or null for none.
    * `stay`: keep it up (used while a video is still being saved).
    */
   function showSaved(text, thumb, ok = true, link, stay) {
@@ -145,8 +149,8 @@ export function mount(el) {
     const img = $('[data-thumb]');
     img.style.display = thumb ? '' : 'none';
     if (thumb) img.src = thumb;
-    // "See it" opens the photo frame, which starts with the newest picture: this one.
-    const to = link === undefined ? (ok ? { href: '#/photos', label: 'See it ›' } : null) : link;
+    // "See it in the Gallery" opens the Gallery's big viewer on the newest one: this one.
+    const to = link === undefined ? (ok ? { href: '#/photos/show/newest', label: 'See it in the Gallery ›' } : null) : link;
     const box = $('[data-saved]');
     const see = $('[data-see]');
     see.style.display = to ? '' : 'none';
@@ -170,8 +174,8 @@ export function mount(el) {
     v.timers.push(okTimer);
   }
   // Nothing more fits in the album: say so plainly and offer the way to make room.
-  const FULL_TEXT = `The photo album is full (${ALBUM_MAX}). Remove a few to make room.`;
-  const MAKE_ROOM = { href: '#/photos/album', label: 'Make room ›' };
+  const FULL_TEXT = `The Gallery is full (${ALBUM_MAX}). Remove a few to make room.`;
+  const MAKE_ROOM = { href: '#/photos/choose', label: 'Make room ›' };
 
   function setWaiting(on) {
     $('[data-wait]').style.display = on ? '' : 'none';
@@ -187,8 +191,8 @@ export function mount(el) {
       <div style="font-size:32px;font-weight:600">${title}</div>
       <div style="font-size:20px;color:#ccc;max-width:720px;line-height:1.4">${text}</div>
       <div style="display:flex;gap:16px;margin-top:8px">
-        ${isTablet() ? '<button class="cam-btn" data-retry>Try again</button>' : ''}
-        <a class="cam-done" href="${back()}" style="position:static;background:rgba(255,255,255,.16)">Back</a>
+        ${isTablet() ? '<button class="x-btn white" data-retry>Try again</button>' : ''}
+        <a class="x-btn frost" href="${back()}">Back</a>
       </div>`;
     const retry = msg.querySelector('[data-retry]');
     if (retry) retry.onclick = () => startCamera();
@@ -270,7 +274,7 @@ export function mount(el) {
   function capture() {
     if (!v.ready || !video.videoWidth) { log('capture skipped: camera not ready'); return; }
     // Full already: don't flash and click as if it worked.
-    if (albumFull()) { showSaved(FULL_TEXT, null, false, MAKE_ROOM); flashWord('Not saved: the album is full', true); return; }
+    if (albumFull()) { showSaved(FULL_TEXT, null, false, MAKE_ROOM); flashWord('Not saved: the Gallery is full', true); return; }
     let jpeg = '';
     try {
       const c = document.createElement('canvas');
@@ -283,8 +287,8 @@ export function mount(el) {
     shutterSound();
     const flash = $('[data-flash]');
     flash.classList.remove('go'); void flash.offsetWidth; flash.classList.add('go');
-    if (ok) { showSaved('Saved to the photo frame', jpeg); flashWord('✓ Photo saved'); }
-    else if (albumFull()) { showSaved(FULL_TEXT, jpeg || null, false, MAKE_ROOM); flashWord('Not saved: the album is full', true); }
+    if (ok) { showSaved('Saved to the Gallery', jpeg); flashWord('✓ Photo saved'); }
+    else if (albumFull()) { showSaved(FULL_TEXT, jpeg || null, false, MAKE_ROOM); flashWord('Not saved: the Gallery is full', true); }
     else { showSaved('Couldn’t save the photo. Please try again.', jpeg || null, false); flashWord('Not saved', true); }
   }
 
@@ -338,7 +342,7 @@ export function mount(el) {
       .find((t) => window.MediaRecorder && MediaRecorder.isTypeSupported(t));
     if (!type) { showSaved('Video isn’t supported on this screen', null, false); return; }
     // A whole minute of filming that then can't be kept would be a sad surprise: say so first.
-    if (albumFull()) { showSaved(FULL_TEXT, null, false, MAKE_ROOM); flashWord('The album is full', true); return; }
+    if (albumFull()) { showSaved(FULL_TEXT, null, false, MAKE_ROOM); flashWord('The Gallery is full', true); return; }
     v.starting = true;
     // Switch the microphone on just for this clip. If it can't open, record without sound.
     const mic = navigator.mediaDevices.getUserMedia({ audio: true, video: false });
@@ -364,8 +368,8 @@ export function mount(el) {
         const ok = saveVideo(b64, `Video · ${stamp()}`);
         log('video ' + Math.round(b64.length * 0.75 / 1024) + ' KB saved=' + ok);
         if (!live()) return;
-        if (ok || !isTablet()) { showSaved('Video saved to the photo frame', null, true); flashWord('✓ Video saved'); }
-        else if (albumFull()) { showSaved(FULL_TEXT, null, false, MAKE_ROOM); flashWord('Not saved: the album is full', true); }
+        if (ok || !isTablet()) { showSaved('Video saved to the Gallery', null, true); flashWord('✓ Video saved'); }
+        else if (albumFull()) { showSaved(FULL_TEXT, null, false, MAKE_ROOM); flashWord('Not saved: the Gallery is full', true); }
         else { showSaved('Couldn’t save the video. It may be too big: try a shorter one.', null, false); flashWord('Video not saved', true); }
       } catch (err) {
         log('video save failed ' + err);

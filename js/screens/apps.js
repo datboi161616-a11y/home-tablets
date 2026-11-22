@@ -32,7 +32,7 @@ const THEMES = {
 const GRID_H = 588;
 const GAP = 24;
 
-// Family look only: a tablet full of apps, on the house halo. Fills the space under a short grid.
+// Kitchen look only: a screen full of apps, on the house halo. Fills the space under a short grid.
 const appsArt = (w = 340) => `<svg viewBox="0 0 360 200" aria-hidden="true" focusable="false" style="display:block;width:${w}px;max-width:100%;height:auto">
   <circle cx="180" cy="104" r="92" fill="#F7F5FA"/>
   <rect x="84" y="46" width="192" height="126" rx="16" fill="${C.ink}"/><rect x="95" y="57" width="170" height="104" rx="6" fill="#F1EFF5"/>
@@ -100,7 +100,7 @@ function colorFor(a) {
   return FALLBACK_COLORS[h % FALLBACK_COLORS.length];
 }
 
-// A long name ("Grandma’s Crossword Puzzle Collection") gets a smaller size so more of it
+// A long name ("Daily Crossword Puzzle Collection") gets a smaller size so more of it
 // fits in the tile's two lines, instead of being cut after two words.
 function nameSize(label, g) {
   const n = String(label || '').length;
@@ -257,7 +257,7 @@ export function mount(el) {
       <div style="display:flex;align-items:center;gap:24px">
         <a href="${tom ? t.back : backHref()}" class="pill ap-btn" style="${tom ? '' : 'font-weight:600'}">${tom ? t.backLabel : backLabel()}</a>
         <div style="font-family:${t.font};font-size:${tom ? '22px' : '44px'};font-weight:500;${tom ? 'letter-spacing:6px;color:#5CE1E6' : ''}">${t.title}</div>
-        ${canUpdate ? `<button data-update class="pill ap-btn" style="margin-left:auto">${tom ? 'UPDATE APPS · GROWN-UPS' : 'Update apps · grown-ups'}</button>` : ''}
+        ${canUpdate ? `<button data-update class="pill ap-btn" style="margin-left:auto">${tom ? 'UPDATE APPS · PIN' : 'Update apps · PIN'}</button>` : ''}
       </div>
       ${apps.length ? `
         <div class="ap-grid">
@@ -276,15 +276,15 @@ export function mount(el) {
           ${tom ? '' : `<div style="margin-bottom:8px">${appsArt(340)}</div>`}
           <div style="font-family:${t.font};font-size:36px;font-weight:500">${up('No apps here yet')}</div>
           <div style="color:${t.ink2};font-size:21px;max-width:760px;line-height:1.45">${canUpdate
-            ? up('Favourites like YouTube, Netflix and Spotify show up here by themselves once they’re installed. A grown-up can install them: tap “Update apps” and enter the PIN.')
+            ? up('Favourites like YouTube, Netflix and Spotify show up here by themselves once they’re installed. To install them, tap “Update apps” and enter the PIN from the card that came with this screen.')
             : up('Favourites like YouTube, Netflix and Spotify show up here once the person who looks after this screen adds them.')}</div>
-          ${canUpdate ? `<button data-update class="pill ap-btn" style="margin-top:10px;${tom ? '' : 'background:#1D2430;color:#fff'}">${tom ? 'UPDATE APPS · GROWN-UPS' : 'Update apps · grown-ups'}</button>` : ''}
+          ${canUpdate ? `<button data-update class="pill ap-btn" style="margin-top:10px;${tom ? '' : 'background:#1D2430;color:#fff'}">${tom ? 'UPDATE APPS · PIN' : 'Update apps · PIN'}</button>` : ''}
         </div>`}
       <div class="ap-msg" data-msg role="status"></div>
       <div class="ap-sheet" data-sheet>
         <div class="ap-card">
           <h2>${up('Update or add apps')}</h2>
-          <p>${up('This part is for a grown-up. The screen asks for the grown-up PIN next, then opens the Play Store for 15 minutes.')}</p>
+          <p>${up('This part is for the owner. The screen asks for the PIN from the card that came with it next, then opens the Play Store for 15 minutes.')}</p>
           <p>${up('When you’re done, press Home to come back here. Newly installed favourites show up here by themselves.')}</p>
           <div class="row">
             <button data-sheet-no style="background:transparent;color:${t.ink};border:${tom ? '1px solid #1E3A4A' : '2px solid #D5D9DE'}">${up('Not now')}</button>
@@ -303,7 +303,7 @@ export function mount(el) {
       });
     });
 
-    // An app says it needs an update (YouTube does now and then): the Play Store, for a grown-up.
+    // An app says it needs an update (YouTube does now and then): the Play Store, behind the owner's PIN.
     el.querySelectorAll('[data-update]').forEach((b) => b.addEventListener('click', askUpdate));
     el.querySelector('[data-sheet-no]').addEventListener('click', closeSheet);
     el.querySelector('[data-sheet-yes]').addEventListener('click', startUpdate);
@@ -343,7 +343,7 @@ export function mount(el) {
             reset();
             say(tom
               ? `${a.label.toUpperCase()} DIDN’T OPEN. TRY ONCE MORE.`
-              : `${a.label} didn’t open. Try once more. If it still won’t, it may need updating: a grown-up can use “Update apps”.`, 9000);
+              : `${a.label} didn’t open. Try once more. If it still won’t, it may need updating: “Update apps” does that, with the PIN.`, 9000);
           }, OPEN_CHECK_MS);
         } else {
           reset();

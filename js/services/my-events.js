@@ -3,10 +3,13 @@
 //
 // Saved shape: { id, title, date: 'YYYY-MM-DD', allDay, time: 'HH:MM', minutes,
 //                repeat: 'none'|'weekly'|'fortnightly'|'monthly'|'yearly',
-//                skip: ['YYYY-MM-DD'] (repeats left out), until: 'YYYY-MM-DD' (last repeat), updated }
+//                skip: ['YYYY-MM-DD'] (repeats left out), until: 'YYYY-MM-DD' (last repeat), updated,
+//                who: [name] (who it is for; none = everyone here), tag: one of EVENT_TAGS }
 const KEY = 'calendar.mine.v1';
 const MAX = 300;
 const REPEATS = ['weekly', 'fortnightly', 'monthly', 'yearly'];
+/** The kinds of thing an event typed here can be (the calendar screen gives each a colour). */
+export const EVENT_TAGS = ['plan', 'appointment', 'out', 'trip', 'birthday', 'reminder'];
 
 const pad = (n) => String(n).padStart(2, '0');
 export const isoDay = (d) => `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
@@ -63,6 +66,10 @@ export function saveMyEvent(ev) {
     repeat,
     updated: Date.now(),
   };
+  // Who it is for (names from the household, none = everyone) and what kind of thing it is.
+  const who = (Array.isArray(ev.who) ? ev.who : []).map((n) => String(n || '').trim().slice(0, 40)).filter(Boolean).slice(0, 8);
+  if (who.length) saved.who = who;
+  if (EVENT_TAGS.indexOf(ev.tag) > 0) saved.tag = ev.tag; // 'plan' is the usual one: not saved
   // A repeat keeps its left-out days and its end when it is changed (unless it now starts later).
   if (repeat !== 'none' && old && old.repeat === repeat) {
     if (Array.isArray(old.skip) && old.skip.length) saved.skip = old.skip.filter((d) => d > saved.date);
@@ -162,10 +169,12 @@ export function myEventsOn(d) {
   const day = new Date(d.getFullYear(), d.getMonth(), d.getDate());
   return myEvents().filter((e) => happensOn(e, day)).map((e) => {
     const repeat = e.repeat || 'none';
-    if (e.allDay) return { id: e.id, title: e.title, start: day, end: new Date(day.getFullYear(), day.getMonth(), day.getDate() + 1), allDay: true, repeat };
+    const who = Array.isArray(e.who) ? e.who.filter((n) => typeof n === 'string' && n) : [];
+    const tag = EVENT_TAGS.indexOf(e.tag) >= 0 ? e.tag : 'plan';
+    if (e.allDay) return { id: e.id, title: e.title, start: day, end: new Date(day.getFullYear(), day.getMonth(), day.getDate() + 1), allDay: true, repeat, who, tag };
     const [h, m] = e.time.split(':').map(Number);
     const start = new Date(day.getFullYear(), day.getMonth(), day.getDate(), h, m);
-    return { id: e.id, title: e.title, start, end: new Date(start.getTime() + e.minutes * 60000), allDay: false, repeat };
+    return { id: e.id, title: e.title, start, end: new Date(start.getTime() + e.minutes * 60000), allDay: false, repeat, who, tag };
   });
 }
 

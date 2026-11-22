@@ -1,5 +1,5 @@
 // Optional features you switch on or off per tablet from your admin dashboard.
-// Defaults: everything on for Family tablets; Tom's tablet keeps its original
+// Defaults: everything on for the kitchen screens; Tom's tablet keeps its original
 // space & flight focus, so the extras start hidden there.
 // (Android starts the page over when a switch changes, so reading them once is enough.)
 import { profile } from '../config.js';

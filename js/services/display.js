@@ -1,5 +1,5 @@
 // What the owner can choose about the screen itself (Settings screen): brightness, the
-// clock, the night clock, the photo frame, alarms, what happens when it is left alone.
+// clock, the night clock, the photos on Home, alarms, what happens when it is left alone.
 // Kept on the device; none of it needs the internet.
 const KEY = 'display.v1';
 const DEFAULTS = {
@@ -12,13 +12,15 @@ const DEFAULTS = {
   nightStyle: 'full',   // night clock: 'full' (clock, tomorrow's weather and first thing) or 'clock' (clock and date only)
   weekStart: 1,         // the calendar's weeks start on 1 = Monday or 0 = Sunday
   restMinutes: 10,      // back to the resting screen after this long untouched; 0 = stay put
-  restScreen: 'home',   // what "left alone" shows: 'home' or 'photos'
-  slideSecs: 60,        // photo frame: how long each picture stays
-  photoZoom: true,      // photo frame: the slow zoom
-  photoCaptions: true,  // photo frame: who sent it and when
-  photoShuffle: false,  // photo frame: mixed up instead of newest first
-  photoClock: true,     // photo frame: the time and date in the corner
-  photoWeather: true,   // photo frame: the temperature beside the date
+  restScreen: 'home',   // (no longer a choice: Home is the photo frame now)
+  homeHideSecs: 10,     // Home: after this long untouched only the photo and the time are left; 0 = never
+  holiday: true,        // holiday touches through the year (snow in December, a countdown to Christmas...)
+  slideSecs: 60,        // photos on Home: how long each picture stays
+  photoZoom: true,      // photos on Home: the slow zoom
+  photoCaptions: true,  // photos on Home: who sent it and when
+  photoShuffle: false,  // photos on Home: mixed up instead of newest first
+  photoClock: true,     // (no longer used: Home always shows the time)
+  photoWeather: true,   // (no longer used)
   alarmSound: 'beeps',  // timers: 'beeps', 'chime' or 'bell'
   alarmMinutes: 2,      // timers: how long an alarm rings if nobody stops it
   alarmInsist: true,    // timers: an alarm still ringing after 30 seconds repeats faster

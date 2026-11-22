@@ -331,3 +331,28 @@ export async function prefetchAll() {
     localStorage.setItem('recipes.prefetched', today);
   } catch (e) { /* offline: try again next time */ }
 }
+
+// ---- Who loves it ---------------------------------------------------------------------
+// A heart per person of the household on a recipe's page. Kept on this screen only, by name.
+const LOVES_KEY = 'recipes.loves.v1';
+function readLoves() {
+  try { const all = JSON.parse(localStorage.getItem(LOVES_KEY) || '{}'); return all && typeof all === 'object' ? all : {}; } catch (e) { return {}; }
+}
+/** The names of the people who gave a recipe a heart. */
+export const lovedBy = (id) => (readLoves()[id] || []).filter((n) => typeof n === 'string');
+/** Give or take back one person's heart. Returns the names that love it now. */
+export function toggleLove(id, name) {
+  const all = readLoves();
+  const was = (all[id] || []).filter((n) => typeof n === 'string');
+  const now = was.indexOf(name) >= 0 ? was.filter((n) => n !== name) : was.concat([name]);
+  if (now.length) all[id] = now; else delete all[id];
+  try { localStorage.setItem(LOVES_KEY, JSON.stringify(all)); } catch (e) { /* storage full */ }
+  return now;
+}
+/** Nobody's hearts on a recipe any more (it was taken out of the favourites). */
+export function clearLoves(id) {
+  const all = readLoves();
+  if (!all[id]) return;
+  delete all[id];
+  try { localStorage.setItem(LOVES_KEY, JSON.stringify(all)); } catch (e) { /* storage full */ }
+}

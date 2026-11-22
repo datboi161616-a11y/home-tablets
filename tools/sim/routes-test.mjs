@@ -9,7 +9,7 @@ import { dirname, resolve } from 'node:path';
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '..', '..');
 const app = readFileSync(resolve(root, 'js/app.js'), 'utf8');
 // Not screens themselves: shared pieces that live beside them.
-const HELPERS = ['kitchen-ui', 'placeholder'];
+const HELPERS = ['kitchen-ui', 'placeholder', 'ui'];
 
 const named = new Set();
 for (const map of ['FAMILY', 'TOM', 'BOTH']) {

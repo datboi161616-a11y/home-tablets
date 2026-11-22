@@ -1,11 +1,11 @@
-// This tablet's family settings, entered from a phone (scan the QR code on
+// This screen's household settings, entered when it is set up or from a phone (scan the QR code on
 // Photos → Add photos, then "Tablet settings"). Stored on the tablet itself.
 //
 // { familyName, people: [name], dates: [{ name, month, day, kind: 'birthday'|'event', year? (birthdays) }],
 //   calendars: [{ name, url }], units: 'fahrenheit'|'celsius' }
 //
 // In a normal browser (previewing on a PC) there's no tablet, so a small example
-// family is used so the screens can still be seen working.
+// household (a couple) is used so the screens can still be seen working.
 
 const N = () => window.TabletNative;
 export const onTablet = () => !!(N() && N().familySettings);
@@ -13,11 +13,11 @@ export const onTablet = () => !!(N() && N().familySettings);
 const EMPTY = { familyName: '', people: [], dates: [], calendars: [], units: 'fahrenheit' };
 
 const PREVIEW = {
-  familyName: 'Family',
-  people: ['Mom', 'Dad', 'Ava', 'Liam', 'Grandma Jo'],
+  familyName: 'Alex & Jordan',
+  people: ['Alex', 'Jordan'],
   dates: [
-    { name: "Ava's birthday", month: 1, day: 14, kind: 'birthday', year: 2017 },
-    { name: "Mom's birthday", month: 3, day: 8, kind: 'birthday' },
+    { name: "Alex's birthday", month: 1, day: 14, kind: 'birthday', year: 1996 },
+    { name: "Jordan's birthday", month: 3, day: 8, kind: 'birthday' },
     { name: 'Anniversary', month: 6, day: 20, kind: 'event' },
   ],
   calendars: [],
@@ -38,8 +38,14 @@ export function getFamily() {
   return cached;
 }
 
-/** "The Smiths" or "Family" if not set yet. */
-export const familyName = () => getFamily().familyName || 'Family';
+/**
+ * The household's name as they typed it when the screen was set up ("Alex & Jordan",
+ * "The Smiths"), or '' when nobody has yet. Most of these screens belong to a couple,
+ * one to a family of five: never assume either.
+ */
+export const householdName = () => String(getFamily().familyName || '').trim();
+/** The same, with "Home" standing in until a name is given (for a heading that needs a word). */
+export const familyName = () => householdName() || 'Home';
 
 /** Can the name and the temperature unit be changed on the screen itself? (Needs launcher app 1.27 or later.) */
 export const canSaveFamily = () => !onTablet() || !!N().saveFamilySettings;

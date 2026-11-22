@@ -7,18 +7,18 @@
 import { profile } from '../config.js';
 import { welcomeDone } from './welcome-state.js';
 
-const FAMILY = [
+const KITCHEN = [
   { id: '2026-11',
     items: [
       ['Timers with names', 'Pasta, eggs, the oven: name each one with a tap. Cancelled one by mistake? Undo.', 'timers'],
-      ['Every photo, in one grid', 'See all of them at once, hold a favourite, take several off in one go.', 'photos/album'],
+      ['The Gallery', 'Every photo in one place: look through them, add more, take some off, choose which ones show on Home.', 'photos'],
       ['A week plan you can rearrange', 'Move meals between days, plan next week, mark leftovers or eating out.', 'plan'],
       ['A quicker shopping list', 'One-tap everyday things, “2 x milk”, and it goes to the store on your phone.', 'shopping'],
       ['Search by what’s in the fridge', 'Try “chicken rice” or “zucchini”: recipes that use it, not just ones named for it.', 'recipes'],
       ['The whole month', 'A month view on the calendar, and entries that repeat every two weeks or every month.', 'calendar'],
       ['Weather in depth', 'Wind, humidity, the next 24 hours, and any day of the week hour by hour.', 'forecast'],
       ['Notes in one tap', 'Ready-made notes, pin the important one, tick off the chores.', 'messages'],
-      ['Make it yours', 'A 24-hour clock, your town, your alarm sound, what it shows when nobody’s looking.', 'settings'],
+      ['Make it yours', 'A 24-hour clock, your town, your alarm sound, how long each photo stays on Home.', 'settings'],
     ] },
 ];
 const TOM = [
@@ -36,7 +36,7 @@ const TOM = [
     ] },
 ];
 
-const EDITIONS = profile === 'tom' ? TOM : FAMILY;
+const EDITIONS = profile === 'tom' ? TOM : KITCHEN;
 const SEEN_KEY = 'whatsnew.seen.v1';      // the id of the last edition looked at
 const SINCE_KEY = 'whatsnew.since.v1';    // when the word about the newest one first went up
 const WORD_FOR_MS = 7 * 24 * 60 * 60 * 1000;

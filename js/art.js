@@ -1,4 +1,4 @@
-// Illustrations for the family screens: flat, drawn in code, in the app's own colors.
+// Illustrations for the kitchen screens: flat, drawn in code, in the app's own colors.
 // Drawn here (not photos) so they work offline, load instantly and stay sharp at any size.
 // Every function returns an <svg> string. Pass a CSS width/height; the drawing scales to fit.
 //
@@ -218,7 +218,7 @@ export function homeLandscape(night = false) {
     <path d="M0 124q150-20 300-4t288-4v34H0z" fill="${night ? '#1E2A40' : '#8FAEBF'}"/>
     ${house(250, 64, 1, night ? '#C9D3E0' : '#FFFFFF')}`, 'width:100%;height:auto');
 }
-// Empty photo frame state: three hanging pictures.
+// No photos yet: three hanging pictures.
 export function framesArt() {
   return svg('0 0 420 230', `
     <path d="M80 18q130-24 260 0" fill="none" stroke="#C9B8A6" stroke-width="2"/><path d="M120 12v22M210 6v22M300 12v22" stroke="#C9B8A6" stroke-width="2"/>

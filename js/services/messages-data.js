@@ -1,5 +1,5 @@
-// Family message board (Messages.dc.html).
-// On the tablet, notes are stored by the tablet app: written on the tablet itself
+// The household's note board (board KP12 "Reactions" in the redesign).
+// On a kitchen screen, notes are stored by the screen's app: written on the screen itself
 // or sent from any phone on the home Wi-Fi (QR code → "Leave a note").
 // In a normal browser (previewing on a PC) they live in localStorage, with a few
 // example notes so the screen can be seen working.
@@ -8,6 +8,11 @@
 // can only mark ALL notes read at once. What the screen adds on top (which notes were
 // really looked at, pinned, done, who a note is for) is kept on this screen in a small
 // side list keyed by note id ("meta" below), so the app's stored notes never change shape.
+//
+// Reactions ("Love it", "I'll do it", "Thank you") and "seen by" live in that side list too:
+// the app's updateNote() only understands {love} and {read} and drops every other field, so
+// a reaction handed to the app would be lost. In the side list it survives a restart. It
+// stays on this one screen (nothing syncs between screens, and the phone page doesn't see it).
 import { getFamily, familyName } from './family.js';
 import { getPhotos } from './tablet-photos.js';
 
@@ -31,7 +36,7 @@ export const QUICK_NOTES = [
   'Dog has been fed', 'Gone to the shop', 'Love you!',
 ];
 
-/** Who can post from this tablet: the people entered in Tablet settings. */
+/** Who can post from this screen: the people entered in Settings. */
 export function members() {
   const people = getFamily().people;
   return people.length ? people : ['Me'];
@@ -43,7 +48,8 @@ export const noMembers = () => !getFamily().people.length;
 export const household = () => familyName();
 
 // ---- what this screen adds to each note ----
-// { [id]: { seen: 1, pinned: 1, done: at, for: 'Ava' } }
+// { [id]: { seen: 1, pinned: 1, done: at, for: 'Alex', re: { love: ['Jordan'], doing: [], thanks: [] }, saw: ['Jordan'] } }
+// (A name of '' in a reaction is "somebody": a household that has typed no names yet.)
 function readMeta() {
   try {
     const m = JSON.parse(localStorage.getItem(META_KEY) || '{}');
@@ -68,6 +74,28 @@ function pruneMeta(ids) {
   if (changed) writeMeta(all);
 }
 
+// ---- reactions and "seen by" ----
+/** The reactions a note can get, in the order of the buttons. */
+export const REACTIONS = [
+  { key: 'love', label: 'Love it' },
+  { key: 'doing', label: 'I’ll do it' },
+  { key: 'thanks', label: 'Thank you' },
+];
+const same = (a, b) => String(a).trim().toLowerCase() === String(b).trim().toLowerCase();
+const names = (list) => (Array.isArray(list) ? list.filter((n) => typeof n === 'string').slice(0, 12) : []);
+function cleanReactions(re) {
+  const out = {};
+  REACTIONS.forEach((r) => { out[r.key] = names(re && re[r.key]); });
+  return out;
+}
+// Adds `who` to a list of names, or takes them off it (on: true, false, or undefined to flip).
+function flip(list, who, on) {
+  const has = list.some((n) => same(n, who));
+  const want = on === undefined ? !has : !!on;
+  if (want === has) return list;
+  return want ? list.concat([String(who)]) : list.filter((n) => !same(n, who));
+}
+
 // ---- the tablet app's notes ----
 function fromNative(n) {
   const photos = n.photo ? getPhotos() : [];
@@ -83,9 +111,10 @@ function fromNative(n) {
 function seed() {
   const now = Date.now();
   return [
-    { who: 'Mom', at: now - 20 * MIN, text: 'Picked up milk and eggs. Leftover lasagna is in the fridge for lunch tomorrow.' },
-    { who: 'Ava', at: now - 1 * DAY - 3 * HOUR, text: 'Got an A on my science project! Thanks for helping with the volcano, Dad.' },
-    { who: 'Dad', at: now - 3 * DAY, text: 'Plumber is coming Thursday morning. Someone needs to be home by 9.' },
+    { who: 'Alex', at: now - 20 * MIN, text: 'Turkey is ordered! Pick up Wed after 3' },
+    { who: 'Jordan', at: now - 2 * HOUR, text: 'Running late, start dinner without me' },
+    { who: 'Alex', at: now - 1 * DAY - 3 * HOUR, text: 'Out of milk + eggs!!' },
+    { who: 'Jordan', at: now - 3 * DAY, text: 'Plumber is coming Thursday morning. Someone needs to be home by 9.' },
   ].map((m, i) => ({ id: `seed-${i}`, household: household(), photo: null, loved: false, seen: i > 0, ...m }));
 }
 
@@ -120,7 +149,10 @@ function loadBase() {
 
 // ---- API used by the screens ----
 
-/** Newest first. Each note: { id, who, text, at, photo, replyTo, loved, seen, pinned, done, for }. */
+/**
+ * Newest first. Each note: { id, who, text, at, photo, replyTo, loved, seen, pinned, done, for,
+ * reactions: { love: [names], doing: [names], thanks: [names] }, seenBy: [names] }.
+ */
 export function loadMessages() {
   const base = loadBase();
   if (!base) return [];
@@ -130,9 +162,14 @@ export function loadMessages() {
     return {
       ...m,
       seen: !!(m.seen || x.seen),
+      // A heart from before reactions had names (or sent from the app) still counts; once
+      // hearts are given by name here ("lv"), the names are the whole truth, so one can be taken back.
+      loved: x.lv ? cleanReactions(x.re).love.length > 0 : !!m.loved,
       pinned: !!x.pinned,
       done: x.done || null,
       for: x.for || m.for || null,
+      reactions: cleanReactions(x.re),
+      seenBy: names(x.saw),
     };
   });
   pruneMeta(new Set(list.map((m) => m.id)));
@@ -140,7 +177,9 @@ export function loadMessages() {
 }
 
 /** photo: a JPEG data URL (or null). forWho: the person the note is meant for (or null). */
-export function postMessage({ who, text, photo = null, replyTo = null, forWho = null }) {
+/** replyToId: the note being answered; whoever answers a note has plainly seen it. */
+export function postMessage({ who, text, photo = null, replyTo = null, forWho = null, replyToId = null }) {
+  if (replyToId && !noMembers()) updateMessage(replyToId, { sawBy: { who, on: true } });
   text = String(text || '').slice(0, MAXLEN);
   if (onTablet()) {
     let id = '';
@@ -161,9 +200,27 @@ export function postMessage({ who, text, photo = null, replyTo = null, forWho = 
   return loadMessages().find((m) => m.id === msg.id) || msg;
 }
 
-/** patch: { loved: true }, { seen: true }, { pinned: true|false }, { done: true|false } */
+/**
+ * patch: { loved: true }, { seen: true }, { pinned: true|false }, { done: true|false },
+ *        { react: { kind: 'love'|'doing'|'thanks', who: 'Alex', on?: true|false } }  (no `on`: flips it),
+ *        { sawBy: { who: 'Alex', on?: true|false } }  ("Alex has seen this note")
+ */
 export function updateMessage(id, patch) {
   const extra = {};
+  const was = readMeta()[id] || {};
+  if (patch.react && REACTIONS.some((r) => r.key === patch.react.kind)) {
+    const re = cleanReactions(was.re);
+    const before = re[patch.react.kind].length;
+    re[patch.react.kind] = flip(re[patch.react.kind], patch.react.who || '', patch.react.on);
+    extra.re = REACTIONS.some((r) => re[r.key].length) ? re : null;
+    if (patch.react.kind === 'love') extra.lv = 1;
+    // The first "Love it" is also the heart the screen's app and the phone page know about.
+    if (patch.react.kind === 'love' && !before && re.love.length) patch = Object.assign({}, patch, { loved: true });
+  }
+  if (patch.sawBy && patch.sawBy.who) {
+    const saw = flip(names(was.saw), patch.sawBy.who, patch.sawBy.on);
+    extra.saw = saw.length ? saw : null;
+  }
   if (patch.seen) extra.seen = 1;
   if ('pinned' in patch) extra.pinned = patch.pinned ? 1 : null;
   if ('done' in patch) extra.done = patch.done ? Date.now() : null;
@@ -196,7 +253,7 @@ export function deleteMessage(id) {
     const left = list.filter((m) => m.id !== id);
     gone = left.length !== list.length && saveLocal(left);
   }
-  if (gone) patchMeta(id, { seen: null, pinned: null, done: null, for: null });
+  if (gone) patchMeta(id, { seen: null, pinned: null, done: null, for: null, re: null, saw: null, lv: null });
   return gone;
 }
 

@@ -40,7 +40,7 @@ fit();
 //    all. Those taps are counted here instead.
 const PRESS_MIN_MS = 180; // even the quickest tap shows for this long
 const PRESS_WAIT_MS = 70; // inside a list that scrolls: wait a moment, it may be a swipe
-const TAP_MAX_MS = 1500;  // held longer than this it is no tap (the grown-up menu is a 5 s hold)
+const TAP_MAX_MS = 1500;  // held longer than this it is no tap (the owner's menu is a 5 s hold)
 const TAP_ROOM_PX = 24;   // how far the finger may roll; inside a list that scrolls, 8
 let pressed = null;       // the element showing as pressed
 let pressedAt = 0;
@@ -165,7 +165,7 @@ const TOM = {
   deepimage: 'Space image', viewscreen: 'Starfield', settings: 'Settings',
 };
 // Both (Tom's only when its extras are switched on)
-const BOTH = { photos: 'Photo frame', apps: 'Apps', camera: 'Camera', addphotos: 'Add photos', welcome: 'Welcome', whatsnew: 'What’s new' };
+const BOTH = { photos: 'Gallery', apps: 'Apps', camera: 'Camera', addphotos: 'Add photos', welcome: 'Welcome', whatsnew: 'What’s new' };
 const SCREENS = { ...FAMILY, ...TOM, ...BOTH };
 // The screens this tablet can get to, most used first (see "Keep every screen on the device").
 const OWN_SCREENS = Object.keys({ ...(profile === 'tom' ? TOM : FAMILY), ...BOTH });
@@ -291,7 +291,8 @@ addEventListener('focusout', () => setTimeout(placeForTyping, 80)); // the curso
 // Settings were just saved on a phone (the family's name, degrees C or F...): draw the
 // screens that show them again, so the phone's "updates right away" is true.
 addEventListener('tablet-family', () => {
-  if (['home', 'launcher', 'forecast', 'photos'].includes(screenName())) setTimeout(navigate, 50);
+  // (Not under the first-start questions: they are the ones saving it.)
+  if (shownName !== 'welcome' && ['home', 'launcher', 'forecast', 'photos'].includes(screenName())) setTimeout(navigate, 50);
 });
 
 // The charger came out, or the Wi-Fi has been gone a while: a quiet word in the corner.
@@ -491,8 +492,8 @@ function freshStart(here) {
 // never) it is Home again, or the photo frame if the owner prefers that. Screens people
 // watch without touching (a recipe, timers, cooking) are left alone.
 function restingScreen() {
-  // (Tom's flight deck is its own resting screen.)
-  return profile !== 'tom' && display().restScreen === 'photos' ? 'photos' : homeRoute;
+  // (Home is the photo frame now, and Tom's flight deck is its own resting screen.)
+  return homeRoute;
 }
 // A half-written note or calendar entry is never thrown away by the clock: not while the
 // cursor is in a box, and not while a box on the screen has something typed in it.
@@ -501,7 +502,7 @@ const typing = () => {
   if (at && (at.tagName === 'INPUT' || at.tagName === 'TEXTAREA')) return true;
   return Array.from(screenEl.querySelectorAll('textarea, input[type="text"], input:not([type])')).some((box) => box.value.trim());
 };
-const WANDERED = ['launcher', 'calendar', 'forecast', 'messages', 'recipes', 'plan', 'shopping', 'apps', 'addphotos', 'settings', 'whatsnew', 'convert'];
+const WANDERED = ['photos', 'launcher', 'calendar', 'forecast', 'messages', 'recipes', 'plan', 'shopping', 'apps', 'addphotos', 'settings', 'whatsnew', 'convert'];
 
 setInterval(() => {
   const here = screenName();
@@ -515,7 +516,7 @@ setInterval(() => {
     location.hash = `#/${nightRoute}`;
   } else if (!night && here === nightRoute && idleFor(5 * 60 * 1000)) {
     // Morning: the photo frame again if that is what the night interrupted, otherwise Home.
-    location.hash = `#/${beforeNight === 'photos' ? 'photos' : homeRoute}`;
+    location.hash = `#/${homeRoute}`;
     rememberBeforeNight(null);
   } else {
     const rest = restingScreen();

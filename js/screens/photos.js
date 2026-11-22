@@ -1,236 +1,288 @@
-// Family · Full-screen photo frame (Photos.dc.html in the design)
-// Slow pan on each photo, cross-fade to the next one every minute.
-// Tap the middle to go back home, the sides (or a swipe) for the other photos.
-// "All photos" opens a grid of the whole album: jump to one, or remove several at once.
-// "Hold" keeps one picture up (it carries on by itself after a while).
+// Gallery: every photo and video on this screen (board KP05 of the November 2026 redesign).
+// A ring for each person who sends photos, above a river of photos that flows week by week,
+// newest on the left. Home is the photo frame now: it shows the photos that are "on Home"
+// (js/services/rotation.js), and this is where the household looks through them, adds,
+// removes and chooses which ones take their turn there.
 //
-// Routes: #/photos, #/photos/album (opens the grid), #/photos/show/<id> (starts on that one).
-import { display, clockTime, clockAmPm, timeText } from '../services/display.js';
-import { getLocation } from '../services/location.js';
-import { getWeather, describe } from '../services/weather.js';
-// On the tablet: its own album (sent from phones, see addphotos.js).
+// Tap a photo for the big viewer (swipe or the arrows for the others, the caption, who sent
+// it, Remove, and the "Shows on Home" switch). "Choose" picks several at once.
+//
+// Routes: #/photos            the Gallery
+//         #/photos/album      the same (older links)
+//         #/photos/choose     opens with "Choose" already on (to make room when it is full)
+//         #/photos/show/<id>  opens the viewer on that one ("newest" for the newest)
+import { esc, topBar, people, avatar, phoneCode, wirePhoneCodes } from './ui.js';
+// On the kitchen screen: its own album (sent from phones, see addphotos.js).
 // In a normal browser: sample pictures, so the screen can still be previewed.
 import { photos as samplePhotos } from '../services/family-sample.js';
 import {
   isTablet, getPhotos, onPhotosChanged, canRemovePhotos, removePhoto, removePhotos, thumbnail,
 } from '../services/tablet-photos.js';
+import { inRotation, setRotation, tidyRotation, onRotationChanged } from '../services/rotation.js';
 import { feature } from '../services/features.js';
 import { framesArt } from '../art.js';
 
-// How long each picture stays: a minute, or what the owner chose (Settings → Photo frame).
-const slideMs = () => Math.max(10, +display().slideSecs || 60) * 1000;
-// A held picture carries on by itself after this long, so the frame never stays stuck.
-const HOLD_MS = 10 * 60 * 1000;
-// Videos move on when they end, or after this long at most (clips are 60 s or less).
-const VIDEO_MAX_MS = 70 * 1000;
-let clockTimer, slideTimer, fadeTimer, weatherTimer, holdTimer, toastTimer, hintTimer, offPhotos, io;
-let alive = null; // this visit's marker: chunked album building stops when it changes
+let toastTimer, offPhotos, offRotation, stopCodes, stopView, io;
+let alive = null; // this visit's marker: chunked building stops when it changes
 
-function clockParts() {
-  const now = new Date();
-  return {
-    time: clockTime(now),
-    ampm: clockAmPm(now), // "PM" (nothing with the 24-hour clock)
-    date: now.toLocaleDateString('en-US', { weekday: 'long', month: 'short', day: 'numeric' }),
-  };
-}
+const DAY = 864e5;
+const CHUNK = 40;        // tiles built per step (the album can hold 500)
+const COL = 210, ROW = 240, GAP = 12; // the river's grid: two rows of tiles
+const HERE = '\u0000here'; // the "person" for photos with no name: taken with this screen's camera
 
-const esc = (s) => String(s).replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' })[c]);
 const plural = (n, w) => `${n} ${w}${n === 1 ? '' : 's'}`;
+const keyOf = (name) => String(name || '').trim().toLowerCase() || HERE;
 
-// Real photos (src) win; gradients are the stand-in until the backend exists.
-const slideBg = (p) => (p.src
-  ? `background:#2A3038 url('${encodeURI(p.src)}') center/cover no-repeat`
-  : `background:${p.art}`);
+const HOUSE = '<svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path d="M3 11.5 12 4l9 7.5V20a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z" fill="currentColor"/></svg>';
+const HOUSE_OFF = '<svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path d="M3 11.5 12 4l9 7.5V20a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z" fill="none" stroke="currentColor" stroke-width="2"/><path d="M4 3l16 19" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/></svg>';
+const CAMERA = '<svg viewBox="0 0 24 24" width="24" height="24" aria-hidden="true"><path d="M8.5 5l1.2-2h4.6l1.2 2H19a2 2 0 0 1 2 2v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V7a2 2 0 0 1 2-2z" fill="currentColor"/><circle cx="12" cy="12.5" r="4" fill="#F6F1E9"/></svg>';
+
+// Weeks start on Sunday, like the calendar on the wall.
+function weekStart(ms) {
+  const d = new Date(ms);
+  d.setHours(0, 0, 0, 0);
+  d.setDate(d.getDate() - d.getDay());
+  return d.getTime();
+}
+function weekLabel(start, thisWeek) {
+  if (start === thisWeek) return 'This week';
+  if (start === weekStart(thisWeek - 3 * DAY)) return 'Last week';
+  const a = new Date(start);
+  const b = new Date(start); b.setDate(b.getDate() + 6);
+  const month = (d, long) => d.toLocaleDateString('en-US', { month: long ? 'long' : 'short' });
+  const year = b.getFullYear() !== new Date().getFullYear() ? `, ${b.getFullYear()}` : '';
+  return a.getMonth() === b.getMonth()
+    ? `${month(a, true)} ${a.getDate()}–${b.getDate()}${year}`
+    : `${month(a)} ${a.getDate()} – ${month(b)} ${b.getDate()}${year}`;
+}
 
 function loadAlbum() {
-  const list = isTablet() ? getPhotos() : samplePhotos.map((p) => ({ ...p, name: p.addedBy, line: `${p.caption} · Added by ${p.addedBy}` }));
-  if (!display().photoShuffle || list.length < 3) return list;
-  // "Mixed up": the newest one still comes first (somebody just sent it), the rest in any order.
-  const rest = list.slice(1);
-  for (let i = rest.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
-    const t = rest[i]; rest[i] = rest[j]; rest[j] = t;
-  }
-  return [list[0]].concat(rest);
+  const list = isTablet()
+    ? getPhotos()
+    : samplePhotos.map((p) => ({ ...p, name: p.addedBy, title: `${p.title}: ${p.caption}`, line: `Added by ${p.addedBy} · ${p.day}` }));
+  return list.sort((a, b) => (b.added || 0) - (a.added || 0)); // newest first
 }
 
-const MAX_DOTS = 12;
-const TILE_W = 240, TILE_H = 180; // the small copies in the album grid
-const CHUNK = 40;                 // grid tiles built per step (the album can hold 500)
-
-export function mount(el, { homeRoute = 'home', args = [] } = {}) {
-  const c = clockParts();
-  const prefs = display();
+export function mount(el, { args = [] } = {}) {
   const visit = alive = {};
-  let photos = loadAlbum();
-  let index = 0;
-  let weatherText = '';
-  let broken = 0; // photos in a row that wouldn't load
-  let preload = null;
-  let held = false;
-  let albumOpen = false, askOpen = false, fullOpen = false;
-  let currentVideo = null, videoGo = null;
   const canRemove = canRemovePhotos();
+  const hasCamera = feature('camera');
+  let album = loadAlbum();
+  let who = null;          // null: everyone; otherwise a person's key
+  let homeFilter = 'all';  // 'all' | 'on' | 'off'
+  let picking = false;
+  let picked = {};         // id -> true
+  let fresh = {};          // ids that arrived while the Gallery was open (they glow)
+  let rings = [];
+  let lastSeen = null;     // the photo the viewer last showed (outlined in the river)
+  // The viewer
+  let viewing = false, vList = [], vIndex = 0, vVideo = null, preload = null;
+  let askIds = [];
 
   el.innerHTML = `
   <style>
-    .ph-root{position:absolute;top:0;right:0;bottom:0;left:0;background:#2A3038;color:#fff;overflow:hidden;cursor:pointer}
-    /* will-change: the slide is drawn once and then only moved. Without it the tablet drew
-       the whole picture again for every step of the slow zoom: under one frame a second. */
-    .ph-slide{position:absolute;top:-6%;right:-6%;bottom:-6%;left:-6%;opacity:0;transition:opacity 2.5s ease;will-change:transform,opacity}
-    .ph-slide.quick{transition-duration:.35s}
-    .ph-slide.on{opacity:1}
-    .ph-back{position:absolute;top:0;left:0;width:100%;height:100%}
-    .ph-ask,.ph-full{display:none;position:absolute;top:0;right:0;bottom:0;left:0;background:rgba(10,12,16,.62);align-items:center;justify-content:center;cursor:default;z-index:8}
-    .ph-ask button,.ph-full button{border:0;font-family:inherit;cursor:pointer;font-size:19px;padding:0 30px;min-height:56px;justify-content:center}
-    /* In 300 small steps, not 60 times a second: the picture moves under half a pixel per
-       step either way, and the tablet draws about five frames a second instead of sixty
-       (measured: the smooth version kept a processor core and a half busy all day). */
-    .ph-slide.pan-a{animation:ph-pan-a 63s steps(300, end) forwards}
-    .ph-slide.pan-b{animation:ph-pan-b 63s steps(300, end) forwards}
-    @keyframes ph-pan-a{from{transform:scale(1) translate(0,0)}to{transform:scale(1.08) translate(-2%,-1.5%)}}
-    @keyframes ph-pan-b{from{transform:scale(1.08) translate(-2%,1%)}to{transform:scale(1) translate(1.5%,0)}}
-    .ph-dot{height:8px;width:8px;border-radius:4px;background:rgba(255,255,255,.5);transition:width .4s,background .4s}
-    .ph-dot.on{width:28px;background:#fff}
-    .ph-clamp{overflow:hidden;display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2;max-width:620px}
-    .ph-arrow{position:absolute;top:50%;margin-top:-32px;width:64px;height:64px;border-radius:32px;background:rgba(10,12,16,.4);color:#fff;
-      display:none;align-items:center;justify-content:center;font-size:40px;line-height:1;opacity:.75;pointer-events:none}
-    .ph-pill{border:0;font-family:inherit;cursor:pointer;min-height:56px;font-size:18px;padding:0 22px;background:rgba(10,12,16,.55);color:#fff;white-space:nowrap}
-    .ph-cap{border:0;background:transparent;color:#fff;font-family:inherit;text-align:right;padding:6px 0;cursor:pointer;display:flex;flex-direction:column;align-items:flex-end;gap:8px;min-height:48px}
-    .ph-more{font-size:16px;font-weight:600;color:#fff;background:rgba(255,255,255,.18);border-radius:999px;padding:6px 14px;display:none}
-    .ph-badge{background:rgba(10,12,16,.62);padding:0 18px;border-radius:999px;font-size:17px;font-weight:600;color:#fff;min-height:48px;display:none;align-items:center;gap:8px;border:0;font-family:inherit}
-    button.ph-badge{cursor:pointer;min-height:56px;padding:0 22px;font-size:18px}
-    .ph-toast{position:absolute;top:180px;left:50%;transform:translateX(-50%);background:rgba(10,12,16,.82);color:#fff;border-radius:999px;padding:10px 12px 10px 26px;
-      font-size:20px;font-weight:600;display:flex;align-items:center;gap:16px;white-space:nowrap;opacity:0;pointer-events:none;transition:opacity .4s;z-index:9;min-height:56px}
-    .ph-toast.plain{padding-right:26px}
-    .ph-toast button{border:0;background:#fff;color:#1D2430;border-radius:999px;font-family:inherit;font-size:18px;font-weight:700;min-height:48px;padding:0 22px;cursor:pointer}
-    .ph-hint{position:absolute;left:50%;bottom:240px;transform:translateX(-50%);background:rgba(10,12,16,.62);border-radius:999px;padding:12px 26px;font-size:19px;
-      white-space:nowrap;pointer-events:none;opacity:0;transition:opacity .6s}
-    .ph-broken{position:absolute;top:30%;left:12%;right:12%;text-align:center;display:flex;flex-direction:column;gap:12px;align-items:center}
-    /* The album: every picture as a small copy, to look through, jump to, or remove. */
-    .ph-album{display:none;position:absolute;top:0;right:0;bottom:0;left:0;background:#1D2430;cursor:default;z-index:6}
-    .ph-ahead{position:absolute;top:0;left:0;right:0;height:112px;display:flex;align-items:center;gap:14px;padding:0 40px}
-    .ph-grid{position:absolute;top:112px;left:0;right:0;bottom:0;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:4px 40px 40px;
-      display:grid;grid-template-columns:repeat(5,minmax(0,1fr));grid-gap:18px 16px;align-content:start}
-    .ph-album.picking .ph-grid{bottom:104px}
-    .ph-tile{border:0;background:transparent;color:#E6E9ED;font-family:inherit;padding:0;text-align:left;cursor:pointer;display:flex;flex-direction:column;gap:8px}
-    .ph-thumb{position:relative;width:100%;height:168px;border-radius:14px;background:#2A3038 center/cover no-repeat;overflow:hidden;border:4px solid transparent}
-    .ph-tile.cur .ph-thumb{border-color:#fff}
-    .ph-tile.sel .ph-thumb{border-color:#E8734A}
-    .ph-tlabel{font-size:16px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-    .ph-tplay{position:absolute;top:0;right:0;bottom:0;left:0;display:flex;align-items:center;justify-content:center;font-size:34px;background:rgba(10,12,16,.35)}
-    .ph-tbroken{position:absolute;top:0;right:0;bottom:0;left:0;display:flex;align-items:center;justify-content:center;text-align:center;font-size:16px;padding:10px;color:#C9D0D8}
-    .ph-tick{position:absolute;top:10px;right:10px;width:40px;height:40px;border-radius:20px;border:3px solid #fff;background:rgba(10,12,16,.4);display:none;
-      align-items:center;justify-content:center;font-size:24px;font-weight:700}
-    .ph-album.picking .ph-tick{display:flex}
-    .ph-tile.sel .ph-tick{background:#E8734A;border-color:#E8734A}
-    .ph-selbar{display:none;position:absolute;left:0;right:0;bottom:0;height:104px;background:#11161D;align-items:center;gap:14px;padding:0 40px}
-    .ph-album.picking .ph-selbar{display:flex}
-    .ph-pill[disabled]{opacity:.4}
+    .ga-root{position:absolute;top:0;right:0;bottom:0;left:0;background:#F6F1E9;color:#22303F;overflow:hidden;--accent:#E0663A;
+      display:flex;flex-direction:column;padding:26px 0 0;font-family:Inter,system-ui,sans-serif}
+    .ga-pad{padding:0 40px}
+    .ga-root .x-btn.white{box-shadow:0 2px 8px rgba(34,48,63,.08)}
+    .ga-count{text-align:right;line-height:1.3;flex:none}
+    .ga-count b{display:block;font:600 18px Inter,sans-serif}
+    .ga-count span{font-size:16px;color:#6E7B89}
+    /* ---- people ---- */
+    .ga-row{display:flex;align-items:flex-start;gap:24px;height:128px;margin-top:14px;flex:none}
+    .ga-rings{flex:1;min-width:0;display:flex;gap:14px;overflow-x:auto;overflow-y:hidden;-webkit-overflow-scrolling:touch;padding:5px 4px 0}
+    .ga-ring{flex:none;width:104px;border:0;background:transparent;padding:0;font-family:inherit;color:inherit;cursor:pointer;text-align:center;position:relative}
+    .ga-face{display:block;width:78px;height:78px;border-radius:39px;margin:9px auto 0;background:#D5DCE3 center/cover no-repeat;position:relative;overflow:hidden}
+    .ga-face.all{background:#22303F;color:#fff;font:700 22px Outfit,sans-serif;display:flex;align-items:center;justify-content:center}
+    .ga-face.quiet{box-shadow:inset 0 0 0 4px #D5DCE3}
+    .ga-dash{position:absolute;left:4px;top:0;width:96px;height:96px;pointer-events:none}
+    .ga-dash.spin{animation:ga-spin 14s linear infinite;will-change:transform}
+    @keyframes ga-spin{from{transform:rotate(0)}to{transform:rotate(360deg)}}
+    .ga-rname{display:block;font:600 16px Inter,sans-serif;margin-top:9px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+    .ga-rname i{font-style:normal;color:#E0663A}
+    .ga-ring.quiet .ga-rname{color:#6E7B89}
+    .ga-ring.on .ga-face{box-shadow:0 0 0 4px #22303F}
+    .ga-ring.on .ga-rname{font-weight:700;color:#22303F}
+    .ga-side{flex:none;width:452px;display:flex;flex-direction:column;gap:8px;padding-top:5px}
+    .ga-seg{display:flex;background:#fff;border-radius:999px;padding:4px;box-shadow:0 2px 8px rgba(34,48,63,.08)}
+    .ga-seg button{flex:1;border:0;background:transparent;color:#22303F;font:600 17px Inter,sans-serif;min-height:56px;border-radius:999px;cursor:pointer;white-space:nowrap;padding:0 10px}
+    .ga-seg button.on{background:#22303F;color:#fff}
+    .ga-note{font-size:16px;line-height:1.35;color:#4D5B6A;padding:0 8px;overflow:hidden;display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2}
+    .ga-note b{color:#E0663A}
+    /* ---- choosing several ---- */
+    .ga-pick{display:none;align-items:center;gap:12px;height:128px;margin-top:14px;flex:none}
+    .ga-root.picking .ga-pick{display:flex}
+    .ga-root.picking .ga-row{display:none}
+    .ga-picked{flex:1;min-width:0;font:500 26px Outfit,sans-serif}
+    .ga-picked small{display:block;font:400 16px Inter,sans-serif;color:#6E7B89;margin-top:2px}
+    .ga-danger{background:#B8401A;color:#fff}
+    /* ---- the river ---- */
+    .ga-river{flex:1;min-height:0;position:relative;display:flex;gap:34px;overflow-x:auto;overflow-y:hidden;-webkit-overflow-scrolling:touch;padding:12px 150px 0 40px}
+    .ga-week{flex:none}
+    .ga-wlabel{font:700 15px Inter,sans-serif;letter-spacing:2px;text-transform:uppercase;color:#6E7B89;margin-bottom:12px;white-space:nowrap}
+    .ga-week.now .ga-wlabel{color:#E0663A}
+    .ga-grid{display:grid;grid-auto-flow:column dense;grid-template-rows:${ROW}px ${ROW}px;grid-auto-columns:${COL}px;grid-gap:${GAP}px}
+    .ga-tile{position:relative;border:0;padding:0;background:#DDD5C8;border-radius:22px;overflow:hidden;cursor:pointer;font-family:inherit;color:#fff;display:block;width:100%;height:100%}
+    .ga-tile.wide{grid-column:span 2}
+    .ga-tile.hero{grid-column:span 2;grid-row:span 2}
+    .ga-tile.tall{grid-row:span 2}
+    .ga-img{position:absolute;top:0;right:0;bottom:0;left:0;background:center/cover no-repeat}
+    .ga-tile.off .ga-img{opacity:.5}
+    .ga-home{position:absolute;top:10px;left:10px;width:38px;height:38px;border-radius:19px;background:#E0663A;color:#fff;display:flex;align-items:center;justify-content:center;box-shadow:0 0 0 2px rgba(255,255,255,.9)}
+    .ga-tile.off .ga-home{background:rgba(34,48,63,.82);color:#D5DCE3}
+    .ga-home .no{display:none}
+    .ga-tile.off .ga-home .yes{display:none}
+    .ga-tile.off .ga-home .no{display:block}
+    .ga-who{position:absolute;left:10px;bottom:10px;display:flex;align-items:center;gap:8px;max-width:calc(100% - 20px)}
+    .ga-who > span:first-child{box-shadow:0 0 0 2px rgba(255,255,255,.9)}
+    .ga-chip{background:rgba(255,255,255,.92);color:#22303F;border-radius:999px;padding:7px 14px;font:600 16px Inter,sans-serif;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0}
+    .ga-vid{position:absolute;right:10px;top:10px;background:#22303F;color:#fff;border-radius:999px;padding:6px 12px;font:600 15px Inter,sans-serif}
+    .ga-broken{position:absolute;top:0;right:0;bottom:0;left:0;display:flex;align-items:center;justify-content:center;text-align:center;font-size:16px;padding:12px;color:#4D5B6A}
+    .ga-tick{position:absolute;right:10px;bottom:10px;width:44px;height:44px;border-radius:22px;border:3px solid #fff;background:rgba(34,48,63,.45);display:none;align-items:center;justify-content:center;font:700 24px Inter,sans-serif;color:#fff}
+    .ga-root.picking .ga-tick{display:flex}
+    .ga-root.picking .ga-who{max-width:calc(100% - 76px)}
+    .ga-tile.sel .ga-tick{background:#E0663A;border-color:#E0663A}
+    .ga-tile.sel::before,.ga-tile.cur::before,.ga-tile.new::after{content:'';position:absolute;top:0;right:0;bottom:0;left:0;border-radius:22px;pointer-events:none;z-index:1}
+    .ga-tile.cur::before{box-shadow:inset 0 0 0 4px #22303F}
+    .ga-tile.sel::before{box-shadow:inset 0 0 0 5px #E0663A}
+    .ga-tile.new::after{box-shadow:inset 0 0 0 5px #E0663A;animation:ga-new 2.4s ease-in-out infinite}
+    @keyframes ga-new{0%,100%{opacity:1}50%{opacity:.25}}
+    .ga-fade{position:absolute;right:0;bottom:0;width:130px;height:560px;background:linear-gradient(90deg,rgba(246,241,233,0),#F6F1E9);pointer-events:none}
+    .ga-older{position:absolute;right:36px;bottom:22px;font:600 16px Inter,sans-serif;color:#6E7B89;pointer-events:none;transition:opacity .4s}
+    .ga-newest{position:absolute;left:40px;bottom:18px;display:none;box-shadow:0 4px 14px rgba(34,48,63,.25)}
+    .ga-empty{flex:1;display:none;align-items:center;justify-content:center;gap:56px;padding:0 40px 30px}
+    .ga-none{flex:1;display:none;flex-direction:column;align-items:center;justify-content:center;gap:16px;text-align:center;padding-bottom:40px}
+    /* ---- the big viewer ---- */
+    .ga-view{display:none;position:absolute;top:0;right:0;bottom:0;left:0;background:#14171C;color:#fff;z-index:6}
+    .ga-stage{position:absolute;top:104px;right:0;bottom:136px;left:0}
+    .ga-pic{position:absolute;top:0;right:110px;bottom:0;left:110px;background:center/contain no-repeat}
+    .ga-pic.art{top:10px;bottom:10px;right:190px;left:190px;border-radius:26px;background-size:cover}
+    .ga-stage video{position:absolute;top:0;left:110px;width:1060px;height:100%;object-fit:contain;background:#000}
+    .ga-sample{position:absolute;left:0;right:0;top:44%;text-align:center;font:500 22px Inter,sans-serif}
+    .ga-sample span{background:rgba(16,18,26,.6);border-radius:999px;padding:12px 24px}
+    .ga-wont{position:absolute;top:26%;left:14%;right:14%;text-align:center;display:flex;flex-direction:column;gap:12px;align-items:center}
+    .ga-vtop{position:absolute;top:26px;left:40px;right:40px;display:flex;align-items:center;gap:14px}
+    .ga-vcount{flex:1;font:500 20px Inter,sans-serif;color:#C9D0D8;padding-left:6px}
+    .ga-arrow{position:absolute;top:50%;margin-top:-52px;width:76px;height:76px;border-radius:38px;border:0;background:rgba(255,255,255,.14);color:#fff;font:300 46px/1 Outfit,sans-serif;cursor:pointer;
+      display:flex;align-items:center;justify-content:center;padding-bottom:6px}
+    .ga-vbar{position:absolute;left:0;right:0;bottom:0;min-height:136px;background:#1D2229;display:flex;align-items:center;gap:20px;padding:16px 40px}
+    .ga-vcap{flex:1;min-width:0;border:0;background:transparent;color:#fff;font-family:inherit;text-align:left;padding:0;cursor:pointer;min-height:64px}
+    .ga-vtitle{font:500 26px/1.2 Outfit,sans-serif;overflow:hidden;display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2}
+    .ga-vline{font-size:18px;color:#C9D0D8;margin-top:4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+    .ga-vmore{display:none;font:600 16px Inter,sans-serif;background:rgba(255,255,255,.16);border-radius:999px;padding:5px 14px;margin-top:6px}
+    .ga-vbar.open{align-items:flex-start}
+    .ga-vbar.open .ga-vtitle{display:block;max-height:330px;overflow-y:auto}
+    .ga-switch{flex:none;border:0;cursor:pointer;font:600 20px Inter,sans-serif;min-height:72px;border-radius:999px;padding:0 14px 0 24px;display:flex;align-items:center;gap:14px;
+      background:rgba(255,255,255,.12);color:#C9D0D8}
+    .ga-switch.on{background:#E0663A;color:#fff}
+    .ga-track{width:68px;height:40px;border-radius:20px;background:rgba(0,0,0,.3);position:relative;flex:none}
+    .ga-knob{position:absolute;top:4px;left:4px;width:32px;height:32px;border-radius:16px;background:#fff;transition:transform .2s}
+    .ga-switch.on .ga-knob{transform:translateX(28px)}
+    /* ---- questions and little messages ---- */
+    .ga-ask{display:none;position:absolute;top:0;right:0;bottom:0;left:0;background:rgba(10,12,16,.62);align-items:center;justify-content:center;z-index:8}
+    .ga-toast{position:absolute;bottom:152px;left:50%;transform:translateX(-50%);background:rgba(16,18,26,.92);color:#fff;border-radius:999px;padding:10px 12px 10px 28px;
+      font:600 20px Inter,sans-serif;display:flex;align-items:center;gap:16px;white-space:nowrap;opacity:0;pointer-events:none;transition:opacity .4s;z-index:9;min-height:64px}
+    .ga-toast.plain{padding-right:28px}
+    .ga-toast button{border:0;background:#fff;color:#1D2430;border-radius:999px;font:700 18px Inter,sans-serif;min-height:56px;padding:0 24px;cursor:pointer}
+    @media (prefers-reduced-motion: reduce){.ga-dash.spin,.ga-tile.new::after{animation:none}.ga-knob{transition:none}}
   </style>
-  <div class="ph-root" data-root>
-    <div data-slides></div>
-    <!-- The dark strip the words sit on: only as tall as what the owner chose to show. -->
-    <div style="position:absolute;left:0;right:0;bottom:0;height:${prefs.photoClock || prefs.photoCaptions ? 220 : prefs.photoWeather ? 140 : 84}px;background:${prefs.photoClock || prefs.photoCaptions || prefs.photoWeather ? 'rgba(10,12,16,.55)' : 'linear-gradient(rgba(10,12,16,0),rgba(10,12,16,.55))'}"></div>
-    <div style="position:absolute;left:48px;bottom:40px;display:${prefs.photoClock || prefs.photoWeather ? 'flex' : 'none'};flex-direction:column;gap:6px">
-      <div class="display" style="font-weight:300;font-size:96px;line-height:1;letter-spacing:-3px;white-space:nowrap${prefs.photoClock ? '' : ';display:none'}"><span data-time>${c.time}</span><span data-ampm style="font-size:30px;font-weight:500;letter-spacing:0;margin-left:10px">${c.ampm}</span></div>
-      <div data-date style="font-size:${prefs.photoClock ? 22 : 28}px;font-weight:500">${prefs.photoClock ? c.date : ''}</div>
-    </div>
-    <div style="position:absolute;right:48px;bottom:36px;display:flex;flex-direction:column;align-items:flex-end;gap:10px;max-width:620px;text-align:right">
-      <button class="ph-cap" data-more-btn aria-label="Read the whole caption">
-        <div data-title class="display ph-clamp" style="font-size:28px;font-weight:500;line-height:1.2"></div>
-        <div data-caption class="ph-clamp" style="font-size:18px;color:#E6E9ED;line-height:1.3"></div>
-        <div class="ph-more" data-more>Read all ›</div>
-      </button>
-      <div data-dots style="display:flex;gap:8px;font-size:16px;font-weight:600"></div>
-    </div>
-    <div class="ph-arrow" data-arrow style="left:28px">‹</div>
-    <div class="ph-arrow" data-arrow style="right:28px">›</div>
-    <div class="ph-hint" data-hint></div>
-    <div data-empty style="display:none;position:absolute;top:0;left:0;right:0;bottom:220px;align-items:center;justify-content:center;flex-direction:column;gap:20px;text-align:center">
-      <div style="width:380px;height:220px;display:flex;align-items:center;justify-content:center;border-radius:190px/110px;background:rgba(255,255,255,.06)"><div style="width:340px">${framesArt()}</div></div>
-      <div class="display" style="font-size:44px;font-weight:500">No photos yet</div>
-      <div style="font-size:20px;color:#E6E9ED">Send some from a phone on the same Wi-Fi${feature('camera') ? ', or take one right here' : ''}.</div>
-      <div style="display:flex;gap:14px">
-        <a href="#/addphotos" class="pill ph-pill" style="background:#fff;color:#1D2430">Add photos from a phone</a>
-        ${feature('camera') ? '<a href="#/camera" class="pill ph-pill" style="background:rgba(255,255,255,.16)">📷 Take a photo</a>' : ''}
-      </div>
-    </div>
-    <div style="position:absolute;top:104px;left:32px;display:flex;flex-direction:column;align-items:flex-start;gap:10px">
-      <button class="ph-badge" data-held aria-label="Carry on with the slideshow"></button>
-      <div style="display:flex;gap:10px;align-items:center">
-        <div class="ph-badge" data-vbadge>▶ Video</div>
-        <button class="ph-badge" data-sound></button>
-      </div>
-    </div>
-    <div style="position:absolute;top:32px;right:32px;display:flex;gap:10px">
-      ${feature('camera') ? '<a href="#/camera" class="pill ph-pill">📷 Camera</a>' : ''}
-      <button data-album-open class="pill ph-pill" style="display:none">▦ All photos</button>
-      <button data-hold class="pill ph-pill" style="display:none">⏸ Hold</button>
-      <button data-remove class="pill ph-pill" style="display:none">Remove</button>
-      <a href="#/addphotos" class="pill ph-pill">+ Add photos</a>
-      <a href="#/${homeRoute}" class="pill ph-pill">Home</a>
-    </div>
-    <div class="ph-album" data-album>
-      <div class="ph-ahead">
-        <div style="flex:1;min-width:0">
-          <div class="display" data-album-title style="font-size:34px;font-weight:500">All photos</div>
-          <div data-album-sub style="font-size:17px;color:#C9D0D8;margin-top:2px"></div>
-        </div>
-        ${canRemove ? '<button data-pick class="pill ph-pill" style="background:rgba(255,255,255,.12)">Choose photos to remove</button>' : ''}
-        <button data-album-close class="pill ph-pill" style="background:#fff;color:#1D2430">‹ Back to the slideshow</button>
-      </div>
-      <div class="ph-grid" data-grid></div>
-      <div class="ph-selbar">
-        <div data-picked style="flex:1;font-size:20px;font-weight:600"></div>
-        <button data-pick-all class="pill ph-pill" style="background:rgba(255,255,255,.12)">Choose all</button>
-        <button data-pick-cancel class="pill ph-pill" style="background:rgba(255,255,255,.12)">Cancel</button>
-        <button data-pick-remove class="pill ph-pill" style="background:#C2491F" disabled>Remove</button>
-      </div>
-    </div>
-    <div class="ph-full" data-full>
-      <div style="background:#fff;color:#1D2430;border-radius:24px;padding:34px 40px;width:720px;max-height:640px;overflow-y:auto">
-        <div data-full-title class="display" style="font-size:32px;font-weight:500;line-height:1.2"></div>
-        <div data-full-line style="font-size:20px;line-height:1.45;color:#4A5363;margin-top:12px"></div>
-        <div data-full-count style="font-size:17px;color:#6B7380;margin-top:14px"></div>
-        <div style="display:flex;justify-content:flex-end;margin-top:22px">
-          <button data-full-close class="pill" style="background:#ECEEF0;color:#1D2430">Close</button>
+  <div class="ga-root" data-root>
+    <div class="ga-pad">
+      ${topBar({ title: 'Gallery', tone: 'light', right: `
+        <div class="ga-count" data-count></div>
+        <button class="x-btn white" data-pick>Choose</button>
+        ${hasCamera ? `<a class="x-btn white" href="#/camera/gallery">${CAMERA} Camera</a>` : ''}
+        <a class="x-btn accent" href="#/addphotos">+ Add photos</a>` })}
+      <div class="ga-row">
+        <div class="ga-rings" data-rings></div>
+        <div class="ga-side">
+          <div class="ga-seg" data-seg>
+            <button data-f="all">All</button><button data-f="on">On Home</button><button data-f="off">Not on Home</button>
+          </div>
+          <div class="ga-note" data-note></div>
         </div>
       </div>
+      <div class="ga-pick">
+        <div class="ga-picked" data-picked></div>
+        <button class="x-btn white" data-pick-all>Choose all</button>
+        <button class="x-btn ink" data-pick-on disabled>${HOUSE} Show on Home</button>
+        <button class="x-btn white" data-pick-off disabled>Take off Home</button>
+        ${canRemove ? '<button class="x-btn ga-danger" data-pick-remove disabled>Remove</button>' : ''}
+        <button class="x-btn line" data-pick-done>Done</button>
+      </div>
     </div>
-    <div class="ph-ask" data-ask>
-      <div style="background:#fff;color:#1D2430;border-radius:24px;padding:34px 40px;max-width:560px;text-align:center">
-        <div data-ask-title class="display" style="font-size:32px;font-weight:500">Remove this photo?</div>
-        <div data-ask-line style="font-size:19px;line-height:1.4;color:#4A5363;margin-top:10px">It comes off this screen for good.</div>
+    <div class="ga-river" data-river></div>
+    <div class="ga-fade" data-fade aria-hidden="true"></div>
+    <div class="ga-older" data-older>Swipe for older →</div>
+    <button class="x-btn ink sm ga-newest" data-newest>← Back to the newest</button>
+    <div class="ga-none" data-none>
+      <div style="font:500 34px Outfit,sans-serif" data-none-title></div>
+      <div style="font-size:19px;color:#4D5B6A;max-width:640px;line-height:1.4" data-none-line></div>
+      <button class="x-btn ink" data-none-all>Show every photo</button>
+    </div>
+    <div class="ga-empty" data-empty>
+      <div style="display:flex;flex-direction:column;gap:16px;max-width:560px">
+        <div style="width:300px">${framesArt()}</div>
+        <div style="font:500 44px Outfit,sans-serif">No photos yet</div>
+        <div style="font-size:20px;line-height:1.4;color:#4D5B6A">Send some from a phone on the same Wi-Fi${hasCamera ? ', or take one right here' : ''}. They show up here, and take turns on Home.</div>
+        <div style="display:flex;gap:14px;margin-top:6px">
+          <a href="#/addphotos" class="x-btn accent">+ Add photos</a>
+          ${hasCamera ? `<a href="#/camera/gallery" class="x-btn white">${CAMERA} Take a photo</a>` : ''}
+        </div>
+      </div>
+      ${phoneCode({ tab: 'photos', size: 220, tone: 'light', column: true })}
+    </div>
+
+    <div class="ga-view" data-view>
+      <div class="ga-stage" data-stage></div>
+      <div class="ga-vtop">
+        <button class="x-btn glass" data-vclose>← Gallery</button>
+        <div class="ga-vcount" data-vcount></div>
+        <button class="x-btn glass" data-vsound style="display:none"></button>
+        ${canRemove ? '<button class="x-btn glass" data-vremove>Remove</button>' : ''}
+      </div>
+      <button class="ga-arrow" data-vprev style="left:22px" aria-label="The photo before">‹</button>
+      <button class="ga-arrow" data-vnext style="right:22px" aria-label="The next photo">›</button>
+      <div class="ga-vbar" data-vbar>
+        <div data-vwho style="flex:none;display:flex"></div>
+        <button class="ga-vcap" data-vcap aria-label="Read the whole caption">
+          <div class="ga-vtitle" data-vtitle></div>
+          <div class="ga-vline" data-vline></div>
+          <span class="ga-vmore" data-vmore>Read all ›</span>
+        </button>
+        <button class="ga-switch" data-vhome role="switch">${HOUSE}<span data-vhome-text></span><span class="ga-track"><span class="ga-knob"></span></span></button>
+      </div>
+    </div>
+
+    <div class="ga-ask" data-ask>
+      <div style="background:#fff;color:#1D2430;border-radius:28px;padding:34px 40px;max-width:580px;text-align:center">
+        <div data-ask-title style="font:500 32px Outfit,sans-serif">Remove this photo?</div>
+        <div data-ask-line style="font-size:19px;line-height:1.4;color:#4A5363;margin-top:10px"></div>
         <div style="display:flex;gap:12px;justify-content:center;margin-top:24px">
-          <button data-keep class="pill" style="background:#ECEEF0;color:#1D2430">Keep it</button>
-          <button data-really class="pill" style="background:#C2491F;color:#fff">Remove</button>
+          <button data-keep class="x-btn line">Keep</button>
+          <button data-really class="x-btn ga-danger">Remove</button>
         </div>
       </div>
     </div>
-    <div class="ph-toast" data-toast></div>
+    <div class="ga-toast" data-toast></div>
   </div>`;
 
   const $ = (s) => el.querySelector(s);
-  const slidesEl = $('[data-slides]');
-  const albumEl = $('[data-album]');
-  const gridEl = $('[data-grid]');
+  const root = $('[data-root]');
+  const river = $('[data-river]');
+  const viewEl = $('[data-view]');
+  const stage = $('[data-stage]');
   const askEl = $('[data-ask]');
-  const fullEl = $('[data-full]');
+  stopCodes = wirePhoneCodes(el);
 
-  // The corner shows what the owner chose (Settings → Photo frame): the time and date, the
-  // weather, both, or neither.
-  function renderDate() {
-    const n = clockParts();
-    $('[data-time]').textContent = n.time;
-    $('[data-ampm]').textContent = n.ampm;
-    const wx = prefs.photoWeather ? weatherText : '';
-    $('[data-date]').textContent = prefs.photoClock ? (wx ? `${n.date} · ${wx}` : n.date) : wx;
-  }
-
-  // ---- Little messages at the top ("New photo from Grandma", "Photo removed") ----
+  // ---- Little messages at the bottom ("New photo from Priya", "Removed") ----
   let toastRun = null;
+  function hideToast() {
+    const t = $('[data-toast]');
+    t.style.opacity = '0';
+    t.style.pointerEvents = 'none';
+    toastRun = null;
+  }
   function toast(text, action) {
     const t = $('[data-toast]');
     t.innerHTML = `<span>${esc(text)}</span>${action ? `<button>${esc(action.label)}</button>` : ''}`;
@@ -241,524 +293,474 @@ export function mount(el, { homeRoute = 'home', args = [] } = {}) {
     clearTimeout(toastTimer);
     toastTimer = setTimeout(hideToast, action ? 15000 : 4500);
   }
-  function hideToast() {
-    const t = $('[data-toast]');
-    t.style.opacity = '0';
-    t.style.pointerEvents = 'none';
-    toastRun = null;
-  }
   $('[data-toast]').addEventListener('click', (e) => {
-    e.stopPropagation();
     if (e.target.closest('button') && toastRun) { const run = toastRun; hideToast(); run(); }
   });
 
-  // ---- Is anything holding the slideshow still? ----
-  const busy = () => held || albumOpen || askOpen || fullOpen;
+  // ---- Which photos are showing ----
+  const byPerson = (p) => who === null || keyOf(p.name) === who;
+  const byHome = (p) => homeFilter === 'all' || inRotation(p.id) === (homeFilter === 'on');
+  const visible = () => album.filter((p) => byPerson(p) && byHome(p));
+  const noun = (list) => {
+    const vids = list.filter((p) => p.video).length;
+    return vids === list.length && vids ? 'video' : vids ? 'photos and videos' : 'photo';
+  };
+  const count = (list) => (noun(list) === 'photos and videos' ? `${list.length} photos and videos` : plural(list.length, noun(list)));
 
-  /** Start the countdown to the next picture (unless something is holding it still). */
-  function schedule() {
-    clearTimeout(slideTimer);
-    const p = photos[index];
-    if (!p || busy() || photos.length < 2) return;
-    if (p.video) { if (videoGo) slideTimer = setTimeout(videoGo, VIDEO_MAX_MS); }
-    else slideTimer = setTimeout(next, slideMs());
+  // ---- The top: how many, and the rings ----
+  function renderCount() {
+    const thisWeek = weekStart(Date.now());
+    const fresh7 = album.filter((p) => (p.added || 0) >= thisWeek).length;
+    const onHome = album.filter((p) => inRotation(p.id)).length;
+    $('[data-count]').innerHTML = album.length
+      ? `<b>${esc(count(album))}${fresh7 ? ` · ${fresh7} new this week` : ''}</b><span>${onHome === album.length ? 'All of them show on Home' : `${onHome} on Home`}</span>`
+      : '';
+    $('[data-pick]').style.display = album.length ? '' : 'none';
+    const off = album.length - onHome;
+    const seg = $('[data-seg]');
+    seg.querySelector('[data-f="on"]').textContent = `On Home · ${onHome}`;
+    seg.querySelector('[data-f="off"]').textContent = `Not on Home · ${off}`;
+    [...seg.children].forEach((b) => b.classList.toggle('on', b.dataset.f === homeFilter));
   }
 
-  /** Stop the slow zoom while held or covered (no point drawing what nobody sees). */
-  function applyPaused() {
-    const still = busy();
-    [...slidesEl.children].forEach((s) => { s.style.animationPlayState = still ? 'paused' : ''; });
-    if (currentVideo) {
-      if (albumOpen) { try { currentVideo.pause(); } catch (e) { /* fine */ } }
-      else if (currentVideo.paused && !currentVideo.ended) currentVideo.play?.().catch(() => {});
-    }
-  }
-
-  // The soft, dark copy of the photo behind it. It used to be the photo itself with a live
-  // blur, which this tablet's graphics chip can't keep up with. A tiny drawing stretched
-  // over the screen looks the same and costs nothing.
-  function softBackdrop(canvas, img) {
-    const g = canvas.getContext('2d');
-    const s = Math.max(canvas.width / img.naturalWidth, canvas.height / img.naturalHeight);
-    const w = img.naturalWidth * s, h = img.naturalHeight * s;
-    g.drawImage(img, (canvas.width - w) / 2, (canvas.height - h) / 2, w, h);
-    g.fillStyle = 'rgba(14,17,22,.5)';
-    g.fillRect(0, 0, canvas.width, canvas.height);
-  }
-
-  // A file that won't open, and nothing else to move on to: say so instead of a blank screen.
-  function markBroken(slide, video) {
-    if (slide.querySelector('.ph-broken')) return;
-    const box = document.createElement('div');
-    box.className = 'ph-broken';
-    box.innerHTML = `<div class="display" style="font-size:36px;font-weight:500">${video ? 'This video won’t play' : 'This photo won’t open'}</div>
-      <div style="font-size:20px;color:#E6E9ED;line-height:1.4">It may not have arrived whole. Send it again from the phone${canRemove ? ', or take this one off with Remove at the top' : ''}.</div>`;
-    slide.appendChild(box);
-  }
-
-  /** Show photo `i`. `quick`: somebody tapped, so change at once instead of the slow fade. */
-  function show(i, quick) {
-    index = i;
-    const p = photos[i];
-    currentVideo = null; videoGo = null;
-    $('[data-empty]').style.display = 'none'; // (the album may have been empty a moment ago)
-    // Never more than the old picture and the new one (tapping through quickly used to pile them up).
-    while (slidesEl.children.length > 1) slidesEl.firstChild.remove();
-    // The clip that was playing stops now, not when its slide has faded out.
-    [...slidesEl.querySelectorAll('video')].forEach((v) => { try { v.pause(); } catch (e) { /* fine */ } });
-    const slide = document.createElement('div');
-    const pan = !p.video && prefs.photoZoom;
-    slide.className = `ph-slide ${quick ? 'quick ' : ''}${pan ? (i % 2 ? 'pan-b' : 'pan-a') : ''}`;
-    if (p.video) {
-      // Play the clip (muted until somebody taps for sound), full-frame over black. Advance when it ends.
-      slide.style.background = '#000';
-      const v = document.createElement('video');
-      v.src = encodeURI(p.src);
-      v.muted = true; v.autoplay = true; v.playsInline = true;
-      v.loop = held; // held: play it again and again instead of moving on
-      v.style.cssText = 'position:absolute;top:6%;right:6%;bottom:6%;left:6%;width:88%;height:88%;object-fit:contain';
-      // Move on when it ends, if it can't play, or after 70s at most (clips are ≤60s).
-      let moved = false;
-      const go = () => {
-        if (moved || !el.isConnected || slidesEl.lastChild !== slide || photos.length < 2 || busy()) return;
-        moved = true; next();
-      };
-      v.addEventListener('ended', go);
-      v.addEventListener('error', () => {
-        if (!el.isConnected || slidesEl.lastChild !== slide) return;
-        if (photos.length > 1 && ++broken < photos.length && !busy()) go();
-        else markBroken(slide, true);
-      });
-      v.addEventListener('playing', () => { broken = 0; });
-      slide.appendChild(v);
-      currentVideo = v; videoGo = go;
-      v.play?.().catch(() => {});
-    } else if (p.src) {
-      // Whole photo (portrait ones too) over a blurred, darkened copy of itself.
-      const u = `url('${encodeURI(p.src)}')`;
-      slide.style.background = '#2A3038';
-      slide.innerHTML = `
-        <canvas class="ph-back" width="64" height="40"></canvas>
-        <div style="position:absolute;top:6%;right:6%;bottom:6%;left:6%;background:${u} center/contain no-repeat"></div>`;
-      // A missing or damaged file would leave a blank grey screen for a whole minute: skip it.
-      const probe = new Image();
-      probe.onload = () => {
-        broken = 0;
-        try { softBackdrop(slide.firstElementChild, probe); } catch (err) { /* plain dark is fine */ }
-      };
-      probe.onerror = () => {
-        if (!el.isConnected || slidesEl.lastChild !== slide) return;
-        // Skip it, unless it's the only one, every one is broken, or somebody is looking at it on purpose.
-        if (photos.length > 1 && ++broken < photos.length && !busy()) next();
-        else markBroken(slide, false);
-      };
-      probe.src = encodeURI(p.src);
-    } else {
-      slide.style.cssText = slideBg(p);
-    }
-    if (pan) {
-      // The drift lasts as long as the picture stays, still at about five small steps a second.
-      const ms = slideMs() + 3000;
-      slide.style.animationDuration = `${ms}ms`;
-      slide.style.animationTimingFunction = `steps(${Math.max(40, Math.min(300, Math.round(ms / 210)))}, end)`;
-    }
-    slidesEl.appendChild(slide);
-    // Fade in on the next frame, then drop older slides once the fade is done.
-    requestAnimationFrame(() => requestAnimationFrame(() => slide.classList.add('on')));
-    clearTimeout(fadeTimer);
-    fadeTimer = setTimeout(() => {
-      while (slidesEl.children.length > 1 && slidesEl.firstChild !== slide) slidesEl.firstChild.remove();
-    }, quick ? 600 : 3000);
-
-    updateMeta();
-    applyPaused();
-    // Auto-advance: photos after their time is up; videos when they end (or 70 s at most).
-    schedule();
-
-    // Load the next photo in the background so it fades in whole, not half-drawn.
-    const up = photos.length > 1 && photos[(i + 1) % photos.length];
-    if (up && up.src && !up.video) { preload = new Image(); preload.src = encodeURI(up.src); }
-  }
-
-  /** Everything around the picture: caption, dots, buttons. (Also after the album changes.) */
-  function updateMeta() {
-    const p = photos[index];
-    // (Settings can hide who sent it and when, for a frame that is only pictures.)
-    const titleEl = $('[data-title]'), capEl = $('[data-caption]');
-    titleEl.textContent = p && prefs.photoCaptions ? p.title : '';
-    capEl.textContent = p && prefs.photoCaptions ? (p.line || '') : '';
-    $('[data-more-btn]').style.display = p && prefs.photoCaptions && (p.title || p.line) ? '' : 'none';
-    // "Read all" only when the words are cut off (measured once the text is laid out).
-    $('[data-more]').style.display = 'none';
-    requestAnimationFrame(() => {
-      if (!el.isConnected) return;
-      const cut = (e) => e.scrollHeight > e.clientHeight + 2;
-      $('[data-more]').style.display = cut(titleEl) || cut(capEl) ? 'block' : 'none';
+  /** Everyone who lives here, and everyone who has ever sent a photo. */
+  function renderRings() {
+    const thisWeek = weekStart(Date.now());
+    const map = {};
+    const order = [];
+    const add = (name, key) => {
+      if (!map[key]) { map[key] = { key, name, total: 0, week: 0, latest: null }; order.push(map[key]); }
+      return map[key];
+    };
+    people().forEach((p) => add(p.name, keyOf(p.name)));
+    album.forEach((p) => { // (newest first, so the first one seen is each person's latest)
+      const key = keyOf(p.name);
+      const r = add(key === HERE ? 'Taken here' : String(p.name).trim(), key);
+      r.total++;
+      if ((p.added || 0) >= thisWeek) r.week++;
+      if (!r.latest) r.latest = p;
     });
-    const dots = $('[data-dots]');
-    if (photos.length === 1) {
-      dots.textContent = 'The only photo so far';
-    } else if (photos.length <= MAX_DOTS) {
-      if (dots.children.length !== photos.length) dots.innerHTML = photos.map(() => '<div class="ph-dot"></div>').join('');
-      [...dots.children].forEach((d, j) => d.classList.toggle('on', j === index));
-    } else {
-      dots.textContent = `${index + 1} / ${photos.length}`;
+    // Whoever sent something this week comes first (most first); the rest stay in their order.
+    rings = order.map((r, i) => ({ r, i })).sort((a, b) => (b.r.week - a.r.week) || (a.i - b.i)).map((x) => x.r);
+    if (who !== null && !map[who]) who = null; // the person's last photo went
+    const top = rings[0] && rings[0].week > 0 && (!rings[1] || rings[1].week < rings[0].week) ? rings[0] : null;
+    const dash = (spin) => `<svg class="ga-dash${spin ? ' spin' : ''}" viewBox="0 0 96 96" aria-hidden="true"><circle cx="48" cy="48" r="45" fill="none" stroke="#E0663A" stroke-width="4" stroke-dasharray="40 14"/></svg>`;
+    const box = $('[data-rings]');
+    box.innerHTML = `<button class="ga-ring${who === null ? ' on' : ''}" data-ring="-1"><span class="ga-face all">All</span><span class="ga-rname">Everyone</span></button>`
+      + rings.map((r, i) => {
+        const face = r.key === HERE
+          ? '<span class="ga-face" data-face style="background-color:#22303F"></span>'
+          : (r.latest ? '<span class="ga-face" data-face></span>'
+            : `<span class="ga-face" style="background:none">${avatar(r.name, 78)}</span>`);
+        return `<button class="ga-ring${who === r.key ? ' on' : ''}${r.week ? '' : ' quiet'}" data-ring="${i}" aria-label="${esc(r.name)}: ${plural(r.total, 'photo')}">
+          ${r.week ? dash(r === top) : ''}${face}
+          <span class="ga-rname">${esc(r.name)}${r.week ? ` <i>${r.week}</i>` : ''}</span></button>`;
+      }).join('');
+    // Each ring shows that person's latest picture.
+    rings.forEach((r, i) => {
+      const face = box.querySelector(`[data-ring="${i}"] [data-face]`);
+      const p = r.latest;
+      if (!face || !p) return;
+      if (!r.week) face.classList.add('quiet');
+      if (!p.src) { if (p.art) face.style.background = p.art; return; }
+      if (p.video) return;
+      thumbnail(p.src, { w: 96, h: 96 }).then((url) => { if (url && face.isConnected) face.style.backgroundImage = `url(${url})`; });
+    });
+    renderNote(top);
+  }
+
+  // A kind line beside the rings: who sent the most this week, and (gently) who has gone quiet.
+  function renderNote(top) {
+    const parts = [];
+    if (top && rings.filter((r) => r.week).length > 1) parts.push(`<b>${esc(top.name)}</b> sent the most this week (${top.week}).`);
+    const now = Date.now();
+    const quiet = rings
+      .filter((r) => r.key !== HERE && r.latest && r.latest.added && now - r.latest.added > 30 * DAY)
+      .sort((a, b) => a.latest.added - b.latest.added)[0];
+    if (quiet) {
+      const since = new Date(quiet.latest.added).toLocaleDateString('en-US', { month: 'long' });
+      parts.push(`Nothing new from ${esc(quiet.name)} since ${since}. Maybe ask for one?`);
     }
-    el.querySelectorAll('[data-arrow]').forEach((a) => { a.style.display = photos.length > 1 ? 'flex' : 'none'; });
-    $('[data-remove]').style.display = canRemove && p && p.id ? '' : 'none';
-    $('[data-album-open]').style.display = photos.length ? '' : 'none';
-    $('[data-hold]').style.display = photos.length > 1 ? '' : 'none';
-    if (held && photos.length < 2) { held = false; clearTimeout(holdTimer); } // nothing left to hold back
-    // Videos: a sign that it is one, and a button to hear it.
-    $('[data-vbadge]').style.display = p && p.video ? 'flex' : 'none';
-    $('[data-sound]').style.display = p && p.video ? 'flex' : 'none';
-    renderSound();
-    renderHold();
+    if (!parts.length && album.length) parts.push('The house marks the photos that take their turn on Home.');
+    $('[data-note]').innerHTML = parts.join(' ');
   }
 
-  function next() { show((index + 1) % photos.length); }
-
-  /** One photo on (+1) or back (-1), saying so when it goes round to the other end. */
-  function step(d) {
-    if (photos.length < 2) return;
-    let j = index + d;
-    if (j >= photos.length) { j = 0; toast('Back to the first photo'); }
-    else if (j < 0) { j = photos.length - 1; toast('That was the first one. Here’s the last photo'); }
-    show(j, true);
-  }
-
-  // ---- Sound for videos (they start quiet: the frame may be playing to an empty kitchen) ----
-  function renderSound() {
-    const b = $('[data-sound]');
-    const on = currentVideo && !currentVideo.muted;
-    b.textContent = on ? '🔊 Sound on · tap for quiet' : '🔇 Tap for sound';
-  }
-  $('[data-sound]').addEventListener('click', (e) => {
-    e.stopPropagation();
-    const v = currentVideo;
-    if (!v) return;
-    v.muted = !v.muted;
-    if (!v.muted) {
-      const tried = v.play?.();
-      if (tried && tried.catch) tried.catch(() => { if (currentVideo === v) { v.muted = true; v.play?.().catch(() => {}); renderSound(); toast('The sound couldn’t start. Try once more'); } });
-    }
-    renderSound();
-  });
-
-  // ---- Hold: keep this picture up for a while ----
-  function renderHold() {
-    $('[data-hold]').textContent = held ? '▶ Carry on' : '⏸ Hold';
-    const badge = $('[data-held]');
-    badge.style.display = held ? 'flex' : 'none';
-  }
-  function setHeld(on) {
-    held = on;
-    clearTimeout(holdTimer);
-    if (on) {
-      const until = new Date(Date.now() + HOLD_MS);
-      $('[data-held]').textContent = `⏸ Held · moves on by itself at ${timeText(until)} · tap to carry on`;
-      holdTimer = setTimeout(() => { if (el.isConnected) setHeld(false); }, HOLD_MS);
-    }
-    if (currentVideo) currentVideo.loop = on;
-    renderHold();
-    applyPaused();
-    schedule();
-  }
-  $('[data-hold]').addEventListener('click', (e) => { e.stopPropagation(); setHeld(!held); });
-  $('[data-held]').addEventListener('click', (e) => { e.stopPropagation(); setHeld(false); });
-
-  // ---- The whole caption, when it's too long for the bottom corner ----
-  $('[data-more-btn]').addEventListener('click', (e) => {
-    e.stopPropagation();
-    const p = photos[index];
-    if (!p) return;
-    $('[data-full-title]').textContent = p.title || '';
-    $('[data-full-line]').textContent = p.line || '';
-    $('[data-full-count]').textContent = photos.length > 1 ? `Photo ${index + 1} of ${photos.length}` : '';
-    fullEl.style.display = 'flex';
-    fullOpen = true;
-    applyPaused(); schedule();
-  });
-  fullEl.addEventListener('click', (e) => {
-    e.stopPropagation();
-    if (e.target === fullEl || e.target.closest('[data-full-close]')) {
-      fullEl.style.display = 'none';
-      fullOpen = false;
-      applyPaused(); schedule();
-    }
-  });
-
-  // ---- Taking pictures off the screen (one here, or several from the album) ----
-  let askIds = [];
-  function openAsk(ids) {
-    askIds = ids;
-    const one = ids.length === 1 && photos.find((p) => p.id === ids[0]);
-    const vids = photos.filter((p) => ids.indexOf(p.id) >= 0 && p.video).length;
-    $('[data-ask-title]').textContent = ids.length === 1
-      ? (one && one.video ? 'Remove this video?' : 'Remove this photo?')
-      : `Remove these ${ids.length} ${vids === ids.length ? 'videos' : vids ? 'photos and videos' : 'photos'}?`;
-    $('[data-ask-line]').textContent = ids.length === 1 ? 'It comes off this screen for good.' : 'They come off this screen for good.';
-    $('[data-really]').textContent = ids.length === 1 ? 'Remove' : `Remove ${ids.length}`;
-    askEl.style.display = 'flex';
-    askOpen = true;
-    applyPaused(); schedule();
-  }
-  function closeAsk() {
-    askEl.style.display = 'none';
-    askOpen = false;
-    askIds = [];
-    applyPaused(); schedule(); // the pictures stood still while the question was up
-  }
-  $('[data-remove]').addEventListener('click', (e) => {
-    e.stopPropagation();
-    const p = photos[index];
-    if (p && p.id) openAsk([p.id]);
-  });
-  askEl.addEventListener('click', (e) => {
-    e.stopPropagation(); // not a tap on the photo
-    if (e.target.closest('[data-really]')) {
-      const ids = askIds.slice();
-      const many = ids.length > 1;
-      // (The album tells us it changed, and the frame and grid follow: see onPhotosChanged below.)
-      const gone = many ? removePhotos(ids) : (removePhoto(ids[0]) ? 1 : 0);
-      if (!gone) { $('[data-ask-line]').textContent = 'That didn’t work. Try again in a moment.'; return; }
-      closeAsk();
-      if (many) { picked = {}; setPicking(false); }
-      toast(gone === 1 ? (many ? '1 removed. The others couldn’t be' : 'Removed') : `${gone} removed${gone < ids.length ? `. ${ids.length - gone} couldn’t be` : ''}`);
-    } else if (e.target.closest('[data-keep]') || e.target === askEl) {
-      closeAsk();
-    }
-  });
-
-  // ---- The album: everything on the screen, as a grid ----
-  let picking = false;
-  let picked = {}; // id -> true
-  const albumOrder = () => photos.slice().sort((a, b) => (b.added || 0) - (a.added || 0)); // newest first, even when mixed up
-
+  // ---- The river ----
   function loadThumb(b) {
     if (b.__queued || b.__done) return;
     b.__queued = true;
-    thumbnail(b.__src, { w: TILE_W, h: TILE_H, wanted: () => el.isConnected && albumOpen && b.isConnected && b.__seen })
+    thumbnail(b.__src, { w: b.__w, h: b.__h, wanted: () => el.isConnected && b.isConnected && b.__seen })
       .then((url) => {
         b.__queued = false;
-        if (url === null || !b.isConnected) return; // scrolled past before its turn: tried again when it's back
+        if (url === null || !b.isConnected) return; // swiped past before its turn: tried again when it's back
         b.__done = true;
-        const t = b.firstElementChild;
-        if (url) t.style.backgroundImage = `url(${url})`;
-        else t.insertAdjacentHTML('beforeend', '<div class="ph-tbroken">This one won’t open</div>');
+        if (url) b.firstElementChild.style.backgroundImage = `url(${url})`;
+        else b.insertAdjacentHTML('beforeend', '<span class="ga-broken">This one won’t open</span>');
       });
   }
 
-  function tile(p) {
+  function tile(p, shape) {
     const b = document.createElement('button');
-    b.className = `ph-tile${photos[index] && photos[index].id === p.id ? ' cur' : ''}${picked[p.id] ? ' sel' : ''}`;
+    const on = inRotation(p.id);
+    b.className = `ga-tile${shape ? ` ${shape}` : ''}${on ? '' : ' off'}${picked[p.id] ? ' sel' : ''}${fresh[p.id] ? ' new' : ''}${lastSeen === p.id ? ' cur' : ''}`;
     b.__id = p.id;
-    const label = [p.day, p.name].filter(Boolean).join(' · ') || p.title || '';
-    b.innerHTML = `<div class="ph-thumb">${p.video ? '<div class="ph-tplay">▶</div>' : ''}<div class="ph-tick">✓</div></div><div class="ph-tlabel">${esc(label)}</div>`;
-    if (!p.src) b.firstElementChild.style.background = p.art || '#2A3038';
-    else if (!p.video) {
+    const name = String(p.name || '').trim();
+    const big = shape === 'hero' || shape === 'wide';
+    const words = [name, p.caption || (p.src ? '' : p.title)].filter(Boolean).join(' · ');
+    b.setAttribute('aria-label', `${p.video ? 'Video' : 'Photo'}${name ? ` from ${name}` : ''}, ${p.day || ''}. ${on ? 'Shows on Home' : 'Not on Home'}`);
+    b.innerHTML = `<span class="ga-img"></span>
+      <span class="ga-home"><span class="yes">${HOUSE}</span><span class="no">${HOUSE_OFF}</span></span>
+      ${p.video ? '<span class="ga-vid">▶ Video</span>' : ''}
+      <span class="ga-who">${name ? avatar(name, 36) : ''}${big && words ? `<span class="ga-chip">${esc(words)}</span>` : ''}</span>
+      <span class="ga-tick">✓</span>`;
+    const img = b.firstElementChild;
+    if (!p.src) img.style.background = p.art || '#2A3038';
+    else if (p.video) img.style.background = '#2A3038';
+    else {
       b.__src = p.src;
+      b.__w = big ? 432 : shape === 'tall' ? 216 : 252;
+      b.__h = shape === 'hero' ? 492 : shape === 'wide' ? 240 : shape === 'tall' ? 506 : 288;
       if (io) io.observe(b); else { b.__seen = true; loadThumb(b); }
     }
     return b;
   }
 
-  function renderAlbum(scrollToCurrent) {
+  function renderRiver(keepPlace) {
     const token = {};
-    renderAlbum.token = token;
+    renderRiver.token = token;
     if (io) io.disconnect();
     io = window.IntersectionObserver ? new IntersectionObserver((entries) => {
       entries.forEach((en) => { en.target.__seen = en.isIntersecting; if (en.isIntersecting) loadThumb(en.target); });
-    }, { root: gridEl, rootMargin: '240px 0px' }) : null;
-    const keep = gridEl.scrollTop;
-    gridEl.innerHTML = '';
-    const list = albumOrder();
-    const vids = list.filter((p) => p.video).length;
-    $('[data-album-title]').textContent = vids ? `All photos and videos (${list.length})` : `All photos (${list.length})`;
-    $('[data-album-sub]').textContent = list.length
-      ? `Newest first. Tap one to show it${canRemove ? ', or “Choose photos to remove” to take several off at once' : ''}.`
-      : 'Nothing on this screen yet.';
-    renderPicked();
+    }, { root: river, rootMargin: '0px 480px' }) : null;
+    const keep = keepPlace ? river.scrollLeft : 0;
+    river.innerHTML = '';
+    river.scrollLeft = 0;
+    const list = visible();
+
+    // Nothing at all, or nothing that fits what was asked for.
+    const empty = !album.length;
+    $('[data-empty]').style.display = empty ? 'flex' : 'none';
+    $('[data-none]').style.display = !empty && !list.length ? 'flex' : 'none';
+    river.style.display = list.length ? 'flex' : 'none';
+    $('[data-fade]').style.display = list.length ? '' : 'none';
+    root.querySelector('.ga-row').style.visibility = empty ? 'hidden' : '';
+    if (!empty && !list.length) {
+      const person = who !== null && rings.find((r) => r.key === who);
+      $('[data-none-title]').textContent = homeFilter === 'off'
+        ? (person ? `Every photo from ${person.name} is on Home` : 'Every photo is on Home')
+        : homeFilter === 'on' ? (person ? `None from ${person.name} are on Home` : 'No photos are on Home')
+          : 'No photos here';
+      $('[data-none-line]').textContent = homeFilter === 'on' && !person
+        ? 'Home shows its painted scene until some are. Tap a photo and switch “Shows on Home” on, or use Choose for several at once.'
+        : '';
+    }
+    $('[data-older]').style.opacity = '0';
+    $('[data-newest]').style.display = 'none';
+
+    // Week by week, newest on the left. The newest week leads with one big picture.
+    const thisWeek = weekStart(Date.now());
+    const weeks = [];
+    list.forEach((p) => {
+      const start = p.added ? weekStart(p.added) : 0;
+      const last = weeks[weeks.length - 1];
+      if (last && last.start === start) last.items.push(p); else weeks.push({ start, items: [p] });
+    });
+    const jobs = [];
+    // The grid has two rows. So that no week ends with a hole, its photos are laid in blocks:
+    // a wide one over (or under) two small ones, four small ones, two small ones, or one tall one.
+    weeks.forEach((w, wi) => {
+      const items = w.items.slice();
+      const put = (shape) => jobs.push({ w, p: items.shift(), shape });
+      if (wi === 0 && items.length !== 2) put('hero');
+      let k = 0;
+      while (items.length) {
+        const r = items.length;
+        if (r === 1) put('tall');
+        else if (r === 2) { put(''); put(''); }
+        else if (r === 3 || k % 2 === 0) {
+          if (k % 4 === 0) { put('wide'); put(''); put(''); } else { put(''); put('wide'); put(''); }
+        } else { put(''); put(''); put(''); put(''); }
+        k++;
+      }
+    });
     let at = 0;
     const chunk = () => {
-      if (renderAlbum.token !== token || alive !== visit || !albumOpen) return;
-      const frag = document.createDocumentFragment();
-      list.slice(at, at + CHUNK).forEach((p) => frag.appendChild(tile(p)));
+      if (renderRiver.token !== token || alive !== visit) return;
+      jobs.slice(at, at + CHUNK).forEach((j) => {
+        if (!j.w.grid) {
+          const box = document.createElement('div');
+          box.className = `ga-week${j.w.start === thisWeek ? ' now' : ''}`;
+          const label = j.w.start ? weekLabel(j.w.start, thisWeek) : 'Earlier';
+          box.innerHTML = `<div class="ga-wlabel">${esc(label)} · ${j.w.items.length}</div><div class="ga-grid"></div>`;
+          j.w.grid = box.lastElementChild;
+          river.appendChild(box);
+        }
+        j.w.grid.appendChild(tile(j.p, j.shape));
+      });
       at += CHUNK;
-      gridEl.appendChild(frag);
-      if (scrollToCurrent) {
-        const cur = gridEl.querySelector('.ph-tile.cur');
-        if (cur) { scrollToCurrent = false; gridEl.scrollTop = Math.max(0, cur.offsetTop - 160); }
-      } else if (keep && gridEl.scrollTop < keep) gridEl.scrollTop = keep;
-      if (at < list.length) setTimeout(chunk, 40);
+      if (keep && river.scrollLeft < keep) river.scrollLeft = keep;
+      if (at < jobs.length) setTimeout(chunk, 40);
+      else onScroll();
     };
     chunk();
   }
 
+  function onScroll() {
+    const x = river.scrollLeft;
+    const more = river.scrollWidth - river.clientWidth;
+    $('[data-older]').style.opacity = more > 40 && x < 40 && river.style.display !== 'none' ? '1' : '0';
+    $('[data-newest]').style.display = x > 1500 && river.style.display !== 'none' ? '' : 'none';
+  }
+  river.addEventListener('scroll', onScroll, { passive: true });
+  $('[data-newest]').addEventListener('click', () => { river.scrollLeft = 0; });
+
+  /** The house on every tile, after photos went on or off Home. */
+  function refreshTiles() {
+    river.querySelectorAll('.ga-tile').forEach((t) => {
+      t.classList.toggle('off', !inRotation(t.__id));
+      t.classList.toggle('sel', !!picked[t.__id]);
+      t.classList.toggle('cur', lastSeen === t.__id);
+    });
+  }
+
+  function renderAll(keepPlace) {
+    renderRings();
+    renderCount();
+    renderRiver(keepPlace);
+    renderPicked();
+  }
+
+  // ---- Rings and the Home filter ----
+  $('[data-rings]').addEventListener('click', (e) => {
+    const b = e.target.closest('[data-ring]');
+    if (!b) return;
+    const r = rings[+b.dataset.ring];
+    who = !r || who === r.key ? null : r.key; // a second tap on the same ring is "everyone" again
+    renderRings();
+    renderRiver(false);
+  });
+  $('[data-seg]').addEventListener('click', (e) => {
+    const b = e.target.closest('[data-f]');
+    if (!b) return;
+    homeFilter = b.dataset.f;
+    renderCount();
+    renderRiver(false);
+  });
+  $('[data-none-all]').addEventListener('click', () => { who = null; homeFilter = 'all'; renderAll(false); });
+
+  // ---- Choosing several ----
   function renderPicked() {
-    const n = Object.keys(picked).length;
-    $('[data-picked]').textContent = n ? `${plural(n, 'photo')} chosen` : 'Tap the photos to take off';
-    const btn = $('[data-pick-remove]');
-    btn.disabled = !n;
-    btn.textContent = n ? `Remove ${n}` : 'Remove';
-    $('[data-pick-all]').textContent = n && n === photos.length ? 'Choose none' : 'Choose all';
+    const ids = Object.keys(picked);
+    const n = ids.length;
+    const shown = visible();
+    $('[data-picked]').innerHTML = n
+      ? `${plural(n, 'photo')} chosen<small>${ids.filter((id) => inRotation(id)).length} of them on Home</small>`
+      : 'Tap the photos you want<small>Then show them on Home, take them off Home, or remove them.</small>';
+    const set = (sel, text) => { const b = $(sel); if (b) { b.disabled = !n; if (text) b.textContent = text; } };
+    set('[data-pick-on]');
+    set('[data-pick-off]');
+    set('[data-pick-remove]', n ? `Remove ${n}` : 'Remove');
+    $('[data-pick-all]').textContent = n && shown.every((p) => picked[p.id]) ? 'Choose none' : 'Choose all';
   }
   function setPicking(on) {
     picking = on;
     if (!on) picked = {};
-    albumEl.classList.toggle('picking', on);
-    [...gridEl.children].forEach((t) => t.classList.toggle('sel', !!picked[t.__id]));
+    root.classList.toggle('picking', on);
+    $('[data-pick]').style.visibility = on ? 'hidden' : '';
+    refreshTiles();
     renderPicked();
   }
-
-  function openAlbum() {
-    if (!photos.length) return;
-    albumOpen = true;
-    albumEl.style.display = 'block';
-    hideHint();
-    applyPaused(); schedule();
-    renderAlbum(true);
-  }
-  function closeAlbum() {
-    albumOpen = false;
-    setPicking(false);
-    albumEl.style.display = 'none';
-    if (io) { io.disconnect(); io = null; }
-    gridEl.innerHTML = ''; // the small pictures are kept (tablet-photos.js); the tiles needn't be
-    applyPaused(); schedule();
-  }
-  $('[data-album-open]').addEventListener('click', (e) => { e.stopPropagation(); openAlbum(); });
-  albumEl.addEventListener('click', (e) => {
-    e.stopPropagation(); // never a tap on the photo behind
-    const t = e.target.closest('.ph-tile');
-    if (t) {
-      if (picking) {
-        if (picked[t.__id]) delete picked[t.__id]; else picked[t.__id] = true;
-        t.classList.toggle('sel', !!picked[t.__id]);
-        renderPicked();
-        return;
-      }
-      const i = photos.findIndex((p) => p.id === t.__id);
-      closeAlbum();
-      if (i >= 0) show(i, true);
-      return;
-    }
-    if (e.target.closest('[data-album-close]')) closeAlbum();
-    else if (e.target.closest('[data-pick]')) setPicking(!picking);
-    else if (e.target.closest('[data-pick-cancel]')) setPicking(false);
-    else if (e.target.closest('[data-pick-all]')) {
-      const all = Object.keys(picked).length === photos.length;
-      picked = {};
-      if (!all) photos.forEach((p) => { picked[p.id] = true; });
-      setPicking(true);
-    } else if (e.target.closest('[data-pick-remove]')) {
-      const ids = Object.keys(picked);
-      if (ids.length) openAsk(ids);
-    }
+  $('[data-pick]').addEventListener('click', () => setPicking(true));
+  $('[data-pick-done]').addEventListener('click', () => setPicking(false));
+  $('[data-pick-all]').addEventListener('click', () => {
+    const shown = visible();
+    const all = shown.length && shown.every((p) => picked[p.id]);
+    picked = {};
+    if (!all) shown.forEach((p) => { picked[p.id] = true; });
+    refreshTiles();
+    renderPicked();
   });
-
-  // ---- First steps ----
-  function hideHint() { clearTimeout(hintTimer); $('[data-hint]').style.opacity = '0'; }
-  function showHint() {
-    const h = $('[data-hint]');
-    h.textContent = photos.length > 1 ? 'Tap the sides (or swipe) for other photos · Tap the middle for Home' : 'Tap anywhere for Home';
-    h.style.opacity = '1';
-    clearTimeout(hintTimer);
-    hintTimer = setTimeout(hideHint, 7000);
-  }
-
-  function start(at = 0) {
-    clearTimeout(slideTimer);
-    $('[data-empty]').style.display = photos.length ? 'none' : 'flex';
-    if (!photos.length) {
-      slidesEl.innerHTML = '';
-      currentVideo = null; videoGo = null;
-      if (held) setHeld(false);
-      if (albumOpen) closeAlbum();
-      index = 0;
-      updateMeta();
-      $('[data-more-btn]').style.display = 'none';
-      $('[data-dots]').innerHTML = '';
-      hideHint();
-      return;
-    }
-    show(Math.max(0, Math.min(at, photos.length - 1)));
-  }
-
-  // Opened at a particular photo (#/photos/show/<id>), or straight into the album (#/photos/album).
-  const wantId = args[0] === 'show' ? args[1] : null;
-  const startAt = wantId ? photos.findIndex((p) => p.id === wantId) : 0;
-  start(startAt > 0 ? startAt : 0);
-  if (args[0] === 'album') openAlbum();
-  else if (photos.length) showHint();
-  clockTimer = setInterval(renderDate, 10000);
-
-  // A phone just sent photos, or some were removed (here or from the phone page).
-  offPhotos = onPhotosChanged(() => {
-    if (!el.isConnected) return;
-    const cur = photos[index] && photos[index].id;
-    const had = {};
-    photos.forEach((p) => { had[p.id] = true; });
-    const fresh = loadAlbum();
-    const still = {};
-    fresh.forEach((p) => { still[p.id] = true; });
-    const arrived = fresh.filter((p) => !had[p.id]).sort((a, b) => (b.added || 0) - (a.added || 0));
-    // Mixed up: keep the order the others were already in, with the new ones first.
-    photos = prefs.photoShuffle ? arrived.concat(photos.filter((p) => still[p.id])) : fresh;
-    Object.keys(picked).forEach((id) => { if (!still[id]) delete picked[id]; });
-    if (askOpen && askIds.some((id) => !still[id])) closeAsk(); // what it asked about is gone already
-    if (!photos.length) { start(); return; }
-
-    const curAt = photos.findIndex((p) => p.id === cur);
-    if (arrived.length) {
-      const names = [...new Set(arrived.map((p) => p.name).filter(Boolean))];
-      const vids = arrived.filter((p) => p.video).length;
-      const what = arrived.length === 1 ? (vids ? 'New video' : 'New photo') : `${arrived.length} new ${vids === arrived.length ? 'videos' : vids ? 'photos and videos' : 'photos'}`;
-      const text = `${what}${names.length === 1 ? ` from ${names[0]}` : ''}`;
-      if (busy() && curAt >= 0) {
-        // Somebody is looking at something on purpose: don't snatch it away, offer it instead.
-        index = curAt;
-        updateMeta();
-        const firstNew = arrived[0].id;
-        toast(text, { label: 'Show', run: () => {
-          if (albumOpen) closeAlbum();
-          if (held) setHeld(false);
-          const i = photos.findIndex((p) => p.id === firstNew);
-          show(i >= 0 ? i : 0, true);
-        } });
-      } else {
-        show(photos.findIndex((p) => p.id === arrived[0].id), true);
-        toast(text);
-      }
-    } else if (curAt >= 0) {
-      index = curAt; // the one on screen is still here: carry on with it
-      updateMeta();
-    } else {
-      show(Math.min(index, photos.length - 1), true); // it was removed: the next one takes its place
-    }
-    if (albumOpen) renderAlbum(false);
-  });
-
-  // Tap the left or right side to go back / forward a photo; tap the middle to go home.
-  const onTap = (e) => {
-    if (e.target.closest('a, button, [data-album], [data-ask], [data-full], [data-toast]')) return;
-    const r = $('[data-root]').getBoundingClientRect();
-    const x = (e.clientX - r.left) / r.width;
-    if (photos.length > 1 && x < 0.22) step(-1);
-    else if (photos.length > 1 && x > 0.78) step(1);
-    else location.hash = `#/${homeRoute}`;
+  const putOnHome = (on) => {
+    const ids = Object.keys(picked);
+    if (!ids.length) return;
+    picked = {};
+    setRotation(ids, on); // (the screen follows: see onRotationChanged below)
+    refreshTiles();
+    renderPicked();
+    toast(on ? `${plural(ids.length, 'photo')} will show on Home` : `${plural(ids.length, 'photo')} taken off Home. ${ids.length === 1 ? 'It stays' : 'They stay'} in the Gallery`);
   };
-  $('[data-root]').addEventListener('click', onTap);
+  $('[data-pick-on]').addEventListener('click', () => putOnHome(true));
+  $('[data-pick-off]').addEventListener('click', () => putOnHome(false));
+  if (canRemove) $('[data-pick-remove]').addEventListener('click', () => { const ids = Object.keys(picked); if (ids.length) openAsk(ids); });
 
-  // A swipe left or right works too (a finger that moves is never a tap, so it never goes Home).
+  river.addEventListener('click', (e) => {
+    const t = e.target.closest('.ga-tile');
+    if (!t) return;
+    if (picking) {
+      if (picked[t.__id]) delete picked[t.__id]; else picked[t.__id] = true;
+      t.classList.toggle('sel', !!picked[t.__id]);
+      renderPicked();
+      return;
+    }
+    openViewer(t.__id);
+  });
+
+  // ---- The big viewer ----
+  function markBroken(video) {
+    if (stage.querySelector('.ga-wont')) return;
+    const box = document.createElement('div');
+    box.className = 'ga-wont';
+    box.innerHTML = `<div style="font:500 36px Outfit,sans-serif">${video ? 'This video won’t play' : 'This photo won’t open'}</div>
+      <div style="font-size:20px;color:#E6E9ED;line-height:1.4">It may not have arrived whole. Send it again from the phone${canRemove ? ', or take this one off with Remove at the top' : ''}.</div>`;
+    stage.appendChild(box);
+  }
+
+  function renderSound() {
+    const b = $('[data-vsound]');
+    b.style.display = vVideo ? '' : 'none';
+    b.textContent = vVideo && !vVideo.muted ? '🔊 Sound on · tap for quiet' : '🔇 Tap for sound';
+  }
+  $('[data-vsound]').addEventListener('click', () => {
+    const v = vVideo;
+    if (!v) return;
+    v.muted = !v.muted;
+    if (!v.muted) {
+      const tried = v.play && v.play();
+      if (tried && tried.catch) tried.catch(() => { if (vVideo === v) { v.muted = true; if (v.play) v.play().catch(() => {}); renderSound(); toast('The sound couldn’t start. Try once more'); } });
+    }
+    renderSound();
+  });
+
+  function stopVideo() {
+    if (vVideo) { try { vVideo.pause(); vVideo.removeAttribute('src'); vVideo.load(); } catch (e) { /* fine */ } }
+    vVideo = null;
+  }
+
+  function renderHomeSwitch() {
+    const p = vList[vIndex];
+    if (!p) return;
+    const on = inRotation(p.id);
+    const b = $('[data-vhome]');
+    b.classList.toggle('on', on);
+    b.setAttribute('aria-checked', on ? 'true' : 'false');
+    $('[data-vhome-text]').textContent = on ? 'Shows on Home' : 'Not on Home';
+  }
+
+  function showAt(i) {
+    vIndex = i;
+    const p = vList[i];
+    if (!p) return;
+    lastSeen = p.id;
+    if (fresh[p.id]) delete fresh[p.id]; // seen now
+    stopVideo();
+    stage.innerHTML = '';
+    if (p.video && p.src) {
+      // Plays at once, quiet until somebody taps for sound, again and again until they move on.
+      const v = document.createElement('video');
+      v.src = encodeURI(p.src);
+      v.muted = true; v.autoplay = true; v.playsInline = true; v.loop = true;
+      v.addEventListener('error', () => { if (vVideo === v) markBroken(true); });
+      stage.appendChild(v);
+      vVideo = v;
+      const tried = v.play && v.play();
+      if (tried && tried.catch) tried.catch(() => {});
+    } else if (p.src) {
+      const pic = document.createElement('div');
+      pic.className = 'ga-pic';
+      pic.style.backgroundImage = `url('${encodeURI(p.src)}')`;
+      stage.appendChild(pic);
+      const probe = new Image();
+      probe.onerror = () => { if (el.isConnected && viewing && vList[vIndex] === p) markBroken(false); };
+      probe.src = encodeURI(p.src);
+    } else {
+      // (A sample picture, in a normal browser.)
+      const pic = document.createElement('div');
+      pic.className = 'ga-pic art';
+      pic.style.background = p.art || '#2A3038';
+      stage.appendChild(pic);
+      if (p.video) stage.insertAdjacentHTML('beforeend', '<div class="ga-sample"><span>▶ A video plays here on the kitchen screen</span></div>');
+    }
+    const name = String(p.name || '').trim();
+    $('[data-vwho]').innerHTML = name ? avatar(name, 64) : '';
+    const bar = $('[data-vbar]');
+    bar.classList.remove('open');
+    const titleEl = $('[data-vtitle]');
+    titleEl.textContent = p.title || '';
+    $('[data-vline]').textContent = p.line || '';
+    // "Read all" only when the words are cut off (measured once the text is laid out).
+    $('[data-vmore]').style.display = 'none';
+    requestAnimationFrame(() => {
+      if (!el.isConnected || vList[vIndex] !== p) return;
+      $('[data-vmore]').style.display = titleEl.scrollHeight > titleEl.clientHeight + 2 ? 'inline-block' : 'none';
+    });
+    $('[data-vcount]').textContent = vList.length > 1 ? `${p.video ? 'Video' : 'Photo'} ${i + 1} of ${vList.length}` : (p.video ? 'The only video here' : 'The only photo here');
+    el.querySelectorAll('.ga-arrow').forEach((a) => { a.style.display = vList.length > 1 ? 'flex' : 'none'; });
+    renderSound();
+    renderHomeSwitch();
+    // The next one, ready before it is asked for.
+    const up = vList.length > 1 && vList[(i + 1) % vList.length];
+    if (up && up.src && !up.video) { preload = new Image(); preload.src = encodeURI(up.src); }
+  }
+
+  function openViewer(id) {
+    vList = visible();
+    let i = vList.findIndex((p) => p.id === id);
+    if (i < 0) { vList = album.slice(); i = vList.findIndex((p) => p.id === id); } // (hidden by a filter)
+    if (i < 0) return false;
+    viewing = true;
+    viewEl.style.display = 'block';
+    showAt(i);
+    return true;
+  }
+  function closeViewer() {
+    viewing = false;
+    stopVideo();
+    stage.innerHTML = '';
+    viewEl.style.display = 'none';
+    refreshTiles();
+    river.querySelectorAll('.ga-tile.new').forEach((t) => { if (!fresh[t.__id]) t.classList.remove('new'); });
+    // Back in the river where that photo is.
+    const cur = river.querySelector('.ga-tile.cur');
+    if (cur) {
+      const a = cur.getBoundingClientRect(), r = river.getBoundingClientRect();
+      if (a.left < r.left || a.right > r.right) river.scrollLeft += (a.left - r.left) * (river.clientWidth / r.width) - 300;
+    }
+  }
+  /** One on (+1) or back (-1), saying so when it goes round to the other end. */
+  function step(d) {
+    if (vList.length < 2) return;
+    let j = vIndex + d;
+    if (j >= vList.length) { j = 0; toast('Back to the newest one'); }
+    else if (j < 0) { j = vList.length - 1; toast('That was the newest. Here’s the oldest one'); }
+    showAt(j);
+  }
+  $('[data-vclose]').addEventListener('click', closeViewer);
+  $('[data-vprev]').addEventListener('click', () => step(-1));
+  $('[data-vnext]').addEventListener('click', () => step(1));
+  $('[data-vcap]').addEventListener('click', () => {
+    const bar = $('[data-vbar]');
+    if ($('[data-vmore]').style.display === 'none' && !bar.classList.contains('open')) return; // nothing more to read
+    const open = bar.classList.toggle('open');
+    $('[data-vmore]').textContent = open ? 'Show less' : 'Read all ›';
+    if (!open) $('[data-vmore]').style.display = 'inline-block';
+  });
+  $('[data-vhome]').addEventListener('click', () => {
+    const p = vList[vIndex];
+    if (!p) return;
+    const on = !inRotation(p.id);
+    setRotation(p.id, on);
+    toast(on ? 'It will take its turn on Home' : 'Taken off Home. It stays in the Gallery');
+  });
+  if (canRemove) $('[data-vremove]').addEventListener('click', () => { const p = vList[vIndex]; if (p && p.id) openAsk([p.id]); });
+
+  // A swipe left or right works too.
   let sx = null, sy = 0, st = 0;
-  const root = $('[data-root]');
-  root.addEventListener('touchstart', (e) => {
+  viewEl.addEventListener('touchstart', (e) => {
     sx = null;
-    if (e.touches.length !== 1 || busy() || e.target.closest('[data-album], [data-ask], [data-full]')) return;
+    if (e.touches.length !== 1 || e.target.closest('.ga-vbar, .ga-vtop')) return;
     sx = e.touches[0].clientX; sy = e.touches[0].clientY; st = Date.now();
   }, { passive: true });
-  root.addEventListener('touchend', (e) => {
+  viewEl.addEventListener('touchend', (e) => {
     if (sx == null) return;
     const t = e.changedTouches[0];
     const dx = t.clientX - sx, dy = t.clientY - sy;
@@ -767,32 +769,108 @@ export function mount(el, { homeRoute = 'home', args = [] } = {}) {
     if (Math.abs(dx) > 70 * wide && Math.abs(dx) > Math.abs(dy) * 1.5 && Date.now() - st < 900) step(dx < 0 ? 1 : -1);
   }, { passive: true });
 
-  // The frame can stay up all day, so keep the temperature fresh (the weather service caches it).
-  const loadWeather = async () => {
-    try {
-      const w = await getWeather(await getLocation());
-      if (!el.isConnected) return;
-      weatherText = `${w.temp}° ${describe(w.code).label}`;
-      renderDate();
-    } catch (err) {
-      console.error(err);
-    }
-  };
-  if (prefs.photoWeather) { // (not fetched at all when the owner switched it off)
-    loadWeather();
-    weatherTimer = setInterval(loadWeather, 15 * 60 * 1000);
+  // ---- Taking pictures off this screen for good (one in the viewer, or several chosen) ----
+  function openAsk(ids) {
+    askIds = ids;
+    const these = album.filter((p) => ids.indexOf(p.id) >= 0);
+    const vids = these.filter((p) => p.video).length;
+    $('[data-ask-title]').textContent = ids.length === 1
+      ? (vids ? 'Remove this video?' : 'Remove this photo?')
+      : `Remove these ${ids.length} ${vids === ids.length ? 'videos' : vids ? 'photos and videos' : 'photos'}?`;
+    $('[data-ask-line]').textContent = `${ids.length === 1 ? 'It comes' : 'They come'} off this screen for good. To only stop ${ids.length === 1 ? 'it' : 'them'} showing on Home, use “${ids.length === 1 ? 'Shows on Home' : 'Take off Home'}” instead.`;
+    $('[data-really]').textContent = ids.length === 1 ? 'Remove' : `Remove ${ids.length}`;
+    askEl.style.display = 'flex';
   }
+  function closeAsk() {
+    askEl.style.display = 'none';
+    askIds = [];
+  }
+  askEl.addEventListener('click', (e) => {
+    if (e.target.closest('[data-really]')) {
+      const ids = askIds.slice();
+      const many = ids.length > 1;
+      // (The album tells us it changed, and everything follows: see onPhotosChanged below.)
+      const gone = many ? removePhotos(ids) : (removePhoto(ids[0]) ? 1 : 0);
+      if (!gone) { $('[data-ask-line]').textContent = 'That didn’t work. Try again in a moment.'; return; }
+      closeAsk();
+      if (picking) { picked = {}; renderPicked(); }
+      toast(gone === 1 ? (many ? '1 removed. The others couldn’t be' : 'Removed') : `${gone} removed${gone < ids.length ? `. ${ids.length - gone} couldn’t be` : ''}`);
+    } else if (e.target.closest('[data-keep]') || e.target === askEl) {
+      closeAsk();
+    }
+  });
+
+  stopView = stopVideo; // (a clip must not play on after the Gallery is left)
+
+  // ---- Start ----
+  // (Photos that have gone needn't be remembered as "not on Home". Never with an empty
+  // album: a list that failed to load must not wipe what the household chose.)
+  const tidy = () => { if (album.length) tidyRotation(album.map((p) => p.id)); };
+  tidy();
+  renderAll(false);
+  if (args[0] === 'show' && album.length) openViewer(args[1] === 'newest' ? album[0].id : args[1]);
+  else if (args[0] === 'choose' && album.length) setPicking(true);
+
+  // Photos went on or off Home (here, or by a choice made elsewhere).
+  offRotation = onRotationChanged(() => {
+    if (!el.isConnected) return;
+    renderCount();
+    renderPicked();
+    if (viewing) renderHomeSwitch();
+    if (homeFilter === 'all' || viewing) refreshTiles(); else renderRiver(true);
+  });
+
+  // A phone just sent photos, or some were removed (here or from the phone page).
+  offPhotos = onPhotosChanged(() => {
+    if (!el.isConnected) return;
+    const had = {};
+    album.forEach((p) => { had[p.id] = true; });
+    album = loadAlbum();
+    const still = {};
+    album.forEach((p) => { still[p.id] = true; });
+    const arrived = album.filter((p) => !had[p.id]);
+    arrived.forEach((p) => { fresh[p.id] = true; });
+    Object.keys(picked).forEach((id) => { if (!still[id]) delete picked[id]; });
+    Object.keys(fresh).forEach((id) => { if (!still[id]) delete fresh[id]; });
+    if (askIds.length && askIds.some((id) => !still[id])) closeAsk(); // what it asked about is gone already
+    tidy();
+    if (!album.length && picking) setPicking(false);
+
+    if (viewing) {
+      // Keep the one being looked at; if it was removed, the next one takes its place.
+      const cur = vList[vIndex] && vList[vIndex].id;
+      vList = vList.filter((p) => still[p.id]);
+      const at = vList.findIndex((p) => p.id === cur);
+      if (!vList.length) closeViewer();
+      else if (at >= 0) { vIndex = at; $('[data-vcount]').textContent = vList.length > 1 ? `${vList[at].video ? 'Video' : 'Photo'} ${at + 1} of ${vList.length}` : ''; }
+      else showAt(Math.min(vIndex, vList.length - 1));
+    }
+    renderAll(!arrived.length || viewing || picking);
+
+    if (arrived.length) {
+      const names = [...new Set(arrived.map((p) => p.name).filter(Boolean))];
+      const vids = arrived.filter((p) => p.video).length;
+      const what = arrived.length === 1 ? (vids ? 'New video' : 'New photo') : `${arrived.length} new ${vids === arrived.length ? 'videos' : vids ? 'photos and videos' : 'photos'}`;
+      const text = `${what}${names.length === 1 ? ` from ${names[0]}` : ''}`;
+      const firstNew = arrived[0].id;
+      // Somebody may be looking at something on purpose: don't snatch it away, offer it instead.
+      toast(text, { label: 'Show', run: () => {
+        if (picking) setPicking(false);
+        if (viewing) closeViewer();
+        who = null; homeFilter = 'all';
+        renderAll(false);
+        openViewer(firstNew);
+      } });
+    }
+  });
 }
 
 export function unmount() {
   alive = null;
-  clearInterval(clockTimer);
-  clearInterval(weatherTimer);
-  clearTimeout(slideTimer);
-  clearTimeout(fadeTimer);
-  clearTimeout(holdTimer);
   clearTimeout(toastTimer);
-  clearTimeout(hintTimer);
   if (io) { io.disconnect(); io = null; }
-  offPhotos?.();
+  if (stopCodes) { stopCodes(); stopCodes = null; }
+  if (stopView) { stopView(); stopView = null; }
+  if (offPhotos) { offPhotos(); offPhotos = null; }
+  if (offRotation) { offRotation(); offRotation = null; }
 }

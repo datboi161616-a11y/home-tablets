@@ -74,8 +74,8 @@ async function download(loc) {
     wind_speed_unit: metric() ? 'kmh' : 'mph',
     precipitation_unit: metric() ? 'mm' : 'inch',
     current: 'temperature_2m,apparent_temperature,weather_code,wind_speed_10m,wind_direction_10m,wind_gusts_10m,relative_humidity_2m,is_day',
-    hourly: 'temperature_2m,weather_code,precipitation_probability,snowfall,precipitation,is_day,wind_speed_10m',
-    daily: 'weather_code,temperature_2m_max,temperature_2m_min,sunrise,sunset,precipitation_probability_max,snowfall_sum,precipitation_sum,wind_speed_10m_max,wind_gusts_10m_max,wind_direction_10m_dominant,uv_index_max',
+    hourly: 'temperature_2m,apparent_temperature,weather_code,precipitation_probability,snowfall,precipitation,is_day,wind_speed_10m',
+    daily: 'weather_code,temperature_2m_max,temperature_2m_min,sunrise,sunset,precipitation_probability_max,snowfall_sum,precipitation_sum,wind_speed_10m_max,wind_gusts_10m_max,wind_direction_10m_dominant,uv_index_max,daylight_duration',
     forecast_days: 7,
   });
   const res = await fetch(url, { signal: AbortSignal.timeout(10000) });
@@ -124,6 +124,7 @@ async function download(loc) {
       wet: pick(H.precipitation, i) || 0,   // rain + melted snow, in rainUnit
       snow: pick(H.snowfall, i) || 0,       // in snowUnit
       wind: round(pick(H.wind_speed_10m, i)),
+      feels: round(pick(H.apparent_temperature, i)), // (null in a copy saved before this was asked for)
     })),
     days: D.time.map((t, i) => ({
       date: t,
@@ -139,6 +140,7 @@ async function download(loc) {
       gusts: round(pick(D.wind_gusts_10m_max, i)),
       dir: pick(D.wind_direction_10m_dominant, i),
       uv: pick(D.uv_index_max, i),
+      light: pick(D.daylight_duration, i),  // seconds of daylight, to the second (may be missing)
     })),
   };
   try { localStorage.setItem(CACHE_KEY, JSON.stringify(result)); } catch (e) { /* storage full: still show it */ }
@@ -330,4 +332,87 @@ export function advice(f) {
   else if (strongSun && !cold[3]) parts.push('Strong sun: wear sunscreen.');
   else if (sky === 'sun' && f.isDay) parts.push('Sunglasses weather.');
   return parts.join(' ');
+}
+
+// ---------------------------------------------------------------------------------------
+// Daylight (the Weather screen's sun panel): all of it from the forecast's own sunrise
+// and sunset times, so it is right for the town the forecast is for.
+// ---------------------------------------------------------------------------------------
+const MIN = 60000;
+const stamp = (iso) => (iso ? new Date(iso).getTime() : NaN);
+/** Seconds of daylight on a forecast day (the precise figure when the forecast has it). */
+export function dayLight(d) {
+  if (!d) return null;
+  if (num(d.light) != null && d.light > 0) return d.light;
+  const a = stamp(d.sunrise), b = stamp(d.sunset);
+  return isFinite(a) && isFinite(b) && b > a ? (b - a) / 1000 : null;
+}
+
+/** "9 h 41 min", "12 min", "1 h" */
+export function spanText(ms) {
+  const min = Math.max(0, Math.round(ms / MIN));
+  const h = Math.floor(min / 60), m = min % 60;
+  if (!h) return `${m} min`;
+  return m ? `${h} h ${m} min` : `${h} h`;
+}
+
+// The next solstice (Meeus' mean formula: right to within a quarter of an hour).
+function nextSolstice(now) {
+  const of = (year, june) => {
+    const y = (year - 2000) / 1000;
+    const jde = june
+      ? 2451716.56767 + 365241.62603 * y + 0.00325 * y * y + 0.00888 * y * y * y - 0.0003 * y * y * y * y
+      : 2451900.05952 + 365242.74049 * y - 0.06223 * y * y - 0.00823 * y * y * y + 0.00032 * y * y * y * y;
+    return { at: (jde - 2440587.5) * 86400000, june };
+  };
+  const y = new Date(now).getFullYear();
+  // (Still "ahead" on the day itself.)
+  return [of(y, true), of(y, false), of(y + 1, true)].find((s) => s.at > now - 12 * 3600000);
+}
+
+/**
+ * Where the sun is in its day, from the saved forecast:
+ * {
+ *   up            is the sun up right now
+ *   sunrise, sunset   today's (ISO), and `next`: { sunrise, sunset } for tomorrow if known
+ *   frac          0..1 of the way from sunrise to sunset (below 0 before, above 1 after)
+ *   left          ms of daylight left (while up), untilRise: ms until the next sunrise (while down; null if unknown)
+ *   golden        the last hour of light
+ *   light         seconds of daylight today
+ *   perDay        seconds each day gains (+) or loses (-), averaged over the forecast's days; null if unknown
+ *   week          [{ date, light }] for the little bars
+ *   solstice      { at (ms), days, shortest (true: the shortest day, false: the longest) }
+ * }
+ * or null when the forecast has no sun times for today.
+ */
+export function sunInfo(f, now = Date.now()) {
+  const today = isoDay(new Date(now));
+  const days = (f && f.days) || [];
+  const i = days.findIndex((d) => d.date === today);
+  const d = i >= 0 ? days[i] : null;
+  const rise = stamp(d ? d.sunrise : f && f.sunrise), set = stamp(d ? d.sunset : f && f.sunset);
+  if (!isFinite(rise) || !isFinite(set) || set <= rise || isoDay(new Date(set)) !== today) return null;
+  const next = i >= 0 && days[i + 1] && days[i + 1].sunrise ? days[i + 1] : null;
+  const up = now >= rise && now < set;
+  const untilRise = now < rise ? rise - now : next && isFinite(stamp(next.sunrise)) ? stamp(next.sunrise) - now : null;
+  const week = days.slice(Math.max(0, i)).map((x) => ({ date: x.date, light: dayLight(x) })).filter((x) => x.light != null);
+  const perDay = week.length >= 2 ? (week[week.length - 1].light - week[0].light) / (week.length - 1) : null;
+  const sol = nextSolstice(now);
+  const north = !(f && typeof f.lat === 'number' && f.lat < 0);
+  const midnight = new Date(now); midnight.setHours(0, 0, 0, 0);
+  const solDay = new Date(sol.at); solDay.setHours(0, 0, 0, 0);
+  return {
+    up,
+    sunrise: d ? d.sunrise : f.sunrise,
+    sunset: d ? d.sunset : f.sunset,
+    next: next ? { sunrise: next.sunrise, sunset: next.sunset } : null,
+    frac: (now - rise) / (set - rise),
+    left: up ? set - now : 0,
+    untilRise: up ? null : untilRise,
+    golden: up && set - now <= 60 * MIN,
+    light: dayLight(d || { sunrise: f.sunrise, sunset: f.sunset }),
+    perDay,
+    week,
+    solstice: { at: sol.at, days: Math.round((solDay - midnight) / 86400000), shortest: sol.june !== north },
+  };
 }

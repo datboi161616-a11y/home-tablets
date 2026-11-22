@@ -4,9 +4,13 @@ A custom home-screen "OS" for six Lenovo Tab M10 FHD Plus (TB-X606FA) tablets, e
 one a kitchen smart display for one household. Plain HTML/CSS/JavaScript: no build
 step, no frameworks, free to host.
 
-- **Family tablets (×5):** home dashboard, photo frame, recipes (about 1,000) with a
-  cooking mode, week plan and grocery list, kitchen timers, calendar, weather, message
-  board, camera, the household's own apps, night clock, and a first-start showcase tour.
+- **Kitchen screens (×5; four go to couples, one to a family of five):** Home (a
+  full-screen photo frame with the time; its buttons slip away when it is left alone),
+  the Gallery, camera, recipes (about 1,000) with a cooking mode, week plan and grocery
+  list, kitchen timers, calendar, weather, message board, the household's own apps,
+  night clock, and a first start that asks for the household's name and then gives a
+  showcase tour. Nothing in the wording assumes a family, and there are no child
+  controls: the PIN and the 5-second corner hold are how the owner leaves kiosk mode.
 - **Tom's tablet:** flight deck, planes overhead, departures, trivia, sky alert, space
   missions, tonight's sky, space image, starfield, and its own showcase tour.
 
@@ -58,12 +62,13 @@ python tools/sim/serve.py
 (Not `python -m http.server`: with that, a reload right after an edit can quietly reuse
 the old files.)
 
-Then open http://localhost:5173 (Family) or http://localhost:5173/?profile=tom (Tom).
+Then open http://localhost:5173 (a kitchen screen) or http://localhost:5173/?profile=tom (Tom).
 
 ## Tablet profile
 
 Each tablet remembers its profile. Open the site once with `?profile=tom` or
-`?profile=family`; it is stored on the device after that.
+`?profile=family` (the kitchen screens; the profile's name is older than the wording);
+it is stored on the device after that.
 
 ## Layout
 
@@ -106,9 +111,9 @@ adsbdb (flight routes), NOAA SWPC (northern lights).
 
 ## Still to do
 
-- Set up the other five tablets (`setup\Setup tablet.bat`); one Family tablet has been
+- Set up the other five tablets (`setup\Setup tablet.bat`); one kitchen screen has been
   running the real thing since November 2026.
-- By hand, on a real tablet: the alarm sounds, video sound on the photo frame, the night
+- By hand, on a real tablet: the alarm sounds, video sound in the Gallery, the night
   clock at "Darkest", and the phone page on a real iPhone.
 - God's Eye View on Tom's tablet (`godseye-tablet/`): needs that real-tablet test, then
   a place for its small server and a button on the flight deck.
@@ -121,9 +126,10 @@ adsbdb (flight routes), NOAA SWPC (northern lights).
   if Android closes the page to free memory.
 - Photos: phones on the same Wi-Fi scan a QR code and send photos straight to the
   tablet. **Private to each tablet** (they're individual gifts); nothing goes to the cloud.
-- The same phone page sets the family name, people, birthdays and calendar links
+- The same phone page sets the household's name, people, birthdays and calendar links
   (Google Calendar / iCloud), leaves notes on the message board, edits the grocery list
-  and adds the family's own recipes. Events can also be added on the tablet itself.
+  and adds the household's own recipes. The name and the people can also be typed on
+  the screen itself (the first-start welcome, or Settings). Events can also be added on the tablet itself.
 - Works without Wi-Fi from the last copy it saw: every screen (they are all fetched
   shortly after each start, not only the ones somebody opened), the fonts, every recipe,
   today's weather, the calendar. If a screen still can't open it says so, and opens by

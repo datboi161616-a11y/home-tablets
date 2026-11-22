@@ -6,11 +6,30 @@ const CACHE = 'tablet-v2';
 // or more, and every screen change would wait on it. After this long, the saved copy is
 // used instead; the answer, if it ever comes, still replaces the saved copy for next time.
 const PATIENCE_MS = 4000;
+// NASA's photographs (the flight deck's resting picture, the Space image page): a picture
+// never changes, so the copy is used first and kept through updates. The newest few only:
+// each one is counted as several megabytes by the browser.
+const PICTURES = 'pictures-v1';
+const PICTURE_HOSTS = ['images-assets.nasa.gov', 'apod.nasa.gov'];
+const PICTURES_KEPT = 14;
+async function picture(req) {
+  const cache = await caches.open(PICTURES);
+  const hit = await cache.match(req.url);
+  if (hit) return hit;
+  const res = await fetch(req);
+  // (A picture fetched for an <img> comes back "opaque": it can be kept, not looked into.)
+  if (res.ok || res.type === 'opaque') {
+    await cache.put(req.url, res.clone());
+    const keys = await cache.keys();
+    for (let i = 0; i < keys.length - PICTURES_KEPT; i++) await cache.delete(keys[i]);
+  }
+  return res;
+}
 
 self.addEventListener('install', () => self.skipWaiting());
 self.addEventListener('activate', (e) => e.waitUntil((async () => {
   // Drop caches from older versions of this file.
-  for (const k of await caches.keys()) if (k !== CACHE) await caches.delete(k);
+  for (const k of await caches.keys()) if (k !== CACHE && k !== PICTURES) await caches.delete(k);
   await self.clients.claim();
 })()));
 
@@ -20,6 +39,7 @@ self.addEventListener('fetch', (e) => {
   const url = new URL(req.url);
   // This tablet's own photos are served by the Android app, never cached here.
   if (url.pathname.includes('/__tablet/')) return;
+  if (PICTURE_HOSTS.indexOf(url.host) >= 0 && req.destination === 'image') { e.respondWith(picture(req)); return; }
   // Only cache our own files and fonts; live data APIs handle their own caching.
   const own = url.origin === location.origin;
   if (!own && !url.host.includes('fonts.g')) return;

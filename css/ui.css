@@ -1,0 +1,75 @@
+/* The shared look of the screens (November 2026 redesign): big buttons, panels that sit
+   on a photo or a painted scene, one top bar. Every screen keeps its own colours; these
+   are the pieces they have in common. js/screens/ui.js builds the markup.
+
+   The tablets' graphics are weak: nothing here blurs, and only transform and opacity
+   are ever animated. A "frosted" panel is a see-through fill, not a blur. */
+
+/* ---- Buttons: 64 px tall, never smaller than 56 ---- */
+.x-btn {
+  min-height: 64px; padding: 0 28px; border-radius: 999px; border: 0;
+  font: 600 20px Inter, system-ui, sans-serif; cursor: pointer; flex: none;
+  display: inline-flex; align-items: center; justify-content: center; gap: 10px;
+  white-space: nowrap; text-decoration: none; background: #FFFFFF; color: #1D2430;
+}
+.x-btn.sm { min-height: 56px; padding: 0 22px; font-size: 18px; }
+.x-btn.lg { min-height: 76px; padding: 0 36px; font-size: 23px; }
+.x-btn.round { width: 64px; padding: 0; }
+.x-btn.round.sm { width: 56px; }
+/* on a photo or a dark scene */
+.x-btn.glass { background: rgba(16, 18, 26, .52); color: #FFFFFF; box-shadow: inset 0 0 0 1.5px rgba(255, 255, 255, .34); }
+.x-btn.frost { background: rgba(255, 255, 255, .18); color: #FFFFFF; box-shadow: inset 0 0 0 1.5px rgba(255, 255, 255, .42); }
+.x-btn.white { background: #FFFFFF; color: #1D2430; }
+.x-btn.ink { background: #1D2430; color: #FFFFFF; }
+.x-btn.accent { background: var(--accent); color: #FFFFFF; }
+/* on a light screen */
+.x-btn.line { background: transparent; color: inherit; box-shadow: inset 0 0 0 2px rgba(29, 36, 48, .22); }
+.x-btn[disabled] { opacity: .45; cursor: default; }
+.x-badge {
+  min-width: 28px; height: 28px; padding: 0 8px; border-radius: 14px; background: var(--accent); color: #FFFFFF;
+  font: 600 15px Inter, system-ui, sans-serif; display: inline-flex; align-items: center; justify-content: center;
+}
+
+/* ---- Top bar: back, title, whatever the screen adds on the right ---- */
+.x-top { display: flex; align-items: center; gap: 16px; min-height: 64px; flex: none; }
+.x-title {
+  font: 500 36px Outfit, system-ui, sans-serif; flex: 1; min-width: 0;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.x-serif { font-family: Fraunces, Georgia, serif; font-style: italic; }
+.x-eyebrow { font: 600 15px Inter, system-ui, sans-serif; letter-spacing: 2px; text-transform: uppercase; }
+
+/* ---- Panels ---- */
+.x-panel { border-radius: 28px; background: rgba(16, 18, 26, .62); color: #FFFFFF; }
+.x-panel.light { background: rgba(255, 255, 255, .94); color: #1D2430; }
+.x-scroll { overflow-y: auto; -webkit-overflow-scrolling: touch; min-height: 0; }
+
+/* ---- "Scan with your phone" (ui.js phoneCode) ---- */
+.x-code { display: flex; align-items: center; gap: 18px; border-radius: 24px; padding: 16px 20px 16px 16px; background: rgba(16, 18, 26, .62); color: #FFFFFF; }
+.x-code.light { background: #FFFFFF; color: #1D2430; }
+.x-code.column { flex-direction: column; text-align: center; padding: 20px; }
+.x-code-qr { flex: none; background: #FFFFFF; border-radius: 14px; padding: 6px; line-height: 0; display: flex; align-items: center; justify-content: center; color: #4A5363; }
+.x-code-qr svg { display: block; }
+.x-code-title { font: 600 20px Inter, system-ui, sans-serif; }
+.x-code-sub { font: 400 16px/1.35 Inter, system-ui, sans-serif; opacity: .78; margin-top: 4px; }
+
+/* ---- A resting screen: its controls fade away when nobody touches it (ui.js restful) ---- */
+.x-chrome { transition: opacity .7s ease; }
+.x-resting .x-chrome { opacity: 0; pointer-events: none; }
+
+/* ---- Holiday touches: a few things drifting down (ui.js seasonLayer) ---- */
+.x-season { position: absolute; top: 0; right: 0; bottom: 0; left: 0; overflow: hidden; pointer-events: none; }
+.x-flake { position: absolute; top: -40px; will-change: transform; animation: x-fall linear infinite; }
+.x-rise { position: absolute; bottom: -40px; top: auto; will-change: transform; animation: x-rise linear infinite; }
+@keyframes x-fall {
+  0% { transform: translate3d(0, 0, 0) rotate(0deg); }
+  100% { transform: translate3d(var(--drift, 40px), 880px, 0) rotate(var(--turn, 0deg)); }
+}
+@keyframes x-rise {
+  0% { transform: translate3d(0, 0, 0); opacity: 0; }
+  12% { opacity: var(--peak, .7); }
+  100% { transform: translate3d(var(--drift, 30px), -880px, 0); opacity: 0; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .x-flake, .x-rise { animation: none; display: none; }
+}

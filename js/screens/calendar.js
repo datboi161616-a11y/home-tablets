@@ -1,26 +1,51 @@
-// Family · Week calendar (Calendar.dc.html in the design), with a month view
-import { minutesText, timeText } from '../services/display.js';
-import { backHref, backLabel } from '../services/nav.js';
+// Calendar: a big traditional month where every day keeps its best photo, so the month
+// reads as a mosaic (board KC03). Days still to come show what is planned. Tapping a day
+// opens it (what is on, its photos, Add); "Add" opens a large sheet built around a month
+// to pick the day from. A week view is one button away.
+import { minutesText, timeText, hourText, display } from '../services/display.js';
 import { settings } from '../config.js';
-import { getWeek, getDay, nextAfter, nextBigThing, calendarStatus, refreshCalendars, linkedCalendars, startOfWeek, weekdayNames, KINDS, BACK_WEEKS } from '../services/calendar-data.js';
-import { eventIcon, spot } from '../art.js';
+import { getWeek, getDay, nextAfter, nextBigThing, upcoming, calendarStatus, refreshCalendars, linkedCalendars, startOfWeek, weekdayNames, KINDS, BACK_WEEKS } from '../services/calendar-data.js';
+import { eventIcon } from '../art.js';
 import { saveMyEvent, removeMyEvent, getMyEvent, myEvents, isoDay, fromIso, restoreMyEvent, skipMyEventOn, endMyEventBefore, recentTitles } from '../services/my-events.js';
+import { getPhotos, thumbnail, isTablet } from '../services/tablet-photos.js';
+import { photos as samplePhotos } from '../services/family-sample.js';
+import { topBar, esc, people, personColor, phoneCode, wirePhoneCodes, season, seasonLayer } from './ui.js';
 
-let timer, onUpdate, undoTimer;
-let view = 'week'; // 'week' or 'month' (back to the week on every visit)
+let timer, onUpdate, onPhotos, undoTimer, stopCodes;
+let view = 'month'; // 'month' (opens first) or 'week'
 let weekOffset = 0; // 0 = this week, 1 = next week, -1 = last week… (the arrows)
-let monthOffset = 0; // 0 = this month (month view)
-let form = null; // the add / change form while it's open (see showForm)
+let monthOffset = 0; // 0 = this month
+let form = null; // the add / change sheet while it's open (see showForm)
+let sheet = ''; // '', 'day' or 'cals': which other sheet is open over the month
+let stale = false; // something changed while a sheet was open: draw again when it closes
 let undo = null; // { text, restore } after a removal, for the "Undo" button
 let checking = false; // "Check now" was tapped and the calendars are being read
-// How many weeks ahead the arrows go. It was 8 (calendar links are only read about two
-// months ahead), but something added here for a later date then saved without a trace:
-// the week it was in could never be shown, so it could not be seen, changed or removed.
+let album = null; // this screen's photos filed by day (see photosByDay)
+// How many weeks ahead the arrows go: a year, so something added for a later date can
+// always be seen, changed and removed.
 const MAX_AHEAD = 52;
 const MIN_WEEK = -BACK_WEEKS; // a few weeks back: "when was the plumber here?"
-const MAX_MONTH = 12, MIN_MONTH = -1;
+const MAX_MONTH = 12;
+const DAY = 86400000;
+const GOLD = '#FFCF7A';
 
-const colorOf = (kind) => (kind === 'family' ? settings.accent : KINDS[kind]?.color || '#2D5BA8');
+// A colour for each kind of thing typed here (my-events.js EVENT_TAGS).
+const TAGS = {
+  plan: { label: 'Plan', color: '#7A6CB8' },
+  appointment: { label: 'Appointment', color: '#5B7FD6' },
+  out: { label: 'Going out', short: 'Out', color: '#D05C8E' },
+  trip: { label: 'Trip', color: '#3E9BC0' },
+  birthday: { label: 'Birthday', color: '#C9892B' },
+  reminder: { label: 'Reminder', color: '#8C7A6B' },
+};
+// (The screen is dark: birthdays are gold here, not the ink colour the light screens used.)
+const colorOf = (kind) => (kind === 'family' ? settings.accent : kind === 'birthday' ? '#C9892B' : (KINDS[kind] && KINDS[kind].color) || '#2D5BA8');
+/** An event's colour: the person it is for, else its kind. */
+function colorOfEvent(e) {
+  if (e.kind !== 'tablet') return colorOf(e.kind);
+  if (e.who && e.who.length === 1) return personColor(e.who[0]);
+  return (TAGS[e.tag] || TAGS.plan).color;
+}
 
 // Little pictures for birthdays, holidays and named occasions (not for every dentist visit).
 const OCCASION = /christmas|xmas|eve|thanksgiving|labor day|birthday|bday|valentine|anniversar|wedding|mother|father|patrick|easter|halloween|independence|memorial|veteran|president|new year/i;
@@ -30,18 +55,92 @@ function iconFor(e, size) {
   return '';
 }
 // The icon on a white disc, so it reads on any event colour.
-const iconBadge = (e) => { const i = iconFor(e, 18); return i ? `<span class="cal-badge">${i}</span>` : ''; };
-
-const esc = (s) => String(s).replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+const iconBadge = (e) => { const i = iconFor(e, 18); return i ? `<span class="kc-badge">${i}</span>` : ''; };
 
 const midnightOf = (d) => new Date(d.getFullYear(), d.getMonth(), d.getDate());
 const shiftDay = (d, n) => new Date(d.getFullYear(), d.getMonth(), d.getDate() + n);
-const dayDiff = (a, b) => Math.round((Date.UTC(b.getFullYear(), b.getMonth(), b.getDate()) - Date.UTC(a.getFullYear(), a.getMonth(), a.getDate())) / 86400000);
-// The Monday of the week on screen, counted in calendar days (not hours, so a
+const dayDiff = (a, b) => Math.round((Date.UTC(b.getFullYear(), b.getMonth(), b.getDate()) - Date.UTC(a.getFullYear(), a.getMonth(), a.getDate())) / DAY);
+// The first day of the week on screen, counted in calendar days (not hours, so a
 // daylight-saving weekend can never make the arrows skip or repeat a week).
 const weekStart = () => shiftDay(startOfWeek(new Date()), weekOffset * 7);
 const monthStart = () => { const n = new Date(); return new Date(n.getFullYear(), n.getMonth() + monthOffset, 1); };
+const monthsFromNow = (d) => { const n = new Date(); return (d.getFullYear() - n.getFullYear()) * 12 + d.getMonth() - n.getMonth(); };
 const thisYear = (d) => d.getFullYear() === new Date().getFullYear();
+
+// ---------- The photos, filed by the day they were added ----------
+
+/** { byDay: { 'YYYY-MM-DD': [photo] }, oldest: Date|null }. Each photo: { src, art, caption, name, added }. */
+function photosByDay() {
+  if (album) return album;
+  let list;
+  if (isTablet()) {
+    list = getPhotos().filter((p) => !p.video).map((p) => ({ src: p.src, art: '', caption: p.caption || '', name: p.name || '', added: +p.added || 0 }));
+  } else {
+    // A PC preview has no album: the sample pictures, over the last few weeks.
+    const noon = midnightOf(new Date()).getTime() + 12 * 3600000;
+    const back = [0, 1, 7, 20];
+    list = samplePhotos.map((p, i) => ({ src: p.src || '', art: p.art || '', caption: p.title || p.caption || '', name: p.addedBy || '',
+      added: +p.added || noon - (back[i % back.length] + Math.floor(i / back.length) * 31) * DAY }));
+  }
+  const byDay = {};
+  let oldest = 0;
+  list.forEach((p) => {
+    if (!(p.added > 0)) return;
+    const k = isoDay(new Date(p.added));
+    (byDay[k] = byDay[k] || []).push(p);
+    if (!oldest || p.added < oldest) oldest = p.added;
+  });
+  album = { byDay, oldest: oldest ? new Date(oldest) : null };
+  return album;
+}
+const photosOn = (d) => photosByDay().byDay[isoDay(d)] || [];
+/** The one picture a day's box shows: one somebody wrote a few words for, else the newest. */
+function bestPhoto(d) {
+  const list = photosOn(d);
+  return list.filter((p) => p.caption)[0] || list[0] || null;
+}
+// A picture as a filled box: the real photo comes as a small copy, one at a time (loadThumbs).
+function photoBox(p, cls, w, h) {
+  if (p.src) return `<div class="${cls}" data-thumb="${esc(p.src)}" data-tw="${w}" data-th="${h}"></div>`;
+  return `<div class="${cls}" style="background:${esc(p.art)}"></div>`;
+}
+function loadThumbs(el) {
+  el.querySelectorAll('[data-thumb]').forEach((node) => {
+    const src = node.dataset.thumb;
+    node.removeAttribute('data-thumb');
+    thumbnail(src, { w: +node.dataset.tw || 200, h: +node.dataset.th || 160, wanted: () => node.isConnected }).then((url) => {
+      if (!node.isConnected) return;
+      if (url) { node.style.backgroundImage = `url(${url})`; node.classList.add('in'); } else if (url === '') {
+        // The file would not open: the day goes back to a plain box.
+        const cell = node.closest('.has-ph');
+        if (cell) cell.classList.remove('has-ph');
+      }
+    });
+  });
+}
+// How far back the month arrows go: last month, or as far as the oldest photo (two years at most).
+function minMonth() {
+  const o = photosByDay().oldest;
+  return Math.max(-24, Math.min(-1, o ? monthsFromNow(o) : -1));
+}
+
+/** A photo from this date a year, a month or a week ago, if the album has one: { photo, date, label } or null. */
+function memory() {
+  const t = midnightOf(new Date());
+  const tries = [];
+  for (let y = 1; y <= 10; y++) tries.push([new Date(t.getFullYear() - y, t.getMonth(), t.getDate()), `On this day, ${t.getFullYear() - y}`, true]);
+  for (let m = 1; m <= 11; m++) tries.push([new Date(t.getFullYear(), t.getMonth() - m, t.getDate()), m === 1 ? 'A month ago today' : `${m} months ago today`, true]);
+  for (let w = 1; w <= 3; w++) tries.push([shiftDay(t, -7 * w), w === 1 ? 'A week ago today' : `${w} weeks ago today`, false]);
+  for (let i = 0; i < tries.length; i++) {
+    const d = tries[i][0];
+    if (tries[i][2] && d.getDate() !== t.getDate()) continue; // no Feb 30: that month has no such day
+    const photo = bestPhoto(d);
+    if (photo) return { photo, date: d, label: tries[i][1] };
+  }
+  return null;
+}
+
+// ---------- Words ----------
 
 // "Updated 10:32 AM" / "Wed at 9:15 PM" with the owner's 12- or 24-hour clock.
 function whenSaved(at) {
@@ -49,31 +148,30 @@ function whenSaved(at) {
   return `${day}${timeText(at)}`;
 }
 
-// Right side of the footer: setup hint, a download problem, or when the calendars were last read.
-function footerNote() {
+// The linked calendars: a setup hint, a download problem, or when they were last read.
+function linkNote() {
   const st = calendarStatus();
-  if (!st.calendars) return { text: 'Tap + Add to put something on. Google or iPhone calendars: Add photos → scan the code → Settings', button: '' };
-  const button = checking ? '<button class="pill cal-check" disabled>Checking…</button>' : `<button data-check class="pill cal-check">${st.lastError ? 'Try again' : 'Check now'}</button>`;
+  if (!st.calendars) return { text: 'No phone calendar is linked yet. Scan the code to link a Google or iPhone calendar, or to add birthdays.', error: false, button: false };
   if (st.lastError) {
     // Say how old the saved copy is, so nobody trusts a week-old calendar by mistake.
     const at = st.savedAt;
-    if (!at) return { text: st.lastError, button };
-    return { text: `${st.lastError} · showing what was saved ${at.toDateString() === new Date().toDateString() ? 'today at ' : ''}${whenSaved(at)}`, button };
+    if (!at) return { text: st.lastError, error: true, button: true };
+    return { text: `${st.lastError} · showing what was saved ${at.toDateString() === new Date().toDateString() ? 'today at ' : ''}${whenSaved(at)}`, error: true, button: true };
   }
-  return { text: st.savedAt ? `Calendars updated ${whenSaved(st.savedAt)}` : 'Tap + Add, or add events on your phone’s calendar — they show up here', button };
+  return { text: st.savedAt ? `Calendars updated ${whenSaved(st.savedAt)}` : 'Events on your phone’s calendar show up here by themselves.', error: false, button: true };
 }
 
-// Hide events that don't fit in a day column and say "+N more" instead.
+// Hide events that don't fit in a day column (week view) and say "+N more" instead.
 function fitDays(el) {
-  el.querySelectorAll('.cal-day').forEach((day) => {
+  el.querySelectorAll('.kc-wday').forEach((day) => {
     if (!day.clientHeight) return; // not laid out yet
-    const evs = [...day.querySelectorAll('.cal-ev')];
-    const old = day.querySelector('.cal-more');
+    const evs = [...day.querySelectorAll('.kc-ev')];
+    const old = day.querySelector('.kc-more');
     if (old) old.remove();
     evs.forEach((e) => { e.style.display = ''; });
     if (day.scrollHeight <= day.clientHeight + 1) return;
     const more = document.createElement('div');
-    more.className = 'cal-more';
+    more.className = 'kc-more';
     day.appendChild(more);
     let hidden = 0;
     for (let i = evs.length - 1; i >= 0 && day.scrollHeight > day.clientHeight + 1; i--) {
@@ -101,12 +199,7 @@ function weekRange(days) {
   return thisYear(a) ? range : `${range}, ${a.getFullYear()}`;
 }
 
-// "Thanksgiving · Nov 26 · in 8 days"
-function countdown(big) {
-  if (big.days === 0) return 'today!';
-  if (big.days === 1) return 'tomorrow';
-  return `in ${big.days} days`;
-}
+const inDays = (n) => (n === 0 ? 'today' : n === 1 ? 'tomorrow' : `in ${n} days`);
 
 // "Today", "Tomorrow", "In 5 days", "Yesterday", "3 days ago" for a day.
 function howFar(d) {
@@ -117,98 +210,149 @@ function howFar(d) {
   return n > 0 ? `In ${n} days` : `${-n} days ago`;
 }
 
-// "All day · day 2 of 3" for things over several days.
 const REPEAT_WORDS = { weekly: 'every week', fortnightly: 'every 2 weeks', monthly: 'every month', yearly: 'every year' };
 
 // The key: one colour per calendar link (named as on the phone page), then the rest.
 function legend() {
   const links = linkedCalendars();
-  const items = links.length ? links.map((c) => [c.kind, c.name]) : [['family', KINDS.family.label]];
-  if (myEvents().length) items.push(['tablet', KINDS.tablet.label]);
-  items.push(['birthday', KINDS.birthday.label], ['holiday', KINDS.holiday.label]);
-  return items.map(([k, label]) => `
-    <div style="display:flex;align-items:center;gap:8px;white-space:nowrap;max-width:220px"><div style="width:12px;height:12px;border-radius:50%;flex:none;background:${colorOf(k)}"></div><span style="overflow:hidden;text-overflow:ellipsis">${esc(label)}</span></div>`).join('');
+  const items = links.map((c) => [colorOf(c.kind), c.name]);
+  items.push([TAGS.plan.color, 'Added on this screen']);
+  people().slice(0, 6).forEach((p) => items.push([p.color, `For ${p.name}`]));
+  items.push([colorOf('family'), 'Dates from Settings'], [colorOf('birthday'), KINDS.birthday.label], [colorOf('holiday'), KINDS.holiday.label]);
+  return items.map(([c, label]) => `
+    <div class="kc-key"><span class="kc-dot" style="background:${c}"></span><span class="kc-cut">${esc(label)}</span></div>`).join('');
+}
+
+// ---------- The month's painting (behind the days that have no photo) ----------
+
+function painting(month) {
+  const s = month <= 1 || month === 11 ? 'winter' : month <= 4 ? 'spring' : month <= 7 ? 'summer' : 'autumn';
+  const P = {
+    winter: { sky: ['#52688C', '#A9B9CF', '#E3E9F1'], hills: ['#C9D5E3', '#9FB1C6', '#6F839C'], a: '#F4F7FB', b: '#3E5068' },
+    spring: { sky: ['#6FA3C9', '#CFE3EC', '#F6DDE2'], hills: ['#9CC27A', '#6FA35A', '#47793F'], a: '#F7BCD0', b: '#FFFFFF' },
+    summer: { sky: ['#3F8FCB', '#8FCBE6', '#F7E3A6'], hills: ['#7DB85A', '#4F9447', '#2F6B3A'], a: '#F6D24A', b: '#E8F3C0' },
+    autumn: { sky: ['#6E86A8', '#D9B48A', '#E8C796'], hills: ['#B7793F', '#9B4F2A', '#6E3B22'], a: '#C9562C', b: '#E3A23A' },
+  }[s];
+  return `<svg class="kc-paint" viewBox="0 0 984 634" preserveAspectRatio="none" aria-hidden="true">
+    <defs><linearGradient id="kcSky" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="${P.sky[0]}"/><stop offset="0.45" stop-color="${P.sky[1]}"/><stop offset="1" stop-color="${P.sky[2]}"/></linearGradient></defs>
+    <rect width="984" height="634" fill="url(#kcSky)"/>
+    ${s === 'summer' ? `<circle cx="780" cy="120" r="54" fill="${P.a}"/>` : ''}
+    <path d="M0 260 Q180 200 380 250 T760 230 T984 240 V634 H0Z" fill="${P.hills[0]}"/>
+    <path d="M0 360 Q240 300 520 370 T984 340 V634 H0Z" fill="${P.hills[1]}"/>
+    <path d="M0 470 Q300 420 640 480 T984 460 V634 H0Z" fill="${P.hills[2]}"/>
+    <g fill="${P.a}"><circle cx="120" cy="330" r="34"/><circle cx="170" cy="345" r="24"/><circle cx="820" cy="310" r="30"/><circle cx="860" cy="325" r="22"/></g>
+    <g fill="${P.b}"><circle cx="420" cy="420" r="30"/><circle cx="460" cy="432" r="20"/><circle cx="640" cy="450" r="26"/></g>
+  </svg>`;
 }
 
 const STYLE = `
   <style>
-    .cal-ev { color:#fff; border-radius:12px; padding:10px 12px; display:flex; flex-direction:column; gap:2px; flex:none; min-width:0; }
-    .cal-ev.over { opacity:.5; }
-    .cal-ev-top { display:flex; align-items:center; gap:6px; min-width:0; }
-    .cal-badge { flex:none; width:24px; height:24px; border-radius:12px; background:#fff; display:flex; align-items:center; justify-content:center; }
-    .cal-quiet { position:absolute; left:50%; bottom:28px; transform:translateX(-50%); width:680px; background:#fff; border-radius:24px; padding:14px 24px 14px 14px;
-      display:flex; align-items:center; gap:12px; box-shadow:0 12px 36px rgba(29,36,48,.14); pointer-events:none; }
-    .cal-quiet button { pointer-events:auto; }
-    .cal-ev-time { font-size:13px; font-weight:600; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
-    .cal-ev-title { font-size:16px; line-height:1.3; overflow-wrap:anywhere; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden; }
-    [data-step][disabled] { opacity:.3; }
-    .cal-more { font-size:14px; font-weight:600; opacity:.7; flex:none; }
-    .cal-day { border-radius:20px; padding:18px 14px; display:flex; flex-direction:column; gap:12px; min-height:0; overflow:hidden; }
-    .cal-day.past, .cal-cell.past { opacity:.55; }
-    .cal-nav { background:#fff; border:none; font-size:22px; padding:0 18px; min-width:56px; min-height:56px; justify-content:center; cursor:pointer; flex:none; }
-    .cal-seg { display:flex; background:#fff; border-radius:28px; padding:4px; flex:none; }
-    .cal-seg button { min-height:48px; padding:0 18px; border:none; border-radius:24px; background:transparent; color:var(--ink); font:600 17px Inter,sans-serif; cursor:pointer; }
-    .cal-seg button.on { background:var(--ink); color:#fff; }
-    .cal-check { background:#fff; border:2px solid var(--line); color:var(--ink); cursor:pointer; flex:none; margin-left:12px; min-height:48px; }
-    .cal-month { flex-grow:1; min-height:0; display:grid; grid-template-columns:repeat(7,minmax(0,1fr)); gap:8px; }
-    .cal-dow { font-size:15px; font-weight:600; letter-spacing:1px; text-transform:uppercase; color:var(--ink-2); padding:0 10px; }
-    .cal-cell { background:#fff; border-radius:14px; padding:6px 8px; display:flex; flex-direction:column; gap:3px; min-height:0; overflow:hidden; cursor:pointer; }
-    .cal-cell.out { background:transparent; box-shadow:inset 0 0 0 2px var(--line); }
-    .cal-cell.today { background:var(--ink); color:#fff; }
-    .cal-num { font:500 22px Outfit,sans-serif; line-height:1.1; display:flex; align-items:center; gap:6px; }
-    .cal-line { font-size:16px; line-height:1.25; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; display:flex; align-items:center; gap:6px; }
-    .cal-dot { width:10px; height:10px; border-radius:50%; flex:none; }
-    .cf-label { font-size:14px; font-weight:600; letter-spacing:1px; text-transform:uppercase; color:var(--ink-2); width:118px; flex:none; }
-    .cf-line { display:flex; align-items:center; gap:12px; min-width:0; }
-    .cf-row { display:flex; align-items:center; gap:10px; flex-wrap:wrap; min-width:0; }
-    .cf-chips { display:flex; align-items:center; gap:10px; flex-wrap:nowrap; overflow:hidden; min-width:0; }
-    .cf-chip { min-height:52px; padding:0 20px; border-radius:26px; border:2px solid var(--line); background:#fff; color:var(--ink); font:600 17px Inter,sans-serif; cursor:pointer; flex:none; white-space:nowrap; }
-    .cf-chip.sm { padding:0 14px; }
-    .cf-chip.on { background:var(--ink); border-color:var(--ink); color:#fff; }
-    .cf-step { width:56px; height:52px; border-radius:26px; border:2px solid var(--line); background:#fff; color:var(--ink); font:600 18px Inter,sans-serif; cursor:pointer; flex:none; }
-    .cf-val { min-width:230px; text-align:center; font:500 24px Outfit,sans-serif; }
-    .cf-in { width:100%; height:60px; box-sizing:border-box; border:2px solid var(--line); border-radius:16px; padding:0 18px; font:22px Inter,sans-serif; color:var(--ink); outline:none; user-select:text; }
-    .cf-in:focus { border-color:${settings.accent}; }
-    .cd-mine { cursor:pointer; border-radius:14px; }
-    .cd-mine:active { background:#F2F4F7; }
-    .cal-day.today .cal-ev[data-kind="birthday"] { box-shadow: inset 0 0 0 2px rgba(255,255,255,.35); }
-    .cal-undo { position:absolute; left:50%; bottom:112px; transform:translateX(-50%); z-index:6; background:var(--ink); color:#fff; border-radius:28px;
-      padding:6px 6px 6px 24px; display:flex; align-items:center; gap:16px; font-size:18px; box-shadow:0 12px 36px rgba(29,36,48,.25); max-width:900px; }
-    .cal-undo span { white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
-    .cal-undo button { min-height:52px; padding:0 24px; border:none; border-radius:26px; background:#fff; color:var(--ink); font:600 18px Inter,sans-serif; cursor:pointer; flex:none; }
+    .kc { height:100%; box-sizing:border-box; padding:20px 24px; display:flex; flex-direction:column; gap:14px; background:#15121A; color:#fff; position:relative; overflow:hidden; font-family:Inter,system-ui,sans-serif; }
+    .kc .x-btn.gold { background:${GOLD}; color:#15121A; }
+    .kc .x-btn.danger { background:transparent; color:#FF9D94; box-shadow:inset 0 0 0 2px #FF9D94; }
+    .kc .x-btn.danger.sure { background:#C9382E; color:#fff; box-shadow:none; }
+    .kc-seg { display:flex; flex:none; border-radius:999px; padding:4px; background:rgba(255,255,255,.1); }
+    .kc-seg button { min-height:56px; padding:0 22px; border:0; border-radius:999px; background:transparent; color:#fff; font:600 18px Inter,sans-serif; cursor:pointer; }
+    .kc-seg button.on { background:#fff; color:#15121A; }
+    .kc-body { flex:1; min-height:0; display:flex; gap:20px; }
+    .kc-main { flex:1; min-width:0; display:flex; flex-direction:column; gap:8px; }
+    .kc-dows { display:grid; grid-template-columns:repeat(7,minmax(0,1fr)); gap:6px; flex:none; }
+    .kc-dow { font:600 15px Inter,sans-serif; letter-spacing:2px; text-transform:uppercase; color:#A89DB5; padding-left:8px; }
+    .kc-dow.now { color:${GOLD}; }
+    .kc-frame { flex:1; min-height:0; position:relative; }
+    .kc-paint { position:absolute; left:0; top:0; width:100%; height:100%; display:block; border-radius:10px; }
+    .kc-gap { position:absolute; background:#15121A; }
+    .kc-grid { position:absolute; left:0; top:0; width:100%; height:100%; display:grid; grid-template-columns:repeat(7,minmax(0,1fr)); gap:6px; }
+    .kc-cell { position:relative; min-width:0; min-height:0; cursor:pointer; background:rgba(21,18,26,.62); }
+    .kc-cell.past { background:rgba(21,18,26,.38); }
+    .kc-cell.out { background:#15121A; box-shadow:inset 0 0 0 1.5px rgba(255,255,255,.09); }
+    .kc-phw { position:absolute; left:0; top:0; width:100%; height:100%; overflow:hidden; display:none; }
+    .has-ph > .kc-phw { display:block; }
+    .kc-ph { position:absolute; left:0; top:0; width:100%; height:100%; background-size:cover; background-position:center; }
+    .kc-ph[data-tw] { opacity:0; transition:opacity .5s ease; }
+    .kc-ph.in { opacity:1; }
+    .kc-shade { position:absolute; left:0; top:0; width:100%; height:100%; background:linear-gradient(180deg,rgba(10,8,14,.62) 0%,rgba(10,8,14,0) 34%,rgba(10,8,14,0) 46%,rgba(10,8,14,.78) 100%); }
+    .kc-cell.out.has-ph > .kc-phw { opacity:.45; }
+    .kc-num { position:absolute; left:9px; top:5px; font:600 21px Outfit,sans-serif; text-shadow:0 1px 6px rgba(0,0,0,.7); display:flex; align-items:baseline; gap:6px; }
+    .kc-cell.out .kc-num { color:#A89DB5; }
+    .kc-num small { font:600 15px Inter,sans-serif; letter-spacing:1.5px; text-transform:uppercase; }
+    .kc-cell.today { z-index:2; box-shadow:inset 0 0 0 3px ${GOLD}; }
+    .kc-cell.today .kc-num { color:${GOLD}; }
+    .kc-ring { position:absolute; left:-5px; top:-5px; right:-5px; bottom:-5px; border:4px solid ${GOLD}; border-radius:9px; pointer-events:none; animation:kc-pulse 3s ease-in-out infinite; }
+    .kc-cell.today .kc-ph { animation:kc-ken 30s ease-in-out infinite alternate; will-change:transform; }
+    .kc-chips { position:absolute; left:6px; right:6px; bottom:6px; display:flex; flex-direction:column; gap:3px; }
+    .kc-chip { height:23px; line-height:23px; border-radius:6px; padding:0 7px; font:600 15px/23px Inter,sans-serif; color:#fff; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+    .kc-chip.more { background:rgba(255,255,255,.2); }
+    .kc-cut { min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+    .kc-dot { width:12px; height:12px; border-radius:50%; flex:none; display:inline-block; }
+    @keyframes kc-pulse { 0%,100% { opacity:.25; } 50% { opacity:.95; } }
+    @keyframes kc-ken { from { transform:scale(1); } to { transform:scale(1.22) translate(-3%,2%); } }
+    @keyframes kc-up { from { transform:translateY(36px); opacity:0; } to { transform:none; opacity:1; } }
+
+    .kc-side { width:250px; flex:none; display:flex; flex-direction:column; gap:12px; min-height:0; overflow:hidden; }
+    .kc-eye { font:600 15px Inter,sans-serif; letter-spacing:2px; text-transform:uppercase; color:${GOLD}; }
+    .kc-card { border-radius:16px; background:rgba(255,255,255,.08); padding:12px; cursor:pointer; flex:none; }
+    .kc-mem { position:relative; height:112px; border-radius:10px; overflow:hidden; margin-top:8px; background:rgba(255,255,255,.06); }
+    .kc-row { display:flex; align-items:center; gap:12px; min-height:58px; padding:0 12px; border-radius:14px; background:rgba(255,255,255,.06); cursor:pointer; flex:none; }
+    .kc-warn { font:500 15px/1.35 Inter,sans-serif; color:#FFB4A8; }
+
+    .kc-week { flex:1; min-height:0; position:relative; display:grid; grid-template-columns:repeat(7,minmax(0,1fr)); gap:8px; }
+    .kc-wday { border-radius:16px; background:rgba(255,255,255,.07); display:flex; flex-direction:column; gap:8px; min-height:0; overflow:hidden; cursor:pointer; padding-bottom:10px; }
+    .kc-wday.past { opacity:.6; }
+    .kc-wday.today { box-shadow:inset 0 0 0 3px ${GOLD}; }
+    .kc-wday.today .kc-num { color:${GOLD}; }
+    .kc-whead { position:relative; flex:none; height:84px; }
+    .kc-whead .kc-num { font-size:38px; font-weight:500; top:30px; left:12px; }
+    .kc-whead .kc-dow { position:absolute; left:12px; top:10px; padding:0; text-shadow:0 1px 6px rgba(0,0,0,.7); }
+    .has-ph > .kc-dow { color:#fff; }
+    .kc-ev { color:#fff; border-radius:10px; padding:8px 7px; margin:0 5px; display:flex; flex-direction:column; gap:2px; flex:none; min-width:0; }
+    .kc-ev.over { opacity:.5; }
+    .kc-ev-top { display:flex; align-items:center; gap:6px; min-width:0; }
+    .kc-badge { flex:none; width:24px; height:24px; border-radius:12px; background:#fff; display:flex; align-items:center; justify-content:center; }
+    .kc-ev-time { font-size:15px; font-weight:600; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+    .kc-ev-title { font-size:16px; line-height:1.25; overflow-wrap:anywhere; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden; }
+    .kc-more { font-size:15px; font-weight:600; opacity:.75; flex:none; margin:0 12px; }
+    .kc-quiet { position:absolute; left:50%; bottom:24px; transform:translateX(-50%); width:640px; background:#2A2334; border-radius:24px; padding:16px 16px 16px 26px;
+      display:flex; align-items:center; gap:16px; box-shadow:0 12px 36px rgba(0,0,0,.4); }
+
+    .kc-over { display:none; position:absolute; left:0; top:0; width:100%; height:100%; z-index:5; background:rgba(8,6,12,.72); align-items:center; justify-content:center; }
+    .kc-sheet { background:#221C2B; border-radius:28px; box-sizing:border-box; display:flex; flex-direction:column; box-shadow:0 20px 60px rgba(0,0,0,.5); }
+    .kc-sheet.kc-in { animation:kc-up .28s ease-out both; }
+    .kc-key { display:flex; align-items:center; gap:9px; font:500 18px Inter,sans-serif; max-width:260px; min-height:28px; }
+    .kc-h { font:500 36px/1.1 Outfit,sans-serif; }
+    .kc-soft { color:#CFC6D8; }
+    .kc-item { display:flex; gap:14px; align-items:flex-start; padding:14px 12px; border-radius:16px; background:rgba(255,255,255,.06); min-height:64px; box-sizing:border-box; }
+    .kc-item.mine { cursor:pointer; }
+    .kc-bar { width:6px; align-self:stretch; border-radius:3px; flex:none; }
+    .kc-tile { position:relative; width:168px; height:126px; border-radius:12px; overflow:hidden; background:rgba(255,255,255,.06); flex:none; }
+
+    .kf-label { font:600 15px Inter,sans-serif; letter-spacing:1.5px; text-transform:uppercase; color:#A89DB5; width:92px; flex:none; }
+    .kf-line { display:flex; align-items:center; gap:10px; min-width:0; min-height:56px; }
+    .kf-row { display:flex; align-items:center; gap:8px; flex-wrap:wrap; height:56px; overflow:hidden; min-width:0; flex:1; }
+    .kf-row.tight { gap:6px; }
+    .kf-chip { min-height:56px; padding:0 17px; border-radius:28px; border:0; background:rgba(255,255,255,.1); color:#fff; font:600 18px Inter,sans-serif; cursor:pointer; flex:none; white-space:nowrap; display:inline-flex; align-items:center; gap:8px; max-width:190px; }
+    .kf-chip.on { background:${GOLD}; color:#15121A; }
+    .kf-step { width:60px; height:56px; border-radius:28px; border:0; background:rgba(255,255,255,.1); color:#fff; font:600 19px Inter,sans-serif; cursor:pointer; flex:none; }
+    .kf-val { min-width:128px; text-align:center; font:500 26px Outfit,sans-serif; flex:none; }
+    .kf-in { flex:1; min-width:0; height:64px; box-sizing:border-box; border:2px solid rgba(255,255,255,.24); border-radius:18px; padding:0 20px; background:rgba(255,255,255,.07); font:500 24px Inter,sans-serif; color:#fff; outline:none; user-select:text; -webkit-user-select:text; }
+    .kf-in::placeholder { color:#A89DB5; }
+    .kf-in:focus { border-color:${GOLD}; }
+    .kf-cal { display:grid; grid-template-columns:repeat(7,56px); grid-auto-rows:56px; }
+    .kf-d { position:relative; border:0; background:transparent; color:#fff; font:500 21px Outfit,sans-serif; cursor:pointer; border-radius:28px; padding:0; }
+    .kf-d.out { color:#7F7590; }
+    .kf-d[disabled] { color:#5A5166; cursor:default; }
+    .kf-d.now { box-shadow:inset 0 0 0 2px ${GOLD}; color:${GOLD}; }
+    .kf-d.on { background:${GOLD}; color:#15121A; font-weight:700; }
+    .kf-d i { position:absolute; left:50%; bottom:7px; width:6px; height:6px; margin-left:-3px; border-radius:3px; background:#D05C8E; }
+    .kf-d.on i { background:#15121A; }
+    .kc [data-step][disabled] { opacity:.3; }
+    .kc-undo { position:absolute; left:50%; bottom:28px; transform:translateX(-50%); z-index:6; background:#fff; color:#15121A; border-radius:32px;
+      padding:6px 6px 6px 26px; display:flex; align-items:center; gap:16px; font:500 19px Inter,sans-serif; box-shadow:0 12px 36px rgba(0,0,0,.45); max-width:900px; }
+    .kc-undo span { white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+    @media (prefers-reduced-motion: reduce) { .kc-ring, .kc-cell.today .kc-ph, .kc-sheet.kc-in { animation:none; } .kc-ring { opacity:.6; } }
   </style>`;
 
-function weekGrid(days, today) {
-  const quiet = days.every((d) => !d.events.length);
-  // An empty week says what comes next, with a way to go there.
-  const next = quiet ? nextAfter(days[6].date) : null;
-  return `
-    <div style="flex-grow:1;min-height:0;position:relative;display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:12px">
-      ${days.map((d, i) => `
-        <div class="cal-day${d.isToday ? ' today' : ''}${!d.isToday && d.date < today ? ' past' : ''}" data-day="${isoDay(d.date)}" style="cursor:pointer;${d.isToday ? 'background:var(--ink);color:#fff' : 'background:#fff'}">
-          <div style="display:flex;flex-direction:column;gap:2px">
-            <div class="eyebrow">${d.dow}${d.isToday ? ' · Today' : ''}</div>
-            <div class="display" style="font-size:40px;font-weight:500;line-height:1">${d.num}${d.num === 1 || i === 0 ? `<span style="font-size:18px;margin-left:6px">${d.date.toLocaleDateString('en-US', { month: 'short' })}</span>` : ''}</div>
-          </div>
-          ${d.events.map((e) => `
-            <div class="cal-ev${d.isToday && e.over ? ' over' : ''}" data-kind="${e.kind}" style="background:${colorOf(e.kind)}">
-              <div class="cal-ev-top">${iconBadge(e)}<div class="cal-ev-time">${esc(e.ofDays ? `${e.time} · ${e.dayOf}/${e.ofDays}` : e.time)}</div></div>
-              <div class="cal-ev-title">${esc(e.title)}</div>
-            </div>`).join('')}
-        </div>`).join('')}
-      ${quiet ? `
-        <div class="cal-quiet">
-          <div style="flex:none;width:140px">${spot.quietDay()}</div>
-          <div style="display:flex;flex-direction:column;gap:6px;min-width:0;flex-grow:1">
-            <div class="display" style="font-size:28px;font-weight:500">A quiet week</div>
-            <div class="muted" style="font-size:17px;line-height:1.35;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${next
-              ? `Next: ${esc(next.name)}${next.turns ? ` · turns ${next.turns}` : ''} · ${next.date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}${next.days > 0 ? `, in ${next.days} days` : ''}`
-              : 'Nothing on the calendar this week.'}</div>
-          </div>
-          ${next && dayDiff(startOfWeek(new Date()), next.date) <= MAX_AHEAD * 7 + 6 ? `<button data-jump="${isoDay(next.date)}" class="pill" style="background:var(--ink);color:#fff;border:none;cursor:pointer;flex:none;min-height:52px">Show me</button>` : ''}
-        </div>` : ''}
-    </div>`;
-}
+// ---------- The month ----------
 
 function monthGrid(today) {
   const first = monthStart();
@@ -222,138 +366,295 @@ function monthGrid(today) {
     const out = d.date.getMonth() !== first.getMonth();
     const shown = d.events.slice(0, d.events.length > lines ? lines - 1 : lines);
     const more = d.events.length - shown.length;
+    const photo = bestPhoto(d.date);
     cells.push(`
-      <div class="cal-cell${d.isToday ? ' today' : ''}${out ? ' out' : ''}${!d.isToday && d.date < today ? ' past' : ''}" data-day="${isoDay(d.date)}">
-        <div class="cal-num">${d.num}${d.num === 1 && out ? `<span style="font-size:15px">${d.date.toLocaleDateString('en-US', { month: 'short' })}</span>` : ''}</div>
-        ${shown.map((e) => `<div class="cal-line"><span class="cal-dot" style="background:${colorOf(e.kind)}${d.isToday ? ';box-shadow:0 0 0 2px #fff' : ''}"></span><span style="overflow:hidden;text-overflow:ellipsis">${esc(e.title)}</span></div>`).join('')}
-        ${more > 0 ? `<div class="cal-line" style="font-weight:600;opacity:.7">+${more} more</div>` : ''}
+      <div class="kc-cell${d.isToday ? ' today' : ''}${out ? ' out' : ''}${!d.isToday && d.date < today ? ' past' : ''}${photo ? ' has-ph' : ''}" data-day="${isoDay(d.date)}">
+        ${photo ? `<div class="kc-phw">${photoBox(photo, 'kc-ph', 200, 160)}<div class="kc-shade"></div></div>` : ''}
+        ${d.isToday ? '<div class="kc-ring"></div>' : ''}
+        <div class="kc-num">${d.num}${d.isToday ? '<small>Today</small>' : d.num === 1 && out ? `<small>${d.date.toLocaleDateString('en-US', { month: 'short' })}</small>` : ''}</div>
+        <div class="kc-chips">
+          ${shown.map((e) => `<div class="kc-chip" style="background:${colorOfEvent(e)}">${esc(e.title)}</div>`).join('')}
+          ${more > 0 ? `<div class="kc-chip more">+${more} more</div>` : ''}
+        </div>
       </div>`);
   }
+  // Dark lines between the days, so the painting behind shows through as a mosaic.
+  let gaps = '';
+  for (let i = 1; i < 7; i++) gaps += `<div class="kc-gap" style="top:0;height:100%;width:6px;left:calc(${i} * (100% + 6px) / 7 - 6px)"></div>`;
+  for (let i = 1; i < rows; i++) gaps += `<div class="kc-gap" style="left:0;width:100%;height:6px;top:calc(${i} * (100% + 6px) / ${rows} - 6px)"></div>`;
+  const todayDow = monthOffset === 0 ? dayDiff(startOfWeek(today), today) : -1;
   return `
-    <div style="flex-grow:1;min-height:0;display:flex;flex-direction:column;gap:8px">
-      <div style="display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:8px">${weekdayNames().map((x) => `<div class="cal-dow">${x}</div>`).join('')}</div>
-      <div class="cal-month" style="grid-template-rows:repeat(${rows},minmax(0,1fr))">${cells.join('')}</div>
+    <div class="kc-dows">${weekdayNames().map((x, i) => `<div class="kc-dow${i === todayDow ? ' now' : ''}">${x}</div>`).join('')}</div>
+    <div class="kc-frame">
+      ${painting(first.getMonth())}${gaps}
+      <div class="kc-grid" style="grid-template-rows:repeat(${rows},minmax(0,1fr))">${cells.join('')}</div>
+    </div>`;
+}
+
+// ---------- The week ----------
+
+function weekGrid(days, today) {
+  const quiet = days.every((d) => !d.events.length);
+  // An empty week says what comes next, with a way to go there.
+  const next = quiet ? nextAfter(days[6].date) : null;
+  return `
+    <div class="kc-week">
+      ${days.map((d, i) => {
+        const photo = bestPhoto(d.date);
+        return `
+        <div class="kc-wday${d.isToday ? ' today' : ''}${!d.isToday && d.date < today ? ' past' : ''}" data-day="${isoDay(d.date)}">
+          <div class="kc-whead${photo ? ' has-ph' : ''}">
+            ${photo ? `<div class="kc-phw">${photoBox(photo, 'kc-ph', 200, 130)}<div class="kc-shade"></div></div>` : ''}
+            <div class="kc-dow${d.isToday ? ' now' : ''}">${d.dow}</div>
+            <div class="kc-num">${d.num}${d.isToday ? '<small>Today</small>' : d.num === 1 || i === 0 ? `<small>${d.date.toLocaleDateString('en-US', { month: 'short' })}</small>` : ''}</div>
+          </div>
+          ${d.events.map((e) => `
+            <div class="kc-ev${d.isToday && e.over ? ' over' : ''}" style="background:${colorOfEvent(e)}">
+              <div class="kc-ev-top">${iconBadge(e)}<div class="kc-ev-time">${esc(e.ofDays ? `${e.time} · ${e.dayOf}/${e.ofDays}` : e.time)}</div></div>
+              <div class="kc-ev-title">${esc(e.title)}</div>
+            </div>`).join('')}
+        </div>`;
+      }).join('')}
+      ${quiet ? `
+        <div class="kc-quiet">
+          <div style="display:flex;flex-direction:column;gap:4px;min-width:0;flex:1">
+            <div class="kc-h" style="font-size:28px">A quiet week</div>
+            <div class="kc-soft kc-cut" style="font-size:18px">${next
+              ? `Next: ${esc(next.name)}${next.turns ? ` · turns ${next.turns}` : ''} · ${next.date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}${next.days > 0 ? `, in ${next.days} days` : ''}`
+              : 'Nothing on the calendar this week.'}</div>
+          </div>
+          ${next && dayDiff(startOfWeek(new Date()), next.date) <= MAX_AHEAD * 7 + 6 ? `<button data-jump="${isoDay(next.date)}" class="x-btn sm gold">Show me</button>` : ''}
+        </div>` : ''}
+    </div>`;
+}
+
+// ---------- Beside the month: a memory, the next big thing, what is coming up ----------
+
+function sidePanel() {
+  const mem = memory();
+  const big = nextBigThing();
+  const note = linkNote();
+  const first = monthStart();
+  let count = 0;
+  const month = `${first.getFullYear()}-${String(first.getMonth() + 1).padStart(2, '0')}-`;
+  const by = photosByDay().byDay;
+  Object.keys(by).forEach((k) => { if (k.indexOf(month) === 0) count += by[k].length; });
+  const room = (mem ? 3 : 6) - (note.error ? 1 : 0) - (big ? 0 : -1);
+  const soon = upcoming(room + 1).filter((u) => !(big && u.days === big.days && u.name === big.name)).slice(0, room);
+  const when = (u) => {
+    const day = u.days === 0 ? 'Today' : u.days === 1 ? 'Tomorrow' : u.date.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' });
+    return u.turns ? `${day} · turns ${u.turns}` : u.allDay || (u.date.getHours() === 0 && u.date.getMinutes() === 0) ? day : `${day} · ${timeText(u.date)}`;
+  };
+  const headline = view === 'month'
+    ? (count ? `${count} photo${count === 1 ? '' : 's'} ${monthOffset === 0 ? 'so far' : 'this month'}` : monthOffset <= 0 ? 'A photo for every day' : 'Still to come')
+    : 'Beside the week';
+  return `
+    <div class="kc-side">
+      <div class="kc-eye kc-cut" style="flex:none;line-height:20px">${esc(headline)}</div>
+      ${mem ? `
+      <div class="kc-card" data-jump="${isoDay(mem.date)}" data-any>
+        <div class="kc-soft kc-cut" style="font:500 16px Inter,sans-serif">${esc(mem.label)}</div>
+        <div class="kc-mem">${photoBox(mem.photo, 'kc-ph', 340, 170)}</div>
+        ${mem.photo.caption || mem.photo.name ? `<div class="kc-cut x-serif" style="font-size:18px;margin-top:8px">${esc(mem.photo.caption || `From ${mem.photo.name}`)}</div>` : ''}
+      </div>` : ''}
+      ${big ? `
+      <div class="kc-card" data-jump="${isoDay(big.date)}" style="display:flex;align-items:center;gap:12px">
+        <span class="kc-badge" style="width:44px;height:44px;border-radius:22px">${eventIcon(big.name, 26)}</span>
+        <div style="min-width:0">
+          <div class="kc-cut" style="font:600 18px Inter,sans-serif">${esc(big.name)}${big.turns ? ` · ${big.turns}` : ''}</div>
+          <div class="kc-cut" style="font:500 22px Outfit,sans-serif;color:${GOLD}">${esc(big.label)} · ${inDays(big.days)}</div>
+        </div>
+      </div>` : ''}
+      ${soon.length ? `<div class="kc-eye" style="flex:none;margin-top:2px">Coming up</div>` : ''}
+      ${soon.map((u) => `
+      <div class="kc-row" data-jump="${isoDay(u.date)}">
+        <span class="kc-dot" style="background:${colorOfEvent(u.kind === 'event' ? Object.assign({}, u, { kind: 'family' }) : u)}"></span>
+        <div style="min-width:0;flex:1">
+          <div class="kc-cut" style="font:600 18px Inter,sans-serif">${esc(u.name)}</div>
+          <div class="kc-cut kc-soft" style="font:400 15px Inter,sans-serif">${esc(when(u))}</div>
+        </div>
+      </div>`).join('')}
+      ${!mem && !big && !soon.length ? '<div class="kc-soft" style="font:400 18px/1.4 Inter,sans-serif">Tap a day to plan it. Days gone by keep the photo that was added then.</div>' : ''}
+      <div style="flex:1;min-height:0"></div>
+      ${note.error ? `<div class="kc-warn" style="flex:none;max-height:62px;overflow:hidden">${esc(note.text)}</div>` : ''}
+      <button data-cals class="x-btn sm frost" style="flex:none;width:100%">${calendarStatus().calendars ? 'Calendars' : 'Link a calendar'}</button>
     </div>`;
 }
 
 function render(el) {
-  const big = nextBigThing();
   const today = midnightOf(new Date());
   const month = view === 'month';
   const days = month ? null : getWeek(weekStart());
   const first = monthStart();
-  const title = month ? first.toLocaleDateString('en-US', { month: 'long' }) : weekTitle(days);
-  const sub = month ? `${monthOffset === 0 ? 'This month · ' : monthOffset === 1 ? 'Next month · ' : ''}${first.getFullYear()}` : weekRange(days);
-  const atStart = month ? monthOffset <= MIN_MONTH : weekOffset <= MIN_WEEK;
+  const title = month ? first.toLocaleDateString('en-US', { month: 'long', year: 'numeric' }) : `${weekTitle(days)} · ${weekRange(days)}`;
+  const atStart = month ? monthOffset <= minMonth() : weekOffset <= MIN_WEEK;
   const atEnd = month ? monthOffset >= MAX_MONTH : weekOffset >= MAX_AHEAD;
   const away = month ? monthOffset !== 0 : weekOffset !== 0;
-  const note = footerNote();
+  const right = `
+    <button data-step="-1" class="x-btn glass round"${atStart ? ' disabled' : ''} aria-label="${month ? 'Earlier month' : 'Earlier week'}">‹</button>
+    <button data-step="1" class="x-btn glass round"${atEnd ? ' disabled' : ''} aria-label="${month ? 'Later month' : 'Later week'}">›</button>
+    ${away ? '<button data-step="0" class="x-btn white">Today</button>' : ''}
+    <div class="kc-seg"><button data-view="month" class="${month ? 'on' : ''}">Month</button><button data-view="week" class="${month ? '' : 'on'}">Week</button></div>
+    <button data-add class="x-btn gold">+ Add</button>`;
 
   el.innerHTML = `${STYLE}
-  <div style="height:100%;padding:40px;display:flex;flex-direction:column;gap:${month ? 16 : 24}px">
-    <div style="display:flex;align-items:center;justify-content:space-between">
-      <div style="display:flex;align-items:center;gap:14px">
-        <a href="${backHref()}" class="pill" style="background:#fff;flex:none;white-space:nowrap">${backLabel()}</a>
-        <div style="min-width:230px;flex:none;display:flex;flex-direction:column">
-          <div class="display" style="font-size:40px;font-weight:500;line-height:1.1;white-space:nowrap">${esc(title)}</div>
-          <div class="muted" style="font-size:16px;font-weight:500;white-space:nowrap">${esc(sub)}</div>
-        </div>
-        <button data-step="-1" class="pill cal-nav"${atStart ? ' disabled' : ''} aria-label="${month ? 'Earlier month' : 'Earlier week'}">‹</button>
-        <button data-step="1" class="pill cal-nav"${atEnd ? ' disabled' : ''} aria-label="${month ? 'Later month' : 'Later week'}">›</button>
-        ${away ? '<button data-step="0" class="pill" style="background:var(--ink);color:#fff;border:none;cursor:pointer;flex:none;white-space:nowrap;min-height:56px">Today</button>' : ''}
-        <div class="cal-seg"><button data-view="week" class="${month ? '' : 'on'}">Week</button><button data-view="month" class="${month ? 'on' : ''}">Month</button></div>
-        <button data-add class="pill" style="background:${settings.accent};color:#fff;border:none;cursor:pointer;font-size:18px;padding:0 24px;flex:none;white-space:nowrap;min-height:56px">+ Add</button>
-      </div>
-      <div class="muted" style="display:flex;flex-wrap:wrap;justify-content:flex-end;gap:4px 16px;font-size:16px;min-width:0;margin-left:16px">${legend()}</div>
+  <div class="kc">
+    ${seasonLayer(season(), { quiet: true })}
+    ${topBar({ title, tone: 'dark', right })}
+    <div class="kc-body">
+      <div class="kc-main">${month ? monthGrid(today) : weekGrid(days, today)}</div>
+      ${sidePanel()}
     </div>
-
-    ${month ? monthGrid(today) : weekGrid(days, today)}
-
-    <div data-detail style="display:none;position:absolute;top:0;right:0;bottom:0;left:0;background:rgba(29,36,48,.45);z-index:5;align-items:center;justify-content:center"></div>
-
-    <div style="background:#fff;border-radius:20px;padding:${note.button ? 8 : 18}px 24px;min-height:${note.button ? 64 : 0}px;box-sizing:border-box;display:flex;justify-content:space-between;align-items:center;font-size:18px">
-      <div style="white-space:nowrap;flex:none;max-width:56%;overflow:hidden;text-overflow:ellipsis">${big ? `<span style="font-weight:600">Next big thing:</span> <span style="display:inline-block;vertical-align:-5px;margin:0 2px">${eventIcon(big.name, 24)}</span> ${esc(big.name)}${big.where ? ` at ${esc(big.where)}` : ''}${big.turns ? ` · turns ${big.turns}` : ''} · ${big.label} · <span style="font-weight:600">${countdown(big)}</span>` : ''}</div>
-      <div style="display:flex;align-items:center;min-width:0;margin-left:16px">
-        <div class="muted" style="text-align:right;min-width:0">${esc(note.text)}</div>${note.button}
-      </div>
-    </div>
-    ${undo ? `<div class="cal-undo" data-undo-bar><span>${esc(undo.text)}</span><button data-undo>Undo</button></div>` : ''}
+    <div data-detail class="kc-over"></div>
+    ${undo ? `<div class="kc-undo" data-undo-bar><span>${esc(undo.text)}</span><button data-undo class="x-btn sm ink">Undo</button></div>` : ''}
   </div>`;
 }
 
 function draw(el) {
+  stale = false;
+  sheet = '';
   render(el);
+  loadThumbs(el);
   if (view !== 'week') return;
   fitDays(el);
   // Again after layout settles (older WebViews add flex-gap margins a frame later).
   requestAnimationFrame(() => setTimeout(() => { if (el.isConnected) fitDays(el); }, 50));
 }
 
-// The days things can be added to: from this week's Monday to the last week the arrows reach.
+// The days things can be added to: from this week's first day to the last week the arrows reach.
 function canAddOn(d) {
   const n = dayDiff(startOfWeek(new Date()), d);
   return n >= 0 && n <= MAX_AHEAD * 7 + 6;
 }
 
-// Tap a day: everything on it, with full titles, times and places.
-function showDay(el, d) {
+function openSheet(el, kind, html) {
   const box = el.querySelector('[data-detail]');
-  const title = d.date.toLocaleDateString('en-US', thisYear(d.date) ? { weekday: 'long', month: 'long', day: 'numeric' } : { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' });
-  box.innerHTML = `
-    <div data-day-box="${isoDay(d.date)}" style="background:#fff;border-radius:24px;padding:28px 32px;width:680px;max-height:640px;box-sizing:border-box;display:flex;flex-direction:column;gap:16px">
-      <div style="display:flex;align-items:center;justify-content:space-between;gap:16px">
-        <div style="min-width:0">
-          <div class="display" style="font-size:32px;font-weight:500">${esc(title)}</div>
-          <div class="muted" style="font-size:17px;font-weight:600">${howFar(d.date)}</div>
-        </div>
-        <div style="display:flex;gap:10px;flex:none">
-          ${canAddOn(d.date) ? `<button data-add="${isoDay(d.date)}" class="pill" style="background:${settings.accent};color:#fff;border:none;cursor:pointer;min-height:56px;padding:0 24px">+ Add</button>` : ''}
-          <button data-close class="pill" style="background:var(--ink);color:#fff;border:none;cursor:pointer;min-height:56px;padding:0 24px">Close</button>
-        </div>
-      </div>
-      <div style="overflow-y:auto;display:flex;flex-direction:column;gap:10px">
-        ${d.events.length ? d.events.map((e) => `
-          <div${e.id ? ` data-edit="${esc(e.id)}" class="cd-mine"` : ''} style="display:flex;gap:14px;align-items:flex-start;padding:12px 0;border-top:1px solid var(--line)${d.isToday && e.over ? ';opacity:.55' : ''}">
-            ${iconFor(e, 24) ? `<div style="width:24px;flex:none;margin-top:1px">${iconFor(e, 24)}</div>` : `<div style="width:12px;height:12px;border-radius:50%;margin:7px 6px 0;flex:none;background:${colorOf(e.kind)}"></div>`}
-            <div style="width:150px;flex:none;font-weight:600;font-size:17px">${esc(e.time)}${e.endTime ? `<div class="muted" style="font-weight:500;font-size:15px">to ${esc(e.endTime)}</div>` : ''}${e.ofDays ? `<div class="muted" style="font-weight:500;font-size:15px">day ${e.dayOf} of ${e.ofDays}</div>` : ''}</div>
-            <div style="min-width:0"><div style="font-size:19px;font-weight:500;overflow-wrap:anywhere">${esc(e.title)}</div>
-              ${e.location ? `<div class="muted" style="font-size:15px;margin-top:2px;overflow-wrap:anywhere">${esc(e.location)}</div>` : ''}
-              ${e.calendar ? `<div class="muted" style="font-size:15px;margin-top:2px">From ${esc(e.calendar)}</div>` : ''}
-              ${e.id ? `<div class="muted" style="font-size:15px;margin-top:2px">Added here${REPEAT_WORDS[e.repeat] ? ` · ${REPEAT_WORDS[e.repeat]}` : ''} · tap to change</div>` : ''}</div>
-          </div>`).join('') : `<div style="display:flex;flex-direction:column;align-items:center;gap:8px;padding:4px 0 12px"><div style="width:240px">${spot.quietDay()}</div><div class="muted" style="font-size:19px">Nothing planned</div></div>`}
-      </div>
-    </div>`;
+  box.innerHTML = html;
   box.style.display = 'flex';
+  // It slides up when it opens, not again every time a choice inside it is tapped.
+  if (sheet !== kind && box.firstElementChild) box.firstElementChild.classList.add('kc-in');
+  sheet = kind;
+  loadThumbs(box);
+  return box;
+}
+function closeSheet(el) {
+  sheet = '';
+  if (stopCodes) { stopCodes(); stopCodes = null; }
+  const box = el.querySelector('[data-detail]');
+  if (box) { box.style.display = 'none'; box.innerHTML = ''; }
+  if (stale) draw(el);
 }
 
+// Tap a day: everything on it, with full titles, times and places; its photos; and Add.
+function showDay(el, d) {
+  const title = d.date.toLocaleDateString('en-US', thisYear(d.date) ? { weekday: 'long', month: 'long', day: 'numeric' } : { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' });
+  const pics = photosOn(d.date);
+  const shown = pics.slice(0, 6);
+  const past = d.date <= midnightOf(new Date());
+  const side = pics.length || d.isToday;
+  openSheet(el, 'day', `
+    <div class="kc-sheet" data-day-box="${isoDay(d.date)}" style="width:${side ? 1060 : 760}px;max-height:700px;padding:26px 30px;gap:18px">
+      <div style="display:flex;align-items:center;justify-content:space-between;gap:16px;flex:none">
+        <div style="min-width:0">
+          <div class="kc-eye">${howFar(d.date)}</div>
+          <div class="kc-h kc-cut" style="margin-top:4px">${esc(title)}</div>
+        </div>
+        <div style="display:flex;gap:12px;flex:none">
+          ${canAddOn(d.date) ? `<button data-add="${isoDay(d.date)}" class="x-btn gold">+ Add</button>` : ''}
+          <button data-close class="x-btn frost">Close</button>
+        </div>
+      </div>
+      <div style="display:flex;gap:24px;min-height:0;flex:1">
+        <div class="x-scroll" style="flex:1;min-width:0;display:flex;flex-direction:column;gap:10px">
+          ${d.events.length ? d.events.map((e) => `
+            <div${e.id ? ` data-edit="${esc(e.id)}"` : ''} class="kc-item${e.id ? ' mine' : ''}"${d.isToday && e.over ? ' style="opacity:.55"' : ''}>
+              <span class="kc-bar" style="background:${colorOfEvent(e)}"></span>
+              <div style="width:128px;flex:none;font:600 18px Inter,sans-serif">${esc(e.time)}${e.endTime ? `<div class="kc-soft" style="font-weight:500;font-size:15px">to ${esc(e.endTime)}</div>` : ''}${e.ofDays ? `<div class="kc-soft" style="font-weight:500;font-size:15px">day ${e.dayOf} of ${e.ofDays}</div>` : ''}</div>
+              <div style="min-width:0;flex:1"><div style="font:500 21px/1.25 Inter,sans-serif;overflow-wrap:anywhere;display:flex;align-items:center;gap:8px">${iconFor(e, 24)}<span style="min-width:0">${esc(e.title)}</span></div>
+                ${e.location ? `<div class="kc-soft" style="font-size:16px;margin-top:3px;overflow-wrap:anywhere">${esc(e.location)}</div>` : ''}
+                ${e.calendar ? `<div class="kc-soft" style="font-size:16px;margin-top:3px">From ${esc(e.calendar)}</div>` : ''}
+                ${e.id ? `<div class="kc-soft" style="font-size:16px;margin-top:3px">${esc([e.who && e.who.length ? `For ${e.who.join(' and ')}` : '', e.tag && e.tag !== 'plan' && TAGS[e.tag] ? TAGS[e.tag].label : '', REPEAT_WORDS[e.repeat] || ''].filter(Boolean).concat(['tap to change']).join(' · '))}</div>` : ''}</div>
+            </div>`).join('') : `
+            <div style="display:flex;flex-direction:column;justify-content:center;gap:8px;padding:26px 12px">
+              <div class="x-serif" style="font-size:28px">${past && !d.isToday ? 'Nothing was planned.' : 'Nothing planned yet.'}</div>
+              ${canAddOn(d.date) ? '<div class="kc-soft" style="font-size:18px">Tap + Add to put something on this day.</div>' : ''}
+            </div>`}
+        </div>
+        ${side ? `
+        <div style="width:348px;flex:none;display:flex;flex-direction:column;gap:12px;min-height:0">
+          <div class="kc-eye" style="color:#A89DB5">${pics.length ? `${pics.length} photo${pics.length === 1 ? '' : 's'} from this day` : 'No photo from today yet'}</div>
+          <div style="display:flex;flex-wrap:wrap;gap:12px;overflow:hidden">
+            ${shown.map((p) => `<div class="kc-tile">${photoBox(p, 'kc-ph', 252, 190)}</div>`).join('')}
+          </div>
+          ${pics.length > shown.length ? `<div class="kc-soft" style="font-size:16px">and ${pics.length - shown.length} more in the gallery</div>` : ''}
+          <div style="flex:1"></div>
+          <a href="${pics.length ? '#/photos' : '#/addphotos'}" class="x-btn sm frost" style="flex:none">${pics.length ? 'Open the gallery' : 'Add today’s photo'}</a>
+        </div>` : ''}
+      </div>
+    </div>`);
+}
 
-// ---------- Adding / changing an event typed on this tablet ----------
+// Open the day sheet for date `d` (any day: from the week, the month or a saved change).
+function showDayOn(el, d) {
+  showDay(el, getDay(d));
+}
+
+// The key, the linked calendars and how they are doing, and the code to link one from a phone.
+function showCals(el) {
+  const note = linkNote();
+  const links = linkedCalendars();
+  const d = display();
+  openSheet(el, 'cals', `
+    <div class="kc-sheet" style="width:980px;max-height:700px;padding:26px 30px;gap:18px">
+      <div style="display:flex;align-items:center;justify-content:space-between;gap:16px;flex:none">
+        <div class="kc-h">Calendars</div>
+        <button data-close class="x-btn frost">Close</button>
+      </div>
+      <div style="display:flex;gap:28px;min-height:0">
+        <div style="flex:1;min-width:0;display:flex;flex-direction:column;gap:14px">
+          <div class="kc-eye" style="color:#A89DB5">${links.length ? `${links.length} linked · the colours` : 'The colours'}</div>
+          <div style="display:flex;flex-wrap:wrap;gap:10px 22px">${legend()}</div>
+          <div class="${note.error ? 'kc-warn' : 'kc-soft'}" style="font:${note.error ? 500 : 400} 18px/1.4 Inter,sans-serif;margin-top:6px">${esc(note.text)}</div>
+          ${note.button ? `<div><button data-check class="x-btn sm white"${checking ? ' disabled' : ''}>${checking ? 'Checking…' : note.error ? 'Try again' : 'Check now'}</button></div>` : ''}
+          <div class="kc-soft" style="font:400 16px/1.4 Inter,sans-serif;margin-top:auto">Weeks start on ${d.weekStart === 0 ? 'Sunday' : 'Monday'}, with a ${d.clock24 ? '24' : '12'}-hour clock. Both can be changed in Settings.</div>
+        </div>
+        <div style="width:330px;flex:none">${phoneCode({ tab: 'settings', title: 'Add your phone’s calendar', sub: 'Scan to link a calendar or add birthdays.', column: true, size: 170 })}</div>
+      </div>
+    </div>`);
+  if (stopCodes) stopCodes();
+  stopCodes = wirePhoneCodes(el);
+}
+
+// ---------- Adding / changing an event typed on this screen ----------
 
 const fmtMin = (m) => minutesText(m);
 const LENGTHS = [[30, '30 min'], [60, '1 hr'], [90, '1½ hr'], [120, '2 hr'], [180, '3 hr']];
-const REPEATS = [['none', 'Just once'], ['weekly', 'Every week'], ['fortnightly', 'Every 2 weeks'], ['monthly', 'Every month'], ['yearly', 'Every year']];
-// One-tap times and titles, so most things need no typing at all.
-const QUICK_TIMES = [9 * 60, 10 * 60, 12 * 60, 15 * 60, 17 * 60, 18 * 60, 19 * 60];
-const COMMON_TITLES = ['Doctor', 'Dentist', 'Haircut', 'Visitors', 'Birthday party', 'School', 'Church', 'Bin day'];
-
-function dayLabel(d) {
-  const today = midnightOf(new Date());
-  const diff = dayDiff(today, d);
-  const name = d.toLocaleDateString('en-US', thisYear(d) ? { weekday: 'long', month: 'short', day: 'numeric' } : { weekday: 'short', month: 'short', day: 'numeric', year: 'numeric' });
-  return diff === 0 ? `Today · ${name}` : diff === 1 ? `Tomorrow · ${name}` : name;
-}
+const REPEATS = [['none', 'Just once'], ['weekly', 'Weekly'], ['fortnightly', 'Every 2 weeks'], ['monthly', 'Monthly'], ['yearly', 'Yearly']];
+// One-tap times and titles, so most things need no typing at all. A suggestion also sets
+// what usually goes with it (a birthday is all day, every year), which can still be changed.
+const QUICK_HOURS = [9, 12, 15, 17, 18, 19, 20];
+const SUGGEST = [
+  { t: 'Dinner out', tag: 'out', at: 19 * 60, len: 120 },
+  { t: 'Date night', tag: 'out', at: 19 * 60, len: 180 },
+  { t: 'Dentist', tag: 'appointment', len: 60 },
+  { t: 'Trip', tag: 'trip', allDay: true },
+  { t: 'Birthday', tag: 'birthday', allDay: true, repeat: 'yearly' },
+  { t: 'Friends over', tag: 'plan', at: 18 * 60, len: 180 },
+  { t: 'Doctor', tag: 'appointment', len: 60 },
+  { t: 'Haircut', tag: 'appointment', len: 60 },
+];
 
 function titleChips(current) {
   const seen = {};
   const list = [];
-  recentTitles(4).concat(COMMON_TITLES).forEach((t) => {
+  recentTitles(2).concat(SUGGEST.map((s) => s.t)).forEach((t) => {
     const k = t.toLowerCase();
-    if (!seen[k] && list.length < 7) { seen[k] = true; list.push(t); }
+    if (!seen[k] && list.length < 8) { seen[k] = true; list.push(t); }
   });
-  return list.map((t) => `<button data-f="title" data-title-chip="${esc(t)}" class="cf-chip sm${current.trim().toLowerCase() === t.toLowerCase() ? ' on' : ''}">${esc(t)}</button>`).join('');
+  return list.map((t) => `<button data-f="title" data-title-chip="${esc(t)}" class="kf-chip${current.trim().toLowerCase() === t.toLowerCase() ? ' on' : ''}"><span class="kc-cut">${esc(t)}</span></button>`).join('');
 }
 
-/** Open the form: a new event on `date`, or the saved event `id` (as it falls on day `on`). `back` = the day to return to on Cancel. */
+/** Open the sheet: a new event on `date`, or the saved event `id` (as it falls on day `on`). `back` = the day to return to on Cancel. */
 function showForm(el, { date, id, back, on }) {
   const saved = id ? getMyEvent(id) : null;
   if (id && !saved) return;
@@ -363,75 +664,124 @@ function showForm(el, { date, id, back, on }) {
   const start = day.getTime() === midnightOf(now).getTime() ? Math.min(23, now.getHours() + 1) * 60 : 9 * 60;
   let mins = start;
   if (saved) { const t = saved.time.split(':').map(Number); mins = t[0] * 60 + t[1]; }
+  const cal = new Date(day.getFullYear(), day.getMonth(), 1);
   form = saved
-    ? { id: saved.id, title: saved.title, date: day, allDay: saved.allDay, mins, minutes: saved.minutes, repeat: saved.repeat || 'none', back, on: on || back || day, confirm: false, error: '' }
-    : { id: '', title: '', date: day, allDay: false, mins, minutes: 60, repeat: 'none', back, confirm: false, error: '' };
+    ? { id: saved.id, title: saved.title, date: day, cal, allDay: saved.allDay, mins, minutes: saved.minutes, repeat: saved.repeat || 'none',
+      who: Array.isArray(saved.who) ? saved.who.slice() : [], tag: TAGS[saved.tag] ? saved.tag : 'plan', back, on: on || back || day, confirm: false, error: '' }
+    : { id: '', title: '', date: day, cal, allDay: false, mins, minutes: 60, repeat: 'none', who: [], tag: 'plan', back, confirm: false, error: '' };
   drawForm(el);
+}
+
+// The month the day is picked from: tap a day. Days that already have something show a dot.
+function pickMonth(f) {
+  const first = f.cal;
+  const gridStart = startOfWeek(first);
+  const todayIso = isoDay(new Date());
+  const chosen = isoDay(f.date);
+  let cells = '';
+  for (let i = 0; i < 42; i++) {
+    const d = shiftDay(gridStart, i);
+    const iso = isoDay(d);
+    const out = d.getMonth() !== first.getMonth();
+    const busy = !out && getDay(d).events.length > 0;
+    cells += `<button data-f="pick:${iso}" class="kf-d${out ? ' out' : ''}${iso === todayIso ? ' now' : ''}${iso === chosen ? ' on' : ''}"${canAddOn(d) ? '' : ' disabled'}>${d.getDate()}${busy ? '<i></i>' : ''}</button>`;
+  }
+  const prevOk = canAddOn(new Date(first.getFullYear(), first.getMonth(), 0));
+  const nextOk = canAddOn(new Date(first.getFullYear(), first.getMonth() + 1, 1));
+  return `
+    <div style="width:392px;flex:none;display:flex;flex-direction:column;gap:6px">
+      <div style="display:flex;align-items:center;gap:8px">
+        <button data-f="cal-1" class="kf-step" aria-label="Earlier month"${prevOk ? '' : ' disabled style="opacity:.3"'}>‹</button>
+        <div style="flex:1;text-align:center;font:500 24px Outfit,sans-serif">${first.toLocaleDateString('en-US', { month: 'long', year: 'numeric' })}</div>
+        <button data-f="cal+1" class="kf-step" aria-label="Later month"${nextOk ? '' : ' disabled style="opacity:.3"'}>›</button>
+      </div>
+      <div class="kf-cal" style="grid-auto-rows:24px">${weekdayNames().map((x) => `<div style="text-align:center;font:600 15px Inter,sans-serif;color:#A89DB5">${x.slice(0, 2)}</div>`).join('')}</div>
+      <div class="kf-cal">${cells}</div>
+      <div style="display:flex;gap:8px;margin-top:6px">
+        <button data-f="today" class="kf-chip">Today</button>
+        <button data-f="date+1" class="kf-chip">Next day</button>
+        <button data-f="date+7" class="kf-chip">+1 week</button>
+      </div>
+    </div>`;
 }
 
 function drawForm(el) {
   const f = form;
-  const box = el.querySelector('[data-detail]');
-  const repeating = f.id && (getMyEvent(f.id) || {}).repeat && (getMyEvent(f.id) || {}).repeat !== 'none';
+  const was = f.id ? getMyEvent(f.id) || {} : {};
+  const repeating = was.repeat && was.repeat !== 'none';
   const onLabel = f.on ? f.on.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' }) : '';
-  box.innerHTML = `
-    <div data-form style="background:#fff;border-radius:24px;padding:24px 32px;width:980px;box-sizing:border-box;display:flex;flex-direction:column;gap:14px">
-      <div style="display:flex;align-items:center;justify-content:space-between;gap:16px">
-        <div class="display" style="font-size:32px;font-weight:500">${f.id ? 'Change event' : 'Add to the calendar'}</div>
-        <button data-f="cancel" class="pill" style="background:#fff;border:2px solid var(--line);cursor:pointer;min-height:52px;padding:0 24px">Cancel</button>
-      </div>
-      <div class="cf-line">
-        <span class="cf-label">What</span>
-        <input data-title class="cf-in" maxlength="80" placeholder="Tap a choice below, or type here" value="${esc(f.title)}" autocomplete="off">
-      </div>
-      <div class="cf-line"><span class="cf-label"></span><div class="cf-chips">${titleChips(f.title)}</div></div>
-      <div class="cf-line">
-        <span class="cf-label">Day</span>
-        <div class="cf-row">
-          <button data-f="date-1" class="cf-step" aria-label="Day before">‹</button>
-          <div class="cf-val" style="min-width:0;width:290px;flex:none;font-size:22px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${esc(dayLabel(f.date))}</div>
-          <button data-f="date+1" class="cf-step" aria-label="Day after">›</button>
-          <button data-f="date+7" class="cf-chip">+1 week</button>
-          <button data-f="date+28" class="cf-chip">+4 weeks</button>
-          <button data-f="today" class="cf-chip">Today</button>
+  const diff = dayDiff(midnightOf(new Date()), f.date);
+  const dayWords = f.date.toLocaleDateString('en-US', thisYear(f.date) ? { weekday: 'long', month: 'long', day: 'numeric' } : { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' });
+  const names = people();
+  // Somebody an older event was for, who is no longer in Settings, still shows (and can be taken off).
+  f.who.forEach((n) => { if (!names.some((p) => p.name === n)) names.push({ name: n, color: personColor(n) }); });
+  // Two names or seven: they all fit on the one line.
+  const shown = names.slice(0, 7);
+  const nameW = Math.min(150, Math.floor((640 - 62 - 8 * shown.length) / Math.max(1, shown.length)));
+  const box = openSheet(el, 'form', `
+    <div data-form class="kc-sheet" style="width:1232px;padding:22px 28px;gap:14px">
+      <div style="display:flex;align-items:center;gap:16px;flex:none">
+        <div style="min-width:0;flex:1">
+          <div class="kc-eye">${f.id ? 'Change this' : 'Add to the calendar'}</div>
+          <div class="kc-h kc-cut" style="margin-top:2px">${esc(dayWords)}${diff === 0 ? ' <span class="x-serif kc-soft" style="font-size:26px">today</span>' : diff === 1 ? ' <span class="x-serif kc-soft" style="font-size:26px">tomorrow</span>' : ''}</div>
         </div>
+        <button data-f="cancel" class="x-btn frost">Cancel</button>
       </div>
-      <div class="cf-line">
-        <span class="cf-label">Time</span>
-        <div class="cf-row">
-          <button data-f="allday" class="cf-chip${f.allDay ? ' on' : ''}">All day</button>
-          <button data-f="timed" class="cf-chip${f.allDay ? '' : ' on'}">At a time</button>
+      <div style="display:flex;gap:32px;min-height:0">
+        ${pickMonth(f)}
+        <div style="flex:1;min-width:0;display:flex;flex-direction:column;gap:8px">
+          <div class="kf-line">
+            <span class="kf-label">What</span>
+            <input data-title class="kf-in" maxlength="80" placeholder="Tap a choice below, or type here" value="${esc(f.title)}" autocomplete="off">
+          </div>
+          <div class="kf-line"><span class="kf-label"></span><div class="kf-row">${titleChips(f.title)}</div></div>
+          <div class="kf-line">
+            <span class="kf-label">When</span>
+            <div class="kf-row">
+              <button data-f="allday" class="kf-chip${f.allDay ? ' on' : ''}">All day</button>
+              <button data-f="timed" class="kf-chip${f.allDay ? '' : ' on'}">At a time</button>
+              ${f.allDay ? '' : `
+              <span style="flex:1"></span>
+              <button data-f="t-60" class="kf-step" aria-label="1 hour earlier">−1h</button>
+              <button data-f="t-15" class="kf-step" aria-label="15 minutes earlier">−</button>
+              <div class="kf-val">${fmtMin(f.mins)}</div>
+              <button data-f="t+15" class="kf-step" aria-label="15 minutes later">+</button>
+              <button data-f="t+60" class="kf-step" aria-label="1 hour later">+1h</button>`}
+            </div>
+          </div>
           ${f.allDay ? '' : `
-          <span style="width:8px"></span>
-          <button data-f="t-60" class="cf-step" aria-label="1 hour earlier">−1h</button>
-          <button data-f="t-15" class="cf-step" aria-label="15 minutes earlier">−</button>
-          <div class="cf-val" style="min-width:140px">${fmtMin(f.mins)}</div>
-          <button data-f="t+15" class="cf-step" aria-label="15 minutes later">+</button>
-          <button data-f="t+60" class="cf-step" aria-label="1 hour later">+1h</button>`}
+          <div class="kf-line"><span class="kf-label"></span><div class="kf-row">${QUICK_HOURS.map((h) => `<button data-f="at:${h * 60}" class="kf-chip${f.mins === h * 60 ? ' on' : ''}">${hourText(h)}</button>`).join('')}</div></div>
+          <div class="kf-line"><span class="kf-label">How long</span><div class="kf-row">${LENGTHS.map(([m, t]) => `<button data-f="len:${m}" class="kf-chip${f.minutes === m ? ' on' : ''}">${t}</button>`).join('')}<span class="kc-soft kc-cut" style="font-size:17px;margin-left:4px">until ${fmtMin((f.mins + f.minutes) % 1440)}</span></div></div>`}
+          <div class="kf-line">
+            <span class="kf-label">Repeats</span>
+            <div class="kf-row">${REPEATS.map(([k, t]) => `<button data-f="rep:${k}" class="kf-chip${f.repeat === k ? ' on' : ''}">${t}</button>`).join('')}</div>
+          </div>
+          ${names.length ? `
+          <div class="kf-line">
+            <span class="kf-label">Who</span>
+            <div class="kf-row"><button data-f="who:" class="kf-chip${f.who.length ? '' : ' on'}"${shown.length > 3 ? ' style="padding:0 14px"' : ''}>${shown.length > 3 ? 'All' : 'Everyone'}</button>${shown.map((p) => `<button data-f="who:${esc(p.name)}" class="kf-chip${f.who.indexOf(p.name) >= 0 ? ' on' : ''}" style="max-width:${nameW}px${shown.length > 3 ? ';padding:0 12px' : ''}"><span class="kc-dot" style="background:${p.color}"></span><span class="kc-cut">${esc(p.name)}</span></button>`).join('')}</div>
+          </div>` : ''}
+          <div class="kf-line">
+            <span class="kf-label">Kind</span>
+            <div class="kf-row tight">${Object.keys(TAGS).map((k) => `<button data-f="tag:${k}" class="kf-chip${f.tag === k ? ' on' : ''}"  style="padding:0 11px;font-size:17px;gap:6px"><span class="kc-dot" style="background:${TAGS[k].color}"></span>${TAGS[k].short || TAGS[k].label}</button>`).join('')}</div>
+          </div>
+          <div style="display:flex;align-items:center;gap:12px;margin-top:auto;padding-top:6px;min-height:64px">
+            ${f.confirm && repeating ? `
+              <span style="font:600 18px Inter,sans-serif;flex:none">Remove which?</span>
+              <button data-f="del:one" class="x-btn sm danger">Just ${esc(onLabel)}</button>
+              <button data-f="del:later" class="x-btn sm danger">This and later</button>
+              <button data-f="del:all" class="x-btn sm danger sure">Every one</button>
+              <button data-f="keep" class="x-btn sm frost" style="margin-left:auto">Keep it</button>` : `
+              <button data-f="save" class="x-btn lg gold">${f.id ? 'Save changes' : 'Save'}</button>
+              <button data-f="cancel" class="x-btn frost">Cancel</button>
+              <div data-ferr class="kc-warn kc-cut" style="font-size:18px;font-weight:600;flex:1">${esc(f.error)}</div>
+              ${f.id ? `<button data-f="delete" class="x-btn danger${f.confirm ? ' sure' : ''}" style="margin-left:auto">${f.confirm ? 'Tap again to remove' : 'Remove'}</button>` : ''}`}
+          </div>
         </div>
       </div>
-      ${f.allDay ? '' : `
-      <div class="cf-line"><span class="cf-label"></span><div class="cf-chips">${QUICK_TIMES.map((m) => `<button data-f="at:${m}" class="cf-chip sm${f.mins === m ? ' on' : ''}">${fmtMin(m)}</button>`).join('')}</div></div>
-      <div class="cf-line"><span class="cf-label">How long</span><div class="cf-row">${LENGTHS.map(([m, t]) => `<button data-f="len:${m}" class="cf-chip${f.minutes === m ? ' on' : ''}">${t}</button>`).join('')}<span class="muted" style="font-size:17px;margin-left:6px">until ${fmtMin((f.mins + f.minutes) % 1440)}</span></div></div>`}
-      <div class="cf-line">
-        <span class="cf-label">Repeats</span>
-        <div class="cf-row">${REPEATS.map(([k, t]) => `<button data-f="rep:${k}" class="cf-chip sm${f.repeat === k ? ' on' : ''}">${t}</button>`).join('')}</div>
-      </div>
-      <div style="display:flex;align-items:center;gap:12px;margin-top:4px;min-height:56px">
-        ${f.confirm && repeating ? `
-          <span style="font-weight:600;font-size:17px;flex:none">Remove which?</span>
-          <button data-f="del:one" class="cf-chip" style="border-color:#B3261E;color:#B3261E">Just ${esc(onLabel)}</button>
-          <button data-f="del:later" class="cf-chip" style="border-color:#B3261E;color:#B3261E">This and later</button>
-          <button data-f="del:all" class="cf-chip" style="background:#B3261E;border-color:#B3261E;color:#fff">Every one</button>
-          <button data-f="keep" class="cf-chip" style="margin-left:auto">Keep it</button>` : `
-          <button data-f="save" class="pill" style="background:${settings.accent};color:#fff;border:none;cursor:pointer;font-size:19px;min-height:56px;padding:0 34px">${f.id ? 'Save changes' : 'Add to calendar'}</button>
-          <div data-ferr style="color:#B3261E;font-weight:600;font-size:17px">${esc(f.error)}</div>
-          ${f.id ? `<button data-f="delete" class="pill" style="margin-left:auto;min-height:56px;padding:0 24px;background:${f.confirm ? '#B3261E' : '#fff'};color:${f.confirm ? '#fff' : '#B3261E'};border:2px solid #B3261E;cursor:pointer">${f.confirm ? 'Tap again to remove' : 'Remove'}</button>` : ''}`}
-      </div>
-    </div>`;
-  box.style.display = 'flex';
+    </div>`);
   const input = box.querySelector('[data-title]');
-  input.addEventListener('keydown', (e) => { if (e.key === 'Enter') { e.preventDefault(); formAction(el, 'save'); } });
+  input.addEventListener('keydown', (e) => { if (e.key === 'Enter') { e.preventDefault(); input.blur(); formAction(el, 'save'); } });
   // Typing a title that matches a choice lights it up (and un-lights the others).
   input.addEventListener('input', () => {
     box.querySelectorAll('[data-title-chip]').forEach((c) => { c.classList.toggle('on', c.dataset.titleChip.toLowerCase() === input.value.trim().toLowerCase()); });
@@ -442,7 +792,7 @@ function drawForm(el) {
 function closeForm(el) {
   const back = form && form.back;
   form = null;
-  el.querySelector('[data-detail]').style.display = 'none';
+  closeSheet(el);
   return back;
 }
 
@@ -453,12 +803,11 @@ function clampDay(d) {
   return d < first ? first : d > last ? last : d;
 }
 
-// Show the week (or month) holding `d`, within what the arrows allow.
+// Show the week and month holding `d`, within what the arrows allow.
 function goToWeekOf(d) {
   const weeks = Math.floor(dayDiff(startOfWeek(new Date()), midnightOf(d)) / 7);
   weekOffset = Math.max(MIN_WEEK, Math.min(MAX_AHEAD, weeks));
-  const now = new Date();
-  monthOffset = Math.max(MIN_MONTH, Math.min(MAX_MONTH, (d.getFullYear() - now.getFullYear()) * 12 + d.getMonth() - now.getMonth()));
+  monthOffset = Math.max(minMonth(), Math.min(MAX_MONTH, monthsFromNow(d)));
 }
 
 // After a removal: a short "Undo" at the bottom of the screen.
@@ -487,10 +836,11 @@ function formAction(el, act, btn) {
   if (act === 'save') {
     try {
       saveMyEvent({ id: f.id, title: f.title, date: isoDay(f.date), allDay: f.allDay,
-        time: `${String(Math.floor(f.mins / 60)).padStart(2, '0')}:${String(f.mins % 60).padStart(2, '0')}`, minutes: f.minutes, repeat: f.repeat });
+        time: `${String(Math.floor(f.mins / 60)).padStart(2, '0')}:${String(f.mins % 60).padStart(2, '0')}`, minutes: f.minutes, repeat: f.repeat,
+        who: f.who, tag: f.tag });
     } catch (err) { f.error = err.message || 'Couldn’t save'; drawForm(el); return; }
     const d = f.date;
-    closeForm(el);
+    form = null;
     goToWeekOf(d);
     draw(el);
     showDayOn(el, d);
@@ -498,7 +848,7 @@ function formAction(el, act, btn) {
   }
   if (act === 'delete' || act.indexOf('del:') === 0) {
     const was = getMyEvent(f.id);
-    if (!was) { closeForm(el); draw(el); return; }
+    if (!was) { form = null; draw(el); return; }
     const repeating = was.repeat && was.repeat !== 'none';
     if (act === 'delete' && !f.confirm) { f.confirm = true; drawForm(el); return; }
     const on = f.on || f.date;
@@ -508,43 +858,66 @@ function formAction(el, act, btn) {
     else if (act === 'del:all' || !repeating) removeMyEvent(f.id);
     else return;
     const back = f.back || on;
-    closeForm(el);
+    form = null;
     offerUndo(el, text, () => restoreMyEvent(was));
     draw(el);
     showDayOn(el, back);
     return;
   }
   if (act === 'keep') { drawForm(el); return; }
-  if (act === 'title') { f.title = btn ? btn.dataset.titleChip : f.title; drawForm(el); return; }
-  if (act === 'today') f.date = midnightOf(new Date());
-  else if (act.indexOf('date') === 0) f.date = clampDay(shiftDay(f.date, +act.slice(4)));
+  if (act === 'title') {
+    f.title = btn ? btn.dataset.titleChip : f.title;
+    // A new event takes what usually goes with the suggestion.
+    const s = f.id ? null : SUGGEST.filter((x) => x.t === f.title)[0];
+    if (s) {
+      f.tag = s.tag;
+      f.allDay = !!s.allDay;
+      if (s.at != null) f.mins = s.at;
+      if (s.len) f.minutes = s.len;
+      f.repeat = s.repeat || 'none';
+    }
+    drawForm(el);
+    return;
+  }
+  const setDay = (d) => { f.date = clampDay(d); f.cal = new Date(f.date.getFullYear(), f.date.getMonth(), 1); };
+  if (act === 'today') setDay(midnightOf(new Date()));
+  else if (act.indexOf('pick:') === 0) { const d = fromIso(act.slice(5)); if (canAddOn(d)) setDay(d); }
+  else if (act.indexOf('date') === 0) setDay(shiftDay(f.date, +act.slice(4)));
+  else if (act.indexOf('cal') === 0) {
+    const to = new Date(f.cal.getFullYear(), f.cal.getMonth() + +act.slice(3), 1);
+    if (canAddOn(to) || canAddOn(new Date(to.getFullYear(), to.getMonth() + 1, 0))) f.cal = to;
+  }
   else if (act === 'allday') f.allDay = true;
   else if (act === 'timed') f.allDay = false;
   else if (act.indexOf('at:') === 0) f.mins = +act.slice(3);
   else if (act.indexOf('len:') === 0) f.minutes = +act.slice(4);
   else if (act.indexOf('rep:') === 0) f.repeat = act.slice(4);
+  else if (act.indexOf('tag:') === 0) f.tag = TAGS[act.slice(4)] ? act.slice(4) : 'plan';
+  else if (act.indexOf('who:') === 0) {
+    const n = act.slice(4);
+    if (!n) f.who = [];
+    else if (f.who.indexOf(n) >= 0) f.who = f.who.filter((x) => x !== n);
+    else f.who = f.who.concat([n]);
+  }
   else if (act[0] === 't') f.mins = (f.mins + +act.slice(1) + 1440) % 1440;
   drawForm(el);
 }
 
-// Open the day popup for date `d` (any day: from the week, the month or a saved change).
-function showDayOn(el, d) {
-  showDay(el, getDay(d));
-}
-
 export function mount(el) {
-  view = 'week';
+  view = 'month';
   weekOffset = 0;
   monthOffset = 0;
   form = null;
+  sheet = '';
   undo = null;
   checking = false;
+  album = null;
   draw(el);
   const step = (n) => {
-    if (view === 'month') monthOffset = n === 0 ? 0 : Math.max(MIN_MONTH, Math.min(MAX_MONTH, monthOffset + n));
+    if (view === 'month') monthOffset = n === 0 ? 0 : Math.max(minMonth(), Math.min(MAX_MONTH, monthOffset + n));
     else weekOffset = n === 0 ? 0 : Math.max(MIN_WEEK, Math.min(MAX_AHEAD, weekOffset + n));
   };
-  // Swipe left/right across the week (or month) to change it (like turning a page).
+  // Swipe left/right across the month (or week) to change it (like turning a page).
   let touch = null, swipedAt = 0;
   el.addEventListener('touchstart', (e) => {
     const t = e.touches[0];
@@ -552,8 +925,7 @@ export function mount(el) {
   }, { passive: true });
   el.addEventListener('touchend', (e) => {
     const t = e.changedTouches[0];
-    const box = el.querySelector('[data-detail]');
-    if (!touch || !t || (box && box.style.display === 'flex')) { touch = null; return; }
+    if (!touch || !t || sheet || form) { touch = null; return; }
     const dx = t.clientX - touch.x, dy = t.clientY - touch.y;
     touch = null;
     if (Math.abs(dx) < 80 || Math.abs(dx) < Math.abs(dy) * 1.5) return;
@@ -569,27 +941,28 @@ export function mount(el) {
       try { undo.restore(); } catch (err) { /* nothing to put back */ }
       undo = null;
       clearTimeout(undoTimer);
-      const open = box && box.style.display === 'flex' && !form ? el.querySelector('[data-day-box]') : null;
+      const open = sheet === 'day' ? el.querySelector('[data-day-box]') : null;
+      const day = open ? fromIso(open.dataset.dayBox) : null;
       draw(el);
-      if (open) showDayOn(el, fromIso(open.dataset.dayBox));
+      if (day) showDayOn(el, day);
       return;
     }
     if (form) {
-      // The form only closes with Cancel / Save, so a stray tap can't lose what was typed.
+      // The sheet only closes with Cancel / Save, so a stray tap can't lose what was typed.
       const fb = e.target.closest('[data-f]');
-      if (fb) formAction(el, fb.dataset.f, fb);
+      if (fb && !fb.disabled) formAction(el, fb.dataset.f, fb);
       return;
     }
     const add = e.target.closest('[data-add]');
     if (add) {
       const back = add.dataset.add ? fromIso(add.dataset.add) : null;
-      // From the header: today, or the first day of the week / month on screen.
+      // From the top bar: today, or the first day of the week / month on screen.
       const first = view === 'month' ? monthStart() : weekStart();
       const shown = (view === 'month' ? monthOffset : weekOffset) !== 0 && first > new Date() ? first : new Date();
       showForm(el, { date: back || clampDay(midnightOf(shown)), back });
       return;
     }
-    if (box && box.style.display === 'flex') {
+    if (sheet) {
       const ed = e.target.closest('[data-edit]');
       if (ed) {
         const shown = el.querySelector('[data-day-box]');
@@ -597,18 +970,29 @@ export function mount(el) {
         showForm(el, { id: ed.dataset.edit, back: on, on });
         return;
       }
-      if (e.target === box || e.target.closest('[data-close]')) box.style.display = 'none';
+      const check = e.target.closest('[data-check]');
+      if (check && !checking) {
+        checking = true;
+        showCals(el);
+        refreshCalendars(true).then(() => {
+          checking = false;
+          if (!el.isConnected) return;
+          if (sheet === 'cals') { stale = true; showCals(el); } else onUpdate();
+        });
+        return;
+      }
+      if (e.target === box || e.target.closest('[data-close]')) closeSheet(el);
       return;
     }
-    const check = e.target.closest('[data-check]');
-    if (check) {
-      checking = true;
-      draw(el);
-      refreshCalendars(true).then(() => { checking = false; if (el.isConnected && !form) onUpdate(); });
-      return;
-    }
+    if (e.target.closest('[data-cals]')) { showCals(el); return; }
     const jump = e.target.closest('[data-jump]');
-    if (jump) { const d = fromIso(jump.dataset.jump); goToWeekOf(d); draw(el); showDayOn(el, d); return; }
+    if (jump) {
+      const d = fromIso(jump.dataset.jump);
+      // (A memory from long ago opens its day without leaving the month on screen.)
+      if (!jump.hasAttribute('data-any')) { goToWeekOf(d); draw(el); }
+      showDayOn(el, d);
+      return;
+    }
     const v = e.target.closest('[data-view]');
     if (v) {
       if (v.dataset.view === view) return;
@@ -626,27 +1010,33 @@ export function mount(el) {
     step(+b.dataset.step);
     draw(el);
   });
-  // Don't redraw under an open form or day popup (a background calendar download would close them).
+  // Don't redraw under an open sheet (a background calendar download would close it):
+  // it is drawn again when the sheet closes.
   onUpdate = () => {
-    if (!el.isConnected || form) return;
-    const box = el.querySelector('[data-detail]');
-    if (box && box.style.display === 'flex') return;
+    if (!el.isConnected) return;
+    if (form || sheet) { stale = true; return; }
     draw(el);
   };
   window.addEventListener('calendar-updated', onUpdate);
+  onPhotos = () => { album = null; onUpdate(); };
+  window.addEventListener('tablet-photos', onPhotos);
   refreshCalendars(); // no-op unless the saved copy is older than 30 minutes
-  // Re-render when the day rolls over so "today" and the week stay current.
+  // Re-render when the day rolls over so "today" and the month stay current.
   let day = new Date().toDateString();
   timer = setInterval(() => {
     const now = new Date().toDateString();
-    if (now !== day) { day = now; onUpdate(); }
+    if (now !== day) { day = now; album = null; onUpdate(); }
   }, 60000);
 }
 
 export function unmount() {
   form = null;
+  sheet = '';
   undo = null;
+  album = null;
+  if (stopCodes) { stopCodes(); stopCodes = null; }
   clearInterval(timer);
   clearTimeout(undoTimer);
   window.removeEventListener('calendar-updated', onUpdate);
+  window.removeEventListener('tablet-photos', onPhotos);
 }

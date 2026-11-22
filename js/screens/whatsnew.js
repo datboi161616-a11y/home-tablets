@@ -20,7 +20,7 @@ export function mount(el) {
     .wn-card h3{margin:0;font-family:Outfit,system-ui,sans-serif;font-size:26px;font-weight:500;line-height:1.15}
     .wn-card p{margin:0;font-size:18px;line-height:1.4;color:var(--ink-2)}
     .wn-go{margin-top:auto;font-size:17px;font-weight:600;color:var(--accent)}
-    .wn-back{background:#fff}
+    .wn-back{background:#fff;min-height:56px;padding:0 22px;font-size:18px;box-sizing:border-box}
     /* The flight deck's colours */
     .wn.deck{--ink:#E3EDF5;--ink-2:#9DB4C4;--accent:#5CE1E6;background:#05070D;color:var(--ink);font-family:'JetBrains Mono',monospace}
     .deck .wn-card{background:#0A1220;border:1px solid #1E3A4A;border-radius:4px}

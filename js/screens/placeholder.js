@@ -22,11 +22,11 @@ const FAMILY = {
       <div class="muted" style="font-size:20px;line-height:1.4">${line}</div>
       <div style="display:flex;gap:14px">${buttons}</div>
     </div>`,
-  home: (route) => `<a href="#/${route}" class="pill" style="background:var(--ink);color:#fff">Back home</a>`,
-  again: '<button data-again class="pill" style="border:none;background:var(--card);color:var(--ink);font-family:inherit;cursor:pointer">Try again</button>',
+  home: (route) => `<a href="#/${route}" class="pill" style="min-height:56px;padding:0 26px;font-size:18px;box-sizing:border-box;background:var(--ink);color:#fff">Back home</a>`,
+  again: '<button data-again class="pill" style="min-height:56px;padding:0 26px;font-size:18px;box-sizing:border-box;border:none;background:var(--card);color:var(--ink);font-family:inherit;cursor:pointer">Try again</button>',
 };
 
-// The flight deck's look (Tom's tablet).
+// The flight deck's look (Tom's screen).
 const DECK = {
   page: (heading, line, buttons) => `
     <link rel="stylesheet" crossorigin href="https://fonts.googleapis.com/css2?family=Oxanium:wght@300;500;700&family=JetBrains+Mono:wght@400;600&display=swap">
@@ -35,8 +35,8 @@ const DECK = {
       <div style="font-size:17px;line-height:1.5;letter-spacing:1px;color:#7FA6B8">${line}</div>
       <div style="display:flex;gap:14px">${buttons}</div>
     </div>`,
-  home: (route) => `<a href="#/${route}" style="min-height:48px;padding:0 22px;box-sizing:border-box;border:1px solid #1E3A4A;color:#5CE1E6;font-size:14px;letter-spacing:3px;display:flex;align-items:center">◂ DECK</a>`,
-  again: '<button data-again style="min-height:48px;padding:0 26px;border:none;border-radius:0;background:#FFB547;color:#05070D;font-family:Oxanium,sans-serif;font-size:15px;font-weight:700;letter-spacing:3px;cursor:pointer">TRY AGAIN</button>',
+  home: (route) => `<a href="#/${route}" style="min-height:56px;padding:0 22px;box-sizing:border-box;border:1px solid #1E3A4A;color:#5CE1E6;font-size:14px;letter-spacing:3px;display:flex;align-items:center">◂ DECK</a>`,
+  again: '<button data-again style="min-height:56px;padding:0 26px;border:none;border-radius:0;background:#FFB547;color:#05070D;font-family:Oxanium,sans-serif;font-size:15px;font-weight:700;letter-spacing:3px;cursor:pointer">TRY AGAIN</button>',
 };
 
 export function mount(el, { name, title, homeRoute = 'home', failed = false, broken = false }) {

@@ -1,4 +1,4 @@
-// Family · Week plan: breakfast, lunch and dinner for this week and next.
+// Kitchen · Week plan: breakfast, lunch and dinner for this week and next.
 // Tap a meal for its choices (recipe, cook, how many people, move, take off). Tap a day's
 // name to mark a meal "Leftovers" / "Eating out", move or swap the day, or clear it.
 // Moving never needs dragging: tap "Move", then tap the day.
@@ -7,8 +7,10 @@ import {
   getPlan, addToPlan, removeFromPlan, onKitchenChanged, weekRecipeIds, nextWeekRecipeIds, MEALS, dayKey,
   planDays, dayIds, MARKS, markFor, setMark, moveMeal, swapDays, snapshotDays, restoreDays, clearDays, copyDays,
   mealServings, setMealServings, favorites, MAX_MEALS, getListState, setListNextWeek,
+  shoppingCount,
 } from '../services/meal-plan.js';
-import { esc, kitchenStyles, kitchenTop, fillCounts } from './kitchen-ui.js';
+import * as KUI from './kitchen-ui.js'; // (its painted plates are used when it has them)
+import { esc, topBar } from './ui.js';
 import { spot, C } from '../art.js';
 import { ADD_DAY_KEY } from './dish.js';
 
@@ -18,6 +20,14 @@ let off, dayTimer, undoTimer, armTimer, searchTimer;
 const PLATE = { breakfast: C.cream, lunch: C.mint, dinner: C.peach };
 // After these hours today's meal is over and fades back.
 const OVER_AT = { breakfast: 11, lunch: 15, dinner: 21 };
+// The same evening-teal, cream-paper world as the Shopping list.
+const INK = '#23323A';
+const CREAM = '#FFF8EE';
+const AMBER = '#FFB86B';
+const RUST = '#C2652D';
+const MIST = '#BFD6DE';
+// The dish on its plate, when the kitchen's shared art has painted plates (else nothing).
+const plate = (r, size) => (r && typeof KUI.plateArt === 'function' ? KUI.plateArt(r, size) : '');
 const WEEK_KEY = 'kitchen.planWeek'; // which week was showing (so coming back from a recipe keeps it)
 
 const DINNER_HOUR = 18; // "Start by" times for long dinners aim for dinner at 6 pm
@@ -42,73 +52,85 @@ const MARK_ART = {
 const markIcon = (k, s = 30) => `<svg width="${s}" height="${s}" viewBox="0 0 32 32" aria-hidden="true" focusable="false" style="flex:none">${MARK_ART[k] || ''}</svg>`;
 
 export function mount(el) {
-  el.innerHTML = `${kitchenStyles()}
+  el.innerHTML = `
   <style>
-    [data-root] .k-title:empty{display:none}
-    .wp-weeks{margin-right:auto;display:flex;gap:4px;background:#FFFFFF;border-radius:999px;padding:6px;flex:none}
-    .k-btn.wp-tb{padding:0 14px;font-size:17px}
-    .wp-weeks button{min-height:48px;padding:0 12px;border-radius:999px;border:none;background:transparent;font:600 17px Inter,sans-serif;color:#1D2430;cursor:pointer}
-    .wp-weeks button.on{background:var(--accent);color:#FFFFFF}
-    .wp-days{flex-grow:1;min-height:0;display:grid;grid-template-columns:minmax(0,1.45fr) repeat(6,minmax(0,1fr));gap:12px}
+    .wp{position:absolute;left:0;top:0;width:100%;height:100%;overflow:hidden;color:#FFFFFF;font-family:Inter,system-ui,sans-serif;
+      background:radial-gradient(ellipse at 70% 20%,#2E5A6B 0%,#183846 45%,#0E222C 100%)}
+    .wp-wrap{position:relative;height:100%;padding:28px 40px 32px;display:flex;flex-direction:column;gap:18px}
+    .wp .x-btn.amber{background:${AMBER};color:${INK}}
+    .wp .x-btn.soft{background:#F1E4CF;color:${INK}}
+    .wp-weeks{display:flex;gap:4px;background:rgba(8,20,26,.55);box-shadow:inset 0 0 0 1.5px rgba(255,255,255,.3);border-radius:999px;padding:4px;flex:none}
+    .wp-weeks button{min-height:56px;padding:0 18px;border-radius:999px;border:none;background:transparent;font:600 18px Inter,system-ui,sans-serif;color:#FFFFFF;cursor:pointer}
+    .wp-weeks button.on{background:${AMBER};color:${INK}}
+    .wp-days{flex-grow:1;min-height:0;display:grid;grid-template-columns:minmax(0,1.5fr) repeat(6,minmax(0,1fr));gap:12px}
     .wp-days.even{grid-template-columns:repeat(7,minmax(0,1fr))}
-    .wp-day{background:#FFFFFF;border-radius:20px;padding:6px 8px 10px;display:flex;flex-direction:column;gap:6px;min-height:0;min-width:0;position:relative}
-    .wp-day.today{box-shadow:inset 0 0 0 3px var(--accent)}
-    .wp-dh{display:block;width:100%;text-align:left;border:none;background:transparent;border-radius:14px;padding:6px 6px 6px 4px;cursor:pointer;font-family:Inter,sans-serif;color:#1D2430;min-height:56px}
-    .wp-dl{font-size:20px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;letter-spacing:-.2px}
-    .wp-day.today .wp-dl{color:var(--accent)}
-    .wp-ds{font-size:16px;color:#4A5363;margin-top:2px;white-space:nowrap;overflow:hidden;display:flex;align-items:center;gap:4px}
-    .wp-ds .dots{margin-left:auto;font-size:16px;color:#8A93A3;letter-spacing:1px;flex:none}
+    .wp-day{background:${CREAM};color:${INK};border-radius:22px;padding:6px 8px 10px;display:flex;flex-direction:column;gap:6px;min-height:0;min-width:0;position:relative}
+    .wp-day.today{box-shadow:inset 0 0 0 4px ${AMBER}}
+    .wp-dh{display:block;width:100%;text-align:left;border:none;background:transparent;border-radius:14px;padding:8px 6px 6px 6px;cursor:pointer;font-family:Inter,system-ui,sans-serif;color:${INK};min-height:60px}
+    .wp-dl{font:500 22px Outfit,system-ui,sans-serif;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+    .wp-day.today .wp-dl{font-weight:700;font-size:26px;color:${RUST}}
+    .wp-ds{font-size:16px;color:#5B6B73;margin-top:2px;white-space:nowrap;overflow:hidden;display:flex;align-items:center;gap:4px}
+    .wp-ds .dots{margin-left:auto;font-size:16px;color:#8A979D;letter-spacing:1px;flex:none}
     .wp-meals{display:flex;flex-direction:column;gap:6px;flex-grow:1;min-height:0;overflow-y:auto;-webkit-overflow-scrolling:touch}
     .wp-slot{display:flex;flex-direction:column;gap:6px}
     .wp-slot.over{opacity:.5}
-    .wp-mh{font-size:14px;font-weight:700;letter-spacing:.8px;text-transform:uppercase;color:#6B7585;padding:4px 2px 0}
-    .wp-meal{border-radius:12px;background:#F4F5F7;padding:8px 2px 0 10px;display:flex;flex-direction:column;gap:2px;border-left:5px solid #1D2430;cursor:pointer}
-    .wp-meal .t{font-size:17px;font-weight:600;line-height:1.25;padding-right:4px;overflow-wrap:break-word;word-break:normal;hyphens:auto}
-    .wp-meal .m{font-size:15px;color:#4A5363;display:flex;align-items:center;justify-content:space-between;gap:4px}
-    .wp-meal .by{font-size:15px;font-weight:600;color:var(--accent)}
-    .wp-meal .pp{font-size:14px;color:#4A5363;font-weight:600}
-    .wp-x{width:48px;height:48px;flex:none;border:none;background:transparent;font-size:24px;color:#4A5363;cursor:pointer}
-    .wp-add{min-height:52px;border-radius:12px;border:2px dashed #D3D8DE;background:transparent;display:flex;align-items:center;justify-content:center;font:600 16px Inter,sans-serif;color:#4A5363;flex:none;cursor:pointer;width:100%}
+    .wp-mh{font-size:15px;font-weight:700;letter-spacing:.8px;text-transform:uppercase;color:${RUST};padding:4px 4px 0}
+    .wp-meal{border-radius:14px;background:#F3E7D3;padding:8px 2px 0 10px;display:flex;flex-direction:column;gap:2px;border-left:6px solid ${INK};cursor:pointer}
+    .wp-meal .hd{display:flex;align-items:center;gap:10px;padding-right:6px}
+    .wp-meal .t{font-size:17px;font-weight:600;line-height:1.25;padding-right:4px;overflow-wrap:break-word;word-break:normal;hyphens:auto;min-width:0}
+    .wp-day.today .wp-meal .t{font-size:19px}
+    .wp-meal .m{font-size:16px;color:#5B6B73;display:flex;align-items:center;justify-content:space-between;gap:4px}
+    .wp-meal .by{font-size:16px;font-weight:600;color:${RUST}}
+    .wp-meal .pp{font-size:15px;color:#5B6B73;font-weight:600}
+    .wp-x{width:48px;height:56px;flex:none;border:none;background:transparent;font-size:26px;color:#5B6B73;cursor:pointer}
+    .wp-add{min-height:56px;border-radius:14px;border:2px dashed #D9C8AD;background:transparent;display:flex;align-items:center;justify-content:center;font:600 17px Inter,system-ui,sans-serif;color:#5B6B73;flex:none;cursor:pointer;width:100%}
     .wp-add.empty{flex-direction:column;gap:2px;padding:6px 0 6px}
-    .wp-mark{min-height:56px;border-radius:12px;background:#EEF3F8;display:flex;align-items:center;gap:8px;padding:0 10px;font:600 16px Inter,sans-serif;color:#1D2430;border:none;width:100%;text-align:left;cursor:pointer}
-    .wp-cook{flex:1;min-width:0;min-height:44px;padding:0 12px;border-radius:999px;background:#1D2430;color:#FFFFFF;font-size:15px;font-weight:600;
-      display:flex;align-items:center;justify-content:center;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-    .wp-cook.go{background:var(--accent)}
-    .wp-days.moving .wp-day{box-shadow:inset 0 0 0 3px #9FB7D6;cursor:pointer}
-    .wp-days.moving .wp-day.from{box-shadow:inset 0 0 0 3px #1D2430;background:#F4F5F7}
-    .wp-days.moving .wp-day::after{content:"Tap here";position:absolute;left:8px;right:8px;bottom:10px;min-height:52px;border-radius:12px;background:#1D2430;color:#FFFFFF;
-      font:600 17px Inter,sans-serif;display:flex;align-items:center;justify-content:center}
-    .wp-days.moving .wp-day.from::after{content:"From here";background:#8A93A3}
-    .wp-toast{position:absolute;left:50%;bottom:28px;transform:translateX(-50%);z-index:40;display:flex;align-items:center;gap:18px;
-      background:#1D2430;color:#FFFFFF;border-radius:999px;padding:8px 8px 8px 26px;font-size:18px;box-shadow:0 6px 20px rgba(0,0,0,.18);max-width:900px;min-height:64px}
+    .wp-mark{min-height:60px;border-radius:14px;background:#E3ECEC;display:flex;align-items:center;gap:8px;padding:0 10px;font:600 16px Inter,system-ui,sans-serif;color:${INK};border:none;width:100%;text-align:left;cursor:pointer}
+    .wp-cook{flex:1;min-width:0;min-height:56px;padding:0 12px;border-radius:999px;background:${INK};color:#FFFFFF;font-size:17px;font-weight:600;
+      display:flex;align-items:center;justify-content:center;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;text-decoration:none}
+    .wp-cook.go{background:${RUST}}
+    .wp-days.moving .wp-day{box-shadow:inset 0 0 0 4px #7FB3C4;cursor:pointer}
+    .wp-days.moving .wp-day.from{box-shadow:inset 0 0 0 4px ${INK};background:#EBDFCB}
+    .wp-days.moving .wp-day::after{content:"Tap here";position:absolute;left:8px;right:8px;bottom:10px;min-height:56px;border-radius:14px;background:${INK};color:#FFFFFF;
+      font:600 18px Inter,system-ui,sans-serif;display:flex;align-items:center;justify-content:center}
+    .wp-days.moving .wp-day.from::after{content:"From here";background:#8A979D}
+    .wp-toast{position:absolute;left:50%;bottom:26px;transform:translateX(-50%);z-index:40;display:flex;align-items:center;gap:18px;
+      background:${INK};color:#FFFFFF;border-radius:999px;padding:8px 8px 8px 28px;font-size:19px;box-shadow:0 10px 24px rgba(0,0,0,.4),inset 0 0 0 2px ${AMBER};max-width:900px;min-height:72px}
     .wp-toast span{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0}
-    .wp-toast.plain{padding-right:26px}
-    .wp-toast button{min-height:48px;padding:0 24px;border-radius:999px;border:none;background:#FFFFFF;color:#1D2430;font:600 17px Inter,sans-serif;cursor:pointer;flex:none}
-    .wp-bg{position:absolute;left:0;top:0;right:0;bottom:0;z-index:50;background:rgba(29,36,48,.45);display:flex;align-items:center;justify-content:center}
-    .wp-sheet{background:#FFFFFF;border-radius:28px;padding:28px 32px;width:720px;max-height:740px;display:flex;flex-direction:column;gap:16px;box-shadow:0 12px 40px rgba(0,0,0,.25)}
-    .wp-sheet.wide{width:1000px}
-    .wp-sh{font-size:28px;font-weight:600;line-height:1.2}
-    .wp-ss{font-size:18px;color:#4A5363;margin-top:-10px}
+    .wp-toast.plain{padding-right:28px}
+    .wp-days.moving ~ .wp-toast{bottom:110px}
+    .wp-bg{position:absolute;left:0;top:0;right:0;bottom:0;z-index:50;background:rgba(6,16,21,.62);display:flex;align-items:center;justify-content:center}
+    .wp-sheet{background:${CREAM};color:${INK};border-radius:30px;padding:28px 32px;width:720px;max-height:744px;display:flex;flex-direction:column;gap:16px;box-shadow:0 20px 40px rgba(0,0,0,.4)}
+    .wp-sheet.wide{width:1040px}
+    .wp-sheet .x-btn{font-size:19px;padding:0 20px}
+    .wp-sheet .x-btn.line{box-shadow:inset 0 0 0 2px rgba(35,50,58,.3)}
+    .wp-sh{font:500 30px/1.2 Outfit,system-ui,sans-serif}
+    .wp-ss{font-size:18px;color:#5B6B73;margin-top:-10px}
+    .wp-small{font-size:16px;color:#5B6B73;margin-top:-8px}
     .wp-row{display:flex;gap:12px;flex-wrap:wrap;align-items:center}
-    .wp-row .k-btn{flex:1 1 0}
-    .wp-big{min-height:60px;font-size:19px}
+    .wp-row .x-btn{flex:1 1 0}
     .wp-step{display:flex;align-items:center;gap:14px;font-size:19px}
-    .wp-step button{width:60px;height:60px;border-radius:50%;border:2px solid #D9DDE2;background:#FFFFFF;font:600 28px Inter,sans-serif;color:#1D2430;cursor:pointer}
-    .wp-step b{min-width:44px;text-align:center;font-size:26px}
-    .wp-mrow{display:flex;align-items:center;gap:10px;flex-wrap:wrap;padding:6px 0;border-top:1px solid #EEF0F2}
-    .wp-mrow .nm{width:120px;font-size:18px;font-weight:600}
-    .wp-chip{min-height:52px;padding:0 18px;border-radius:999px;border:2px solid #D9DDE2;background:#FFFFFF;font:600 17px Inter,sans-serif;color:#1D2430;cursor:pointer;display:inline-flex;align-items:center;gap:6px}
-    .wp-chip.on{background:#1D2430;border-color:#1D2430;color:#FFFFFF}
+    .wp-step button{width:64px;height:64px;border-radius:50%;border:2px solid #D9C8AD;background:#FFFFFF;font:600 28px Inter,system-ui,sans-serif;color:${INK};cursor:pointer}
+    .wp-step b{min-width:44px;text-align:center;font:700 28px Outfit,system-ui,sans-serif}
+    .wp-mrow{display:flex;align-items:center;gap:10px;flex-wrap:wrap;padding:8px 0;border-top:1px solid #EADFCC}
+    .wp-mrow .nm{width:112px;font-size:18px;font-weight:600}
+    .wp-chip{min-height:56px;padding:0 16px;border-radius:999px;border:2px solid #D9C8AD;background:#FFFFFF;font:600 17px Inter,system-ui,sans-serif;color:${INK};cursor:pointer;display:inline-flex;align-items:center;gap:6px}
+    .wp-chip.on{background:${INK};border-color:${INK};color:#FFFFFF}
+    .wp-in{min-height:64px;border-radius:999px;border:2px solid #D9C8AD;background:#FFFFFF;padding:0 26px;font:400 20px Inter,system-ui,sans-serif;color:${INK};outline:none;min-width:0;flex:none}
+    .wp-in:focus{border-color:${INK}}
     .wp-pick{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
-    .wp-tile{min-height:72px;border-radius:14px;border:none;background:#F4F5F7;text-align:left;padding:8px 12px;font-family:Inter,sans-serif;color:#1D2430;cursor:pointer;
-      border-left:6px solid #1D2430;display:flex;flex-direction:column;justify-content:center;gap:2px}
+    .wp-tile{min-height:76px;border-radius:16px;border:none;background:#F3E7D3;text-align:left;padding:8px 12px 8px 10px;font-family:Inter,system-ui,sans-serif;color:${INK};cursor:pointer;
+      border-left:6px solid ${INK};display:flex;align-items:center;gap:10px}
+    .wp-tile .w{display:flex;flex-direction:column;justify-content:center;gap:2px;min-width:0}
     .wp-tile .t{font-size:17px;font-weight:600;line-height:1.2;overflow:hidden;max-height:41px}
-    .wp-tile .s{font-size:14px;color:#4A5363}
-    .wp-ph{font-size:14px;font-weight:700;letter-spacing:.8px;text-transform:uppercase;color:#6B7585;margin-top:6px}
-    .wp-hint{font-size:18px;text-align:center;color:#4A5363}
+    .wp-tile .s{font-size:15px;color:#5B6B73}
+    .wp-ph{font-size:15px;font-weight:700;letter-spacing:.8px;text-transform:uppercase;color:${RUST};margin-top:6px}
+    .wp-hint{font-size:19px;text-align:center;color:${MIST};flex:none}
+    .wp-sheet .wp-hint{color:#5B6B73}
+    .wp-load{flex-grow:1;display:flex;align-items:center;justify-content:center;font-size:20px;color:${MIST};text-align:center}
   </style>
-  <div class="k-wrap" data-root style="position:relative">${kitchenTop({ title: 'Week plan', active: 'plan' })}<div class="k-empty k-scroll">Loading…</div></div>`;
-  const root = el.querySelector('[data-root]');
+  <div class="wp" data-root><div class="wp-wrap" data-wrap>${topBar({ title: 'Week plan' })}<div class="wp-load" data-load>Loading…</div></div></div>`;
+  const root = el.querySelector('[data-wrap]');
   let shownDay = '';
   let week = 0;
   try { week = sessionStorage.getItem(WEEK_KEY) === '1' ? 1 : 0; } catch (e) { /* private */ }
@@ -117,6 +139,7 @@ export function mount(el) {
   let toast = null; // { text, snap?: days to put back on Undo, list?: shopping list choice to put back }
   let armed = ''; // a "clear" button waiting for its second tap
   let ixRef = null;
+  let listCount = 0;
 
   // Where "Browse all recipes" goes for each meal.
   function browseFor(ix, meal) {
@@ -155,8 +178,8 @@ export function mount(el) {
     const by = meal === 'dinner' ? startBy(r.m) : '';
     return `
       <div class="wp-meal" ${open} style="border-left-color:${cuisineColor(r.c)};padding-bottom:2px">
-        <div class="t">${esc(r.t)}</div>${pp}
-        ${by ? `<div class="by">${by}</div>` : ''}
+        <div class="hd">${plate(r, 56)}<div style="min-width:0"><div class="t">${esc(r.t)}</div>${pp}
+        ${by ? `<div class="by">${by}</div>` : ''}</div></div>
         <div class="m">
           <a href="#/recipe/${encodeURIComponent(id)}" class="wp-cook${step ? ' go' : ''}">${step ? `Continue · step ${step}` : `Cook · ${fmtMinutes(r.m)}`}</a>${rm}
         </div>
@@ -195,20 +218,21 @@ export function mount(el) {
     if (!r || ((plan[key] || {})[meal] || []).indexOf(id) < 0) { sheet = null; return ''; }
     const n = mealServings(plan, key, meal, id, r);
     return `
-      <div class="wp-sh">${esc(r.t)}</div>
-      <div class="wp-ss">${esc(dayWords(key))} · ${esc(mealName(meal).toLowerCase())} · ${fmtMinutes(r.m)}</div>
+      <div style="display:flex;align-items:center;gap:18px">${plate(r, 104)}<div style="min-width:0;display:flex;flex-direction:column;gap:16px">
+        <div class="wp-sh">${esc(r.t)}</div>
+        <div class="wp-ss">${esc(dayWords(key))} · ${esc(mealName(meal).toLowerCase())} · ${fmtMinutes(r.m)}</div></div></div>
       <div class="wp-row">
-        <a href="#/dish/${encodeURIComponent(id)}" class="k-btn line wp-big">See the recipe</a>
-        <a href="#/recipe/${encodeURIComponent(id)}" class="k-btn dark wp-big">Start cooking</a>
+        <a href="#/dish/${encodeURIComponent(id)}" class="x-btn line">See the recipe</a>
+        <a href="#/recipe/${encodeURIComponent(id)}" class="x-btn ink">Start cooking</a>
       </div>
       ${n ? `<div class="wp-step"><span style="flex:1">How many people is it for?</span>
         <button data-serves="-1" aria-label="Fewer people">−</button><b>${n}</b><button data-serves="1" aria-label="More people">+</button></div>
-        <div class="muted" style="font-size:16px;margin-top:-8px">The shopping list buys enough for ${n}.</div>` : ''}
+        <div class="wp-small">The shopping list buys enough for ${n}.</div>` : ''}
       <div class="wp-row">
-        <button class="k-btn line wp-big" data-movemeal>Move to another day</button>
-        <button class="k-btn line wp-big" data-removesheet>Take it off the plan</button>
+        <button class="x-btn line" data-movemeal>Move to another day</button>
+        <button class="x-btn line" data-removesheet>Take it off the plan</button>
       </div>
-      <button class="k-btn wp-big" data-close style="background:#F1F2F4">Close</button>`;
+      <button class="x-btn soft" data-close>Close</button>`;
   }
 
   function daySheet(ix, plan) {
@@ -223,16 +247,16 @@ export function mount(el) {
           const ids = ((plan[d.key] || {})[meal] || []).filter((id) => ix.byId[id]);
           const mark = markFor(plan, d.key, meal);
           return `<div class="wp-mrow"><div class="nm">${name}</div>
-            ${ids.length ? `<div style="font-size:17px;color:#4A5363">${esc(ids.map((id) => ix.byId[id].t).join(', '))}</div>`
+            ${ids.length ? `<div style="font-size:17px;color:#5B6B73;flex:1;min-width:0">${esc(ids.map((id) => ix.byId[id].t).join(', '))}</div>`
               : MARKS.map(([k, label]) => `<button class="wp-chip${mark === k ? ' on' : ''}" data-mark="${k}" data-meal="${meal}">${markIcon(k, 24)}${esc(label)}</button>`).join('')}
           </div>`;
         }).join('')}
       </div>
       ${has ? `<div class="wp-row">
-        <button class="k-btn line wp-big" data-moveday>Move or swap this day</button>
-        <button class="k-btn ${armed === `day:${d.key}` ? 'solid' : 'line'} wp-big" data-clearday>${armed === `day:${d.key}` ? 'Tap again to clear the day' : 'Clear this day'}</button>
+        <button class="x-btn line" data-moveday>Move or swap this day</button>
+        <button class="x-btn ${armed === `day:${d.key}` ? 'amber' : 'line'}" data-clearday>${armed === `day:${d.key}` ? 'Tap again to clear' : 'Clear this day'}</button>
       </div>` : ''}
-      <button class="k-btn wp-big" data-close style="background:#F1F2F4">Done</button>`;
+      <button class="x-btn soft" data-close>Done</button>`;
   }
 
   function weekSheet() {
@@ -244,20 +268,20 @@ export function mount(el) {
     const which = week ? 'next week' : 'this week';
     return `
       <div class="wp-sh">${week ? 'Next week' : 'This week'}</div>
-      ${!week && thisHas ? `<button class="k-btn line wp-big" data-copyweek>Same meals again next week</button>
-        <div class="muted" style="font-size:16px;margin-top:-8px">Copies this week’s meals into next week, where nothing is planned yet.</div>` : ''}
-      ${week && thisHas ? `<button class="k-btn line wp-big" data-copyweek>Copy this week’s meals here</button>
-        <div class="muted" style="font-size:16px;margin-top:-8px">Only fills meals that have nothing planned yet.</div>` : ''}
+      ${!week && thisHas ? `<button class="x-btn line" data-copyweek>Same meals again next week</button>
+        <div class="wp-small">Copies this week’s meals into next week, where nothing is planned yet.</div>` : ''}
+      ${week && thisHas ? `<button class="x-btn line" data-copyweek>Copy this week’s meals here</button>
+        <div class="wp-small">Only fills meals that have nothing planned yet.</div>` : ''}
       <div class="wp-mrow" style="border-top:none"><div class="nm" style="width:auto;margin-right:8px">Shopping list for</div>
         <button class="wp-chip${next ? '' : ' on'}" data-listnext="0">This week</button>
         <button class="wp-chip${next ? ' on' : ''}" data-listnext="1">This week and next</button></div>
-      ${has ? `<button class="k-btn ${armed === 'week' ? 'solid' : 'line'} wp-big" data-clearweek>${armed === 'week' ? `Tap again to clear ${which}` : `Clear ${which}`}</button>` : ''}
-      <button class="k-btn wp-big" data-close style="background:#F1F2F4">Done</button>`;
+      ${has ? `<button class="x-btn ${armed === 'week' ? 'amber' : 'line'}" data-clearweek>${armed === 'week' ? `Tap again to clear ${which}` : `Clear ${which}`}</button>` : ''}
+      <button class="x-btn soft" data-close>Done</button>`;
   }
 
   const tile = (ix, id) => {
     const r = ix.byId[id];
-    return r ? `<button class="wp-tile" data-pickid="${esc(id)}" style="border-left-color:${cuisineColor(r.c)}"><span class="t">${esc(r.t)}</span><span class="s">${fmtMinutes(r.m)}</span></button>` : '';
+    return r ? `<button class="wp-tile" data-pickid="${esc(id)}" style="border-left-color:${cuisineColor(r.c)}">${plate(r, 56)}<span class="w"><span class="t">${esc(r.t)}</span><span class="s">${fmtMinutes(r.m)}</span></span></button>` : '';
   };
   function pickLists(ix, meal, key) {
     const mc = mealOfCuisine(ix);
@@ -289,11 +313,11 @@ export function mount(el) {
     return `
       <div style="display:flex;align-items:center;gap:16px">
         <div style="flex:1;min-width:0"><div class="wp-sh">${esc(mealName(meal))} for ${esc(d ? (d.n < 2 ? d.label : `${d.label} ${d.sub}`) : '')}</div></div>
-        ${week === 0 ? `<a href="${browseFor(ix, meal)}" class="k-btn solid" data-browse>Browse all recipes</a>` : ''}
-        <button class="k-btn" data-close style="background:#F1F2F4">Close</button>
+        ${week === 0 ? `<a href="${browseFor(ix, meal)}" class="x-btn amber" data-browse>Browse all recipes</a>` : ''}
+        <button class="x-btn soft" data-close>Close</button>
       </div>
-      <input data-picksearch class="k-input" maxlength="40" placeholder="Search — chicken, soup, pasta…" autocomplete="off">
-      <div data-pickbody class="k-scroll" style="display:flex;flex-direction:column;gap:8px;min-height:200px">
+      <input data-picksearch class="wp-in" maxlength="40" placeholder="Search: chicken, soup, pasta…" autocomplete="off" aria-label="Search the recipes">
+      <div data-pickbody class="x-scroll" style="display:flex;flex-direction:column;gap:8px;min-height:200px;flex-grow:1">
         ${part('Your favourites', l.fav)}${part('Planned lately', l.lately)}${part('Ideas', l.ideas)}
         ${!l.fav.length && !l.lately.length && !l.ideas.length ? '<div class="wp-hint">Type above to find a recipe.</div>' : ''}
       </div>`;
@@ -317,20 +341,28 @@ export function mount(el) {
     const scrolls = [].map.call(root.querySelectorAll('.wp-meals'), (m) => m.scrollTop); // keep each day's place
     const what = moving && (moving.kind === 'meal' ? moving.title : `${dayWords(moving.key)}’s meals`);
     root.innerHTML = `
-      ${kitchenTop({
-        title: '', active: 'plan',
-        extra: `<div class="wp-weeks" role="tablist"><button data-week="0" class="${week ? '' : 'on'}">This week</button><button data-week="1" class="${week ? 'on' : ''}">Next week</button></div>
-          <button class="k-btn wp-tb" data-weeksheet>Week •••</button>`,
+      ${topBar({
+        title: 'Week plan',
+        right: `<div class="wp-weeks"><button data-week="0" class="${week ? '' : 'on'}" aria-pressed="${week ? 'false' : 'true'}">This week</button><button data-week="1" class="${week ? 'on' : ''}" aria-pressed="${week ? 'true' : 'false'}">Next week</button></div>
+          <button class="x-btn frost sm" data-weeksheet>Week •••</button>
+          <a href="#/recipes" class="x-btn glass sm">Recipes</a>
+          <a href="#/shopping" class="x-btn glass sm">Shopping list<span data-listcount class="x-badge" style="display:none">${listCount || ''}</span></a>`,
       })}
       <div class="wp-days${week ? ' even' : ''}${moving ? ' moving' : ''}">
         ${days.map((d) => dayColumn(ix, plan, d)).join('')}
       </div>
-      ${moving ? `<div class="wp-toast"><span>Tap the day for ${esc(what)}${week ? '' : ' (or Next week above)'}</span><button data-cancelmove>Cancel</button></div>`
-        : toast ? `<div class="wp-toast${toast.snap || toast.list != null ? '' : ' plain'}"><span>${esc(toast.text)}</span>${toast.snap || toast.list != null ? '<button data-undo>Undo</button>' : ''}</div>`
+      ${moving ? `<div class="wp-toast"><span>Tap the day for ${esc(what)}${week ? '' : ' (or Next week above)'}</span><button class="x-btn white sm" data-cancelmove>Cancel</button></div>`
+        : toast ? `<div class="wp-toast${toast.snap || toast.list != null ? '' : ' plain'}"><span>${esc(toast.text)}</span>${toast.snap || toast.list != null ? '<button class="x-btn white sm" data-undo>Undo</button>' : ''}</div>`
           : shown || marks ? '' : `<div class="wp-hint">${week ? 'Nothing planned for next week yet. Tap “+ Add”, or “Week •••” to copy this week.' : 'Tap “+ Add” under a meal and pick a recipe. Your shopping list builds itself.'}</div>`}
       ${sheetHtml(ix, plan)}`;
     if (sameDay) root.querySelectorAll('.wp-meals').forEach((m, i) => { m.scrollTop = scrolls[i] || 0; });
-    fillCounts(root);
+    fillCount();
+  }
+  // The number on the "Shopping list" button: things still to buy.
+  function fillCount() {
+    const show = () => { const b = root.querySelector('[data-listcount]'); if (b) { b.textContent = listCount || ''; b.style.display = listCount ? '' : 'none'; } };
+    show();
+    shoppingCount().then((n) => { listCount = n; if (el.isConnected) show(); }).catch(() => { /* offline: keep the last number */ });
   }
 
   function say(text, extra = {}) {
@@ -513,7 +545,7 @@ export function mount(el) {
     }, 60 * 1000);
   }).catch((err) => {
     console.error(err);
-    if (el.isConnected) root.querySelector('.k-empty').textContent = 'Recipes need the internet the first time. Check the Wi-Fi.';
+    if (el.isConnected) root.querySelector('[data-load]').textContent = 'Recipes need the internet the first time. Check the Wi-Fi.';
   });
 }
 

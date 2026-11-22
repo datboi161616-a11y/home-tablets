@@ -1,70 +1,146 @@
-// Family · Add photos: a QR code phones scan to send photos to this tablet.
+// Gallery → Add photos (board KP08 of the November 2026 redesign, "Live arrivals"):
+// a big code phones scan to send photos to this screen, with a line sweeping over it, and
+// on the right a drawn phone that the photos visibly fly out of, into an "Arriving now"
+// frame, with the sender's name. It is part of the Gallery: back leads there.
 import { isTablet, getPhotos, uploadUrl, onPhotosChanged, qrSvg, thumbnail, ALBUM_MAX } from '../services/tablet-photos.js';
 import { photos as samplePhotos } from '../services/family-sample.js';
-import { spot } from '../art.js';
+import { esc, topBar } from './ui.js';
 
-let off, flashTimer, wifiTimer, tickTimer;
+let off, flashTimer, wifiTimer, tickTimer, flyTimer;
 
-const QR_SIZE = 440; // big enough for an older phone held at arm's length
-const esc = (s) => String(s).replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' })[c]);
+const QR_SIZE = 400; // big enough for an older phone held at arm's length
 const N = () => window.TabletNative;
+const FLY_MS = 1000;      // one photo's flight from the phone to the frame
+const FLY_EVERY = 1500;   // ...and the next one sets off this long after
+const FLY_MOST = 6;       // of a big batch, this many are shown flying in
 
 export function mount(el, { homeRoute = 'home' } = {}) {
   const canWifi = !!(N() && N().wifiSettings);
   el.innerHTML = `
   <style>
-    .ad-thumb{flex:none;width:96px;height:96px;border-radius:14px;background:#2A3038 center/cover no-repeat;position:relative;overflow:hidden;display:block}
-    .ad-thumb.new{box-shadow:0 0 0 4px #2F6B4F}
-    .ad-play{position:absolute;top:0;right:0;bottom:0;left:0;display:flex;align-items:center;justify-content:center;color:#fff;font-size:30px;background:rgba(10,12,16,.35)}
-    .ad-pill{min-height:56px;font-size:18px;padding:0 24px;border:0;font-family:inherit;cursor:pointer}
-    .ad-live{display:inline-block;width:10px;height:10px;border-radius:5px;background:#2F6B4F;margin-right:10px;vertical-align:1px}
+    .ad-root{position:absolute;top:0;right:0;bottom:0;left:0;overflow:hidden;color:#fff;font-family:Inter,system-ui,sans-serif;
+      background:linear-gradient(135deg,#2B3A67 0%,#4B3C78 50%,#7A4B78 100%);--accent:#E0663A}
+    .ad-top{position:absolute;left:40px;right:40px;top:26px}
+    .ad-live{display:flex;align-items:center;gap:12px;font:600 18px Inter,sans-serif;white-space:nowrap}
+    .ad-dot{width:14px;height:14px;border-radius:7px;background:#6EE7A0;animation:ad-live 1.6s ease-in-out infinite}
+    .ad-live.wait .ad-dot{background:#B9B4CC;animation:none}
+    @keyframes ad-live{0%,100%{opacity:1}50%{opacity:.3}}
+    /* ---- the code ---- */
+    .ad-card{position:absolute;left:40px;top:108px;width:480px;height:666px;border-radius:36px;background:#fff;color:#1E2240;
+      display:flex;flex-direction:column;align-items:center;padding:24px 24px 0;box-shadow:0 24px 60px rgba(10,10,40,.4)}
+    .ad-eyebrow{font:700 16px Inter,sans-serif;letter-spacing:2.5px;text-transform:uppercase}
+    .ad-qr{position:relative;width:${QR_SIZE}px;height:${QR_SIZE}px;margin-top:12px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:18px;text-align:center}
+    .ad-qr svg{display:block}
+    .ad-scan{position:absolute;left:-8px;right:-8px;top:0;height:8px;border-radius:4px;background:linear-gradient(90deg,rgba(224,102,58,0),#E0663A,rgba(224,102,58,0));
+      animation:ad-scan 4s ease-in-out infinite;will-change:transform;display:none}
+    .ad-qr.ready .ad-scan{display:block}
+    @keyframes ad-scan{0%,100%{transform:translateY(0)}50%{transform:translateY(${QR_SIZE - 8}px)}}
+    .ad-tap{font:500 26px Outfit,sans-serif;margin-top:14px}
+    .ad-url-label{font-size:16px;color:#5A5F80;margin-top:8px;text-align:center}
+    .ad-url{font:600 19px Inter,sans-serif;text-align:center;word-break:break-all;margin-top:4px;line-height:1.3}
+    /* ---- the right side ---- */
+    .ad-right{position:absolute;left:564px;right:40px;top:108px}
+    .ad-head{font:500 42px/1.1 Outfit,sans-serif;white-space:nowrap}
+    .ad-steps{margin-top:16px;display:flex;flex-direction:column;gap:9px;font-size:19px;line-height:1.35}
+    .ad-step{display:flex;gap:14px;align-items:flex-start}
+    .ad-num{flex:none;width:36px;height:36px;border-radius:18px;background:rgba(255,255,255,.16);font:700 18px Outfit,sans-serif;display:flex;align-items:center;justify-content:center;margin-top:-4px}
+    .ad-also{font-size:16px;color:#D6CDEB;padding-left:50px}
+    .ad-frame{position:absolute;left:564px;top:352px;width:350px;height:284px;border-radius:22px;background:rgba(255,255,255,.13);padding:12px 14px}
+    .ad-frame .ad-eyebrow{font-size:15px;color:#FFD08A}
+    .ad-land{position:relative;height:202px;margin-top:8px;border-radius:14px;overflow:hidden;background:rgba(20,24,44,.35);display:flex;align-items:center;justify-content:center;text-align:center;
+      font-size:17px;line-height:1.35;color:#D6CDEB;padding:0 22px}
+    .ad-landed{position:absolute;top:0;right:0;bottom:0;left:0;background:#14182C center/cover no-repeat;display:flex;align-items:center;justify-content:center;font-size:44px;color:#fff}
+    .ad-landed.in{animation:ad-in .5s ease-out}
+    @keyframes ad-in{from{opacity:0;transform:translateY(-26px)}to{opacity:1;transform:translateY(0)}}
+    .ad-from{font-size:18px;margin-top:8px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+    .ad-art{position:absolute;left:0;top:0;pointer-events:none}
+    .ad-flyer{position:absolute;left:986px;top:353px;width:260px;height:192px;border-radius:14px;background:#14182C center/cover no-repeat;box-shadow:0 0 0 4px #fff;
+      opacity:0;pointer-events:none;will-change:transform;display:flex;align-items:center;justify-content:center;font-size:60px}
+    .ad-flyer.go{opacity:1;transform:translate(-377px,46px) scale(1.1) rotate(-4deg);transition:transform ${FLY_MS}ms cubic-bezier(.4,0,.2,1)}
+    .ad-flyer.start{opacity:1;transform:translate(0,0) scale(.2) rotate(-12deg)}
+    /* ---- the bottom: what is here already, and what just happened ---- */
+    .ad-foot{position:absolute;left:564px;right:40px;top:650px;bottom:18px}
+    .ad-foot .ad-eyebrow{font-size:15px;color:#D6CDEB}
+    .ad-thumbs{display:flex;gap:10px;overflow:hidden;margin-top:6px}
+    .ad-thumb{flex:none;width:64px;height:64px;border-radius:12px;background:#14182C center/cover no-repeat;position:relative;overflow:hidden;display:block}
+    .ad-thumb.new{box-shadow:inset 0 0 0 4px #6EE7A0}
+    .ad-play{position:absolute;top:0;right:0;bottom:0;left:0;display:flex;align-items:center;justify-content:center;color:#fff;font-size:24px;background:rgba(10,12,16,.35)}
+    .ad-status{font-size:16px;line-height:1.35;color:#E4DDF3;margin-top:8px}
+    .ad-status b{color:#FFD08A}
+    .ad-came{font:600 22px Outfit,sans-serif;color:#9FF2C1}
+    .ad-qr .ad-dim{font-size:19px;line-height:1.4;color:#5A5F80}
+    @media (prefers-reduced-motion: reduce){.ad-dot,.ad-scan,.ad-landed.in{animation:none}.ad-flyers{display:none}.ad-flyer.go{transition:none}}
   </style>
-  <div style="height:100%;padding:36px 40px;display:grid;grid-template-columns:520px minmax(0,1fr);gap:44px;align-items:center">
-    <div class="card" style="padding:34px 40px;display:flex;flex-direction:column;align-items:center;gap:14px">
-      <div data-qr style="width:${QR_SIZE}px;height:${QR_SIZE}px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:20px;text-align:center"></div>
-      <div data-url-label class="muted" style="font-size:17px;text-align:center;display:none">No camera on the phone? Type this into its web browser:</div>
-      <div data-url style="font-size:20px;font-weight:600;text-align:center;word-break:break-all"></div>
+  <div class="ad-root">
+    <svg class="ad-art" width="1280" height="800" viewBox="0 0 1280 800" aria-hidden="true">
+      <defs><linearGradient id="ad-trail" x1="1" y1="0" x2="0" y2="0"><stop offset="0" stop-color="#FFD08A" stop-opacity="0"/><stop offset="1" stop-color="#FFD08A" stop-opacity=".75"/></linearGradient></defs>
+      <path id="ad-arc" d="M1120 458 C1100 330 990 350 916 470" fill="none" stroke="url(#ad-trail)" stroke-width="3" stroke-dasharray="6 10"/>
+      <g transform="translate(1066 410) rotate(-12)">
+        <rect x="0" y="0" width="118" height="208" rx="20" fill="#14182C" stroke="#8A93C8" stroke-width="3"/>
+        <rect x="9" y="20" width="100" height="168" rx="9" fill="#F4ECE0"/>
+        <rect x="18" y="36" width="40" height="40" rx="6" fill="#E57A3A"/><rect x="62" y="36" width="40" height="40" rx="6" fill="#7FC3E8"/>
+        <rect x="18" y="80" width="40" height="40" rx="6" fill="#9AA9BE"/><rect x="62" y="80" width="40" height="40" rx="6" fill="#D9792E"/>
+        <rect x="18" y="144" width="84" height="30" rx="15" fill="#E0663A"/>
+      </g>
+      <!-- While it waits: two blank prints drift along the path, to show which way photos go. -->
+      <g class="ad-flyers" data-flyers>
+        <g opacity=".8"><rect x="-24" y="-18" width="48" height="36" rx="5" fill="#FFFFFF"/><rect x="-20" y="-14" width="40" height="28" rx="3" fill="#E9A07A"/>
+          <animateMotion dur="5s" repeatCount="indefinite" calcMode="spline" keyPoints="0;1" keyTimes="0;1" keySplines="0.4 0 0.2 1"><mpath href="#ad-arc"/></animateMotion></g>
+        <g opacity=".8"><rect x="-24" y="-18" width="48" height="36" rx="5" fill="#FFFFFF"/><rect x="-20" y="-14" width="40" height="28" rx="3" fill="#8FC6E4"/>
+          <animateMotion dur="5s" begin="2.5s" repeatCount="indefinite" calcMode="spline" keyPoints="0;1" keyTimes="0;1" keySplines="0.4 0 0.2 1"><mpath href="#ad-arc"/></animateMotion></g>
+      </g>
+    </svg>
+
+    <div class="ad-top">${topBar({ title: 'Add photos', back: '#/photos', backLabel: '← Gallery', tone: 'dark', right: `
+      <div class="ad-live" data-live><span class="ad-dot"></span><span data-live-text></span></div>
+      <a href="#/${homeRoute}" class="x-btn glass">Home</a>` })}</div>
+
+    <div class="ad-card">
+      <div class="ad-eyebrow" style="color:#7A4B78">Point your phone’s camera here</div>
+      <div class="ad-qr" data-qr-box><div data-qr></div><div class="ad-scan"></div></div>
+      <div class="ad-tap" data-tap>Then tap the link that pops up</div>
+      <div class="ad-url-label" data-url-label style="display:none">No camera on the phone? Type this into its web browser:</div>
+      <div class="ad-url" data-url></div>
     </div>
 
-    <div style="display:flex;flex-direction:column;gap:22px;min-width:0">
-      <div style="display:flex;justify-content:space-between;align-items:center;gap:16px">
-        <a href="#/photos" class="pill ad-pill" style="background:var(--card);color:var(--ink)">← Photo frame</a>
-        <a href="#/${homeRoute}" class="pill ad-pill" style="background:var(--card);color:var(--ink)">Home</a>
-      </div>
-      <div style="display:flex;align-items:center;gap:20px">
-        <div class="display" style="flex:1;min-width:0;font-size:48px;font-weight:500;line-height:1.05">Add photos from your phone</div>
-        <div style="flex:none;width:200px">${spot.phoneToTablet()}</div>
-      </div>
-      <div style="display:flex;flex-direction:column;gap:16px;font-size:21px;line-height:1.3">
+    <div class="ad-right">
+      <div class="ad-head">Send photos from your phone</div>
+      <div class="ad-steps">
         ${[
           'Connect your phone to the same Wi-Fi as this screen.',
           'Point your phone’s camera at the code, then tap the link that pops up.',
           'A page called “Your kitchen screen” opens. Type your name, tap <b>Choose photos</b> and pick as many as you like.',
-        ].map((t, i) => `
-          <div style="display:flex;gap:18px;align-items:flex-start">
-            <div class="display" style="flex:none;width:44px;height:44px;border-radius:22px;background:var(--accent);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700">${i + 1}</div>
-            <div style="padding-top:8px">${t}</div>
-          </div>`).join('')}
-        <div class="muted" style="font-size:18px;padding-left:62px">The same page can also leave a note, add to the shopping list or send a recipe.</div>
+        ].map((t, i) => `<div class="ad-step"><div class="ad-num">${i + 1}</div><div>${t}</div></div>`).join('')}
+        <div class="ad-also">The same page can also leave a note, add to the shopping list or send a recipe.</div>
       </div>
-      <div data-latest style="display:none;flex-direction:column;gap:10px">
-        <div class="eyebrow muted">Newest on this screen · tap one to see it</div>
-        <div data-thumbs style="display:flex;gap:12px;overflow:hidden"></div>
+    </div>
+
+    <div class="ad-frame">
+      <div class="ad-eyebrow" data-frame-title>Arriving here</div>
+      <div class="ad-land" data-land><span data-land-text>Photos land here the moment they are sent.</span></div>
+      <div class="ad-from" data-from>&nbsp;</div>
+    </div>
+    <div class="ad-flyer" data-flyer></div>
+
+    <div class="ad-foot">
+      <div data-latest style="display:none">
+        <div class="ad-eyebrow">Newest in the Gallery · tap one to see it</div>
+        <div class="ad-thumbs" data-thumbs></div>
       </div>
-      <div data-status class="muted" style="font-size:18px;line-height:1.4">Photos stay on this screen. Nothing is uploaded to the internet.</div>
+      <div class="ad-status" data-status>Photos stay on this screen. Nothing is uploaded to the internet.</div>
     </div>
   </div>`;
 
   const $ = (s) => el.querySelector(s);
   let lastCount = getPhotos().length;
-  let shownUrl; // the address the QR code currently shows (undefined = not drawn yet)
+  let shownUrl; // the address the code currently shows (undefined = not drawn yet)
   let fresh = {}; // ids that arrived while this screen was open (outlined in green)
 
   // Newest few pictures, so people can see what's already here (and that theirs arrived).
-  // Small copies, not the phone-sized originals: six of those were a lot for this screen's memory.
+  // Small copies, not the phone-sized originals: those were a lot for this screen's memory.
   function renderLatest(list) {
-    const items = (isTablet() ? list : samplePhotos).slice(0, 6);
-    $('[data-latest]').style.display = items.length ? 'flex' : 'none';
+    const items = (isTablet() ? list : samplePhotos).slice(0, 8);
+    $('[data-latest]').style.display = items.length ? '' : 'none';
     $('[data-thumbs]').innerHTML = items.map((p, i) => {
       const bg = !p.src && p.art ? `background:${p.art}` : '';
       const to = p.id ? `#/photos/show/${encodeURIComponent(p.id)}` : '#/photos';
@@ -79,29 +155,38 @@ export function mount(el, { homeRoute = 'home' } = {}) {
     });
   }
 
-  // Only redraw the QR code when the address changes (drawing it is slow on the tablet).
+  // Only redraw the code when the address changes (drawing it is slow on the kitchen screen).
   function renderQr() {
     const url = uploadUrl();
     if (url === shownUrl) return;
     shownUrl = url;
+    const live = $('[data-live]');
     $('[data-url-label]').style.display = url ? '' : 'none';
+    $('[data-qr-box]').classList.toggle('ready', url !== '');
+    $('[data-tap]').style.display = url === '' ? 'none' : '';
+    $('[data-flyers]').style.display = url === '' ? 'none' : '';
+    live.classList.toggle('wait', !url);
     if (url === null) {
-      // Testing in a normal browser: there is no tablet to send photos to.
-      $('[data-qr]').innerHTML = `<div class="muted" style="font-size:20px">The QR code appears here on the kitchen screen.</div>`;
-      $('[data-url]').textContent = '';
+      // Previewing in a normal browser: there is no screen to send photos to. A stand-in
+      // code, so the page looks as it will.
+      $('[data-qr]').innerHTML = qrSvg('http://kitchen-screen.example/photos', QR_SIZE);
+      $('[data-url]').innerHTML = '<span style="font-weight:400;font-size:16px;color:#5A5F80">A preview: on the kitchen screen this is its own code.</span>';
+      $('[data-live-text]').textContent = 'Preview';
     } else if (!url) {
       $('[data-qr]').innerHTML = `
-        <div class="display" style="font-size:30px;font-weight:500">This screen isn’t on the Wi-Fi</div>
-        <div style="font-size:19px;line-height:1.4" class="muted">The code appears here by itself as soon as it’s connected.</div>
-        ${canWifi ? '<button data-wifi class="pill ad-pill" style="background:var(--ink);color:#fff">Wi-Fi settings (grown-ups)</button>' : ''}`;
+        <div style="font:500 28px Outfit,sans-serif;white-space:nowrap">This screen isn’t on the Wi-Fi</div>
+        <div class="ad-dim" style="margin-top:14px">The code appears here by itself as soon as it’s connected.</div>
+        ${canWifi ? '<button data-wifi class="x-btn ink" style="margin-top:22px">Wi-Fi settings</button>' : ''}`;
       $('[data-url]').innerHTML = canWifi ? ''
-        : '<span class="muted" style="font-weight:400;font-size:17px">A grown-up can connect it: hold the top-left corner for 5 seconds, then Wi-Fi settings.</span>';
+        : '<span style="font-weight:400;font-size:17px;color:#5A5F80">To connect it: hold the top-left corner for 5 seconds, then Wi-Fi settings.</span>';
       const w = $('[data-wifi]');
       if (w) w.addEventListener('click', () => { try { N().wifiSettings(); } catch (e) { /* older version of the screen */ } });
+      $('[data-live-text]').textContent = 'Waiting for Wi-Fi';
     } else {
       $('[data-qr]').innerHTML = qrSvg(url, QR_SIZE);
       // The whole address, key and all: without the key the screen answers "this link has expired".
       $('[data-url]').textContent = url;
+      $('[data-live-text]').textContent = 'Ready and listening';
     }
   }
 
@@ -119,17 +204,73 @@ export function mount(el, { homeRoute = 'home' } = {}) {
 
   function stopCountdown() { clearTimeout(flashTimer); clearInterval(tickTimer); flashTimer = 0; }
 
+  // ---- The fly-in: each photo that really arrived leaves the drawn phone and lands in the frame ----
+  let queue = [];   // [{ p, at, of }] still to fly
+  let flying = false;
+  function land(job, url) {
+    const box = $('[data-land]');
+    const old = box.querySelector('.ad-landed');
+    if (old) old.remove();
+    const pic = document.createElement('div');
+    pic.className = 'ad-landed in';
+    if (url) pic.style.backgroundImage = `url(${url})`;
+    else pic.textContent = job.p.video ? '▶' : '';
+    box.appendChild(pic);
+    $('[data-frame-title]').textContent = 'Arriving now';
+    const name = String(job.p.name || '').trim();
+    $('[data-from]').innerHTML = `${name ? `From <b>${esc(name)}</b>` : (job.p.video ? 'A video' : 'A photo')}${job.of > 1 ? ` · ${job.at} of ${job.of}` : ''}`;
+  }
+  function flyNext() {
+    const job = queue.shift();
+    if (!job || !el.isConnected) {
+      flying = false;
+      if (el.isConnected) $('[data-flyers]').style.display = shownUrl === '' ? 'none' : ''; // the blank prints drift again
+      return;
+    }
+    flying = true;
+    $('[data-flyers]').style.display = 'none'; // real ones are on their way
+    const go = (url) => {
+      if (!el.isConnected) return;
+      const f = $('[data-flyer]');
+      f.className = 'ad-flyer start';
+      f.style.backgroundImage = url ? `url(${url})` : '';
+      f.textContent = url ? '' : (job.p.video ? '▶' : '');
+      void f.offsetWidth; // start from the phone, then set off
+      f.className = 'ad-flyer go';
+      clearTimeout(flyTimer);
+      flyTimer = setTimeout(() => {
+        if (!el.isConnected) return;
+        f.className = 'ad-flyer';
+        land(job, url);
+        flyTimer = setTimeout(flyNext, FLY_EVERY - FLY_MS);
+      }, FLY_MS);
+    };
+    if (job.p.src && !job.p.video) thumbnail(job.p.src, { w: 320, h: 200 }).then(go);
+    else go('');
+  }
+  function flyIn(arrived) {
+    // Oldest of the batch first, so the last one to land is the newest.
+    const some = arrived.slice(0, FLY_MOST).reverse();
+    const of = arrived.length;
+    some.forEach((p, i) => queue.push({ p, at: of - some.length + i + 1, of }));
+    if (!flying) flyNext();
+  }
+
   // What is waiting: ready for photos, nearly full, or full.
   function renderReady(count) {
+    $('[data-latest]').style.display = $('[data-thumbs]').children.length ? '' : 'none';
     if (!isTablet()) return;
+    const words = $('[data-land-text]');
+    if (words) words.textContent = count >= ALBUM_MAX ? 'No room for more until a few are removed.' : 'Photos land here the moment they are sent.';
     if (count >= ALBUM_MAX - 50) {
       // Uploads stop at the limit; say so before someone's photos quietly don't arrive.
-      $('[data-status]').innerHTML = `<span style="color:var(--accent);font-weight:600">The album is ${count >= ALBUM_MAX ? 'full' : 'almost full'} (${count} of ${ALBUM_MAX}).</span> `
-        + 'Take a few old ones off to make room. <a href="#/photos/album" class="pill ad-pill" style="background:var(--card);color:var(--ink);margin-top:8px">Choose photos to remove</a>';
+      $('[data-latest]').style.display = 'none';
+      $('[data-status]').innerHTML = `<div style="font-size:18px"><b>The Gallery is ${count >= ALBUM_MAX ? 'full' : 'almost full'} (${count} of ${ALBUM_MAX}).</b> Take a few old ones off to make room.</div>
+        <a href="#/photos/choose" class="x-btn white" style="margin-top:12px">Choose photos to remove</a>`;
     } else if (shownUrl) {
-      $('[data-status]').innerHTML = `<span class="ad-live"></span>Ready: photos appear here the moment they arrive. ${count} on this screen so far; they stay here and nothing goes on the internet.`;
+      $('[data-status]').textContent = `${count} in the Gallery so far. They stay on this screen; nothing goes on the internet.`;
     } else {
-      $('[data-status]').textContent = `${count} photo${count === 1 ? '' : 's'} on this screen. Photos stay here; nothing is uploaded to the internet.`;
+      $('[data-status]').textContent = `${count} photo${count === 1 ? '' : 's'} in the Gallery. Photos stay on this screen; nothing is uploaded to the internet.`;
     }
   }
 
@@ -141,37 +282,43 @@ export function mount(el, { homeRoute = 'home' } = {}) {
       const arrived = list.slice(0, count - lastCount); // newest first
       arrived.forEach((p) => { fresh[p.id] = true; });
       renderLatest(list);
-      // Off to the photo frame in a few seconds to show them, unless they want to send more first.
-      let left = 8;
+      flyIn(arrived);
+      // Off to the Gallery in a few seconds to show them, unless they want to send more first.
+      // (Long enough for every one that flies in to land.)
+      let left = Math.max(8, Math.ceil((Math.min(queue.length + 1, FLY_MOST) * FLY_EVERY) / 1000) + 4);
+      const total = left;
+      const them = arrived.length > 1 ? 'them' : 'it';
       const say = () => {
-        $('[data-status]').innerHTML = `<div style="color:#2F6B4F;font-weight:700;font-size:22px">${esc(arrivedText(arrived))}</div>
-          <div style="display:flex;gap:12px;align-items:center;margin-top:10px;flex-wrap:wrap">
-            <a href="#/photos" class="pill ad-pill" style="background:#2F6B4F;color:#fff">See ${arrived.length > 1 ? 'them' : 'it'} now</a>
-            <button data-stay class="pill ad-pill" style="background:var(--card);color:var(--ink)">Stay here to send more</button>
-            <span>Showing ${arrived.length > 1 ? 'them' : 'it'} in ${left}…</span>
+        $('[data-latest]').style.display = 'none';
+        $('[data-status]').innerHTML = `<div class="ad-came">${esc(arrivedText(arrived))}</div>
+          <div style="display:flex;gap:12px;align-items:center;margin-top:10px">
+            <a href="#/photos" class="x-btn white">See ${them} in the Gallery</a>
+            <button data-stay class="x-btn glass">Stay to send more</button>
+            <span style="font-size:17px;white-space:nowrap">Showing ${them} in ${left}…</span>
           </div>`;
         $('[data-stay]').addEventListener('click', () => { stopCountdown(); renderReady(getPhotos().length); });
       };
       stopCountdown();
       say();
       tickTimer = setInterval(() => { if (!el.isConnected) return; left--; if (left > 0) say(); }, 1000);
-      flashTimer = setTimeout(() => { stopCountdown(); if (el.isConnected) location.hash = '#/photos'; }, 8000);
+      flashTimer = setTimeout(() => { stopCountdown(); if (el.isConnected) location.hash = '#/photos'; }, total * 1000);
     } else {
       renderLatest(list);
-      renderReady(count);
+      if (!flashTimer) renderReady(count);
     }
     lastCount = count;
   }
 
   render();
   off = onPhotosChanged(render);
-  // The tablet may join Wi-Fi (or get a new address) while this screen is open.
+  // The screen may join Wi-Fi (or get a new address) while this is open.
   if (isTablet()) wifiTimer = setInterval(() => { if (el.isConnected) { const was = shownUrl; renderQr(); if (was !== shownUrl && !flashTimer) renderReady(lastCount); } }, 5000);
 }
 
 export function unmount() {
-  off?.();
+  if (off) { off(); off = null; }
   clearTimeout(flashTimer);
+  clearTimeout(flyTimer);
   clearInterval(tickTimer);
   clearInterval(wifiTimer);
   flashTimer = 0;

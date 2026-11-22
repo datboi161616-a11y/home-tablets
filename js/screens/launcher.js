@@ -1,20 +1,35 @@
-// Family · App menu (Launcher.dc.html in the design)
+// Kitchen display · App menu ("Live card carousel", board IdeaKH10)
+//
+// A row of big cards to swipe through sideways; each card is an app already showing what
+// it has right now (the first things on the shopping list, timers counting down, today's
+// weather, what's next on the calendar, tonight's dinner, the newest note, the newest
+// photo). A tap on a card opens that app. Below the cards: every app as a big button.
+//
+// The weak graphics chip: the row is the browser's own sideways scrolling with snapping
+// (no 3D), the card in the middle is a little bigger (a transform on two cards at a time),
+// and the only things that move by themselves are the rain or snow on the weather card.
 import { display, hourText, clockTime, clockAmPm, timeText } from '../services/display.js';
 import { settings } from '../config.js';
 import { getLocation, manualPlace, knownPlace } from '../services/location.js';
 import { getWeather, describe } from '../services/weather.js';
-import { getAlerts, alertColor } from '../services/weather-alerts.js';
+import { getAlerts } from '../services/weather-alerts.js';
 import { photos as samplePhotos } from '../services/family-sample.js';
 import { thisWeekCount, upcoming } from '../services/calendar-data.js';
-import { loadMessages, onMessagesChanged } from '../services/messages-data.js';
-import { tonight, weekRecipeIds, shoppingCount, getPlan, markFor, dayKey, onKitchenChanged } from '../services/meal-plan.js';
-import { isTablet, getPhotos, onPhotosChanged } from '../services/tablet-photos.js';
+import { loadMessages, onMessagesChanged, when as noteWhen } from '../services/messages-data.js';
+import { tonight, weekRecipeIds, buildShoppingList, extraText, getPlan, markFor, dayKey, onKitchenChanged } from '../services/meal-plan.js';
+import { isTablet, getPhotos, onPhotosChanged, thumbnail } from '../services/tablet-photos.js';
 import { getApps } from '../services/apps.js';
 import { feature } from '../services/features.js';
 import { wipeScreen } from '../services/wipe.js';
-import { tileArt, C } from '../art.js';
+import * as timerSvc from '../services/timers.js';
+import { wxIcon, foodArt, spot } from '../art.js';
+import { topBar, avatar, esc } from './ui.js';
 
-let timer, offNotes, offPhotos, offKitchen, onWake, onOnline;
+let timer, secTimer, offNotes, offPhotos, offKitchen, offTimers, onWake, onOnline, raf;
+
+const CARD_W = 340;
+const CARD_GAP = 24;
+const STEP = CARD_W + CARD_GAP;
 
 function clockParts() {
   const now = new Date();
@@ -39,70 +54,21 @@ function isNight() {
   return h < 6 || h >= 18;
 }
 
-// The picture at the top of each tile (art.js). The night clock has no scene of its
-// own, so it borrows the weather one with the moon out.
-function artFor(icon) {
-  switch (icon) {
-    case 'recipe': {
-      const a = tileArt.recipes();
-      // The halo is drawn for the house orange; on any other accent, keep it subtle.
-      return settings.accent.toUpperCase() === C.accent ? a : a.replace(`fill="${C.accentSoft}"`, 'fill="rgba(255,255,255,.12)"');
-    }
-    case 'weather': return tileArt.weather('sun', isNight());
-    case 'night': return tileArt.weather('sun', true);
-    default: return (tileArt[icon] || tileArt.apps)();
-  }
-}
-
 const plural = (n, one, many) => `${n} ${n === 1 ? one : many}`;
 
-const esc = (s) => String(s).replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
-
-function planSub() {
-  const n = weekRecipeIds().length;
-  return n ? plural(n, 'meal planned', 'meals planned') : 'Browse and plan the week';
-}
-
-// "New note from Mom", "3 new notes · newest from Ava", or when they have all been
-// read, who wrote last: "No new notes · last from Dad".
-function notesSub() {
-  const list = loadMessages();
-  const unread = list.filter((m) => !m.seen);
-  if (unread.length === 1) return unread[0].who ? `New note from ${unread[0].who}` : '1 new note';
-  if (unread.length) return `${unread.length} new notes${unread[0].who ? ` · newest from ${unread[0].who}` : ''}`;
-  return list.length && list[0].who ? `No new notes · last from ${list[0].who}` : 'No new notes';
-}
-
-function photosSub() {
-  if (!isTablet()) return plural(samplePhotos.length, 'photo', 'photos'); // browser preview
-  const n = getPhotos().length;
-  return n ? `${n} photo${n === 1 ? '' : 's'}` : 'Add from your phone';
-}
-// With no photos yet, the tile goes where they are added rather than to an empty frame.
-const photosHref = () => (isTablet() && !getPhotos().length ? '#/addphotos' : '#/photos');
-
-// When the next thing is: "now", "today 3 PM", "tomorrow 9 AM", "Thursday", "in 8 days".
+// When something is: "Now", "Today 3 PM", "Tomorrow 9 AM", "Thursday", "In 8 days".
 function whenWords(e) {
   const d = e.date instanceof Date ? e.date : new Date(e.date);
   const timed = d.getHours() || d.getMinutes();
   const at = () => (d.getMinutes() ? timeText(d) : hourText(d.getHours()));
-  if (e.days === 0) return timed ? (d.getTime() <= Date.now() ? 'now' : `today ${at()}`) : 'today';
-  if (e.days === 1) return timed ? `tomorrow ${at()}` : 'tomorrow';
-  if (e.days < 7) return d.toLocaleDateString('en-US', { weekday: 'long' });
-  return `in ${e.days} days`;
-}
-
-// What's next and when ("Next: Dentist tomorrow 9 AM"), with how busy the week is.
-function calendarSub() {
-  const week = thisWeekCount();
-  const next = upcoming(1)[0];
-  if (!next) return week ? `${plural(week, 'thing', 'things')} this week` : 'Nothing coming up';
-  const line = `Next: ${next.name} ${whenWords(next)}`;
-  return week > 1 ? `${line} · ${week} this week` : line;
+  if (e.days === 0) return timed ? (d.getTime() <= Date.now() ? 'Now' : `Today ${at()}`) : 'Today';
+  if (e.days === 1) return timed ? `Tomorrow ${at()}` : 'Tomorrow';
+  if (e.days < 7) return `${d.toLocaleDateString('en-US', { weekday: 'long' })}${timed ? ` ${at()}` : ''}`;
+  return `In ${e.days} days`;
 }
 
 // The last weather downloaded today (for when the Wi-Fi is down), or null. Only in the
-// degrees the family chose, and for the place the weather is for now.
+// degrees chosen in Settings, and for the place the weather is for now.
 function savedWeather() {
   try {
     const w = JSON.parse(localStorage.getItem('weather.v1') || 'null');
@@ -114,13 +80,161 @@ function savedWeather() {
   } catch (e) { return null; }
 }
 
-// e.g. "34° · snow later": say what's coming if it differs from now.
-function weatherSub(w) {
+// e.g. "Cloudy · rain later": say what's coming if it differs from now.
+function weatherLine(w) {
   const now = describe(w.code);
   const later = (w.hours || []).filter((h) => new Date(h.time).getTime() > Date.now())
     .map((h) => describe(h.code)).find((d) => d.label !== now.label);
-  const sub = later && later.icon !== now.icon ? `${later.label.toLowerCase()} later` : now.label.toLowerCase();
-  return `${w.temp}° · ${sub}`;
+  return later && later.icon !== now.icon ? `${now.label} · ${later.label.toLowerCase()} later` : now.label;
+}
+
+// ---- What each card shows -------------------------------------------------------------
+const head = (title, side = '') => `<div class="lc-head"><span class="lc-name">${title}</span>${side ? `<span class="lc-side">${side}</span>` : ''}</div>`;
+// A card whose app has nothing yet: a picture and a friendly word, never made-up content.
+const invite = (line, button, art = '') => `<div class="lc-invite">${art ? `<div class="lc-invite-art">${art}</div>` : ''}<div class="x-serif lc-invite-line">${line}</div></div>
+  <div class="lc-go">${button}</div>`;
+
+function calendarCard() {
+  const week = thisWeekCount();
+  const next = upcoming(4);
+  if (!next.length) return head('Calendar') + invite('Nothing coming up yet.', 'Add the first thing', spot.quietDay());
+  return `${head('Calendar', week ? `${week} this week` : '')}
+    <div class="lc-sub">Coming up</div>
+    <div class="lc-rows">${next.map((e) => `<div class="lc-ev"><b>${esc(whenWords(e))}</b><span>${esc(e.name)}</span></div>`).join('')}</div>`;
+}
+
+// The sky behind the weather card, and whether its text is dark or light.
+function weatherLook(kind, night) {
+  if (night) return { bg: 'linear-gradient(180deg,#232C48 0%,#3A4668 100%)', ink: '#FFFFFF', soft: '#C9D2E8' };
+  switch (kind) {
+    case 'sun': return { bg: 'linear-gradient(180deg,#5FA8E0 0%,#A9D3F0 70%,#DDEEF8 100%)', ink: '#FFFFFF', soft: '#F0F8FF' };
+    case 'partly': return { bg: 'linear-gradient(180deg,#6C9FCB 0%,#A8C8E2 70%,#D5E3EE 100%)', ink: '#FFFFFF', soft: '#F0F6FB' };
+    case 'snow': return { bg: 'linear-gradient(180deg,#7C8FA8 0%,#AEBDCE 60%,#DCE4EC 100%)', ink: '#FFFFFF', soft: '#EEF3F8' };
+    case 'storm': return { bg: 'linear-gradient(180deg,#444E62 0%,#6C778A 100%)', ink: '#FFFFFF', soft: '#D5DBE5' };
+    default: return { bg: 'linear-gradient(180deg,#5E6E88 0%,#93A2B6 60%,#B9C4D2 100%)', ink: '#FFFFFF', soft: '#E8EDF3' };
+  }
+}
+// Rain or snow falling under the cloud: one group that moves, nothing else.
+function falling(kind) {
+  if (kind === 'rain' || kind === 'storm') {
+    return `<svg class="lc-fall" width="150" height="60" viewBox="0 0 150 60" aria-hidden="true"><g class="lc-drops" stroke="#DCEBFA" stroke-width="4" stroke-linecap="round"><line x1="24" y1="6" x2="18" y2="20"/><line x1="58" y1="10" x2="52" y2="24"/><line x1="92" y1="6" x2="86" y2="20"/><line x1="126" y1="10" x2="120" y2="24"/></g></svg>`;
+  }
+  if (kind === 'snow') {
+    return `<svg class="lc-fall" width="150" height="60" viewBox="0 0 150 60" aria-hidden="true"><g class="lc-drops slow" fill="#FFFFFF"><circle cx="22" cy="10" r="4.5"/><circle cx="58" cy="18" r="4"/><circle cx="92" cy="8" r="4.5"/><circle cx="126" cy="16" r="4"/></g></svg>`;
+  }
+  return '';
+}
+// w: a weather result; note: a word under it ("from 3:40 PM"); alert: a warning's name.
+function weatherCard(w, { note = '', alert = '' } = {}) {
+  const kind = describe(w.code).icon;
+  const night = isNight();
+  return {
+    look: weatherLook(kind, night),
+    html: `${head('Weather')}
+      <div class="lc-temp">${esc(w.temp)}°</div>
+      <div class="lc-line">${esc(weatherLine(w))}</div>
+      ${typeof w.high === 'number' && typeof w.low === 'number' ? `<div class="lc-sub">High ${w.high}° · low ${w.low}°${note ? ` · ${esc(note)}` : ''}</div>` : note ? `<div class="lc-sub">${esc(note)}</div>` : ''}
+      ${alert ? `<div class="lc-alert">⚠ ${esc(alert)}</div>` : `<div class="lc-wx">${wxIcon(kind, 150, night)}${falling(kind)}</div>`}`,
+  };
+}
+
+// The timers worth showing: ringing first, then the ones still going.
+function liveTimers() {
+  const rank = { done: 0, running: 1, paused: 2 };
+  return timerSvc.timers().filter((t) => timerSvc.state(t) !== 'stopped' && !timerSvc.missed(t))
+    .sort((a, b) => (rank[timerSvc.state(a)] - rank[timerSvc.state(b)]) || (timerSvc.left(a) - timerSvc.left(b)));
+}
+const RING = 2 * Math.PI * 54;
+const ringOffset = (t) => {
+  const whole = (t.secs || 0) * 1000;
+  const part = whole ? Math.max(0, Math.min(1, timerSvc.left(t) / whole)) : 0;
+  return (RING * (1 - part)).toFixed(1);
+};
+const ringText = (t) => (timerSvc.state(t) === 'done' ? 'Done' : timerSvc.fmt(timerSvc.left(t)));
+function timersCard() {
+  const list = liveTimers();
+  if (!list.length) return head('Timers') + invite('Nothing ticking right now.', '+ New timer', spot.timer());
+  const going = list.filter((t) => timerSvc.state(t) === 'running').length;
+  const ringing = list.filter((t) => timerSvc.state(t) === 'done').length;
+  const side = ringing ? 'Time’s up!' : going ? `${going} running` : 'Paused';
+  const shown = list.slice(0, 2);
+  return `${head('Timers', side)}
+    <div class="lc-rings${shown.length === 1 ? ' one' : ''}">${shown.map((t) => {
+    const st = timerSvc.state(t);
+    const color = st === 'done' ? '#F0553A' : st === 'paused' ? '#B9A9A0' : '#F2A64A';
+    return `<div class="lc-ring" data-timer="${esc(t.id)}">
+        <svg width="130" height="130" viewBox="0 0 130 130" aria-hidden="true"><circle cx="65" cy="65" r="54" fill="none" stroke="rgba(255,255,255,.15)" stroke-width="12"/>
+          <circle data-arc cx="65" cy="65" r="54" fill="none" stroke="${color}" stroke-width="12" stroke-linecap="round" stroke-dasharray="${RING.toFixed(1)}" stroke-dashoffset="${st === 'done' ? 0 : ringOffset(t)}" transform="rotate(-90 65 65)"/></svg>
+        <div class="lc-ring-time" data-left>${ringText(t)}</div>
+        <div class="lc-ring-name">${esc(t.label || 'Timer')}${st === 'paused' ? ' · paused' : ''}</div>
+      </div>`;
+  }).join('')}</div>
+    <div class="lc-go">${list.length > 2 ? `+${list.length - 2} more · see them all` : '+ New timer'}</div>`;
+}
+
+function shoppingCard(l) {
+  const items = l.extras.filter((x) => !x.got).map((x) => extraText(x));
+  l.sections.forEach((s) => s.items.forEach((x) => { if (!x.got) items.push(x.name); }));
+  const got = l.extras.filter((x) => x.got).length + l.sections.reduce((n, s) => n + s.items.filter((x) => x.got).length, 0);
+  if (!items.length) {
+    return head('Shopping list') + invite(got ? 'Everything is ticked off.' : 'Nothing on the list yet.', '+ Add something', spot.groceryBag());
+  }
+  const room = 6;
+  const shown = items.length > room ? items.slice(0, room - 1) : items;
+  const cap = (s) => s.charAt(0).toUpperCase() + s.slice(1);
+  return `${head('Shopping list', `${items.length} to get`)}
+    <div class="lc-sub">${l.recipes ? `With what ${plural(l.recipes, 'planned meal needs', 'planned meals need')}` : got ? `${got} ticked off so far` : 'Added by hand'}</div>
+    <div class="lc-rows">${shown.map((t) => `<div class="lc-item"><i></i><span>${esc(cap(String(t)))}</span></div>`).join('')}
+      ${items.length > room ? `<div class="lc-item more">and ${items.length - shown.length} more</div>` : ''}</div>`;
+}
+
+function planSub() {
+  const n = weekRecipeIds().length;
+  return n ? plural(n, 'meal planned this week', 'meals planned this week') : 'Browse and plan the week';
+}
+// t: what tonight() found (or null).
+function recipesCard(t) {
+  let label = 'Tonight';
+  let title = '';
+  const mark = markFor(getPlan(), dayKey(new Date()), 'dinner');
+  if (t && t.planned) title = t.entry.t;
+  else if (mark === 'out') title = 'Eating out';
+  else if (mark === 'leftovers') title = 'Leftovers';
+  else if (t) { label = 'An idea for tonight'; title = t.entry.t; }
+  if (!title) return head('Recipes') + invite('What’s for dinner?', 'Browse the recipes', foodArt.dinner('#B5502E', '#8E3A1C'));
+  return `${head('Recipes')}
+    <div class="lc-sub">${label}</div>
+    <div class="lc-dish">${esc(title)}</div>
+    <div class="lc-sub" style="margin-top:8px">${esc(planSub())}</div>
+    <div class="lc-food">${foodArt.dinner('#B5502E', '#8E3A1C')}</div>`;
+}
+
+function messagesCard() {
+  const list = loadMessages();
+  if (!list.length) return head('Messages') + invite('No notes yet.', 'Leave the first one', spot.noteBoard());
+  const unread = list.filter((m) => !m.seen).length;
+  const m = list[0];
+  const text = String(m.text || '').trim() || (m.photo ? 'Sent a photo' : '');
+  return `${head('Messages', unread ? `${unread} new` : '')}
+    <div class="lc-who">${m.who ? avatar(m.who, 44) : ''}<div style="min-width:0"><div class="lc-who-name">${esc(m.who || 'A note')}</div><div class="lc-who-when">${esc(noteWhen(m.at))}</div></div></div>
+    <div class="lc-note">${esc(text)}</div>
+    ${list.length > 1 ? `<div class="lc-foot">${plural(list.length, 'note', 'notes')} on the board</div>` : ''}`;
+}
+
+// With no photos yet, the card goes where they are added rather than to an empty Gallery.
+const galleryHref = () => (isTablet() && !getPhotos().length ? '#/addphotos' : '#/photos');
+function galleryCard() {
+  if (!isTablet()) {
+    // A PC preview has no album: the sample pictures, and it says so.
+    const p = samplePhotos[0];
+    return `<div class="lc-photo" style="background:${p ? p.art : '#222'}"></div>
+      <div class="lc-photo-text">${head('Gallery', plural(samplePhotos.length, 'photo', 'photos'))}<div class="lc-sub">Sample pictures (preview on a computer)</div></div>`;
+  }
+  const all = getPhotos();
+  if (!all.length) return head('Gallery') + invite('Your photos will live here.', 'Add from your phone', spot.phoneToTablet());
+  const p = all.filter((x) => !x.video)[0];
+  return `<div class="lc-photo" data-photo="${p ? esc(p.src) : ''}"></div>
+    <div class="lc-photo-text">${head('Gallery', plural(all.length, 'photo', 'photos'))}<div class="lc-sub">Newest: ${esc(all[0].caption || `added ${String(all[0].day || '').toLowerCase()}`)}</div></div>`;
 }
 
 function appsSub() {
@@ -130,107 +244,215 @@ function appsSub() {
   return apps.length > 2 ? `${names} & ${apps.length - 2} more` : names;
 }
 
+const CARDS = [
+  { id: 'calendar', href: '#/calendar', bg: '#F4F0FA', ink: '#2A2440', soft: '#6A5E86' },
+  { id: 'weather', href: '#/forecast', bg: 'linear-gradient(180deg,#5E6E88 0%,#93A2B6 60%,#B9C4D2 100%)', ink: '#FFFFFF', soft: '#E8EDF3' },
+  { id: 'shopping', href: '#/shopping', bg: '#FFFDF6', ink: '#23301E', soft: '#5E7A4E' },
+  { id: 'timers', href: '#/timers', bg: 'linear-gradient(180deg,#3A2A2A,#24181A)', ink: '#FFFFFF', soft: '#E8C8B8' },
+  { id: 'recipes', href: '#/recipes', bg: 'linear-gradient(180deg,#E2703A,#A8401E)', ink: '#FFFFFF', soft: '#FFE2C8' },
+  { id: 'messages', href: '#/messages', bg: '#FCEBB0', ink: '#3A2E10', soft: '#7A6222' },
+  { id: 'photos', href: '#/photos', bg: '#15171E', ink: '#FFFFFF', soft: '#C9CFD6' },
+];
+
 export function mount(el) {
-  const a = settings.accent;
   const c = clockParts();
-  const notes = loadMessages().filter((m) => !m.seen).length;
-  const early = savedWeather(); // shown at once; the fresh one follows
+  const unread = loadMessages().filter((m) => !m.seen).length;
+  const night = display().night;
 
-  // style: 'dark' | 'accent' | 'light'
-  const tiles = [
-    { href: '#/home', icon: 'home', title: 'Home', sub: 'Today at a glance', style: 'dark' },
-    { href: photosHref(), icon: 'photos', title: 'Photos', sub: photosSub(), data: 'data-photos' },
-    { href: '#/calendar', icon: 'calendar', title: 'Calendar', sub: calendarSub(), data: 'data-calendar' },
-    { href: '#/forecast', icon: 'weather', title: 'Weather', sub: early ? weatherSub(early) : 'Loading…', data: 'data-weather' },
-    { href: '#/recipes', icon: 'recipe', title: 'Recipes', sub: planSub(), style: 'accent', data: 'data-recipes' },
-    { href: '#/messages', icon: 'messages', title: 'Messages', sub: notesSub(), data: 'data-notes', badge: true },
-    { href: '#/shopping', icon: 'grocery', title: 'Shopping list', sub: 'From your week plan', data: 'data-grocery' },
-    // The night clock comes on by itself at 10 PM, so its tile gives way to Apps when Apps is on.
-    feature('apps')
-      ? { href: '#/apps', icon: 'apps', title: 'Apps', sub: appsSub() }
-      : { href: '#/night', icon: 'night', title: 'Night clock', sub: display().night ? `Starts at ${hourText(display().nightFrom)}` : 'Tap to show it' },
-  ];
+  // Every app the kitchen display has, as a big button. Seven to a row, so the last row
+  // always ends early: the bottom right corner stays free for the running-timer chip.
+  // (Camera and the Android apps are switched on or off per screen: js/services/features.js.)
+  const apps = [
+    ['#/home', 'Home', 'home'],
+    ['#/calendar', 'Calendar'],
+    ['#/forecast', 'Weather'],
+    ['#/recipes', 'Recipes'],
+    ['#/plan', 'Week plan'],
+    ['#/shopping', 'Shopping list'],
+    ['#/messages', 'Messages', 'notes'],
+    ['#/timers', 'Timers'],
+    [galleryHref(), 'Gallery', 'gallery'],
+    feature('camera') ? ['#/camera', 'Camera'] : null,
+    feature('apps') ? ['#/apps', 'Apps', 'apps'] : null,
+    ['#/convert', 'Conversions'],
+    ['#/night', 'Night clock', 'night'],
+    ['#/settings', 'Settings'],
+    ['#/whatsnew', 'What’s new'],
+    ['#/welcome', 'Tour', 'tour'],
+    ['', 'Wipe the screen', 'wipe'],
+  ].filter(Boolean);
 
-  const tile = (t) => {
-    const bg = t.style === 'dark' ? '#1D2430' : t.style === 'accent' ? a : '#FFFFFF';
-    const fg = t.style ? '#FFFFFF' : '#1D2430';
-    const subColor = t.style === 'dark' ? '#C9CFD6' : t.style === 'accent' ? '#FFFFFF' : '#4A5363';
-    const tag = t.href ? 'a' : 'div';
-    // New notes: a number badge on the tile, easy to spot from across the kitchen.
-    const badge = t.badge ? `<span data-badge class="ln-badge" style="background:${a};display:${notes ? 'flex' : 'none'}">${notes}</span>` : '';
-    const art = t.icon === 'weather' ? ' data-weather-art' : '';
-    return `<${tag} ${t.href ? `href="${t.href}"` : ''} class="ln-tile"${t.icon === 'photos' ? ' data-photos-tile' : ''} style="background:${bg};color:${fg};position:relative">
-      <div class="ln-art"${art}>${t.icon === 'weather' && early ? tileArt.weather(describe(early.code).icon, isNight()) : artFor(t.icon)}</div>${badge}
-      <div class="ln-text">
-        <div class="display" style="font-size:30px;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${t.title}</div>
-        <div ${t.data || ''} class="ln-sub" style="color:${subColor}">${esc(t.sub)}</div>
-      </div>
-    </${tag}>`;
+  const appBtn = ([href, label, kind]) => {
+    if (kind === 'wipe') return `<button type="button" data-wipe class="x-btn sm frost lc-app" aria-label="Wipe the screen: touches off for half a minute">${label}</button>`;
+    const cls = kind === 'home' ? 'x-btn sm white lc-app' : 'x-btn sm frost lc-app';
+    const extra = kind === 'notes' ? `<span data-badge class="x-badge"${unread ? '' : ' style="display:none"'}>${unread}</span>` : '';
+    const hint = kind === 'tour' ? ' aria-label="Show the welcome tour again"'
+      : kind === 'night' ? ` aria-label="Night clock${night ? `, comes on by itself at ${hourText(display().nightFrom)}` : ''}"`
+        : kind === 'apps' ? ` aria-label="Apps: ${esc(appsSub())}"` : '';
+    return `<a href="${href}" class="${cls}"${kind === 'gallery' ? ' data-gallery-btn' : ''}${hint}>${label}${extra}</a>`;
   };
 
-  const pill = 'class="pill ln-pill"';
   el.innerHTML = `
   <style>
-    .ln-tile{border-radius:24px;padding:0;display:flex;flex-direction:column;overflow:hidden;
-      min-width:0;transition:transform .12s ease}
-    /* The picture gives up some height when a hint needs a second line. */
-    .ln-art{height:170px;flex:0 1 auto;min-height:118px;overflow:hidden}
-    .ln-art svg{width:100%;height:100%}
-    .ln-text{min-width:0;padding:0 26px 22px;margin-top:auto;flex:none}
-    /* Two lines rather than "Idea: Cajun stuffed bell pe…" */
-    .ln-sub{font-size:17px;line-height:1.3;margin-top:4px;overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow-wrap:anywhere}
-    a.ln-tile:active{transform:scale(.97)}
-    .ln-badge{position:absolute;top:18px;right:18px;min-width:40px;height:40px;padding:0 12px;border-radius:999px;
-      color:#fff;font:600 20px Inter,sans-serif;align-items:center;justify-content:center}
-    .ln-pill{background:#fff;color:var(--ink);min-height:52px;padding:0 20px;font-size:17px;white-space:nowrap;border:none;font-family:inherit;cursor:pointer}
+    .lc-root{position:absolute;top:0;right:0;bottom:0;left:0;color:#FFFFFF;display:flex;flex-direction:column;
+      background:radial-gradient(1200px 700px at 50% 30%,#4A3A5E 0%,#231B30 70%)}
+    .lc-top{padding:26px 40px 0;flex:none}
+    .lc-hint{font-size:20px;color:#D9CDE8;white-space:nowrap}
+    .lc-clock{text-align:right;flex:none;margin-left:10px}
+    .lc-clock .d{font:500 16px Inter,sans-serif;color:#D9CDE8;white-space:nowrap}
+    .lc-clock .t{font:500 30px/1.1 Outfit,sans-serif;white-space:nowrap}
+    .lc-clock .t span+span{font-size:17px;margin-left:6px;color:#D9CDE8}
+
+    /* The row of cards: the browser's own sideways scrolling, one card always in the middle. */
+    .lc-row{flex:none;height:424px;display:flex;align-items:center;overflow-x:auto;overflow-y:hidden;
+      -webkit-overflow-scrolling:touch;scroll-snap-type:x mandatory;scrollbar-width:none}
+    .lc-row::-webkit-scrollbar{display:none}
+    .lc-pad{flex:none;width:${(1280 - CARD_W) / 2}px;height:1px}
+    .lc-card{flex:none;width:${CARD_W}px;height:392px;margin-right:${CARD_GAP}px;border-radius:32px;position:relative;overflow:hidden;
+      box-sizing:border-box;padding:24px 26px;text-decoration:none;scroll-snap-align:center;display:flex;flex-direction:column;
+      box-shadow:0 14px 30px rgba(0,0,0,.38);transform:scale(.9);opacity:.72;transition:transform .25s ease,opacity .25s ease;will-change:transform}
+    .lc-card.on{transform:scale(1);opacity:1}
+    .lc-card:last-of-type{margin-right:0}
+    .lc-head{display:flex;align-items:baseline;flex:none}
+    .lc-name{font:700 27px Outfit,sans-serif;white-space:nowrap}
+    .lc-side{margin-left:auto;padding-left:10px;font:600 17px Inter,sans-serif;color:var(--soft);white-space:nowrap}
+    .lc-sub{font:500 16px/1.3 Inter,sans-serif;color:var(--soft);margin-top:3px;flex:none;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+    .lc-rows{margin-top:12px;min-height:0;flex:1;overflow:hidden}
+    .lc-go{position:absolute;left:26px;right:26px;bottom:24px;min-height:58px;border-radius:18px;display:flex;align-items:center;justify-content:center;
+      font:600 18px Inter,sans-serif;background:rgba(127,127,127,.2)}
+    .lc-invite{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding-bottom:70px;min-height:0}
+    .lc-invite-art{width:190px;height:120px;display:flex;align-items:center;justify-content:center;overflow:hidden;border-radius:22px}
+    .lc-invite-art svg{width:190px !important;height:120px !important}
+    .lc-invite-line{font-size:23px;line-height:1.25;margin-top:12px}
+
+    .lc-ev{display:flex;flex-direction:column;justify-content:center;height:64px;border-top:1.5px solid rgba(42,36,64,.12)}
+    .lc-ev:first-child{border-top:0}
+    .lc-ev b{font:600 15px Inter,sans-serif;letter-spacing:.4px;color:#B5502E;white-space:nowrap}
+    .lc-ev span{font:500 20px Inter,sans-serif;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+
+    .lc-temp{font:300 104px/1 Outfit,sans-serif;margin-top:12px;flex:none}
+    .lc-line{font:500 21px/1.25 Inter,sans-serif;margin-top:6px;flex:none;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+    .lc-wx{position:absolute;left:26px;bottom:8px;width:150px;height:140px}
+    .lc-fall{position:absolute;left:0;top:84px;overflow:hidden}
+    .lc-drops{animation:lc-drop 1.4s linear infinite}
+    .lc-drops.slow{animation-duration:4s}
+    .lc-alert{position:absolute;left:26px;right:26px;bottom:24px;min-height:58px;border-radius:18px;background:#C2331F;color:#FFFFFF;
+      display:flex;align-items:center;justify-content:center;text-align:center;padding:8px 14px;box-sizing:border-box;font:600 18px/1.25 Inter,sans-serif}
+    @keyframes lc-drop{from{transform:translateY(-16px)}to{transform:translateY(34px)}}
+
+    .lc-rings{display:flex;justify-content:space-between;margin-top:20px}
+    .lc-rings.one{justify-content:center}
+    .lc-ring{position:relative;width:136px;text-align:center}
+    .lc-ring-time{position:absolute;left:0;right:0;top:48px;font:700 26px Outfit,sans-serif;font-variant-numeric:tabular-nums}
+    .lc-ring-name{font:600 17px Inter,sans-serif;margin-top:4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+
+    .lc-item{display:flex;align-items:center;height:42px;font:500 20px Inter,sans-serif}
+    .lc-item i{flex:none;width:26px;height:26px;border-radius:8px;border:2.5px solid #A8B89A;box-sizing:border-box;margin-right:14px}
+    .lc-item span{min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+    .lc-item.more{color:#5E7A4E;font-weight:600;font-size:18px;padding-left:40px}
+
+    .lc-dish{font:700 30px/1.15 Outfit,sans-serif;margin-top:4px;overflow:hidden;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow-wrap:anywhere}
+    .lc-food{position:absolute;left:50px;right:50px;bottom:-14px;height:132px}
+    .lc-food svg{width:100%;height:100%}
+
+    .lc-who{display:flex;align-items:center;margin-top:16px;flex:none}
+    .lc-who>span{margin-right:12px}
+    .lc-who-name{font:600 20px Inter,sans-serif;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+    .lc-who-when{font:500 15px Inter,sans-serif;color:var(--soft)}
+    .lc-note{font-family:Fraunces,Georgia,serif;font-style:italic;font-size:25px;line-height:1.3;margin-top:16px;overflow:hidden;display:-webkit-box;-webkit-line-clamp:5;-webkit-box-orient:vertical;overflow-wrap:anywhere}
+    .lc-foot{position:absolute;left:26px;right:26px;bottom:22px;font:500 16px Inter,sans-serif;color:var(--soft)}
+
+    .lc-photo{position:absolute;top:0;right:0;left:0;height:278px;background-size:cover;background-position:center;background-color:#262A35}
+    .lc-photo-text{position:absolute;left:26px;right:26px;top:292px}
+
+    .lc-dots{flex:none;height:26px;display:flex;justify-content:center;align-items:center}
+    .lc-dots span{width:10px;height:10px;border-radius:5px;background:rgba(255,255,255,.35);margin:0 5px}
+    .lc-dots span.on{width:34px;background:#FFFFFF}
+
+    .lc-apps{flex:1;min-height:0;padding:8px 40px 22px;display:grid;grid-template-columns:repeat(7,minmax(0,1fr));grid-auto-rows:minmax(58px,1fr);grid-gap:10px;align-content:end}
+    .lc-app{min-width:0;padding:0 6px;max-height:64px;align-self:end;height:100%}
+    @media (prefers-reduced-motion: reduce){.lc-drops{animation:none}.lc-card{transition:none}}
   </style>
-  <div style="height:100%;padding:40px;display:flex;flex-direction:column;gap:24px">
-    <div style="display:flex;flex-direction:column;gap:2px">
-      <div style="display:flex;align-items:center;justify-content:space-between;gap:20px">
-        <div data-date class="muted" style="font-size:20px;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${c.date}</div>
-        <!-- Quick ways to what the eight tiles don't reach. -->
-        <div style="display:flex;gap:10px;flex:none">
-          <a href="#/timers" ${pill}>Timers</a>
-          ${feature('camera') ? `<a href="#/camera" ${pill}>Camera</a>` : ''}
-          ${feature('apps') ? `<a href="#/night" ${pill}>Night clock</a>` : ''}
-          <button type="button" data-wipe ${pill}>Wipe the screen</button>
-          <a href="#/settings" ${pill}>Settings</a>
-          <a href="#/welcome" ${pill} aria-label="Show the welcome tour again">Tour</a>
-        </div>
-      </div>
-      <div style="display:flex;align-items:flex-end;justify-content:space-between;gap:20px">
-        <div class="display" style="font-size:48px;font-weight:500;white-space:nowrap">What would you like to see?</div>
-        <div class="display" style="font-size:56px;font-weight:300;white-space:nowrap"><span data-time>${c.time}</span><span data-ampm class="muted" style="font-size:24px;font-weight:500;margin-left:8px${c.ampm ? '' : ';display:none'}">${c.ampm}</span></div>
-      </div>
+  <div class="lc-root">
+    <div class="lc-top">${topBar({
+    title: 'Apps', back: '#/home', backLabel: '← Home', tone: 'dark',
+    right: `<div class="x-serif lc-hint">Swipe through. Tap a card to open it.</div>
+        <div class="lc-clock"><div class="d" data-date>${c.date}</div><div class="t"><span data-time>${c.time}</span><span data-ampm${c.ampm ? '' : ' style="display:none"'}>${c.ampm}</span></div></div>`,
+  })}</div>
+    <div class="lc-row" data-row>
+      <div class="lc-pad"></div>
+      ${CARDS.map((k) => `<a class="lc-card" data-card="${k.id}" href="${k.href}" style="background:${k.bg};color:${k.ink};--soft:${k.soft}"></a>`).join('')}
+      <div class="lc-pad"></div>
     </div>
-    <div style="flex-grow:1;min-height:0;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));grid-template-rows:repeat(2,minmax(0,1fr));gap:20px">
-      ${tiles.map(tile).join('')}
-    </div>
+    <div class="lc-dots" data-dots aria-hidden="true">${CARDS.map(() => '<span></span>').join('')}</div>
+    <div class="lc-apps">${apps.map(appBtn).join('')}</div>
   </div>`;
 
   const $ = (s) => el.querySelector(s);
+  const card = (id) => $(`[data-card="${id}"]`);
+  const fill = (id, html) => { const box = card(id); if (box) box.innerHTML = html; };
+
+  // ---- The carousel: which card is in the middle ----
+  const row = $('[data-row]');
+  const cards = Array.prototype.slice.call(el.querySelectorAll('.lc-card'));
+  const dots = Array.prototype.slice.call($('[data-dots]').children);
+  let middle = -1;
+  const setMiddle = (i) => {
+    i = Math.max(0, Math.min(cards.length - 1, i));
+    if (i === middle) return;
+    if (middle >= 0) { cards[middle].classList.remove('on'); dots[middle].classList.remove('on'); }
+    middle = i;
+    cards[i].classList.add('on');
+    dots[i].classList.add('on');
+  };
+  // Timers going? Start there. Otherwise the shopping list, with a card either side.
+  const startAt = liveTimers().length ? 3 : 2;
+  setMiddle(startAt);
+  row.scrollLeft = startAt * STEP;
+  row.addEventListener('scroll', () => {
+    if (raf) return;
+    raf = requestAnimationFrame(() => { raf = 0; setMiddle(Math.round(row.scrollLeft / STEP)); });
+  }, { passive: true });
 
   // Wipe the screen: touches off for half a minute so the glass can be cleaned.
   $('[data-wipe]').addEventListener('click', () => wipeScreen(30));
 
-  // Recipes: tonight's dinner (or "eating out" / "leftovers" from the week plan);
-  // Shopping list: how many things to get.
-  const showRecipes = () => tonight().then((t) => {
-    if (!el.isConnected) return;
-    const box = $('[data-recipes]');
-    if (t && t.planned) { box.textContent = `Tonight: ${t.entry.t}`; return; }
-    const mark = markFor(getPlan(), dayKey(new Date()), 'dinner');
-    if (mark === 'out') box.textContent = 'Tonight: eating out';
-    else if (mark === 'leftovers') box.textContent = 'Tonight: leftovers';
-    else if (t && !weekRecipeIds().length) box.textContent = `Idea: ${t.entry.t}`;
-    else box.textContent = planSub();
-  }).catch(() => {});
-  const showShopping = () => shoppingCount().then((n) => {
-    if (el.isConnected) $('[data-grocery]').textContent = n ? plural(n, 'thing to get', 'things to get') : 'Nothing on the list';
-  }).catch(() => {});
+  // ---- Calendar, notes, photos: read straight from this screen's own storage ----
+  const showCalendar = () => fill('calendar', calendarCard());
+  const showNotes = () => {
+    fill('messages', messagesCard());
+    const n = loadMessages().filter((m) => !m.seen).length;
+    const b = $('[data-badge]');
+    b.textContent = n;
+    b.style.display = n ? '' : 'none';
+  };
+  const showGallery = () => {
+    const box = card('photos');
+    box.innerHTML = galleryCard();
+    box.setAttribute('href', galleryHref());
+    $('[data-gallery-btn]').setAttribute('href', galleryHref());
+    // The newest photo, as a small copy (the full picture is far too big for a card).
+    const pic = box.querySelector('[data-photo]');
+    const src = pic && pic.getAttribute('data-photo');
+    if (src) {
+      thumbnail(src, { w: 340, h: 278, wanted: () => el.isConnected && pic.isConnected }).then((url) => {
+        if (url && pic.isConnected) pic.style.backgroundImage = `url("${url}")`;
+      }).catch(() => {});
+    }
+  };
+  showCalendar();
+  showNotes();
+  showGallery();
+
+  // ---- Recipes and the shopping list ----
+  const showRecipes = () => tonight().catch(() => null).then((t) => { if (el.isConnected) fill('recipes', recipesCard(t)); });
+  const showShopping = () => buildShoppingList().then((l) => { if (el.isConnected) fill('shopping', shoppingCard(l)); })
+    .catch(() => { if (el.isConnected) fill('shopping', head('Shopping list') + invite('The list is one tap away.', 'Open the list', spot.groceryBag())); });
+  fill('recipes', head('Recipes'));
+  fill('shopping', head('Shopping list'));
   showRecipes();
   showShopping();
-  // Something was added from a phone while the menu is open: the count follows.
+  // Something was added from a phone while the menu is open: the cards follow.
   // (A few changes in a row are counted once.)
   let kitchenWait = 0;
   const offChanges = onKitchenChanged(() => {
@@ -239,8 +461,28 @@ export function mount(el) {
   });
   offKitchen = () => { clearTimeout(kitchenWait); offChanges(); };
 
-  // The clock turns over exactly on the minute. At midnight the date and the tiles'
-  // hints (what's next on the calendar, tonight's dinner) move on too.
+  // ---- Timers: the rings count down once a second, only while something is going ----
+  let timerShape = '';
+  const shapeNow = () => liveTimers().map((t) => `${t.id}:${timerSvc.state(t)}`).join(',');
+  const showTimers = () => { timerShape = shapeNow(); fill('timers', timersCard()); };
+  const second = () => {
+    if (!el.isConnected || document.hidden) return;
+    if (shapeNow() !== timerShape) { showTimers(); return; } // one finished, or dropped off
+    if (!timerShape) return;
+    const box = card('timers');
+    liveTimers().slice(0, 2).forEach((t) => {
+      const ring = box.querySelector(`[data-timer="${t.id}"]`);
+      if (!ring || timerSvc.state(t) !== 'running') return;
+      ring.querySelector('[data-left]').textContent = ringText(t);
+      ring.querySelector('[data-arc]').setAttribute('stroke-dashoffset', ringOffset(t));
+    });
+  };
+  showTimers();
+  secTimer = setInterval(second, 1000);
+  offTimers = timerSvc.onTimersChanged(() => { if (el.isConnected) showTimers(); });
+
+  // ---- The clock turns over exactly on the minute. At midnight the date and the cards
+  // (what's next on the calendar, tonight's dinner) move on too. ----
   let day = new Date().toDateString();
   const tick = () => {
     clearTimeout(timer);
@@ -253,31 +495,33 @@ export function mount(el) {
     $('[data-date]').textContent = n.date;
     if (new Date().toDateString() !== day) {
       day = new Date().toDateString();
-      $('[data-calendar]').textContent = calendarSub();
+      showCalendar();
+      showNotes();
       showRecipes();
       showShopping();
     }
     timer = setTimeout(tick, 60000 - (Date.now() % 60000) + 30);
   };
   timer = setTimeout(tick, 60000 - (Date.now() % 60000) + 30);
-  onWake = () => { if (!document.hidden) tick(); };
+  onWake = () => { if (!document.hidden) { tick(); second(); } };
   document.addEventListener('visibilitychange', onWake);
 
-  // Notes and photos arrive from phones while the menu is open: keep the counts current.
-  offNotes = onMessagesChanged(() => {
-    if (!el.isConnected) return;
-    const n = loadMessages().filter((m) => !m.seen).length;
-    $('[data-notes]').textContent = notesSub();
-    const b = $('[data-badge]');
-    b.textContent = n;
-    b.style.display = n ? 'flex' : 'none';
-  });
-  offPhotos = onPhotosChanged(() => {
-    if (!el.isConnected) return;
-    $('[data-photos]').textContent = photosSub();
-    $('[data-photos-tile]').setAttribute('href', photosHref());
-  });
+  // Notes and photos arrive from phones while the menu is open: keep the cards current.
+  offNotes = onMessagesChanged(() => { if (el.isConnected) showNotes(); });
+  offPhotos = onPhotosChanged(() => { if (el.isConnected) showGallery(); });
 
+  // ---- Weather: today's saved one at once, the fresh one when it arrives ----
+  const showWeather = (w, more) => {
+    const k = weatherCard(w, more);
+    const box = card('weather');
+    box.style.background = k.look.bg;
+    box.style.color = k.look.ink;
+    box.style.setProperty('--soft', k.look.soft);
+    box.innerHTML = k.html;
+  };
+  const early = savedWeather();
+  if (early) showWeather(early);
+  else fill('weather', `${head('Weather')}<div class="lc-invite"><div class="x-serif lc-invite-line">Looking outside…</div></div>`);
   let loading = false;
   async function loadWeather() {
     if (loading) return;
@@ -286,27 +530,18 @@ export function mount(el) {
       const loc = await getLocation();
       const w = await getWeather(loc);
       if (!el.isConnected) return;
-      $('[data-weather-art]').innerHTML = tileArt.weather(describe(w.code).icon, isNight());
+      showWeather(w);
       const alerts = await getAlerts(loc).catch(() => []);
       if (!el.isConnected) return;
-      const box = $('[data-weather]');
-      if (alerts.length) {
-        // Keep the temperature, and make a warning stand out in red.
-        box.textContent = `${w.temp}° · ⚠ ${alerts[0].event}`;
-        box.style.color = alertColor(alerts[0]);
-        box.style.fontWeight = '600';
-        return;
-      }
-      box.style.color = '';
-      box.style.fontWeight = '';
-      box.textContent = weatherSub(w);
+      // A warning takes the picture's place, in red: easy to spot from across the kitchen.
+      if (alerts.length) showWeather(w, { alert: alerts[0].event });
     } catch (err) {
       console.error(err);
       if (!el.isConnected) return;
-      // No internet: today's last forecast beats a blank tile (and says from when).
+      // No internet: today's last forecast beats an empty card (and says from when).
       const old = savedWeather();
-      if (old) $('[data-weather-art]').innerHTML = tileArt.weather(describe(old.code).icon, isNight());
-      $('[data-weather]').textContent = old ? `${old.temp}° at ${timeText(new Date(old.at))}` : 'No internet right now';
+      if (old) showWeather(old, { note: `from ${timeText(new Date(old.at))}` });
+      else fill('weather', head('Weather') + invite('No internet right now.', 'Open Weather', wxIcon('cloud', 120)));
     } finally {
       loading = false;
     }
@@ -320,10 +555,14 @@ export function mount(el) {
 
 export function unmount() {
   clearTimeout(timer);
+  clearInterval(secTimer);
+  if (raf) cancelAnimationFrame(raf);
+  raf = 0;
   offNotes?.();
   offPhotos?.();
   offKitchen?.();
-  offKitchen = null;
+  offTimers?.();
+  offNotes = offPhotos = offKitchen = offTimers = null;
   if (onWake) document.removeEventListener('visibilitychange', onWake);
   if (onOnline) { window.removeEventListener('online', onOnline); window.removeEventListener('place-changed', onOnline); }
   onWake = onOnline = null;

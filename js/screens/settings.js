@@ -1,11 +1,11 @@
-// Family · Settings: what an owner wants to change on the screen itself, without finding a
-// phone first. Sections down the left (your family, screen & sound, clock & night, photo
-// frame, weather, timers, Wi-Fi & about), the chosen one on the right. Every choice takes
+// Kitchen · Settings: what an owner wants to change on the screen itself, without finding a
+// phone first. Sections down the left (your household, screen & sound, clock & night, photos
+// on Home, weather, timers, Wi-Fi & about), the chosen one on the right. Every choice takes
 // effect as it is tapped; nothing here needs a Save button except typed text.
-// (Birthdays, people and calendar links stay on the phone page: they need real typing.)
+// (Birthdays and calendar links stay on the phone page: they need real typing.)
 // Tom's flight deck has the same screen in its own colours, with the sections that apply.
 import { backHref, backLabel } from '../services/nav.js';
-import { getFamily, saveFamily, canSaveFamily } from '../services/family.js';
+import { getFamily, saveFamily, canSaveFamily, householdName } from '../services/family.js';
 import { display, setDisplay, hourText, timeText } from '../services/display.js';
 import { testBeep, softChime } from '../services/timers.js';
 import { uploadUrl, qrSvg } from '../services/tablet-photos.js';
@@ -28,16 +28,19 @@ const SECTIONS = DECK ? [
   ['weather', 'Where you are'],
   ['about', 'Wi-Fi & about'],
 ] : [
-  ['family', 'Your family'],
+  ['family', 'Your household'],
   ['screen', 'Screen & sound'],
   ['clock', 'Clock & night'],
-  ['photos', 'Photo frame'],
+  ['photos', 'Photos on Home'],
   ['weather', 'Weather'],
   ['timers', 'Timers'],
   ['about', 'Wi-Fi & about'],
 ];
 const NIGHT_SCREEN = DECK ? 'viewscreen' : 'night';
 const SECTION_KEY = 'settings.section';
+const ASKED_KEY = 'settings.name-asked'; // the household section was opened once to ask for a name
+const MAX_PEOPLE = 12;
+const PERSON_COLORS = ['#E2674A', '#3F8F7A', '#5B7FD6', '#C9892B', '#9A62C4', '#3E9BC0', '#D05C8E', '#6E8B3D']; // as screens/ui.js gives them out
 // A screen on Wi-Fi alone can't work out its time zone; one set up in one zone and unwrapped
 // in another shows the wrong hour until somebody says where it lives (needs app 1.30).
 const ZONES = [['America/New_York', 'Eastern'], ['America/Chicago', 'Central'], ['America/Denver', 'Mountain'], ['America/Phoenix', 'Arizona'],
@@ -50,13 +53,14 @@ let sendTimer = null;
 let savedTimer = null;
 
 // The either/or choices: what each one is now, and how to change it. A `set` that
-// answers false didn't take (the family's details couldn't be saved).
+// answers false didn't take (the household's details couldn't be saved).
 const CHOICES = {
   units: { get: () => (getFamily().units === 'celsius' ? 'celsius' : 'fahrenheit'), set: (v) => saveFamily({ units: v }) },
   clock24: { get: () => (display().clock24 ? '24' : '12'), set: (v) => setDisplay({ clock24: v === '24' }) },
   night: { get: () => (display().night ? '1' : '0'), set: (v) => setDisplay({ night: v === '1' }) },
   nightDim: { get: () => String(display().nightDim), set: (v) => setDisplay({ nightDim: +v }) },
-  restScreen: { get: () => display().restScreen, set: (v) => setDisplay({ restScreen: v }) },
+  homeHideSecs: { get: () => String([10, 30, 60, 0].indexOf(+display().homeHideSecs) < 0 ? 10 : +display().homeHideSecs), set: (v) => setDisplay({ homeHideSecs: +v }) },
+  holiday: { get: () => (display().holiday === false ? '0' : '1'), set: (v) => setDisplay({ holiday: v === '1' }) },
   restMinutes: { get: () => String(display().restMinutes), set: (v) => setDisplay({ restMinutes: +v }) },
   slideSecs: { get: () => String(display().slideSecs), set: (v) => setDisplay({ slideSecs: +v }) },
   photoZoom: { get: () => (display().photoZoom ? '1' : '0'), set: (v) => setDisplay({ photoZoom: v === '1' }) },
@@ -70,8 +74,6 @@ const CHOICES = {
   noteChime: { get: () => (display().noteChime ? '1' : '0'), set: (v) => { setDisplay({ noteChime: v === '1' }); if (v === '1') softChime(); } },
   weekStart: { get: () => String(display().weekStart === 0 ? 0 : 1), set: (v) => setDisplay({ weekStart: +v }) },
   nightStyle: { get: () => (display().nightStyle === 'clock' ? 'clock' : 'full'), set: (v) => setDisplay({ nightStyle: v }) },
-  photoClock: { get: () => (display().photoClock ? '1' : '0'), set: (v) => setDisplay({ photoClock: v === '1' }) },
-  photoWeather: { get: () => (display().photoWeather ? '1' : '0'), set: (v) => setDisplay({ photoWeather: v === '1' }) },
 };
 
 const seg = (name, options, off) => `<div class="st-seg" data-seg="${name}">${options.map(([v, text]) => `<button data-v="${v}"${off ? ' disabled' : ''}>${text}</button>`).join('')}</div>`;
@@ -101,7 +103,7 @@ export function mount(el) {
     .st-btn.quiet{background:var(--bg);color:var(--ink)}
     .st-btn:disabled{opacity:.4}
     .st-seg{display:inline-flex;background:var(--bg);border-radius:999px;padding:4px}
-    .st-seg button{min-height:48px;min-width:88px;padding:0 20px;border:0;border-radius:999px;background:none;font-family:inherit;font-size:19px;font-weight:600;color:var(--ink-2);cursor:pointer;white-space:nowrap}
+    .st-seg button{min-height:52px;min-width:88px;padding:0 20px;border:0;border-radius:999px;background:none;font-family:inherit;font-size:19px;font-weight:600;color:var(--ink-2);cursor:pointer;white-space:nowrap}
     .st-seg button.on{background:var(--ink);color:#fff}
     .st-seg button:disabled{opacity:.5}
     .st-range{-webkit-appearance:none;appearance:none;flex:1;min-width:0;height:48px;margin:0;background:none}
@@ -109,14 +111,20 @@ export function mount(el) {
     .st-range::-webkit-slider-thumb{-webkit-appearance:none;width:40px;height:40px;margin-top:-14px;border-radius:50%;background:${a};border:4px solid #fff;box-shadow:0 2px 8px rgba(0,0,0,.25)}
     .st-val{flex:none;min-width:112px;text-align:right;font-size:18px;font-weight:600;color:var(--ink-2)}
     .st-step{display:inline-flex;align-items:center;gap:4px}
-    .st-step button{width:48px;height:48px;border:0;border-radius:50%;background:var(--bg);font-family:inherit;font-size:26px;font-weight:600;line-height:1;color:var(--ink);cursor:pointer}
+    .st-step button{width:52px;height:52px;border:0;border-radius:50%;background:var(--bg);font-family:inherit;font-size:26px;font-weight:600;line-height:1;color:var(--ink);cursor:pointer}
     .st-step span{min-width:86px;text-align:center;font-size:20px;font-weight:600}
     .st-dot{flex:none;width:14px;height:14px;border-radius:50%;background:#8A93A3}
     .st-places{display:flex;flex-direction:column;gap:8px}
     .st-place{min-height:52px;padding:0 20px;border:2px solid var(--line);border-radius:14px;background:#fff;text-align:left;font-family:inherit;font-size:19px;font-weight:600;color:var(--ink);cursor:pointer}
-    .st-back{background:#fff}
+    .st-back{background:#fff;min-height:56px;padding:0 22px;font-size:18px;box-sizing:border-box}
+    .st-ask{font-size:19px;line-height:1.4;font-weight:500;padding:14px 18px;border-radius:14px;background:#FFF3E4;color:#5A3A12}
+    .st-chips{display:flex;flex-wrap:wrap;gap:10px}
+    .st-chip{min-height:52px;padding:0 16px 0 8px;border:0;border-radius:26px;background:var(--bg);color:var(--ink);font-family:inherit;font-size:19px;font-weight:600;display:inline-flex;align-items:center;gap:10px;cursor:pointer}
+    .st-chip i{flex:none;width:36px;height:36px;border-radius:18px;display:inline-flex;align-items:center;justify-content:center;font-style:normal;font-size:17px;color:#fff}
+    .st-chip b{font-weight:400;font-size:24px;line-height:1;color:var(--ink-2)}
+    .st-chip:disabled{cursor:default}
     .st-zones{display:flex;flex-wrap:wrap;gap:8px}
-    .st-zones button{min-height:48px;padding:0 18px;border:0;border-radius:999px;background:var(--bg);font-family:inherit;font-size:18px;font-weight:600;color:var(--ink-2);cursor:pointer}
+    .st-zones button{min-height:52px;padding:0 18px;border:0;border-radius:999px;background:var(--bg);font-family:inherit;font-size:18px;font-weight:600;color:var(--ink-2);cursor:pointer}
     .st-zones button.on{background:var(--ink);color:#fff}
     .deck .st-zones button{background:#12203A}
     .deck .st-zones button.on{background:#5CE1E6;color:#05070D}
@@ -168,25 +176,31 @@ export function mount(el) {
   const SECTION_HTML = {
     family: () => {
       const fam = getFamily();
-      return row('Name on the Home screen', `<div class="st-line">
+      return (canSave && !householdName() ? '<div class="st-ask">This screen doesn’t know what to call your household yet. Your two names, a surname, a nickname for the place: whatever you call home.</div>' : '')
+        + row('Household name', `<div class="st-line">
           <input data-name class="st-input" type="text" maxlength="40" autocomplete="off" autocapitalize="words" spellcheck="false"
-            placeholder="e.g. The Smiths" value="${esc(fam.familyName || '')}"${canSave ? '' : ' disabled'}>
+            placeholder="e.g. Alex &amp; Jordan" value="${esc(fam.familyName || '')}"${canSave ? '' : ' disabled'}>
           <button data-save-name class="st-btn" disabled>Save</button>
-        </div>`, `Shows as “Good morning, <span data-name-echo>${esc(fam.familyName || 'Family')}</span>”.`)
+        </div>`, 'What this screen calls your home, on the Home screen and wherever it says hello.')
+        + row('Who lives here', `<div class="st-chips" data-people></div>
+        <div class="st-line">
+          <input data-person class="st-input" type="text" maxlength="24" autocomplete="off" autocapitalize="words" spellcheck="false" placeholder="A name" style="max-width:360px"${canSave ? '' : ' disabled'}>
+          <button data-add-person class="st-btn" disabled>Add</button>
+        </div>`, 'First names are plenty. The screen puts them on notes and lists, each in its own colour. Tap a name to take it off.')
         + (() => {
-          // Birthdays, people and calendars need real typing: they are entered on a phone.
+          // Birthdays and calendars need real typing: they are entered on a phone.
           // The code for that page is shown right here (it opens on the phone's Settings tab).
           let url = null;
           try { url = uploadUrl(); } catch (e) { url = null; }
-          const what = 'Birthdays, the people who leave notes and Google or iPhone calendars are added from a phone';
+          const what = 'Birthdays, anniversaries and Google or iPhone calendars are added from a phone';
           if (!url) {
-            return `<div class="st-hint" style="margin-top:auto">${canSave ? '' : 'For now the name is changed from a phone as well. '}${what}:
-              <b>Photos → Add photos</b>, scan the code, then <b>Settings</b>.</div>`;
+            return `<div class="st-hint" style="margin-top:auto">${canSave ? '' : 'For now the name and the people are changed from a phone as well. '}${what}:
+              <b>Gallery → Add photos</b>, scan the code, then <b>Settings</b>.</div>`;
           }
           return `<div class="st-line" style="margin-top:auto;gap:24px;align-items:center">
-              <div style="flex:none;padding:10px;background:#fff;border-radius:14px;line-height:0">${qrSvg(`${url}#settings`, 190)}</div>
+              <div style="flex:none;padding:10px;background:#fff;border-radius:14px;line-height:0">${qrSvg(`${url}#settings`, 150)}</div>
               <div>
-                <div class="st-label">Birthdays, people and calendars</div>
+                <div class="st-label">Birthdays and calendars</div>
                 <div class="st-hint" style="margin-top:6px">${what}, because they need real typing. Point a phone’s camera at this code (the phone has to be on your home Wi-Fi); it opens straight on <b>Settings</b>.</div>
               </div>
             </div>`;
@@ -205,8 +219,11 @@ export function mount(el) {
           <div data-volume-val class="st-val"></div>
           <button data-volume-test class="st-btn quiet">Try it</button>
         </div>`) : '')
-        + (DECK ? '' : row('When nobody is using it, show', `<div>${seg('restScreen', [['home', 'Home'], ['photos', 'The photo frame']])}</div>`)
-        + row('Go back to it after', `<div>${seg('restMinutes', [['5', '5 min'], ['10', '10 min'], ['30', '30 min'], ['0', 'Stay put']])}</div>`,
+        + (DECK ? '' : row('On Home, hide the buttons after', `<div>${seg('homeHideSecs', [['10', '10 seconds'], ['30', '30 seconds'], ['60', '1 minute'], ['0', 'Never']])}</div>`,
+          'Home is your photo frame: left alone, only the photo and the time stay up. A touch brings the buttons back.')
+        + row('Holiday touches', `<div>${seg('holiday', [['1', 'On'], ['0', 'Off']])}</div>`,
+          'Small touches through the year: snow in December, a countdown to Christmas, leaves in autumn.')
+        + row('Go back to Home after', `<div>${seg('restMinutes', [['5', '5 min'], ['10', '10 min'], ['30', '30 min'], ['0', 'Stay put']])}</div>`,
           'A menu or list that somebody walked away from doesn’t stay up all day. Recipes, timers and anything half-typed are never interrupted.'))
         + (DECK ? '' : row('When a note arrives from a phone', `<div>${seg('noteChime', [['1', 'A soft chime'], ['0', 'Silent']])}</div>`, 'Two quiet notes, so somebody in the kitchen looks up. Never during the night clock’s hours.'))
         + row('Cleaning the glass', `<div class="st-line">
@@ -232,13 +249,12 @@ export function mount(el) {
       + (DECK ? '' : row('The night clock shows', `<div>${seg('nightStyle', [['full', 'Clock and tomorrow'], ['clock', 'Clock only']])}</div>`,
         'Clock only leaves out tomorrow’s weather and the first thing on the calendar. A timer that rings still says so.')
         + row('Weeks start on', `<div>${seg('weekStart', [['0', 'Sunday'], ['1', 'Monday']])}</div>`, 'For the calendar’s weeks and months.')),
+    // (Home is the photo frame now: these are the choices the old photo frame had.)
     photos: () => row('Each picture stays for', `<div>${seg('slideSecs', [['15', '15 sec'], ['30', '30 sec'], ['60', '1 min'], ['300', '5 min'], ['900', '15 min']])}</div>`)
       + row('Slow zoom', `<div>${seg('photoZoom', [['1', 'On'], ['0', 'Off']])}</div>`, 'Each picture drifts gently while it is up. Off keeps it perfectly still.')
-      + row('Who sent it and when', `<div>${seg('photoCaptions', [['1', 'Show'], ['0', 'Hide']])}</div>`)
-      + row('The time and date', `<div>${seg('photoClock', [['1', 'Show'], ['0', 'Hide']])}</div>`)
-      + row('The weather', `<div>${seg('photoWeather', [['1', 'Show'], ['0', 'Hide']])}</div>`, 'With all three hidden, the frame is only the pictures.')
+      + row('Who sent it and when', `<div>${seg('photoCaptions', [['1', 'Show'], ['0', 'Hide']])}</div>`, 'A small line on the picture. The time is always there.')
       + row('Order', `<div>${seg('photoShuffle', [['0', 'Newest first'], ['1', 'Mixed up']])}</div>`)
-      + `<div class="st-line" style="margin-top:auto"><a href="#/photos" class="st-btn quiet">Open the photo frame</a><a href="#/addphotos" class="st-btn quiet">Add photos</a></div>`,
+      + `<div class="st-line" style="margin-top:auto"><a href="#/photos" class="st-btn quiet">Open the Gallery</a><a href="#/addphotos" class="st-btn quiet">Add photos</a></div>`,
     weather: () => row('Temperature', `<div>${seg('units', [['fahrenheit', '°F'], ['celsius', '°C']], !canSave)}</div>`)
       + row(DECK ? 'Town for the sky, the planes overhead and the weather' : 'Town for the weather', `<div class="st-hint" data-place-now></div>
         <div class="st-line">
@@ -271,7 +287,7 @@ export function mount(el) {
           <button data-restart class="st-btn quiet">Start again</button>
         </div>`)
       + row('The settings', `<div class="st-line">
-          <div class="st-hint" style="flex:1">Puts brightness, the clock, the night hours${DECK ? '' : ', the photo frame, the calendar’s first day, the alarm'} and the town back the way they came. ${DECK ? 'Nothing else is touched.' : 'Photos, lists, notes and the family’s name are not touched.'}</div>
+          <div class="st-hint" style="flex:1">Puts brightness, the clock, the night hours${DECK ? '' : ', the photos on Home, the calendar’s first day, the alarm'} and the town back the way they came. ${DECK ? 'Nothing else is touched.' : 'Photos, lists, notes and the household’s name are not touched.'}</div>
           <button data-reset class="st-btn quiet">Put them back</button>
         </div>`)
       + row('For whoever looks after this screen', `<div class="st-hint" data-health></div>
@@ -315,16 +331,52 @@ export function mount(el) {
       const name = pane.querySelector('[data-name]');
       const saveName = pane.querySelector('[data-save-name]');
       const nameChanged = () => name.value.trim() !== (getFamily().familyName || '');
-      name.addEventListener('input', () => {
-        saveName.disabled = !canSave || !nameChanged();
-        pane.querySelector('[data-name-echo]').textContent = name.value.trim() || 'Family';
-      });
+      name.addEventListener('input', () => { saveName.disabled = !canSave || !nameChanged(); });
       const doSaveName = () => {
         if (!canSave || !nameChanged()) return;
-        if (saveFamily({ familyName: name.value.trim() })) { saveName.disabled = true; name.blur(); saved(); }
+        if (saveFamily({ familyName: name.value.replace(/\s+/g, ' ').trim() })) {
+          saveName.disabled = true; name.blur(); saved();
+          const ask = pane.querySelector('.st-ask');
+          if (ask && householdName()) ask.remove();
+        }
       };
       saveName.addEventListener('click', doSaveName);
       name.addEventListener('keydown', (e) => { if (e.key === 'Enter') doSaveName(); });
+
+      // Who lives here: each change is saved as it is made.
+      const chips = pane.querySelector('[data-people]');
+      const person = pane.querySelector('[data-person]');
+      const addPerson = pane.querySelector('[data-add-person]');
+      let list = (getFamily().people || []).map((p) => String(p).trim()).filter(Boolean);
+      const drawPeople = () => {
+        chips.innerHTML = list.length
+          ? list.map((p, i) => `<button class="st-chip" data-off="${i}" aria-label="Take ${esc(p)} off"${canSave ? '' : ' disabled'}><i style="background:${PERSON_COLORS[i % PERSON_COLORS.length]}">${esc(p.charAt(0).toUpperCase())}</i>${esc(p)}${canSave ? '<b>×</b>' : ''}</button>`).join('')
+          : '<span class="st-hint">Nobody yet.</span>';
+        person.disabled = !canSave || list.length >= MAX_PEOPLE;
+      };
+      const keepPeople = (next) => {
+        if (!saveFamily({ people: next })) return;
+        list = next;
+        drawPeople(); saved(); moreBelow();
+      };
+      // ("Alex, Jordan" typed in one go counts as two.)
+      const doAdd = () => {
+        const next = list.slice();
+        person.value.split(/[,;]/).map((p) => p.replace(/\s+/g, ' ').trim().slice(0, 24)).filter(Boolean).forEach((p) => {
+          if (next.length < MAX_PEOPLE && !next.some((q) => q.toLowerCase() === p.toLowerCase())) next.push(p);
+        });
+        person.value = '';
+        addPerson.disabled = true;
+        if (next.length !== list.length) keepPeople(next);
+      };
+      drawPeople();
+      person.addEventListener('input', () => { addPerson.disabled = !canSave || !person.value.trim(); });
+      person.addEventListener('keydown', (e) => { if (e.key === 'Enter') doAdd(); });
+      addPerson.addEventListener('click', doAdd);
+      chips.addEventListener('click', (e) => {
+        const b = e.target.closest('[data-off]');
+        if (b && canSave) keepPeople(list.filter((_, i) => i !== +b.dataset.off));
+      });
     },
     screen() {
       // Brightness: sent a few times a second while the slider moves, not for every pixel.
@@ -367,7 +419,7 @@ export function mount(el) {
           let ok = false;
           try { ok = !!N().setTimeZone(b.dataset.zone); } catch (err) { ok = false; }
           const hint = pane.querySelector('[data-zone-hint]');
-          if (!ok) { if (hint) hint.textContent = 'Couldn’t change it from here. A grown-up can: hold the top-left corner for 5 seconds, Unlock, then Settings → System → Date & time.'; return; }
+          if (!ok) { if (hint) hint.textContent = 'Couldn’t change it from here. The owner can: hold the top-left corner for 5 seconds, type the PIN from the card that came with this screen, Unlock, then Settings → System → Date & time.'; return; }
           zones.querySelectorAll('button').forEach((x) => x.classList.toggle('on', x === b));
           if (hint) hint.textContent = `Now on ${b.textContent} time. One moment while every clock catches up…`;
           saved();
@@ -443,7 +495,7 @@ export function mount(el) {
         pane.querySelector('[data-net]').textContent = state === 'online' ? 'Wi-Fi is connected' : state === 'connected' ? 'Wi-Fi is connected, but the internet isn’t answering' : 'Not connected to Wi-Fi';
         pane.querySelector('[data-net-hint]').textContent = state === 'online' ? 'Weather, calendars and updates are coming through.'
           : state === 'connected' ? 'Usually the router or the internet line. The screen keeps working from what it saved.'
-            : (N() && N().wifiSettings ? 'A grown-up can pick a network with “Wi-Fi settings”.' : 'A grown-up can pick a network: hold the top-left corner for 5 seconds, then Wi-Fi settings.');
+            : (N() && N().wifiSettings ? 'Pick a network with “Wi-Fi settings”. It asks for the PIN from the card that came with this screen.' : 'To pick a network: hold the top-left corner for 5 seconds, type the PIN from the card that came with this screen, then Wi-Fi settings.');
       };
       // One plain line for whoever helps over the phone: the version, since when it has been
       // running, the Wi-Fi, and how many things went wrong. Nothing personal in it.
@@ -567,6 +619,11 @@ export function mount(el) {
   // Back where you were (after "See the night clock", say); a first visit starts at the top.
   let first = SECTIONS[0][0];
   try { first = sessionStorage.getItem(SECTION_KEY) || first; } catch (e) { /* storage off */ }
+  // No name for the household yet (the welcome was skipped): the first visit after that
+  // opens on the name, with a gentle word. Once; after that Settings opens where it was left.
+  if (!DECK && canSave && !householdName()) {
+    try { if (!sessionStorage.getItem(ASKED_KEY)) { first = 'family'; sessionStorage.setItem(ASKED_KEY, '1'); } } catch (e) { first = 'family'; }
+  }
   show(first);
 }
 

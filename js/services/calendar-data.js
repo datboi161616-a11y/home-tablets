@@ -205,7 +205,7 @@ function itemsOn(d) {
   myEventsOn(dayStart).forEach((e) => {
     list.push({ id: e.id, title: e.title, time: e.allDay ? 'All day' : fmtTime(e.start), kind: 'tablet',
       sort: e.allDay ? -1 : e.start.getHours() * 60 + e.start.getMinutes(), start: e.start, end: e.end, allDay: e.allDay, location: '',
-      repeat: e.repeat || 'none', endTime: e.allDay ? '' : fmtTime(e.end) });
+      repeat: e.repeat || 'none', endTime: e.allDay ? '' : fmtTime(e.end), who: e.who || [], tag: e.tag || 'plan' });
   });
   datedOn(d, list.map((x) => x.title)).forEach((x) => {
     list.push({ title: x.title, time: x.turns ? `Turns ${x.turns}` : 'All day', kind: x.kind, sort: -1, start: dayStart, end: dayEnd, allDay: true, turns: x.turns || 0 });
@@ -227,7 +227,7 @@ export function getWeek(date = new Date()) {
 /**
  * One day with its events (the same shape as a getWeek() day). Each event:
  * { id (own entries), time, endTime, title, location, kind, allDay, calendar (link name),
- *   dayOf / ofDays (2 of 3 for things over several days, else 0), repeat (own entries),
+ *   dayOf / ofDays (2 of 3 for things over several days, else 0), repeat, who: [name], tag (own entries),
  *   over (a timed thing that has already finished), start, end }.
  */
 export function getDay(date) {
@@ -241,7 +241,8 @@ export function getDay(date) {
     // Settings dates that aren't birthdays use the main calendar colour.
     events: itemsOn(d).map((e) => ({ id: e.id || '', time: e.time, endTime: e.endTime || '', title: e.title, location: e.location || '',
       kind: e.kind === 'event' ? 'family' : e.kind, allDay: !!e.allDay, calendar: e.calendar || '', dayOf: e.dayOf || 0, ofDays: e.ofDays || 0,
-      repeat: e.repeat || '', over: !e.allDay && !!e.end && e.end <= now && e.end > e.start, start: e.start, end: e.end, turns: e.turns || 0 })),
+      repeat: e.repeat || '', over: !e.allDay && !!e.end && e.end <= now && e.end > e.start, start: e.start, end: e.end, turns: e.turns || 0,
+      who: e.who || [], tag: e.tag || '' })),
   };
 }
 
@@ -280,7 +281,7 @@ export function upcoming(n = 3) {
       if (e.end && e.end <= now && !(e.allDay && i === 0)) return;
       if (e.start < d && i > 0) return; // a multi-day event counts once
       if (out.some((o) => o.days === i && sameName(o.name, e.title))) return;
-      out.push({ name: e.title, date: e.start < d ? d : e.start, days: i, kind: e.kind, turns: e.turns || 0 });
+      out.push({ name: e.title, date: e.start < d ? d : e.start, days: i, kind: e.kind, turns: e.turns || 0, allDay: !!e.allDay, who: e.who || [], tag: e.tag || '' });
     });
   }
   return out.slice(0, n);

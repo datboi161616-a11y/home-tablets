@@ -159,7 +159,7 @@
   <section id="tab-photos" role="tabpanel">
   <div class="card">
     <label for="name">Your name</label>
-    <input id="name" type="text" maxlength="40" placeholder="e.g. Grandma" autocomplete="given-name">
+    <input id="name" type="text" maxlength="40" placeholder="e.g. Alex" autocomplete="given-name">
     <label for="caption">Caption <span class="muted">(optional, for this batch)</span></label>
     <input id="caption" type="text" maxlength="120" placeholder="e.g. Thanksgiving 2026">
     <label class="pick" id="pick">
@@ -230,7 +230,7 @@
     <h2><span id="rcHead">Add a recipe</span><button id="rcNew" class="small-btn" style="white-space:nowrap;margin-left:10px" hidden>Cancel</button></h2>
     <p class="muted" style="margin:0 0 14px">It shows up on the kitchen screen under Recipes &rarr; My recipes, ready for the week plan and shopping list.</p>
     <label for="rcTitle">Name</label>
-    <input id="rcTitle" type="text" maxlength="60" placeholder="Grandma's pot roast">
+    <input id="rcTitle" type="text" maxlength="60" placeholder="Slow-cooker pot roast">
     <label for="rcBlurb">A few words about it <span class="muted">(optional)</span></label>
     <input id="rcBlurb" type="text" maxlength="90" placeholder="e.g. Sunday favourite, falls apart">
     <label for="rcMeal">Meal</label>
@@ -258,15 +258,15 @@
 
   <section id="tab-settings" role="tabpanel" hidden>
     <div class="card">
-      <label for="famName">Name on the home screen</label>
-      <input id="famName" type="text" maxlength="40" placeholder="e.g. The Smiths  (shows as “Good morning, The Smiths”)">
+      <label for="famName">Household name</label>
+      <input id="famName" type="text" maxlength="40" placeholder="e.g. Alex &amp; Jordan, or The Parkers">
       <label id="unitsLabel">Temperature</label>
       <div class="seg" id="units" role="group" aria-labelledby="unitsLabel"><button data-u="fahrenheit" aria-label="Fahrenheit">°F</button><button data-u="celsius" aria-label="Celsius">°C</button></div>
     </div>
 
     <div class="card">
       <h2><span>People</span><span class="muted" id="peopleCount"></span></h2>
-      <p class="muted" style="margin:0 0 10px">Who leaves notes on the message board. Tap a name to change it.</p>
+      <p class="muted" style="margin:0 0 10px">Everyone who lives here. Their names go on notes and lists. Tap a name to change it.</p>
       <div class="chips" id="people"></div>
       <div class="row" id="personRow"><input id="personName" type="text" maxlength="30" placeholder="Add a name" enterkeyhint="done"><button class="btn" id="personAdd">Add</button></div>
     </div>
@@ -387,7 +387,7 @@
     return (err && err.message) || 'That didn’t work. Try again.';
   }
 
-  // The family's name in the title, so you know which kitchen screen this is; people for the note picker.
+  // The household's name in the title, so you know which kitchen screen this is; people for the note picker.
   var family = { name: '', people: [] };
   function possessive(n) { return /s$/i.test(n) ? n + '’' : n + '’s'; }
   function applyFamily(d) {
@@ -805,7 +805,7 @@
     noteText.value = (cur ? cur + (/[.!?]$/.test(cur) ? ' ' : '. ') : '') + t;
     noteText.dispatchEvent(new Event('input'));
   });
-  // The family's people as taps for "From".
+  // The household's people as taps for "From".
   function drawWhoChips() {
     var box = $('noteWhoChips'), me = noteWho.value.trim().toLowerCase();
     box.hidden = !family.people.length;
@@ -976,7 +976,7 @@
       if (d.day > daysIn(d.month)) d.day = daysIn(d.month);
       var days = ''; for (var n = 1; n <= daysIn(d.month); n++) days += '<option' + (n === d.day ? ' selected' : '') + '>' + n + '</option>';
       return '<div style="margin-bottom:14px"><div class="row">' +
-        '<input type="text" maxlength="50" data-dn="' + i + '" value="' + esc(d.name) + '" placeholder="e.g. Ava’s birthday" aria-label="What the date is">' +
+        '<input type="text" maxlength="50" data-dn="' + i + '" value="' + esc(d.name) + '" placeholder="e.g. Alex’s birthday" aria-label="What the date is">' +
         '<button class="x" data-del-date="' + i + '" aria-label="Remove ' + esc(d.name || 'this date') + '">×</button></div>' +
         '<div class="row" style="flex-wrap:wrap;margin-bottom:4px">' +
         '<select data-dm="' + i + '" aria-label="Month">' + MONTHS.map(function (m, k) { return '<option value="' + (k + 1) + '"' + (k + 1 === d.month ? ' selected' : '') + '>' + m + '</option>'; }).join('') + '</select>' +
@@ -1438,7 +1438,7 @@
     }
   });
 
-  // Who's who and the family's name, straight away (also tells us the kitchen screen is there).
+  // Who's who and the household's name, straight away (also tells us the kitchen screen is there).
   req('/api/settings' + q()).then(applyFamily).catch(function () {});
   // The List badge from the copy on this phone, even before the List tab is opened.
   if (!SL) { SL = slRead(SL_COPY, null); if (SL) renderShopping(); }

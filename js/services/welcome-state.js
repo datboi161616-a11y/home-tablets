@@ -1,7 +1,7 @@
-// Has this screen finished (or skipped) the hands-on tutorial (services/tutorial.js)?
-// Until it has, Home starts the tutorial instead (see app.js).
-// To run it again for a new owner: grown-up menu → "Tutorial: show again",
-// or the "Tour" button on the App menu / flight deck.
+// Has this screen finished (or skipped) the first-start welcome and tour (screens/welcome.js, services/tutorial.js)?
+// Until it has, Home opens the welcome instead (see app.js).
+// To run it again for a new owner: the owner's menu (hold the top-left corner, then the PIN) → "Tutorial: show again",
+// or Settings, Wi-Fi & about, "Show the tour again".
 const KEY = 'welcome.done.v1';
 
 export function welcomeDone() {

@@ -7,14 +7,14 @@ if (params.get('profile')) localStorage.setItem('profile', params.get('profile')
 
 export const profile = localStorage.getItem('profile') || 'family';
 
-// Family name and units come from "Tablet settings" on the phone page.
+// The household's name and the units come from the first-start welcome, Settings, or the phone page.
 export const settings = {
   get familyName() { return familyName(); },
   accent: '#C2491F',
   get units() { return getFamily().units === 'celsius' ? 'celsius' : 'fahrenheit'; },
 };
 
-// Holidays shown alongside the family's own dates (US). Repeat yearly.
+// Holidays shown alongside the household's own dates (US). Repeat yearly.
 //   { month, day }            fixed date (month is 1-12)
 //   { month, weekday, nth }   e.g. 4th Thursday of November (weekday 0 = Sunday, nth -1 = last)
 //   { easter: 0 }             days from Easter Sunday

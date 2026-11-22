@@ -10,6 +10,7 @@
 import { profile, settings } from '../config.js';
 import { setWelcomeDone } from './welcome-state.js';
 import { markSeen as newThingsSeen } from './whatsnew.js';
+import { householdName } from './family.js';
 
 let script = null, idx = 0, root = null, tick = null, waitingSince = 0, goneFor = -1;
 let wentTo = {};     // beat number -> the screen that beat went to (for Back and "Carry on")
@@ -39,16 +40,21 @@ const find = (t) => visible(typeof t === 'function' ? t() : q(t));
 const H = (title, line) => `<div class="tu-h">${title}</div><div class="tu-l">${line}</div>`;
 const dinnerHref = () => { const d = q('[data-dinner]'); const h = d && d.getAttribute('href'); return h && h.indexOf('#/dish/') === 0 ? h.replace('#/dish/', 'recipe/') : 'recipes'; };
 
-const FAMILY = [
+// The kitchen screens. (Most belong to a couple, one to a family of five: no beat assumes either.)
+// Home is the photo frame now, so the tour starts there; the beats that point at one piece of
+// Home are optional, so a Home without that piece simply doesn't get that beat.
+const KITCHEN = [
   { center: true, wait: 'start',
-    say: H(festiveHello(), 'This isn’t a tablet. It’s your new kitchen screen: photos, weather, recipes, the family calendar and more, all in one place. Here’s what it can do.') },
-  { route: /^home/, go: 'home', target: '[data-weather]', wait: 'next',
-    say: H('Weather, at a glance', 'Live for your town, hour by hour, and it even tells you when to grab a jacket.') },
-  { route: /^home/, target: () => { const b = q('[data-photo-bg]'); return b && b.parentNode; }, wait: 'next',
-    say: H('Every photo, from everyone', 'Pictures the family sends from their phones play right here, all day long.') },
+    get say() { return H(hello(), 'This isn’t a tablet. It’s your new kitchen screen: your photos, the weather, recipes, the calendar and more, all in one place. Here’s what it can do.'); } },
+  { route: /^home/, go: 'home', corner: true, wait: 'next',
+    say: H('Home is your photos', 'Your pictures fill the whole screen, with the time on top. Leave it alone for a few seconds and the buttons slip away; one touch brings them back.') },
   { route: /^addphotos/, go: 'addphotos', target: '[data-qr]', optional: true, wait: 'next',
-    say: H('No apps. No accounts.', 'Point any phone’s camera at this code and send. Grandma can do it. Try it right now!') },
-  { route: /^home/, go: 'home', target: '[data-dinner]', wait: 'next',
+    say: H('No apps. No accounts.', 'Point any phone’s camera at this code and send. Anyone on your Wi-Fi can. Try it right now!') },
+  { route: /^photos/, go: 'photos', corner: true, wait: 'next',
+    say: H('The Gallery', 'Every picture in one place: look through them, add more, take some off, and choose which ones show on Home. The Camera takes new ones right here.') },
+  { route: /^forecast/, go: 'forecast', corner: true, wait: 'next',
+    say: H('Weather, at a glance', 'Live for your town, hour by hour, and it even tells you when to grab a jacket.') },
+  { route: /^home/, go: 'home', target: '[data-dinner]', optional: true, wait: 'next',
     say: H('“What’s for dinner?” Solved.', 'A new idea every night, from over 1,000 recipes built right in.') },
   { route: /^recipe\//, go: () => dinnerHref(), corner: true, wait: 'next',
     say: H('Cooking mode', 'Big steps you can read from across the kitchen, and timers that ring on any screen.') },
@@ -57,15 +63,15 @@ const FAMILY = [
   { route: /^recipes/, go: 'recipes', corner: true, wait: 'next',
     say: H('Plan the week, skip the list', 'Tap dinners onto the week and the shopping list writes itself, sorted by aisle. It even goes to the store with you on your phone.') },
   { route: /^calendar/, go: 'calendar', corner: true, wait: 'next',
-    say: H('The family calendar', 'Birthdays, holidays and plans in one place. Google and iPhone calendars show up here too.') },
+    say: H('One calendar for the house', 'Birthdays, holidays and plans in one place. Google and iPhone calendars show up here too.') },
   { route: /^messages/, go: 'messages', corner: true, wait: 'next',
     say: H('Notes on the fridge, upgraded', 'Leave a message for whoever walks by next, from here or from any phone.') },
   { route: /^night/, go: 'night', corner: true, wait: 'next',
     say: H('Goodnight mode', 'At night it dims to a soft clock, then wakes up with you in the morning.') },
   { route: /^settings/, go: 'settings', corner: true, wait: 'next',
-    say: H('Make it yours', 'Your town, your clock, your alarm sound, what it shows when nobody’s looking. It’s all in Settings.') },
+    say: H('Make it yours', 'Your town, your clock, your alarm sound, how long each photo stays on Home. It’s all in Settings.') },
   { center: true, go: 'home', wait: 'finish',
-    say: H('And it keeps getting better', 'New features show up on their own, no updates to install. Enjoy! (Want to see this again? Menu → Tour.)') },
+    get say() { return H('And it keeps getting better', `New features show up on their own, no updates to install. Enjoy${who() ? `, ${who()}` : ''}! (Want to see this again? Settings has the tour.)`); } },
 ];
 
 const TOM = [
@@ -106,14 +112,20 @@ const WIFI_FIRST = {
   get say() {
     return H(profile === 'tom' ? 'First, the Wi-Fi' : 'First, let’s get it on your Wi-Fi',
       `This screen doesn’t know your home’s Wi-Fi yet, and the weather, photos from your phone and the calendar all come over it. ${canOpenWifi()
-        ? 'Tap the button, type the grown-up PIN from the card that came with it, and pick your Wi-Fi.'
-        : 'Hold the top-left corner of the screen for 5 seconds, type the grown-up PIN from the card that came with it, and choose Wi-Fi settings.'} The tour carries on by itself the moment it is connected.`);
+        ? 'Tap the button, type the PIN from the card that came with it, and pick your Wi-Fi.'
+        : 'Hold the top-left corner of the screen for 5 seconds, type the PIN from the card that came with it, and choose Wi-Fi settings.'} The tour carries on by itself the moment it is connected.`);
   },
 };
 
-function festiveHello() {
+// The household's name, as typed on the first start ('' until it has one), ready to follow
+// a comma: "the Parkers", "Alex &amp; Jordan".
+const esc = (x) => String(x).replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+function who() { return esc(householdName().replace(/^The\s/, 'the ')); }
+function hello() {
   const d = new Date();
-  return d.getMonth() === 11 || (d.getMonth() === 0 && d.getDate() <= 6) ? 'Merry Christmas!' : 'Say hello to your kitchen screen';
+  const name = who();
+  if (d.getMonth() === 11 || (d.getMonth() === 0 && d.getDate() <= 6)) return `Merry Christmas${name ? `, ${name}` : ''}!`;
+  return name ? `Hello, ${name}` : 'Say hello to your kitchen screen';
 }
 
 // ---------------- Drawing ----------------
@@ -315,6 +327,15 @@ function update() {
   const el = find(step.target);
   if (!el) {
     if (step.optional && Date.now() - waitingSince > 3000) { advance(); return; }
+    // The piece it points at isn't on this screen (the screen was redesigned, or is still
+    // loading slowly): say it over the whole screen rather than leave the tour with nothing up.
+    if (!step.optional && Date.now() - waitingSince > 2500) {
+      setDims('<div class="tu-dim" style="left:0;top:0;width:1280px;height:800px;background:transparent"></div>');
+      hideRing();
+      bubble(step, null, 'next');
+      root.querySelector('[data-tu-bub]').className = 'tu-bub corner';
+      return;
+    }
     setDims('');
     hideRing();
     root.querySelector('[data-tu-bub]').style.display = 'none';
@@ -335,7 +356,7 @@ function update() {
 
 /** Start from the beginning (the welcome route calls this). */
 export function startTutorial() {
-  script = tom() ? TOM : FAMILY;
+  script = tom() ? TOM : KITCHEN;
   if (!connected()) script = [WIFI_FIRST].concat(script);
   idx = 0;
   goneFor = -1;

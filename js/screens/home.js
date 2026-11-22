@@ -1,23 +1,32 @@
-// Family · Home dashboard (Main.dc.html in the design)
-import { clockTime, clockAmPm, timeText, hourText } from '../services/display.js';
+// Kitchen · Home. The household's photos fill the screen, one after another, with the
+// time over them. Left alone for ten seconds, the photo and the time are all that is
+// left; a touch brings back the weather, what's next, dinner, and the way into
+// everything else. (It used to be a dashboard of cards with a small photo in one of them,
+// and a separate "photo frame" screen. Home is the photo frame now.)
+import { clockTime, clockAmPm, timeText, hourText, display } from '../services/display.js';
 import { settings } from '../config.js';
+import { householdName } from '../services/family.js';
 import { getLocation, manualPlace, knownPlace } from '../services/location.js';
 import { getWeather, describe } from '../services/weather.js';
-import { wxIcon, homeLandscape, framesArt, foodArt, foodFor, eventIcon, C } from '../art.js';
-import { isTablet, getPhotos, onPhotosChanged } from '../services/tablet-photos.js';
+import { wxIcon, eventIcon } from '../art.js';
+import { isTablet, getPhotos, onPhotosChanged, thumbnail } from '../services/tablet-photos.js';
+import { photos as samplePhotos } from '../services/family-sample.js';
+import { rotationOf, onRotationChanged } from '../services/rotation.js';
 import { upcoming, refreshCalendars, ordinal } from '../services/calendar-data.js';
 import { chipShowsOn, onChipChanged } from '../services/timers.js';
 import { fmtMinutes, loadIndex } from '../services/recipe-data.js';
 import { tonight, getPlan, markFor, plannedFor, dayKey } from '../services/meal-plan.js';
 import { loadMessages, onMessagesChanged } from '../services/messages-data.js';
 import { getAlerts, untilText, alertColor } from '../services/weather-alerts.js';
+import { tutorialRunning } from '../services/tutorial.js';
+import { restful, season, seasonLayer } from './ui.js';
 
-let timer, photoTimer, refreshTimer, offPhotos, onCalendar, offNotes, offFonts, onWake, onOnline, offChip;
+let timer, photoTimer, refreshTimer, roomTimer, offPhotos, offRotation, onCalendar, offNotes, onWake, onOnline, offChip, rest;
 
-const REFRESH_MS = 15 * 60 * 1000; // weather, "Coming up" and dinner stay fresh all day
-const COMING_MS = 5 * 60 * 1000;   // "Coming up" is looked at again this often (redrawn only if it changed)
+const REFRESH_MS = 15 * 60 * 1000; // weather, what's next and dinner stay fresh all day
+const COMING_MS = 5 * 60 * 1000;   // what's next is looked at again this often (redrawn only if it changed)
 
-// What the dinner card showed last time, so coming back to Home shows it at once
+// What the dinner chip showed last time, so coming back to Home shows it at once
 // instead of "Pick a recipe" for a moment. { at: 'day|evening', info }
 let lastDinner = null;
 
@@ -80,15 +89,6 @@ function tomorrowWeather(w) {
   return { icon: desc.icon, label: desc.label, high: Math.round(d.temperature_2m_max[i]), low: Math.round(d.temperature_2m_min[i]) };
 }
 
-// Picture on the dinner card: a steaming bowl, or the matching food scene when the
-// dish's name says it's really a breakfast, a sandwich or a bake.
-function dinnerArt(title) {
-  const kind = foodFor('dinner', title);
-  const soft = settings.accent.toUpperCase() === C.accent ? C.accentSoft : 'rgba(255,255,255,.12)';
-  if (kind === 'dinner') return `<div class="h-dish-art" style="width:150px;height:150px;right:-30px;bottom:-30px">${foodArt.bowl(soft)}</div>`;
-  return `<div class="h-dish-art" style="width:190px;height:104px;right:-28px;bottom:-6px">${foodArt[kind](soft, 'rgba(0,0,0,.16)')}</div>`;
-}
-
 // What the dinner card should say right now:
 //   planned  tonight's dinner from the week plan
 //   tomorrow in the evening (from 8 PM), tomorrow's planned dinner, so it can be thawed or prepared
@@ -140,7 +140,7 @@ function comingUpRows(list) {
 
 // ---- The greeting ----
 // On a birthday or a holiday it says so ("Happy birthday, Ava!", "Happy Thanksgiving,
-// Family"); otherwise good morning / afternoon / evening.
+// Alex & Jordan"); otherwise good morning / afternoon / evening.
 const HOLIDAY_WORDS = {
   "new year's": 'Happy New Year', "valentine's": 'Happy Valentine’s Day', "st patrick's": 'Happy St. Patrick’s Day',
   easter: 'Happy Easter', "mother's": 'Happy Mother’s Day', "father's": 'Happy Father’s Day',
@@ -153,6 +153,7 @@ const holidayKey = (s) => String(s).toLowerCase().replace(/[’`]/g, "'").replac
 const birthdayName = (s) => { const m = /^([^’'\d]+?)(?:[’']s)?\s+(?:birthday|bday)$/i.exec(String(s).trim()); return m ? m[1].trim() : ''; };
 
 function greetingFor(list) {
+  const name = householdName();
   const today = list.filter((e) => e.days === 0);
   const birthdays = today.filter((e) => e.kind === 'birthday');
   if (birthdays.length) {
@@ -165,10 +166,11 @@ function greetingFor(list) {
   for (let i = 0; i < today.length; i++) {
     if (/observed/i.test(today[i].name)) continue;
     const words = HOLIDAY_WORDS[holidayKey(today[i].name)];
-    if (words) return { text: `${words}, ${settings.familyName}`, special: true };
+    if (words) return { text: name ? `${words}, ${name}` : words, special: true };
   }
   const h = new Date().getHours();
-  return { text: `${h < 12 ? 'Good morning' : h < 18 ? 'Good afternoon' : 'Good evening'}, ${settings.familyName}`, special: false };
+  const hello = h < 12 ? 'Good morning' : h < 18 ? 'Good afternoon' : 'Good evening';
+  return { text: name ? `${hello}, ${name}` : hello, special: false };
 }
 
 // On the two days a year the clocks change, say so: everybody wonders whether this
@@ -188,132 +190,366 @@ function clockParts() {
   };
 }
 
+// ---- The photo ----
+// Where the clock can sit: the middle (the favourite), or wherever the photo is calmest.
+// x is the middle of the block for 'center', its left edge for 'left', its right edge for 'right'.
+const ZONES = [
+  { id: 'c', x: 640, y: 372, align: 'center', cost: 0 },
+  { id: 'tc', x: 640, y: 244, align: 'center', cost: 1 },
+  { id: 'ml', x: 64, y: 372, align: 'left', cost: 1.6 },
+  { id: 'mr', x: 1216, y: 372, align: 'right', cost: 1.6 },
+  { id: 'tl', x: 64, y: 244, align: 'left', cost: 2 },
+  { id: 'tr', x: 1216, y: 244, align: 'right', cost: 2 },
+];
+const BLOCK_W = 620, BLOCK_H = 300; // about the room the date, the time and a line under it take
+const GRID_W = 64, GRID_H = 40;     // the photo is looked at this small
+
+// Where on this photo is there the least going on (faces, text and branches are busy;
+// sky, water and walls are calm)? Gives { zone, light } where light is how bright that
+// part is, 0-255, so the shade behind the clock can be made as strong as it needs.
+function calmestZone(small) {
+  return new Promise((done) => {
+    if (!small) { done(null); return; }
+    const img = new Image();
+    img.onerror = () => done(null);
+    img.onload = () => {
+      try {
+        const c = document.createElement('canvas');
+        c.width = GRID_W; c.height = GRID_H;
+        const g = c.getContext('2d');
+        g.drawImage(img, 0, 0, GRID_W, GRID_H);
+        const px = g.getImageData(0, 0, GRID_W, GRID_H).data;
+        const L = new Float32Array(GRID_W * GRID_H);
+        for (let i = 0; i < L.length; i++) L[i] = 0.299 * px[i * 4] + 0.587 * px[i * 4 + 1] + 0.114 * px[i * 4 + 2];
+        let best = null;
+        ZONES.forEach((z) => {
+          const left = z.align === 'center' ? z.x - BLOCK_W / 2 : z.align === 'left' ? z.x : z.x - BLOCK_W;
+          const x0 = Math.max(0, Math.floor(left / 20)), x1 = Math.min(GRID_W - 1, Math.ceil((left + BLOCK_W) / 20));
+          const y0 = Math.max(0, Math.floor((z.y - BLOCK_H / 2) / 20)), y1 = Math.min(GRID_H - 1, Math.ceil((z.y + BLOCK_H / 2) / 20));
+          let busy = 0, light = 0, n = 0;
+          for (let y = y0; y < y1; y++) {
+            for (let x = x0; x < x1; x++) {
+              const v = L[y * GRID_W + x];
+              busy += Math.abs(v - L[y * GRID_W + x + 1]) + Math.abs(v - L[(y + 1) * GRID_W + x]);
+              light += v; n++;
+            }
+          }
+          const score = busy / n + z.cost * 2.2;
+          if (!best || score < best.score) best = { zone: z, score, light: light / n };
+        });
+        done(best);
+      } catch (e) { done(null); }
+    };
+    img.src = small;
+  });
+}
+
+// A painted evening for a screen with no photos yet (and it changes with the time of year).
+function paintedScene(theme, night) {
+  const winter = theme === 'winter' || theme === 'christmas' || theme === 'newyear' || theme === 'valentine';
+  const fall = theme === 'autumn' || theme === 'halloween' || theme === 'thanksgiving';
+  const sky = night ? ['#070B1C', '#141C3A', '#2A2A52'] : fall ? ['#2B2F5E', '#B8566A', '#F3A65A'] : winter ? ['#1E2A52', '#6C7FB3', '#F0C9B0'] : ['#27407A', '#E07C6A', '#F8C873'];
+  const far = night ? '#1A2244' : winter ? '#8FA3C9' : fall ? '#6B3F5C' : '#4C5C8C';
+  const mid = night ? '#121A36' : winter ? '#C9D6EA' : fall ? '#7A3F3A' : '#2F5B5A';
+  const near = night ? '#0A1024' : winter ? '#EEF3FA' : fall ? '#3D2530' : '#17373A';
+  const tree = night ? '#060A18' : winter ? '#2B4257' : fall ? '#22151E' : '#0E2628';
+  const pine = (x, y, s) => `<path d="M${x} ${y - 70 * s}l${26 * s} ${44 * s}h${-14 * s}l${22 * s} ${38 * s}h${-68 * s}l${22 * s} ${-38 * s}h${-14 * s}z" fill="${tree}"/>`;
+  return `<svg width="1280" height="800" viewBox="0 0 1280 800" preserveAspectRatio="xMidYMid slice" style="display:block;width:100%;height:100%" aria-hidden="true">
+    <defs>
+      <linearGradient id="hmSky" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="${sky[0]}"/><stop offset=".55" stop-color="${sky[1]}"/><stop offset="1" stop-color="${sky[2]}"/></linearGradient>
+      <radialGradient id="hmSun" cx=".5" cy=".5" r=".5"><stop offset="0" stop-color="${night ? '#F4F1E4' : '#FFF3C4'}"/><stop offset=".22" stop-color="${night ? '#F4F1E4' : '#FFE08A'}" stop-opacity="${night ? 0.9 : 1}"/><stop offset=".24" stop-color="${night ? '#C8D2F0' : '#FFC46B'}" stop-opacity=".35"/><stop offset="1" stop-color="#FFC46B" stop-opacity="0"/></radialGradient>
+    </defs>
+    <rect width="1280" height="800" fill="url(#hmSky)"/>
+    ${night ? [[90, 70], [210, 150], [330, 60], [470, 120], [610, 50], [760, 140], [1010, 60], [1130, 170], [1210, 90], [880, 220], [150, 260], [540, 240]].map(([x, y], i) => `<circle cx="${x}" cy="${y}" r="${i % 3 ? 1.4 : 2.2}" fill="#fff" opacity="${0.5 + (i % 4) * 0.12}"/>`).join('') : ''}
+    <circle cx="${night ? 980 : 890}" cy="${night ? 170 : 470}" r="${night ? 190 : 300}" fill="url(#hmSun)"/>
+    <path d="M0 520 L160 400 L300 470 L470 350 L640 460 L800 380 L960 470 L1120 390 L1280 480 V800 H0Z" fill="${far}"/>
+    ${winter && !night ? '<path d="M470 350l40 28-22 4-18-10-20 14-16-6zM800 380l36 22-20 2-16-8-18 10-12-6zM1120 390l34 22-18 2-16-8-18 12-10-8z" fill="#fff" opacity=".85"/>' : ''}
+    <path d="M0 610 C200 540 380 600 560 570 S900 520 1280 590 V800 H0Z" fill="${mid}"/>
+    ${pine(150, 640, 1.5)}${pine(230, 650, 1.1)}${pine(1090, 640, 1.6)}${pine(1180, 655, 1.2)}${pine(1010, 648, 0.9)}
+    <g transform="translate(600 560)">
+      <path d="M-70 60V0L0-52 70 0V60Z" fill="${night ? '#1B2038' : winter ? '#7A5A4A' : '#5A3A30'}"/>
+      <path d="M-86 6L0-64 86 6 72 16 0-42-72 16Z" fill="${winter ? '#F4F7FB' : night ? '#0B0F20' : '#2A1A1C'}"/>
+      <rect x="-44" y="14" width="30" height="30" rx="3" fill="#FFD27A"/><rect x="18" y="14" width="30" height="30" rx="3" fill="#FFD27A"/>
+      <rect x="-12" y="20" width="22" height="40" rx="2" fill="${night ? '#0B0F20' : '#2A1A1C'}"/>
+    </g>
+    <path d="M0 700 C260 640 520 690 760 660 S1100 640 1280 680 V800 H0Z" fill="${near}"/>
+  </svg>`;
+}
+
+const ICON = {
+  timers: '<svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="13" r="8"/><path d="M12 9v4l2.500 2.500M10 2h4"/></svg>',
+  menu: '<svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><rect x="3" y="3" width="7" height="7" rx="2"/><rect x="14" y="3" width="7" height="7" rx="2"/><rect x="3" y="14" width="7" height="7" rx="2"/><rect x="14" y="14" width="7" height="7" rx="2"/></svg>',
+  gallery: '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="16" rx="3"/><circle cx="9" cy="10" r="2"/><path d="M4 18l5-5 4 4 3-3 4 4"/></svg>',
+  dinner: '<svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="13" r="7"/><circle cx="12" cy="13" r="3.2"/><path d="M3 4v6M21 4v6"/></svg>',
+};
+
 export function mount(el) {
   const c = clockParts();
-  let coming = upcoming(3);
-  let greet = greetingFor(coming);
+  let coming = upcoming(1);
+  let greet = greetingFor(upcoming(3));
+  let theme = season();
+  const hideAfter = Math.max(0, +display().homeHideSecs || 0) * 1000;
 
   el.innerHTML = `
   <style>
-    .h-dish-art{position:absolute;pointer-events:none}
-    .h-dish-art svg{width:100%;height:100%}
-    .h-pill{min-height:52px;padding:0 22px;font-size:18px;background:var(--card);color:var(--ink);gap:8px}
+    .hm{position:absolute;top:0;right:0;bottom:0;left:0;background:#0B0E18;color:#fff;overflow:hidden}
+    .hm-layer{position:absolute;top:0;right:0;bottom:0;left:0;opacity:0;transition:opacity 1.4s ease;will-change:opacity}
+    .hm-layer.on{opacity:1}
+    .hm-back,.hm-pic{position:absolute;top:0;right:0;bottom:0;left:0;background:center/cover no-repeat}
+    .hm-pic.zoom{animation:hm-zoom 70s ease-in-out infinite alternate;will-change:transform}
+    @keyframes hm-zoom{from{transform:scale(1)}to{transform:scale(1.07)}}
+    .hm-shade{position:absolute;top:0;right:0;bottom:0;left:0;pointer-events:none;
+      background:linear-gradient(180deg,rgba(6,8,16,.55) 0,rgba(6,8,16,0) 22%,rgba(6,8,16,0) 62%,rgba(6,8,16,.72) 100%)}
+    .hm-clock{position:absolute;width:${BLOCK_W}px;transition:opacity .6s ease;text-shadow:0 2px 18px rgba(0,0,0,.45)}
+    .hm-glow{position:absolute;left:50%;top:50%;width:980px;height:520px;margin:-260px 0 0 -490px;pointer-events:none;
+      background:radial-gradient(closest-side,rgba(4,6,14,1) 0,rgba(4,6,14,.6) 45%,rgba(4,6,14,0) 100%)}
+    .hm-date{position:relative;font:500 24px Inter,sans-serif;letter-spacing:.5px}
+    .hm-time{position:relative;font:200 204px/1 Outfit,sans-serif;letter-spacing:-6px;margin:2px 0 0;white-space:nowrap}
+    .hm-ampm{font:500 40px Outfit,sans-serif;letter-spacing:0;margin-left:12px;opacity:.85}
+    .hm-count{position:relative;font-size:34px;margin-top:6px}
+    .hm-wx{position:relative;font:500 24px Inter,sans-serif;margin-top:10px;display:inline-flex;align-items:center;gap:10px}
+    .hm-top{position:absolute;left:40px;right:40px;top:32px;display:flex;align-items:flex-start;gap:16px}
+    .hm-hello{font:500 30px Outfit,sans-serif;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;text-shadow:0 2px 14px rgba(0,0,0,.5)}
+    .hm-cap{font:400 18px Inter,sans-serif;opacity:.9;margin-top:4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;text-shadow:0 1px 10px rgba(0,0,0,.6)}
+    .hm-note{margin-top:12px;min-height:56px;display:inline-flex;align-items:center;gap:10px;padding:0 22px;border-radius:28px;background:var(--accent);color:#fff;font:600 19px Inter,sans-serif;max-width:560px}
+    .hm-note span{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+    .hm-row{position:absolute;left:40px;right:40px;bottom:36px;display:flex;align-items:stretch;gap:14px}
+    .hm-chip{flex:1 1 0;min-width:0;min-height:88px;border-radius:26px;padding:0 20px;display:flex;align-items:center;gap:14px;
+      background:rgba(14,16,24,.6);box-shadow:inset 0 0 0 1.5px rgba(255,255,255,.22);color:#fff}
+    .hm-chip b{display:block;font:600 21px Inter,sans-serif;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+    .hm-chip i{display:block;font:400 16px Inter,sans-serif;font-style:normal;opacity:.82;margin-top:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+    .hm-chip .x-eyebrow{font-size:13px;opacity:.75;margin-bottom:3px;display:block}
+    .hm-dock{min-height:88px;border-radius:26px;padding:0 30px;font-size:22px}
+    @media (prefers-reduced-motion: reduce){.hm-pic.zoom{animation:none}}
   </style>
-  <div style="height:100%;padding:40px;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));grid-template-rows:minmax(0,1fr);gap:24px">
-    <div style="display:flex;flex-direction:column;gap:24px;min-width:0">
-      <div style="display:flex;flex-direction:column;gap:4px;padding:8px 8px 0">
-        <div style="display:flex;align-items:center;gap:14px;font-size:22px;font-weight:500;min-width:0">
-          <span data-date class="muted" style="flex:none">${c.date}</span>
-          <a href="#/messages" data-notes style="display:none;color:${settings.accent};font-weight:600;padding:13px 8px;margin:-13px -8px;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis"></a>
-        </div>
-        <div class="display" style="font-weight:300;font-size:168px;line-height:1;letter-spacing:-6px">
-          <span data-time>${c.time}</span><span data-ampm class="muted" style="font-size:40px;letter-spacing:0;margin-left:12px;font-weight:500${c.ampm ? '' : ';display:none'}">${c.ampm}</span>
-        </div>
-        <div style="display:flex;align-items:center;justify-content:space-between;gap:16px;margin-top:8px">
-          <div data-hello class="display" style="font-size:30px;font-weight:500;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis${greet.special ? `;color:${settings.accent}` : ''}">${esc(greet.text)}</div>
-          <div style="display:flex;gap:10px;flex:none">
-          <a href="#/timers" class="pill h-pill">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="13" r="8"/><path d="M12 9v4l2.5 2.5M10 2h4"/></svg>
-            Timers
-          </a>
-          <a href="#/launcher" class="pill h-pill">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><rect x="3" y="3" width="7" height="7" rx="2"/><rect x="14" y="3" width="7" height="7" rx="2"/><rect x="3" y="14" width="7" height="7" rx="2"/><rect x="14" y="14" width="7" height="7" rx="2"/></svg>
-            Menu
-          </a>
-          </div>
-        </div>
-      </div>
+  <div class="hm" data-home>
+    <div class="hm-layer" data-layer="0"><div class="hm-back"></div><div class="hm-pic"></div></div>
+    <div class="hm-layer" data-layer="1"><div class="hm-back"></div><div class="hm-pic"></div></div>
+    <div class="hm-shade"></div>
+    <div data-season>${seasonLayer(theme)}</div>
 
-      <a href="#/forecast" data-weather class="card skeleton" style="flex-grow:1;min-height:0;padding:0;display:flex;flex-direction:column;overflow:hidden">
-        <div data-w-alert style="display:none;margin:20px 20px 0;border-radius:14px;padding:10px 16px;color:#fff;font-size:17px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis"></div>
-        <div style="display:flex;align-items:center;gap:20px;padding:26px 28px 0">
-          <span data-w-icon style="display:flex;flex:none">${wxIcon('cloud', 80)}</span>
-          <div data-w-temp class="display" style="font-size:80px;font-weight:500;line-height:1">--°</div>
-          <div style="display:flex;flex-direction:column;gap:4px;margin-left:8px;min-width:0">
-            <div data-w-label style="font-size:22px;font-weight:600">Loading weather…</div>
-            <div data-w-sub class="muted" style="font-size:18px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">Finding your location</div>
-            <div data-w-note class="muted" style="display:none;font-size:15px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis"></div>
-          </div>
-        </div>
-        <div data-w-hours style="display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:8px;padding:18px 28px 0;min-height:80px"></div>
-        <div style="display:flex;align-items:center;justify-content:space-between;gap:16px;padding:10px 28px 0;min-height:44px;font-size:18px">
-          <span data-w-soon style="font-weight:600;color:${settings.accent};min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis"></span>
-          <span data-w-tom style="display:none;align-items:center;gap:8px;flex:none"></span>
-        </div>
-        <div data-w-land style="margin-top:auto;flex:0 1 auto;min-height:0;overflow:hidden;display:flex;align-items:flex-end">${homeLandscape(isNight())}</div>
-      </a>
-      <!-- Kept free for the timer chip while a timer is going: nothing else on Home sits here. -->
-      <div data-chip-room style="flex:none;height:64px;display:${chipShowsOn('home') ? 'block' : 'none'}"></div>
+    <div class="hm-clock" data-clock>
+      <div class="hm-glow" data-glow></div>
+      <div class="hm-date" data-date>${esc(c.date)}</div>
+      <div class="hm-time"><span data-time>${c.time}</span><span data-ampm class="hm-ampm"${c.ampm ? '' : ' style="display:none"'}>${c.ampm}</span></div>
+      <div class="hm-count x-serif" data-count></div>
+      <div><a href="#/forecast" class="hm-wx x-chrome" data-wx-line></a></div>
     </div>
 
-    <div style="display:grid;grid-template-rows:minmax(0,1fr) 168px;gap:24px;min-width:0">
-      <div data-photo-card style="border-radius:var(--radius);background:#F6EFE7;display:flex;align-items:flex-end;justify-content:space-between;padding:24px;position:relative;overflow:hidden">
-        <div data-photo-bg style="position:absolute;top:0;right:0;bottom:0;left:0;background-position:center;background-size:cover;transition:opacity .8s"></div>
-        <div data-photo-empty style="position:absolute;top:0;right:0;bottom:0;left:0;display:flex;flex-direction:column;gap:14px;align-items:center;justify-content:center;font-size:22px;color:#4A5363;text-align:center;padding:32px">
-          ${framesArt()}
-          <div style="margin-top:4px">Family photos will show here</div>
-          <a href="#/addphotos" class="pill" style="background:var(--ink);color:#fff;min-height:52px;padding:0 24px;font-size:18px">Add photos from a phone</a>
-        </div>
-        <div data-photo-label style="position:relative;background:rgba(255,255,255,.92);border-radius:999px;padding:10px 18px;font-size:16px;font-weight:500;max-width:60%;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">Photo frame</div>
-        <a data-photo-full href="#/photos" class="pill" style="position:relative;background:var(--ink);color:#fff;margin-left:auto;min-height:52px;padding:0 24px;font-size:18px">Full screen</a>
+    <div class="hm-top x-chrome">
+      <div style="flex:1;min-width:0">
+        <div class="hm-hello" data-hello>${esc(greet.text)}</div>
+        <div class="hm-cap" data-cap></div>
+        <a href="#/messages" class="hm-note" data-notes style="display:none"></a>
       </div>
+      <a href="#/addphotos" class="x-btn accent" data-add style="display:none">Add your photos</a>
+      <a href="#/photos" class="x-btn glass">${ICON.gallery}Gallery</a>
+    </div>
 
-      <div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:24px;min-height:0">
-        <a data-dinner href="#/recipes" style="background:${settings.accent};color:#fff;border-radius:var(--radius);padding:22px 24px;display:flex;flex-direction:column;gap:6px;position:relative;overflow:hidden;min-width:0">
-          <span data-d-art>${dinnerArt('')}</span>
-          <div data-d-eyebrow class="eyebrow" style="position:relative">Tonight's dinner idea</div>
-          <div data-d-title class="display" style="position:relative;max-width:150px;font-size:26px;font-weight:500;line-height:1.15;overflow-wrap:anywhere;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden">Pick a recipe</div>
-          <div data-d-sub style="position:relative;max-width:150px;font-size:15px;color:#FBE3D8;margin-top:auto">Tap to browse recipes</div>
-        </a>
-        <a href="#/calendar" class="card" style="padding:22px 24px;display:flex;flex-direction:column;gap:10px;min-width:0;overflow:hidden">
-          <div class="eyebrow muted">Coming up</div>
-          <div data-coming style="display:flex;flex-direction:column;gap:10px">${comingUpRows(coming)}</div>
-        </a>
-      </div>
+    <div class="hm-row x-chrome" data-row>
+      <a href="#/forecast" class="hm-chip" data-weather>
+        <span data-w-icon style="display:flex;flex:none">${wxIcon('cloud', 52)}</span>
+        <span style="min-width:0"><b data-w-main>Weather</b><i data-w-sub>Finding your town…</i></span>
+      </a>
+      <a href="#/calendar" class="hm-chip" data-coming></a>
+      <a href="#/recipes" class="hm-chip" data-dinner>
+        <span style="display:flex;flex:none;opacity:.9">${ICON.dinner}</span>
+        <span style="min-width:0"><span class="x-eyebrow" data-d-eyebrow>Dinner</span><b data-d-title>Pick a recipe</b></span>
+      </a>
+      <a href="#/timers" class="x-btn frost hm-dock">${ICON.timers}Timers</a>
+      <a href="#/launcher" class="x-btn white hm-dock">${ICON.menu}Menu</a>
     </div>
   </div>`;
 
   const $ = (s) => el.querySelector(s);
+  const root = $('[data-home]');
 
-  // The timer chip's strip: there while the chip is up, gone (weather card full height) when not.
-  offChip = onChipChanged(() => {
-    if (el.isConnected) $('[data-chip-room]').style.display = chipShowsOn('home') ? 'block' : 'none';
+  // ---- Left alone, only the photo and the time are left; a touch brings the rest back ----
+  // (A word from the screen itself, "New things have arrived", waits with the buttons.)
+  const noticeBar = () => document.querySelector('#screen > [data-notice]');
+  rest = restful(root, {
+    after: hideAfter,
+    stay: () => tutorialRunning(),
+    onChange: (resting) => { const bar = noticeBar(); if (bar) bar.style.visibility = resting ? 'hidden' : ''; makeRoom(); },
   });
 
-  // "New note from Mom" (or "3 new notes") next to the date, until someone opens the board.
+  // The timer chip sits in the bottom-left corner while a timer runs, and so does a word
+  // from the screen: the row steps up for whichever is there.
+  function makeRoom() {
+    const bar = noticeBar();
+    const notice = !!bar && bar.style.display !== 'none';
+    const chip = chipShowsOn('home');
+    $('[data-row]').style.bottom = `${36 + (chip ? 80 : 0) + (notice ? 60 : 0)}px`;
+  }
+  makeRoom();
+  roomTimer = setInterval(makeRoom, 3000);
+  offChip = onChipChanged(() => { if (el.isConnected) makeRoom(); });
+
+  // ---- The time of year: a countdown under the clock, and things drifting past ----
+  const showSeason = () => {
+    theme = season();
+    $('[data-season]').innerHTML = seasonLayer(theme);
+    const line = $('[data-count]');
+    line.textContent = theme.countdown ? theme.countdown.text : '';
+    line.style.display = theme.countdown ? '' : 'none';
+    line.style.color = theme.glow || '';
+  };
+  showSeason();
+
+  // ---- Where the clock sits ----
+  let zoneNow = null;
+  const placeClock = (zone, light) => {
+    const z = zone || ZONES[0];
+    const box = $('[data-clock]');
+    const put = () => {
+      box.style.textAlign = z.align;
+      box.style.left = `${z.align === 'center' ? z.x - BLOCK_W / 2 : z.align === 'left' ? z.x : z.x - BLOCK_W}px`;
+      box.style.top = `${z.y - BLOCK_H / 2}px`;
+      // A bright patch of photo needs more shade behind white letters than a dark one.
+      const strength = light == null ? 0.34 : Math.max(0.16, Math.min(0.62, (light - 50) / 260));
+      $('[data-glow]').style.opacity = strength.toFixed(2);
+      $('[data-glow]').style.marginLeft = z.align === 'center' ? '-490px' : z.align === 'left' ? `${-490 - (BLOCK_W / 2 - 220)}px` : `${-490 + (BLOCK_W / 2 - 220)}px`;
+    };
+    if (zoneNow && zoneNow !== z.id) {
+      // It moves between photos, never while one is up: out, across, in.
+      box.style.opacity = '0';
+      setTimeout(() => { if (!el.isConnected) return; put(); box.style.opacity = '1'; }, 620);
+    } else put();
+    zoneNow = z.id;
+  };
+  placeClock(null, null);
+
+  // ---- The photos, one after another ----
+  // The album's photos that are "in the rotation" (the Gallery chooses), a minute each
+  // unless Settings says otherwise. The next one is fetched and looked at before it is
+  // shown, so the screen never flashes empty; one that won't open is skipped.
+  let list = [];
+  let at = 0;
+  let front = 1; // the layer showing now (the first photo goes on layer 0)
+  let shownKey = '';
+  const layers = [$('[data-layer="0"]'), $('[data-layer="1"]')];
+  const night = isNight();
+  const photosNow = () => {
+    if (!isTablet()) return rotationOf(samplePhotos.filter((p) => !p.video)).map((p) => ({ id: p.id, art: p.art, title: p.title, line: p.addedBy ? `from ${p.addedBy}` : '' }));
+    let all = rotationOf(getPhotos().filter((p) => !p.video));
+    if (display().photoShuffle) {
+      // Mixed up, but the same order all day (so "next" and "back" mean something).
+      const seed = new Date().getDate();
+      all = all.map((p, i) => [Math.sin((i + 1) * 12.9898 + seed) * 43758.5453 % 1, p]).sort((a, b) => a[0] - b[0]).map((x) => x[1]);
+    }
+    return all;
+  };
+  const setCaption = (p) => {
+    const cap = $('[data-cap]');
+    const show = p && display().photoCaptions !== false;
+    cap.textContent = show ? (p.line ? `${p.title} · ${p.line}` : p.title || '') : '';
+  };
+  function putUp(p, picture, small, found) {
+    if (!el.isConnected) return;
+    const next = 1 - front;
+    const layer = layers[next];
+    const back = layer.querySelector('.hm-back');
+    const pic = layer.querySelector('.hm-pic');
+    pic.className = 'hm-pic';
+    back.style.background = '';
+    if (!p) {
+      // No photos yet: the painted evening.
+      pic.style.background = 'none';
+      pic.innerHTML = paintedScene(theme.key, night);
+    } else if (p.art) {
+      pic.innerHTML = '';
+      pic.style.background = p.art;
+    } else {
+      pic.innerHTML = '';
+      const tall = picture && picture.naturalWidth / picture.naturalHeight < 1.05;
+      pic.style.background = `url('${encodeURI(p.src)}') ${tall ? 'right center/contain' : 'center 35%/cover'} no-repeat`;
+      // A tall photo stands at the right with the clock beside it, over a soft, dark, stretched
+      // copy of itself (a tiny picture stretched: the look of a blur without the cost).
+      back.style.background = tall && small ? `linear-gradient(rgba(8,10,18,.62),rgba(8,10,18,.62)),url(${small}) center/cover no-repeat` : '#0B0E18';
+      if (!tall && display().photoZoom !== false) pic.className = 'hm-pic zoom';
+      if (tall) found = { zone: ZONES[2], light: 40 };
+    }
+    layer.classList.add('on');
+    layers[front].classList.remove('on');
+    front = next;
+    placeClock(found && found.zone, found ? found.light : null);
+    setCaption(p);
+  }
+  function showPhoto(tries = 0) {
+    list = photosNow();
+    $('[data-add]').style.display = isTablet() && !getPhotos().length ? '' : 'none';
+    if (!list.length) {
+      if (shownKey !== 'painted') { shownKey = 'painted'; putUp(null); placeClock(ZONES[1], 60); }
+      return;
+    }
+    const p = list[((at % list.length) + list.length) % list.length];
+    if (p.id === shownKey && list.length > 1) return;
+    if (p.art) { shownKey = p.id; putUp(p); return; }
+    const img = new Image();
+    img.onload = () => {
+      if (!el.isConnected) return;
+      thumbnail(p.src, { w: GRID_W * 2, h: GRID_H * 2 }).then((small) => calmestZone(small).then((found) => {
+        shownKey = p.id;
+        putUp(p, img, small, found);
+      }));
+    };
+    img.onerror = () => {
+      if (!el.isConnected) return;
+      if (tries + 1 < list.length) { at++; showPhoto(tries + 1); }
+    };
+    img.src = p.src;
+  }
+  const step = (by) => { at += by; showPhoto(); restartSlides(); };
+  const restartSlides = () => {
+    clearInterval(photoTimer);
+    photoTimer = setInterval(() => { at++; showPhoto(); }, Math.max(10, +display().slideSecs || 60) * 1000);
+  };
+  showPhoto();
+  restartSlides();
+  offPhotos = onPhotosChanged(() => { at = 0; shownKey = ''; showPhoto(); });
+  offRotation = onRotationChanged(() => { shownKey = ''; showPhoto(); });
+
+  // A swipe across the photo: the next one, or the one before.
+  let swipe = null;
+  root.addEventListener('touchstart', (e) => { swipe = e.touches.length === 1 ? { x: e.touches[0].clientX, y: e.touches[0].clientY } : null; }, { passive: true });
+  root.addEventListener('touchend', (e) => {
+    if (!swipe) return;
+    const t = e.changedTouches[0];
+    const dx = t.clientX - swipe.x, dy = t.clientY - swipe.y;
+    swipe = null;
+    if (Math.abs(dx) > 90 && Math.abs(dx) > Math.abs(dy) * 2) step(dx < 0 ? 1 : -1);
+  }, { passive: true });
+
+  // ---- "New note from Alex" (or "3 new notes"), until someone opens the board ----
   const showNotes = () => {
     if (!el.isConnected) return;
     const unread = loadMessages().filter((m) => !m.seen);
     const n = unread.length;
     const a = $('[data-notes]');
     a.style.display = n ? '' : 'none';
-    a.textContent = n === 1 ? (unread[0].who ? `· New note from ${unread[0].who}` : '· 1 new note') : `· ${n} new notes`;
+    a.innerHTML = `<span>${esc(n === 1 ? (unread[0].who ? `New note from ${unread[0].who}` : '1 new note') : `${n} new notes`)}</span>`;
   };
   showNotes();
   offNotes = onMessagesChanged(showNotes);
 
-  // Dinner card: what's planned tonight (or tomorrow, late in the evening), "Eating out" or
-  // "Leftovers" when the week plan says so, else the daily idea.
+  // ---- Dinner: what's planned tonight (tomorrow's, late in the evening), else today's idea ----
   let dinnerShown = '';
   const showDinner = (info) => {
     if (!info || !el.isConnected) return;
     const sig = JSON.stringify(info);
-    if (sig === dinnerShown) return; // same as on screen: nothing to redraw
+    if (sig === dinnerShown) return;
     dinnerShown = sig;
     const id = info.id ? encodeURIComponent(info.id) : '';
-    const set = (href, eyebrow, title, sub, art) => {
+    const set = (href, eyebrow, title) => {
       $('[data-dinner]').setAttribute('href', href);
       $('[data-d-eyebrow]').textContent = eyebrow;
       $('[data-d-title]').textContent = title;
-      $('[data-d-sub]').textContent = sub;
-      $('[data-d-art]').innerHTML = dinnerArt(art);
     };
-    if (info.kind === 'planned') set(`#/recipe/${id}`, "Tonight's dinner", info.t, `${fmtMinutes(info.m)} · Tap to cook`, info.t);
-    else if (info.kind === 'tomorrow') set(`#/dish/${id}`, "Tomorrow's dinner", info.t, `${fmtMinutes(info.m)} · Tap to see it`, info.t);
-    else if (info.kind === 'out') set('#/plan', "Tonight's dinner", 'Eating out', 'Tap for the week plan', '');
-    else if (info.kind === 'leftovers') set('#/plan', "Tonight's dinner", 'Leftovers', 'Tap for the week plan', '');
-    else set(`#/dish/${id}`, "Tonight's dinner idea", info.t, `${fmtMinutes(info.m)} · Tap to see it`, info.t);
-    soon(fitDinner);
+    if (info.kind === 'planned') set(`#/recipe/${id}`, `Tonight · ${fmtMinutes(info.m)}`, info.t);
+    else if (info.kind === 'tomorrow') set(`#/dish/${id}`, 'Tomorrow’s dinner', info.t);
+    else if (info.kind === 'out') set('#/plan', 'Tonight', 'Eating out');
+    else if (info.kind === 'leftovers') set('#/plan', 'Tonight', 'Leftovers');
+    else set(`#/dish/${id}`, 'Dinner idea', info.t);
   };
   const loadDinner = () => {
     const slot = dinnerSlot();
@@ -323,145 +559,30 @@ export function mount(el) {
       showDinner(info);
     }).catch(() => {});
   };
-
-  // Long dish names: a smaller size on three lines rather than cut off.
-  function fitDinner() {
-    const d = $('[data-d-title]');
-    d.style.fontSize = '26px';
-    d.style.webkitLineClamp = '2';
-    d.style.maxWidth = '150px';
-    if (d.scrollHeight > d.clientHeight + 2) {
-      d.style.fontSize = '21px';
-      d.style.webkitLineClamp = '3';
-      d.style.maxWidth = '160px';
-    }
-  }
-
-  // "Thanksgiving" beside "Thursday" does not fit the card: a name that would be cut
-  // off gets the short day ("Thu") instead.
-  // (All the measuring first, then the changes: changing one row between two measurements
-  // made the tablet lay the whole card out again each time.)
-  const fitComing = () => {
-    const cut = [...el.querySelectorAll('[data-coming] [data-when]')].filter((when) => {
-      const name = when.parentElement.querySelector('[data-name]');
-      return name && name.scrollWidth > name.clientWidth;
-    });
-    cut.forEach((when) => { when.textContent = when.dataset.short; });
-  };
-  // Measuring has to wait a beat. On the tablets' older browser the gaps between things
-  // are put in by compat.js right after the screen is built; measured before that there
-  // is more room than there will be, and the name was cut off after all (seen on a real
-  // tablet). "Soon" is still before anything is drawn.
-  const soon = (fit) => Promise.resolve().then(() => { if (el.isConnected) fit(); });
-  soon(fitComing);
-
-  // The same dinner as last time is put up at once (it is checked again just after).
   if (lastDinner && lastDinner.at === dinnerSlot()) showDinner(lastDinner.info);
   loadDinner();
 
-  // "Good afternoon, Family" stays on one line: shrink the text a little if it's too long.
-  // Measured with the cut-off switched off and by where the buttons end up: with it on,
-  // the tablet's older browser says the text fits while it is showing "Good afternoon, Fam...".
-  const fitGreeting = () => {
-    const h = $('[data-hello]');
-    const row = h.parentElement;
-    h.style.overflow = 'visible';
-    h.style.flexShrink = '0';
-    for (let size = 30; size >= 20; size -= 2) {
-      h.style.fontSize = `${size}px`;
-      if (row.lastElementChild.getBoundingClientRect().right <= row.getBoundingClientRect().right + 0.5) break;
-    }
-    h.style.overflow = 'hidden';
-    h.style.flexShrink = '';
-  };
-  soon(fitGreeting);
-  const showGreeting = () => {
-    const g = greetingFor(coming);
-    const h = $('[data-hello]');
-    if (h.textContent === g.text) return;
-    h.textContent = g.text;
-    h.style.color = g.special ? settings.accent : '';
-    fitGreeting();
-  };
-
-  // "Coming up" is worked out again now and then (a finished appointment drops off, one
-  // that has started says "Now"), but only drawn again when it really changed.
-  let comingHtml = comingUpRows(coming);
-  const renderComing = (force) => {
+  // ---- The next thing on the calendar ----
+  let comingHtml = '';
+  const renderComing = () => {
     if (!el.isConnected) return;
-    coming = upcoming(3);
-    const html = comingUpRows(coming);
-    showGreeting();
-    if (html === comingHtml && force !== true) return;
-    comingHtml = html;
-    $('[data-coming]').innerHTML = html;
-    soon(fitComing);
+    coming = upcoming(1);
+    const e = coming[0];
+    const html = e
+      ? `<span style="display:flex;flex:none">${eventIcon(e.name, 34)}</span><span style="min-width:0"><span class="x-eyebrow">${esc(whenText(e))}</span><b>${esc(e.name)}</b></span>`
+      : '<span style="min-width:0"><span class="x-eyebrow">Calendar</span><b>Nothing coming up</b></span>';
+    if (html !== comingHtml) { comingHtml = html; $('[data-coming]').innerHTML = html; }
+    const g = greetingFor(upcoming(3));
+    const h = $('[data-hello]');
+    if (h.textContent !== g.text) h.textContent = g.text;
+    h.style.color = g.special && theme.glow ? theme.glow : '';
   };
-  // Calendar links download in the background; redraw "Coming up" when they arrive.
+  renderComing();
   onCalendar = () => renderComing();
   window.addEventListener('calendar-updated', onCalendar);
   refreshCalendars();
 
-  // Photo card: this display's newest photos, changing every 30 seconds.
-  // The next picture is loaded first, so the card never flashes grey mid-change; a photo
-  // that won't load (removed meanwhile) is skipped instead of leaving the card blank.
-  let photoIndex = 0;
-  let photoCount = 0;
-  const showEmpty = (empty) => {
-    $('[data-photo-empty]').style.display = empty ? 'flex' : 'none';
-    $('[data-photo-label]').style.display = empty ? 'none' : '';
-  };
-  function renderPhoto(tries = 0) {
-    const list = getPhotos().filter((p) => !p.video).slice(0, 20); // the card shows stills only
-    const bg = $('[data-photo-bg]');
-    photoCount = list.length;
-    showEmpty(!list.length);
-    $('[data-photo-full]').style.display = list.length ? '' : 'none'; // nothing to show full screen yet
-    $('[data-photo-card]').style.cursor = list.length ? 'pointer' : '';
-    if (!list.length) { bg.style.backgroundImage = ''; return; }
-    const p = list[photoIndex % list.length];
-    const show = () => {
-      if (!el.isConnected) return;
-      bg.style.backgroundImage = `url('${encodeURI(p.src)}')`;
-      $('[data-photo-label]').textContent = p.line ? `${p.title} · ${p.line}` : p.title;
-    };
-    const img = new Image();
-    img.onload = show;
-    img.onerror = () => {
-      if (!el.isConnected) return;
-      if (tries + 1 < list.length) { photoIndex++; renderPhoto(tries + 1); } else show();
-    };
-    img.src = p.src;
-  }
-  // The whole photo is a way into the photo frame, not just the small button.
-  $('[data-photo-card]').addEventListener('click', (e) => {
-    if (!photoCount || (e.target instanceof Element && e.target.closest('a'))) return;
-    location.hash = '#/photos';
-  });
-  if (isTablet()) {
-    renderPhoto();
-    photoTimer = setInterval(() => { photoIndex++; renderPhoto(); }, 30000);
-    offPhotos = onPhotosChanged(() => { photoIndex = 0; renderPhoto(); });
-  } else {
-    // Previewing in a normal browser: no album here (Full screen shows samples).
-    showEmpty(true);
-  }
-
-  // Again once the real letters are in (they are wider than the stand-in font).
-  // Seen on a real tablet: Home is drawn before its fonts have arrived, the fit was made
-  // with the stand-in font, and "Thanksgivi..." stayed cut off until the next visit. So it
-  // is fitted again every time a font finishes loading while Home is up.
-  if (document.fonts && document.fonts.ready) {
-    const refit = () => { if (el.isConnected) { fitGreeting(); renderComing(true); } };
-    document.fonts.ready.then(refit);
-    if (document.fonts.addEventListener) {
-      document.fonts.addEventListener('loadingdone', refit);
-      offFonts = () => document.fonts.removeEventListener('loadingdone', refit);
-    }
-  }
-
-  // Clock: turns over exactly on the minute (not up to ten seconds late). At midnight
-  // the day's cards move on too; at 8 PM the dinner card looks ahead to tomorrow.
+  // ---- The clock: turns over exactly on the minute. At midnight the day's things move on. ----
   let day = new Date().toDateString();
   let hour = new Date().getHours();
   let comingAt = Date.now();
@@ -472,18 +593,20 @@ export function mount(el) {
     const ampm = $('[data-ampm]');
     $('[data-time]').textContent = n.time;
     ampm.textContent = n.ampm;
-    ampm.style.display = n.ampm ? '' : 'none'; // 24-hour clock: no empty gap after the time
+    ampm.style.display = n.ampm ? '' : 'none';
     $('[data-date]').textContent = n.date;
     const now = new Date();
     if (now.toDateString() !== day) {
       day = now.toDateString();
-      renderComing(true);
+      showSeason();
+      renderComing();
       loadDinner();
       comingAt = Date.now();
+      if (shownKey === 'painted') { shownKey = ''; showPhoto(); }
     } else if (Date.now() - comingAt >= COMING_MS) {
       renderComing();
       comingAt = Date.now();
-    } else showGreeting();
+    }
     if (now.getHours() !== hour) { hour = now.getHours(); loadDinner(); }
     timer = setTimeout(tick, 60000 - (Date.now() % 60000) + 30);
   };
@@ -492,42 +615,23 @@ export function mount(el) {
   onWake = () => { if (!document.hidden) tick(); };
   document.addEventListener('visibilitychange', onWake);
 
-  // Weather: location -> forecast. Fetched again every 15 minutes (the dashboard stays
-  // up all day); when the Wi-Fi is down, today's last forecast is shown instead.
+  // ---- Weather: one line under the clock and a chip. Fetched again every 15 minutes; ----
+  // ---- with the Wi-Fi down, today's last forecast is shown and says from when.       ----
   let shown = false;
-  let nightShown = isNight();
   function showWeather(w, loc, offline) {
     const d = describe(w.code);
-    $('[data-weather]').classList.remove('skeleton');
-    const night = isNight();
-    $('[data-w-icon]').innerHTML = wxIcon(d.icon, 80, night);
-    if (night !== nightShown) { nightShown = night; $('[data-w-land]').innerHTML = homeLandscape(night); }
-    $('[data-w-temp]').textContent = `${w.temp}°`;
-    $('[data-w-label]').textContent = d.label;
-    $('[data-w-sub]').textContent = `H ${w.high}° · L ${w.low}°${loc && loc.town ? ` · ${loc.town}` : ''}`;
-    const note = $('[data-w-note]');
+    const dark = isNight();
+    $('[data-w-icon]').innerHTML = wxIcon(d.icon, 52, dark);
+    $('[data-wx-line]').innerHTML = `<span style="display:flex">${wxIcon(d.icon, 34, dark)}</span>${w.temp}° · ${esc(d.label)}`;
+    $('[data-w-main]').textContent = `${w.temp}° ${d.label}`;
+    const soon = rainSoon(w);
+    const tom = tomorrowWeather(w);
     // Honest about old numbers: say from when, if the Wi-Fi is down or they are over an hour old.
     const old = offline || Date.now() - w.at > 60 * 60 * 1000;
-    note.style.display = old ? '' : 'none';
-    note.textContent = old ? `${offline ? 'No internet · ' : ''}as of ${timeText(new Date(w.at))}` : '';
-    const hours = (w.hours || []).filter((h) => new Date(h.time).getTime() > Date.now());
-    $('[data-w-hours]').innerHTML = hours.map((h) => `
-        <div style="display:flex;flex-direction:column;align-items:center;gap:6px">
-          <div class="muted" style="font-size:16px">${hourText(new Date(h.time).getHours())}</div>
-          <div class="display" style="font-size:26px;font-weight:500">${h.temp}°</div>
-        </div>`).join('');
-    $('[data-w-soon]').textContent = rainSoon(w);
-    const tom = tomorrowWeather(w);
-    const tomBox = $('[data-w-tom]');
-    tomBox.style.display = tom ? 'flex' : 'none';
-    if (tom) {
-      tomBox.innerHTML = `<span class="muted">Tomorrow</span><span style="display:flex">${wxIcon(tom.icon, 30)}</span>`
-        + `<span style="font-weight:600">${tom.high}°</span><span class="muted">/ ${tom.low}°</span>`;
-      tomBox.title = tom.label;
-    }
+    $('[data-w-sub]').textContent = old ? `${offline ? 'No internet · ' : ''}as of ${timeText(new Date(w.at))}`
+      : soon || (tom ? `Tomorrow ${tom.high}° / ${tom.low}°` : `High ${w.high}° · Low ${w.low}°${loc && loc.town ? ` · ${loc.town}` : ''}`);
     shown = true;
   }
-  // Coming back to Home: the weather it already has goes up at once (no "Loading weather…").
   const early = savedWeather();
   if (early) showWeather(early, manualPlace() || knownPlace(), false);
 
@@ -538,13 +642,12 @@ export function mount(el) {
     let loc = null;
     try {
       loc = await getLocation();
-      getAlerts(loc).then((list) => {
+      getAlerts(loc).then((alerts) => {
         if (!el.isConnected) return;
-        const box = $('[data-w-alert]');
-        box.style.display = list.length ? 'block' : 'none'; // a warning that ended goes away
-        if (!list.length) return;
-        box.style.background = alertColor(list[0]);
-        box.textContent = `⚠ ${list[0].event} ${untilText(list[0].until)}`;
+        const chip = $('[data-weather]');
+        // A weather warning colours the chip and takes its second line; one that ended goes away.
+        chip.style.background = alerts.length ? alertColor(alerts[0]) : '';
+        if (alerts.length) $('[data-w-sub]').textContent = `⚠ ${alerts[0].event} ${untilText(alerts[0].until)}`;
       }).catch(() => {});
       const w = await getWeather(loc);
       if (!el.isConnected) return;
@@ -555,8 +658,7 @@ export function mount(el) {
       const old = savedWeather();
       if (old) { showWeather(old, loc, true); return; }
       if (shown) return; // keep what's on screen
-      $('[data-weather]').classList.remove('skeleton');
-      $('[data-w-label]').textContent = 'No weather right now';
+      $('[data-w-main]').textContent = 'No weather right now';
       $('[data-w-sub]').textContent = 'It comes back with the Wi-Fi';
     } finally {
       loading = false;
@@ -577,12 +679,15 @@ export function unmount() {
   clearTimeout(timer);
   clearInterval(photoTimer);
   clearInterval(refreshTimer);
+  clearInterval(roomTimer);
+  { const bar = document.querySelector('#screen > [data-notice]'); if (bar) bar.style.visibility = ''; }
+  if (rest) rest.stop();
+  rest = null;
   offPhotos?.();
+  offRotation?.();
   offNotes?.();
-  offFonts?.();
-  offFonts = null;
   offChip?.();
-  offChip = null;
+  offChip = offRotation = null;
   window.removeEventListener('calendar-updated', onCalendar);
   if (onWake) document.removeEventListener('visibilitychange', onWake);
   if (onOnline) { window.removeEventListener('online', onOnline); window.removeEventListener('place-changed', onOnline); }

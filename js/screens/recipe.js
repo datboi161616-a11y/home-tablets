@@ -1,15 +1,17 @@
-// Family · Cooking mode (Recipe.dc.html in the design)
-// Step-by-step with big buttons, tickable ingredients, and real countdown timers.
+// Kitchen · Cooking mode: "across-the-room step, pot timer".
+// One giant step readable from across the room, a pot bubbling on its flame inside the
+// timer's ring, huge Back and Next buttons with a peek at what comes next. The ingredients
+// (tickable) open beside the step; the step itself names the ones it needs.
 // Progress (step, ticks, timers) is saved per recipe id so leaving the screen or
 // switching recipes doesn't lose it; timers keep counting in the background via their end time.
 // "All recipes" goes to the recipe browser; the recipe being cooked is remembered in localStorage.
 // #/recipe/<id> opens that recipe; plain #/recipe opens the one in progress, else tonight's.
-import { settings } from '../config.js';
-import { alarmBeep } from '../services/timers.js';
+import { alarmBeep, whenText } from '../services/timers.js';
 import { display } from '../services/display.js';
 import { getRecipe as getRecipeRaw, ingredientText, metaLine, withStepTimers, markCooked } from '../services/recipe-data.js';
 import { tonight, servingsFor, scaleFor } from '../services/meal-plan.js';
-import { recipeArt, cropFood, FILL } from './kitchen-ui.js';
+import { plateArt } from './kitchen-ui.js';
+import { topBar } from './ui.js';
 
 const esc = (x) => String(x == null ? '' : x).replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 // Steps that say "rest 10 minutes" get a timer too, here as on the recipe page.
@@ -85,8 +87,8 @@ function beep() { alarmBeep(); }
 const shortTitle = (t) => (t.length > 18 ? `${t.slice(0, 17)}…` : t);
 // What a step's timer is for ("Crisp the pork"), or "Step 3" when the recipe doesn't say.
 const timerName = (step, i) => step.timerLabel || `Step ${i + 1}`;
-// Long steps get slightly smaller type so they always fit the card.
-const stepSize = (text) => (text.length <= 90 ? 46 : text.length <= 130 ? 40 : 34);
+// Short steps are giant; long ones start smaller (and are fitted to the room after that).
+const stepSize = (text) => (text.length <= 40 ? 84 : text.length <= 70 ? 68 : text.length <= 110 ? 56 : text.length <= 160 ? 46 : 40);
 
 // Which ingredients a step mentions ("Add the beef, onion and garlic" -> beef, onion, garlic),
 // so the list can point them out. Describing words are skipped so "brown sugar" matches "sugar", not "brown".
@@ -115,18 +117,129 @@ function usedIn(r, stepText) {
   return lists.map((ws, i) => sure[i] || hits[i].some((w) => !claimed[w]));
 }
 
+// ---- The look -------------------------------------------------------------------
+// One giant step, a pot on a flame inside the timer's ring, and Back / Next big enough
+// for an elbow. Only transforms and opacity move: three bubbles, the lid, the flame, the glow.
+const HOT = '#FF8A3D';
+const RING = 2 * Math.PI * 200; // the ring's length, for drawing how much of the time has gone
+const STYLES = `
+  <style>
+    .rc{height:100%;position:relative;overflow:hidden;background:#110D0B;color:#FFF3E6;font-family:Inter,system-ui,sans-serif}
+    .rc-ember{position:absolute;right:-120px;bottom:-200px;width:900px;height:900px;border-radius:50%;pointer-events:none;will-change:opacity;
+      background:radial-gradient(closest-side,rgba(255,110,40,.32),rgba(255,110,40,0));animation:rc-ember 6s ease-in-out infinite}
+    @keyframes rc-ember{0%,100%{opacity:.55}50%{opacity:.9}}
+    .rc-top{position:absolute;left:40px;right:40px;top:28px}
+    .rc-top .x-title{font-size:30px;color:#E8D3BF}
+    .rc-segs{display:flex;flex:0 1 300px;min-width:0}
+    .rc-seg{flex:1 1 0;min-width:14px;height:56px;border:0;background:transparent;padding:0 3px;cursor:pointer;display:flex;align-items:center}
+    .rc-seg i{display:block;width:100%;height:10px;border-radius:5px;background:#3A2A22}
+    .rc-seg.past i{background:${HOT};opacity:.5}
+    .rc-seg.on{flex-grow:2}
+    .rc-seg.on i{background:${HOT};height:14px;border-radius:7px}
+    .rc-left{position:absolute;left:40px;top:112px;width:716px;bottom:150px;display:flex;flex-direction:column;gap:12px}
+    .rc-num{font:700 26px Outfit,sans-serif;color:${HOT};letter-spacing:1px;text-transform:uppercase;flex:none}
+    .rc-text{flex:1 1 0;min-height:0;overflow:hidden;font:700 84px/1.04 Outfit,sans-serif;letter-spacing:-1px}
+    .rc-uses{flex:none;display:flex;flex-wrap:wrap;align-items:center;max-height:84px;overflow:hidden;margin-bottom:-6px}
+    .rc-uses .l{font:600 15px Inter,sans-serif;letter-spacing:2px;text-transform:uppercase;color:#CDB8A4;margin:0 12px 6px 0}
+    .rc-use{padding:7px 14px;border-radius:12px;background:rgba(255,138,61,.16);color:#FFE2C8;font:500 18px Inter,sans-serif;margin:0 8px 6px 0;white-space:nowrap;max-width:100%;overflow:hidden;text-overflow:ellipsis}
+    .rc-side{flex:none;display:flex;flex-wrap:wrap;gap:10px}
+    .rc-chip{min-height:56px;padding:0 20px;border-radius:16px;border:0;background:rgba(255,255,255,.1);color:#FFF3E6;font:600 18px Inter,sans-serif;cursor:pointer;
+      display:inline-flex;align-items:center;gap:8px;font-variant-numeric:tabular-nums}
+    .rc-chip.done{background:${HOT};color:#1A0E08}
+    /* The pot in its ring */
+    .rc-pot{position:absolute;right:44px;top:100px;width:440px;height:440px}
+    .rc-ring{position:absolute;left:0;top:0}
+    .rc-pot.done .rc-ring{animation:rc-blink 1s steps(1) infinite}
+    @keyframes rc-blink{0%{opacity:1}50%{opacity:.55}}
+    .rc-stove{position:absolute;left:79px;top:58px;width:282px;height:270px;transform:scale(.74);transform-origin:50% 0}
+    .rc-stove>*{position:absolute}
+    .rc-bub{border-radius:50%;background:#FFD9B8;opacity:0;will-change:transform,opacity;animation:rc-bub 4.2s ease-out infinite}
+    @keyframes rc-bub{0%{transform:translateY(0) scale(.6);opacity:0}20%{opacity:.8}100%{transform:translateY(-70px) scale(1);opacity:0}}
+    .rc-lid{left:34px;top:40px;transform-origin:50% 92%}
+    .rc-flame{left:66px;top:232px;transform-origin:50% 100%;will-change:transform;animation:rc-flame 2.2s ease-in-out infinite}
+    @keyframes rc-flame{0%,100%{transform:scaleY(.7)}50%{transform:scaleY(.86)}}
+    @keyframes rc-flame-hot{0%,100%{transform:scaleY(1)}50%{transform:scaleY(1.2)}}
+    @keyframes rc-lid{0%,86%,100%{transform:translateY(0) rotate(0)}90%{transform:translateY(-6px) rotate(-2deg)}94%{transform:translateY(-2px) rotate(1deg)}}
+    @keyframes rc-lid-fast{0%,100%{transform:translateY(0) rotate(0)}30%{transform:translateY(-7px) rotate(-3deg)}60%{transform:translateY(-2px) rotate(2deg)}}
+    .rc-pot.run .rc-bub{animation-duration:2.4s}
+    .rc-pot.run .rc-lid{will-change:transform;animation:rc-lid 7s ease-in-out infinite}
+    .rc-pot.run .rc-flame,.rc-pot.done .rc-flame{animation:rc-flame-hot 1.2s ease-in-out infinite}
+    .rc-pot.done .rc-bub{animation-duration:1.6s}
+    .rc-pot.done .rc-lid{will-change:transform;animation:rc-lid-fast .7s ease-in-out infinite}
+    .rc-pot.paused .rc-bub,.rc-pot.paused .rc-flame{animation-play-state:paused}
+    .rc-clockbox{position:absolute;left:60px;right:60px;top:268px;text-align:center}
+    .rc-clock{font:700 62px/1 Outfit,sans-serif;font-variant-numeric:tabular-nums}
+    .rc-tlabel{font-size:17px;color:#CDB8A4;margin:4px 6px 0;line-height:1.25;max-height:46px;overflow:hidden}
+    .rc-pot.done .rc-tlabel{color:#FFC15E;font-weight:600}
+    .rc-tbtns{position:absolute;right:44px;top:556px;width:440px;display:flex;justify-content:center;gap:10px}
+    .rc-tbtn{min-height:64px;min-width:64px;padding:0 24px;border-radius:18px;border:0;background:rgba(255,255,255,.1);color:#FFF3E6;font:600 20px Inter,sans-serif;cursor:pointer}
+    .rc-tbtn.main{background:${HOT};color:#1A0E08;min-width:150px;font-weight:700}
+    .rc-meta{position:absolute;right:44px;top:566px;width:440px;text-align:center;font-size:18px;color:#CDB8A4;line-height:1.35}
+    /* Back, what comes next, Next */
+    .rc-bar{position:absolute;left:40px;right:40px;bottom:32px;display:flex;align-items:stretch;gap:16px}
+    .rc-big{min-height:100px;border-radius:26px;border:0;font:700 30px Outfit,sans-serif;cursor:pointer;display:flex;align-items:center;justify-content:center;flex:none}
+    .rc-big:active,.rc-tbtn:active,.rc-chip:active{transform:scale(.97)}
+    .rc-prev{width:200px;background:rgba(255,255,255,.1);color:#FFF3E6}
+    .rc-prev[disabled]{opacity:.3;pointer-events:none}
+    .rc-next{width:310px;background:${HOT};color:#1A0E08;font-size:34px}
+    .rc-peek{flex:1;min-width:0;border-radius:26px;border:2px solid #3A2A22;display:flex;align-items:center;gap:16px;padding:0 24px}
+    .rc-peek .l{font:700 18px Outfit,sans-serif;color:${HOT};letter-spacing:1px;flex:none}
+    .rc-peek .t{font-size:23px;line-height:1.3;color:#E8D3BF;flex:1;min-width:0;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+    .rc-again{min-height:64px;padding:0 22px;border-radius:18px;border:0;background:rgba(255,255,255,.1);color:#FFF3E6;font:600 19px Inter,sans-serif;cursor:pointer;flex:none}
+    /* The ingredients, when asked for: beside the step, over the pot */
+    .rc-panel{position:absolute;right:0;top:0;bottom:150px;width:510px;z-index:2;background:#1D1512;border-radius:0 0 0 32px;padding:28px 40px 22px 30px;display:flex;flex-direction:column;gap:12px}
+    .rc-panel .h{display:flex;align-items:center;gap:12px}
+    .rc-panel .h div{flex:1;min-width:0;font:600 15px Inter,sans-serif;letter-spacing:2px;text-transform:uppercase;color:${HOT}}
+    .rc-list{flex:1 1 0;min-height:0;overflow-y:auto;-webkit-overflow-scrolling:touch}
+    .rc-ing{position:relative;display:flex;align-items:center;gap:14px;font-size:20px;min-height:56px;cursor:pointer;line-height:1.25;border-radius:14px;padding:6px 12px}
+    .rc-ing input{position:absolute;opacity:0;width:1px;height:1px}
+    .rc-ing i{flex:none;width:30px;height:30px;border-radius:9px;border:2px solid #8A7566;display:flex;align-items:center;justify-content:center;font:normal 700 20px Inter,sans-serif;color:transparent}
+    .rc-ing input:checked+i{background:${HOT};border-color:${HOT};color:#1A0E08}
+    .rc-ing.on span{color:#9C8777;text-decoration:line-through}
+    .rc-ing.use{background:rgba(255,138,61,.16);font-weight:600}
+    .rc-scale{font-size:16px;color:#CDB8A4;line-height:1.35}
+    /* Finished, or left half-way on another day */
+    .rc-over{position:absolute;top:0;right:0;bottom:0;left:0;z-index:3;background:#110D0B;padding:40px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:20px;text-align:center}
+    .rc-over .big{font:700 64px/1.05 Outfit,sans-serif}
+    .rc-over .sub{font-size:24px;color:#E8D3BF;max-width:860px;line-height:1.35}
+    .rc-over .row{display:flex;gap:16px;flex-wrap:wrap;justify-content:center;margin-top:10px}
+    .rc-over .rc-big{padding:0 36px;min-height:84px;font-size:26px;text-decoration:none}
+    .rc-ghost{background:rgba(255,255,255,.1);color:#FFF3E6}
+    .rc-plain{height:100%;background:#110D0B;color:#E8D3BF;display:flex;flex-direction:column;gap:24px;align-items:center;justify-content:center;font-size:24px;text-align:center;padding:40px}
+    @media (prefers-reduced-motion: reduce){.rc-ember,.rc-bub,.rc-flame,.rc-pot .rc-lid,.rc-pot .rc-ring{animation:none!important}}
+  </style>`;
+
+// The pot: each moving part is its own small picture, so only that part is redrawn.
+const POT = `
+  <div class="rc-stove" aria-hidden="true">
+    <div class="rc-bub" style="left:98px;top:62px;width:16px;height:16px"></div>
+    <div class="rc-bub" style="left:140px;top:60px;width:12px;height:12px;animation-delay:-1.4s"></div>
+    <div class="rc-bub" style="left:171px;top:65px;width:14px;height:14px;animation-delay:-2.8s"></div>
+    <svg class="rc-lid" width="214" height="52" viewBox="118 120 214 52"><path d="M118 172Q225 120 332 172Z" fill="#9E2A1A"/><rect x="205" y="132" width="40" height="14" rx="7" fill="#2A1E18"/></svg>
+    <svg style="left:0;top:92px" width="282" height="140" viewBox="84 172 282 140">
+      <defs><linearGradient id="rcPotFill" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#7A1E14"/><stop offset=".45" stop-color="#C53A22"/><stop offset="1" stop-color="#6E1A10"/></linearGradient></defs>
+      <rect x="112" y="172" width="226" height="22" rx="8" fill="#8A2416"/>
+      <path d="M120 190H330V280Q330 310 300 310H150Q120 310 120 280Z" fill="url(#rcPotFill)"/>
+      <rect x="84" y="206" width="40" height="18" rx="9" fill="#2A1E18"/><rect x="326" y="206" width="40" height="18" rx="9" fill="#2A1E18"/>
+      <ellipse cx="180" cy="232" rx="24" ry="40" fill="#FFFFFF" opacity=".1"/>
+    </svg>
+    <svg class="rc-flame" width="150" height="28" viewBox="150 312 150 28">
+      <defs><radialGradient id="rcFire" cx=".5" cy="1" r="1"><stop offset="0" stop-color="#FFE7A0"/><stop offset=".5" stop-color="#FF9A3A"/><stop offset="1" stop-color="#E2421E" stop-opacity="0"/></radialGradient></defs>
+      <path d="M150 340Q160 318 170 340Q182 314 196 340Q210 312 225 340Q240 312 254 340Q268 314 280 340Q290 318 300 340Z" fill="url(#rcFire)"/>
+    </svg>
+    <div style="left:46px;top:258px;width:190px;height:8px;border-radius:4px;background:#3A2A22"></div>
+  </div>`;
+
 // ---- Screen -----------------------------------------------------------------
 export function mount(el, ctx) {
-  el.innerHTML = '<div class="k-empty" style="height:100%;display:flex;align-items:center;justify-content:center;font-size:22px;color:#4A5363">Loading recipe…</div>';
+  el.innerHTML = `${STYLES}<div class="rc-plain">Loading recipe…</div>`;
   start(el, (ctx && ctx.args) || []).catch((err) => {
     console.error(err);
-    if (el.isConnected) el.innerHTML = '<div style="height:100%;display:flex;flex-direction:column;gap:20px;align-items:center;justify-content:center;font-size:22px;color:#4A5363">Couldn’t load the recipe. Check the Wi-Fi.<a href="#/recipes" class="pill" style="background:#1D2430;color:#fff">All recipes</a></div>';
+    if (el.isConnected) el.innerHTML = `${STYLES}<div class="rc-plain">Couldn’t load the recipe. Check the Wi-Fi.<a href="#/recipes" class="x-btn white">All recipes</a></div>`;
   });
 }
 
 async function start(el, args) {
-  const a = settings.accent;
-
   // Every recipe with saved progress (so running timers in other recipes keep showing).
   const savedIds = [];
   for (let k = 0; k < localStorage.length; k++) {
@@ -145,11 +258,7 @@ async function start(el, args) {
     r = await getRecipe(args[0]);
     // A recipe that has gone (your own, deleted): say so, rather than quietly opening another one.
     if (!r) {
-      if (el.isConnected) {
-        el.innerHTML = `<div style="height:100%;display:flex;flex-direction:column;gap:24px;align-items:center;justify-content:center;font-size:24px;color:#4A5363;text-align:center;padding:40px">
-          That recipe isn’t here any more.
-          <a href="#/recipes" class="pill" style="background:#1D2430;color:#fff;min-height:56px;padding:0 32px;display:inline-flex;align-items:center">All recipes</a></div>`;
-      }
+      if (el.isConnected) el.innerHTML = `${STYLES}<div class="rc-plain">That recipe isn’t here any more.<a href="#/recipes" class="x-btn white">All recipes</a></div>`;
       try { if (localStorage.getItem(CURRENT_KEY) === args[0]) localStorage.removeItem(CURRENT_KEY); } catch (e) { /* storage off */ }
       return;
     }
@@ -179,61 +288,13 @@ async function start(el, args) {
 
   let lastBeep = 0;
   let sideHtml = '';
+  let ringAt = -1; // what the ring shows now (so it is only redrawn when it moves)
+  let panelOpen = false; // the ingredients, beside the step
 
-  el.innerHTML = `
-  <style>
-    .rc-btn{min-height:64px;border-radius:999px;font-size:20px;font-weight:600;font-family:Inter,sans-serif;cursor:pointer;
-      display:inline-flex;align-items:center;justify-content:center;gap:10px;transition:transform .1s ease}
-    .rc-btn:active{transform:scale(.96)}
-    .rc-btn[disabled]{opacity:.35;pointer-events:none}
-    .rc-ghost{padding:0 32px;border:2px solid #1D2430;background:#FFFFFF;color:#1D2430}
-    .rc-solid{padding:0 40px;border:none;background:${a};color:#FFFFFF}
-    .rc-ing{display:flex;align-items:center;gap:14px;font-size:19px;min-height:52px;cursor:pointer;line-height:1.3}
-    .rc-ing input{width:28px;height:28px;accent-color:${a};flex:none;margin:0}
-    .rc-ing.on span{color:#4A5363;text-decoration:line-through}
-    .rc-ing{border-radius:12px;margin:0 -12px;padding:0 12px;flex:none}
-    .rc-ing.use{background:${a}1A;font-weight:600}
-    .rc-dots{display:flex;align-items:center;flex:1;min-width:0;justify-content:flex-end}
-    .rc-dot{flex:0 1 44px;min-width:24px;height:56px;border:none;background:transparent;cursor:pointer;display:flex;align-items:center;justify-content:center;padding:0}
-    .rc-dot i{width:14px;height:14px;border-radius:50%;background:#D9DDE2;display:block}
-    .rc-dot.past i{background:${a};opacity:.45}
-    .rc-dot.on i{background:${a};width:20px;height:20px}
-    .rc-next{font-size:20px;color:#4A5363;line-height:1.35;overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical}
-    .rc-next b{color:#1D2430;font-weight:600}
-    .rc-timer{display:flex;align-items:center;gap:20px;border-radius:20px;background:#F4F5F7;padding:18px 18px 18px 26px}
-    /* Two-frame blink (steps), not a smooth 60-frames-a-second pulse the slow chip can't keep up with. */
-    .rc-timer.done{background:${a};color:#FFFFFF;animation:rc-pulse 1s steps(1) infinite}
-    @keyframes rc-pulse{0%{opacity:1}50%{opacity:.8}}
-    .rc-done{position:absolute;top:0;right:0;bottom:0;left:0;background:var(--bg);padding:40px;z-index:2;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:22px;text-align:center}
-    .rc-done .big{font-size:64px;font-weight:500;line-height:1.1}
-    .rc-done .sub{font-size:24px;color:#4A5363;max-width:820px;line-height:1.35}
-    .rc-done .row{display:flex;gap:18px;flex-wrap:wrap;justify-content:center;margin-top:8px}
-    .rc-scale{font-size:16px;color:#4A5363}
-    .rc-tbtn{min-height:56px;min-width:56px;padding:0 24px;border-radius:999px;border:none;font-size:18px;font-weight:600;
-      font-family:Inter,sans-serif;cursor:pointer;background:#1D2430;color:#FFFFFF}
-    .rc-tbtn.light{background:#FFFFFF;color:#1D2430;border:2px solid #D9DDE2}
-    .rc-timer.done .rc-tbtn{background:#FFFFFF;color:${a}}
-    .rc-chip{min-height:44px;padding:0 18px;border-radius:999px;border:none;background:#F4F5F7;color:#1D2430;
-      font-size:16px;font-weight:600;font-family:Inter,sans-serif;cursor:pointer;display:inline-flex;align-items:center;gap:8px}
-    .rc-chip.done{background:${a};color:#FFFFFF}
-    .rc-pillbtn{border:none;background:#FFFFFF;color:#1D2430;font-family:Inter,sans-serif;cursor:pointer;flex:none}
-    .rc-chooser{position:absolute;top:0;right:0;bottom:0;left:0;background:var(--bg);padding:40px;
-      display:flex;flex-direction:column;gap:24px;z-index:2}
-    .rc-grid{flex-grow:1;min-height:0;overflow-y:auto;-webkit-overflow-scrolling:touch;display:grid;
-      grid-template-columns:repeat(4,minmax(0,1fr));gap:20px;align-content:start;padding-bottom:4px}
-    .rc-card{border:3px solid transparent;background:#FFFFFF;border-radius:var(--radius);padding:22px;min-height:168px;
-      display:flex;flex-direction:column;gap:10px;text-align:left;font-family:Inter,sans-serif;color:#1D2430;cursor:pointer;
-      transition:transform .1s ease}
-    .rc-card:active{transform:scale(.97)}
-    .rc-card.tonight{border-color:${a}}
-    .rc-card .t{font-size:24px;font-weight:500;line-height:1.15}
-    .rc-card .m{font-size:15px;color:#4A5363}
-    .rc-tag{align-self:flex-start;border-radius:999px;padding:5px 12px;font-size:14px;font-weight:600;background:#F4F5F7;color:#1D2430}
-    .rc-badge{align-self:flex-start;border-radius:999px;padding:5px 12px;font-size:14px;font-weight:600;background:${a};color:#FFFFFF}
-    .rc-badge.now{background:#1D2430}
-  </style>
-  <div data-root style="height:100%;position:relative">
-    <div data-cook style="height:100%;padding:40px;display:flex;flex-direction:column;gap:24px"></div>
+  el.innerHTML = `${STYLES}
+  <div class="rc" data-root>
+    <div class="rc-ember" aria-hidden="true"></div>
+    <div data-cook></div>
   </div>`;
 
   const $ = (sel) => el.querySelector(sel);
@@ -243,50 +304,66 @@ async function start(el, args) {
   let armTimer;
   function showIngCount() {
     const n = s.checked.filter(Boolean).length;
-    $('[data-ingcount]').textContent = n ? `Ingredients · ${n} of ${r.ingredients.length} ready` : 'Ingredients';
+    const words = n ? `Ingredients · ${n} of ${r.ingredients.length} ready` : `Ingredients · ${r.ingredients.length}`;
+    $('[data-ingcount]').textContent = words;
+    $('[data-ingbtn]').textContent = panelOpen ? 'Hide ingredients' : n ? `Ingredients · ${n}/${r.ingredients.length}` : 'Ingredients';
+  }
+  function showPanel() {
+    $('[data-panel]').style.display = panelOpen ? '' : 'none';
+    showIngCount();
   }
 
   function renderCook() {
     sideHtml = '';
+    ringAt = -1;
     $('[data-cook]').innerHTML = `
-    <div style="display:flex;align-items:center;justify-content:space-between;gap:16px">
-      <a href="#/home" class="pill" style="background:#FFFFFF;flex:none">← Home</a>
-      <div class="display" style="font-size:34px;font-weight:500;flex:1;min-width:0;text-align:center;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${esc(r.title)}</div>
-      <div class="muted" style="font-size:18px;flex:none">${esc(metaLine(r, servingsFor(r)))}</div>
-      <a href="#/convert" class="pill rc-pillbtn" style="flex:none">Conversions</a>
-      <a href="#/recipes" class="pill rc-pillbtn">All recipes</a>
+    <div class="rc-top">${topBar({ title: r.title, back: '#/home', backLabel: '← Home', tone: 'dark',
+      right: `<div data-segs class="rc-segs">${r.steps.map((_, j) => `<button class="rc-seg" data-goto="${j}" aria-label="Step ${j + 1}"><i></i></button>`).join('')}</div>
+        <button data-ingbtn class="x-btn sm frost"></button>
+        <a href="#/recipes" class="x-btn sm glass">All recipes</a>` })}</div>
+    <div class="rc-left" data-stepcard>
+      <div data-stepnum class="rc-num"></div>
+      <div data-steptext class="rc-text"></div>
+      <div data-uses class="rc-uses"></div>
+      <div data-side class="rc-side"></div>
     </div>
-    <div style="flex-grow:1;display:grid;grid-template-columns:380px minmax(0,1fr);gap:24px;min-height:0">
-      <div data-ings class="card" style="padding:28px;display:flex;flex-direction:column;gap:14px;overflow:auto">
-        <div data-ingcount class="eyebrow muted"></div>
-        ${servingsFor(r) !== r.serves ? `<div class="rc-scale">Amounts below are for ${servingsFor(r)}. Amounts in the steps are for ${r.serves}, as the recipe was written.</div>` : ''}
+    <div class="rc-pot" data-pot>
+      <svg class="rc-ring" width="440" height="440" viewBox="0 0 440 440" aria-hidden="true">
+        <defs><linearGradient id="rcRingFill" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#FFC15E"/><stop offset="1" stop-color="#FF6A2A"/></linearGradient></defs>
+        <circle cx="220" cy="220" r="200" fill="none" stroke="#2A1E18" stroke-width="18"/>
+        <circle data-ring cx="220" cy="220" r="200" fill="none" stroke="url(#rcRingFill)" stroke-width="18" stroke-linecap="round"
+          stroke-dasharray="${RING.toFixed(1)}" stroke-dashoffset="${RING.toFixed(1)}" transform="rotate(-90 220 220)" style="display:none"/>
+      </svg>
+      ${POT}
+      <div class="rc-clockbox"><div data-tclock class="rc-clock"></div><div data-tlabel class="rc-tlabel"></div></div>
+    </div>
+    <div data-tbtns class="rc-tbtns">
+      <button data-tplus class="rc-tbtn" aria-label="One more minute">+1 min</button>
+      <button data-treset class="rc-tbtn">Reset</button>
+      <button data-ttoggle class="rc-tbtn main"></button>
+    </div>
+    <div data-meta class="rc-meta">${esc(metaLine(r, servingsFor(r)))}</div>
+    <div class="rc-panel" data-panel style="display:none">
+      <div class="h"><div data-ingcount></div><button data-ingclose class="x-btn sm frost">Close</button></div>
+      ${servingsFor(r) !== r.serves ? `<div class="rc-scale">Amounts here are for ${servingsFor(r)}. Amounts in the steps are for ${r.serves}, as the recipe was written.</div>` : ''}
+      <div data-ings class="rc-list">
         ${r.ingredients.map((ing, i) => `
           <label class="rc-ing${s.checked[i] ? ' on' : ''}">
-            <input type="checkbox" data-ing="${i}"${s.checked[i] ? ' checked' : ''}><span>${esc(ingredientText(ing, scaleFor(r)))}</span>
+            <input type="checkbox" data-ing="${i}"${s.checked[i] ? ' checked' : ''}><i>✓</i><span>${esc(ingredientText(ing, scaleFor(r)))}</span>
           </label>`).join('')}
       </div>
-      <div data-stepcard class="card" style="padding:40px;display:flex;flex-direction:column;justify-content:space-between;gap:24px;min-width:0;min-height:0;overflow:hidden">
-        <div style="display:flex;flex-direction:column;gap:14px">
-          <div style="display:flex;align-items:center;gap:16px;margin:-12px 0 -6px">
-            <div data-stepnum style="font-size:18px;font-weight:600;color:${a};flex:none"></div>
-            <div data-dots class="rc-dots">${r.steps.map((_, j) => `<button class="rc-dot" data-goto="${j}" aria-label="Step ${j + 1}"><i></i></button>`).join('')}</div>
-          </div>
-          <div data-steptext class="display" style="font-size:46px;font-weight:500;line-height:1.2"></div>
-        </div>
-        <div data-art style="position:relative;flex:1 1 0;min-height:0;display:none">${cropFood(recipeArt(r, `${FILL}max-height:230px`))}</div>
-        <div data-timerbox></div>
-        <div style="display:flex;flex-direction:column;gap:20px">
-          <div data-nextup class="rc-next"></div>
-          <div style="display:flex;align-items:center;gap:16px">
-            <button data-prev class="rc-btn rc-ghost">Back</button>
-            <button data-next class="rc-btn rc-solid"></button>
-            <button data-finish class="rc-btn rc-solid" style="display:none">Done cooking</button>
-            <div data-side style="margin-left:auto;display:flex;gap:10px;align-items:center;justify-content:flex-end;flex-wrap:wrap;min-width:0"></div>
-          </div>
-        </div>
+      <div style="display:flex;align-items:center;gap:12px">
+        <div class="rc-scale" style="flex:1;min-width:0">${esc(metaLine(r, servingsFor(r)))}</div>
+        <a href="#/convert" class="x-btn sm glass">Conversions</a>
       </div>
+    </div>
+    <div class="rc-bar">
+      <button data-prev class="rc-big rc-prev">← Back</button>
+      <div class="rc-peek"><span data-peeklabel class="l">NEXT</span><span data-nextup class="t"></span><button data-restart class="rc-again" style="display:none">Start over</button></div>
+      <button data-next class="rc-big rc-next">Next step →</button>
+      <button data-finish class="rc-big rc-next" style="display:none">Done cooking</button>
     </div>`;
-    showIngCount();
+    showPanel();
     renderStep();
   }
 
@@ -302,14 +379,17 @@ async function start(el, args) {
     armed = false;
     clearTimeout(armTimer);
     // The last step: "Done cooking" is the big button, "Start over" the quiet one.
-    $('[data-next]').textContent = last ? 'Start over' : 'Next step';
-    $('[data-next]').className = last ? 'rc-btn rc-ghost' : 'rc-btn rc-solid';
+    $('[data-next]').style.display = last ? 'none' : '';
     $('[data-finish]').style.display = last ? '' : 'none';
-    // Where you are: a dot per step (tap one to jump there).
-    el.querySelectorAll('[data-goto]').forEach((d, j) => { d.className = `rc-dot${j === i ? ' on' : j < i ? ' past' : ''}`; });
+    const again = $('[data-restart]');
+    again.style.display = last ? '' : 'none';
+    again.textContent = 'Start over';
+    // Where you are: a bar per step (tap one to jump there).
+    el.querySelectorAll('[data-goto]').forEach((d, j) => { d.className = `rc-seg${j === i ? ' on' : j < i ? ' past' : ''}`; });
     // A peek at what's coming, so nobody gets caught out.
-    $('[data-nextup]').innerHTML = last ? '<b>Last step.</b> Enjoy!' : `<b>Next:</b> ${esc(r.steps[i + 1].text)}`;
-    // Point out the ingredients this step uses, and bring the first one into view.
+    $('[data-peeklabel]').textContent = last ? 'LAST STEP' : 'NEXT';
+    $('[data-nextup]').textContent = last ? 'Enjoy!' : r.steps[i + 1].text;
+    // Point out the ingredients this step uses: named under the step, and lit up in the list.
     const use = usedIn(r, step.text);
     let first = null;
     el.querySelectorAll('[data-ing]').forEach((cb) => {
@@ -318,62 +398,72 @@ async function start(el, args) {
       if (on && !first) first = cb.parentElement;
     });
     const box = $('[data-ings]');
-    if (first && (first.offsetTop < box.scrollTop || first.offsetTop + first.offsetHeight > box.scrollTop + box.clientHeight)) {
+    if (first && panelOpen && (first.offsetTop < box.scrollTop || first.offsetTop + first.offsetHeight > box.scrollTop + box.clientHeight)) {
       box.scrollTop = Math.max(0, first.offsetTop - 70);
     }
-    $('[data-timerbox]').innerHTML = step.timer ? `
-      <div class="rc-timer" data-timer>
-        <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="13" r="8"/><path d="M12 9v4l2.5 2.5M10 2h4"/></svg>
-        <div style="display:flex;flex-direction:column;gap:2px;min-width:0">
-          <div data-tlabel style="font-size:16px;font-weight:600"></div>
-          <div data-tclock class="display" style="font-size:52px;font-weight:500;line-height:1;font-variant-numeric:tabular-nums"></div>
-        </div>
-        <div style="margin-left:auto;display:flex;gap:10px">
-          <button data-tplus class="rc-tbtn light" aria-label="One more minute">+1 min</button>
-          <button data-treset class="rc-tbtn light">Reset</button>
-          <button data-ttoggle class="rc-tbtn"></button>
-        </div>
-      </div>` : '';
-    // Steps without a timer leave a gap: the dish fills it (unless the step text needs the room).
-    const art = $('[data-art]');
-    art.style.display = step.timer ? 'none' : '';
-    art.style.visibility = !step.timer && art.clientHeight < 110 ? 'hidden' : '';
+    const used = r.ingredients.filter((_, n) => use[n]);
+    $('[data-uses]').innerHTML = used.length
+      ? `<span class="l">You need</span>${used.map((ing) => `<span class="rc-use">${esc(ingredientText(ing, scaleFor(r)))}</span>`).join('')}` : '';
+    // The pot shows this step's timer when it has one; without one it just simmers.
+    $('[data-tbtns]').style.display = step.timer ? '' : 'none';
+    $('[data-meta]').style.display = step.timer ? 'none' : '';
+    $('[data-ring]').style.display = step.timer ? '' : 'none';
+    ringAt = -1;
     tick();
-    // A very long step (or one with a timer and the next-step line under it) could run
-    // past the bottom of the card: make the words smaller until everything fits.
+    fitText(i);
+  }
+
+  // A long step is made smaller until all of it fits above the buttons.
+  function fitText(i) {
     Promise.resolve().then(() => {
-      const card = $('[data-stepcard]');
-      if (!card || s.step !== i || text.textContent !== step.text) return;
+      const text = $('[data-steptext]');
+      const step = r.steps[i];
+      if (!text || s.step !== i || text.textContent !== step.text) return;
       let size = stepSize(step.text);
-      while (card.scrollHeight > card.clientHeight + 1 && size > 26) {
-        size -= 4;
+      text.style.fontSize = `${size}px`;
+      while (text.scrollHeight > text.clientHeight + 1 && size > 26) {
+        size -= size > 48 ? 6 : 3;
         text.style.fontSize = `${size}px`;
       }
-      art.style.visibility = !step.timer && art.clientHeight < 110 ? 'hidden' : '';
     });
   }
 
-  // Updates the countdowns, the "other timers" chips and the alarm.
+  // Updates the countdown, the ring, the "other timers" chips and the alarm.
   function tick() {
     const i = s.step;
     const step = r.steps[i];
     let ringing = false;
+    const pot = $('[data-pot]');
 
     if (step.timer) {
       const st = status(s, i);
-      const box = $('[data-timer]');
-      box.classList.toggle('done', st === 'done' && !s.timers[i].ack);
-      $('[data-tclock]').textContent = fmt(remaining(r, s, i));
+      const ringingHere = st === 'done' && !s.timers[i].ack;
+      const cls = `rc-pot${ringingHere ? ' done' : st === 'running' ? ' run' : st === 'paused' ? ' paused' : ''}`;
+      if (pot.className !== cls) pot.className = cls;
+      const left = remaining(r, s, i);
+      const clock = fmt(left);
+      if ($('[data-tclock]').textContent !== clock) $('[data-tclock]').textContent = clock;
       const name = timerName(step, i);
-      $('[data-tlabel]').textContent = st === 'done'
-        ? (s.timers[i].ack ? `${name} · finished` : `${name} · Time’s up!`)
-        : st === 'paused' ? `${name} · paused` : name;
+      const label = st === 'done' ? (s.timers[i].ack ? `${name} · finished` : `${name} · Time’s up!`)
+        : st === 'paused' ? `${name} · paused` : st === 'running' ? `${name} · done at ${whenText(s.timers[i].end)}` : `${name} · tap Start`;
+      if ($('[data-tlabel]').textContent !== label) $('[data-tlabel]').textContent = label;
+      // The ring fills as the time goes (a minute added makes the whole longer).
+      const whole = Math.max(step.timer * 1000, left);
+      const done = st === 'idle' ? 0 : Math.round((1 - left / whole) * 500) / 500;
+      if (done !== ringAt) {
+        ringAt = done;
+        $('[data-ring]').setAttribute('stroke-dashoffset', (RING * (1 - done)).toFixed(1));
+        $('[data-ring]').style.display = done > 0 ? '' : 'none';
+      }
       const toggle = $('[data-ttoggle]');
-      const label = st === 'running' ? 'Pause' : st === 'paused' ? 'Resume' : st === 'done' ? (s.timers[i].ack ? 'Restart' : 'Stop') : 'Start';
-      if (toggle.textContent !== label) toggle.textContent = label;
+      const word = st === 'running' ? 'Pause' : st === 'paused' ? 'Resume' : st === 'done' ? (s.timers[i].ack ? 'Restart' : 'Stop') : 'Start';
+      if (toggle.textContent !== word) toggle.textContent = word;
       $('[data-treset]').style.display = st === 'idle' ? 'none' : '';
       // "Just one more minute": while it counts, or the moment it rings.
-      $('[data-tplus]').style.display = st === 'running' || st === 'paused' || (st === 'done' && !s.timers[i].ack) ? '' : 'none';
+      $('[data-tplus]').style.display = st === 'running' || st === 'paused' || ringingHere ? '' : 'none';
+    } else {
+      if (pot.className !== 'rc-pot') pot.className = 'rc-pot';
+      if ($('[data-tclock]').textContent) { $('[data-tclock]').textContent = ''; $('[data-tlabel]').textContent = ''; }
     }
 
     // Chips for timers on other steps (tap to jump there), named for what they time.
@@ -393,8 +483,13 @@ async function start(el, args) {
       });
     });
     const side = $('[data-side]');
-    const html = chips || '<span class="muted" style="font-size:18px">Big buttons for messy hands</span>';
-    if (sideHtml !== html) { sideHtml = html; side.innerHTML = html; }
+    if (sideHtml !== chips) {
+      const had = !!sideHtml;
+      sideHtml = chips;
+      side.innerHTML = chips ? `<span class="rc-uses" style="margin:0"><span class="l" style="margin-bottom:0">Also going</span></span>${chips}` : '';
+      // The chips' row takes room from the step: fit its words again when it comes or goes.
+      if (had !== !!chips) fitText(i);
+    }
 
     // Ring while any finished timer hasn't been acknowledged.
     r.steps.forEach((stp, j) => {
@@ -430,16 +525,16 @@ async function start(el, args) {
   function showDone() {
     const still = activeTimers(r, s).length;
     const panel = document.createElement('div');
-    panel.className = 'rc-done';
+    panel.className = 'rc-over';
     panel.setAttribute('data-donepanel', '');
     panel.innerHTML = `
-      <div style="width:260px;height:150px;position:relative">${cropFood(recipeArt(r, `${FILL}`))}</div>
-      <div class="big display">Enjoy your meal!</div>
+      ${plateArt(r, 250, { detail: true })}
+      <div class="big">Enjoy your meal!</div>
       <div class="sub">${esc(r.title)} is done.${still ? ` ${still === 1 ? 'A timer is' : `${still} timers are`} still going: you’ll hear ${still === 1 ? 'it' : 'them'} on any screen.` : ''}</div>
       <div class="row">
-        <a href="#/recipes" class="rc-btn rc-solid" style="text-decoration:none">Back to recipes</a>
-        <button data-again class="rc-btn rc-ghost">Cook it again</button>
-        <a href="#/home" class="rc-btn rc-ghost" style="text-decoration:none">Home</a>
+        <a href="#/recipes" class="rc-big rc-next" style="width:auto">Back to recipes</a>
+        <button data-again class="rc-big rc-ghost">Cook it again</button>
+        <a href="#/home" class="rc-big rc-ghost">Home</a>
       </div>`;
     $('[data-root]').appendChild(panel);
   }
@@ -448,15 +543,16 @@ async function start(el, args) {
   function askIfStale() {
     if (!s.at || Date.now() - s.at < STALE_MS || !inProgress(r, s) || activeTimers(r, s).length) return;
     const panel = document.createElement('div');
-    panel.className = 'rc-done';
+    panel.className = 'rc-over';
     panel.setAttribute('data-stale', '');
     const when = new Date(s.at).toDateString() === new Date().toDateString() ? 'earlier today' : 'on an earlier day';
     panel.innerHTML = `
-      <div class="big display" style="font-size:52px">${esc(r.title)}</div>
+      ${plateArt(r, 200, { detail: true })}
+      <div class="big" style="font-size:52px">${esc(r.title)}</div>
       <div class="sub">This was left at step ${s.step + 1} of ${r.steps.length} ${when}.</div>
       <div class="row">
-        <button data-fresh class="rc-btn rc-solid">Start from the beginning</button>
-        <button data-carry class="rc-btn rc-ghost">Carry on from step ${s.step + 1}</button>
+        <button data-fresh class="rc-big rc-next" style="width:auto">Start from the beginning</button>
+        <button data-carry class="rc-big rc-ghost">Carry on from step ${s.step + 1}</button>
       </div>`;
     $('[data-root]').appendChild(panel);
   }
@@ -466,28 +562,31 @@ async function start(el, args) {
     const t = e.target.closest('button');
     if (!t) return;
     const i = s.step;
-    if (t.matches('[data-other]')) {
+    if (t.matches('[data-ingbtn],[data-ingclose]')) {
+      panelOpen = t.matches('[data-ingbtn]') ? !panelOpen : false;
+      showPanel();
+      if (panelOpen) renderStep(); // brings this step's first ingredient into view
+    } else if (t.matches('[data-other]')) {
       const j = +t.dataset.ostep;
       openRecipe(t.dataset.other, true);
       if (status(s, j) === 'done') { s.timers[j].ack = true; save(r, s); }
       setStep(j);
     } else if (t.matches('[data-prev]')) setStep(i - 1);
-    else if (t.matches('[data-next]')) {
-      if (i === r.steps.length - 1) {
-        if (!armed) {
-          armed = true;
-          t.textContent = 'Tap again to start over';
-          clearTimeout(armTimer);
-          armTimer = setTimeout(() => { armed = false; if (el.isConnected && s.step === i) t.textContent = 'Start over'; }, 4000);
-          return;
-        }
-        // Start over: clear ticks and timers.
-        s.checked = s.checked.map(() => false);
-        s.timers = {};
-        el.querySelectorAll('[data-ing]').forEach((cb) => { cb.checked = false; cb.parentElement.classList.remove('on'); });
-        showIngCount();
-        setStep(0);
-      } else setStep(i + 1);
+    else if (t.matches('[data-next]')) setStep(i + 1);
+    else if (t.matches('[data-restart]')) {
+      if (!armed) {
+        armed = true;
+        t.textContent = 'Tap again to start over';
+        clearTimeout(armTimer);
+        armTimer = setTimeout(() => { armed = false; if (el.isConnected && s.step === i) t.textContent = 'Start over'; }, 4000);
+        return;
+      }
+      // Start over: clear ticks and timers.
+      s.checked = s.checked.map(() => false);
+      s.timers = {};
+      el.querySelectorAll('[data-ing]').forEach((cb) => { cb.checked = false; cb.parentElement.classList.remove('on'); });
+      showIngCount();
+      setStep(0);
     } else if (t.matches('[data-finish]')) {
       // Finished: put the recipe away, so the week plan stops saying "Continue · step 5".
       // Timers still going stay (and still ring, on any screen).
