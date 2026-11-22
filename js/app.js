@@ -300,6 +300,31 @@ if (!isGhostCopy()) {
   screenEl.appendChild(notices.bar);
 }
 
+// A note arrived from a phone: two soft notes, so somebody in the kitchen looks up
+// (Settings → Screen & sound; never in the night clock's hours, never on Tom's deck).
+if (profile !== 'tom' && !isGhostCopy()) {
+  let unread = -1;
+  const countUnread = () => import('./services/messages-data.js').then((m) => m.unreadCount()).catch(() => -1);
+  countUnread().then((n) => { unread = n; });
+  addEventListener('tablet-notes', () => {
+    countUnread().then((n) => {
+      const more = unread >= 0 && n > unread;
+      unread = n;
+      if (more && display().noteChime && !isNightNow() && timerSvc && timerSvc.softChime) timerSvc.softChime();
+    });
+  });
+}
+
+// The screens updated themselves since last time: a line in the diary, so "it changed on
+// Tuesday" can be matched to a version by whoever looks after it.
+try {
+  const was = localStorage.getItem('build.last');
+  if (BUILD !== 'dev' && was !== BUILD) {
+    if (was) noteTrouble(`The screens updated themselves to version ${BUILD} (from ${was}). Nothing is wrong: this is only for the record.`, '');
+    localStorage.setItem('build.last', BUILD);
+  }
+} catch (e) { /* storage off */ }
+
 // Once a day: put away what is finished with in the screen's own storage (services/tidy.js).
 if (!isGhostCopy()) import('./services/tidy.js').then((m) => m.startTidying()).catch(() => {});
 

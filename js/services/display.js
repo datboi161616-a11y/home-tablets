@@ -9,14 +9,21 @@ const DEFAULTS = {
   nightFrom: 22,        // hour it starts (22 = 10 PM)
   nightTo: 6,           // hour it ends
   nightDim: 0.05,       // how bright the screen stays at night: 0.02 darkest, 0.05 dim, 0.15 soft
+  nightStyle: 'full',   // night clock: 'full' (clock, tomorrow's weather and first thing) or 'clock' (clock and date only)
+  weekStart: 1,         // the calendar's weeks start on 1 = Monday or 0 = Sunday
   restMinutes: 10,      // back to the resting screen after this long untouched; 0 = stay put
   restScreen: 'home',   // what "left alone" shows: 'home' or 'photos'
   slideSecs: 60,        // photo frame: how long each picture stays
   photoZoom: true,      // photo frame: the slow zoom
   photoCaptions: true,  // photo frame: who sent it and when
   photoShuffle: false,  // photo frame: mixed up instead of newest first
+  photoClock: true,     // photo frame: the time and date in the corner
+  photoWeather: true,   // photo frame: the temperature beside the date
   alarmSound: 'beeps',  // timers: 'beeps', 'chime' or 'bell'
   alarmMinutes: 2,      // timers: how long an alarm rings if nobody stops it
+  alarmInsist: true,    // timers: an alarm still ringing after 30 seconds repeats faster
+  alarmHeadsUp: false,  // timers: two soft notes a minute before a longer timer runs out
+  noteChime: true,      // a soft chime when a note arrives from a phone (never at night)
 };
 
 let now = null; // read once, then kept (date wording asks on every call)

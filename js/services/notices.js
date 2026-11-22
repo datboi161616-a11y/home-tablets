@@ -126,6 +126,8 @@ export function startNotices({ settingsRoute = '', homeRoutes: homes = [] } = {}
       plug();
     }).catch(() => { /* this engine doesn't say */ });
   }
+  // The timer chip came or went (timers.js says so): step out of its way at once.
+  addEventListener('timer-chip-changed', () => setTimeout(makeRoom, 80));
   addEventListener('online', lookAtNetwork);
   addEventListener('offline', lookAtNetwork);
   setInterval(lookAtNetwork, 60 * 1000);

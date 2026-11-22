@@ -7,6 +7,8 @@
 #      file doesn't offer would only fail when somebody opens that screen.
 #   3. Things Chrome 81 doesn't have and no translation adds (newer JavaScript methods,
 #      newer CSS), which would work on this PC and quietly fail in a kitchen.
+#   4. The tests with known answers: every screen named in js/app.js has its file (and the
+#      other way round), the calendar-file reader, the sky maths, the kitchen conversions.
 cd "$(dirname "$0")/.." || exit 1
 fail=0
 out="$(mktemp -d)"
@@ -28,6 +30,12 @@ echo "3. Looking for things Chrome 81 doesn't have..."
 if grep -nE '\.replaceAll\(|\.at\(-?[0-9a-z]|structuredClone\(|Object\.hasOwn\(|Promise\.any\(|\.findLast(Index)?\(|[^a-z-]inset\s*:|aspect-ratio\s*:|:is\(|:where\(|:has\(|:focus-visible|filter\s*:\s*blur|backdrop-filter' -r js css index.html --include=*.js --include=*.css --include=*.html; then
   echo "   ^ not available (or far too slow) on the tablets"; fail=1
 fi
+
+echo "4. The tests with known answers..."
+for t in routes ics astro convert; do
+  if node "tools/sim/$t-test.mjs" > "$out/$t.txt" 2>&1; then echo "   $t: $(tail -1 "$out/$t.txt")"
+  else echo "   $t: FAILED"; grep -E "^FAIL" "$out/$t.txt" | head -10; fail=1; fi
+done
 
 rm -rf "$out"
 if [ "$fail" = 0 ]; then echo "All good."; else echo "FAILED"; fi

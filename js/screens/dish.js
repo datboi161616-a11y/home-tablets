@@ -1,6 +1,6 @@
 // Family · One recipe (#/dish/<id>): ingredients, steps, add to the week plan, cook it.
 import { getRecipe, loadIndex, ingredientText, fmtMinutes, cuisineColor, withStepTimers, lastCooked, cookedWhen, cookingProgress } from '../services/recipe-data.js';
-import { weekDays, daysPlanned, addToPlan, removeFromPlan, plannedFor, MEALS, defaultMeal, isFavorite, toggleFavorite, servingsFor, scaleFor, setServings, addExtra, weekRecipeIds } from '../services/meal-plan.js';
+import { planDays, addToPlan, removeFromPlan, plannedFor, MEALS, defaultMeal, isFavorite, toggleFavorite, servingsFor, scaleFor, setServings, addExtra, weekRecipeIds } from '../services/meal-plan.js';
 import { addTimer, MAX } from '../services/timers.js';
 import { esc, kitchenStyles, kitchenTop, wireBack, fillCounts, recipeArt, cropFood } from './kitchen-ui.js';
 
@@ -85,16 +85,25 @@ export function mount(el, { args = [] } = {}) {
     const total = (r.prep || 0) + (r.cook || 0);
     const cooked = lastCooked(r.id);
     const secsText = (secs) => (secs < 60 ? `${secs} sec` : fmtMinutes(Math.round(secs / 60)));
-    const dayWord = (d) => (d.label === 'Today' || d.label === 'Tomorrow' ? d.label : d.short);
-    // "Also on the week plan: Fri lunch" for the other meals (the day buttons show only the chosen meal).
+    // Next week's days say their date too ("Mon Nov 30"): "Mon" alone would mean this week.
+    const dayWord = (d) => (d.label === 'Today' || d.label === 'Tomorrow' ? d.label : d.n >= 7 ? `${d.short} ${d.sub}` : d.short);
+    // Both weeks the plan holds: today and the next six, then the seven after (meal-plan.js).
+    const bothWeeks = () => planDays(0).concat(planDays(1));
+    // The days (of those) a meal has this recipe on.
+    const plannedOn = (days, m) => days.filter((d) => plannedFor(d.key, m).indexOf(r.id) >= 0).map((d) => d.key);
+    // Which week the day buttons show: this one, or next ("Next week ▸").
+    // (Sent here by the Week plan's "+ Add" for a day next week: start on that week.)
+    let page = p0 && planDays(1).some((d) => d.key === p0.key) ? 1 : 0;
+    // "Also on the week plan: Fri lunch" for the other meals, both weeks (the day buttons show
+    // only the chosen meal; the week button says how many of it the other week has).
     const elsewhere = () => {
-      const days = weekDays();
+      const days = bothWeeks();
       const out = [];
       MEALS.forEach(([m]) => {
         if (m === meal) return;
-        daysPlanned(r.id, m).forEach((k) => {
+        plannedOn(days, m).forEach((k) => {
           const i = days.findIndex((x) => x.key === k);
-          if (i >= 0) out.push({ i, t: `${dayWord(days[i])} ${mealName(m)}` });
+          out.push({ i, t: `${dayWord(days[i])} ${mealName(m)}` });
         });
       });
       return out.sort((a, b) => a.i - b.i).map((x) => x.t);
@@ -102,9 +111,10 @@ export function mount(el, { args = [] } = {}) {
 
     function render() {
       const p = pending();
-      const days = weekDays();
-      const on = daysPlanned(r.id, meal);
-      const target = p && days.find((d) => d.key === p.key);
+      const days = planDays(page);
+      const on = plannedOn(days, meal);
+      const target = p && bothWeeks().find((d) => d.key === p.key);
+      const otherWeek = plannedOn(planDays(1 - page), meal).length;
       root.innerHTML = `
         ${kitchenTop({ title: r.title, back: 'history', backLabel: '← Back', active: 'recipes',
           extra: `${r.mine ? `<a href="#/myrecipe/${encodeURIComponent(r.id)}" class="k-btn">Edit</a>` : ''}<button data-fav class="k-btn" style="color:#C2491F">${isFavorite(r.id) ? '♥ Saved' : '♡ Save'}</button>` })}
@@ -159,18 +169,21 @@ export function mount(el, { args = [] } = {}) {
                   return `<a href="#/recipe/${encodeURIComponent(r.id)}" class="k-btn dark">${prog ? `Continue · step ${prog.step}` : 'Cook now'}</a>`;
                 })()}
               </div>
-              ${target && daysPlanned(r.id, p.meal).indexOf(target.key) < 0 ? `<button data-addto="${target.key}" data-addmeal="${p.meal}" class="k-btn solid" style="width:100%">Add to ${esc(target.label)} ${mealName(p.meal)}</button>` : ''}
+              ${target && plannedFor(target.key, p.meal).indexOf(r.id) < 0 ? `<button data-addto="${target.key}" data-addmeal="${p.meal}" class="k-btn solid" style="width:100%">Add to ${esc(target.n >= 7 ? `${target.label} ${target.sub}` : target.label)} ${mealName(p.meal)}</button>` : ''}
               <div style="display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:10px">
                 ${days.map((d) => `
                   <button class="dz-day${on.indexOf(d.key) >= 0 ? ' on' : ''}" data-day="${d.key}">
                     <span class="l">${d.label === 'Today' || d.label === 'Tomorrow' ? d.label : d.short}</span><span class="s">${on.indexOf(d.key) >= 0 ? '✓ Planned' : d.sub}</span>
                   </button>`).join('')}
               </div>
-              ${(() => {
-                if (note) return `<div class="dz-note${note.warn ? ' warn' : ''}">${esc(note.text)}</div>`;
-                const other = elsewhere();
-                return other.length ? `<div class="dz-note">Also on the week plan: ${esc(other.join(' · '))}</div>` : '';
-              })()}
+              <div style="display:flex;align-items:center;gap:12px;min-height:52px">
+                <div style="flex:1;min-width:0">${(() => {
+                  if (note) return `<div class="dz-note${note.warn ? ' warn' : ''}">${esc(note.text)}</div>`;
+                  const other = elsewhere();
+                  return other.length ? `<div class="dz-note">Also on the week plan: ${esc(other.join(' · '))}</div>` : '';
+                })()}</div>
+                <button data-page class="k-btn sm line" style="flex:none">${page ? '◂ This week' : 'Next week ▸'}${otherWeek ? ` · ${otherWeek} planned` : ''}</button>
+              </div>
             </div>
           </div>
         </div>`;
@@ -245,15 +258,16 @@ export function mount(el, { args = [] } = {}) {
       if (sv) { setServings(r, servingsFor(r) + +sv.dataset.serves); render(); return; }
       const m = e.target.closest('[data-meal]');
       if (m) { meal = m.dataset.meal; render(); return; }
+      if (e.target.closest('[data-page]')) { page = 1 - page; note = null; render(); return; }
       const day = e.target.closest('[data-day]');
       if (!day) return;
       const k = day.dataset.day;
-      const d = weekDays().find((x) => x.key === k);
+      const d = bothWeeks().find((x) => x.key === k);
       note = null;
-      if (daysPlanned(r.id, meal).indexOf(k) >= 0) removeFromPlan(k, r.id, meal);
+      if (plannedFor(k, meal).indexOf(r.id) >= 0) removeFromPlan(k, r.id, meal);
       else if (plannedFor(k, meal).length >= MAX_PER_MEAL) {
         // The plan holds up to 3 recipes per meal; say so instead of silently doing nothing.
-        note = { warn: true, text: `${d ? d.label : 'That day'} already has ${MAX_PER_MEAL} ${mealName(meal)} recipes. Take one off in Week plan first.` };
+        note = { warn: true, text: `${d ? dayWord(d) : 'That day'} already has ${MAX_PER_MEAL} ${mealName(meal)} recipes. Take one off in Week plan first.` };
       } else addToPlan(k, r.id, meal);
       const pd = pending();
       if (pd && pd.key === k && pd.meal === meal) sessionStorage.removeItem(ADD_DAY_KEY);

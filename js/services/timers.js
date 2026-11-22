@@ -172,7 +172,11 @@ let audio;
 function ensureAudio() {
   try {
     if (!audio) audio = new (window.AudioContext || window.webkitAudioContext)();
-    if (audio.state === 'suspended') audio.resume();
+    if (audio.state === 'suspended') {
+      // Refused until somebody touches the screen: quietly, it is tried again at the next touch.
+      const p = audio.resume();
+      if (p && p.catch) p.catch(() => {});
+    }
   } catch (e) { /* no audio */ }
 }
 // One note: it swells in a blink and dies away over `len` seconds.
@@ -204,6 +208,18 @@ function beep(sound) {
   if (!audio) return;
   try { (SOUNDS[sound || display().alarmSound] || SOUNDS.beeps)(audio.currentTime); } catch (e) { /* no sound this time */ }
 }
+
+/** Two soft notes: a note has arrived, or a timer is about to run out. Never mistaken for an alarm. */
+export function softChime() {
+  ensureAudio();
+  if (!audio) return;
+  try {
+    const t0 = audio.currentTime;
+    note(t0, 880, 0.35, 0.2);
+    note(t0 + 0.18, 1175, 0.55, 0.18);
+  } catch (e) { /* no sound this time */ }
+}
+const headsUpGiven = {}; // timer id + end time -> already chimed
 
 /** The alarm once, so someone setting the volume (or choosing a sound) can hear it. */
 export function testBeep(sound) { beep(sound); }
@@ -269,17 +285,22 @@ function namesText(names) {
 // other bottom corner (or the top right) when it would cover one. Checked when a screen opens
 // and when the chip appears, not every tick: measuring is slow on the tablet.
 const SPOTS = [
-  { right: '24px', left: 'auto', bottom: '24px', top: 'auto' },
-  { right: 'auto', left: '24px', bottom: '24px', top: 'auto' },
-  { right: '24px', left: 'auto', bottom: 'auto', top: '24px' },
+  { right: '24px', left: 'auto', bottom: '24px', top: 'auto', maxWidth: '620px' },
+  { right: 'auto', left: '24px', bottom: '24px', top: 'auto', maxWidth: '620px' },
+  { right: '24px', left: 'auto', bottom: 'auto', top: '24px', maxWidth: '620px' },
 ];
-function covers(r) {
+// Home has no free corner (every card there is a way in), so it keeps a strip free for the
+// chip under the weather card, as wide as that column (see screens/home.js).
+const HOME_SPOT = { right: 'auto', left: '40px', bottom: '40px', top: 'auto', maxWidth: '588px' };
+// (`reserved`: a spot the screen keeps free for the chip. The notice bar along the bottom
+// steps up out of the chip's way by itself, so only the screen's own buttons count there.)
+function covers(r, reserved) {
   const host = chip && chip.parentNode;
   if (!host) return false;
   const els = host.querySelectorAll('button,a[href],input,select,textarea,[data-tap],[role="button"]');
   for (let i = 0; i < els.length; i++) {
     const e = els[i];
-    if (e === chip || chip.contains(e)) continue;
+    if (e === chip || chip.contains(e) || (reserved && e.hasAttribute('data-notice'))) continue;
     const b = e.getBoundingClientRect();
     if (!b.width || !b.height) continue;
     if (b.left < r.right - 4 && b.right > r.left + 4 && b.top < r.bottom - 4 && b.bottom > r.top + 4) return true;
@@ -289,19 +310,40 @@ function covers(r) {
 function place() {
   if (!chip || chip.style.display === 'none' || !chip.isConnected) return;
   // On the Timers screen the list of timers (and their buttons) fills the right-hand side.
-  const order = route === 'timers' ? [SPOTS[1], SPOTS[0], SPOTS[2]] : SPOTS;
+  const order = route === 'timers' ? [SPOTS[1], SPOTS[0], SPOTS[2]] : route === 'home' ? [HOME_SPOT].concat(SPOTS) : SPOTS;
   for (let i = 0; i < order.length; i++) {
     Object.assign(chip.style, order[i]);
-    if (!covers(chip.getBoundingClientRect())) return;
+    if (!covers(chip.getBoundingClientRect(), order[i] === HOME_SPOT)) return;
   }
   Object.assign(chip.style, order[0]); // covers something everywhere: the usual corner
 }
 function placeSoon(ms) { clearTimeout(placeTimer); placeTimer = setTimeout(place, ms); }
 
 // What cooking mode has going, when it isn't on screen to show and ring it itself.
-function cookingNow() {
+function cookingNow(on = route) {
   const now = Date.now();
-  return route === 'recipe' ? [] : cookingTimers().filter((c) => c.end > now || now - c.end < ringMs());
+  return on === 'recipe' ? [] : cookingTimers().filter((c) => c.end > now || now - c.end < ringMs());
+}
+// The kitchen timers the chip talks about (one that finished with nobody there is mentioned
+// for an hour; the Timers screen keeps it longer).
+const chipTimers = (now) => timers().filter((t) => state(t) !== 'stopped' && !(missed(t) && now - t.end > 60 * 60 * 1000));
+// Is there nothing for the chip to say on screen `on`? The Timers screen shows the kitchen
+// timers itself, and cooking mode its own, so the chip only appears there for what they
+// don't show, or when something is ringing.
+function chipHidden(on) {
+  const now = Date.now();
+  const cooks = cookingNow(on);
+  const ring = ringingNow().length > 0 || cooks.some((c) => c.end <= now);
+  const full = now < fullUntil && on !== 'timers';
+  const count = chipTimers(now).length + cooks.length;
+  return !full && (!count || (on === 'recipe' && !ring) || (on === 'timers' && !ring && !cooks.length));
+}
+/** Will the chip be up on screen `name` (e.g. 'home') right now? For a screen that keeps room for it. */
+export const chipShowsOn = (name) => !chipHidden(name);
+/** Calls cb() when the chip comes or goes. Returns an unsubscribe function. */
+export function onChipChanged(cb) {
+  window.addEventListener('timer-chip-changed', cb);
+  return () => window.removeEventListener('timer-chip-changed', cb);
 }
 /** The names of everything ringing right now, kitchen timers and cooking steps alike ([] when quiet). */
 export function ringingNames() {
@@ -314,6 +356,16 @@ export const ringingText = () => namesText(ringingNames());
 export function stopAllRinging() { stopRinging(); stopCooking(); }
 
 let wasRinging = false;
+
+// How often a ringing alarm plays (ms). One nobody has stopped after half a minute comes
+// faster, so it is harder to miss from the next room (Settings → Timers can switch that off).
+const RING_GAP = 2500, RING_GAP_INSISTENT = 1500, INSIST_AFTER = 30 * 1000;
+function ringGap(rung, cookDone) {
+  if (!display().alarmInsist) return RING_GAP;
+  const ends = rung.map((t) => t.end).concat(cookDone.map((c) => c.end));
+  const first = ends.length ? Math.min.apply(null, ends) : Date.now();
+  return Date.now() - first >= INSIST_AFTER ? RING_GAP_INSISTENT : RING_GAP;
+}
 
 export function startTimers() {
   chip = document.createElement('button');
@@ -338,18 +390,25 @@ export function startTimers() {
   const small = (s) => `<span style="opacity:.85;overflow:hidden;text-overflow:ellipsis">${esc(s)}</span>`;
   const tick = () => {
     const now = Date.now();
-    // (One that finished with nobody there is mentioned for an hour; the Timers screen keeps it longer.)
-    const list = timers().filter((t) => state(t) !== 'stopped' && !(missed(t) && now - t.end > 60 * 60 * 1000));
+    const list = chipTimers(now);
     const cooks = cooking();
     const cookDone = cooks.filter((c) => c.end <= now);
     const rung = ringingNow();
     const ring = rung.length > 0 || cookDone.length > 0;
+    // A heads-up a minute before a longer timer runs out (Settings → Timers): time to get to the stove.
+    if (display().alarmHeadsUp && !ring) {
+      list.forEach((t) => {
+        const togo = t.end - now;
+        const key = `${t.id}:${t.end}`;
+        if (state(t) === 'running' && t.secs >= 300 && togo <= 60000 && togo > 40000 && !headsUpGiven[key]) { headsUpGiven[key] = 1; softChime(); }
+      });
+    }
     const full = now < fullUntil && route !== 'timers'; // (the Timers screen says it itself)
     const count = list.length + cooks.length;
-    // The Timers screen shows the kitchen timers itself, and cooking mode its own, so the
-    // chip only appears there for what they don't show, or when something is ringing.
-    const hide = !full && (!count || (route === 'recipe' && !ring) || (route === 'timers' && !ring && !cooks.length));
+    const hide = chipHidden(route);
     chip.style.display = hide ? 'none' : 'inline-flex';
+    // A screen that keeps room for the chip (Home) makes it now, before the chip finds its spot.
+    if (hide !== wasHidden) window.dispatchEvent(new Event('timer-chip-changed'));
     if (!hide) {
       if (wasHidden) placeSoon(0);
       // Whatever runs out first, kitchen timer or cooking step.
@@ -387,7 +446,7 @@ export function startTimers() {
     }
     wasHidden = hide;
     if (ring !== wasRinging) { wasRinging = ring; window.dispatchEvent(new Event('alarm-changed')); }
-    if (ring && Date.now() - lastBeep > 2500) { lastBeep = Date.now(); beep(); }
+    if (ring && Date.now() - lastBeep > ringGap(rung, cookDone)) { lastBeep = Date.now(); beep(); }
   };
   setInterval(tick, 250);
   onTimersChanged(tick);

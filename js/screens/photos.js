@@ -5,7 +5,7 @@
 // "Hold" keeps one picture up (it carries on by itself after a while).
 //
 // Routes: #/photos, #/photos/album (opens the grid), #/photos/show/<id> (starts on that one).
-import { display, clockTime, timeText } from '../services/display.js';
+import { display, clockTime, clockAmPm, timeText } from '../services/display.js';
 import { getLocation } from '../services/location.js';
 import { getWeather, describe } from '../services/weather.js';
 // On the tablet: its own album (sent from phones, see addphotos.js).
@@ -30,6 +30,7 @@ function clockParts() {
   const now = new Date();
   return {
     time: clockTime(now),
+    ampm: clockAmPm(now), // "PM" (nothing with the 24-hour clock)
     date: now.toLocaleDateString('en-US', { weekday: 'long', month: 'short', day: 'numeric' }),
   };
 }
@@ -130,10 +131,11 @@ export function mount(el, { homeRoute = 'home', args = [] } = {}) {
   </style>
   <div class="ph-root" data-root>
     <div data-slides></div>
-    <div style="position:absolute;left:0;right:0;bottom:0;height:220px;background:rgba(10,12,16,.55)"></div>
-    <div style="position:absolute;left:48px;bottom:40px;display:flex;flex-direction:column;gap:6px">
-      <div data-time class="display" style="font-weight:300;font-size:96px;line-height:1;letter-spacing:-3px">${c.time}</div>
-      <div data-date style="font-size:22px;font-weight:500">${c.date}</div>
+    <!-- The dark strip the words sit on: only as tall as what the owner chose to show. -->
+    <div style="position:absolute;left:0;right:0;bottom:0;height:${prefs.photoClock || prefs.photoCaptions ? 220 : prefs.photoWeather ? 140 : 84}px;background:${prefs.photoClock || prefs.photoCaptions || prefs.photoWeather ? 'rgba(10,12,16,.55)' : 'linear-gradient(rgba(10,12,16,0),rgba(10,12,16,.55))'}"></div>
+    <div style="position:absolute;left:48px;bottom:40px;display:${prefs.photoClock || prefs.photoWeather ? 'flex' : 'none'};flex-direction:column;gap:6px">
+      <div class="display" style="font-weight:300;font-size:96px;line-height:1;letter-spacing:-3px;white-space:nowrap${prefs.photoClock ? '' : ';display:none'}"><span data-time>${c.time}</span><span data-ampm style="font-size:30px;font-weight:500;letter-spacing:0;margin-left:10px">${c.ampm}</span></div>
+      <div data-date style="font-size:${prefs.photoClock ? 22 : 28}px;font-weight:500">${prefs.photoClock ? c.date : ''}</div>
     </div>
     <div style="position:absolute;right:48px;bottom:36px;display:flex;flex-direction:column;align-items:flex-end;gap:10px;max-width:620px;text-align:right">
       <button class="ph-cap" data-more-btn aria-label="Read the whole caption">
@@ -217,10 +219,14 @@ export function mount(el, { homeRoute = 'home', args = [] } = {}) {
   const askEl = $('[data-ask]');
   const fullEl = $('[data-full]');
 
+  // The corner shows what the owner chose (Settings → Photo frame): the time and date, the
+  // weather, both, or neither.
   function renderDate() {
     const n = clockParts();
     $('[data-time]').textContent = n.time;
-    $('[data-date]').textContent = weatherText ? `${n.date} · ${weatherText}` : n.date;
+    $('[data-ampm]').textContent = n.ampm;
+    const wx = prefs.photoWeather ? weatherText : '';
+    $('[data-date]').textContent = prefs.photoClock ? (wx ? `${n.date} · ${wx}` : n.date) : wx;
   }
 
   // ---- Little messages at the top ("New photo from Grandma", "Photo removed") ----
@@ -772,8 +778,10 @@ export function mount(el, { homeRoute = 'home', args = [] } = {}) {
       console.error(err);
     }
   };
-  loadWeather();
-  weatherTimer = setInterval(loadWeather, 15 * 60 * 1000);
+  if (prefs.photoWeather) { // (not fetched at all when the owner switched it off)
+    loadWeather();
+    weatherTimer = setInterval(loadWeather, 15 * 60 * 1000);
+  }
 }
 
 export function unmount() {

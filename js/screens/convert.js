@@ -69,7 +69,17 @@ const OVEN = [
   [450, 230, '8', 'Very hot'], [475, 245, '9', 'Very hot'],
 ];
 
-const TABS = [['volume', 'Cups & spoons'], ['weight', 'Weights & butter'], ['oven', 'Oven'], ['halve', 'Halve & double']];
+// Cooked through: the US food-safety minimums (USDA), on a thermometer in the thickest part.
+const DONE = [
+  ['Chicken, turkey and other poultry', 'whole, pieces or ground', 165, 74, ''],
+  ['Ground beef, pork, lamb or veal', 'burgers, meatballs, meatloaf', 160, 71, ''],
+  ['Beef, pork, lamb or veal', 'steaks, chops and roasts', 145, 63, 'then rest 3 minutes'],
+  ['Fish and shellfish', 'or until it turns opaque and flakes', 145, 63, ''],
+  ['Egg dishes', 'quiche, breakfast casseroles', 160, 71, ''],
+  ['Leftovers and casseroles', 'reheated all the way through', 165, 74, ''],
+];
+
+const TABS = [['volume', 'Cups & spoons'], ['weight', 'Weights & butter'], ['oven', 'Oven'], ['halve', 'Halve & double'], ['done', 'Is it done?']];
 const KEY = 'convert.v1'; // which tab and what was last picked, for next time
 
 export function mount(el) {
@@ -104,7 +114,7 @@ export function mount(el) {
   <div class="cv">
     <div class="cv-top">
       <button data-back class="pill" style="background:#fff;border:0;font-family:inherit;cursor:pointer">← Back</button>
-      <div class="display" style="font-size:40px;font-weight:500">Kitchen conversions</div>
+      <div class="display" style="font-size:40px;font-weight:500">Conversions</div>
       <div class="cv-tabs" data-tabs>${TABS.map(([id, name]) => `<button data-tab="${id}">${name}</button>`).join('')}</div>
     </div>
     <div class="cv-body" data-body></div>
@@ -186,6 +196,16 @@ export function mount(el) {
             ${OVEN.map(([f, c, gas, word]) => `<tr><td>${f} °F</td><td>${c} °C</td><td>${c - 20} °C</td><td>${gas}</td><td>${word}</td></tr>`).join('')}
           </table>
           <div class="cv-note">A fan (convection) oven cooks hotter: set it about 20 °C (25 °F) lower than the recipe says.</div>
+        </div>`;
+    },
+    done() {
+      return `
+        <div class="card cv-card" style="grid-column:1 / -1;overflow-y:auto">
+          <table class="cv-oven">
+            <tr><th>What you’re cooking</th><th>It’s done at</th><th></th><th></th></tr>
+            ${DONE.map(([what, which, f, c, rest]) => `<tr><td>${esc(what)}<div style="font-size:18px;font-weight:500;color:var(--ink-2)">${esc(which)}</div></td><td>${f} °F</td><td>${c} °C</td><td>${esc(rest)}</td></tr>`).join('')}
+          </table>
+          <div class="cv-note">On a food thermometer, in the thickest part and away from the bone. These are the US food-safety minimums; many cooks take steak and roasts off earlier by choice.</div>
         </div>`;
     },
     halve() {

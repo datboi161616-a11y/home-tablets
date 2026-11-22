@@ -5,13 +5,14 @@ import { getLocation, manualPlace, knownPlace } from '../services/location.js';
 import { getWeather, describe } from '../services/weather.js';
 import { wxIcon, homeLandscape, framesArt, foodArt, foodFor, eventIcon, C } from '../art.js';
 import { isTablet, getPhotos, onPhotosChanged } from '../services/tablet-photos.js';
-import { upcoming, refreshCalendars } from '../services/calendar-data.js';
+import { upcoming, refreshCalendars, ordinal } from '../services/calendar-data.js';
+import { chipShowsOn, onChipChanged } from '../services/timers.js';
 import { fmtMinutes, loadIndex } from '../services/recipe-data.js';
 import { tonight, getPlan, markFor, plannedFor, dayKey } from '../services/meal-plan.js';
 import { loadMessages, onMessagesChanged } from '../services/messages-data.js';
 import { getAlerts, untilText, alertColor } from '../services/weather-alerts.js';
 
-let timer, photoTimer, refreshTimer, offPhotos, onCalendar, offNotes, offFonts, onWake, onOnline;
+let timer, photoTimer, refreshTimer, offPhotos, onCalendar, offNotes, offFonts, onWake, onOnline, offChip;
 
 const REFRESH_MS = 15 * 60 * 1000; // weather, "Coming up" and dinner stay fresh all day
 const COMING_MS = 5 * 60 * 1000;   // "Coming up" is looked at again this often (redrawn only if it changed)
@@ -156,8 +157,10 @@ function greetingFor(list) {
   const birthdays = today.filter((e) => e.kind === 'birthday');
   if (birthdays.length) {
     const names = birthdays.map((e) => birthdayName(e.name)).filter(Boolean);
-    if (names.length) return { text: `Happy birthday, ${names.slice(0, 2).join(' and ')}!`, special: true };
-    return { text: `${birthdays[0].name} today`, special: true };
+    // One birthday whose year the family gave: "Happy 9th birthday, Ava!"
+    const age = birthdays.length === 1 && birthdays[0].turns ? `${ordinal(birthdays[0].turns)} ` : '';
+    if (names.length) return { text: `Happy ${names.length === 1 ? age : ''}birthday, ${names.slice(0, 2).join(' and ')}!`, special: true };
+    return { text: `${birthdays[0].name} today${age ? ` · turns ${birthdays[0].turns}` : ''}`, special: true };
   }
   for (let i = 0; i < today.length; i++) {
     if (/observed/i.test(today[i].name)) continue;
@@ -188,7 +191,7 @@ export function mount(el) {
     .h-dish-art svg{width:100%;height:100%}
     .h-pill{min-height:52px;padding:0 22px;font-size:18px;background:var(--card);color:var(--ink);gap:8px}
   </style>
-  <div style="height:100%;padding:40px;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:24px">
+  <div style="height:100%;padding:40px;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));grid-template-rows:minmax(0,1fr);gap:24px">
     <div style="display:flex;flex-direction:column;gap:24px;min-width:0">
       <div style="display:flex;flex-direction:column;gap:4px;padding:8px 8px 0">
         <div style="display:flex;align-items:center;gap:14px;font-size:22px;font-weight:500;min-width:0">
@@ -229,8 +232,10 @@ export function mount(el) {
           <span data-w-soon style="font-weight:600;color:${settings.accent};min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis"></span>
           <span data-w-tom style="display:none;align-items:center;gap:8px;flex:none"></span>
         </div>
-        <div data-w-land style="margin-top:auto;flex:none">${homeLandscape(isNight())}</div>
+        <div data-w-land style="margin-top:auto;flex:0 1 auto;min-height:0;overflow:hidden;display:flex;align-items:flex-end">${homeLandscape(isNight())}</div>
       </a>
+      <!-- Kept free for the timer chip while a timer is going: nothing else on Home sits here. -->
+      <div data-chip-room style="flex:none;height:64px;display:${chipShowsOn('home') ? 'block' : 'none'}"></div>
     </div>
 
     <div style="display:grid;grid-template-rows:minmax(0,1fr) 168px;gap:24px;min-width:0">
@@ -261,6 +266,11 @@ export function mount(el) {
   </div>`;
 
   const $ = (s) => el.querySelector(s);
+
+  // The timer chip's strip: there while the chip is up, gone (weather card full height) when not.
+  offChip = onChipChanged(() => {
+    if (el.isConnected) $('[data-chip-room]').style.display = chipShowsOn('home') ? 'block' : 'none';
+  });
 
   // "New note from Mom" (or "3 new notes") next to the date, until someone opens the board.
   const showNotes = () => {
@@ -563,6 +573,8 @@ export function unmount() {
   offNotes?.();
   offFonts?.();
   offFonts = null;
+  offChip?.();
+  offChip = null;
   window.removeEventListener('calendar-updated', onCalendar);
   if (onWake) document.removeEventListener('visibilitychange', onWake);
   if (onOnline) { window.removeEventListener('online', onOnline); window.removeEventListener('place-changed', onOnline); }

@@ -535,3 +535,24 @@ from are counted.
 469. Weights too: ounces, pounds, grams and kilos, and what an amount comes to as sticks and tablespoons of butter.
 470. An oven table: Fahrenheit, Celsius, a fan oven's setting, gas mark, and the words recipes use ("moderate", "hot").
 471. "Halve & double": half, a third, one and a half, double or three times a measure, answered in measures that can actually be scooped ("half of ¾ cup is 6 tablespoons").
+472. Conversions also has "Is it done?": what a food thermometer should read for poultry, ground meat, steaks and roasts, fish, egg dishes and leftovers.
+
+## 21 · A second pass over the kitchen screens
+
+473. Weeks can start on Sunday or on Monday (Settings → Clock & night); the calendar's week and month views follow.
+474. The night clock can show the clock only, without tomorrow's weather and calendar, for a screen that faces a bed.
+475. The photo frame can hide its clock and date, and separately the weather.
+476. An alarm nobody stops gets more insistent after half a minute (it can be switched off).
+477. On a birthday whose year is known, Home says "Happy 9th birthday, Ava!".
+478. The calendar's "Next big thing" gives the age too ("turns 22").
+479. Home keeps a place free for the timer chip, so it no longer sits on top of "Coming up" or the photo.
+480. A recipe can be planned for a day next week from its own page.
+481. Coming from next week's "+ Add" on the week plan, the recipe's page offers that day (it offered nothing).
+482. Settings → Wi-Fi & about: the list of what went wrong scrolls in its own box, and there is one plain line to read out over the phone to whoever is helping.
+483. With the 12-hour clock, the photo frame's clock shows AM/PM like the other clocks.
+484. A soft chime when a note arrives from a phone, so somebody in the kitchen looks up; never in the night clock's hours, and it can be switched off.
+485. An optional heads-up: two soft notes a minute before a timer of five minutes or more runs out.
+486. A Settings section longer than its card says "More below" until its end is reached.
+487. "What's new" is always one tap away in Settings → Wi-Fi & about.
+488. The screen's diary records when the screens updated themselves, and to which version.
+489. For whoever looks after the code: `bash tools/check.sh` also runs every test with known answers, including a new one that each screen named in the app has its file, and each file is named.

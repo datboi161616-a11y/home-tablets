@@ -11,7 +11,7 @@
 // instantly. refreshCalendars() updates it at most every 30 minutes (or right
 // away when the settings change) and then fires the window event
 // 'calendar-updated' so open screens can redraw.
-import { timeText } from './display.js';
+import { timeText, display } from './display.js';
 import { events as holidays } from '../config.js';
 import { getFamily, fetchCalendarFeeds } from './family.js';
 import { expandEvents, calendarName } from './ics.js';
@@ -56,10 +56,27 @@ export function fmtTime(d) {
   return timeText(d);
 }
 
+/** The first day of the week holding `date`: Monday, or Sunday if the owner chose (Settings → Clock & night). */
 export function startOfWeek(date = new Date()) {
   const d = midnight(date);
-  d.setDate(d.getDate() - ((d.getDay() + 6) % 7)); // back to Monday
+  const first = display().weekStart === 0 ? 0 : 1;
+  d.setDate(d.getDate() - ((d.getDay() - first + 7) % 7));
   return d;
+}
+
+/** The weekday names in the order the owner's weeks run: ['Mon', …, 'Sun'] or ['Sun', …, 'Sat']. */
+export function weekdayNames() {
+  const start = startOfWeek(new Date());
+  const out = [];
+  for (let i = 0; i < 7; i++) out.push(addDays(start, i).toLocaleDateString('en-US', { weekday: 'short' }));
+  return out;
+}
+
+/** 1 -> "1st", 2 -> "2nd", 11 -> "11th", 22 -> "22nd", 101 -> "101st". */
+export function ordinal(n) {
+  const t = n % 100;
+  const end = t >= 11 && t <= 13 ? 'th' : ({ 1: 'st', 2: 'nd', 3: 'rd' })[n % 10] || 'th';
+  return `${n}${end}`;
 }
 
 // ---------- Cache of calendar-link events ----------
@@ -191,7 +208,7 @@ function itemsOn(d) {
       repeat: e.repeat || 'none', endTime: e.allDay ? '' : fmtTime(e.end) });
   });
   datedOn(d, list.map((x) => x.title)).forEach((x) => {
-    list.push({ title: x.title, time: x.turns ? `Turns ${x.turns}` : 'All day', kind: x.kind, sort: -1, start: dayStart, end: dayEnd, allDay: true });
+    list.push({ title: x.title, time: x.turns ? `Turns ${x.turns}` : 'All day', kind: x.kind, sort: -1, start: dayStart, end: dayEnd, allDay: true, turns: x.turns || 0 });
   });
   const rank = (x) => (x.kind in KIND_ORDER ? KIND_ORDER[x.kind] : 3);
   return list.sort((a, b) => a.sort - b.sort || (a.sort === -1 ? rank(a) - rank(b) : 0));
@@ -199,7 +216,7 @@ function itemsOn(d) {
 
 // ---------- What the screens use ----------
 
-/** Seven days (Mon-Sun) with their events, for the week containing `date`. */
+/** Seven days (Mon-Sun, or Sun-Sat) with their events, for the week containing `date`. */
 export function getWeek(date = new Date()) {
   const start = startOfWeek(date);
   const out = [];
@@ -224,7 +241,7 @@ export function getDay(date) {
     // Settings dates that aren't birthdays use the main calendar colour.
     events: itemsOn(d).map((e) => ({ id: e.id || '', time: e.time, endTime: e.endTime || '', title: e.title, location: e.location || '',
       kind: e.kind === 'event' ? 'family' : e.kind, allDay: !!e.allDay, calendar: e.calendar || '', dayOf: e.dayOf || 0, ofDays: e.ofDays || 0,
-      repeat: e.repeat || '', over: !e.allDay && !!e.end && e.end <= now && e.end > e.start, start: e.start, end: e.end })),
+      repeat: e.repeat || '', over: !e.allDay && !!e.end && e.end <= now && e.end > e.start, start: e.start, end: e.end, turns: e.turns || 0 })),
   };
 }
 
@@ -235,7 +252,7 @@ export function nextAfter(date) {
   for (let i = 0; i < 366; i++) {
     const d = addDays(from, i);
     const e = itemsOn(d).filter((x) => !(x.start < d))[0];
-    if (e) return { name: e.title, date: d, days: dayDiff(today, d) };
+    if (e) return { name: e.title, date: d, days: dayDiff(today, d), turns: e.turns || 0 };
   }
   return null;
 }
@@ -263,7 +280,7 @@ export function upcoming(n = 3) {
       if (e.end && e.end <= now && !(e.allDay && i === 0)) return;
       if (e.start < d && i > 0) return; // a multi-day event counts once
       if (out.some((o) => o.days === i && sameName(o.name, e.title))) return;
-      out.push({ name: e.title, date: e.start < d ? d : e.start, days: i, kind: e.kind });
+      out.push({ name: e.title, date: e.start < d ? d : e.start, days: i, kind: e.kind, turns: e.turns || 0 });
     });
   }
   return out.slice(0, n);
@@ -282,7 +299,7 @@ export function nextBigThing() {
   return null;
 }
 
-/** How many things are on the calendar from today through Sunday. */
+/** How many things are on the calendar from today to the end of the week (Sunday, or Saturday when weeks start on Sunday). */
 export function thisWeekCount() {
   const today = midnight(new Date());
   const end = addDays(startOfWeek(today), 7);

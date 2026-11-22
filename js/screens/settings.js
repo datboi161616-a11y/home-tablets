@@ -57,6 +57,13 @@ const CHOICES = {
   photoShuffle: { get: () => (display().photoShuffle ? '1' : '0'), set: (v) => setDisplay({ photoShuffle: v === '1' }) },
   alarmSound: { get: () => display().alarmSound, set: (v) => { setDisplay({ alarmSound: v }); testBeep(v); } },
   alarmMinutes: { get: () => String(display().alarmMinutes), set: (v) => setDisplay({ alarmMinutes: +v }) },
+  alarmInsist: { get: () => (display().alarmInsist ? '1' : '0'), set: (v) => setDisplay({ alarmInsist: v === '1' }) },
+  alarmHeadsUp: { get: () => (display().alarmHeadsUp ? '1' : '0'), set: (v) => setDisplay({ alarmHeadsUp: v === '1' }) },
+  noteChime: { get: () => (display().noteChime ? '1' : '0'), set: (v) => setDisplay({ noteChime: v === '1' }) },
+  weekStart: { get: () => String(display().weekStart === 0 ? 0 : 1), set: (v) => setDisplay({ weekStart: +v }) },
+  nightStyle: { get: () => (display().nightStyle === 'clock' ? 'clock' : 'full'), set: (v) => setDisplay({ nightStyle: v }) },
+  photoClock: { get: () => (display().photoClock ? '1' : '0'), set: (v) => setDisplay({ photoClock: v === '1' }) },
+  photoWeather: { get: () => (display().photoWeather ? '1' : '0'), set: (v) => setDisplay({ photoWeather: v === '1' }) },
 };
 
 const seg = (name, options, off) => `<div class="st-seg" data-seg="${name}">${options.map(([v, text]) => `<button data-v="${v}"${off ? ' disabled' : ''}>${text}</button>`).join('')}</div>`;
@@ -74,7 +81,7 @@ export function mount(el) {
     .st-rail{flex:none;width:272px;display:flex;flex-direction:column;gap:8px}
     .st-tab{min-height:62px;padding:0 24px;border:0;border-radius:18px;background:none;text-align:left;font-family:inherit;font-size:21px;font-weight:600;color:var(--ink-2);cursor:pointer}
     .st-tab.on{background:#fff;color:var(--ink);box-shadow:0 1px 3px rgba(0,0,0,.06)}
-    .st-card{flex:1;min-width:0;padding:30px 36px;display:flex;flex-direction:column;gap:26px;overflow-y:auto;-webkit-overflow-scrolling:touch}
+    .st-card{flex:1;min-width:0;padding:30px 36px;display:flex;flex-direction:column;gap:24px;overflow-y:auto;-webkit-overflow-scrolling:touch}
     .st-row{display:flex;flex-direction:column;gap:10px}
     .st-line{display:flex;align-items:center;gap:14px;min-width:0}
     .st-label{font-size:20px;font-weight:600}
@@ -100,8 +107,15 @@ export function mount(el) {
     .st-places{display:flex;flex-direction:column;gap:8px}
     .st-place{min-height:52px;padding:0 20px;border:2px solid var(--line);border-radius:14px;background:#fff;text-align:left;font-family:inherit;font-size:19px;font-weight:600;color:var(--ink);cursor:pointer}
     .st-back{background:#fff}
+    /* "More below": a section longer than the card says so, until its end is reached. */
+    .st-more{position:sticky;bottom:-30px;margin:-34px -36px -30px;padding:26px 0 14px;text-align:center;font-size:16px;font-weight:600;color:var(--ink-2);pointer-events:none;flex:none;
+      background:linear-gradient(rgba(255,255,255,0),#fff 55%);transition:opacity .2s}
+    .deck .st-more{background:linear-gradient(rgba(10,18,32,0),#0A1220 55%)}
     .st-list{display:flex;flex-direction:column;gap:8px;font-size:16px;line-height:1.35;color:var(--ink-2)}
     .st-list b{color:var(--ink);font-weight:600}
+    /* A long list of what went wrong scrolls by itself instead of pushing everything down. */
+    .st-list:not(:empty){max-height:232px;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:12px 16px;border:2px solid var(--line);border-radius:14px}
+    .st-readout{font-size:19px;line-height:1.45;font-weight:600;padding:14px 18px;border-radius:14px;background:var(--bg);color:var(--ink);-webkit-user-select:text;user-select:text}
     /* The flight deck's colours */
     .st-wrap.deck{--ink:#E3EDF5;--ink-2:#8FA9BA;--line:#24384A;--bg:#0C1524;background:#05070D;color:var(--ink)}
     .deck .st-card{background:#0A1220;border:1px solid #1E3A4A;box-shadow:none}
@@ -113,6 +127,7 @@ export function mount(el) {
     .deck .st-step button{background:#12203A}
     .deck .st-back{background:#12203A;color:var(--ink)}
     .deck .st-range::-webkit-slider-thumb{border-color:#0A1220}
+    .deck .st-readout{border:1px solid #1E3A4A}
   </style>
   <div class="st-wrap${DECK ? ' deck' : ''}">
     <div class="st-line" style="gap:16px">
@@ -164,6 +179,7 @@ export function mount(el) {
         + (DECK ? '' : row('When nobody is using it, show', `<div>${seg('restScreen', [['home', 'Home'], ['photos', 'The photo frame']])}</div>`)
         + row('Go back to it after', `<div>${seg('restMinutes', [['5', '5 min'], ['10', '10 min'], ['30', '30 min'], ['0', 'Stay put']])}</div>`,
           'A menu or list that somebody walked away from doesn’t stay up all day. Recipes, timers and anything half-typed are never interrupted.'))
+        + (DECK ? '' : row('When a note arrives from a phone', `<div>${seg('noteChime', [['1', 'A soft chime'], ['0', 'Silent']])}</div>`, 'Two quiet notes, so somebody in the kitchen looks up. Never during the night clock’s hours.'))
         + row('Cleaning the glass', `<div class="st-line">
           <div class="st-hint" style="flex:1">Switches touches off for 30 seconds, so a cloth doesn’t press anything. It comes back by itself.</div>
           <button data-wipe-now class="st-btn quiet">Wipe the screen</button>
@@ -181,10 +197,15 @@ export function mount(el) {
         </div>`, DECK ? 'Dims to the starfield once nobody has touched the screen for 5 minutes.' : 'Dims to a soft clock once nobody has touched the screen for 5 minutes.')
       + row('At night the screen is', `<div class="st-line">${seg('nightDim', [['0.02', 'Darkest'], ['0.05', 'Dim'], ['0.15', 'Soft']])}
           <a href="#/${NIGHT_SCREEN}" class="st-btn quiet">${DECK ? 'See the starfield' : 'See the night clock'}</a></div>`,
-        'Darkest suits a bedroom; Soft can be read from across a kitchen.'),
+        'Darkest suits a bedroom; Soft can be read from across a kitchen.')
+      + (DECK ? '' : row('The night clock shows', `<div>${seg('nightStyle', [['full', 'Clock and tomorrow'], ['clock', 'Clock only']])}</div>`,
+        'Clock only leaves out tomorrow’s weather and the first thing on the calendar. A timer that rings still says so.')
+        + row('Weeks start on', `<div>${seg('weekStart', [['0', 'Sunday'], ['1', 'Monday']])}</div>`, 'For the calendar’s weeks and months.')),
     photos: () => row('Each picture stays for', `<div>${seg('slideSecs', [['15', '15 sec'], ['30', '30 sec'], ['60', '1 min'], ['300', '5 min'], ['900', '15 min']])}</div>`)
       + row('Slow zoom', `<div>${seg('photoZoom', [['1', 'On'], ['0', 'Off']])}</div>`, 'Each picture drifts gently while it is up. Off keeps it perfectly still.')
       + row('Who sent it and when', `<div>${seg('photoCaptions', [['1', 'Show'], ['0', 'Hide']])}</div>`)
+      + row('The time and date', `<div>${seg('photoClock', [['1', 'Show'], ['0', 'Hide']])}</div>`)
+      + row('The weather', `<div>${seg('photoWeather', [['1', 'Show'], ['0', 'Hide']])}</div>`, 'With all three hidden, the frame is only the pictures.')
       + row('Order', `<div>${seg('photoShuffle', [['0', 'Newest first'], ['1', 'Mixed up']])}</div>`)
       + `<div class="st-line" style="margin-top:auto"><a href="#/photos" class="st-btn quiet">Open the photo frame</a><a href="#/addphotos" class="st-btn quiet">Add photos</a></div>`,
     weather: () => row('Temperature', `<div>${seg('units', [['fahrenheit', '°F'], ['celsius', '°C']], !canSave)}</div>`)
@@ -197,6 +218,8 @@ export function mount(el) {
         <div class="st-places" data-place-list></div>`),
     timers: () => row('Alarm sound', `<div>${seg('alarmSound', [['beeps', 'Beeps'], ['chime', 'Chime'], ['bell', 'Bell']])}</div>`, 'Tap one to hear it. Kitchen timers and cooking timers both use it.')
       + row('An alarm nobody stops rings for', `<div>${seg('alarmMinutes', [['1', '1 min'], ['2', '2 min'], ['5', '5 min'], ['10', '10 min']])}</div>`)
+      + row('A heads-up one minute before', `<div>${seg('alarmHeadsUp', [['1', 'On'], ['0', 'Off']])}</div>`, 'Two soft notes a minute before a timer of five minutes or more runs out: time to get to the stove.')
+      + row('Gets more insistent', `<div>${seg('alarmInsist', [['1', 'On'], ['0', 'Off']])}</div>`, 'After half a minute of ringing, the sound comes faster, so it is harder to miss from the next room.')
       + `<div class="st-line" style="margin-top:auto"><a href="#/timers" class="st-btn quiet">Open the timers</a></div>`,
     about: () => `<div class="st-row">
         <div class="st-line">
@@ -217,14 +240,17 @@ export function mount(el) {
           <button data-restart class="st-btn quiet">Start again</button>
         </div>`)
       + row('The settings', `<div class="st-line">
-          <div class="st-hint" style="flex:1">Puts brightness, the clock, the night hours and the town back the way they came. ${DECK ? 'Nothing else is touched.' : 'Photos, lists, notes and the family’s name are not touched.'}</div>
+          <div class="st-hint" style="flex:1">Puts brightness, the clock, the night hours${DECK ? '' : ', the photo frame, the calendar’s first day, the alarm'} and the town back the way they came. ${DECK ? 'Nothing else is touched.' : 'Photos, lists, notes and the family’s name are not touched.'}</div>
           <button data-reset class="st-btn quiet">Put them back</button>
         </div>`)
       + row('For whoever looks after this screen', `<div class="st-hint" data-health></div>
         <div class="st-line"><div class="st-hint" data-trouble-line style="flex:1"></div><button data-trouble-show class="st-btn quiet">Show</button></div>
-        <div class="st-list" data-trouble-list></div>`)
+        <div class="st-list" data-trouble-list></div>
+        <div class="st-line"><div class="st-hint" style="flex:1">Helping over the phone? One line to read out:</div><button data-readout-show class="st-btn quiet">Show it</button></div>
+        <div class="st-readout" data-readout style="display:none"></div>`)
       + `<div class="st-line" style="margin-top:auto">
           <a href="#/welcome" class="st-btn quiet">Show the tour again</a>
+          <a href="#/whatsnew" class="st-btn quiet">What’s new</a>
           <div class="st-hint" style="margin-left:auto;text-align:right">${DECK ? 'Flight deck' : 'Kitchen screen'} · version ${esc(BUILD)}${N() && N().appVersion ? ` · app ${esc(N().appVersion())}` : ''}</div>
         </div>`,
   };
@@ -357,16 +383,41 @@ export function mount(el) {
       auto.addEventListener('click', () => { setPlace(null); list.innerHTML = ''; showNow(); saved(); });
     },
     about() {
-      const showNet = () => {
-        if (!pane.querySelector('[data-net]')) return;
+      const netState = () => {
         let state = navigator.onLine === false ? 'off' : 'online';
         try { if (N() && N().network) state = N().network(); } catch (e) { /* keep the guess */ }
+        return state;
+      };
+      const showNet = () => {
+        if (!pane.querySelector('[data-net]')) return;
+        const state = netState();
+        showReadout();
         pane.querySelector('[data-net-dot]').style.background = state === 'online' ? '#2F9E6B' : state === 'connected' ? '#D9A21B' : '#C2491F';
         pane.querySelector('[data-net]').textContent = state === 'online' ? 'Wi-Fi is connected' : state === 'connected' ? 'Wi-Fi is connected, but the internet isn’t answering' : 'Not connected to Wi-Fi';
         pane.querySelector('[data-net-hint]').textContent = state === 'online' ? 'Weather, calendars and updates are coming through.'
           : state === 'connected' ? 'Usually the router or the internet line. The screen keeps working from what it saved.'
             : (N() && N().wifiSettings ? 'A grown-up can pick a network with “Wi-Fi settings”.' : 'A grown-up can pick a network: hold the top-left corner for 5 seconds, then Wi-Fi settings.');
       };
+      // One plain line for whoever helps over the phone: the version, since when it has been
+      // running, the Wi-Fi, and how many things went wrong. Nothing personal in it.
+      const readout = pane.querySelector('[data-readout]');
+      const readoutBtn = pane.querySelector('[data-readout-show]');
+      function showReadout() {
+        if (!readout || readout.style.display === 'none') return;
+        const st = netState();
+        const n = trouble().length;
+        const since = new Date(runningSince());
+        readout.textContent = `Version ${BUILD}${N() && N().appVersion ? `, app ${N().appVersion()}` : ''}`
+          + ` · running since ${since.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' })}, ${timeText(since)}`
+          + ` · Wi-Fi ${st === 'online' ? 'connected' : st === 'connected' ? 'connected, internet not answering' : 'not connected'}`
+          + ` · ${n ? `${n} ${n === 1 ? 'thing' : 'things'} went wrong lately` : 'nothing went wrong lately'}.`;
+      }
+      readoutBtn.addEventListener('click', () => {
+        const open = readout.style.display === 'none';
+        readout.style.display = open ? '' : 'none';
+        readoutBtn.textContent = open ? 'Hide it' : 'Show it';
+        showReadout();
+      });
       showNet();
       clearInterval(netTimer);
       netTimer = setInterval(() => { if (el.isConnected) showNet(); }, 5000);
@@ -381,8 +432,12 @@ export function mount(el) {
         check.disabled = true;
         line.textContent = 'Checking…';
         let text = '';
+        // Gives up after 8 seconds. (AbortSignal.timeout() is newer than the screens' Chrome 81:
+        // there it threw, and "Check now" said "Couldn’t check" every time.)
+        const stop = typeof AbortController === 'function' ? new AbortController() : null;
+        const giveUp = setTimeout(() => { if (stop) stop.abort(); }, 8000);
         try {
-          const res = await fetch(`./version.json?t=${Date.now()}`, { cache: 'no-store', signal: AbortSignal.timeout(8000) });
+          const res = await fetch(`./version.json?t=${Date.now()}`, stop ? { cache: 'no-store', signal: stop.signal } : { cache: 'no-store' });
           const latest = (await res.json()).version;
           if (BUILD === 'dev') text = 'This is a preview copy; it doesn’t update itself.';
           else if (latest && latest !== BUILD) {
@@ -393,6 +448,7 @@ export function mount(el) {
         } catch (e) {
           text = 'Couldn’t check just now. Is the Wi-Fi connected?';
         }
+        clearTimeout(giveUp);
         if (!line.isConnected) return;
         line.textContent = text;
         check.disabled = false;
@@ -431,7 +487,7 @@ export function mount(el) {
       };
       showTrouble();
       show.addEventListener('click', () => {
-        if (listEl.children.length) { clearTrouble(); listEl.innerHTML = ''; show.textContent = 'Show'; showTrouble(); return; }
+        if (listEl.children.length) { clearTrouble(); listEl.innerHTML = ''; show.textContent = 'Show'; showTrouble(); showReadout(); return; }
         listEl.innerHTML = trouble().map((t) => `<div><b>${esc(day(t.at))}, ${esc(timeText(new Date(t.at)))}${t.screen ? ` · ${esc(t.screen)}` : ''}${t.times > 1 ? ` · ${t.times} times` : ''}</b><br>${esc(t.what)}</div>`).join('');
         show.textContent = 'Clear the list';
       });
@@ -443,11 +499,18 @@ export function mount(el) {
     try { sessionStorage.setItem(SECTION_KEY, id); } catch (e) { /* storage off */ }
     clearInterval(netTimer);
     el.querySelectorAll('[data-sec]').forEach((b) => b.classList.toggle('on', b.dataset.sec === id));
-    pane.innerHTML = SECTION_HTML[id]();
+    pane.innerHTML = `${SECTION_HTML[id]()}<div class="st-more" data-more>▾ More below</div>`;
     pane.scrollTop = 0;
     paint();
     if (SECTION_START[id]) SECTION_START[id]();
+    moreBelow();
   }
+  // Is there more of this section under the edge of the card?
+  function moreBelow() {
+    const more = pane.querySelector('[data-more]');
+    if (more) more.style.opacity = pane.scrollHeight - pane.clientHeight - pane.scrollTop > 24 ? '1' : '0';
+  }
+  pane.addEventListener('scroll', moreBelow, { passive: true });
   $('[data-rail]').addEventListener('click', (e) => {
     const b = e.target.closest('[data-sec]');
     if (b && !b.classList.contains('on')) show(b.dataset.sec);

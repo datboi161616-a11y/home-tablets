@@ -2,7 +2,7 @@
 import { minutesText, timeText } from '../services/display.js';
 import { backHref, backLabel } from '../services/nav.js';
 import { settings } from '../config.js';
-import { getWeek, getDay, nextAfter, nextBigThing, calendarStatus, refreshCalendars, linkedCalendars, startOfWeek, KINDS, BACK_WEEKS } from '../services/calendar-data.js';
+import { getWeek, getDay, nextAfter, nextBigThing, calendarStatus, refreshCalendars, linkedCalendars, startOfWeek, weekdayNames, KINDS, BACK_WEEKS } from '../services/calendar-data.js';
 import { eventIcon, spot } from '../art.js';
 import { saveMyEvent, removeMyEvent, getMyEvent, myEvents, isoDay, fromIso, restoreMyEvent, skipMyEventOn, endMyEventBefore, recentTitles } from '../services/my-events.js';
 
@@ -203,7 +203,7 @@ function weekGrid(days, today) {
           <div style="display:flex;flex-direction:column;gap:6px;min-width:0;flex-grow:1">
             <div class="display" style="font-size:28px;font-weight:500">A quiet week</div>
             <div class="muted" style="font-size:17px;line-height:1.35;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${next
-              ? `Next: ${esc(next.name)} · ${next.date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}${next.days > 0 ? `, in ${next.days} days` : ''}`
+              ? `Next: ${esc(next.name)}${next.turns ? ` · turns ${next.turns}` : ''} · ${next.date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}${next.days > 0 ? `, in ${next.days} days` : ''}`
               : 'Nothing on the calendar this week.'}</div>
           </div>
           ${next && dayDiff(startOfWeek(new Date()), next.date) <= MAX_AHEAD * 7 + 6 ? `<button data-jump="${isoDay(next.date)}" class="pill" style="background:var(--ink);color:#fff;border:none;cursor:pointer;flex:none;min-height:52px">Show me</button>` : ''}
@@ -232,7 +232,7 @@ function monthGrid(today) {
   }
   return `
     <div style="flex-grow:1;min-height:0;display:flex;flex-direction:column;gap:8px">
-      <div style="display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:8px">${['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'].map((x) => `<div class="cal-dow">${x}</div>`).join('')}</div>
+      <div style="display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:8px">${weekdayNames().map((x) => `<div class="cal-dow">${x}</div>`).join('')}</div>
       <div class="cal-month" style="grid-template-rows:repeat(${rows},minmax(0,1fr))">${cells.join('')}</div>
     </div>`;
 }
@@ -273,7 +273,7 @@ function render(el) {
     <div data-detail style="display:none;position:absolute;top:0;right:0;bottom:0;left:0;background:rgba(29,36,48,.45);z-index:5;align-items:center;justify-content:center"></div>
 
     <div style="background:#fff;border-radius:20px;padding:${note.button ? 8 : 18}px 24px;min-height:${note.button ? 64 : 0}px;box-sizing:border-box;display:flex;justify-content:space-between;align-items:center;font-size:18px">
-      <div style="white-space:nowrap;flex:none;max-width:56%;overflow:hidden;text-overflow:ellipsis">${big ? `<span style="font-weight:600">Next big thing:</span> <span style="display:inline-block;vertical-align:-5px;margin:0 2px">${eventIcon(big.name, 24)}</span> ${esc(big.name)}${big.where ? ` at ${esc(big.where)}` : ''} · ${big.label} · <span style="font-weight:600">${countdown(big)}</span>` : ''}</div>
+      <div style="white-space:nowrap;flex:none;max-width:56%;overflow:hidden;text-overflow:ellipsis">${big ? `<span style="font-weight:600">Next big thing:</span> <span style="display:inline-block;vertical-align:-5px;margin:0 2px">${eventIcon(big.name, 24)}</span> ${esc(big.name)}${big.where ? ` at ${esc(big.where)}` : ''}${big.turns ? ` · turns ${big.turns}` : ''} · ${big.label} · <span style="font-weight:600">${countdown(big)}</span>` : ''}</div>
       <div style="display:flex;align-items:center;min-width:0;margin-left:16px">
         <div class="muted" style="text-align:right;min-width:0">${esc(note.text)}</div>${note.button}
       </div>
@@ -447,10 +447,10 @@ function closeForm(el) {
   return back;
 }
 
-// The days an event can be put on: from this week's Monday to the last week the arrows reach.
+// The days an event can be put on: from the first day of this week to the last week the arrows reach.
 function clampDay(d) {
-  const first = midnightOf(new Date()); first.setDate(first.getDate() - ((first.getDay() + 6) % 7));
-  const last = new Date(first); last.setDate(last.getDate() + MAX_AHEAD * 7 + 6);
+  const first = startOfWeek(new Date());
+  const last = shiftDay(first, MAX_AHEAD * 7 + 6);
   return d < first ? first : d > last ? last : d;
 }
 

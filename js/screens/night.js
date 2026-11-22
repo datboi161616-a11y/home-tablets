@@ -91,6 +91,9 @@ const INK_2 = '#B98262';
 
 export function mount(el) {
   const c = clockParts();
+  // "Clock only" (Settings → Clock & night): no weather or calendar lines, for a screen that
+  // faces a bed. A ringing timer still says so.
+  const clockOnly = display().nightStyle === 'clock';
   // Opened by hand in the daytime (Settings → "See the night clock"): a tap goes back there.
   const byHand = !isNight();
   const cameFrom = location.hash;
@@ -122,7 +125,7 @@ export function mount(el) {
       <div class="nt-mid">
         <div class="nt-time"><span data-time>${c.time}</span><span data-ampm class="nt-ampm">${c.ampm}</span></div>
         <div class="nt-date" data-date>${c.date}</div>
-        <div class="nt-day" data-daybox>
+        <div class="nt-day" data-daybox${clockOnly ? ' style="display:none"' : ''}>
           <span class="nt-label" data-day>Tomorrow</span>
           <span class="nt-line" data-forecast>&nbsp;</span>
           <span class="nt-line" style="display:flex;justify-content:center;gap:14px;max-width:1040px"><span data-first-time style="flex:none"></span><span data-first style="min-width:0;overflow:hidden;text-overflow:ellipsis">&nbsp;</span><span data-first-more style="flex:none;color:${INK_2}"></span></span>
@@ -178,7 +181,7 @@ export function mount(el) {
     if (on === ringShown) return;
     ringShown = on;
     $('[data-ring]').style.display = on ? 'flex' : 'none';
-    $('[data-daybox]').style.display = on ? 'none' : 'flex';
+    $('[data-daybox]').style.display = on || clockOnly ? 'none' : 'flex';
     renderTop();
   }
 
@@ -233,9 +236,12 @@ export function mount(el) {
     }
     renderDay();
   }
-  loadWeather();
   // The clock stays up all night: refresh the forecast and calendar now and then.
-  refreshTimer = setInterval(loadWeather, REFRESH_MS);
+  // (Nothing to fetch when only the clock is shown.)
+  if (!clockOnly) {
+    loadWeather();
+    refreshTimer = setInterval(loadWeather, REFRESH_MS);
+  }
 }
 
 export function unmount() {
