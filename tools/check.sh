@@ -10,6 +10,8 @@
 cd "$(dirname "$0")/.." || exit 1
 fail=0
 out="$(mktemp -d)"
+# (Git Bash on Windows: hand the Windows programs below a path they understand.)
+command -v cygpath >/dev/null 2>&1 && out="$(cygpath -m "$out")"
 
 echo "1. Translating for Chrome 81..."
 npx -y esbuild@0.24.2 $(find js -name '*.js') sw.js --outdir="$out/site" --outbase=. --target=chrome64 --log-level=warning || fail=1

@@ -142,7 +142,11 @@ function datedOn(d, feedTitles) {
   const out = [];
   (getFamily().dates || []).forEach((x) => {
     if (!x.name || +x.month !== m) return;
-    if (+x.day === day || (leapless && +x.day === 29)) out.push({ title: x.name, kind: x.kind === 'birthday' ? 'birthday' : 'event' });
+    if (+x.day === day || (leapless && +x.day === 29)) {
+      // With the year they were born (the phone page asks, if you like): how old they turn.
+      const age = x.kind === 'birthday' && +x.year >= 1900 ? d.getFullYear() - x.year : 0;
+      out.push({ title: x.name, kind: x.kind === 'birthday' ? 'birthday' : 'event', turns: age > 0 && age < 130 ? age : 0 });
+    }
   });
   holidays.forEach((h) => {
     // Skip a holiday the calendar link already has (e.g. a Google "Holidays" calendar).
@@ -187,7 +191,7 @@ function itemsOn(d) {
       repeat: e.repeat || 'none', endTime: e.allDay ? '' : fmtTime(e.end) });
   });
   datedOn(d, list.map((x) => x.title)).forEach((x) => {
-    list.push({ title: x.title, time: 'All day', kind: x.kind, sort: -1, start: dayStart, end: dayEnd, allDay: true });
+    list.push({ title: x.title, time: x.turns ? `Turns ${x.turns}` : 'All day', kind: x.kind, sort: -1, start: dayStart, end: dayEnd, allDay: true });
   });
   const rank = (x) => (x.kind in KIND_ORDER ? KIND_ORDER[x.kind] : 3);
   return list.sort((a, b) => a.sort - b.sort || (a.sort === -1 ? rank(a) - rank(b) : 0));
@@ -272,7 +276,7 @@ export function nextBigThing() {
     const d = addDays(today, i);
     const x = datedOn(d, [])[0];
     if (x) {
-      return { name: x.title, where: '', label: d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }), days: i, date: d };
+      return { name: x.title, where: '', label: d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }), days: i, date: d, turns: x.turns || 0 };
     }
   }
   return null;

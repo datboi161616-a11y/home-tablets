@@ -466,3 +466,49 @@ from are counted.
 412. A feed that fails is left alone for five minutes instead of being asked again every minute.
 413. Small fixes: "1 minute" not "1 minutes"; the pulsing dots blink in two steps instead of animating endlessly.
 414. For whoever looks after the code: `node tools/sim/astro-test.mjs` checks the sky maths against 51 published values.
+
+## 17 · The phone page (arrives with the next app update on each screen)
+
+415. Sending several photos shows each one with its own state (waiting, % sent, done, failed), and the bar fills by how much has really gone.
+416. If the Wi-Fi drops for a moment the page tries that photo once more, and stops cleanly when the connection is really gone instead of failing every remaining photo.
+417. After a batch that partly failed, "Try those again" sends only the ones that didn't go.
+418. The caption is kept until the whole batch has arrived.
+419. Videos and other files a phone can't send are left out straight away with a plain reason, before any waiting.
+420. When the album is nearly full, only as many photos as fit are sent, and the page says how many were left out.
+421. Picking a photo already sent from this phone asks first.
+422. The screen's refusals are said plainly ("too big for the kitchen screen: the most it takes is 15 MB"), without a pointless "try again".
+423. A HEIC photo the phone's browser can't open gets an explanation and what to do.
+424. Tapping a photo in the album opens it large on the page, with caption, sender, Back/Next, swipe and Remove (it used to open the bare image in another tab).
+425. A "Mine" button shows only the photos sent under your name.
+426. The album has a Refresh button, counts photos and videos apart, and warns when it is nearly full.
+427. The album's pictures are no longer downloaded again every time the page checks for changes.
+428. One clear "Can't reach the kitchen screen" notice says what to check, keeps trying by itself and goes away when the screen answers.
+429. An old or changed code gets its own message, saying where to scan again (it ended in a confusing error).
+430. At the store, the List tab no longer shows the red "can't reach" notice: the saved list works there and says so.
+431. The page's title says whose screen it is ("The Smiths' kitchen screen").
+432. Notes: the family's names are one-tap buttons for "From".
+433. Notes: ready-made short notes fill in with one tap.
+434. Notes: the counter is against the real limit, and long notes are warned that they show smaller on the screen.
+435. Notes: a Reply button on each note on the board.
+436. Notes: a photo with a note shows its progress, and isn't uploaded twice if the note has to be sent again.
+437. Notes: "Seen on the kitchen screen" and hearts update by themselves while the tab is open.
+438. List: ticking an item just added on the phone used to be lost silently; the tick now arrives.
+439. List: items and ticks that haven't reached the kitchen screen yet are marked.
+440. List: things added before from this phone are offered as "Add again" buttons.
+441. List: the tab shows how many things are left to get, and "2 milk" and "milk" count as the same thing.
+442. The page stops checking for news while the phone is locked or the page is in the background, to save battery.
+443. Recipe: an optional "A few words about it" field (the screen could already show it).
+444. Recipe: pasting from a website strips the bullets, checkboxes and "1." / "Step 2:" from the lines.
+445. Recipe: times can be typed as "90", "1:30" or "1 hr 30", and a wrong number gets a plain message instead of quietly becoming 4 servings or 0 minutes.
+446. Recipe: the page says before the screen would cut something (a very long step, too many ingredients).
+447. Recipe: deleting confirms that it worked, and the count shows near the limit.
+448. Settings: tap a person's name to change it (it was delete and add again).
+449. Settings: a birthday or date with no name stops the save and points at it (it used to vanish silently).
+450. Settings: common wrong calendar links are caught on the phone, with what to use instead.
+451. Settings: the result of "check this link" is said plainly.
+452. Settings: clearer step-by-step help for finding the private link in Google Calendar, iCloud and Outlook.
+453. The page follows the phone's dark mode.
+454. The tab last used on this phone opens again on the next scan.
+455. List: the things added by hand can be taken off the list from the phone (it could only tick them).
+456. The album on a phone loads small copies made by the kitchen screen, instead of downloading every full-size photo to draw the grid.
+457. A birthday can carry the year (the phone page asks, if you like), and the calendar and night clock then say how old they turn ("Turns 9").

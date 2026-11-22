@@ -611,6 +611,7 @@ export function startShoppingSync() {
     const a = e.detail || {};
     if (a.act === 'got') { if (a.kind === 'extra') setExtraGot(a.key, !!a.got); else setGot(a.key, !!a.got); }
     else if (a.act === 'add') addExtra(a.text);
+    else if (a.act === 'remove') removeExtra(a.key);
   });
   push();
   setInterval(push, 60 * 60 * 1000); // the week moves on by itself

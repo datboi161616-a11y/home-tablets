@@ -17,7 +17,7 @@ import java.net.URL;
  * This tablet's family settings and message-board notes, kept on the tablet.
  * Set up from a phone (the same QR page that adds photos), shown by the screens.
  *
- * settings.json: { familyName, people:[name], dates:[{name, month, day, kind}],
+ * settings.json: { familyName, people:[name], dates:[{name, month, day, kind, year? (birthdays)}],
  *                  calendars:[{name, url}], units: "fahrenheit"|"celsius" }
  * notes.json:    [{ id, who, text, at, love, read, photo }]  (newest first)
  */
@@ -71,7 +71,11 @@ final class FamilyStore {
             String name = clip(d.optString("name", ""), 50);
             if (name.isEmpty() || month < 1 || month > 12 || day < 1 || day > 31) continue;
             String kind = "birthday".equals(d.optString("kind")) ? "birthday" : "event";
-            dates.put(new JSONObject().put("name", name).put("month", month).put("day", day).put("kind", kind));
+            JSONObject date = new JSONObject().put("name", name).put("month", month).put("day", day).put("kind", kind);
+            // The year somebody was born, if the family gave it (for "turns 9").
+            int year = d.optInt("year");
+            if (kind.equals("birthday") && year >= 1900 && year <= 2100) date.put("year", year);
+            dates.put(date);
         }
         out.put("dates", dates);
 
@@ -247,7 +251,11 @@ final class FamilyStore {
         write(shoppingFile, new JSONObject(json).toString()); // must parse
     }
 
-    /** A tick or a new item from the phone: {act:"got", key, kind:"item"|"extra", got} or {act:"add", text}. */
+    /**
+     * A tick, a new item or a removal from the phone: {act:"got", key, kind:"item"|"extra", got},
+     * {act:"add", text} or {act:"remove", key} (only the things added by hand can be removed;
+     * a recipe's ingredients belong to the week plan).
+     */
     static JSONObject shoppingAction(JSONObject b) throws Exception {
         String act = b.optString("act");
         JSONObject a = new JSONObject().put("act", act);
@@ -259,6 +267,10 @@ final class FamilyStore {
             String text = clip(b.optString("text"), 60);
             if (text.isEmpty()) throw new Exception("Type something first");
             a.put("text", text);
+        } else if (act.equals("remove")) {
+            String key = clip(b.optString("key"), 100);
+            if (key.isEmpty()) throw new Exception("which item?");
+            a.put("key", key);
         } else throw new Exception("unknown action");
         return a;
     }

@@ -151,7 +151,7 @@ final class PhotoServer {
                 send(out, 403, "text/html; charset=utf-8", (
                         "<!doctype html><meta name=viewport content='width=device-width'>"
                         + "<body style='font:18px system-ui;padding:32px;text-align:center'>"
-                        + "<h2>This link has expired</h2><p>Scan the QR code on the tablet again.</p>").getBytes("UTF-8"));
+                        + "<h2>This link doesn’t work any more</h2><p>On the kitchen screen, open Photos, then Add photos, and scan the code there again.</p>").getBytes("UTF-8"));
                 return;
             }
 
@@ -160,9 +160,17 @@ final class PhotoServer {
             } else if (method.equals("GET") && path.equals("/api/photos")) {
                 sendJson(out, 200, new JSONObject().put("photos", store.list()).put("max", PhotoStore.MAX_ITEMS));
             } else if (method.equals("GET") && path.startsWith("/api/photo/")) {
-                File f = store.file(path.substring("/api/photo/".length()));
+                String id = path.substring("/api/photo/".length());
+                File f = store.file(id);
+                String type = f == null ? "" : store.contentType(id);
+                // ?w=320: a small copy for the phone's grid of the album. A phone otherwise
+                // downloads every full-size photo just to draw thumbnails.
+                int w = 0;
+                try { w = Integer.parseInt(uri.getQueryParameter("w")); } catch (Exception e) { /* the picture itself */ }
+                byte[] small = f != null && w >= 64 && w <= 1024 && type.startsWith("image/") ? smaller(f, w) : null;
                 if (f == null) send(out, 404, "text/plain", "Not found".getBytes());
-                else sendFile(out, f, store.contentType(path.substring("/api/photo/".length())));
+                else if (small != null) send(out, 200, "image/jpeg", small);
+                else sendFile(out, f, type);
             } else if (method.equals("POST") && path.equals("/api/upload")) {
                 long len = Long.parseLong(headers.getOrDefault("content-length", "0"));
                 try {
@@ -276,6 +284,43 @@ final class PhotoServer {
         out.write(head(code, type, body.length).getBytes("UTF-8"));
         out.write(body);
         out.flush();
+    }
+
+    /**
+     * A copy of a photo about `w` pixels wide, turned the right way up, as a JPEG.
+     * Null when the photo is small already or can't be read: the file itself is sent then.
+     */
+    private static byte[] smaller(File f, int w) {
+        try {
+            android.graphics.BitmapFactory.Options o = new android.graphics.BitmapFactory.Options();
+            o.inJustDecodeBounds = true;
+            android.graphics.BitmapFactory.decodeFile(f.getPath(), o);
+            if (o.outWidth <= 0 || o.outWidth <= w * 2) return null;
+            int sample = 1;
+            while (o.outWidth / (sample * 2) >= w) sample *= 2;
+            o = new android.graphics.BitmapFactory.Options();
+            o.inSampleSize = sample;
+            android.graphics.Bitmap b = android.graphics.BitmapFactory.decodeFile(f.getPath(), o);
+            if (b == null) return null;
+            // Phones store a sideways photo with a note saying which way is up.
+            int turn = 0;
+            try {
+                int way = new android.media.ExifInterface(f.getPath()).getAttributeInt(android.media.ExifInterface.TAG_ORIENTATION, 1);
+                turn = way == 6 ? 90 : way == 3 ? 180 : way == 8 ? 270 : 0;
+            } catch (Exception e) { /* no note: as it is */ }
+            if (turn != 0) {
+                android.graphics.Matrix m = new android.graphics.Matrix();
+                m.postRotate(turn);
+                android.graphics.Bitmap turned = android.graphics.Bitmap.createBitmap(b, 0, 0, b.getWidth(), b.getHeight(), m, true);
+                if (turned != b) { b.recycle(); b = turned; }
+            }
+            ByteArrayOutputStream bytes = new ByteArrayOutputStream();
+            b.compress(android.graphics.Bitmap.CompressFormat.JPEG, 80, bytes);
+            b.recycle();
+            return bytes.toByteArray();
+        } catch (Throwable t) { // out of memory included: the file itself will do
+            return null;
+        }
     }
 
     private static void sendFile(OutputStream out, File f, String type) throws java.io.IOException {

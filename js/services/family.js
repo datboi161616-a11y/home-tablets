@@ -1,7 +1,7 @@
 // This tablet's family settings, entered from a phone (scan the QR code on
 // Photos → Add photos, then "Tablet settings"). Stored on the tablet itself.
 //
-// { familyName, people: [name], dates: [{ name, month, day, kind: 'birthday'|'event' }],
+// { familyName, people: [name], dates: [{ name, month, day, kind: 'birthday'|'event', year? (birthdays) }],
 //   calendars: [{ name, url }], units: 'fahrenheit'|'celsius' }
 //
 // In a normal browser (previewing on a PC) there's no tablet, so a small example
@@ -16,7 +16,7 @@ const PREVIEW = {
   familyName: 'Family',
   people: ['Mom', 'Dad', 'Ava', 'Liam', 'Grandma Jo'],
   dates: [
-    { name: "Ava's birthday", month: 1, day: 14, kind: 'birthday' },
+    { name: "Ava's birthday", month: 1, day: 14, kind: 'birthday', year: 2017 },
     { name: "Mom's birthday", month: 3, day: 8, kind: 'birthday' },
     { name: 'Anniversary', month: 6, day: 20, kind: 'event' },
   ],
