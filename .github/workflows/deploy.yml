@@ -46,7 +46,7 @@ jobs:
       - name: Build site for older tablets
         run: |
           mkdir _site
-          cp -r index.html css data version.json remote.json .nojekyll _site/
+          cp -r index.html css data guide version.json remote.json .nojekyll _site/
           npx -y esbuild@0.24.2 $(find js -name '*.js') sw.js \
             --outdir=_site --outbase=. --target=chrome64 --log-level=warning
           if grep -rlE '\?\.[a-zA-Z_$(\[]|\?\?' _site/js _site/sw.js; then

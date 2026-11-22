@@ -556,3 +556,6 @@ from are counted.
 487. "What's new" is always one tap away in Settings → Wi-Fi & about.
 488. The screen's diary records when the screens updated themselves, and to which version.
 489. For whoever looks after the code: `bash tools/check.sh` also runs every test with known answers, including a new one that each screen named in the app has its file, and each file is named.
+490. On the two days a year the clocks change, Home says so ("Clocks went back last night"), so nobody wonders whether this clock is the right one.
+491. The printable guides are published with the site, so they can be opened and printed from any computer or phone.
+492. "Check tablet" says whether a newer app is out than the one on the tablet (which fetches it by itself within six hours, or at once after being switched off and on).

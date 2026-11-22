@@ -153,6 +153,21 @@ $alreadySetUp = $owners -match "(?s)Device Owner:.{0,200}?package=$([regex]::Esc
 $appVersion = ''
 if ((Adb "shell dumpsys package $Pkg") -match 'versionName=(\S+)') { $appVersion = $Matches[1] }
 if ($alreadySetUp) { Say "  Already set up: app $appVersion, kiosk mode on." 'Green' }
+# Is a newer app out than the one on this tablet? (It fetches its own within six hours, and
+# straight away after being switched off and on again.)
+if ($appVersion) {
+    try {
+        $rel = Invoke-RestMethod -Uri 'https://api.github.com/repos/datboi161616-a11y/home-tablets/releases/latest' -TimeoutSec 10 -Headers @{ 'User-Agent' = 'home-tablets-setup' }
+        $latest = 0
+        if ($rel.tag_name -match '^app-(\d+)$') { $latest = [int]$Matches[1] }
+        $have = 0
+        if ($appVersion -match '^1\.(\d+)') { $have = [int]$Matches[1] }
+        if ($latest -gt $have -and $have -gt 0) {
+            if ($Check) { Warn "A newer app is out (1.$latest; this tablet has $appVersion). It updates itself within six hours, or at once if you restart the tablet." }
+            else { Say "  A newer app (1.$latest) is out; the next step installs it." }
+        } elseif ($have -gt 0) { Say '  The app is the newest one.' }
+    } catch { }
+}
 elseif ($appVersion) { Say "  The app is installed ($appVersion) but kiosk mode is not on yet." }
 else { Say '  A new tablet: nothing of ours on it yet.' }
 

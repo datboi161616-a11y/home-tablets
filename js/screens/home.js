@@ -171,12 +171,20 @@ function greetingFor(list) {
   return { text: `${h < 12 ? 'Good morning' : h < 18 ? 'Good afternoon' : 'Good evening'}, ${settings.familyName}`, special: false };
 }
 
+// On the two days a year the clocks change, say so: everybody wonders whether this
+// clock is the one that is right. (It is: the screen changes itself.)
+function clocksChanged(now) {
+  const earlier = new Date(now.getTime() - 20 * 60 * 60 * 1000);
+  const moved = earlier.getTimezoneOffset() - now.getTimezoneOffset(); // minutes; more than 0: forward
+  return moved > 0 ? 'Clocks went forward last night' : moved < 0 ? 'Clocks went back last night' : '';
+}
 function clockParts() {
   const now = new Date();
+  const changed = clocksChanged(now);
   return {
     time: clockTime(now),
     ampm: clockAmPm(now),
-    date: now.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' }),
+    date: now.toLocaleDateString('en-US', { weekday: 'long', month: changed ? 'short' : 'long', day: 'numeric' }) + (changed ? ` · ${changed}` : ''),
   };
 }
 

@@ -123,7 +123,8 @@ Birthdays, the people who leave notes and calendar links are still added from a 
   untouched for 10 minutes goes back to Home. The photo frame, a recipe, cooking mode
   and the timers stay up.
 - **Updates:** screen changes you push reach the tablet the next time it's idle;
-  app updates install themselves within 6 hours.
+  app updates install themselves within 6 hours (or straight away after the tablet is
+  switched off and on again: it looks for one every time it starts).
 - **A fresh start each night:** between 3 and 5 AM, when nobody has touched it for half
   an hour, the page starts over and comes back on the same screen, so weeks of running
   don't add up.
