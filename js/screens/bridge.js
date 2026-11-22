@@ -68,7 +68,7 @@ export function mount(el) {
     feature('camera') && ['#/camera', 'CAMERA'],
     ['#/deepimage', 'DEEP IMAGE'],
     ['#/viewscreen', 'VIEWSCREEN'],
-    ['#/welcome', 'TOUR'], // dropped first when Apps/Camera are switched on
+    ['#/settings', 'SETTINGS'], // (the tour is in there too) dropped first when Apps/Camera are switched on
   ].filter(Boolean).slice(0, 3);
   const chip = 'min-height: 44px; padding: 10px 12px; box-sizing: border-box; border: 1px solid #1E3A4A; font-size: 13px; letter-spacing: 2px; display: flex; align-items: center; white-space: nowrap';
 

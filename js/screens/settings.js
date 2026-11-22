@@ -3,20 +3,30 @@
 // frame, weather, timers, Wi-Fi & about), the chosen one on the right. Every choice takes
 // effect as it is tapped; nothing here needs a Save button except typed text.
 // (Birthdays, people and calendar links stay on the phone page: they need real typing.)
+// Tom's flight deck has the same screen in its own colours, with the sections that apply.
 import { backHref, backLabel } from '../services/nav.js';
 import { getFamily, saveFamily, canSaveFamily } from '../services/family.js';
 import { display, setDisplay, hourText, timeText } from '../services/display.js';
 import { testBeep } from '../services/timers.js';
 import { manualPlace, knownPlace, findPlaces, setPlace } from '../services/location.js';
 import { BUILD } from '../build.js';
-import { settings } from '../config.js';
+import { settings, profile } from '../config.js';
+import { wipeScreen } from '../services/wipe.js';
+import { trouble, clearTrouble, runningSince, storageUsed } from '../services/trouble.js';
+import { batteryNow } from '../services/notices.js';
 
 const N = () => window.TabletNative;
 const esc = (s) => String(s).replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 // The night clock may start between 6 PM and midnight and end between 4 and 10 AM.
 const FROM = [18, 19, 20, 21, 22, 23, 0];
 const TO = [4, 5, 6, 7, 8, 9, 10];
-const SECTIONS = [
+const DECK = profile === 'tom'; // the flight deck: dark, and without the kitchen's sections
+const SECTIONS = DECK ? [
+  ['screen', 'Screen & sound'],
+  ['clock', 'Clock & night'],
+  ['weather', 'Where you are'],
+  ['about', 'Wi-Fi & about'],
+] : [
   ['family', 'Your family'],
   ['screen', 'Screen & sound'],
   ['clock', 'Clock & night'],
@@ -25,6 +35,7 @@ const SECTIONS = [
   ['timers', 'Timers'],
   ['about', 'Wi-Fi & about'],
 ];
+const NIGHT_SCREEN = DECK ? 'viewscreen' : 'night';
 const SECTION_KEY = 'settings.section';
 
 let netTimer = null;
@@ -88,10 +99,24 @@ export function mount(el) {
     .st-dot{flex:none;width:14px;height:14px;border-radius:50%;background:#8A93A3}
     .st-places{display:flex;flex-direction:column;gap:8px}
     .st-place{min-height:52px;padding:0 20px;border:2px solid var(--line);border-radius:14px;background:#fff;text-align:left;font-family:inherit;font-size:19px;font-weight:600;color:var(--ink);cursor:pointer}
+    .st-back{background:#fff}
+    .st-list{display:flex;flex-direction:column;gap:8px;font-size:16px;line-height:1.35;color:var(--ink-2)}
+    .st-list b{color:var(--ink);font-weight:600}
+    /* The flight deck's colours */
+    .st-wrap.deck{--ink:#E3EDF5;--ink-2:#8FA9BA;--line:#24384A;--bg:#0C1524;background:#05070D;color:var(--ink)}
+    .deck .st-card{background:#0A1220;border:1px solid #1E3A4A;box-shadow:none}
+    .deck .st-tab.on{background:#0F1B2E;color:#5CE1E6;box-shadow:none}
+    .deck .st-input,.deck .st-place{background:#0C1524;color:var(--ink)}
+    .deck .st-btn{background:#5CE1E6;color:#05070D}
+    .deck .st-btn.quiet{background:#12203A;color:var(--ink)}
+    .deck .st-seg button.on{background:#5CE1E6;color:#05070D}
+    .deck .st-step button{background:#12203A}
+    .deck .st-back{background:#12203A;color:var(--ink)}
+    .deck .st-range::-webkit-slider-thumb{border-color:#0A1220}
   </style>
-  <div class="st-wrap">
+  <div class="st-wrap${DECK ? ' deck' : ''}">
     <div class="st-line" style="gap:16px">
-      <a href="${backHref()}" class="pill" style="background:#fff">${backLabel()}</a>
+      <a href="${backHref()}" class="pill st-back">${backLabel()}</a>
       <div class="display" style="font-size:40px;font-weight:500">Settings</div>
       <div data-saved style="margin-left:auto;font-size:18px;font-weight:600;color:#2F6B4F;opacity:0;transition:opacity .3s">✓ Saved</div>
     </div>
@@ -131,17 +156,21 @@ export function mount(el) {
           <div data-bright-val class="st-val"></div>
           <button data-bright-auto class="st-btn quiet">Automatic</button>
         </div>`)
-        + (hasVolume || !N() ? row('Sound (timers, videos, apps)', `<div class="st-line">
+        + (hasVolume || !N() ? row(DECK ? 'Sound' : 'Sound (timers, videos, apps)', `<div class="st-line">
           <input data-volume class="st-range" type="range" min="0" max="100" step="5" value="${volume}">
           <div data-volume-val class="st-val"></div>
           <button data-volume-test class="st-btn quiet">Try it</button>
         </div>`) : '')
-        + row('When nobody is using it, show', `<div>${seg('restScreen', [['home', 'Home'], ['photos', 'The photo frame']])}</div>`)
+        + (DECK ? '' : row('When nobody is using it, show', `<div>${seg('restScreen', [['home', 'Home'], ['photos', 'The photo frame']])}</div>`)
         + row('Go back to it after', `<div>${seg('restMinutes', [['5', '5 min'], ['10', '10 min'], ['30', '30 min'], ['0', 'Stay put']])}</div>`,
-          'A menu or list that somebody walked away from doesn’t stay up all day. Recipes, timers and anything half-typed are never interrupted.');
+          'A menu or list that somebody walked away from doesn’t stay up all day. Recipes, timers and anything half-typed are never interrupted.'))
+        + row('Cleaning the glass', `<div class="st-line">
+          <div class="st-hint" style="flex:1">Switches touches off for 30 seconds, so a cloth doesn’t press anything. It comes back by itself.</div>
+          <button data-wipe-now class="st-btn quiet">Wipe the screen</button>
+        </div>`);
     },
     clock: () => row('Clock', `<div class="st-line">${seg('clock24', [['12', '12-hour'], ['24', '24-hour']])}<span class="st-hint" data-clock-now></span></div>`)
-      + row('Night clock', `<div class="st-line" style="flex-wrap:wrap;row-gap:10px">
+      + row(DECK ? 'Starfield at night' : 'Night clock', `<div class="st-line" style="flex-wrap:wrap;row-gap:10px">
           ${seg('night', [['1', 'On'], ['0', 'Off']])}
           <div data-hours class="st-line" style="gap:10px">
             <span class="st-hint">from</span>
@@ -149,9 +178,9 @@ export function mount(el) {
             <span class="st-hint">to</span>
             <div class="st-step"><button data-to="-1" aria-label="Earlier">−</button><span data-to-val></span><button data-to="1" aria-label="Later">+</button></div>
           </div>
-        </div>`, 'Dims to a soft clock once nobody has touched the screen for 5 minutes.')
+        </div>`, DECK ? 'Dims to the starfield once nobody has touched the screen for 5 minutes.' : 'Dims to a soft clock once nobody has touched the screen for 5 minutes.')
       + row('At night the screen is', `<div class="st-line">${seg('nightDim', [['0.02', 'Darkest'], ['0.05', 'Dim'], ['0.15', 'Soft']])}
-          <a href="#/night" class="st-btn quiet">See the night clock</a></div>`,
+          <a href="#/${NIGHT_SCREEN}" class="st-btn quiet">${DECK ? 'See the starfield' : 'See the night clock'}</a></div>`,
         'Darkest suits a bedroom; Soft can be read from across a kitchen.'),
     photos: () => row('Each picture stays for', `<div>${seg('slideSecs', [['15', '15 sec'], ['30', '30 sec'], ['60', '1 min'], ['300', '5 min'], ['900', '15 min']])}</div>`)
       + row('Slow zoom', `<div>${seg('photoZoom', [['1', 'On'], ['0', 'Off']])}</div>`, 'Each picture drifts gently while it is up. Off keeps it perfectly still.')
@@ -159,7 +188,7 @@ export function mount(el) {
       + row('Order', `<div>${seg('photoShuffle', [['0', 'Newest first'], ['1', 'Mixed up']])}</div>`)
       + `<div class="st-line" style="margin-top:auto"><a href="#/photos" class="st-btn quiet">Open the photo frame</a><a href="#/addphotos" class="st-btn quiet">Add photos</a></div>`,
     weather: () => row('Temperature', `<div>${seg('units', [['fahrenheit', '°F'], ['celsius', '°C']], !canSave)}</div>`)
-      + row('Town for the weather', `<div class="st-hint" data-place-now></div>
+      + row(DECK ? 'Town for the sky, the planes overhead and the weather' : 'Town for the weather', `<div class="st-hint" data-place-now></div>
         <div class="st-line">
           <input data-place class="st-input" type="text" maxlength="60" autocomplete="off" autocapitalize="words" spellcheck="false" placeholder="A town or ZIP code">
           <button data-place-find class="st-btn" disabled>Find</button>
@@ -184,12 +213,19 @@ export function mount(el) {
           <button data-update-check class="st-btn quiet">Check now</button>
         </div>`)
       + row('If something looks stuck', `<div class="st-line">
-          <div class="st-hint" style="flex:1">Starting the screens again is safe: photos, lists and timers are kept.</div>
+          <div class="st-hint" style="flex:1">Starting the screens again is safe: ${DECK ? 'nothing is lost' : 'photos, lists and timers are kept'}.</div>
           <button data-restart class="st-btn quiet">Start again</button>
         </div>`)
+      + row('The settings', `<div class="st-line">
+          <div class="st-hint" style="flex:1">Puts brightness, the clock, the night hours and the town back the way they came. ${DECK ? 'Nothing else is touched.' : 'Photos, lists, notes and the family’s name are not touched.'}</div>
+          <button data-reset class="st-btn quiet">Put them back</button>
+        </div>`)
+      + row('For whoever looks after this screen', `<div class="st-hint" data-health></div>
+        <div class="st-line"><div class="st-hint" data-trouble-line style="flex:1"></div><button data-trouble-show class="st-btn quiet">Show</button></div>
+        <div class="st-list" data-trouble-list></div>`)
       + `<div class="st-line" style="margin-top:auto">
           <a href="#/welcome" class="st-btn quiet">Show the tour again</a>
-          <div class="st-hint" style="margin-left:auto;text-align:right">Kitchen screen · version ${esc(BUILD)}${N() && N().appVersion ? ` · app ${esc(N().appVersion())}` : ''}</div>
+          <div class="st-hint" style="margin-left:auto;text-align:right">${DECK ? 'Flight deck' : 'Kitchen screen'} · version ${esc(BUILD)}${N() && N().appVersion ? ` · app ${esc(N().appVersion())}` : ''}</div>
         </div>`,
   };
 
@@ -263,6 +299,7 @@ export function mount(el) {
         vol.addEventListener('change', () => testBeep()); // let go: hear how loud that is
         pane.querySelector('[data-volume-test]').addEventListener('click', () => testBeep());
       }
+      pane.querySelector('[data-wipe-now]').addEventListener('click', () => wipeScreen(30));
     },
     clock() {
       const stepIn = (list, now, by) => list[Math.min(list.length - 1, Math.max(0, (list.indexOf(now) < 0 ? 0 : list.indexOf(now)) + by))];
@@ -361,6 +398,43 @@ export function mount(el) {
         check.disabled = false;
       });
       pane.querySelector('[data-restart]').addEventListener('click', () => location.reload());
+
+      // Back the way it came: asks once more first, because it can't be undone.
+      const reset = pane.querySelector('[data-reset]');
+      let sure = 0;
+      reset.addEventListener('click', () => {
+        if (Date.now() - sure > 5000) {
+          sure = Date.now();
+          reset.textContent = 'Really? Tap again';
+          setTimeout(() => { if (reset.isConnected && Date.now() - sure >= 5000) reset.textContent = 'Put them back'; }, 5100);
+          return;
+        }
+        sure = 0;
+        try { localStorage.removeItem('display.v1'); } catch (e) { /* storage off */ }
+        setPlace(null);
+        location.reload(); // every screen starts again with the settings it came with
+      });
+
+      // How it is doing, and what went wrong lately.
+      const day = (at) => new Date(at).toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' });
+      const power = batteryNow();
+      pane.querySelector('[data-health]').textContent = `Running since ${day(runningSince())}, ${timeText(new Date(runningSince()))}`
+        + ` · keeps ${(storageUsed() / 1048576).toFixed(1)} MB of settings, lists and notes`
+        + (power ? ` · ${power.charging ? 'plugged in' : 'on its battery'}, ${Math.round(power.level * 100)}%` : '');
+      const troubleLine = pane.querySelector('[data-trouble-line]');
+      const show = pane.querySelector('[data-trouble-show]');
+      const listEl = pane.querySelector('[data-trouble-list]');
+      const showTrouble = () => {
+        const list = trouble();
+        troubleLine.textContent = list.length ? `${list.length === 1 ? 'One thing' : `${list.length} things`} went wrong lately (the last on ${day(list[0].at)}).` : 'Nothing has gone wrong lately.';
+        show.style.display = list.length ? '' : 'none';
+      };
+      showTrouble();
+      show.addEventListener('click', () => {
+        if (listEl.children.length) { clearTrouble(); listEl.innerHTML = ''; show.textContent = 'Show'; showTrouble(); return; }
+        listEl.innerHTML = trouble().map((t) => `<div><b>${esc(day(t.at))}, ${esc(timeText(new Date(t.at)))}${t.screen ? ` · ${esc(t.screen)}` : ''}${t.times > 1 ? ` · ${t.times} times` : ''}</b><br>${esc(t.what)}</div>`).join('');
+        show.textContent = 'Clear the list';
+      });
     },
   };
 

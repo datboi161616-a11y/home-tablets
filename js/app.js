@@ -7,6 +7,14 @@ import { siteAnswers } from './services/online.js';
 import { BUILD } from './build.js';
 import { cameFrom } from './services/nav.js';
 import { display, isNightNow, dayBrightness, nightBrightness } from './services/display.js';
+import * as notices from './services/notices.js';
+import { noteTrouble } from './services/trouble.js';
+import { wiping } from './services/wipe.js';
+
+// Whatever goes wrong is written in the screen's own diary (Settings → Wi-Fi & about), so
+// whoever looks after it can see what happened and when.
+addEventListener('error', (e) => { if (e.message) noteTrouble(`${e.message}${e.filename ? ` (${String(e.filename).split('/').pop()}:${e.lineno})` : ''}`, location.hash.replace(/^#\/?/, '').split('/')[0]); });
+addEventListener('unhandledrejection', (e) => { noteTrouble(`${(e.reason && (e.reason.message || e.reason)) || 'A request failed'}`, location.hash.replace(/^#\/?/, '').split('/')[0]); });
 
 // Was sw.js already keeping copies when this page started? (Not on the very first start.)
 const startedWithCopies = !!(navigator.serviceWorker && navigator.serviceWorker.controller);
@@ -154,7 +162,7 @@ const FAMILY = {
 const TOM = {
   bridge: 'Flight deck', flights: 'Planes overhead', departures: 'Departures', trivia: 'Trivia',
   alert: 'Sky alert', missions: 'Space missions', sky: "Tonight's sky",
-  deepimage: 'Space image', viewscreen: 'Starfield',
+  deepimage: 'Space image', viewscreen: 'Starfield', settings: 'Settings',
 };
 // Both (Tom's only when its extras are switched on)
 const BOTH = { photos: 'Photo frame', apps: 'Apps', camera: 'Camera', addphotos: 'Add photos', welcome: 'Welcome' };
@@ -163,6 +171,8 @@ const SCREENS = { ...FAMILY, ...TOM, ...BOTH };
 const OWN_SCREENS = Object.keys({ ...(profile === 'tom' ? TOM : FAMILY), ...BOTH });
 
 export const homeRoute = profile === 'tom' ? 'bridge' : 'home';
+// The hidden copy used for remote help shows nothing of its own and follows no clock.
+function isGhostCopy() { try { return !!(window.TabletNative && window.TabletNative.isGhost && window.TabletNative.isGhost()); } catch (e) { return false; } }
 
 let current = null;
 let shownName = null; // the screen that is up now
@@ -184,7 +194,7 @@ async function navigate() {
   let failed = false; // its code couldn't be fetched: the placeholder says so and brings it back
   if (SCREENS[name]) {
     try { mod = await import(`./screens/${name}.js`); }
-    catch (err) { console.error(`Screen "${name}" failed to load`, err); failed = true; }
+    catch (err) { console.error(`Screen "${name}" failed to load`, err); failed = true; noteTrouble(`The ${SCREENS[name]} screen couldn’t be fetched`, name); }
   }
   // A tap brought us here: let its pressed look reach the screen before the next screen is
   // built (building one keeps the tablet busy, and nothing is drawn meanwhile).
@@ -217,10 +227,12 @@ async function navigate() {
   host.style.cssText = 'position:absolute;top:0;right:0;bottom:0;left:0';
   screenEl.appendChild(host);
   if (timerSvc && timerSvc.chip) { timerSvc.setRoute(name); screenEl.appendChild(timerSvc.chip); }
+  if (notices.bar) { notices.setRoute(name); screenEl.appendChild(notices.bar); }
   current = mod;
   try { mod.mount(host, { name, args, title: SCREENS[name], homeRoute, failed }); }
   catch (err) {
     console.error(err);
+    noteTrouble(`The ${SCREENS[name] || name} screen stopped while opening: ${(err && err.message) || err}`, name);
     // It stopped part-way: let it put away whatever it had already started.
     try { if (mod.unmount) mod.unmount(); } catch (e) { /* it never got that far */ }
     current = placeholder;
@@ -272,6 +284,13 @@ addEventListener('focusout', () => setTimeout(placeForTyping, 80)); // the curso
 addEventListener('tablet-family', () => {
   if (['home', 'launcher', 'forecast', 'photos'].includes(screenName())) setTimeout(navigate, 50);
 });
+
+// The charger came out, or the Wi-Fi has been gone a while: a quiet word in the corner.
+if (!isGhostCopy()) {
+  notices.startNotices({ settingsRoute: 'settings' });
+  notices.setRoute(location.hash.replace(/^#\/?/, '').split('/')[0] || homeRoute);
+  screenEl.appendChild(notices.bar);
+}
 
 // Family tablets: kitchen timers that ring on any screen.
 if (profile !== 'tom') import('./services/timers.js').then((m) => {
@@ -397,7 +416,36 @@ setInterval(checkForUpdate, 30 * 60 * 1000);
 // Family tablets move to the night clock, Tom's to the starfield, once nobody has
 // touched the screen for 5 minutes. In the morning they go back to what was up before.
 const nightRoute = profile === 'tom' ? 'viewscreen' : 'night';
+// What the night interrupted. Remembered through a restart in the small hours (below), so
+// the photo frame still comes back in the morning.
 let beforeNight = null;
+try { beforeNight = sessionStorage.getItem('before-night'); } catch (e) { /* storage off */ }
+function rememberBeforeNight(name) {
+  beforeNight = name;
+  try { if (name) sessionStorage.setItem('before-night', name); else sessionStorage.removeItem('before-night'); } catch (e) { /* storage off */ }
+}
+
+// ---- A fresh start in the small hours ----
+// A screen that is never switched off runs the same page for weeks, and small things add
+// up (memory, a request that never came back). Once a night, between 3 and 5, when it has
+// been left alone for half an hour and is only showing the night clock, Home or the photo
+// frame, the page starts over. It comes back on the same screen, dimmed the same.
+const pageStarted = Date.now();
+const FRESH_KEY = 'fresh-start-day';
+function freshStart(here) {
+  const now = new Date();
+  if (now.getHours() < 3 || now.getHours() >= 5) return false;
+  if (Date.now() - pageStarted < 12 * 60 * 60 * 1000 || !idleFor(30 * 60 * 1000)) return false;
+  if (![nightRoute, homeRoute, 'photos'].includes(here) || tutorialRunning() || wiping()) return false;
+  if (timerSvc && (timerSvc.ringing() || timerSvc.timers().some((t) => timerSvc.state(t) === 'running'))) return false;
+  const today = now.toDateString();
+  try {
+    if (sessionStorage.getItem(FRESH_KEY) === today) return false; // once a night is enough
+    sessionStorage.setItem(FRESH_KEY, today);
+  } catch (e) { return false; }
+  location.reload();
+  return true;
+}
 
 // ---- Back to the resting screen after a while ----
 // A menu, the calendar or the shopping list that somebody looked at and walked away
@@ -421,14 +469,16 @@ setInterval(() => {
   const here = screenName();
   if (applyUpdate(here)) return;
   if (isGhost) return; // the hidden admin copy doesn't follow the clock
+  if (wiping()) return; // somebody is cleaning the glass: nothing changes underneath
+  if (freshStart(here)) return;
   const night = isNightNow();
   if (night && here !== nightRoute && idleFor(5 * 60 * 1000) && !BUSY.includes(here)) {
-    beforeNight = here;
+    rememberBeforeNight(here);
     location.hash = `#/${nightRoute}`;
   } else if (!night && here === nightRoute && idleFor(5 * 60 * 1000)) {
     // Morning: the photo frame again if that is what the night interrupted, otherwise Home.
     location.hash = `#/${beforeNight === 'photos' ? 'photos' : homeRoute}`;
-    beforeNight = null;
+    rememberBeforeNight(null);
   } else {
     const rest = restingScreen();
     const after = display().restMinutes * 60 * 1000;

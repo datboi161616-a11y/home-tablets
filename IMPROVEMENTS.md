@@ -29,3 +29,19 @@ from are counted.
 20. Settings shows which version the screen is running, with "Check now" for updates and "Update now" when one is ready.
 21. A "Start again" button in Settings restarts the screens if something looks stuck, without losing photos, lists or timers.
 22. For whoever looks after the code: `bash tools/check.sh` runs the deploy's translation for the old browser engine, follows every import, and searches for things that engine doesn't have, in a few seconds.
+
+## 2 · Looking after itself
+
+23. A quiet notice appears in the corner when the charger has come out ("Not plugged in · 42% left"), long before the battery runs flat.
+24. When the battery is low the notice turns urgent ("Plug me in · 15% left") and shows on every screen, the night clock and photo frame included.
+25. A notice when the Wi-Fi or the internet has been gone for a few minutes ("No Wi-Fi · showing what was saved"); tapping it opens the Wi-Fi part of Settings.
+26. "Wipe the screen" (Settings → Screen & sound): touches are switched off for 30 seconds so the glass can be cleaned without pressing anything.
+27. The screens start themselves afresh once a night, in the small hours when nobody is about, and come back on the same screen at the same dimness, so weeks of running don't add up.
+28. After a restart in the night, the photo frame still comes back in the morning if that is what the night interrupted.
+29. The screen keeps a short diary of things that went wrong (what, which screen, when) for whoever looks after it, shown in Settings → Wi-Fi & about. Nothing is sent anywhere.
+30. Settings → Wi-Fi & about says how the screen is doing: running since when, how much it keeps, plugged in or on its battery.
+31. "Put them back" returns brightness, the clock, the night hours and the town to how they came, after asking twice; photos, lists and notes are not touched.
+32. Tom's flight deck has a Settings screen of its own, in the deck's dark colours (it had none): brightness, sound, 12 or 24-hour clock, when the starfield takes over and how dim it is, Wi-Fi, updates, the tour.
+33. On the flight deck the town can be set by hand, so tonight's sky, the planes overhead and the weather are for the right place.
+34. Publishing stops by itself when a check fails, so a mistake that the checks can catch never reaches a kitchen.
+35. For whoever looks after the code: `node tools/sim/try.mjs <screen> [steps.js]` opens one screen in a pretend tablet, taps what you tell it to, and gives back what the screen says, any errors, and a picture.

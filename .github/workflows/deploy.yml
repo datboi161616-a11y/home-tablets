@@ -36,6 +36,11 @@ jobs:
           echo "export const BUILD = '${GITHUB_SHA::7}';" > js/build.js
           cat js/build.js
 
+      # Nothing reaches the kitchens that the checks would have caught: an import that
+      # doesn't exist, or something the tablets' old browser engine doesn't have.
+      - name: Check before publishing
+        run: bash tools/check.sh
+
       # The tablets' built-in WebView can be old (Chrome 7x). Translate the
       # JavaScript to syntax it understands; the source stays modern.
       - name: Build site for older tablets
