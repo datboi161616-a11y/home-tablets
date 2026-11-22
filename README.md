@@ -66,6 +66,9 @@ Each tablet remembers its profile. Open the site once with `?profile=tom` or
   home Wi-Fi, self-update). Built and tested on emulators by GitHub Actions.
 - `setup/`: the double-click USB setup for a new tablet, and `Check tablet.bat`, which
   looks a plugged-in tablet over without changing it.
+- `guide/`: a one-page guide for each kind of screen (`kitchen-screen.html`,
+  `flight-deck.html`). Open one in a browser, print it (one sheet), write the PIN in the
+  blank, and slip it in with the gift.
 - `data/recipes/`, `tools/`: the recipe collection and the scripts that check it.
 - `tools/sim/`: scripts that open the site in a pretend tablet (headless Edge, tablet
   screen size and touch, slowed processor) to walk every screen, time them, and test

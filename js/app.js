@@ -300,6 +300,9 @@ if (!isGhostCopy()) {
   screenEl.appendChild(notices.bar);
 }
 
+// Once a day: put away what is finished with in the screen's own storage (services/tidy.js).
+if (!isGhostCopy()) import('./services/tidy.js').then((m) => m.startTidying()).catch(() => {});
+
 // Family tablets: kitchen timers that ring on any screen.
 if (profile !== 'tom') import('./services/timers.js').then((m) => {
   m.startTimers();

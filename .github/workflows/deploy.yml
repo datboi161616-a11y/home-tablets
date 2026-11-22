@@ -39,7 +39,11 @@ jobs:
       # Nothing reaches the kitchens that the checks would have caught: an import that
       # doesn't exist, or something the tablets' old browser engine doesn't have.
       - name: Check before publishing
-        run: bash tools/check.sh
+        run: |
+          bash tools/check.sh
+          # The calendar-file reader and the sky maths, against known answers.
+          node tools/sim/ics-test.mjs | tail -1
+          node tools/sim/astro-test.mjs | tail -1
 
       # The tablets' built-in WebView can be old (Chrome 7x). Translate the
       # JavaScript to syntax it understands; the source stays modern.

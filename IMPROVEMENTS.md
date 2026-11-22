@@ -518,3 +518,10 @@ from are counted.
 458. A "What's new" page shows the highlights of what has arrived by itself, each with "Show me", in the kitchen's look and in the deck's.
 459. For a week after new things arrive, the home screen mentions it quietly ("New things have arrived"); a brand-new screen never sees it, because the tour is its introduction.
 460. The app's automatic test on GitHub now checks what was added to the screen's little server: small album copies, removing a list item from a phone, a birthday's year, and the expired-link page.
+
+## 19 · Looking after it for years
+
+461. What the screen keeps about a recipe somebody stopped half-way through is put away after a month, and the screen's diary says when its storage is getting full, so it can't fill up without anybody knowing.
+462. Publishing also runs the calendar-file and sky-maths tests first, and stops if one fails.
+463. A printable one-page guide for the kitchen screens (`guide/kitchen-screen.html`), to slip in with the gift: the words match what the screen says, with a blank for the PIN.
+464. The same for Tom's flight deck (`guide/flight-deck.html`).
