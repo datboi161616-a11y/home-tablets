@@ -156,7 +156,7 @@ addEventListener('pointerup', (e) => { if (e.pointerType === 'mouse') endPress(f
 const FAMILY = {
   home: 'Home', launcher: 'Menu', recipes: 'Recipes', calendar: 'Calendar', forecast: 'Weather',
   messages: 'Messages', shopping: 'Shopping list', timers: 'Timers', plan: 'Week plan', dish: 'Recipe',
-  recipe: 'Cooking mode', myrecipe: 'My recipe', night: 'Night clock', settings: 'Settings',
+  recipe: 'Cooking mode', myrecipe: 'My recipe', night: 'Night clock', settings: 'Settings', convert: 'Conversions',
 };
 // Tom · Space & Flight
 const TOM = {
@@ -474,7 +474,7 @@ const typing = () => {
   if (at && (at.tagName === 'INPUT' || at.tagName === 'TEXTAREA')) return true;
   return Array.from(screenEl.querySelectorAll('textarea, input[type="text"], input:not([type])')).some((box) => box.value.trim());
 };
-const WANDERED = ['launcher', 'calendar', 'forecast', 'messages', 'recipes', 'plan', 'shopping', 'apps', 'addphotos', 'settings', 'whatsnew'];
+const WANDERED = ['launcher', 'calendar', 'forecast', 'messages', 'recipes', 'plan', 'shopping', 'apps', 'addphotos', 'settings', 'whatsnew', 'convert'];
 
 setInterval(() => {
   const here = screenName();

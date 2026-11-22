@@ -44,6 +44,7 @@ jobs:
           # The calendar-file reader and the sky maths, against known answers.
           node tools/sim/ics-test.mjs | tail -1
           node tools/sim/astro-test.mjs | tail -1
+          node tools/sim/convert-test.mjs | tail -1
 
       # The tablets' built-in WebView can be old (Chrome 7x). Translate the
       # JavaScript to syntax it understands; the source stays modern.

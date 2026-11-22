@@ -528,3 +528,10 @@ from are counted.
 465. The screen's diary notes when the Wi-Fi or the internet was gone for more than ten minutes: from when, and for how long ("the weather was old all afternoon" has its answer there).
 466. The diary notes time spent on the battery too: from when, for how long, and how low it got.
 467. For whoever looks after the code: `node tools/sim/device-visit.mjs` puts the working copy on a plugged-in tablet, opens every screen there, reports how long each took and any error, and puts the tablet back.
+
+## 20 · Kitchen conversions
+
+468. A Kitchen conversions screen, all by tapping, one tap from Recipes and from cooking mode (Back returns to the step you were on): teaspoons, tablespoons, fluid ounces, cups, pints, quarts and millilitres into one another.
+469. Weights too: ounces, pounds, grams and kilos, and what an amount comes to as sticks and tablespoons of butter.
+470. An oven table: Fahrenheit, Celsius, a fan oven's setting, gas mark, and the words recipes use ("moderate", "hot").
+471. "Halve & double": half, a third, one and a half, double or three times a measure, answered in measures that can actually be scooped ("half of ¾ cup is 6 tablespoons").

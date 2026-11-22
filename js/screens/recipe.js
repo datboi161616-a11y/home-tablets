@@ -253,6 +253,7 @@ async function start(el, args) {
       <a href="#/home" class="pill" style="background:#FFFFFF;flex:none">← Home</a>
       <div class="display" style="font-size:34px;font-weight:500;flex:1;min-width:0;text-align:center;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${esc(r.title)}</div>
       <div class="muted" style="font-size:18px;flex:none">${esc(metaLine(r, servingsFor(r)))}</div>
+      <a href="#/convert" class="pill rc-pillbtn" style="flex:none">Conversions</a>
       <a href="#/recipes" class="pill rc-pillbtn">All recipes</a>
     </div>
     <div style="flex-grow:1;display:grid;grid-template-columns:380px minmax(0,1fr);gap:24px;min-height:0">

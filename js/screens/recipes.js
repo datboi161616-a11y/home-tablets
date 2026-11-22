@@ -300,7 +300,7 @@ export function mount(el, { args = [] } = {}) {
       root.innerHTML = `
         ${kitchenTop({ title: dinnerView ? 'Dinner' : 'Recipes', active: 'recipes',
           back: dinnerView ? '#/recipes' : backHref(), backLabel: dinnerView ? '← Recipes' : backLabel(),
-          extra: `<a href="#/recipes/favorites" class="k-btn" style="color:#C2491F">♥ Favorites${favs.length ? ` · ${favs.length}` : ''}</a><div class="rb-search"><input data-search class="k-input" placeholder="Search recipes" autocomplete="off"><button data-clear class="rb-clear" aria-label="Clear search">×</button></div>` })}
+          extra: `<a href="#/convert" class="k-btn">Conversions</a><a href="#/recipes/favorites" class="k-btn" style="color:#C2491F">♥ Favorites${favs.length ? ` · ${favs.length}` : ''}</a><div class="rb-search"><input data-search class="k-input" placeholder="Search recipes" autocomplete="off"><button data-clear class="rb-clear" aria-label="Clear search">×</button></div>` })}
         <div data-body class="k-scroll"></div>`;
       const body = root.querySelector('[data-body]');
       const names = {};
