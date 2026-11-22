@@ -118,7 +118,6 @@ function howFar(d) {
 }
 
 // "All day · day 2 of 3" for things over several days.
-const timeWords = (e) => (e.ofDays ? `${e.time} · day ${e.dayOf} of ${e.ofDays}` : e.time);
 const REPEAT_WORDS = { weekly: 'every week', fortnightly: 'every 2 weeks', monthly: 'every month', yearly: 'every year' };
 
 // The key: one colour per calendar link (named as on the phone page), then the rest.

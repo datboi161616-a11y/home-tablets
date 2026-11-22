@@ -12,6 +12,8 @@
 //   node tools/sim/smoke.mjs             (in another)
 // BROWSER=<path> picks the browser (see site-drive.mjs); the screens named in js/app.js
 // are found by themselves, so a new screen is tested from the day it is added.
+// It ends with 0 when every screen opens, 1 when one doesn't, and 2 when the browser
+// itself never started (so nothing was learned about the site).
 import { spawnSync } from 'node:child_process';
 import { readFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
@@ -61,6 +63,7 @@ export default async function drive({ ev, sleep, log }) {
 if (process.argv[1] && resolve(process.argv[1]) === ME) {
   const site = process.argv[2] || 'http://localhost:5173/';
   let bad = 0;
+  let neverRan = 0; // the browser itself didn't start (not the site's fault)
   for (const profile of ['family', 'tom']) {
     const routes = routesFor(profile);
     const run = spawnSync(process.execPath, [resolve(dirname(ME), 'site-drive.mjs'), site, ME], {
@@ -73,7 +76,7 @@ if (process.argv[1] && resolve(process.argv[1]) === ME) {
     let result;
     try { result = JSON.parse(run.stdout.trim().split('\n').pop()); } catch (e) { result = { ok: false, error: (run.stderr || run.stdout || 'the browser did not start').slice(-500) }; }
     console.log(`\n${profile === 'tom' ? "Tom's deck" : 'Kitchen screen'}: ${routes.length} screens`);
-    if (!result.ok || !result.screens) { bad++; console.log(`  FAIL  could not run: ${result.error || 'no answer'}`); continue; }
+    if (!result.ok || !result.screens) { bad++; neverRan++; console.log(`  FAIL  could not run: ${result.error || 'no answer'}`); continue; }
     for (const s of result.screens) {
       const why = [s.broke ? `the test itself broke: ${s.broke}` : '', s.never ? 'never appeared' : '', s.cantOpen ? "says it can't open" : '', s.comingSoon ? 'says "coming soon" (no such screen?)' : '',
         s.empty ? 'is empty' : '', s.odd ? `shows "${s.odd.trim()}"` : '', (s.errors || []).length ? `error: ${s.errors.join(' | ')}` : '',
@@ -85,5 +88,6 @@ if (process.argv[1] && resolve(process.argv[1]) === ME) {
     for (const e of fatal) { bad++; console.log(`  FAIL  ${e.slice(0, 220)}`); }
   }
   console.log(bad ? `\n${bad} problem(s). Nothing should be published like this.` : '\nEvery screen opens.');
-  process.exit(bad ? 1 : 0);
+  // 1: a screen failed. 2: the browser never ran at all, so nothing was learned either way.
+  process.exit(!bad ? 0 : neverRan === 2 ? 2 : 1);
 }

@@ -8,7 +8,7 @@ import { BUILD } from './build.js';
 import { cameFrom } from './services/nav.js';
 import { display, isNightNow, dayBrightness, nightBrightness } from './services/display.js';
 import * as notices from './services/notices.js';
-import { noteTrouble } from './services/trouble.js';
+import { noteTrouble, noteRecord } from './services/trouble.js';
 import { wiping } from './services/wipe.js';
 
 // Whatever goes wrong is written in the screen's own diary (Settings → Wi-Fi & about), so
@@ -205,7 +205,8 @@ async function navigate() {
   const args = parts.slice(1).filter(Boolean);
   let mod = placeholder;
   let failed = false; // its code couldn't be fetched: the placeholder says so and brings it back
-  if (SCREENS[name]) {
+  // (Only names this file lists: "#/constructor" is not a screen, whatever a plain object says.)
+  if (Object.prototype.hasOwnProperty.call(SCREENS, name)) {
     try { mod = await import(`./screens/${name}.js`); }
     catch (err) { console.error(`Screen "${name}" failed to load`, err); failed = true; noteTrouble(`The ${SCREENS[name]} screen couldn’t be fetched`, name); }
   }
@@ -320,7 +321,7 @@ if (profile !== 'tom' && !isGhostCopy()) {
 try {
   const was = localStorage.getItem('build.last');
   if (BUILD !== 'dev' && was !== BUILD) {
-    if (was) noteTrouble(`The screens updated themselves to version ${BUILD} (from ${was}). Nothing is wrong: this is only for the record.`, '');
+    if (was) noteRecord(`The screens updated themselves to version ${BUILD} (from ${was}).`);
     localStorage.setItem('build.last', BUILD);
   }
 } catch (e) { /* storage off */ }
@@ -369,7 +370,8 @@ async function keepFirstFiles() {
     try {
       const u = new URL(url);
       const ours = u.origin === location.origin ? !u.pathname.includes('/__tablet/') : u.host.includes('fonts.g');
-      if (/^https?:$/.test(u.protocol) && ours && !(await caches.match(url))) await fetch(url);
+      // (With a time limit: one request that never answers must not stop the rest being kept.)
+      if (/^https?:$/.test(u.protocol) && ours && !(await caches.match(url))) await fetch(url, { signal: AbortSignal.timeout(20000) });
     } catch (err) { /* it is fetched and kept on the next start anyway */ }
   }
 }
@@ -426,7 +428,7 @@ function updateTries() {
 }
 async function checkForUpdate() {
   try {
-    const live = JSON.parse(await (await fetch('./version.json', { cache: 'no-store' })).text()).version;
+    const live = JSON.parse(await (await fetch('./version.json', { cache: 'no-store', signal: AbortSignal.timeout(15000) })).text()).version;
     // ('dev' is the project folder on a PC: nothing to update to.)
     const newer = BUILD !== 'dev' && !!live && live !== BUILD;
     if (newer && !updateWaiting) updateSeenAt = Date.now();

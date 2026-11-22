@@ -9,10 +9,9 @@
 //           optional: true (skip the beat if its target never appears) }
 import { profile, settings } from '../config.js';
 import { setWelcomeDone } from './welcome-state.js';
-import { myEvents } from './my-events.js';
 import { markSeen as newThingsSeen } from './whatsnew.js';
 
-let script = null, idx = 0, root = null, tick = null, waitingSince = 0, startCount = 0, goneFor = -1;
+let script = null, idx = 0, root = null, tick = null, waitingSince = 0, goneFor = -1;
 let wentTo = {};     // beat number -> the screen that beat went to (for Back and "Carry on")
 let lastTouch = 0;   // when the screen was last touched while the tour was up
 export const tutorialRunning = () => !!script;
@@ -32,7 +31,6 @@ const hash = () => location.hash.replace(/^#\/?/, '');
 const q = (s) => document.querySelector(s);
 const visible = (el) => { if (!el) return null; const r = el.getBoundingClientRect(); return r.width > 2 && r.height > 2 ? el : null; };
 const find = (t) => visible(typeof t === 'function' ? t() : q(t));
-const formTitle = () => q('[data-detail] [data-title]');
 
 // ---------------- The showcase scripts ----------------
 // Not a lesson: a quick "look what it can do" on the real screens. Each beat jumps to a
@@ -347,7 +345,6 @@ export function startTutorial() {
   lastTouch = Date.now();
   removeEventListener('pointerdown', touched, true);
   addEventListener('pointerdown', touched, true);
-  startCount = myEvents().length;
   clearInterval(tick);
   tick = setInterval(update, 200);
   update();

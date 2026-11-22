@@ -238,7 +238,7 @@ export function mount(el) {
     if (e.target.closest('[data-example]')) { example = exampleBoard(); setBoard(); page = 0; render(); restartFlip(); return; }
     if (e.target.closest('[data-quiet]')) return; // the words, or the link to the radar
     const row = e.target.closest('[data-hex]');
-    if (row) { location.hash = `#/flights/${row.dataset.hex}`; return; }
+    if (row) { location.hash = `#/flights/${encodeURIComponent(row.dataset.hex)}`; return; }
     show(mode === 'departures' ? 'arrivals' : 'departures');
   });
   el.querySelectorAll('[data-mode]').forEach((b) => b.addEventListener('click', () => show(b.dataset.mode)));

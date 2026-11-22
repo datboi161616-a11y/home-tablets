@@ -323,7 +323,6 @@ const MU = 398600.4418; // km^3/s^2
 const RE = 6378.137; // km
 const J2 = 1.08262668e-3;
 const F_WGS = 1 / 298.257223563;
-const AU_KM = 149597870.7;
 
 /** Builds a position function (ECI, km) from a CelesTrak OMM JSON record. */
 export function makeOrbit(omm) {

@@ -17,6 +17,9 @@ has `adb`) and a USB-C cable that carries data.
 1. Plug the tablet in. Tap **Allow** (tick "Always allow") when the tablet asks.
 2. Double-click **`setup\Setup tablet.bat`** in this project.
 3. Pick **1** (Family) or **2** (Tom), and a grown-up PIN (Enter = `2512`).
+4. Say which **time zone** the tablet will live in, if it isn't yours. A Wi-Fi tablet
+   can't work that out by itself, so a gift sent to another zone would show the wrong
+   hour. (It can be changed later on the screen: Settings → Clock & night → Time zone.)
 
 The script first looks the tablet over (Android and browser-engine versions, battery,
 Wi-Fi, clock, free space) and marks anything worth a look with `!`. Then it downloads

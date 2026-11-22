@@ -244,10 +244,22 @@ if ($alreadySetUp) {
 }
 do { $choice = Read-Host "  Type $($choices -join ', ')" } while ($choice -notin $choices)
 
+# A gift is set up here and may live in another time zone; a Wi-Fi tablet can't work that
+# out for itself, and its own Date and time page is behind the grown-up menu.
+Say ''
+Say "  Its clock is on: $zone"
+Say '  Will it live in another time zone?'
+Say '  1) No, leave it   2) Eastern   3) Central   4) Mountain   5) Arizona   6) Pacific   7) Alaska   8) Hawaii'
+do { $tzChoice = Read-Host '  Type 1 to 8 (press Enter for 1)'; if (-not $tzChoice) { $tzChoice = '1' } } while ($tzChoice -notin @('1', '2', '3', '4', '5', '6', '7', '8'))
+$zones = @{ '2' = 'America/New_York'; '3' = 'America/Chicago'; '4' = 'America/Denver'; '5' = 'America/Phoenix'; '6' = 'America/Los_Angeles'; '7' = 'America/Anchorage'; '8' = 'Pacific/Honolulu' }
+$newZone = ''
+$zoneArg = ''
+if ($zones.ContainsKey($tzChoice)) { $newZone = $zones[$tzChoice]; $zoneArg = " --es timezone $newZone" }
+
 $pin = ''
 if ($choice -eq '3') {
     $screens = 'as before'
-    $null = Adb "shell am start -n $Pkg/.MainActivity"
+    $null = Adb "shell am start -n $Pkg/.MainActivity$zoneArg"
     Say '  Started again, with the screens and PIN it had.' 'Green'
 } else {
     $screens = if ($choice -eq '2') { 'tom' } else { 'family' }
@@ -255,12 +267,17 @@ if ($choice -eq '3') {
         $pin = Read-Host '  Grown-up PIN, 4-8 digits (press Enter for 2512)'
         if (-not $pin) { $pin = '2512' }
     } while ($pin -notmatch '^\d{4,8}$')
-    $null = Adb "shell am start -n $Pkg/.MainActivity --es profile $screens --es pin $pin"
+    $null = Adb "shell am start -n $Pkg/.MainActivity --es profile $screens --es pin $pin$zoneArg"
     Say "  Started with $screens screens." 'Green'
 }
 
 # Is it really up, and locked to the app? (Give it a moment to draw.)
 Start-Sleep -Seconds 4
+if ($newZone) {
+    $nowZone = Adb 'shell getprop persist.sys.timezone'
+    if ($nowZone -eq $newZone) { Say "  Its clock is now on $newZone." 'Green' }
+    else { Warn "The time zone is still $nowZone. Once it is at its new home: Menu > Settings > Clock & night > Time zone." }
+}
 $activity = Adb 'shell dumpsys activity activities'
 if ($activity -match "mResumedActivity:[^\r\n]*$([regex]::Escape($Pkg))") { Say '  The home screen is showing.' 'Green' }
 else { Warn 'The home screen is not in front. Look at the tablet: it may be asking a question (tap Allow / OK), then press its Home button.' }

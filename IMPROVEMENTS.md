@@ -577,3 +577,18 @@ from are counted.
 505. The radar's header line fits again when the feed is away.
 506. The trivia streak says "0 days" instead of a bare dash, and the score line fits in its longest case.
 507. Tom's deck opens in about a third of the time on the real tablet (measured: 0.8 s down to 0.2-0.35 s): the Space Station sums wait until the deck is drawn, and screens share one answer.
+
+## 23 · Ready for the real world
+
+508. A content policy on every screen: only the site's own script files can run, whatever text arrives from outside (a calendar invitation, a note from a phone, the name of a plane). Checked on the real tablet's own browser engine.
+509. Two places where outside text could have become part of the page (a recipe's name in a timer chip, a date from the weather service) are closed; addresses of plane photos and names in links are checked as well.
+510. For whoever looks after the code: `node tools/sim/escape-test.mjs` feeds hostile text through fourteen ways outside text can reach a screen, and fails if any of it becomes markup.
+511. Before anything is published, the built site is opened in a real browser: every screen, as a kitchen screen and as Tom's deck, with no internet behind it. A screen that can't open, an error nobody catches, or "undefined" on a screen stops the publish, and the tablets keep what they have.
+512. The same test runs in Chromium 81, the tablets' own browser engine, on every publish.
+513. The checks include a lint for real mistakes (a name that doesn't exist, something declared twice). The code came out clean; four leftovers were removed.
+514. A screen that starts for the first time without Wi-Fi (set up in one house, unwrapped in another) begins its tour by helping to connect, and carries on by itself once connected.
+515. The time zone can be chosen in Settings → Clock & night and at setup, and the screen sets its own clock (with the next app version); a Wi-Fi tablet can't work its zone out, so a gift sent to another zone would otherwise show the wrong hour.
+516. Requests for the screen's own files have time limits: on a connection that neither answers nor fails, Recipes says it couldn't load instead of "Loading…" for ever, and one stuck file no longer stops the rest being kept for offline use.
+517. The screen's diary tells a record (the screens updated themselves) from trouble, so an update no longer reads as "one thing went wrong".
+518. The site asks search engines not to list it.
+519. The guides say how a publish is checked and how to take a change back, and have a "When something goes wrong" table: what the owner says, what it is, what to do.

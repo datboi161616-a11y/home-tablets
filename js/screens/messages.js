@@ -118,7 +118,7 @@ function renderBoard() {
       </div>
       ${f.photo ? `
         <div style="flex-grow:1;min-height:0;border-radius:16px;background:#C9CFD6;overflow:hidden">
-          <img src="${f.photo}" alt="" style="width:100%;height:100%;object-fit:cover;display:block">
+          <img src="${esc(f.photo)}" alt="" style="width:100%;height:100%;object-fit:cover;display:block">
         </div>
         ${f.text ? `<div data-fbox style="position:relative;flex:none"><div data-ftext class="display msg-words" style="font-size:${f.text.length > 120 ? 26 : 34}px;font-weight:500;line-height:1.25;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden">“${esc(f.text)}”</div></div>` : ''}`
       : `
@@ -207,7 +207,7 @@ function openReader(m) {
         <button data-r="close" class="msg-pill">Close</button>
       </div>
       <div class="msg-scroll" style="min-height:0;display:flex;flex-direction:column;gap:18px">
-        ${m.photo ? `<img src="${m.photo}" alt="" style="width:100%;height:360px;object-fit:contain;border-radius:16px;background:#F3F4F6;flex:none">` : ''}
+        ${m.photo ? `<img src="${esc(m.photo)}" alt="" style="width:100%;height:360px;object-fit:contain;border-radius:16px;background:#F3F4F6;flex:none">` : ''}
         ${m.text ? `<div class="display msg-words" style="font-size:28px;font-weight:500;line-height:1.35;flex:none">“${esc(m.text)}”</div>` : ''}
       </div>
     </div>`, (e) => {

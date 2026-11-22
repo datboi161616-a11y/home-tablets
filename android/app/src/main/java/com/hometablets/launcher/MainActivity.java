@@ -384,6 +384,26 @@ public class MainActivity extends Activity {
      *   adb shell am start -n com.hometablets.launcher/.MainActivity --es site http://localhost:5173/
      * and "--es site off" to go back.
      */
+    /**
+     * Put the tablet's clock on another time zone. Only this app can, as the tablet's
+     * owner app; a Wi-Fi tablet has no phone network to learn its zone from, and Android's
+     * own Date and time page is behind the grown-up menu.
+     */
+    boolean applyTimeZone(String zone) {
+        if (zone == null || !zone.matches("[A-Za-z_]+(/[A-Za-z0-9_+\\-]+)+")) return false;
+        if (!java.util.Arrays.asList(java.util.TimeZone.getAvailableIDs()).contains(zone)) return false;
+        if (java.util.TimeZone.getDefault().getID().equals(zone)) return true;
+        if (!Kiosk.isOwner(this)) return false;
+        try {
+            android.app.admin.DevicePolicyManager dpm = getSystemService(android.app.admin.DevicePolicyManager.class);
+            // "Automatic time zone" can't work without a phone network, and blocks the change.
+            dpm.setGlobalSetting(Kiosk.admin(this), Settings.Global.AUTO_TIME_ZONE, "0");
+            return dpm.setTimeZone(Kiosk.admin(this), zone);
+        } catch (Throwable t) {
+            return false;
+        }
+    }
+
     String siteBase() {
         String dev = usbDebugging() ? prefs.getString("devSite", null) : null;
         return dev != null ? dev : BuildConfig.SITE_URL;
@@ -444,6 +464,10 @@ public class MainActivity extends Activity {
             prefs.edit().remove("devSite").apply();
             changed = true;
         }
+        // The time zone the tablet is going to live in, e.g. --es timezone America/Chicago
+        // (a gift is set up in one zone and may be unwrapped in another).
+        String zone = intent.getStringExtra("timezone");
+        if (zone != null && applyTimeZone(zone)) changed = true;
         // Automated emulator test only: make the page's process die the way it does when
         // memory runs out, to check the app brings the screens back (--es test page-crash).
         if ("page-crash".equals(intent.getStringExtra("test"))) {
@@ -1233,6 +1257,14 @@ public class MainActivity extends Activity {
             int level = Math.round(max * Math.max(0, Math.min(100, percent)) / 100f);
             try { am.setStreamVolume(android.media.AudioManager.STREAM_MUSIC, level, 0); } catch (SecurityException ignored) { }
         }
+
+        /** The time zone the tablet's clock follows, e.g. "America/New_York". */
+        @JavascriptInterface
+        public String timeZone() { return java.util.TimeZone.getDefault().getID(); }
+
+        /** Change it (Settings, Clock and night). True when the clock now follows that zone. */
+        @JavascriptInterface
+        public boolean setTimeZone(String zone) { return !isGhost && applyTimeZone(zone); }
 
         /** "online" (the internet answers), "connected" (a network, but no internet) or "off". */
         @JavascriptInterface

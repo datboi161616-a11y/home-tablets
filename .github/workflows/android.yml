@@ -214,6 +214,18 @@ jobs:
           adb logcat -d | grep "HomeTablet: Page process gone"
           adb exec-out screencap -p > shot-after-page-died.png
 
+          # The time zone can be set at setup (a gift may live in another zone than the PC).
+          adb shell am start -n com.hometablets.launcher/.MainActivity --es timezone Pacific/Honolulu
+          sleep 4
+          zone=$(adb shell getprop persist.sys.timezone | tr -d '\r')
+          echo "time zone -> $zone"; [ "$zone" = "Pacific/Honolulu" ]
+          adb shell am start -n com.hometablets.launcher/.MainActivity --es timezone "Not/A_Real_Zone"
+          sleep 2
+          zone=$(adb shell getprop persist.sys.timezone | tr -d '\r')
+          echo "nonsense zone -> still $zone"; [ "$zone" = "Pacific/Honolulu" ]
+          adb shell am start -n com.hometablets.launcher/.MainActivity --es timezone America/New_York
+          sleep 3
+
           adb shell am start -n com.hometablets.launcher/.MainActivity --es profile tom
           sleep 35
           adb exec-out screencap -p > shot-tom.png

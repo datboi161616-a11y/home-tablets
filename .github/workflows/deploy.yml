@@ -73,20 +73,25 @@ jobs:
           BROWSER="$BROWSER" node tools/sim/smoke.mjs
 
       # The same again in the tablets' own engine: Chromium 81, the build Google keeps for
-      # exactly this kind of testing. It is ten years of web behind the browser above, so
-      # it catches what only an old engine trips over. If that old build can't be fetched
-      # or started one day, the publish still goes ahead: this step warns, it doesn't block.
+      # exactly this kind of testing. It is years of web behind the browser above, so it
+      # catches what only an old engine trips over. A screen that fails HERE stops the
+      # publish like any other. Only if that old build can't be fetched or won't start one
+      # day does the publish go ahead without it, with a warning on the run.
       - name: The same, in the tablets' own engine (Chromium 81)
         timeout-minutes: 8
-        continue-on-error: true
         run: |
-          curl -sSfL -o chromium81.zip "https://commondatastorage.googleapis.com/chromium-browser-snapshots/Linux_x64/737027/chrome-linux.zip"
-          unzip -q chromium81.zip -d chromium81
-          chromium81/chrome-linux/chrome --version || true
-          if ! BROWSER="$PWD/chromium81/chrome-linux/chrome" HEADLESS_FLAG="--headless" node tools/sim/smoke.mjs; then
-            echo "::warning::The built site did not pass in Chromium 81, the tablets' engine. Read this step's output before trusting this publish."
-            exit 1
+          if ! curl -sSfL -o chromium81.zip "https://commondatastorage.googleapis.com/chromium-browser-snapshots/Linux_x64/737027/chrome-linux.zip" \
+             || ! unzip -q chromium81.zip -d chromium81 || ! chromium81/chrome-linux/chrome --version; then
+            echo "::warning::Chromium 81 couldn't be fetched or started, so the site was NOT tested in the tablets' own engine this time."
+            exit 0
           fi
+          rc=0
+          BROWSER="$PWD/chromium81/chrome-linux/chrome" HEADLESS_FLAG="--headless" node tools/sim/smoke.mjs || rc=$?
+          if [ "$rc" = 2 ]; then
+            echo "::warning::Chromium 81 didn't start, so the site was NOT tested in the tablets' own engine this time."
+            exit 0
+          fi
+          exit $rc
 
       - uses: actions/configure-pages@v5
 

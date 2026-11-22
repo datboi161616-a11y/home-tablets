@@ -251,11 +251,12 @@ export function mount(el, ctx = {}) {
     box.style.display = 'none';
     if (!hex) return;
     getAircraftInfo(hex).then((info) => {
-      if (!alive() || photoHex !== hex || !info || !info.photo) return;
+      // Only a plain web address from the feed becomes a picture (never data: or javascript:).
+      if (!alive() || photoHex !== hex || !info || !/^https?:\/\//i.test(info.photo || '')) return;
       const img = new Image();
       img.onload = () => {
         if (!alive() || photoHex !== hex) return;
-        box.style.backgroundImage = `url('${encodeURI(info.photo)}')`;
+        box.style.backgroundImage = `url('${encodeURI(info.photo).replace(/['()\\]/g, (c) => `%${c.charCodeAt(0).toString(16).toUpperCase()}`)}')`;
         setText($('[data-s-reg]'), [info.reg, info.owner].filter(Boolean).join(' · '));
         box.style.display = 'block';
       };

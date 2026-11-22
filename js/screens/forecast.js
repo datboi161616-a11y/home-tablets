@@ -475,7 +475,7 @@ export function mount(el) {
 
 function dayCard(d) {
   return `
-    <div class="card f-day"${d.date ? ` data-f-date="${d.date}" role="button"` : ''} style="background:${d.icon ? wxTint(d.icon) : 'var(--card)'}">
+    <div class="card f-day"${d.date ? ` data-f-date="${esc(d.date)}" role="button"` : ''} style="background:${d.icon ? wxTint(d.icon) : 'var(--card)'}">
       <div class="f-day-name" style="${d.weekend ? `background:#FBE4DA;color:${settings.accent}` : ''}">${d.day}</div>
       <div style="display:flex;flex-direction:column;align-items:center;gap:2px">
         ${d.icon ? wxIcon(d.icon, 50) : '<div style="height:44px"></div>'}

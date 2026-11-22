@@ -90,6 +90,10 @@ Each tablet remembers its profile. Open the site once with `?profile=tom` or
   one screen, taps what you tell it to, and gives back what the screen says, any
   errors and a picture (`--tom` for the flight deck, `--phone=<page>` for the phone page).
 - `tools/check.sh`: the checks to run before publishing.
+- `tools/sim/smoke.mjs`: opens every screen in a real browser with no internet behind it
+  (the deploy runs it on the built site, in Chrome and in Chromium 81).
+  `tools/sim/escape-test.mjs`: feeds hostile text (`<img onerror…>`) through every way
+  outside text can reach a screen, and fails if any of it becomes markup.
 - `godseye-tablet/`: a custom build of God's Eye View for Tom's tablet. Not wired in
   yet; see its README.
 

@@ -13,7 +13,7 @@ import { manualPlace, knownPlace, findPlaces, setPlace } from '../services/locat
 import { BUILD } from '../build.js';
 import { settings, profile } from '../config.js';
 import { wipeScreen } from '../services/wipe.js';
-import { trouble, clearTrouble, runningSince, storageUsed } from '../services/trouble.js';
+import { trouble, troubleCount, clearTrouble, runningSince, storageUsed } from '../services/trouble.js';
 import { batteryNow } from '../services/notices.js';
 
 const N = () => window.TabletNative;
@@ -38,6 +38,12 @@ const SECTIONS = DECK ? [
 ];
 const NIGHT_SCREEN = DECK ? 'viewscreen' : 'night';
 const SECTION_KEY = 'settings.section';
+// A screen on Wi-Fi alone can't work out its time zone; one set up in one zone and unwrapped
+// in another shows the wrong hour until somebody says where it lives (needs app 1.30).
+const ZONES = [['America/New_York', 'Eastern'], ['America/Chicago', 'Central'], ['America/Denver', 'Mountain'], ['America/Phoenix', 'Arizona'],
+  ['America/Los_Angeles', 'Pacific'], ['America/Anchorage', 'Alaska'], ['Pacific/Honolulu', 'Hawaii']];
+const canSetZone = () => { try { return !!(N() && N().setTimeZone && N().timeZone); } catch (e) { return false; } };
+const zoneNow = () => { try { return String(N().timeZone()); } catch (e) { return ''; } };
 
 let netTimer = null;
 let sendTimer = null;
@@ -109,6 +115,11 @@ export function mount(el) {
     .st-places{display:flex;flex-direction:column;gap:8px}
     .st-place{min-height:52px;padding:0 20px;border:2px solid var(--line);border-radius:14px;background:#fff;text-align:left;font-family:inherit;font-size:19px;font-weight:600;color:var(--ink);cursor:pointer}
     .st-back{background:#fff}
+    .st-zones{display:flex;flex-wrap:wrap;gap:8px}
+    .st-zones button{min-height:48px;padding:0 18px;border:0;border-radius:999px;background:var(--bg);font-family:inherit;font-size:18px;font-weight:600;color:var(--ink-2);cursor:pointer}
+    .st-zones button.on{background:var(--ink);color:#fff}
+    .deck .st-zones button{background:#12203A}
+    .deck .st-zones button.on{background:#5CE1E6;color:#05070D}
     /* "More below": a section longer than the card says so, until its end is reached. */
     .st-more{position:sticky;bottom:-30px;margin:-34px -36px -30px;padding:26px 0 14px;text-align:center;font-size:16px;font-weight:600;color:var(--ink-2);pointer-events:none;flex:none;
       background:linear-gradient(rgba(255,255,255,0),#fff 55%);transition:opacity .2s}
@@ -204,6 +215,8 @@ export function mount(el) {
         </div>`);
     },
     clock: () => row('Clock', `<div class="st-line">${seg('clock24', [['12', '12-hour'], ['24', '24-hour']])}<span class="st-hint" data-clock-now></span></div>`)
+      + (canSetZone() ? row('Time zone', `<div class="st-zones" data-zones>${ZONES.map(([id, name]) => `<button data-zone="${id}"${id === zoneNow() ? ' class="on"' : ''}>${name}</button>`).join('')}</div>`,
+        `<span data-zone-hint>${ZONES.some(([id]) => id === zoneNow()) ? '' : `It is on ${esc(zoneNow().replace(/_/g, ' '))} time now. `}The screen can’t work this out by itself. If the clock is an hour or more out, tap where it lives.</span>`) : '')
       + row(DECK ? 'Starfield at night' : 'Night clock', `<div class="st-line" style="flex-wrap:wrap;row-gap:10px">
           ${seg('night', [['1', 'On'], ['0', 'Off']])}
           <div data-hours class="st-line" style="gap:10px">
@@ -346,6 +359,22 @@ export function mount(el) {
       pane.querySelector('[data-wipe-now]').addEventListener('click', () => wipeScreen(30));
     },
     clock() {
+      const zones = pane.querySelector('[data-zones]');
+      if (zones) {
+        zones.addEventListener('click', (e) => {
+          const b = e.target.closest('[data-zone]');
+          if (!b || b.classList.contains('on')) return;
+          let ok = false;
+          try { ok = !!N().setTimeZone(b.dataset.zone); } catch (err) { ok = false; }
+          const hint = pane.querySelector('[data-zone-hint]');
+          if (!ok) { if (hint) hint.textContent = 'Couldn’t change it from here. A grown-up can: hold the top-left corner for 5 seconds, Unlock, then Settings → System → Date & time.'; return; }
+          zones.querySelectorAll('button').forEach((x) => x.classList.toggle('on', x === b));
+          if (hint) hint.textContent = `Now on ${b.textContent} time. One moment while every clock catches up…`;
+          saved();
+          // Every time on every screen was worded for the old zone: start the page afresh.
+          setTimeout(() => location.reload(), 900);
+        });
+      }
       const stepIn = (list, now, by) => list[Math.min(list.length - 1, Math.max(0, (list.indexOf(now) < 0 ? 0 : list.indexOf(now)) + by))];
       pane.querySelector('[data-hours]').addEventListener('click', (e) => {
         const b = e.target.closest('button');
@@ -423,7 +452,7 @@ export function mount(el) {
       function showReadout() {
         if (!readout || readout.style.display === 'none') return;
         const st = netState();
-        const n = trouble().length;
+        const n = troubleCount();
         const since = new Date(runningSince());
         readout.textContent = `Version ${BUILD}${N() && N().appVersion ? `, app ${N().appVersion()}` : ''}`
           + ` · running since ${since.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' })}, ${timeText(since)}`
@@ -500,13 +529,15 @@ export function mount(el) {
       const listEl = pane.querySelector('[data-trouble-list]');
       const showTrouble = () => {
         const list = trouble();
-        troubleLine.textContent = list.length ? `${list.length === 1 ? 'One thing' : `${list.length} things`} went wrong lately (the last on ${day(list[0].at)}).` : 'Nothing has gone wrong lately.';
+        const wrong = list.filter((t) => !t.info); // the rest are records (an update), not faults
+        troubleLine.textContent = (wrong.length ? `${wrong.length === 1 ? 'One thing' : `${wrong.length} things`} went wrong lately (the last on ${day(wrong[0].at)}).` : 'Nothing has gone wrong lately.')
+          + (list.length > wrong.length ? ` ${list.length - wrong.length === 1 ? 'One note' : `${list.length - wrong.length} notes`} for the record.` : '');
         show.style.display = list.length ? '' : 'none';
       };
       showTrouble();
       show.addEventListener('click', () => {
         if (listEl.children.length) { clearTrouble(); listEl.innerHTML = ''; show.textContent = 'Show'; showTrouble(); showReadout(); return; }
-        listEl.innerHTML = trouble().map((t) => `<div><b>${esc(day(t.at))}, ${esc(timeText(new Date(t.at)))}${t.screen ? ` · ${esc(t.screen)}` : ''}${t.times > 1 ? ` · ${t.times} times` : ''}</b><br>${esc(t.what)}</div>`).join('');
+        listEl.innerHTML = trouble().map((t) => `<div><b>${esc(day(t.at))}, ${esc(timeText(new Date(t.at)))}${t.screen ? ` · ${esc(t.screen)}` : ''}${t.times > 1 ? ` · ${t.times} times` : ''}${t.info ? ' · for the record' : ''}</b><br>${esc(t.what)}</div>`).join('');
         show.textContent = 'Clear the list';
       });
     },

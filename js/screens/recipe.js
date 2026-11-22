@@ -388,7 +388,7 @@ async function start(el, args) {
       activeTimers(o.r, o.s).forEach((j) => {
         const st = status(o.s, j);
         const done = st === 'done';
-        chips += `<button class="rc-chip${done ? ' done' : ''}" data-other="${o.r.id}" data-ostep="${j}">${shortTitle(o.r.title)} · ${done ? 'Time’s up!' : fmt(remaining(o.r, o.s, j))}${st === 'paused' ? ' (paused)' : ''}</button>`;
+        chips += `<button class="rc-chip${done ? ' done' : ''}" data-other="${esc(o.r.id)}" data-ostep="${j}">${esc(shortTitle(o.r.title))} · ${done ? 'Time’s up!' : fmt(remaining(o.r, o.s, j))}${st === 'paused' ? ' (paused)' : ''}</button>`;
         if (done && Date.now() - o.s.timers[j].end < alarmMaxMs()) ringing = true;
       });
     });

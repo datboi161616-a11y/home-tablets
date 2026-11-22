@@ -19,7 +19,9 @@ const cuisineP = {};
 const byId = {}; // id -> full recipe, filled as cuisine files load
 
 async function getJson(name) {
-  const res = await fetch(BASE + name);
+  // (A time limit: on a connection that neither answers nor fails, "Loading recipes…" would
+  // stay up for ever; this way the screen says it couldn't, and offers to try again.)
+  const res = await fetch(BASE + name, { signal: AbortSignal.timeout(20000) });
   if (!res.ok) throw new Error(`${name}: ${res.status}`);
   return res.json();
 }
@@ -323,7 +325,7 @@ export async function prefetchAll() {
     const ix = await loadIndex();
     for (const c of ix.cuisines) {
       if (c.id === 'mine') continue; // kept on the tablet, not a file
-      await fetch(BASE + `${c.id}.json`).catch(() => null);
+      await fetch(BASE + `${c.id}.json`, { signal: AbortSignal.timeout(30000) }).catch(() => null);
       await new Promise((r) => setTimeout(r, 1500));
     }
     localStorage.setItem('recipes.prefetched', today);
