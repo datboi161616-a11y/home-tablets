@@ -10,7 +10,7 @@ import { tonight } from '../services/meal-plan.js';
 import { unreadCount, onMessagesChanged } from '../services/messages-data.js';
 import { getAlerts, untilText, alertColor } from '../services/weather-alerts.js';
 
-let timer, photoTimer, refreshTimer, offPhotos, onCalendar, offNotes;
+let timer, photoTimer, refreshTimer, offPhotos, onCalendar, offNotes, offFonts;
 
 const REFRESH_MS = 15 * 60 * 1000; // weather, "Coming up" and dinner stay fresh all day
 
@@ -205,19 +205,27 @@ export function mount(el) {
 
   // "Thanksgiving" beside "Thursday" does not fit the card: a name that would be cut
   // off gets the short day ("Thu") instead.
+  // (All the measuring first, then the changes: changing one row between two measurements
+  // made the tablet lay the whole card out again each time.)
   const fitComing = () => {
-    for (const when of el.querySelectorAll('[data-coming] [data-when]')) {
+    const cut = [...el.querySelectorAll('[data-coming] [data-when]')].filter((when) => {
       const name = when.parentElement.querySelector('[data-name]');
-      if (name && name.scrollWidth > name.clientWidth) when.textContent = when.dataset.short;
-    }
+      return name && name.scrollWidth > name.clientWidth;
+    });
+    cut.forEach((when) => { when.textContent = when.dataset.short; });
   };
-  fitComing();
+  // Measuring has to wait a beat. On the tablets' older browser the gaps between things
+  // are put in by compat.js right after the screen is built; measured before that there
+  // is more room than there will be, and the name was cut off after all (seen on a real
+  // tablet). "Soon" is still before anything is drawn.
+  const soon = (fit) => Promise.resolve().then(() => { if (el.isConnected) fit(); });
+  soon(fitComing);
 
   // Calendar links download in the background; redraw "Coming up" when they arrive.
   const renderComing = () => {
     if (!el.isConnected) return;
     $('[data-coming]').innerHTML = comingUpRows();
-    fitComing();
+    soon(fitComing);
   };
   onCalendar = renderComing;
   window.addEventListener('calendar-updated', onCalendar);
@@ -271,12 +279,18 @@ export function mount(el) {
     h.style.overflow = 'hidden';
     h.style.flexShrink = '';
   };
-  fitGreeting();
+  soon(fitGreeting);
   // Again once the real letters are in (they are wider than the stand-in font).
+  // Seen on a real tablet: Home is drawn before its fonts have arrived, the fit was made
+  // with the stand-in font, and "Thanksgivi..." stayed cut off until the next visit. So it
+  // is fitted again every time a font finishes loading while Home is up.
   if (document.fonts && document.fonts.ready) {
     const refit = () => { if (el.isConnected) { fitGreeting(); renderComing(); } };
     document.fonts.ready.then(refit);
-    if (document.fonts.load) document.fonts.load('500 30px Outfit').then(refit, () => {});
+    if (document.fonts.addEventListener) {
+      document.fonts.addEventListener('loadingdone', refit);
+      offFonts = () => document.fonts.removeEventListener('loadingdone', refit);
+    }
   }
 
   // Clock: tick every 10s. At midnight, the day's cards move on too.
@@ -356,5 +370,7 @@ export function unmount() {
   clearInterval(refreshTimer);
   offPhotos?.();
   offNotes?.();
+  offFonts?.();
+  offFonts = null;
   window.removeEventListener('calendar-updated', onCalendar);
 }

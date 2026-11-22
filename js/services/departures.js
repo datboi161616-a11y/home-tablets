@@ -28,7 +28,9 @@ function pickAirport(home, list, routes) {
       if (!ap?.iata || ap.lat == null) continue;
       const d = distBearing(home, ap.lat, ap.lon).dst;
       if (d > 26) continue;
-      const s = (score[ap.iata] ||= { ap, d, n: 0 });
+      // (Written out rather than with ||=, so the tablets' engine can run this file as it is
+      // when the screens are tried straight from a PC: see tools/sim/serve.py.)
+      const s = score[ap.iata] || (score[ap.iata] = { ap, d, n: 0 });
       s.n += ac.onGround || ac.alt < 12000 ? 2 : 1;
     }
   }

@@ -130,6 +130,30 @@ export function mount(el, { args = [] } = {}) {
   const root = el.querySelector('[data-root]');
   const here = location.hash;
 
+  // ---- Long lists: a screenful first, the rest a moment later ----
+  // All 125 cards of a cuisine at once kept a real tablet busy for over half a second
+  // before anything showed. Now the first dozen are drawn, and the rest are added right
+  // after. (Going back to a spot far down the list still builds it whole, so the list
+  // can be put back where it was.)
+  const FIRST_CARDS = 12;
+  let moreToCome = null;
+  const cards = (list, card, spot = here) => {
+    const whole = list.length <= FIRST_CARDS || !!(memo().scroll || {})[spot];
+    moreToCome = whole ? null : { rest: list.slice(FIRST_CARDS), card };
+    return (whole ? list : list.slice(0, FIRST_CARDS)).map(card).join('');
+  };
+  const restOfCards = (box) => {
+    const more = moreToCome;
+    moreToCome = null;
+    if (!more || !box) return;
+    const add = () => {
+      if (!box.isConnected) return;
+      box.insertAdjacentHTML('beforeend', more.rest.splice(0, 45).map(more.card).join(''));
+      if (more.rest.length) setTimeout(add, 40);
+    };
+    setTimeout(add, 60);
+  };
+
   // Remember how far down the list was scrolled (per page), and put it back on return.
   // `key()` names the spot (the page, plus the search words when searching); null = don't keep.
   const keepScroll = (box, key = () => here) => {
@@ -158,8 +182,9 @@ export function mount(el, { args = [] } = {}) {
       root.innerHTML = `
         ${kitchenTop({ title: 'Favorites', back: '#/recipes', backLabel: '← Recipes', active: 'recipes' })}
         <div class="k-scroll">${list.length
-          ? `<div class="rb-cards">${list.map((r) => recipeCard(r, planned, names[r.c])).join('')}</div>`
+          ? `<div class="rb-cards">${cards(list, (r) => recipeCard(r, planned, names[r.c]))}</div>`
           : '<div class="k-empty">Tap the ♡ on any recipe to keep it here.</div>'}</div>`;
+      restOfCards(root.querySelector('.rb-cards'));
       keepScroll(root.querySelector('.k-scroll'));
       fillCounts(root);
       return;
@@ -225,9 +250,10 @@ export function mount(el, { args = [] } = {}) {
         if (!el.isConnected || input.value.trim() !== q) return;
         body.innerHTML = hits.length
           ? `<div class="rb-found">${hits.length >= 120 ? 'Over 100' : hits.length} recipe${hits.length === 1 ? '' : 's'} found for “${esc(q)}”</div>
-             <div class="rb-cards">${hits.map((r) => recipeCard(r, planned, names[r.c])).join('')}</div>`
+             <div class="rb-cards">${cards(hits, (r) => recipeCard(r, planned, names[r.c]), restoring ? `${here}?${q}` : '')}</div>`
           : `<div class="k-empty">Nothing found for “${esc(q)}”.<br>Try one simple word, like “chicken” or “soup”.
                <button data-clear class="k-btn line">Clear the search</button></div>`;
+        restOfCards(body.querySelector('.rb-cards'));
         if (!restoring) { body.scrollTop = 0; return; }
         else { const at = (memo().scroll || {})[`${here}?${q}`]; if (at) body.scrollTop = at; }
       };
@@ -262,9 +288,10 @@ export function mount(el, { args = [] } = {}) {
             <div class="rb-types-art" style="background:${cuisineColor(cuisine.id)}">${cuisineArt(cuisine)}</div>
           </div>
           <div class="k-scroll">${list.length
-            ? `<div class="rb-cards">${list.map((r) => recipeCard(r, planned)).join('')}</div>`
+            ? `<div class="rb-cards">${cards(list, (r) => recipeCard(r, planned))}</div>`
             : `<div class="k-empty">${cuisine.id === 'mine' ? 'Your own recipes live here.<a href="#/myrecipe" class="k-btn solid">+ Add a recipe</a>' : 'Nothing here yet.'}</div>`}</div>
         </div>`;
+      restOfCards(root.querySelector('.rb-cards'));
       keepScroll(root.querySelector('.k-scroll'));
       // The picture only fills spare room under a short list; a long list keeps it all.
       const pic = root.querySelector('.rb-types-art');
