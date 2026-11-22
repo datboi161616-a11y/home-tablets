@@ -5,8 +5,15 @@
 // in frame, and you tap "Take photo" — a 3-2-1 countdown runs, then it snaps.
 // A "Camera on" badge and shutter sound mean nobody is ever filmed unawares.
 import { profile } from '../config.js';
-import { savePhoto, saveVideo, isTablet } from '../services/tablet-photos.js';
+import { savePhoto, saveVideo, isTablet, albumFull, ALBUM_MAX } from '../services/tablet-photos.js';
 import { C } from '../art.js';
+import { timeText } from '../services/display.js';
+
+// The self-timer for "Take photo": off, 3 or 10 seconds, so people can step back into the
+// picture. Remembered on this screen (it is the same family taking the next one).
+const TIMERS = [0, 3, 10];
+const TIMER_KEY = 'camera.timer';
+const rememberedTimer = () => { try { const n = +localStorage.getItem(TIMER_KEY); return TIMERS.indexOf(n) >= 0 ? n : 0; } catch (e) { return 0; } };
 
 // Camera picture for the screens without a live view (starting, unavailable). Drawn for the black
 // background: a dim halo, a slate camera. Never shown over the live picture.
@@ -33,7 +40,8 @@ const log = (m) => {
   console.log('[camera] ' + m);
   try { window.TabletNative && window.TabletNative.log && window.TabletNative.log(m); } catch { /* not on tablet */ }
 };
-const stamp = () => new Date().toLocaleString('en-US', { month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit' });
+// "Nov 21, 9:15 PM", or "Nov 21, 21:15" when the owner chose the 24-hour clock.
+const stamp = (d = new Date()) => `${d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}, ${timeText(d)}`;
 
 function shutterSound() {
   try {
@@ -66,7 +74,7 @@ export function mount(el) {
     .cam-badge{position:absolute;top:28px;left:28px;display:flex;align-items:center;gap:10px;background:rgba(0,0,0,.5);padding:10px 18px;border-radius:999px;font-size:18px;font-weight:600}
     .cam-rec{width:12px;height:12px;border-radius:50%;background:#FF3B30;animation:cam-pulse 1.4s infinite}
     @keyframes cam-pulse{0%,100%{opacity:1}50%{opacity:.3}}
-    .cam-done{position:absolute;top:28px;right:28px;background:rgba(0,0,0,.5);color:#fff;border-radius:999px;padding:12px 22px;font-size:16px;font-weight:600;text-decoration:none;min-height:44px;display:flex;align-items:center}
+    .cam-done{position:absolute;top:28px;right:28px;background:rgba(0,0,0,.5);color:#fff;border-radius:999px;padding:0 28px;font-size:18px;font-weight:600;text-decoration:none;min-height:56px;display:flex;align-items:center}
     .cam-shutter{position:absolute;left:50%;bottom:32px;transform:translateX(-50%);width:88px;height:88px;border-radius:50%;background:#fff;border:6px solid rgba(255,255,255,.5);cursor:pointer}
     .cam-shutter:active{transform:translateX(-50%) scale(.92)}
     .cam-shutter.rec{background:#FF3B30}
@@ -74,19 +82,27 @@ export function mount(el) {
     .cam-shutter.wait{opacity:.4;pointer-events:none}
     .cam-shutter.rec::after{content:'';position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:28px;height:28px;border-radius:5px;background:#fff}
     .cam-mode{position:absolute;left:50%;bottom:140px;transform:translateX(-50%);display:flex;gap:8px;background:rgba(0,0,0,.5);border-radius:999px;padding:5px}
-    .cam-mode button{border:0;background:transparent;color:#bbb;font-size:16px;font-weight:600;padding:8px 18px;border-radius:999px;cursor:pointer;min-height:44px}
+    .cam-mode button{border:0;background:transparent;color:#ccc;font-size:18px;font-weight:600;padding:0 26px;border-radius:999px;cursor:pointer;min-height:52px;font-family:inherit}
     .cam-mode button.on{background:#fff;color:#111}
+    .cam-timer{position:absolute;left:50%;bottom:48px;margin-left:84px;border:0;background:rgba(0,0,0,.55);color:#fff;border-radius:999px;padding:0 22px;
+      min-height:56px;font-size:18px;font-weight:600;cursor:pointer;font-family:inherit;white-space:nowrap}
+    .cam-timer.on{background:#fff;color:#111}
     .cam-time{position:absolute;left:50%;top:28px;transform:translateX(-50%);background:rgba(0,0,0,.5);padding:8px 16px;border-radius:999px;font-size:18px;font-weight:600;display:none}
+    .cam-time.soon{background:#C2491F}
+    .cam-hint{position:absolute;left:50%;top:50%;margin-top:130px;transform:translateX(-50%);background:rgba(0,0,0,.6);padding:12px 24px;border-radius:999px;font-size:20px;font-weight:600;display:none;white-space:nowrap}
+    .cam-ok{position:absolute;left:50%;top:28px;transform:translateX(-50%);background:#2F6B4F;color:#fff;padding:0 28px;border-radius:999px;font-size:22px;font-weight:700;
+      min-height:56px;display:flex;align-items:center;opacity:0;transition:opacity .3s;pointer-events:none;white-space:nowrap}
+    .cam-ok.bad{background:#C2491F}
     .cam-flash{position:absolute;top:0;right:0;bottom:0;left:0;background:#fff;opacity:0;pointer-events:none}
     .cam-flash.go{animation:cam-flash .35s ease-out}
     @keyframes cam-flash{0%{opacity:.9}100%{opacity:0}}
     .cam-count{position:absolute;top:0;right:0;bottom:0;left:0;display:none;align-items:center;justify-content:center;font-size:220px;font-weight:700;text-shadow:0 4px 30px rgba(0,0,0,.6)}
-    .cam-saved{position:absolute;bottom:40px;left:28px;background:rgba(0,0,0,.6);color:#fff;text-decoration:none;border-radius:16px;padding:10px 14px;display:none;gap:12px;align-items:center;font-size:15px;min-height:74px}
-    .cam-see{font-weight:700;text-decoration:underline}
-    .cam-saved img{width:72px;height:54px;object-fit:cover;border-radius:8px}
+    .cam-saved{position:absolute;bottom:36px;left:28px;max-width:420px;background:rgba(0,0,0,.7);color:#fff;text-decoration:none;border-radius:18px;padding:12px 18px 12px 12px;display:none;gap:14px;align-items:center;font-size:18px;line-height:1.3;min-height:84px}
+    .cam-see{font-weight:700;text-decoration:underline;white-space:nowrap}
+    .cam-saved img{width:96px;height:72px;object-fit:cover;border-radius:10px;flex:none}
     .cam-wait{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);background:rgba(0,0,0,.55);padding:14px 26px;border-radius:999px;font-size:22px;font-weight:600}
     .cam-idle{position:absolute;left:50%;top:96px;transform:translateX(-50%);background:rgba(0,0,0,.7);padding:14px 26px;border-radius:999px;font-size:20px;font-weight:600;display:none;white-space:nowrap}
-    .cam-btn{border:0;background:#fff;color:#111;border-radius:999px;padding:12px 26px;font-size:18px;font-weight:600;min-height:48px;cursor:pointer;font-family:inherit}
+    .cam-btn{border:0;background:#fff;color:#111;border-radius:999px;padding:0 30px;font-size:18px;font-weight:600;min-height:56px;cursor:pointer;font-family:inherit}
     .cam-art{position:absolute;left:50%;top:50%;margin:-215px 0 0 -120px;pointer-events:none}
     .cam-msg{position:absolute;top:0;right:0;bottom:0;left:0;display:none;flex-direction:column;align-items:center;justify-content:center;gap:16px;text-align:center;padding:40px;background:#000}
   </style>
@@ -96,13 +112,16 @@ export function mount(el) {
     <a class="cam-done" href="${back()}">Done</a>
     <div class="cam-time" data-time>0:00</div>
     <div class="cam-count" data-count></div>
+    <div class="cam-hint" data-count-hint>Tap the round button to stop</div>
     <div class="cam-flash" data-flash></div>
+    <div class="cam-ok" data-ok></div>
     <div class="cam-art" data-wait-art>${camArt()}</div>
     <div class="cam-wait" data-wait>Starting camera…</div>
     <div class="cam-idle" data-idle></div>
-    <a class="cam-saved" data-saved href="#/photos"><img data-thumb alt=""><span data-saved-text>Saved to photos</span><span class="cam-see">See it ›</span></a>
+    <a class="cam-saved" data-saved href="#/photos"><img data-thumb alt=""><span data-saved-text>Saved to photos</span><span class="cam-see" data-see>See it ›</span></a>
     <div class="cam-mode"><button data-m="photo" class="on">Photo</button><button data-m="video">Video</button></div>
     <button class="cam-shutter wait" data-shutter aria-label="Take photo"></button>
+    <button class="cam-timer" data-timer></button>
     <div class="cam-msg" data-msg></div>
   </div>`;
 
@@ -115,21 +134,44 @@ export function mount(el) {
   const live = () => visit === v;
   const later = (fn, ms) => { v.timers.push(setTimeout(() => { if (live()) fn(); }, ms)); };
 
-  let savedTimer = 0;
-  function showSaved(text, thumb, ok = true) {
+  let savedTimer = 0, okTimer = 0;
+  /**
+   * The box in the corner after a photo or video: what happened, a small copy, and a link.
+   * `link`: { href, label } (default: "See it" in the photo frame), or null for none.
+   * `stay`: keep it up (used while a video is still being saved).
+   */
+  function showSaved(text, thumb, ok = true, link, stay) {
     $('[data-saved-text]').textContent = text;
     const img = $('[data-thumb]');
     img.style.display = thumb ? '' : 'none';
     if (thumb) img.src = thumb;
     // "See it" opens the photo frame, which starts with the newest picture: this one.
+    const to = link === undefined ? (ok ? { href: '#/photos', label: 'See it ›' } : null) : link;
     const box = $('[data-saved]');
-    box.querySelector('.cam-see').style.display = ok ? '' : 'none';
-    box.style.pointerEvents = ok ? '' : 'none';
+    const see = $('[data-see]');
+    see.style.display = to ? '' : 'none';
+    if (to) { see.textContent = to.label; box.setAttribute('href', to.href); }
+    box.style.pointerEvents = to ? '' : 'none';
     box.style.display = 'flex';
     clearTimeout(savedTimer);
-    savedTimer = setTimeout(() => { if (live()) box.style.display = 'none'; }, 5000);
-    v.timers.push(savedTimer);
+    if (!stay) {
+      savedTimer = setTimeout(() => { if (live()) box.style.display = 'none'; }, 7000);
+      v.timers.push(savedTimer);
+    }
   }
+  // ...and a big, plain word at the top that can be read from across the room.
+  function flashWord(text, bad) {
+    const ok = $('[data-ok]');
+    ok.textContent = text;
+    ok.classList.toggle('bad', !!bad);
+    ok.style.opacity = '1';
+    clearTimeout(okTimer);
+    okTimer = setTimeout(() => { if (live()) ok.style.opacity = '0'; }, 2500);
+    v.timers.push(okTimer);
+  }
+  // Nothing more fits in the album: say so plainly and offer the way to make room.
+  const FULL_TEXT = `The photo album is full (${ALBUM_MAX}). Remove a few to make room.`;
+  const MAKE_ROOM = { href: '#/photos/album', label: 'Make room ›' };
 
   function setWaiting(on) {
     $('[data-wait]').style.display = on ? '' : 'none';
@@ -137,16 +179,16 @@ export function mount(el) {
     $('[data-shutter]').classList.toggle('wait', on);
   }
 
-  function showProblem(text) {
+  function showProblem(text, title = 'The camera isn’t working') {
     setWaiting(false);
     const msg = $('[data-msg]');
     msg.style.display = 'flex';
     msg.innerHTML = `${camArt()}
-      <div style="font-size:32px;font-weight:600">Camera unavailable</div>
-      <div style="font-size:20px;color:#bbb">${text}</div>
+      <div style="font-size:32px;font-weight:600">${title}</div>
+      <div style="font-size:20px;color:#ccc;max-width:720px;line-height:1.4">${text}</div>
       <div style="display:flex;gap:16px;margin-top:8px">
         ${isTablet() ? '<button class="cam-btn" data-retry>Try again</button>' : ''}
-        <a class="cam-done" href="${back()}" style="position:static">Back</a>
+        <a class="cam-done" href="${back()}" style="position:static;background:rgba(255,255,255,.16)">Back</a>
       </div>`;
     const retry = msg.querySelector('[data-retry]');
     if (retry) retry.onclick = () => startCamera();
@@ -189,8 +231,14 @@ export function mount(el) {
       v.timers.push(poll);
     } catch (err) {
       if (!live()) return;
-      log('camera unavailable: ' + (err && err.name));
-      showProblem(isTablet() ? 'The camera is turned off or already in use.' : 'Open this on the tablet to use its camera.');
+      const why = (err && err.name) || '';
+      log('camera unavailable: ' + why);
+      // Say which of the usual reasons it is, so the person knows whether trying again can help.
+      if (!isTablet()) showProblem('Open this on the kitchen screen to use its camera.', 'No camera here');
+      else if (/NotAllowed|Security|PermissionDenied/.test(why)) showProblem('The screen hasn’t been allowed to use its camera. Switch the screen off and on again and choose “Allow” when it asks.', 'The camera isn’t allowed');
+      else if (/NotFound|DevicesNotFound|Overconstrained/.test(why)) showProblem('No camera answered. Tap Try again; if it still doesn’t start, restarting the screen usually helps.', 'Camera not found');
+      else if (/NotReadable|TrackStart|Abort/.test(why)) showProblem('Something else is using the camera, such as a video call. Close it, then tap Try again.', 'The camera is busy');
+      else showProblem('The camera is turned off or already in use. Tap Try again in a moment.');
     }
   }
   startCamera();
@@ -221,34 +269,66 @@ export function mount(el) {
 
   function capture() {
     if (!v.ready || !video.videoWidth) { log('capture skipped: camera not ready'); return; }
-    const c = document.createElement('canvas');
-    c.width = video.videoWidth; c.height = video.videoHeight;
-    c.getContext('2d').drawImage(video, 0, 0, c.width, c.height);
-    const jpeg = c.toDataURL('image/jpeg', 0.9);
-    const ok = savePhoto(jpeg, `Photo · ${stamp()}`);
-    log('photo ' + c.width + 'x' + c.height + ' saved=' + ok);
+    // Full already: don't flash and click as if it worked.
+    if (albumFull()) { showSaved(FULL_TEXT, null, false, MAKE_ROOM); flashWord('Not saved: the album is full', true); return; }
+    let jpeg = '';
+    try {
+      const c = document.createElement('canvas');
+      c.width = video.videoWidth; c.height = video.videoHeight;
+      c.getContext('2d').drawImage(video, 0, 0, c.width, c.height);
+      jpeg = c.toDataURL('image/jpeg', 0.9);
+    } catch (err) { log('capture failed ' + err); }
+    const ok = !!jpeg && (savePhoto(jpeg, `Photo · ${stamp()}`) || !isTablet());
+    log('photo ' + video.videoWidth + 'x' + video.videoHeight + ' saved=' + ok);
     shutterSound();
     const flash = $('[data-flash]');
     flash.classList.remove('go'); void flash.offsetWidth; flash.classList.add('go');
-    showSaved(ok || !isTablet() ? 'Saved to photos' : 'Couldn’t save the photo', jpeg, ok || !isTablet());
+    if (ok) { showSaved('Saved to the photo frame', jpeg); flashWord('✓ Photo saved'); }
+    else if (albumFull()) { showSaved(FULL_TEXT, jpeg || null, false, MAKE_ROOM); flashWord('Not saved: the album is full', true); }
+    else { showSaved('Couldn’t save the photo. Please try again.', jpeg || null, false); flashWord('Not saved', true); }
+  }
+
+  function endCountdown() {
+    $('[data-count]').style.display = 'none';
+    $('[data-count-hint]').style.display = 'none';
+    v.counting = null;
+    v.shooting = false;
   }
 
   function shoot(countdown) {
     if (v.shooting) return;
     v.shooting = true;
     const countEl = $('[data-count]');
+    const run = v.counting = {}; // tapping the button again during the countdown stops it
     const tick = (n) => {
+      if (v.counting !== run) return;
       if (n > 0) {
         countEl.style.display = 'flex'; countEl.textContent = n; shutterSound();
+        $('[data-count-hint]').style.display = 'block';
         later(() => tick(n - 1), 1000);
       } else {
-        countEl.style.display = 'none';
+        endCountdown();
         capture();
-        v.shooting = false;
       }
     };
     tick(countdown);
   }
+
+  // ---- the self-timer button (photo mode only) ----
+  let timerSecs = rememberedTimer();
+  function renderTimer() {
+    const b = $('[data-timer]');
+    b.textContent = timerSecs ? `⏱ ${timerSecs} s timer` : '⏱ Timer off';
+    b.classList.toggle('on', !!timerSecs);
+    b.style.display = v.mode === 'photo' ? '' : 'none';
+    b.setAttribute('aria-label', timerSecs ? `Self-timer: ${timerSecs} seconds. Tap to change` : 'Self-timer off. Tap to change');
+  }
+  $('[data-timer]').onclick = () => {
+    timerSecs = TIMERS[(TIMERS.indexOf(timerSecs) + 1) % TIMERS.length];
+    try { localStorage.setItem(TIMER_KEY, String(timerSecs)); } catch (e) { /* fine for this visit */ }
+    renderTimer();
+  };
+  renderTimer();
 
   const fmt = (ms) => { const s = Math.round(ms / 1000); return `${Math.floor(s / 60)}:${String(s % 60).padStart(2, '0')}`; };
 
@@ -257,6 +337,8 @@ export function mount(el) {
     const type = ['video/webm;codecs=vp8,opus', 'video/webm', 'video/mp4']
       .find((t) => window.MediaRecorder && MediaRecorder.isTypeSupported(t));
     if (!type) { showSaved('Video isn’t supported on this screen', null, false); return; }
+    // A whole minute of filming that then can't be kept would be a sad surprise: say so first.
+    if (albumFull()) { showSaved(FULL_TEXT, null, false, MAKE_ROOM); flashWord('The album is full', true); return; }
     v.starting = true;
     // Switch the microphone on just for this clip. If it can't open, record without sound.
     const mic = navigator.mediaDevices.getUserMedia({ audio: true, video: false });
@@ -275,12 +357,20 @@ export function mount(el) {
     rec.ondataavailable = (e) => { if (e.data && e.data.size) chunks.push(e.data); };
     rec.onstop = async () => {
       // Save even if they already left the screen; only touch the UI if they're still here.
+      // A minute of video takes a few seconds to put away: say so, so nobody thinks it's lost.
+      if (live()) showSaved('Saving the video…', null, false, null, true);
       try {
         const b64 = await blobToBase64(new Blob(chunks, { type }));
         const ok = saveVideo(b64, `Video · ${stamp()}`);
         log('video ' + Math.round(b64.length * 0.75 / 1024) + ' KB saved=' + ok);
-        if (live()) showSaved(ok || !isTablet() ? 'Video saved to photos' : 'Couldn’t save the video (too long?)', null, ok || !isTablet());
-      } catch (err) { log('video save failed ' + err); }
+        if (!live()) return;
+        if (ok || !isTablet()) { showSaved('Video saved to the photo frame', null, true); flashWord('✓ Video saved'); }
+        else if (albumFull()) { showSaved(FULL_TEXT, null, false, MAKE_ROOM); flashWord('Not saved: the album is full', true); }
+        else { showSaved('Couldn’t save the video. It may be too big: try a shorter one.', null, false); flashWord('Video not saved', true); }
+      } catch (err) {
+        log('video save failed ' + err);
+        if (live()) { showSaved('Couldn’t save the video. Please try again.', null, false); flashWord('Video not saved', true); }
+      }
     };
     rec.start(1000);
     v.recorder = rec;
@@ -291,8 +381,13 @@ export function mount(el) {
     $('[data-time]').style.display = 'block';
     v.recTimer = setInterval(() => {
       if (!live()) return;
-      $('[data-time]').textContent = `${fmt(Date.now() - v.recStart)} / ${fmt(MAX_VIDEO_MS)}`;
-      if (Date.now() - v.recStart >= MAX_VIDEO_MS) stopRec();
+      const took = Date.now() - v.recStart;
+      const left = Math.ceil((MAX_VIDEO_MS - took) / 1000);
+      // The last ten seconds turn red and count down, so it doesn't stop by surprise.
+      const t = $('[data-time]');
+      t.textContent = left <= 10 ? `${fmt(took)} / ${fmt(MAX_VIDEO_MS)} · stops in ${Math.max(0, left)}` : `${fmt(took)} / ${fmt(MAX_VIDEO_MS)}`;
+      t.classList.toggle('soon', left <= 10);
+      if (took >= MAX_VIDEO_MS) stopRec();
     }, 250);
   }
 
@@ -304,11 +399,14 @@ export function mount(el) {
     if (v.mic) { v.mic.getTracks().forEach((t) => t.stop()); v.mic = null; } // microphone off again
     $('[data-shutter]').classList.remove('rec');
     $('[data-time]').style.display = 'none';
+    $('[data-time]').classList.remove('soon');
   }
 
   function setMode(m) {
     if (v.recorder) stopRec();
+    if (v.counting) endCountdown(); // switching to video stops a photo countdown
     v.mode = m;
+    renderTimer();
     el.querySelectorAll('[data-m]').forEach((b) => b.classList.toggle('on', b.dataset.m === m));
     // Video mode shows a red record dot on the button, so it's clear it films rather than snaps.
     const btn = $('[data-shutter]');
@@ -317,7 +415,8 @@ export function mount(el) {
   }
 
   $('[data-shutter]').onclick = () => {
-    if (v.mode === 'photo') shoot(0);
+    if (v.mode === 'photo' && v.counting) { endCountdown(); flashWord('Timer stopped', true); }
+    else if (v.mode === 'photo') shoot(timerSecs);
     else if (v.recorder) stopRec();
     else startRec();
   };

@@ -1,9 +1,12 @@
 // Example photos for previewing the Photos screen in a normal browser (on a PC),
 // where there's no tablet album. On the tablet, photos.js shows the photos that
 // were added to this tablet from a phone. `art` is a gradient stand-in; photos.js
-// renders `src` as a background image when present.
+// renders `src` as a background image when present. `id` and `day` match what the
+// real album gives, so the album grid can be previewed too.
 export const photos = [
   {
+    id: 'sample-lake',
+    day: 'Today',
     title: 'Lake trip, summer 2025',
     caption: 'Last swim before dinner',
     addedBy: 'Mom',
@@ -11,6 +14,8 @@ export const photos = [
           linear-gradient(180deg, #F6B26B 0%, #E98B5D 30%, #A85C6B 48%, #3E5A7A 52%, #2B4560 70%, #1C2E40 100%)`,
   },
   {
+    id: 'sample-snow',
+    day: 'Yesterday',
     title: 'First snow',
     caption: 'Snowman number one of the year',
     addedBy: 'Grandpa',
@@ -19,8 +24,11 @@ export const photos = [
           linear-gradient(180deg, #8FA5BC 0%, #B7C6D4 45%, #DCE4EB 75%, #EEF2F5 100%)`,
   },
   {
+    id: 'sample-apples',
+    day: 'Nov 14',
     title: 'Apple picking',
-    caption: 'Two bushels and a lot of cider donuts',
+    // A long one, so the "Read all" card can be seen on a PC too.
+    caption: 'Two bushels and a lot of cider donuts. Sam climbed the tallest ladder in the orchard and Grandpa told the story about the year the tractor got stuck, twice',
     addedBy: 'Sam',
     art: `radial-gradient(circle at 20% 35%, #D8452E 0 3%, transparent 4%),
           radial-gradient(circle at 34% 52%, #C23A26 0 2.5%, transparent 3.5%),
@@ -29,6 +37,8 @@ export const photos = [
           linear-gradient(180deg, #B9D3E6 0%, #8DB06A 45%, #4F6B2A 80%, #3B4F22 100%)`,
   },
   {
+    id: 'sample-birthday',
+    day: 'Nov 2',
     title: 'Birthday at Nana’s',
     caption: 'Eight candles, one breath',
     addedBy: 'Dad',

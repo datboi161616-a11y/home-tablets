@@ -315,3 +315,38 @@ from are counted.
 276. For a town picked by hand in another time zone, "today", the hours and sunrise are right (today could show "--°").
 277. A damaged saved copy or full storage no longer stops the weather on Home, the Menu, the night clock and the photo frame, and a missing temperature is no longer shown as "0°".
 278. Missing numbers show "--", never "undefined°".
+
+## 12 · Photo frame, camera and adding photos
+
+279. "All photos" on the photo frame opens a grid of everything on the screen, newest first, with who sent each and when; tap one to jump to it.
+280. Several photos can be removed at once from the grid: tick them (or "Choose all"), then one question to confirm.
+281. The grid uses small copies made once and kept, so an album of hundreds doesn't load hundreds of full-size phone pictures.
+282. A photo that won't open says so in the grid, so broken ones are easy to find and remove.
+283. "Hold" keeps the current picture up, says until when, and carries on by itself after ten minutes.
+284. Videos have a "Tap for sound" button; each new video starts quiet again, so the frame never plays sound to an empty kitchen.
+285. A caption that is cut off shows "Read all", which opens the whole text with who sent it and when.
+286. Swiping left or right changes the photo, as well as tapping the sides.
+287. Going past the last photo says "Back to the first photo" (and the other way round).
+288. When the frame opens, a hint shows for a few seconds: tap the sides or swipe for other photos, the middle for Home.
+289. A photo or video that can't be shown and can't be skipped says so, with what to do (it was a blank grey screen).
+290. A photo sent while the frame is up is shown at once with "New photo from…"; if a picture is being held or the grid is open, it offers "Show" instead of snatching the screen.
+291. A photo removed from the phone page no longer restarts the slideshow from the beginning.
+292. Photos arriving at an empty frame replace the "No photos yet" message (it stayed on top of them).
+293. The empty frame offers "Take a photo" next to "Add photos from a phone".
+294. With only one photo, the frame says so and hides the arrows and Hold.
+295. Videos are no longer cut off at the screen's edges.
+296. The photo frame's buttons are bigger (56 px).
+297. The slow zoom and any video pause while the grid, a caption or a question covers them, and a video stops at once when the picture changes.
+298. The camera has a self-timer (off, 3 s, 10 s) so people can step back into the picture; tapping again during the countdown stops it.
+299. A clear "Photo saved" or "Video saved" shows at the top, with a bigger preview and "See it".
+300. Camera problems say which problem it is (not allowed, busy, not found) and what to do.
+301. When the album is full, the camera says so before taking the picture, with "Make room" leading to the grid (it used to click as if the photo was saved).
+302. Stopping a video says "Saving the video…" until it is put away, and a failed save says why.
+303. In the last ten seconds of a video the time turns red and counts down, so recording doesn't stop by surprise.
+304. The camera's buttons are bigger, with a visible Back.
+305. The code on "Add photos" is bigger, and so is the typed address.
+306. "Add photos" says what the phone will show and what else that page can do (leave a note, add to the list, send a recipe).
+307. When the screen isn't on Wi-Fi, "Add photos" says so and offers "Wi-Fi settings"; the code appears by itself once connected.
+308. When photos arrive, "Add photos" shows a big message with "See them now" or "Stay here to send more".
+309. The newest pictures on "Add photos" can be tapped to open them in the frame.
+310. When the album is full or nearly full, "Add photos" has a "Choose photos to remove" button that opens the grid.
