@@ -2,8 +2,14 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
+<meta name="robots" content="noindex, nofollow">
 <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
 <meta name="theme-color" content="#ECEEF0">
+<!-- Only this site's own script files may run here, whatever text arrives from outside
+     (a calendar invitation, a note from a phone, the name of a plane). The screens make
+     such text safe themselves as well; this is the second lock, for the day one of them
+     forgets. Styles, pictures and data may still come from the services the screens use. -->
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com data:; img-src * data: blob:; media-src * data: blob:; connect-src * data: blob:; worker-src 'self'; object-src 'none'; frame-src 'none'; base-uri 'self'; form-action 'self'">
 <title>Home Tablet</title>
 <link rel="icon" href="data:,">
 <link rel="preconnect" href="https://fonts.googleapis.com">

@@ -7,7 +7,9 @@
 #      file doesn't offer would only fail when somebody opens that screen.
 #   3. Things Chrome 81 doesn't have and no translation adds (newer JavaScript methods,
 #      newer CSS), which would work on this PC and quietly fail in a kitchen.
-#   4. The tests with known answers: every screen named in js/app.js has its file (and the
+#   4. A lint for mistakes, not style (eslint.config.mjs): names that don't exist, things
+#      declared twice, comparisons that can never be true.
+#   5. The tests with known answers: every screen named in js/app.js has its file (and the
 #      other way round), the calendar-file reader, the sky maths, the kitchen conversions.
 cd "$(dirname "$0")/.." || exit 1
 fail=0
@@ -31,7 +33,10 @@ if grep -nE '\.replaceAll\(|\.at\(-?[0-9a-z]|structuredClone\(|Object\.hasOwn\(|
   echo "   ^ not available (or far too slow) on the tablets"; fail=1
 fi
 
-echo "4. The tests with known answers..."
+echo "4. Mistakes a linter can see (a name that doesn't exist, something declared twice)..."
+npx -y eslint@10.15.0 js sw.js tools --quiet || { echo "   ^ fix these"; fail=1; }
+
+echo "5. The tests with known answers..."
 for t in routes ics astro convert; do
   if node "tools/sim/$t-test.mjs" > "$out/$t.txt" 2>&1; then echo "   $t: $(tail -1 "$out/$t.txt")"
   else echo "   $t: FAILED"; grep -E "^FAIL" "$out/$t.txt" | head -10; fail=1; fi

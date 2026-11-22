@@ -27,6 +27,11 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      # (The browser test below talks to the browser with Node's own WebSocket: Node 22.)
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
       - name: Stamp version
         run: |
           echo "{ \"version\": \"${GITHUB_SHA::7}\", \"deployed\": \"$(date -u +%Y-%m-%dT%H:%M:%SZ)\" }" > version.json
@@ -53,6 +58,35 @@ jobs:
             echo "::error::Modern syntax left after translation"; exit 1
           fi
           find _site -type f | sort
+
+      # The built site, exactly as the tablets will fetch it, opened in a real browser:
+      # every screen, as a kitchen screen and as Tom's deck, with no internet behind it.
+      # A screen that can't open, an error nobody catches, or "undefined" on screen stops
+      # the publish here; the tablets simply keep the version they have.
+      - name: Open every screen of the built site
+        timeout-minutes: 8
+        run: |
+          python3 tools/sim/serve.py 5173 _site > /dev/null 2>&1 &
+          sleep 2
+          BROWSER="$(command -v google-chrome || command -v chromium-browser || command -v chromium)"
+          echo "Browser: $BROWSER"; "$BROWSER" --version
+          BROWSER="$BROWSER" node tools/sim/smoke.mjs
+
+      # The same again in the tablets' own engine: Chromium 81, the build Google keeps for
+      # exactly this kind of testing. It is ten years of web behind the browser above, so
+      # it catches what only an old engine trips over. If that old build can't be fetched
+      # or started one day, the publish still goes ahead: this step warns, it doesn't block.
+      - name: The same, in the tablets' own engine (Chromium 81)
+        timeout-minutes: 8
+        continue-on-error: true
+        run: |
+          curl -sSfL -o chromium81.zip "https://commondatastorage.googleapis.com/chromium-browser-snapshots/Linux_x64/737027/chrome-linux.zip"
+          unzip -q chromium81.zip -d chromium81
+          chromium81/chrome-linux/chrome --version || true
+          if ! BROWSER="$PWD/chromium81/chrome-linux/chrome" HEADLESS_FLAG="--headless" node tools/sim/smoke.mjs; then
+            echo "::warning::The built site did not pass in Chromium 81, the tablets' engine. Read this step's output before trusting this publish."
+            exit 1
+          fi
 
       - uses: actions/configure-pages@v5
 

@@ -93,6 +93,26 @@ const TOM = [
     say: H('All systems go', 'New missions show up on their own. Clear skies, Captain! (SETTINGS on the deck has this tour.)') },
 ];
 
+// A gift is set up in one house and unwrapped in another: the screen arrives knowing the
+// wrong Wi-Fi, and nearly everything it is about to show off (weather, photos from a
+// phone, calendars) needs the right one. So when it starts without a connection, the very
+// first card helps with that, and the tour proper begins by itself once it is connected.
+const N = () => window.TabletNative;
+function connected() {
+  try { if (N() && N().network) return N().network() !== 'off'; } catch (e) { /* older app: ask the browser */ }
+  return navigator.onLine !== false;
+}
+const canOpenWifi = () => { try { return !!(N() && N().wifiSettings); } catch (e) { return false; } };
+const WIFI_FIRST = {
+  center: true, wifi: true, wait: () => connected(),
+  get say() {
+    return H(profile === 'tom' ? 'First, the Wi-Fi' : 'First, let’s get it on your Wi-Fi',
+      `This screen doesn’t know your home’s Wi-Fi yet, and the weather, photos from your phone and the calendar all come over it. ${canOpenWifi()
+        ? 'Tap the button, type the grown-up PIN from the card that came with it, and pick your Wi-Fi.'
+        : 'Hold the top-left corner of the screen for 5 seconds, type the grown-up PIN from the card that came with it, and choose Wi-Fi settings.'} The tour carries on by itself the moment it is connected.`);
+  },
+};
+
 function festiveHello() {
   const d = new Date();
   return d.getMonth() === 11 || (d.getMonth() === 0 && d.getDate() <= 6) ? 'Merry Christmas!' : 'Say hello to your kitchen screen';
@@ -180,10 +200,20 @@ function bubble(step, hole, extra) {
   lastKey = key;
   const isStart = step.wait === 'start', isFinish = step.wait === 'finish';
   bub.className = `tu-bub${hole ? '' : ' center'}`;
-  bub.innerHTML = `${!isStart && !isFinish ? `<div class="tu-step">${idx} / ${n - 2}</div>` : ''}
+  if (step.wifi) {
+    bub.innerHTML = `<div>${step.say}</div>
+      <div class="tu-row" style="justify-content:center;gap:24px">
+        <button class="tu-end" data-tu="next">Later: show me around first</button>
+        ${canOpenWifi() ? '<button class="tu-btn" data-tu="wifi">Wi-Fi settings</button>' : ''}
+      </div>`;
+    bub.style.display = 'block'; bub.style.left = ''; bub.style.top = '';
+    return;
+  }
+  const lead = script[0].wifi ? 1 : 0; // the Wi-Fi card, when there is one, isn't a numbered stop
+  bub.innerHTML = `${!isStart && !isFinish ? `<div class="tu-step">${idx - lead} / ${n - 2 - lead}</div>` : ''}
     <div style="margin-top:${isStart || isFinish ? 0 : 6}px">${step.say}</div>
     <div class="tu-row" style="${hole ? '' : 'justify-content:center;gap:24px'}">
-      ${isFinish ? '' : `<span><button class="tu-end" data-tu="end">${isStart ? 'Skip for now' : 'Skip the tour'}</button>${!isStart && idx > 1 ? '<button class="tu-end" data-tu="back" style="margin-left:10px">← Back</button>' : ''}</span>`}
+      ${isFinish ? '' : `<span><button class="tu-end" data-tu="end">${isStart ? 'Skip for now' : 'Skip the tour'}</button>${!isStart && idx > 1 + lead ? '<button class="tu-end" data-tu="back" style="margin-left:10px">← Back</button>' : ''}</span>`}
       ${isStart ? '<button class="tu-btn" data-tu="next">Show me</button>' : isFinish ? '<button class="tu-btn" data-tu="done">Start using it</button>' : showNext ? '<button class="tu-btn" data-tu="next">Next →</button>' : '<span></span>'}
     </div>`;
   bub.style.display = 'block';
@@ -221,9 +251,10 @@ function onClick(e) {
   const a = b.dataset.tu;
   if (a === 'end' || a === 'done') { stop(true); const home = homeScreen(); if (hash() !== home) location.hash = `#/${home}`; }
   else if (a === 'next') advance();
+  else if (a === 'wifi') { try { N().wifiSettings(); } catch (err) { /* older app: the card says how */ } }
   else if (a === 'back' || a === 'resume') {
     // The beat before (tapped Next too fast), or back to where this beat happens.
-    if (a === 'back') idx = Math.max(1, idx - 1);
+    if (a === 'back') idx = Math.max(script[0].wifi ? 2 : 1, idx - 1);
     goneFor = idx;
     lastKey = '';
     waitingSince = Date.now();
@@ -259,6 +290,8 @@ function update() {
   // The night clock has taken over (nobody is here): the tour steps aside rather than sit
   // bright on top of it. Not finished, so Home offers it again in the morning.
   if (hash().split('/')[0] === nightScreen() && !(step.route && step.route.test(hash()))) { stop(false); return; }
+  // The Wi-Fi card steps aside by itself as soon as the screen is connected.
+  if (step.wifi && step.wait()) { advance(); update(); return; }
   if (step.center && !step.route) { dims(null); hideRing(); bubble(step, null); return; }
   // Done already? (A tap that opens another screen finishes its step before anything else.)
   if (typeof step.wait === 'function' && step.wait() === true) { advance(); update(); return; }
@@ -305,6 +338,7 @@ function update() {
 /** Start from the beginning (the welcome route calls this). */
 export function startTutorial() {
   script = tom() ? TOM : FAMILY;
+  if (!connected()) script = [WIFI_FIRST].concat(script);
   idx = 0;
   goneFor = -1;
   lastKey = '';

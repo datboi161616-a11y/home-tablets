@@ -29,11 +29,23 @@ no longer runs in CI. To bring it back: deploy `admin/`, put the hub address in
 ## Pushing an update to every tablet
 
 1. Edit the files.
-2. Run `bash tools/check.sh` (a few seconds; the deploy runs it too and refuses to
-   publish if it fails).
-3. Commit and push to `main`.
-4. GitHub Actions publishes the site (about a minute) and stamps `version.json`.
-5. Each tablet checks `version.json` every 30 minutes and reloads itself when it changes.
+2. Run `bash tools/check.sh` (a few seconds: the translation for the old browser engine,
+   every import, a lint for mistakes, the tests with known answers).
+3. For anything big, look at it on a real tablet first: `node tools/sim/device-visit.mjs both`.
+4. Commit and push to `main`.
+5. GitHub Actions runs the same checks, builds the site, and then **opens every screen
+   of the built site in a real browser** (as a kitchen screen and as Tom's deck, with no
+   internet behind it; `tools/sim/smoke.mjs`), once in today's Chrome and once in
+   Chromium 81, the tablets' own engine. If a screen can't open, throws an error nobody
+   catches, or shows "undefined", nothing is published and the tablets keep what they have.
+6. The site is published (about two minutes in all) and `version.json` is stamped.
+7. Each tablet checks `version.json` every 30 minutes and reloads itself when it has
+   been left alone for a few minutes.
+
+**Taking a change back.** If something bad did get out: `git revert <the commit>` and
+push. That is a normal publish of the previous code, and the tablets pick it up the same
+way (within about 40 minutes; at once if somebody taps Settings → Wi-Fi & about → Check now).
+App updates (`android/`) can't be taken back that way: publish a new, fixed app instead.
 
 `IMPROVEMENTS.md` is the numbered list of what has been added since November 2026.
 
@@ -90,8 +102,10 @@ adsbdb (flight routes), NOAA SWPC (northern lights).
 
 ## Still to do
 
-- **Try it on a real tablet.** Everything so far has run on emulators and on a PC made
-  to behave like the tablet; none of it has run on a TB-X606FA yet.
+- Set up the other five tablets (`setup\Setup tablet.bat`); one Family tablet has been
+  running the real thing since November 2026.
+- By hand, on a real tablet: the alarm sounds, video sound on the photo frame, the night
+  clock at "Darkest", and the phone page on a real iPhone.
 - God's Eye View on Tom's tablet (`godseye-tablet/`): needs that real-tablet test, then
   a place for its small server and a button on the flight deck.
 - Optional: Google Photos picker (would need a small cloud service).

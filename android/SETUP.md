@@ -131,6 +131,30 @@ Birthdays, the people who leave notes and calendar links are still added from a 
 - **A word in the corner** when the charger has come out ("Not plugged in · 42% left"),
   when the battery is low, or when the Wi-Fi has been gone for a few minutes.
 
+## When something goes wrong
+
+What the owner sees, and what to do (most of it they can do themselves):
+
+| What they say | What it is | What to do |
+|---|---|---|
+| "It says *Not plugged in*" / "*Plug me in*" | The charger has come out or the socket is off. | Plug it in. It runs a few hours on its battery, then goes dark. |
+| "It says *No Wi-Fi*" / the weather is old | The Wi-Fi or the internet is down. Everything else keeps working from what it saved. | Check the router. New router or password: Settings → Wi-Fi & about → **Wi-Fi settings** (grown-up PIN). |
+| "A screen says it can't open" | Its code couldn't be fetched, or it stopped half-way. It tries again by itself. | Settings → Wi-Fi & about → **Start again**. Still there? See "Taking a change back" in the README. |
+| "It looks stuck" | Rare; the screens start afresh by themselves every night anyway. | **Start again** in Settings, or hold the power button and restart. Nothing is lost. |
+| "The weather is for the wrong town" | The automatic guess is a town or two off. | Settings → Weather → type the town or ZIP code. |
+| "My phone can't reach it" | The phone is on mobile data or another Wi-Fi, or the code is old. | Same Wi-Fi as the screen; scan the code on Photos → Add photos again. |
+| "An app won't open / wants an update" | Play Store updates need a grown-up. | Apps → **Update apps** (grown-up PIN). |
+| "It's showing the ordinary Android home screen" | Somebody used "Unlock tablet" in the grown-up menu. | Press Home; or restart the tablet. |
+
+**Finding out what happened.** Settings → Wi-Fi & about → *For whoever looks after this
+screen* lists what went wrong lately (which screen, when), how long the Wi-Fi was gone,
+time spent on the battery, and when the screens last updated themselves, with one line
+to read out over the phone. Nothing is sent anywhere: somebody has to read it to you.
+
+**With the tablet on your desk.** `setup\Check tablet.bat` looks it over without changing
+anything; `node tools/sim/device-visit.mjs both --live` opens every screen on it and
+reports errors.
+
 ## Their photos: removing one
 
 On the photo frame, **Remove** (top right) takes the picture that is showing off the

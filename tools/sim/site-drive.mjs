@@ -55,8 +55,11 @@ mkdirSync(prof, { recursive: true });
 const shots = `${HERE}/shots`;
 mkdirSync(shots, { recursive: true });
 const port = 9400 + Math.floor(Math.random() * 400);
-const edge = spawn('C:/Program Files (x86)/Microsoft/Edge/Application/msedge.exe', [
-  '--headless=new', '--hide-scrollbars', '--mute-audio', '--no-first-run', '--disk-cache-size=67108864', '--media-cache-size=33554432',
+// Which browser: Edge on this PC; on GitHub's Linux machines BROWSER names Chrome (or an
+// old Chromium, the tablets' own engine, which only knows the plain --headless).
+const BROWSER = process.env.BROWSER || 'C:/Program Files (x86)/Microsoft/Edge/Application/msedge.exe';
+const edge = spawn(BROWSER, [
+  process.env.HEADLESS_FLAG || '--headless=new', ...(process.platform === 'linux' ? ['--no-sandbox', '--disable-gpu', '--disable-dev-shm-usage'] : []), '--hide-scrollbars', '--mute-audio', '--no-first-run', '--disk-cache-size=67108864', '--media-cache-size=33554432',
   '--disable-backgrounding-occluded-windows', '--disable-renderer-backgrounding', '--disable-background-timer-throttling',
   '--disable-features=CalculateNativeWinOcclusion', '--autoplay-policy=no-user-gesture-required', '--use-fake-ui-for-media-stream', '--use-fake-device-for-media-stream',
   `--user-data-dir=${prof}`, `--remote-debugging-port=${port}`, '--window-size=1280,800', 'about:blank'], { stdio: 'ignore' });
@@ -74,6 +77,15 @@ try {
   ws.addEventListener('message', (m) => {
     const d = JSON.parse(m.data);
     if (d.id && wait[d.id]) { wait[d.id](d); delete wait[d.id]; return; }
+    // BLOCK_EXTERNAL=1: only the site itself answers; every other address is "no internet".
+    // (A test that must give the same answer every time can't depend on eight free services.)
+    if (d.method === 'Fetch.requestPaused') {
+      const own = /^https?:\/\/(localhost|127\.0\.0\.1)(:\d+)?\//.test(d.params.request.url) || /^(data|blob|about):/.test(d.params.request.url);
+      ws.send(JSON.stringify(own
+        ? { id: ++id, method: 'Fetch.continueRequest', params: { requestId: d.params.requestId } }
+        : { id: ++id, method: 'Fetch.failRequest', params: { requestId: d.params.requestId, errorReason: 'InternetDisconnected' } }));
+      return;
+    }
     if (d.method === 'Runtime.exceptionThrown') {
       const e = d.params.exceptionDetails;
       consoleErrors.push(String((e.exception && e.exception.description) || e.text).slice(0, 300));
@@ -154,6 +166,7 @@ try {
   await send('Page.enable');
   await send('Runtime.enable');
   await send('Network.enable');
+  if (process.env.BLOCK_EXTERNAL === '1') await send('Fetch.enable', { patterns: [{ urlPattern: '*' }] });
   await send('HeapProfiler.enable');
   if (process.env.PROBE !== '0') await send('Page.addScriptToEvaluateOnNewDocument', { source: PROBE });
   if (process.env.INIT_SCRIPT) await send('Page.addScriptToEvaluateOnNewDocument', { source: process.env.INIT_SCRIPT });

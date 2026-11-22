@@ -22,7 +22,8 @@ class Handler(http.server.SimpleHTTPRequestHandler):
 
 def main():
     port = int(sys.argv[1]) if len(sys.argv) > 1 else 5173
-    root = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..'))
+    # The project itself, or another folder given as the second word (the built site, "_site").
+    root = os.path.abspath(sys.argv[2]) if len(sys.argv) > 2 else os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..'))
     # This PC only: nothing else on the network needs to reach it.
     server = http.server.ThreadingHTTPServer(('127.0.0.1', port), functools.partial(Handler, directory=root))
     print(f'Serving {root} at http://localhost:{port}/ (no caching)', flush=True)
