@@ -10,6 +10,7 @@ import { saveMyEvent, removeMyEvent, getMyEvent, myEvents, isoDay, fromIso, rest
 import { getPhotos, thumbnail, isTablet } from '../services/tablet-photos.js';
 import { photos as samplePhotos } from '../services/family-sample.js';
 import { topBar, esc, people, personColor, phoneCode, wirePhoneCodes, season, seasonLayer } from './ui.js';
+import { backHref, backLabel } from '../services/nav.js';
 
 let timer, onUpdate, onPhotos, undoTimer, stopCodes;
 let view = 'month'; // 'month' (opens first) or 'week'
@@ -265,7 +266,8 @@ const STYLE = `
     .kc-grid { position:absolute; left:0; top:0; width:100%; height:100%; display:grid; grid-template-columns:repeat(7,minmax(0,1fr)); gap:6px; }
     .kc-cell { position:relative; min-width:0; min-height:0; cursor:pointer; background:rgba(21,18,26,.62); }
     .kc-cell.past { background:rgba(21,18,26,.38); }
-    .kc-cell.out { background:#15121A; box-shadow:inset 0 0 0 1.5px rgba(255,255,255,.09); }
+    .kc-cell.out { background:#15121A; pointer-events:none; }
+    .kc-cell.out > * { display:none !important; }
     .kc-phw { position:absolute; left:0; top:0; width:100%; height:100%; overflow:hidden; display:none; }
     .has-ph > .kc-phw { display:block; }
     .kc-ph { position:absolute; left:0; top:0; width:100%; height:100%; background-size:cover; background-position:center; }
@@ -288,6 +290,11 @@ const STYLE = `
     @keyframes kc-pulse { 0%,100% { opacity:.25; } 50% { opacity:.95; } }
     @keyframes kc-up { from { transform:translateY(36px); opacity:0; } to { transform:none; opacity:1; } }
 
+    .kc-title { flex:none; display:flex; align-items:center; min-height:60px; }
+    .kc-title .x-btn { margin-right:16px; font-size:30px; }
+    .kc-big { font:700 46px/1 Outfit,sans-serif; letter-spacing:-.5px; }
+    .kc-small { font:500 20px Inter,sans-serif; color:#A89DB5; margin-left:14px; align-self:flex-end; padding-bottom:6px; }
+    .kc-link { flex:none; min-height:48px; border:0; background:none; color:#A89DB5; font:500 17px Inter,sans-serif; text-align:left; padding:0 4px; cursor:pointer; }
     .kc-side { width:250px; flex:none; display:flex; flex-direction:column; gap:12px; min-height:0; overflow:hidden; }
     .kc-eye { font:600 15px Inter,sans-serif; letter-spacing:2px; text-transform:uppercase; color:${GOLD}; }
     .kc-card { border-radius:16px; background:rgba(255,255,255,.08); padding:12px; cursor:pointer; flex:none; }
@@ -428,29 +435,27 @@ function weekGrid(days, today) {
 // ---------- Beside the month: a memory and the next big thing ----------
 // (What is coming up is already on the month and the week, so it is not listed again here.)
 
-function sidePanel() {
+function sidePanel(month, atStart, atEnd, away) {
   const mem = memory();
-  const big = nextBigThing();
   const note = linkNote();
   return `
     <div class="kc-side">
       ${mem ? `
       <div class="kc-card" data-jump="${isoDay(mem.date)}" data-any>
-        <div class="kc-eye kc-cut">${esc(mem.label)}</div>
+        <div class="kc-cut" style="font:500 16px Inter,sans-serif;color:#D9CDE8">${esc(mem.label)}</div>
         <div class="kc-mem">${photoBox(mem.photo, 'kc-ph', 340, 200)}</div>
-        ${mem.photo.caption || mem.photo.name ? `<div class="kc-cut x-serif" style="font-size:18px;margin-top:8px">${esc(mem.photo.caption || `From ${mem.photo.name}`)}</div>` : ''}
+        ${mem.photo.caption || mem.photo.name ? `<div class="kc-cut" style="font:600 16px Inter,sans-serif;margin-top:8px">${esc(mem.photo.caption || mem.photo.name)}</div>` : ''}
       </div>` : ''}
-      ${big ? `
-      <div class="kc-card" data-jump="${isoDay(big.date)}" style="display:flex;align-items:center;gap:12px">
-        <span class="kc-badge" style="width:44px;height:44px;border-radius:22px">${eventIcon(big.name, 26)}</span>
-        <div style="min-width:0">
-          <div class="kc-cut" style="font:600 18px Inter,sans-serif">${esc(big.name)}${big.turns ? ` · ${big.turns}` : ''}</div>
-          <div class="kc-cut" style="font:500 22px Outfit,sans-serif;color:${GOLD}">${esc(big.label)} · ${inDays(big.days)}</div>
-        </div>
-      </div>` : ''}
+      <button data-cals class="kc-link">${calendarStatus().calendars ? 'Linked calendars' : 'Link a calendar'}</button>
       <div style="flex:1;min-height:0"></div>
-      ${note.error ? `<div class="kc-warn" style="flex:none;max-height:62px;overflow:hidden">${esc(note.text)}</div>` : ''}
-      <button data-cals class="x-btn sm frost" style="flex:none;width:100%">${calendarStatus().calendars ? 'Calendars' : 'Link a calendar'}</button>
+      ${note.error ? `<button data-cals class="kc-warn" style="flex:none;max-height:62px;overflow:hidden;background:none;border:0;text-align:left;padding:0;cursor:pointer">${esc(note.text)}</button>` : ''}
+      <div style="display:flex;gap:10px;flex:none">
+        <button data-step="-1" class="x-btn sm frost" style="flex:1"${atStart ? ' disabled' : ''} aria-label="${month ? 'Earlier month' : 'Earlier week'}">‹</button>
+        ${away ? '<button data-step="0" class="x-btn sm frost" style="flex:2">Today</button>' : ''}
+        <button data-step="1" class="x-btn sm frost" style="flex:1"${atEnd ? ' disabled' : ''} aria-label="${month ? 'Later month' : 'Later week'}">›</button>
+      </div>
+      <button data-view="${month ? 'week' : 'month'}" class="x-btn sm frost" style="flex:none;width:100%">${month ? 'Week' : 'Month'}</button>
+      <button data-add class="x-btn gold" style="flex:none;width:100%">+ Add event</button>
     </div>`;
 }
 
@@ -463,20 +468,25 @@ function render(el) {
   const atStart = month ? monthOffset <= minMonth() : weekOffset <= MIN_WEEK;
   const atEnd = month ? monthOffset >= MAX_MONTH : weekOffset >= MAX_AHEAD;
   const away = month ? monthOffset !== 0 : weekOffset !== 0;
-  const right = `
-    <button data-step="-1" class="x-btn glass round"${atStart ? ' disabled' : ''} aria-label="${month ? 'Earlier month' : 'Earlier week'}">‹</button>
-    <button data-step="1" class="x-btn glass round"${atEnd ? ' disabled' : ''} aria-label="${month ? 'Later month' : 'Later week'}">›</button>
-    ${away ? '<button data-step="0" class="x-btn white">Today</button>' : ''}
-    <div class="kc-seg"><button data-view="month" class="${month ? 'on' : ''}">Month</button><button data-view="week" class="${month ? '' : 'on'}">Week</button></div>
-    <button data-add class="x-btn gold">+ Add</button>`;
+  // How many photos this month has (the board's "14 photos so far").
+  let shots = 0;
+  if (month) {
+    const dim = new Date(first.getFullYear(), first.getMonth() + 1, 0).getDate();
+    for (let i = 0; i < dim; i++) shots += photosOn(shiftDay(first, i)).length;
+  }
+  const big = month ? first.toLocaleDateString('en-US', { month: 'long' }) : weekTitle(days);
+  const small = month ? `${first.getFullYear()}${shots ? ` · ${shots} photo${shots === 1 ? '' : 's'}${monthOffset === 0 ? ' so far' : ''}` : ''}` : weekRange(days);
 
   el.innerHTML = `${STYLE}
   <div class="kc">
     ${seasonLayer(season(), { quiet: true })}
-    ${topBar({ title, tone: 'dark', right })}
+    <div class="kc-title">
+      <a href="${backHref()}" class="x-btn glass round sm" aria-label="${esc(backLabel())}">‹</a>
+      <span class="kc-big">${esc(big)}</span><span class="kc-small">${esc(small)}</span>
+    </div>
     <div class="kc-body">
       <div class="kc-main">${month ? monthGrid(today) : weekGrid(days, today)}</div>
-      ${sidePanel()}
+      ${sidePanel(month, atStart, atEnd, away)}
     </div>
     <div data-detail class="kc-over"></div>
     ${undo ? `<div class="kc-undo" data-undo-bar><span>${esc(undo.text)}</span><button data-undo class="x-btn sm ink">Undo</button></div>` : ''}
