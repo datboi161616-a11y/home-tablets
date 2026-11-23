@@ -2,13 +2,14 @@
 // passes (a full pot is ready), with digits big enough to read from across the room.
 // Several at once, and they ring on any screen (services/timers.js does the counting).
 //
-// Cheap to draw: the liquid is one block per pot moved by a transform, with one wave
-// sliding sideways on top of it. Nothing changes size, and nothing is blurred.
+// Cheap to draw: the liquid is one block per pot moved by a transform, its level stepping
+// a whole percent at a time. The surface wave stands still, except on a lone pot, where it
+// slides slowly; steam and bubbles only on that lone pot too. Burners glow without pulsing
+// (only a ringing pot boils and flickers). Nothing changes size, and nothing is blurred.
 import {
   timers, state, left, fmt, addTimer, pauseTimer, resumeTimer, addMinute, restartTimer, removeTimer, stopRinging,
   onTimersChanged, minutesText, missed, whenText, agoText, room, MAX, pauseAll, resumeAll, clearFinished, undoable, undoRemove,
 } from '../services/timers.js';
-import { timeText } from '../services/display.js';
 import { topBar, esc } from './ui.js';
 
 // Minutes. The everyday kitchen times, up to a long roast.
@@ -46,7 +47,8 @@ const WAVE = `M0 14 V7 q50 -12 100 0 ${new Array(12).join('t100 0 ')}V14 Z`;
 // How far down the liquid's surface sits (% of the pot): a sliver at the start, the "ready" mark when done.
 const EMPTY_AT = 95, READY_AT = 17;
 const progress = (t) => (state(t) === 'running' || state(t) === 'paused' ? Math.max(0, Math.min(1, 1 - left(t) / Math.max(1000, t.secs * 1000))) : 1);
-const levelOf = (t) => `translate3d(0,${(EMPTY_AT - progress(t) * (EMPTY_AT - READY_AT)).toFixed(1)}%,0)`;
+// Whole percents: the level moves now and then (a short ease), not on every tick.
+const levelOf = (t) => `translate3d(0,${Math.round(EMPTY_AT - progress(t) * (EMPTY_AT - READY_AT))}%,0)`;
 
 export function mount(el) {
   const prefs = loadPrefs();
@@ -62,11 +64,11 @@ export function mount(el) {
     .tm .x-top,.tm-status,.tm-stage{position:relative}
     .tm-amber{background:#FFC36B;color:#1C1F24}
     .tm-status{display:flex;align-items:center;gap:18px;min-height:34px;margin-top:10px;flex:none}
-    .tm-status .x-eyebrow{color:#FFC36B;white-space:nowrap}
-    .tm-status .hint{font-size:18px;color:#AEB6C2;white-space:nowrap}
     .tm-msg{flex:1;min-width:0;font-size:18px;font-weight:600;text-align:center;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
     .tm-msg.warn{color:#FFC36B}
-    .tm-now{font:500 26px Outfit,sans-serif;color:#D7DCE4;white-space:nowrap}
+    .tm-more{position:absolute;right:36px;top:92px;z-index:16;display:none;flex-direction:column;gap:8px;padding:10px;border-radius:24px;background:#262A31;box-shadow:inset 0 0 0 1.5px rgba(255,255,255,.2)}
+    .tm-more.open{display:flex}
+    .tm-more .x-btn{background:rgba(255,255,255,.12);color:#FFFFFF;min-width:210px}
     .tm-stage{flex:1;min-height:0;display:grid;gap:14px 20px;align-items:center;justify-items:center;margin-top:6px}
     /* (many pots pack to the top: the strip along the bottom stays free for the ringing chip and Undo) */
     .tm-stage.n6,.tm-stage.n8{align-content:start}
@@ -84,23 +86,24 @@ export function mount(el) {
     .tm-ear.l{left:-34px}.tm-ear.r{right:-34px}
     .tm-pot{position:relative;overflow:hidden;box-sizing:border-box;width:470px;height:350px;border-radius:40px;border:4px solid rgba(255,255,255,.45);background:rgba(255,255,255,.05)}
     .tm-liq{position:absolute;left:0;top:0;width:100%;height:100%;will-change:transform;transition:transform 1s linear}
-    .tm-wave{position:absolute;left:0;top:-13px;display:block;will-change:transform;animation:tm-wave 5s linear infinite}
+    .tm-wave{position:absolute;left:0;top:-13px;display:block}
+    .n1 .tm-cell.running .tm-wave{animation:tm-wave 9s linear infinite}
     .tm-bub{position:absolute;top:120px;width:10px;height:10px;border-radius:50%;background:rgba(255,255,255,.75);opacity:0;animation:tm-bub 3s ease-out infinite}
     .tm-glass{position:absolute;left:0;top:0;width:100%;height:100%;pointer-events:none;
       background:linear-gradient(90deg,rgba(255,255,255,.16) 0,rgba(255,255,255,.04) 15%,rgba(255,255,255,.03) 85%,rgba(255,255,255,.14) 100%)}
-    .tm-mark{position:absolute;left:0;top:${READY_AT}%;display:flex;align-items:center;gap:6px;font-size:15px;color:rgba(255,255,255,.7);line-height:1;margin-top:-8px}
+    .tm-mark{position:absolute;left:0;top:${READY_AT}%;line-height:1;margin-top:-2px}
     .tm-mark i{display:block;width:26px;height:3px;background:rgba(255,255,255,.55)}
     .tm-face{position:absolute;left:0;top:0;width:100%;height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center}
     .tm-clock{font:700 150px/1 Outfit,sans-serif;letter-spacing:-.02em;font-variant-numeric:tabular-nums;text-shadow:0 2px 0 rgba(0,0,0,.28)}
     .tm-clock.long{font-size:100px}
-    .tm-note{font-size:22px;color:#F1F3F6;margin-top:6px;font-weight:500;text-shadow:0 1px 0 rgba(0,0,0,.5),0 0 6px rgba(0,0,0,.35)}
+    .tm-note{font-size:22px;color:#F1F3F6;margin-top:6px;font-weight:500;text-shadow:0 1px 0 rgba(0,0,0,.5)}
     .tm-up{font:500 30px Outfit,sans-serif;margin-bottom:12px;text-shadow:0 1px 0 rgba(0,0,0,.35)}
     .tm-stop{min-height:110px;width:74%;border:0;border-radius:28px;background:#FFFFFF;color:#1C1F24;font:700 44px Outfit,sans-serif;cursor:pointer}
     .tm-hob{position:relative;width:118%;height:34px;flex:none}
-    .tm-glow{position:absolute;left:0;top:-14px;width:100%;height:70px;will-change:opacity;animation:tm-burn 3s ease-in-out infinite;
+    .tm-glow{position:absolute;left:0;top:-14px;width:100%;height:70px;opacity:.85;
       background:radial-gradient(ellipse at 50% 50%,rgba(255,106,43,.9) 0,rgba(224,64,26,.35) 42%,rgba(224,64,26,0) 70%)}
     .tm-grate{position:absolute;left:0;top:10px;width:100%;height:12px;border-radius:6px;background:#0B0C0E}
-    .tm-steam{position:absolute;top:-70px;width:70px;height:100px;border-radius:50%;opacity:0;pointer-events:none;will-change:transform;
+    .tm-steam{position:absolute;top:-70px;width:70px;height:100px;border-radius:50%;opacity:0;pointer-events:none;
       background:radial-gradient(ellipse at 50% 50%,rgba(255,255,255,.34) 0,rgba(255,255,255,.12) 45%,rgba(255,255,255,0) 70%);animation:tm-steam 5s ease-out infinite}
     .tm-foam{position:absolute;left:8%;top:-13px;width:84%;height:26px;display:none;pointer-events:none}
     .tm-foam i{position:absolute;top:0;width:26px;height:26px;border-radius:50%;background:#FFF6E6;animation:tm-foam .7s ease-in-out infinite alternate}
@@ -127,7 +130,7 @@ export function mount(el) {
     .n4 .tm-name,.n6 .tm-name,.n8 .tm-name{font-size:24px;margin-bottom:6px}
     .n4 .tm-note,.n6 .tm-note,.n8 .tm-note{font-size:17px;margin-top:2px}
     .n6 .tm-hob,.n8 .tm-hob,.n4 .tm-hob{height:24px;width:112%}
-    .n6 .tm-glow,.n8 .tm-glow,.n4 .tm-glow{animation:none;height:50px;top:-8px}
+    .n6 .tm-glow,.n8 .tm-glow,.n4 .tm-glow{height:50px;top:-8px}
     .n6 .tm-grate,.n8 .tm-grate,.n4 .tm-grate{top:6px;height:10px}
     .n6 .tm-up,.n8 .tm-up{font-size:20px;margin-bottom:6px}
     .n6 .tm-stop,.n8 .tm-stop{min-height:76px;font-size:30px;width:82%;border-radius:22px}
@@ -137,13 +140,10 @@ export function mount(el) {
     .n6 .tm-btns,.n8 .tm-btns,.n4 .tm-btns{margin-top:4px}
 
     /* what the pot is doing */
-    .tm-cell.paused .tm-wave{animation-play-state:paused}
-    .tm-cell.paused .tm-glow,.tm-cell.over .tm-glow{animation:none;opacity:.12}
-    .tm-cell.over .tm-wave{animation:none}
+    .tm-cell.paused .tm-glow,.tm-cell.over .tm-glow{opacity:.12}
     .tm-cell.over .tm-liq{opacity:.5}
     .tm-cell.over .tm-clock{opacity:.6}
     .tm-cell.ring .tm-pot{border-color:#FFFFFF;animation:tm-boil .5s ease-in-out infinite}
-    .tm-cell.ring .tm-wave{animation-duration:1.1s}
     .tm-cell.ring .tm-glow{animation:tm-burn .7s ease-in-out infinite}
     .tm-cell.ring .tm-foam{display:block}
     @keyframes tm-wave{from{transform:translate3d(0,0,0)}to{transform:translate3d(-200px,0,0)}}
@@ -183,18 +183,15 @@ export function mount(el) {
     .tm-recent .x-btn{background:rgba(255,255,255,.12);color:#FFFFFF}
     .tm-undo{position:absolute;left:50%;bottom:18px;z-index:15;transform:translateX(-50%);display:flex;align-items:center;gap:18px;background:#FFFFFF;color:#1C1F24;border-radius:999px;padding:8px 8px 8px 28px;font-size:20px;font-weight:600;white-space:nowrap;box-shadow:0 6px 20px rgba(0,0,0,.4)}
     @media (prefers-reduced-motion: reduce){
-      .tm-wave,.tm-glow,.tm-bub,.tm-steam,.tm-foam i,.tm-cell.ring .tm-pot,.tm-cell.ring .tm-glow{animation:none}
+      .tm-stage .tm-cell .tm-wave,.tm-glow,.tm-bub,.tm-steam,.tm-foam i,.tm-cell.ring .tm-pot,.tm-cell.ring .tm-glow{animation:none}
       .tm-liq{transition:none}
     }
   </style>
   <div class="tm" data-root>
     <div class="tm-tiles" aria-hidden="true"></div>
     ${topBar({ title: 'Timers', tone: 'dark', right: '<div data-tools style="display:flex;align-items:center;gap:12px"></div>' })}
-    <div class="tm-status">
-      <span class="x-eyebrow" data-count></span><span class="hint" data-hint>full pot = ready</span>
-      <span class="tm-msg" data-msg></span>
-      <span class="tm-now" data-now></span>
-    </div>
+    <div class="tm-status"><span class="tm-msg" data-msg></span></div>
+    <div class="tm-more" data-more></div>
     <div class="tm-stage" data-list></div>
     <div data-undo></div>
     <div class="tm-sheet" data-sheet>
@@ -203,9 +200,9 @@ export function mount(el) {
           <div class="x-title">New timer</div>
           <button class="x-btn glass" data-close>Close</button>
         </div>
-        <div class="x-eyebrow">Give it a name, if you like</div>
+        <div class="x-eyebrow">Name</div>
         <div class="tm-names" data-names></div>
-        <div class="x-eyebrow">Tap a time to start</div>
+        <div class="x-eyebrow">Time</div>
         <div class="tm-presets">${PRESETS.map((m) => `<button class="tm-p" data-start="${m}">${presetLabel(m)}</button>`).join('')}</div>
         <div class="x-eyebrow">Other time</div>
         <div class="tm-other">
@@ -279,7 +276,7 @@ export function mount(el) {
     clearTimeout(msgTimer);
     msgTimer = setTimeout(() => { if (el.isConnected) { m.textContent = ''; m.className = 'tm-msg'; showFull(); } }, warn ? 6000 : 4000);
   }
-  const fullText = () => `All ${MAX} timers are in use. Cancel one, or clear a finished one, to make room.`;
+  const fullText = () => `All ${MAX} timers are in use.`;
   // While all 8 are counting, the start buttons look switched off and the reason stays on screen.
   function showFull() {
     const full = room() <= 0;
@@ -328,8 +325,7 @@ export function mount(el) {
     // Running timers say when they'll ring, so you know without doing sums.
     const note = st === 'paused' ? 'Paused'
       : ring ? 'Time’s up!'
-        : gone ? `Rang at ${whenText(t.end)} · ${agoText(t.end)}`
-          : st === 'stopped' ? `Rang ${agoText(t.end)}` : ringsText(t.end);
+        : finished ? `Rang ${agoText(t.end)}` : ringsText(t.end);
     const going = st === 'running';
     const long = left(t) >= 3600000;
     const face = ring
@@ -348,7 +344,7 @@ export function mount(el) {
               ${lively && (going || ring) ? '<i class="tm-bub" style="left:28%"></i><i class="tm-bub" style="left:61%;animation-delay:-1.4s"></i>' : ''}
             </div>
             <div class="tm-glass"></div>
-            <div class="tm-mark"><i></i>ready</div>
+            <div class="tm-mark"><i></i></div>
             <div class="tm-face">${face}</div>
           </div>
           <div class="tm-foam" aria-hidden="true"><i style="left:4%"></i><i style="left:34%;animation-delay:-.3s"></i><i style="left:66%;animation-delay:-.5s"></i></div>
@@ -368,19 +364,17 @@ export function mount(el) {
         <div class="tm-potwrap">
           <div class="tm-ear l"></div><div class="tm-ear r"></div>
           <div class="tm-pot">
-            <div class="tm-glass"></div><div class="tm-mark"><i></i>ready</div>
+            <div class="tm-glass"></div><div class="tm-mark"><i></i></div>
             <div class="tm-face" style="padding:0 34px;box-sizing:border-box">
               <div class="x-serif" style="font-size:36px;line-height:1.2">Nothing on the hob</div>
-              <div style="font-size:19px;line-height:1.4;color:#D7DCE4;margin-top:12px">Each timer is a pot that fills as its time passes. Up to ${MAX} at once, and they ring on every screen until you tap.</div>
             </div>
           </div>
         </div>
         <div class="tm-hob" aria-hidden="true"><div class="tm-glow"></div><div class="tm-grate"></div></div>
       </div>
       <div>
-        <div class="x-eyebrow" style="color:#FFC36B;margin-bottom:14px">Tap a time to start</div>
         <div class="tm-firsts">${FIRST.map((m) => `<button class="tm-first" data-start="${m}">${m}<small>min</small></button>`).join('')}</div>
-        <button class="x-btn lg tm-amber" data-new style="width:100%;margin-top:14px">Custom time or a name</button>
+        <button class="x-btn lg tm-amber" data-new style="width:100%;margin-top:14px">Other time</button>
       </div>
     </div>`;
 
@@ -391,18 +385,15 @@ export function mount(el) {
     const counting = list.filter((t) => state(t) === 'running').length;
     const paused = list.filter((t) => state(t) === 'paused').length;
     const finished = list.filter((t) => state(t) === 'done' || state(t) === 'stopped').length;
-    const busy = MAX - room(); // counting, paused or ringing
-    const now = timeText();
-    if ($('[data-now]').textContent !== now) $('[data-now]').textContent = now;
-    // The top bar: the buttons for all of them at once, the alarm's settings, a new pot.
-    const tools = `
-      ${counting && n > 1 ? '<button class="x-btn sm glass" data-pause-all>Pause all</button>' : paused > 1 ? '<button class="x-btn sm glass" data-resume-all>Resume all</button>' : ''}
-      ${finished > (n > 1 ? 0 : 1) ? '<button class="x-btn sm glass" data-clear-done>Clear finished</button>' : ''}
-      <button class="x-btn sm glass" data-alarm>Alarm sound</button>
+    // The top bar: a new pot, and "•••" for the rarer ones (all at once, the alarm's settings).
+    const more = `
+      ${counting && n > 1 ? '<button class="x-btn sm" data-pause-all>Pause all</button>' : paused > 1 ? '<button class="x-btn sm" data-resume-all>Resume all</button>' : ''}
+      ${finished > (n > 1 ? 0 : 1) ? '<button class="x-btn sm" data-clear-done>Clear finished</button>' : ''}
+      <button class="x-btn sm" data-alarm>Alarm sound</button>`;
+    const tools = `<button class="x-btn sm glass" data-more-btn aria-label="More">•••</button>
       ${n ? '<button class="x-btn tm-amber" data-new>+ New timer</button>' : ''}`;
-    const count = !n ? 'No timers running' : busy ? `${busy} of ${MAX} in use` : 'All finished';
     // Rebuild only when a pot changes what it shows; otherwise just the digits and the levels.
-    const shape = tools + count + list.map((t) => {
+    const shape = tools + more + list.map((t) => {
       const st = state(t);
       const gone = missed(t);
       return [t.id, st, gone, t.label, t.secs, left(t) >= 3600000, st === 'running' ? t.end : '', st === 'done' || st === 'stopped' ? agoText(t.end) : ''].join('|');
@@ -410,12 +401,11 @@ export function mount(el) {
     if (shape !== lastShape) {
       lastShape = shape;
       $('[data-tools]').innerHTML = tools;
-      $('[data-count]').textContent = count;
-      $('[data-hint]').style.display = n ? '' : 'none';
+      $('[data-more]').innerHTML = more;
       const box = $('[data-list]');
       box.className = `tm-stage ${n <= 1 ? 'n1' : n === 2 ? 'n2' : n === 3 ? 'n3' : n === 4 ? 'n4' : n <= 6 ? 'n6' : 'n8'}`;
-      // Steam and bubbles only while there are few pots: the screen's graphics are weak.
-      box.innerHTML = n ? list.map((t) => pot(t, n <= 3)).join('') : emptyHtml();
+      // Steam and bubbles only on a lone pot: the screen's graphics are weak.
+      box.innerHTML = n ? list.map((t) => pot(t, n === 1)).join('') : emptyHtml();
       showFull();
     } else {
       list.forEach((t) => {
@@ -429,10 +419,14 @@ export function mount(el) {
     }
   }
 
+  const moreBox = $('[data-more]');
   el.addEventListener('click', (e) => {
     if (e.target === sheet) { closeSheet(); return; } // a tap beside the card
     const b = e.target.closest('button');
+    // Any tap closes the "•••" list, except the one that opens it.
+    if (!b || !b.matches('[data-more-btn]')) moreBox.classList.remove('open');
     if (!b) return;
+    if (b.matches('[data-more-btn]')) { moreBox.classList.toggle('open'); return; }
     const d = b.dataset;
     if (d.start) start(+d.start, false);
     else if (d.recentStart) start(+d.recentStart, true);

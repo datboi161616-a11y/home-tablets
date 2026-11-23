@@ -2,9 +2,9 @@
 // reads as a mosaic (board KC03). Days still to come show what is planned. Tapping a day
 // opens it (what is on, its photos, Add); "Add" opens a large sheet built around a month
 // to pick the day from. A week view is one button away.
-import { minutesText, timeText, hourText, display } from '../services/display.js';
+import { minutesText, timeText } from '../services/display.js';
 import { settings } from '../config.js';
-import { getWeek, getDay, nextAfter, nextBigThing, upcoming, calendarStatus, refreshCalendars, linkedCalendars, startOfWeek, weekdayNames, KINDS, BACK_WEEKS } from '../services/calendar-data.js';
+import { getWeek, getDay, nextAfter, nextBigThing, calendarStatus, refreshCalendars, linkedCalendars, startOfWeek, weekdayNames, KINDS, BACK_WEEKS } from '../services/calendar-data.js';
 import { eventIcon } from '../art.js';
 import { saveMyEvent, removeMyEvent, getMyEvent, myEvents, isoDay, fromIso, restoreMyEvent, skipMyEventOn, endMyEventBefore, recentTitles } from '../services/my-events.js';
 import { getPhotos, thumbnail, isTablet } from '../services/tablet-photos.js';
@@ -151,14 +151,14 @@ function whenSaved(at) {
 // The linked calendars: a setup hint, a download problem, or when they were last read.
 function linkNote() {
   const st = calendarStatus();
-  if (!st.calendars) return { text: 'No phone calendar is linked yet. Scan the code to link a Google or iPhone calendar, or to add birthdays.', error: false, button: false };
+  if (!st.calendars) return { text: '', error: false, button: false };
   if (st.lastError) {
     // Say how old the saved copy is, so nobody trusts a week-old calendar by mistake.
     const at = st.savedAt;
     if (!at) return { text: st.lastError, error: true, button: true };
     return { text: `${st.lastError} · showing what was saved ${at.toDateString() === new Date().toDateString() ? 'today at ' : ''}${whenSaved(at)}`, error: true, button: true };
   }
-  return { text: st.savedAt ? `Calendars updated ${whenSaved(st.savedAt)}` : 'Events on your phone’s calendar show up here by themselves.', error: false, button: true };
+  return { text: st.savedAt ? `Updated ${whenSaved(st.savedAt)}` : '', error: false, button: true };
 }
 
 // Hide events that don't fit in a day column (week view) and say "+N more" instead.
@@ -269,30 +269,29 @@ const STYLE = `
     .kc-phw { position:absolute; left:0; top:0; width:100%; height:100%; overflow:hidden; display:none; }
     .has-ph > .kc-phw { display:block; }
     .kc-ph { position:absolute; left:0; top:0; width:100%; height:100%; background-size:cover; background-position:center; }
-    .kc-ph[data-tw] { opacity:0; transition:opacity .5s ease; }
+    .kc-ph[data-tw] { opacity:0; }
     .kc-ph.in { opacity:1; }
     .kc-shade { position:absolute; left:0; top:0; width:100%; height:100%; background:linear-gradient(180deg,rgba(10,8,14,.62) 0%,rgba(10,8,14,0) 34%,rgba(10,8,14,0) 46%,rgba(10,8,14,.78) 100%); }
     .kc-cell.out.has-ph > .kc-phw { opacity:.45; }
-    .kc-num { position:absolute; left:9px; top:5px; font:600 21px Outfit,sans-serif; text-shadow:0 1px 6px rgba(0,0,0,.7); display:flex; align-items:baseline; gap:6px; }
+    .kc-num { position:absolute; left:9px; top:5px; font:600 21px Outfit,sans-serif; display:flex; align-items:baseline; gap:6px; }
+    .has-ph > .kc-num, .has-ph > .kc-dow { text-shadow:0 1px 3px rgba(0,0,0,.6); }
     .kc-cell.out .kc-num { color:#A89DB5; }
     .kc-num small { font:600 15px Inter,sans-serif; letter-spacing:1.5px; text-transform:uppercase; }
     .kc-cell.today { z-index:2; box-shadow:inset 0 0 0 3px ${GOLD}; }
     .kc-cell.today .kc-num { color:${GOLD}; }
     .kc-ring { position:absolute; left:-5px; top:-5px; right:-5px; bottom:-5px; border:4px solid ${GOLD}; border-radius:9px; pointer-events:none; animation:kc-pulse 3s ease-in-out infinite; }
-    .kc-cell.today .kc-ph { animation:kc-ken 30s ease-in-out infinite alternate; will-change:transform; }
     .kc-chips { position:absolute; left:6px; right:6px; bottom:6px; display:flex; flex-direction:column; gap:3px; }
     .kc-chip { height:23px; line-height:23px; border-radius:6px; padding:0 7px; font:600 15px/23px Inter,sans-serif; color:#fff; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
     .kc-chip.more { background:rgba(255,255,255,.2); }
     .kc-cut { min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
     .kc-dot { width:12px; height:12px; border-radius:50%; flex:none; display:inline-block; }
     @keyframes kc-pulse { 0%,100% { opacity:.25; } 50% { opacity:.95; } }
-    @keyframes kc-ken { from { transform:scale(1); } to { transform:scale(1.22) translate(-3%,2%); } }
     @keyframes kc-up { from { transform:translateY(36px); opacity:0; } to { transform:none; opacity:1; } }
 
     .kc-side { width:250px; flex:none; display:flex; flex-direction:column; gap:12px; min-height:0; overflow:hidden; }
     .kc-eye { font:600 15px Inter,sans-serif; letter-spacing:2px; text-transform:uppercase; color:${GOLD}; }
     .kc-card { border-radius:16px; background:rgba(255,255,255,.08); padding:12px; cursor:pointer; flex:none; }
-    .kc-mem { position:relative; height:112px; border-radius:10px; overflow:hidden; margin-top:8px; background:rgba(255,255,255,.06); }
+    .kc-mem { position:relative; height:150px; border-radius:10px; overflow:hidden; margin-top:8px; background:rgba(255,255,255,.06); }
     .kc-row { display:flex; align-items:center; gap:12px; min-height:58px; padding:0 12px; border-radius:14px; background:rgba(255,255,255,.06); cursor:pointer; flex:none; }
     .kc-warn { font:500 15px/1.35 Inter,sans-serif; color:#FFB4A8; }
 
@@ -303,7 +302,7 @@ const STYLE = `
     .kc-wday.today .kc-num { color:${GOLD}; }
     .kc-whead { position:relative; flex:none; height:84px; }
     .kc-whead .kc-num { font-size:38px; font-weight:500; top:30px; left:12px; }
-    .kc-whead .kc-dow { position:absolute; left:12px; top:10px; padding:0; text-shadow:0 1px 6px rgba(0,0,0,.7); }
+    .kc-whead .kc-dow { position:absolute; left:12px; top:10px; padding:0; }
     .has-ph > .kc-dow { color:#fff; }
     .kc-ev { color:#fff; border-radius:10px; padding:8px 7px; margin:0 5px; display:flex; flex-direction:column; gap:2px; flex:none; min-width:0; }
     .kc-ev.over { opacity:.5; }
@@ -349,7 +348,7 @@ const STYLE = `
     .kc-undo { position:absolute; left:50%; bottom:28px; transform:translateX(-50%); z-index:6; background:#fff; color:#15121A; border-radius:32px;
       padding:6px 6px 6px 26px; display:flex; align-items:center; gap:16px; font:500 19px Inter,sans-serif; box-shadow:0 12px 36px rgba(0,0,0,.45); max-width:900px; }
     .kc-undo span { white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
-    @media (prefers-reduced-motion: reduce) { .kc-ring, .kc-cell.today .kc-ph, .kc-sheet.kc-in { animation:none; } .kc-ring { opacity:.6; } }
+    @media (prefers-reduced-motion: reduce) { .kc-ring, .kc-sheet.kc-in { animation:none; } .kc-ring { opacity:.6; } }
   </style>`;
 
 // ---------- The month ----------
@@ -419,42 +418,26 @@ function weekGrid(days, today) {
         <div class="kc-quiet">
           <div style="display:flex;flex-direction:column;gap:4px;min-width:0;flex:1">
             <div class="kc-h" style="font-size:28px">A quiet week</div>
-            <div class="kc-soft kc-cut" style="font-size:18px">${next
-              ? `Next: ${esc(next.name)}${next.turns ? ` · turns ${next.turns}` : ''} · ${next.date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}${next.days > 0 ? `, in ${next.days} days` : ''}`
-              : 'Nothing on the calendar this week.'}</div>
+            ${next ? `<div class="kc-soft kc-cut" style="font-size:18px">Next: ${esc(next.name)}${next.turns ? ` · turns ${next.turns}` : ''} · ${next.date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}${next.days > 0 ? `, in ${next.days} days` : ''}</div>` : ''}
           </div>
           ${next && dayDiff(startOfWeek(new Date()), next.date) <= MAX_AHEAD * 7 + 6 ? `<button data-jump="${isoDay(next.date)}" class="x-btn sm gold">Show me</button>` : ''}
         </div>` : ''}
     </div>`;
 }
 
-// ---------- Beside the month: a memory, the next big thing, what is coming up ----------
+// ---------- Beside the month: a memory and the next big thing ----------
+// (What is coming up is already on the month and the week, so it is not listed again here.)
 
 function sidePanel() {
   const mem = memory();
   const big = nextBigThing();
   const note = linkNote();
-  const first = monthStart();
-  let count = 0;
-  const month = `${first.getFullYear()}-${String(first.getMonth() + 1).padStart(2, '0')}-`;
-  const by = photosByDay().byDay;
-  Object.keys(by).forEach((k) => { if (k.indexOf(month) === 0) count += by[k].length; });
-  const room = (mem ? 3 : 6) - (note.error ? 1 : 0) - (big ? 0 : -1);
-  const soon = upcoming(room + 1).filter((u) => !(big && u.days === big.days && u.name === big.name)).slice(0, room);
-  const when = (u) => {
-    const day = u.days === 0 ? 'Today' : u.days === 1 ? 'Tomorrow' : u.date.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' });
-    return u.turns ? `${day} · turns ${u.turns}` : u.allDay || (u.date.getHours() === 0 && u.date.getMinutes() === 0) ? day : `${day} · ${timeText(u.date)}`;
-  };
-  const headline = view === 'month'
-    ? (count ? `${count} photo${count === 1 ? '' : 's'} ${monthOffset === 0 ? 'so far' : 'this month'}` : monthOffset <= 0 ? 'A photo for every day' : 'Still to come')
-    : 'Beside the week';
   return `
     <div class="kc-side">
-      <div class="kc-eye kc-cut" style="flex:none;line-height:20px">${esc(headline)}</div>
       ${mem ? `
       <div class="kc-card" data-jump="${isoDay(mem.date)}" data-any>
-        <div class="kc-soft kc-cut" style="font:500 16px Inter,sans-serif">${esc(mem.label)}</div>
-        <div class="kc-mem">${photoBox(mem.photo, 'kc-ph', 340, 170)}</div>
+        <div class="kc-eye kc-cut">${esc(mem.label)}</div>
+        <div class="kc-mem">${photoBox(mem.photo, 'kc-ph', 340, 200)}</div>
         ${mem.photo.caption || mem.photo.name ? `<div class="kc-cut x-serif" style="font-size:18px;margin-top:8px">${esc(mem.photo.caption || `From ${mem.photo.name}`)}</div>` : ''}
       </div>` : ''}
       ${big ? `
@@ -465,16 +448,6 @@ function sidePanel() {
           <div class="kc-cut" style="font:500 22px Outfit,sans-serif;color:${GOLD}">${esc(big.label)} · ${inDays(big.days)}</div>
         </div>
       </div>` : ''}
-      ${soon.length ? `<div class="kc-eye" style="flex:none;margin-top:2px">Coming up</div>` : ''}
-      ${soon.map((u) => `
-      <div class="kc-row" data-jump="${isoDay(u.date)}">
-        <span class="kc-dot" style="background:${colorOfEvent(u.kind === 'event' ? Object.assign({}, u, { kind: 'family' }) : u)}"></span>
-        <div style="min-width:0;flex:1">
-          <div class="kc-cut" style="font:600 18px Inter,sans-serif">${esc(u.name)}</div>
-          <div class="kc-cut kc-soft" style="font:400 15px Inter,sans-serif">${esc(when(u))}</div>
-        </div>
-      </div>`).join('')}
-      ${!mem && !big && !soon.length ? '<div class="kc-soft" style="font:400 18px/1.4 Inter,sans-serif">Tap a day to plan it. Days gone by keep the photo that was added then.</div>' : ''}
       <div style="flex:1;min-height:0"></div>
       ${note.error ? `<div class="kc-warn" style="flex:none;max-height:62px;overflow:hidden">${esc(note.text)}</div>` : ''}
       <button data-cals class="x-btn sm frost" style="flex:none;width:100%">${calendarStatus().calendars ? 'Calendars' : 'Link a calendar'}</button>
@@ -551,7 +524,7 @@ function showDay(el, d) {
   const pics = photosOn(d.date);
   const shown = pics.slice(0, 6);
   const past = d.date <= midnightOf(new Date());
-  const side = pics.length || d.isToday;
+  const side = pics.length > 0;
   openSheet(el, 'day', `
     <div class="kc-sheet" data-day-box="${isoDay(d.date)}" style="width:${side ? 1060 : 760}px;max-height:700px;padding:26px 30px;gap:18px">
       <div style="display:flex;align-items:center;justify-content:space-between;gap:16px;flex:none">
@@ -573,22 +546,20 @@ function showDay(el, d) {
               <div style="min-width:0;flex:1"><div style="font:500 21px/1.25 Inter,sans-serif;overflow-wrap:anywhere;display:flex;align-items:center;gap:8px">${iconFor(e, 24)}<span style="min-width:0">${esc(e.title)}</span></div>
                 ${e.location ? `<div class="kc-soft" style="font-size:16px;margin-top:3px;overflow-wrap:anywhere">${esc(e.location)}</div>` : ''}
                 ${e.calendar ? `<div class="kc-soft" style="font-size:16px;margin-top:3px">From ${esc(e.calendar)}</div>` : ''}
-                ${e.id ? `<div class="kc-soft" style="font-size:16px;margin-top:3px">${esc([e.who && e.who.length ? `For ${e.who.join(' and ')}` : '', e.tag && e.tag !== 'plan' && TAGS[e.tag] ? TAGS[e.tag].label : '', REPEAT_WORDS[e.repeat] || ''].filter(Boolean).concat(['tap to change']).join(' · '))}</div>` : ''}</div>
+                ${e.id && (e.who && e.who.length || (e.tag && e.tag !== 'plan' && TAGS[e.tag]) || REPEAT_WORDS[e.repeat]) ? `<div class="kc-soft" style="font-size:16px;margin-top:3px">${esc([e.who && e.who.length ? `For ${e.who.join(' and ')}` : '', e.tag && e.tag !== 'plan' && TAGS[e.tag] ? TAGS[e.tag].label : '', REPEAT_WORDS[e.repeat] || ''].filter(Boolean).join(' · '))}</div>` : ''}</div>
             </div>`).join('') : `
             <div style="display:flex;flex-direction:column;justify-content:center;gap:8px;padding:26px 12px">
               <div class="x-serif" style="font-size:28px">${past && !d.isToday ? 'Nothing was planned.' : 'Nothing planned yet.'}</div>
-              ${canAddOn(d.date) ? '<div class="kc-soft" style="font-size:18px">Tap + Add to put something on this day.</div>' : ''}
             </div>`}
         </div>
         ${side ? `
         <div style="width:348px;flex:none;display:flex;flex-direction:column;gap:12px;min-height:0">
-          <div class="kc-eye" style="color:#A89DB5">${pics.length ? `${pics.length} photo${pics.length === 1 ? '' : 's'} from this day` : 'No photo from today yet'}</div>
+          <div class="kc-eye" style="color:#A89DB5">${pics.length} photo${pics.length === 1 ? '' : 's'}</div>
           <div style="display:flex;flex-wrap:wrap;gap:12px;overflow:hidden">
             ${shown.map((p) => `<div class="kc-tile">${photoBox(p, 'kc-ph', 252, 190)}</div>`).join('')}
           </div>
-          ${pics.length > shown.length ? `<div class="kc-soft" style="font-size:16px">and ${pics.length - shown.length} more in the gallery</div>` : ''}
           <div style="flex:1"></div>
-          <a href="${pics.length ? '#/photos' : '#/addphotos'}" class="x-btn sm frost" style="flex:none">${pics.length ? 'Open the gallery' : 'Add today’s photo'}</a>
+          ${pics.length > shown.length ? '<a href="#/photos" class="x-btn sm frost" style="flex:none">Open the gallery</a>' : ''}
         </div>` : ''}
       </div>
     </div>`);
@@ -603,7 +574,6 @@ function showDayOn(el, d) {
 function showCals(el) {
   const note = linkNote();
   const links = linkedCalendars();
-  const d = display();
   openSheet(el, 'cals', `
     <div class="kc-sheet" style="width:980px;max-height:700px;padding:26px 30px;gap:18px">
       <div style="display:flex;align-items:center;justify-content:space-between;gap:16px;flex:none">
@@ -612,13 +582,12 @@ function showCals(el) {
       </div>
       <div style="display:flex;gap:28px;min-height:0">
         <div style="flex:1;min-width:0;display:flex;flex-direction:column;gap:14px">
-          <div class="kc-eye" style="color:#A89DB5">${links.length ? `${links.length} linked · the colours` : 'The colours'}</div>
+          <div class="kc-eye" style="color:#A89DB5">${links.length ? `${links.length} linked` : 'Colours'}</div>
           <div style="display:flex;flex-wrap:wrap;gap:10px 22px">${legend()}</div>
-          <div class="${note.error ? 'kc-warn' : 'kc-soft'}" style="font:${note.error ? 500 : 400} 18px/1.4 Inter,sans-serif;margin-top:6px">${esc(note.text)}</div>
+          ${note.text ? `<div class="${note.error ? 'kc-warn' : 'kc-soft'}" style="font:${note.error ? 500 : 400} 18px/1.4 Inter,sans-serif;margin-top:6px">${esc(note.text)}</div>` : ''}
           ${note.button ? `<div><button data-check class="x-btn sm white"${checking ? ' disabled' : ''}>${checking ? 'Checking…' : note.error ? 'Try again' : 'Check now'}</button></div>` : ''}
-          <div class="kc-soft" style="font:400 16px/1.4 Inter,sans-serif;margin-top:auto">Weeks start on ${d.weekStart === 0 ? 'Sunday' : 'Monday'}, with a ${d.clock24 ? '24' : '12'}-hour clock. Both can be changed in Settings.</div>
         </div>
-        <div style="width:330px;flex:none">${phoneCode({ tab: 'settings', title: 'Add your phone’s calendar', sub: 'Scan to link a calendar or add birthdays.', column: true, size: 170 })}</div>
+        <div style="width:330px;flex:none">${phoneCode({ tab: 'settings', title: 'Link a calendar', sub: 'Google, iPhone or birthdays.', column: true, size: 170 })}</div>
       </div>
     </div>`);
   if (stopCodes) stopCodes();
@@ -630,9 +599,8 @@ function showCals(el) {
 const fmtMin = (m) => minutesText(m);
 const LENGTHS = [[30, '30 min'], [60, '1 hr'], [90, '1½ hr'], [120, '2 hr'], [180, '3 hr']];
 const REPEATS = [['none', 'Just once'], ['weekly', 'Weekly'], ['fortnightly', 'Every 2 weeks'], ['monthly', 'Monthly'], ['yearly', 'Yearly']];
-// One-tap times and titles, so most things need no typing at all. A suggestion also sets
-// what usually goes with it (a birthday is all day, every year), which can still be changed.
-const QUICK_HOURS = [9, 12, 15, 17, 18, 19, 20];
+// One-tap titles, so most things need no typing at all. A suggestion also sets what usually
+// goes with it (a birthday is all day, every year), which can still be changed.
 const SUGGEST = [
   { t: 'Dinner out', tag: 'out', at: 19 * 60, len: 120 },
   { t: 'Date night', tag: 'out', at: 19 * 60, len: 180 },
@@ -697,11 +665,6 @@ function pickMonth(f) {
       </div>
       <div class="kf-cal" style="grid-auto-rows:24px">${weekdayNames().map((x) => `<div style="text-align:center;font:600 15px Inter,sans-serif;color:#A89DB5">${x.slice(0, 2)}</div>`).join('')}</div>
       <div class="kf-cal">${cells}</div>
-      <div style="display:flex;gap:8px;margin-top:6px">
-        <button data-f="today" class="kf-chip">Today</button>
-        <button data-f="date+1" class="kf-chip">Next day</button>
-        <button data-f="date+7" class="kf-chip">+1 week</button>
-      </div>
     </div>`;
 }
 
@@ -722,8 +685,7 @@ function drawForm(el) {
     <div data-form class="kc-sheet" style="width:1232px;padding:22px 28px;gap:14px">
       <div style="display:flex;align-items:center;gap:16px;flex:none">
         <div style="min-width:0;flex:1">
-          <div class="kc-eye">${f.id ? 'Change this' : 'Add to the calendar'}</div>
-          <div class="kc-h kc-cut" style="margin-top:2px">${esc(dayWords)}${diff === 0 ? ' <span class="x-serif kc-soft" style="font-size:26px">today</span>' : diff === 1 ? ' <span class="x-serif kc-soft" style="font-size:26px">tomorrow</span>' : ''}</div>
+          <div class="kc-h kc-cut">${esc(dayWords)}${diff === 0 ? ' <span class="x-serif kc-soft" style="font-size:26px">today</span>' : diff === 1 ? ' <span class="x-serif kc-soft" style="font-size:26px">tomorrow</span>' : ''}</div>
         </div>
         <button data-f="cancel" class="x-btn frost">Cancel</button>
       </div>
@@ -732,7 +694,7 @@ function drawForm(el) {
         <div style="flex:1;min-width:0;display:flex;flex-direction:column;gap:8px">
           <div class="kf-line">
             <span class="kf-label">What</span>
-            <input data-title class="kf-in" maxlength="80" placeholder="Tap a choice below, or type here" value="${esc(f.title)}" autocomplete="off">
+            <input data-title class="kf-in" maxlength="80" placeholder="What’s on?" value="${esc(f.title)}" autocomplete="off">
           </div>
           <div class="kf-line"><span class="kf-label"></span><div class="kf-row">${titleChips(f.title)}</div></div>
           <div class="kf-line">
@@ -750,8 +712,7 @@ function drawForm(el) {
             </div>
           </div>
           ${f.allDay ? '' : `
-          <div class="kf-line"><span class="kf-label"></span><div class="kf-row">${QUICK_HOURS.map((h) => `<button data-f="at:${h * 60}" class="kf-chip${f.mins === h * 60 ? ' on' : ''}">${hourText(h)}</button>`).join('')}</div></div>
-          <div class="kf-line"><span class="kf-label">How long</span><div class="kf-row">${LENGTHS.map(([m, t]) => `<button data-f="len:${m}" class="kf-chip${f.minutes === m ? ' on' : ''}">${t}</button>`).join('')}<span class="kc-soft kc-cut" style="font-size:17px;margin-left:4px">until ${fmtMin((f.mins + f.minutes) % 1440)}</span></div></div>`}
+          <div class="kf-line"><span class="kf-label">How long</span><div class="kf-row">${LENGTHS.map(([m, t]) => `<button data-f="len:${m}" class="kf-chip${f.minutes === m ? ' on' : ''}">${t}</button>`).join('')}</div></div>`}
           <div class="kf-line">
             <span class="kf-label">Repeats</span>
             <div class="kf-row">${REPEATS.map(([k, t]) => `<button data-f="rep:${k}" class="kf-chip${f.repeat === k ? ' on' : ''}">${t}</button>`).join('')}</div>
@@ -773,7 +734,6 @@ function drawForm(el) {
               <button data-f="del:all" class="x-btn sm danger sure">Every one</button>
               <button data-f="keep" class="x-btn sm frost" style="margin-left:auto">Keep it</button>` : `
               <button data-f="save" class="x-btn lg gold">${f.id ? 'Save changes' : 'Save'}</button>
-              <button data-f="cancel" class="x-btn frost">Cancel</button>
               <div data-ferr class="kc-warn kc-cut" style="font-size:18px;font-weight:600;flex:1">${esc(f.error)}</div>
               ${f.id ? `<button data-f="delete" class="x-btn danger${f.confirm ? ' sure' : ''}" style="margin-left:auto">${f.confirm ? 'Tap again to remove' : 'Remove'}</button>` : ''}`}
           </div>
@@ -880,16 +840,13 @@ function formAction(el, act, btn) {
     return;
   }
   const setDay = (d) => { f.date = clampDay(d); f.cal = new Date(f.date.getFullYear(), f.date.getMonth(), 1); };
-  if (act === 'today') setDay(midnightOf(new Date()));
-  else if (act.indexOf('pick:') === 0) { const d = fromIso(act.slice(5)); if (canAddOn(d)) setDay(d); }
-  else if (act.indexOf('date') === 0) setDay(shiftDay(f.date, +act.slice(4)));
+  if (act.indexOf('pick:') === 0) { const d = fromIso(act.slice(5)); if (canAddOn(d)) setDay(d); }
   else if (act.indexOf('cal') === 0) {
     const to = new Date(f.cal.getFullYear(), f.cal.getMonth() + +act.slice(3), 1);
     if (canAddOn(to) || canAddOn(new Date(to.getFullYear(), to.getMonth() + 1, 0))) f.cal = to;
   }
   else if (act === 'allday') f.allDay = true;
   else if (act === 'timed') f.allDay = false;
-  else if (act.indexOf('at:') === 0) f.mins = +act.slice(3);
   else if (act.indexOf('len:') === 0) f.minutes = +act.slice(4);
   else if (act.indexOf('rep:') === 0) f.repeat = act.slice(4);
   else if (act.indexOf('tag:') === 0) f.tag = TAGS[act.slice(4)] ? act.slice(4) : 'plan';

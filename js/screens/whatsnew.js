@@ -32,8 +32,7 @@ export function mount(el) {
   <div class="wn${deck ? ' deck' : ''}">
     <div class="wn-top">
       <a href="${backHref()}" class="pill wn-back">${backLabel()}</a>
-      <div class="display wn-title" style="font-size:${deck ? 30 : 40}px;font-weight:500">${deck ? 'New on the deck' : 'New on your kitchen screen'}</div>
-      <div class="muted" style="margin-left:auto;font-size:17px;text-align:right">${deck ? 'IT ARRIVED BY ITSELF. NOTHING TO INSTALL.' : 'It arrived by itself. Nothing to install.'}</div>
+      <div class="display wn-title" style="font-size:${deck ? 30 : 40}px;font-weight:500">${deck ? 'New on the deck' : 'What’s new'}</div>
     </div>
     <div class="wn-grid">
       ${edition.items.map(([title, line, screen]) => `

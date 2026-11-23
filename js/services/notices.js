@@ -6,6 +6,7 @@
 import { worthAWord } from './whatsnew.js';
 import { noteTrouble } from './trouble.js';
 import { timeText } from './display.js';
+import { profile } from '../config.js';
 
 const N = () => window.TabletNative;
 const ON_A_SCREEN = /Android/.test(navigator.userAgent); // a laptop on its battery is not news
@@ -30,6 +31,18 @@ let hushedUntil = 0; // "I know" was tapped
 let showing = '';
 let homeRoutes = []; // where a word about new things may show (the home screens only)
 
+// The word about new things stays up for two days at most, then it lets the screen be
+// (services/whatsnew.js notes when it first went up; it would otherwise allow a week).
+const NEW_WORD_MS = 2 * 24 * 60 * 60 * 1000;
+function newWordFresh() {
+  // (Not on Tom's deck: its dock fills the bottom edge, and Settings there has What's new.)
+  if (profile === 'tom' || !worthAWord()) return false;
+  let since = '';
+  try { since = localStorage.getItem('whatsnew.since.v1') || ''; } catch (e) { return true; }
+  const at = Number(since.split('|')[1]);
+  return !at || Date.now() - at < NEW_WORD_MS;
+}
+
 function what() {
   const now = Date.now();
   if (battery && !battery.charging && ON_A_SCREEN) {
@@ -42,8 +55,8 @@ function what() {
   if (offlineAt && now - offlineAt > OFFLINE_AFTER && !QUIET_SCREENS.includes(route)) {
     return { kind: 'offline', text: offlineKind === 'connected' ? 'The internet isn’t answering · showing what was saved' : 'No Wi-Fi · showing what was saved' };
   }
-  // Nothing wrong: then, on the home screen only and for a week, a word about new things.
-  if (homeRoutes.indexOf(route) >= 0 && worthAWord()) return { kind: 'new', text: '✨ New things have arrived · See what’s new', fresh: true };
+  // Nothing wrong: then, on Home and the menu only and for a day or two, a small word about new things.
+  if (homeRoutes.indexOf(route) >= 0 && newWordFresh()) return { kind: 'new', text: '✨ What’s new', fresh: true };
   return null;
 }
 
@@ -57,7 +70,13 @@ function render() {
   if (!n) return;
   bar.dataset.kind = n.kind;
   bar.textContent = n.text;
-  bar.style.background = n.urgent ? '#C2491F' : n.fresh ? '#2F6B4F' : '#1D2430';
+  bar.style.background = n.urgent ? '#C2491F' : n.fresh ? 'rgba(29,36,48,.55)' : '#1D2430';
+  // The word about new things is the small, quiet one; the warnings keep their size.
+  bar.style.minHeight = n.fresh ? '40px' : '52px';
+  bar.style.padding = n.fresh ? '0 16px' : '0 22px';
+  bar.style.fontSize = n.fresh ? '15px' : '18px';
+  bar.style.color = n.fresh ? 'rgba(255,255,255,.88)' : '#fff';
+  bar.style.boxShadow = n.fresh ? 'none' : '0 2px 8px rgba(0,0,0,.18)';
   makeRoom();
 }
 
@@ -92,7 +111,7 @@ export function startNotices({ settingsRoute = '', homeRoutes: homes = [] } = {}
   bar.setAttribute('data-notice', '');
   bar.style.cssText = 'position:absolute;left:24px;bottom:24px;z-index:50;display:none;align-items:center;'
     + 'min-height:52px;padding:0 22px;border:none;border-radius:999px;font:600 18px Inter,sans-serif;color:#fff;'
-    + 'cursor:pointer;box-shadow:0 6px 20px rgba(0,0,0,.18)';
+    + 'cursor:pointer';
   bar.addEventListener('click', () => {
     if (bar.dataset.kind === 'offline' && settingsRoute) {
       try { sessionStorage.setItem('settings.section', 'about'); } catch (e) { /* storage off */ }

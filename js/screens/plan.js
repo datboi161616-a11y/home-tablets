@@ -1,10 +1,10 @@
 // Kitchen · Week plan: breakfast, lunch and dinner for this week and next.
-// Tap a meal for its choices (recipe, cook, how many people, move, take off). Tap a day's
+// Tap a meal for its choices (recipe, cook, people, add another, move, remove). Tap a day's
 // name to mark a meal "Leftovers" / "Eating out", move or swap the day, or clear it.
 // Moving never needs dragging: tap "Move", then tap the day.
 import { loadIndex, fmtMinutes, cuisineColor, searchRecipes } from '../services/recipe-data.js';
 import {
-  getPlan, addToPlan, removeFromPlan, onKitchenChanged, weekRecipeIds, nextWeekRecipeIds, MEALS, dayKey,
+  getPlan, addToPlan, removeFromPlan, onKitchenChanged, MEALS, dayKey,
   planDays, dayIds, MARKS, markFor, setMark, moveMeal, swapDays, snapshotDays, restoreDays, clearDays, copyDays,
   mealServings, setMealServings, favorites, MAX_MEALS, getListState, setListNextWeek,
   shoppingCount,
@@ -75,14 +75,13 @@ export function mount(el) {
     .wp-slot{display:flex;flex-direction:column;gap:6px}
     .wp-slot.over{opacity:.5}
     .wp-mh{font-size:15px;font-weight:700;letter-spacing:.8px;text-transform:uppercase;color:${RUST};padding:4px 4px 0}
-    .wp-meal{border-radius:14px;background:#F3E7D3;padding:8px 2px 0 10px;display:flex;flex-direction:column;gap:2px;border-left:6px solid ${INK};cursor:pointer}
+    .wp-meal{border-radius:14px;background:#F3E7D3;padding:8px 6px 8px 10px;display:flex;flex-direction:column;gap:2px;border-left:6px solid ${INK};cursor:pointer}
     .wp-meal .hd{display:flex;align-items:center;gap:10px;padding-right:6px}
     .wp-meal .t{font-size:17px;font-weight:600;line-height:1.25;padding-right:4px;overflow-wrap:break-word;word-break:normal;hyphens:auto;min-width:0}
     .wp-day.today .wp-meal .t{font-size:19px}
     .wp-meal .m{font-size:16px;color:#5B6B73;display:flex;align-items:center;justify-content:space-between;gap:4px}
     .wp-meal .by{font-size:16px;font-weight:600;color:${RUST}}
     .wp-meal .pp{font-size:15px;color:#5B6B73;font-weight:600}
-    .wp-x{width:48px;height:56px;flex:none;border:none;background:transparent;font-size:26px;color:#5B6B73;cursor:pointer}
     .wp-add{min-height:56px;border-radius:14px;border:2px dashed #D9C8AD;background:transparent;display:flex;align-items:center;justify-content:center;font:600 17px Inter,system-ui,sans-serif;color:#5B6B73;flex:none;cursor:pointer;width:100%}
     .wp-add.empty{flex-direction:column;gap:2px;padding:6px 0 6px}
     .wp-mark{min-height:60px;border-radius:14px;background:#E3ECEC;display:flex;align-items:center;gap:8px;padding:0 10px;font:600 16px Inter,system-ui,sans-serif;color:${INK};border:none;width:100%;text-align:left;cursor:pointer}
@@ -91,14 +90,10 @@ export function mount(el) {
     .wp-cook.go{background:${RUST}}
     .wp-days.moving .wp-day{box-shadow:inset 0 0 0 4px #7FB3C4;cursor:pointer}
     .wp-days.moving .wp-day.from{box-shadow:inset 0 0 0 4px ${INK};background:#EBDFCB}
-    .wp-days.moving .wp-day::after{content:"Tap here";position:absolute;left:8px;right:8px;bottom:10px;min-height:56px;border-radius:14px;background:${INK};color:#FFFFFF;
-      font:600 18px Inter,system-ui,sans-serif;display:flex;align-items:center;justify-content:center}
-    .wp-days.moving .wp-day.from::after{content:"From here";background:#8A979D}
     .wp-toast{position:absolute;left:50%;bottom:26px;transform:translateX(-50%);z-index:40;display:flex;align-items:center;gap:18px;
       background:${INK};color:#FFFFFF;border-radius:999px;padding:8px 8px 8px 28px;font-size:19px;box-shadow:0 10px 24px rgba(0,0,0,.4),inset 0 0 0 2px ${AMBER};max-width:900px;min-height:72px}
     .wp-toast span{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0}
     .wp-toast.plain{padding-right:28px}
-    .wp-days.moving ~ .wp-toast{bottom:110px}
     .wp-bg{position:absolute;left:0;top:0;right:0;bottom:0;z-index:50;background:rgba(6,16,21,.62);display:flex;align-items:center;justify-content:center}
     .wp-sheet{background:${CREAM};color:${INK};border-radius:30px;padding:28px 32px;width:720px;max-height:744px;display:flex;flex-direction:column;gap:16px;box-shadow:0 20px 40px rgba(0,0,0,.4)}
     .wp-sheet.wide{width:1040px}
@@ -106,7 +101,6 @@ export function mount(el) {
     .wp-sheet .x-btn.line{box-shadow:inset 0 0 0 2px rgba(35,50,58,.3)}
     .wp-sh{font:500 30px/1.2 Outfit,system-ui,sans-serif}
     .wp-ss{font-size:18px;color:#5B6B73;margin-top:-10px}
-    .wp-small{font-size:16px;color:#5B6B73;margin-top:-8px}
     .wp-row{display:flex;gap:12px;flex-wrap:wrap;align-items:center}
     .wp-row .x-btn{flex:1 1 0}
     .wp-step{display:flex;align-items:center;gap:14px;font-size:19px}
@@ -162,7 +156,6 @@ export function mount(el) {
 
   function mealCard(ix, plan, id, d, meal) {
     const r = ix.byId[id];
-    const rm = `<button class="wp-x" data-remove="${esc(id)}" data-day="${d.key}" data-meal="${meal}" aria-label="Take ${esc(r.t)} off">×</button>`;
     const own = ((plan[d.key] || {}).serves || {})[`${meal}|${id}`];
     const pp = own ? `<div class="pp">For ${own}</div>` : '';
     const open = `data-open="${d.key}|${meal}|${esc(id)}"`;
@@ -170,18 +163,18 @@ export function mount(el) {
       return `
       <div class="wp-meal" ${open} style="border-left-color:${cuisineColor(r.c)}">
         <div class="t">${esc(r.t)}</div>${pp}
-        <div class="m"><span style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${fmtMinutes(r.m)}</span>${rm}</div>
+        <div class="m"><span style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${fmtMinutes(r.m)}</span></div>
       </div>`;
     }
     // Today: the Cook button carries the time, and says where you got to if you've started.
     const step = cookingStep(id);
     const by = meal === 'dinner' ? startBy(r.m) : '';
     return `
-      <div class="wp-meal" ${open} style="border-left-color:${cuisineColor(r.c)};padding-bottom:2px">
+      <div class="wp-meal" ${open} style="border-left-color:${cuisineColor(r.c)}">
         <div class="hd">${plate(r, 56)}<div style="min-width:0"><div class="t">${esc(r.t)}</div>${pp}
         ${by ? `<div class="by">${by}</div>` : ''}</div></div>
         <div class="m">
-          <a href="#/recipe/${encodeURIComponent(id)}" class="wp-cook${step ? ' go' : ''}">${step ? `Continue · step ${step}` : `Cook · ${fmtMinutes(r.m)}`}</a>${rm}
+          <a href="#/recipe/${encodeURIComponent(id)}" class="wp-cook${step ? ' go' : ''}">${step ? `Continue · step ${step}` : `Cook · ${fmtMinutes(r.m)}`}</a>
         </div>
       </div>`;
   }
@@ -203,8 +196,7 @@ export function mount(el) {
               <div class="wp-mh">${name}</div>
               ${ids.map((id) => mealCard(ix, plan, id, d, meal)).join('')}
               ${mark ? `<button class="wp-mark" data-dayhead="${d.key}">${markIcon(mark)}<span>${esc(markName(mark))}</span></button>`
-                : !ids.length ? `<button class="wp-add empty" data-add="${d.key}|${meal}">${spot.plate(PLATE[meal], 40)}<span>+ Add</span></button>`
-                  : ids.length < MAX_MEALS ? `<button class="wp-add" data-add="${d.key}|${meal}">+ Add</button>` : ''}
+                : !ids.length ? `<button class="wp-add empty" data-add="${d.key}|${meal}" aria-label="Add ${esc(name.toLowerCase())}">${spot.plate(PLATE[meal], 40)}</button>` : ''}
             </div>`;
           }).join('')}
         </div>
@@ -225,12 +217,12 @@ export function mount(el) {
         <a href="#/dish/${encodeURIComponent(id)}" class="x-btn line">See the recipe</a>
         <a href="#/recipe/${encodeURIComponent(id)}" class="x-btn ink">Start cooking</a>
       </div>
-      ${n ? `<div class="wp-step"><span style="flex:1">How many people is it for?</span>
-        <button data-serves="-1" aria-label="Fewer people">−</button><b>${n}</b><button data-serves="1" aria-label="More people">+</button></div>
-        <div class="wp-small">The shopping list buys enough for ${n}.</div>` : ''}
+      ${n ? `<div class="wp-step"><span style="flex:1">People</span>
+        <button data-serves="-1" aria-label="Fewer people">−</button><b>${n}</b><button data-serves="1" aria-label="More people">+</button></div>` : ''}
       <div class="wp-row">
-        <button class="x-btn line" data-movemeal>Move to another day</button>
-        <button class="x-btn line" data-removesheet>Take it off the plan</button>
+        ${((plan[key] || {})[meal] || []).length < MAX_MEALS ? `<button class="x-btn line" data-addmore>Add another</button>` : ''}
+        <button class="x-btn line" data-movemeal>Move</button>
+        <button class="x-btn line" data-removesheet>Remove</button>
       </div>
       <button class="x-btn soft" data-close>Close</button>`;
   }
@@ -241,7 +233,6 @@ export function mount(el) {
     const has = dayIds(plan, d.key).length || (plan[d.key] || {}).mark;
     return `
       <div class="wp-sh">${esc(d.n < 2 ? `${d.label}, ${d.date.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' })}` : d.date.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' }))}</div>
-      <div class="wp-ss">Not cooking? Say so, and the plan shows it.</div>
       <div>
         ${MEALS.map(([meal, name]) => {
           const ids = ((plan[d.key] || {})[meal] || []).filter((id) => ix.byId[id]);
@@ -253,8 +244,8 @@ export function mount(el) {
         }).join('')}
       </div>
       ${has ? `<div class="wp-row">
-        <button class="x-btn line" data-moveday>Move or swap this day</button>
-        <button class="x-btn ${armed === `day:${d.key}` ? 'amber' : 'line'}" data-clearday>${armed === `day:${d.key}` ? 'Tap again to clear' : 'Clear this day'}</button>
+        <button class="x-btn line" data-moveday>Move or swap</button>
+        <button class="x-btn ${armed === `day:${d.key}` ? 'amber' : 'line'}" data-clearday>${armed === `day:${d.key}` ? 'Tap again to clear' : 'Clear day'}</button>
       </div>` : ''}
       <button class="x-btn soft" data-close>Done</button>`;
   }
@@ -268,10 +259,7 @@ export function mount(el) {
     const which = week ? 'next week' : 'this week';
     return `
       <div class="wp-sh">${week ? 'Next week' : 'This week'}</div>
-      ${!week && thisHas ? `<button class="x-btn line" data-copyweek>Same meals again next week</button>
-        <div class="wp-small">Copies this week’s meals into next week, where nothing is planned yet.</div>` : ''}
-      ${week && thisHas ? `<button class="x-btn line" data-copyweek>Copy this week’s meals here</button>
-        <div class="wp-small">Only fills meals that have nothing planned yet.</div>` : ''}
+      ${thisHas ? `<button class="x-btn line" data-copyweek>${week ? 'Copy this week here' : 'Repeat next week'}</button>` : ''}
       <div class="wp-mrow" style="border-top:none"><div class="nm" style="width:auto;margin-right:8px">Shopping list for</div>
         <button class="wp-chip${next ? '' : ' on'}" data-listnext="0">This week</button>
         <button class="wp-chip${next ? ' on' : ''}" data-listnext="1">This week and next</button></div>
@@ -313,13 +301,13 @@ export function mount(el) {
     return `
       <div style="display:flex;align-items:center;gap:16px">
         <div style="flex:1;min-width:0"><div class="wp-sh">${esc(mealName(meal))} for ${esc(d ? (d.n < 2 ? d.label : `${d.label} ${d.sub}`) : '')}</div></div>
-        ${week === 0 ? `<a href="${browseFor(ix, meal)}" class="x-btn amber" data-browse>Browse all recipes</a>` : ''}
+        ${week === 0 ? `<a href="${browseFor(ix, meal)}" class="x-btn amber" data-browse>All recipes</a>` : ''}
         <button class="x-btn soft" data-close>Close</button>
       </div>
       <input data-picksearch class="wp-in" maxlength="40" placeholder="Search: chicken, soup, pasta…" autocomplete="off" aria-label="Search the recipes">
       <div data-pickbody class="x-scroll" style="display:flex;flex-direction:column;gap:8px;min-height:200px;flex-grow:1">
         ${part('Your favourites', l.fav)}${part('Planned lately', l.lately)}${part('Ideas', l.ideas)}
-        ${!l.fav.length && !l.lately.length && !l.ideas.length ? '<div class="wp-hint">Type above to find a recipe.</div>' : ''}
+        ${!l.fav.length && !l.lately.length && !l.ideas.length ? '<div class="wp-hint">No ideas yet.</div>' : ''}
       </div>`;
   }
 
@@ -335,9 +323,6 @@ export function mount(el) {
     const days = planDays(week);
     const sameDay = shownDay === planDays(0)[0].key;
     shownDay = planDays(0)[0].key;
-    const total = weekRecipeIds().length;
-    const shown = week ? nextWeekRecipeIds().length : total;
-    const marks = days.some((d) => (plan[d.key] || {}).mark);
     const scrolls = [].map.call(root.querySelectorAll('.wp-meals'), (m) => m.scrollTop); // keep each day's place
     const what = moving && (moving.kind === 'meal' ? moving.title : `${dayWords(moving.key)}’s meals`);
     root.innerHTML = `
@@ -345,15 +330,14 @@ export function mount(el) {
         title: 'Week plan',
         right: `<div class="wp-weeks"><button data-week="0" class="${week ? '' : 'on'}" aria-pressed="${week ? 'false' : 'true'}">This week</button><button data-week="1" class="${week ? 'on' : ''}" aria-pressed="${week ? 'true' : 'false'}">Next week</button></div>
           <button class="x-btn frost sm" data-weeksheet>Week •••</button>
-          <a href="#/recipes" class="x-btn glass sm">Recipes</a>
           <a href="#/shopping" class="x-btn glass sm">Shopping list<span data-listcount class="x-badge" style="display:none">${listCount || ''}</span></a>`,
       })}
       <div class="wp-days${week ? ' even' : ''}${moving ? ' moving' : ''}">
         ${days.map((d) => dayColumn(ix, plan, d)).join('')}
       </div>
-      ${moving ? `<div class="wp-toast"><span>Tap the day for ${esc(what)}${week ? '' : ' (or Next week above)'}</span><button class="x-btn white sm" data-cancelmove>Cancel</button></div>`
+      ${moving ? `<div class="wp-toast"><span>Move ${esc(what)} to…</span><button class="x-btn white sm" data-cancelmove>Cancel</button></div>`
         : toast ? `<div class="wp-toast${toast.snap || toast.list != null ? '' : ' plain'}"><span>${esc(toast.text)}</span>${toast.snap || toast.list != null ? '<button class="x-btn white sm" data-undo>Undo</button>' : ''}</div>`
-          : shown || marks ? '' : `<div class="wp-hint">${week ? 'Nothing planned for next week yet. Tap “+ Add”, or “Week •••” to copy this week.' : 'Tap “+ Add” under a meal and pick a recipe. Your shopping list builds itself.'}</div>`}
+          : ''}
       ${sheetHtml(ix, plan)}`;
     if (sameDay) root.querySelectorAll('.wp-meals').forEach((m, i) => { m.scrollTop = scrolls[i] || 0; });
     fillCount();
@@ -388,7 +372,7 @@ export function mount(el) {
       if (!el.isConnected || !root.querySelector('[data-pickbody]')) return;
       root.querySelector('[data-pickbody]').innerHTML = hits.length
         ? `<div class="wp-pick">${hits.map((r) => tile(ix, r.id)).join('')}</div>`
-        : `<div class="wp-hint">No recipe called “${esc(text.trim())}”. Try another word.</div>`;
+        : `<div class="wp-hint">No recipe called “${esc(text.trim())}”.</div>`;
     }, 250);
   }
 
@@ -428,15 +412,6 @@ export function mount(el) {
       else render(ix);
       return;
     }
-    if ((x = t('[data-remove]'))) {
-      e.preventDefault();
-      const id = x.dataset.remove, key = x.dataset.day, meal = x.dataset.meal;
-      const snap = snapshotDays([key]);
-      if (sheet && sheet.type === 'meal') sheet = null;
-      say(`Took ${(ix.byId[id] || {}).t || 'that meal'} off ${dayWords(key)} ${mealName(meal).toLowerCase()}`, { snap });
-      removeFromPlan(key, id, meal); // redraws via kitchen-changed
-      return;
-    }
     if ((x = t('[data-week]'))) { setWeek(Number(x.dataset.week)); sheet = null; render(ix); return; }
     if (t('[data-weeksheet]')) { sheet = { type: 'week' }; armed = ''; render(ix); return; }
     // Inside a sheet
@@ -457,6 +432,7 @@ export function mount(el) {
         setMealServings(sheet.key, sheet.meal, sheet.id, n + Number(x.dataset.serves));
         return;
       }
+      if (t('[data-addmore]')) { sheet = { type: 'pick', key: sheet.key, meal: sheet.meal }; render(ix); return; }
       if (t('[data-movemeal]')) {
         moving = { kind: 'meal', key: sheet.key, meal: sheet.meal, id: sheet.id, title: (ix.byId[sheet.id] || {}).t || 'that meal' };
         sheet = null;

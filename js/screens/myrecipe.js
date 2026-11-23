@@ -6,7 +6,7 @@
 //   #/myrecipe/from/<id>  a copy of a library recipe, to change as you like
 import { savedRecipes, saveRecipe, deleteRecipe, parseStep, MEAL_NAMES, UNDO_KEY } from '../services/my-recipes.js';
 import { getRecipe, ingredientText, loadIndex } from '../services/recipe-data.js';
-import { esc, fillCounts, kitchenLinks } from './kitchen-ui.js';
+import { esc } from './kitchen-ui.js';
 import { topBar, phoneCode, wirePhoneCodes } from './ui.js';
 
 let armTimer, draftTimer;
@@ -57,7 +57,6 @@ export function mount(el, { args = [] } = {}) {
     .mr-meals{display:grid;grid-template-columns:1fr 1fr;gap:8px}
     .mr-meal{min-height:56px;border-radius:999px;border:0;background:rgba(255,244,234,.14);font:600 18px Inter,sans-serif;color:#FFF4EA;cursor:pointer}
     .mr-meal.on{background:#FFF4EA;color:#3A1D10}
-    .mr-hint{font-size:16px;color:#E3CDBB}
     .mr-msg{font-size:17px;font-weight:600;color:#FFE6D6;line-height:1.35}
     .mr-msg:empty{display:none}
     .mr-in.bad,.mr-ta.bad{border-color:#FF6B5E;background:#FFE4DF}
@@ -66,7 +65,7 @@ export function mount(el, { args = [] } = {}) {
     .mr-phone .x-code{background:rgba(255,244,234,.09);box-shadow:inset 0 0 0 1.5px rgba(255,244,234,.1);border-radius:28px;padding:12px 22px 12px 14px}
   </style>
   <div class="mr">
-    ${topBar({ title: existing ? `Edit: ${existing.title}` : copyOf ? 'Make your own version' : 'Add a recipe', back: 'history', backLabel: '← Back', tone: 'dark', right: kitchenLinks() })}
+    ${topBar({ title: existing ? `Edit: ${existing.title}` : copyOf ? 'Make your own version' : 'Add a recipe', back: 'history', backLabel: '← Back', tone: 'dark' })}
     <div class="mr-grid">
       <div class="mr-card" style="grid-row:1 / 3">
         <div class="mr-fields">
@@ -83,31 +82,28 @@ export function mount(el, { args = [] } = {}) {
                 <button class="mr-pm" data-pm="${f}" data-d="1" aria-label="More">+</button>
               </div>`).join('')}
           </div>
-          <div><div class="mr-label">Short description (optional)</div><input data-f="blurb" class="mr-in" maxlength="90" value="${esc(r.blurb || '')}" placeholder="A favorite for a slow Sunday"></div>
+          <div><div class="mr-label">Description (optional)</div><input data-f="blurb" class="mr-in" maxlength="90" value="${esc(r.blurb || '')}" placeholder="A favorite for a slow Sunday"></div>
         </div>
         <div data-msg class="mr-msg">${missing ? 'That recipe was deleted. You can type it in again as a new one.'
-          : draft ? 'Here’s what you were typing last time. Tap Save when it’s ready.' : ''}</div>
+          : draft ? 'Your unsaved typing is back.' : ''}</div>
         <div style="display:flex;gap:10px">
           <button data-save class="x-btn accent" style="flex:1">Save recipe</button>
           ${existing ? '<button data-delete class="x-btn frost">Delete</button>' : ''}
         </div>
       </div>
-      ${existing || copyOf ? '<div class="mr-phone" style="display:none"></div>' : `<div class="mr-phone">${phoneCode({ tab: 'recipe', size: 76, title: 'Easier on a phone?', sub: 'Scan to type or paste the recipe there and send it to this screen. Same Wi-Fi as this screen.' })}</div>`}
+      ${existing || copyOf ? '<div class="mr-phone" style="display:none"></div>' : `<div class="mr-phone">${phoneCode({ tab: 'recipe', size: 76, title: 'Or send it from your phone', sub: ' ' })}</div>`}
       <div class="mr-card">
         <div style="display:flex;align-items:baseline"><div class="mr-label" style="margin:0">Ingredients</div><div data-count="ingredients" class="mr-count"></div></div>
-        <div class="mr-hint">One per line, like “2 cups flour” or “1 lb ground beef”</div>
         <textarea data-f="ingredients" class="mr-ta" placeholder="For example:&#10;2 lb chuck roast&#10;1 onion, sliced&#10;3 carrots&#10;2 cups beef broth">${esc((r.ingredients || []).join('\n'))}</textarea>
       </div>
       <div class="mr-card">
         <div style="display:flex;align-items:baseline"><div class="mr-label" style="margin:0">Steps</div><div data-count="steps" class="mr-count"></div></div>
-        <div class="mr-hint">One per line. Times like “bake 25 minutes” get a timer.</div>
         <textarea data-f="steps" class="mr-ta" placeholder="For example:&#10;Season the roast and brown it on all sides.&#10;Add the onion, carrots and broth.&#10;Cook on low for 8 hours.">${esc((r.steps || []).join('\n'))}</textarea>
       </div>
     </div>
   </div>`;
   if (stopCodes) stopCodes();
   stopCodes = wirePhoneCodes(el);
-  fillCounts(el);
 
   const $ = (s) => el.querySelector(s);
   const val = (f) => $(`[data-f="${f}"]`).value;
@@ -156,7 +152,7 @@ export function mount(el, { args = [] } = {}) {
       el.querySelectorAll('[data-meal]').forEach((x) => x.classList.toggle('on', x.dataset.meal === meal));
       restored = true;
       counts();
-      msg('A copy for you to change. Tap Save to keep it in My recipes; the original stays as it is.');
+      msg('A copy to change. The original stays as it is.');
     }).catch(() => { if (el.isConnected) msg('Couldn’t open that recipe to copy. Check the Wi-Fi.', true); });
   }
 
@@ -181,7 +177,7 @@ export function mount(el, { args = [] } = {}) {
     if (LIMITS[f]) e.target.value = clampNum(f, e.target.value);
   });
 
-  // Leaving with unsaved typing (Back or one of the tabs) asks for a second tap first.
+  // Leaving with unsaved typing asks for a second tap first.
   const disarmLeave = () => {
     leaveArmed = false;
     const b = $('[data-back]');
@@ -193,7 +189,7 @@ export function mount(el, { args = [] } = {}) {
     if (dirty() && !leaveArmed) {
       e.preventDefault();
       leaveArmed = true;
-      msg('You haven’t saved this recipe. Tap Save, or tap again to leave without saving.', true);
+      msg('Not saved. Tap again to leave without saving.', true);
       if (out.matches('[data-back]')) { out.textContent = 'Leave?'; out.style.color = '#FFB3A8'; }
       clearTimeout(armTimer);
       armTimer = setTimeout(() => { if (el.isConnected) { disarmLeave(); msg(''); } }, 5000);
@@ -235,7 +231,7 @@ export function mount(el, { args = [] } = {}) {
         b.dataset.sure = '1';
         b.textContent = 'Save anyway';
         $('[data-f="title"]').classList.add('bad');
-        msg(`You already have a recipe called “${twin.title}”. Change the name, or tap Save anyway.`, true);
+        msg(`You already have “${twin.title}”.`, true);
         return;
       }
       saving = true;

@@ -24,7 +24,7 @@ import { nextVisiblePass, getCrew, orbitStatus, brightnessWords } from '../servi
 import { getBoard } from '../services/departures.js';
 import { checkAlerts, wasSeen, markSeen, heightWords } from '../services/skyalert.js';
 import { getSpaceImage, fallbackImage, SPACE_IMAGES } from '../services/space.js';
-import { moonPhase, nextMoonPhase, planetEcliptic, sunEcliptic } from '../services/astro.js';
+import { moonPhase, planetEcliptic, sunEcliptic } from '../services/astro.js';
 import { display, clockTime, clockAmPm, timeText } from '../services/display.js';
 import { tutorialRunning } from '../services/tutorial.js';
 import { restful, esc } from './ui.js';
@@ -91,7 +91,7 @@ function vals() {
   const moonName = near(0) ? 'New Moon' : near(MONTH / 4) ? 'First quarter' : near(MONTH / 2) ? 'Full Moon' : near((3 * MONTH) / 4) ? 'Last quarter'
     : age < MONTH / 4 ? 'Waxing crescent' : age < MONTH / 2 ? 'Waxing gibbous' : age < (3 * MONTH) / 4 ? 'Waning gibbous' : 'Waning crescent';
   const toFull = Math.round((((MONTH / 2 - age) % MONTH) + MONTH) % MONTH);
-  const moonNext = near(MONTH / 2) ? 'the brightest nights of the month'
+  const moonNext = near(MONTH / 2) ? ''
     : toFull <= 1 ? 'full Moon tomorrow' : `full Moon in ${toFull} days`;
   const years = now.getFullYear() - 1977 - (now < new Date(now.getFullYear(), 8, 5) ? 1 : 0);
   return {
@@ -102,8 +102,8 @@ function vals() {
     vgrKm: Math.round(km).toLocaleString('en-US'),
     vgrDelay: Math.floor(secs / 3600) + 'h ' + pad(Math.floor((secs % 3600) / 60)) + 'm ' + pad(secs % 60) + 's',
     vgrStatus: until > 0
-      ? 'In ' + Math.ceil(until / 3600000) + ' hours it becomes the first human-made object one light-day from Earth.'
-      : 'Crossed one light-day from Earth on Nov 18, 2026. Nothing we have built has gone farther.',
+      ? 'One light-day from Earth in ' + Math.ceil(until / 3600000) + ' hours'
+      : 'One light-day from Earth since Nov 18, 2026',
     moonName,
     moonNext,
     vgrYears: years,
@@ -164,7 +164,11 @@ async function keep(url) {
 // ---------------------------------------------------------------------------------------
 // The painted scenes
 // ---------------------------------------------------------------------------------------
-/** A few stars of varied brightness; six of them breathe slowly. */
+/** A few stars of varied brightness; six of them breathe slowly. Their own <svg>, so a
+ *  twinkle repaints only the stars, not the Moon or the planets drawn over them. */
+function starSky(n, salt) {
+  return `<svg viewBox="0 0 1280 800" width="1280" height="800" style="position:absolute;left:0;top:0" aria-hidden="true">${stars(n, salt)}</svg>`;
+}
 function stars(n, salt) {
   let out = '';
   for (let i = 0; i < n; i++) {
@@ -223,6 +227,7 @@ function moonArt(date, south) {
   const flip = ph.waxing ? 1 : -1; // (seen from the south the whole disc is turned over, which swaps the sides by itself)
   const halo = (0.05 + 0.11 * k).toFixed(3);
   return `<div style="position:absolute;left:560px;top:20px;width:760px;height:760px;background:radial-gradient(circle,rgba(196,208,232,${halo}) 0,rgba(196,208,232,${(halo * 0.45).toFixed(3)}) 38%,rgba(196,208,232,0) 68%)"></div>
+  ${starSky(70, 3)}
   <svg viewBox="0 0 1280 800" width="1280" height="800" style="position:absolute;left:0;top:0" aria-hidden="true">
     <defs>
       <radialGradient id="fd-mb" cx="46%" cy="42%" r="62%"><stop offset="0" stop-color="#E9E7E1"/><stop offset=".7" stop-color="#D9D6CF"/><stop offset="1" stop-color="#BFBCB5"/></radialGradient>
@@ -231,7 +236,6 @@ function moonArt(date, south) {
       <radialGradient id="fd-ml"><stop offset=".8" stop-color="#000" stop-opacity="0"/><stop offset="1" stop-color="#000" stop-opacity=".24"/></radialGradient>
       <clipPath id="fd-mc"><circle r="${R}"/></clipPath>
     </defs>
-    <g class="fd-sky">${stars(70, 3)}</g>
     <g transform="translate(940 400) rotate(${south ? 180 : -8})">
       <circle r="${R}" fill="url(#fd-mb)"/>
       <g clip-path="url(#fd-mc)">
@@ -275,9 +279,9 @@ function orbitsArt(date) {
     names += `<text x="${(x + size + 12).toFixed(0)}" y="${(y + 5).toFixed(0)}">${label}</text>`;
   });
   return `<div style="position:absolute;left:${CX - 210}px;top:${CY - 210}px;width:420px;height:420px;background:radial-gradient(circle,rgba(255,214,150,.2) 0,rgba(255,196,120,.07) 30%,rgba(255,196,120,0) 62%)"></div>
+  ${starSky(80, 11)}
   <svg viewBox="0 0 1280 800" width="1280" height="800" style="position:absolute;left:0;top:0" aria-hidden="true">
     <defs>${defs}<radialGradient id="fd-sun"><stop offset="0" stop-color="#FFFDF4"/><stop offset=".55" stop-color="#FFE9B8"/><stop offset="1" stop-color="#FFC978" stop-opacity="0"/></radialGradient></defs>
-    <g class="fd-sky">${stars(80, 11)}</g>
     ${rings}
     <circle cx="${CX}" cy="${CY}" r="17" fill="url(#fd-sun)"/>
     ${bodies}
@@ -332,13 +336,9 @@ export function mount(el) {
     .fd{position:relative;width:1280px;height:800px;overflow:hidden;background:#04050A;color:#FFFFFF;font-family:Inter,system-ui,sans-serif}
     .fd a{color:inherit;text-decoration:none}
     .fd-fill{position:absolute;top:0;left:0;width:1280px;height:800px}
-    .fd-layer{opacity:0;transition:opacity ${FADE_MS}ms ease;will-change:transform,opacity}
+    .fd-layer{opacity:0;transition:opacity ${FADE_MS}ms ease;will-change:opacity}
     .fd-layer img{position:absolute;top:0;left:0;width:100%;height:100%;object-fit:cover}
     .fd-layer.on{opacity:1}
-    .fd-zoom .fd-layer.on{animation:fd-drift 90s ease-in-out infinite alternate}
-    @keyframes fd-drift{0%{transform:scale(1.02) translate3d(0,0,0)}100%{transform:scale(1.1) translate3d(-14px,-8px,0)}}
-    .fd-sky{will-change:transform;animation:fd-sky 240s ease-in-out infinite alternate}
-    @keyframes fd-sky{0%{transform:translate3d(0,0,0)}100%{transform:translate3d(-26px,10px,0)}}
     .fd-tw{animation:fd-tw 18s steps(12) infinite}
     @keyframes fd-tw{50%{opacity:.12}}
     .fd-clock{position:absolute;left:64px;top:372px;transition:transform .9s ease;will-change:transform}
@@ -347,6 +347,7 @@ export function mount(el) {
     .fd-time small{font:300 34px Outfit,sans-serif;letter-spacing:2px;margin-left:12px;opacity:.82}
     .fd-date{font:300 24px Outfit,sans-serif;letter-spacing:.5px;margin:6px 0 0 6px;text-shadow:0 1px 10px rgba(0,0,0,.7)}
     .fd-line{display:flex;align-items:center;gap:12px;min-height:56px;max-width:760px;margin:2px 0 0 6px;font:500 19px Inter,sans-serif;color:#E8EEF5;text-shadow:0 1px 10px rgba(0,0,0,.8)}
+    .fd-line.off{visibility:hidden}
     .fd-line span[data-quiet]{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
     .fd-dot{flex:none;width:9px;height:9px;border-radius:50%;background:var(--glow)}
     .fd-dock{position:absolute;left:40px;right:40px;bottom:26px;display:flex;gap:12px}
@@ -362,9 +363,9 @@ export function mount(el) {
     .fd-sheet.shut{width:1px;height:1px;padding:0;overflow:hidden;opacity:0;pointer-events:none}
     .fd-card{border-radius:26px;background:rgba(255,255,255,.055);box-shadow:inset 0 0 0 1px rgba(255,255,255,.1);padding:20px 24px;display:flex;flex-direction:column;gap:6px;min-width:0;overflow:hidden}
     .fd-card:active{background:rgba(255,255,255,.1)}
-    @media (prefers-reduced-motion: reduce){.fd-zoom .fd-layer.on,.fd-sky,.fd-tw{animation:none}}
+    @media (prefers-reduced-motion: reduce){.fd-tw{animation:none}}
   </style>
-  <div class="tbb fd${display().photoZoom === false ? '' : ' fd-zoom'}" style="--glow:${glow}">
+  <div class="tbb fd" style="--glow:${glow}">
     <div class="fd-fill" data-painted></div>
     <div class="fd-fill" style="z-index:0">
       <div class="fd-fill fd-layer"><img alt="" decoding="async"></div>
@@ -374,7 +375,7 @@ export function mount(el) {
     <div class="fd-fill x-chrome" style="pointer-events:none;background:linear-gradient(180deg,rgba(0,0,0,.5) 0,rgba(0,0,0,0) 17%,rgba(0,0,0,0) 44%,rgba(0,0,0,.5) 74%,rgba(0,0,0,.78) 100%)"></div>
 
     <div class="x-chrome" style="position:absolute;left:46px;right:40px;top:26px;display:flex;align-items:center;gap:12px">
-      <div class="x-eyebrow" style="flex:1;color:#D5DEE8;text-shadow:0 1px 8px rgba(0,0,0,.8)">Captain Tom · Flight deck</div>
+      <div style="flex:1"></div>
       <button data-scene class="x-btn glass sm">Scene · ${SCENES.find(([s]) => s === scene)[1]}</button>
       <button data-glance class="x-btn glass sm">At a glance</button>
     </div>
@@ -427,8 +428,7 @@ export function mount(el) {
           <div data-iss-title style="font:500 21px Outfit,sans-serif">Calculating…</div>
           <div data-iss-time style="${big};color:#FFB547">--:--</div>
           <div data-iss-sub style="${sub}">&nbsp;</div>
-          <div data-iss-tip style="${sub};font-size:15px;display:none">Looks like a bright, steady star gliding across the sky. No blinking lights, no sound.</div>
-          <div style="${sub};margin-top:auto;font-size:15px"><b data-iss-crew style="font-weight:600;color:#FFFFFF">--</b> aboard · 17,500 mph · 250 miles up</div>
+          <div style="${sub};margin-top:auto;font-size:15px"><span data-iss-people style="display:none"><b data-iss-crew style="font-weight:600;color:#FFFFFF"></b> aboard · </span>17,500 mph · 250 miles up</div>
         </a>
         <a class="fd-card" href="#/sky">
           <div style="${k}">Moon tonight</div>
@@ -542,12 +542,15 @@ export function mount(el) {
       text = `${closest.count} aircraft overhead · nearest ${closest.text}`;
       href = closest.hex ? `#/flights/${encodeURIComponent(closest.hex)}` : '#/flights';
     } else if (p && p.visStart > now) { text = station(false); href = '#/alert'; }
+    else if (painted.dataset.art === 'moon') text = ''; // the Moon is on screen with its own line
     else {
       const n = vals();
-      text = `${n.moonName} tonight · ${n.moonLit}% lit · ${n.moonNext}`;
+      text = [`${n.moonName} tonight`, `${n.moonLit}% lit`, n.moonNext].filter(Boolean).join(' · ');
       href = '#/sky';
     }
     put('[data-quiet]', text);
+    $('[data-quiet-link]').classList.toggle('off', !text);
+    if (!text) return;
     if ($('[data-quiet-link]').getAttribute('href') !== href) $('[data-quiet-link]').setAttribute('href', href);
   }
 
@@ -625,16 +628,13 @@ ${fmtAlt(c)}${trend(c) ? ' ' + trend(c) : ''} · ${fmtMiles(c.dst)} ${compassSho
       // No times because the newest orbit is too old to trust, not because there are none.
       $('[data-iss-title]').textContent = 'Pass times unavailable';
       $('[data-iss-time]').textContent = '--:--';
-      $('[data-iss-sub]').textContent = `Its latest orbit is ${iss.ageDays} days old, too old to give times · `
-        + (offline() ? 'the Wi-Fi is off' : 'checking again every 15 min');
-      $('[data-iss-tip]').style.display = 'none';
+      $('[data-iss-sub]').textContent = `Orbit data ${iss.ageDays} days old` + (offline() ? ' · Wi-Fi off' : '');
       return;
     }
     if (!p) {
       $('[data-iss-title]').textContent = 'Not visible this week';
       $('[data-iss-time]').textContent = '--:--';
       $('[data-iss-sub]').textContent = 'It passes in daylight or too low for now';
-      $('[data-iss-tip]').style.display = 'none';
       return;
     }
     const start = new Date(p.visStart);
@@ -649,12 +649,13 @@ ${fmtAlt(c)}${trend(c) ? ' ' + trend(c) : ''} · ${fmtMiles(c.dst)} ${compassSho
     $('[data-iss-title]').textContent = title;
     $('[data-iss-time]').textContent = fmtTime(p.visStart);
     $('[data-iss-sub]').textContent = `Look ${compass(p.visAz).toLowerCase()} · ${brightnessWords(p).replace(', LOW DOWN', '').toLowerCase()} · ${heightWords(p.visMaxEl || 0)} · ${mins} min`;
-    $('[data-iss-tip]').style.display = 'block';
   }
 
   function drawCrew(c) {
-    // Never fetched (no Wi-Fi since it was switched on): say so instead of a bare "--".
-    $('[data-iss-crew]').textContent = c && c.onIss ? String(c.onIss) : offline() ? 'No Wi-Fi: crew unknown,' : 'Crew not known yet,';
+    // Never fetched (no Wi-Fi since it was switched on): leave the count out rather than show "--".
+    const known = !!(c && c.onIss);
+    $('[data-iss-crew]').textContent = known ? String(c.onIss) : '';
+    $('[data-iss-people]').style.display = known ? '' : 'none';
   }
 
   async function loadIss() {
@@ -684,7 +685,6 @@ ${fmtAlt(c)}${trend(c) ? ' ' + trend(c) : ''} · ${fmtMiles(c.dst)} ${compassSho
       $('[data-iss-title]').textContent = 'Pass times unavailable';
       $('[data-iss-time]').textContent = '--:--';
       $('[data-iss-sub]').textContent = offline() ? 'The Wi-Fi is off' : 'Trying again shortly';
-      $('[data-iss-tip]').style.display = 'none';
       drawQuiet();
     }
   }
@@ -783,10 +783,11 @@ ${fmtAlt(c)}${trend(c) ? ' ' + trend(c) : ''} · ${fmtMiles(c.dst)} ${compassSho
   // -------------------------------------------------------------------------------------
   function paint(what) {
     painted.dataset.art = what || '';
-    if (!what) { painted.innerHTML = ''; return; }
+    if (!what) { painted.innerHTML = ''; drawQuiet(); return; }
     try {
       painted.innerHTML = what === 'orbits' ? orbitsArt(new Date()) : moonArt(new Date(), !!loc && loc.lat < 0);
     } catch (e) { console.warn('scene', e); painted.innerHTML = ''; }
+    drawQuiet();
   }
 
   function credit(title, by, href) {
@@ -797,21 +798,16 @@ ${fmtAlt(c)}${trend(c) ? ' ' + trend(c) : ''} · ${fmtMiles(c.dst)} ${compassSho
     box.setAttribute('href', href || '#/deepimage');
   }
 
-  function moonCredit(standIn) {
-    const ph = moonPhase(new Date());
-    const full = nextMoonPhase('full');
-    const days = full ? Math.round((full - Date.now()) / 86400000) : null;
-    credit(`${ph.name} · ${Math.round(ph.fraction * 100)}% lit`,
-      standIn ? (offline() ? 'No photograph kept yet and the Wi-Fi is off: tonight’s Moon instead' : 'No photograph has arrived yet: tonight’s Moon instead')
-        : days == null ? 'Tonight’s Moon, at its real phase' : days <= 0 ? 'Tonight’s Moon, at its real phase · full tonight' : `Tonight’s Moon, at its real phase · full in ${days} day${days === 1 ? '' : 's'}`,
-      '#/sky');
+  function moonCredit() {
+    const n = vals();
+    credit(`${n.moonName} · ${n.moonLit}% lit`, n.moonNext ? n.moonNext.charAt(0).toUpperCase() + n.moonNext.slice(1) : '', '#/sky');
   }
 
   function startPhotos() {
     let list = [];
     let at = -1;
     let front = -1;       // which layer is showing (-1: none yet)
-    let timer = 0, loadTimer = 0, clearTimer = 0;
+    let timer = 0, loadTimer = 0, clearTimer = 0, standTimer = 0;
     let blobUrls = [null, null];
     let stopped = false;
     const ok = () => live() && !stopped && scene === 'photos';
@@ -824,7 +820,7 @@ ${fmtAlt(c)}${trend(c) ? ' ' + trend(c) : ''} · ${fmtMiles(c.dst)} ${compassSho
     const standIn = () => {
       if (front >= 0 || painted.dataset.art === 'moon') return;
       paint('moon');
-      moonCredit(true);
+      moonCredit();
     };
 
     async function next(tries) {
@@ -850,6 +846,8 @@ ${fmtAlt(c)}${trend(c) ? ' ' + trend(c) : ''} · ${fmtMiles(c.dst)} ${compassSho
       }
       const back = front === 0 ? 1 : 0;
       const img = layers[back].firstElementChild;
+      // Nothing on screen yet and this one is slow: tonight's Moon while it comes.
+      if (front < 0 && !standTimer) standTimer = setTimeout(() => { if (ok()) standIn(); }, 6000);
       clearTimeout(clearTimer);
       empty(back);
       const blob = await keptGet(pick.url);
@@ -909,7 +907,7 @@ ${fmtAlt(c)}${trend(c) ? ' ' + trend(c) : ''} · ${fmtMiles(c.dst)} ${compassSho
     window.addEventListener('online', again);
     return () => {
       stopped = true;
-      clearTimeout(timer); clearTimeout(loadTimer); clearTimeout(clearTimer);
+      clearTimeout(timer); clearTimeout(loadTimer); clearTimeout(clearTimer); clearTimeout(standTimer);
       window.removeEventListener('online', again);
       layers.forEach((l, i) => { l.classList.remove('on'); empty(i); });
     };
@@ -926,10 +924,10 @@ ${fmtAlt(c)}${trend(c) ? ' ' + trend(c) : ''} · ${fmtMiles(c.dst)} ${compassSho
       stopScene = startPhotos();
     } else if (name === 'moon') {
       paint('moon');
-      moonCredit(false);
+      moonCredit();
     } else {
       paint('orbits');
-      credit('The planets today', 'Each one where it really is around the Sun · spacing evened out', '#/sky');
+      credit('The planets today', '', '#/sky');
     }
   }
   $('[data-scene]').addEventListener('click', () => {

@@ -45,7 +45,7 @@ const dinnerHref = () => { const d = q('[data-dinner]'); const h = d && d.getAtt
 // Home are optional, so a Home without that piece simply doesn't get that beat.
 const KITCHEN = [
   { center: true, wait: 'start',
-    get say() { return H(hello(), 'This isn’t a tablet. It’s your new kitchen screen: your photos, the weather, recipes, the calendar and more, all in one place. Here’s what it can do.'); } },
+    get say() { return H(hello(), 'Your new kitchen screen: your photos, the weather, recipes, the calendar and more, all in one place. Here’s what it can do.'); } },
   { route: /^home/, go: 'home', corner: true, wait: 'next',
     say: H('Home is your photos', 'Your pictures fill the whole screen, with the time on top. Leave it alone for a few seconds and the buttons slip away; one touch brings them back.') },
   { route: /^addphotos/, go: 'addphotos', target: '[data-qr]', optional: true, wait: 'next',
@@ -71,13 +71,13 @@ const KITCHEN = [
   { route: /^settings/, go: 'settings', corner: true, wait: 'next',
     say: H('Make it yours', 'Your town, your clock, your alarm sound, how long each photo stays on Home. It’s all in Settings.') },
   { center: true, go: 'home', wait: 'finish',
-    get say() { return H('And it keeps getting better', `New features show up on their own, no updates to install. Enjoy${who() ? `, ${who()}` : ''}! (Want to see this again? Settings has the tour.)`); } },
+    get say() { return H('And it keeps getting better', `New features show up on their own, no updates to install. Enjoy${who() ? `, ${who()}` : ''}! (Settings can show this again.)`); } },
 ];
 
 const TOM = [
   { center: true, wait: 'start',
     say: H('Welcome aboard, Captain Tom', 'This is your own flight deck: real planes, real rockets, the real night sky. Here’s what it can do.') },
-  { route: /^bridge/, go: 'bridge', target: '.tbb a[href="#/flights"]', wait: 'next',
+  { route: /^bridge/, go: 'bridge', target: '.tbb [data-planes]', wait: 'next',
     say: H('Real planes. Right now.', 'Every plane flying over your house, live on the radar.') },
   { route: /^flights/, go: 'flights', corner: true, wait: 'next',
     say: H('Know every flight', 'The airline, where it came from, where it’s going, how high, and a photo of the actual plane.') },
@@ -135,8 +135,10 @@ function styles() {
   return `
   .tu{position:absolute;top:0;left:0;width:1280px;height:800px;z-index:50;pointer-events:none;font-family:${t ? "'JetBrains Mono',monospace" : 'Inter,sans-serif'}}
   .tu-dim{position:absolute;background:rgba(10,14,22,${t ? '.78' : '.62'});pointer-events:auto}
-  .tu-ring{position:absolute;border:4px solid ${t ? '#5CE1E6' : '#FFFFFF'};border-radius:${t ? '4px' : '18px'};box-shadow:0 0 0 6px ${t ? 'rgba(92,225,230,.35)' : 'rgba(255,255,255,.35)'};animation:tu-pulse 1.6s ease-in-out infinite;pointer-events:none}
-  @keyframes tu-pulse{50%{box-shadow:0 0 0 14px ${t ? 'rgba(92,225,230,0)' : 'rgba(255,255,255,0)'}}}
+  .tu-ring{position:absolute;border:4px solid ${t ? '#5CE1E6' : '#FFFFFF'};border-radius:${t ? '4px' : '18px'};box-shadow:0 0 0 6px ${t ? 'rgba(92,225,230,.35)' : 'rgba(255,255,255,.35)'};pointer-events:none}
+  /* The pulse: a second ring that grows and fades (transform and opacity, not a box-shadow redrawn every frame). */
+  .tu-ring:after{content:'';position:absolute;top:-10px;right:-10px;bottom:-10px;left:-10px;border:6px solid ${t ? 'rgba(92,225,230,.35)' : 'rgba(255,255,255,.35)'};border-radius:${t ? '6px' : '24px'};animation:tu-pulse 1.6s ease-out infinite}
+  @keyframes tu-pulse{0%{opacity:1;transform:scale(1)}100%{opacity:0;transform:scale(1.04)}}
   .tu-bub{position:absolute;width:440px;box-sizing:border-box;padding:22px 24px;pointer-events:auto;
     background:${t ? '#0A1220' : '#FFFFFF'};color:${t ? '#D7E6F0' : '#1D2430'};border:${t ? '1px solid #5CE1E6' : '0'};border-radius:${t ? '2px' : '22px'};
     box-shadow:0 18px 50px rgba(0,0,0,.35);font-size:21px;line-height:1.45}

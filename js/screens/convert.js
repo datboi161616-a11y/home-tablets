@@ -221,7 +221,6 @@ export function mount(el) {
     .ov-grip{position:absolute;left:103px;top:8px;width:34px;height:224px;border-radius:17px;background:#DCD6CB;box-shadow:0 0 0 2px #9A9387}
     .ov-tip{position:absolute;left:107px;top:18px;width:0;height:0;border-left:13px solid transparent;border-right:13px solid transparent;border-bottom:30px solid #E0582A}
     .ov-hit{position:absolute;left:0;top:0;width:548px;height:548px;border-radius:50%;touch-action:none}
-    .ov-turn{position:absolute;left:0;width:548px;top:448px;text-align:center;font-size:18px;font-weight:600;color:#C9D3DD;pointer-events:none}
     .ov-right{position:absolute;left:588px;right:0;top:0}
     .ov-seg{display:inline-flex;background:rgba(10,16,22,.5);border-radius:999px;padding:4px}
     .ov-seg button{min-height:56px;min-width:72px;border:0;border-radius:999px;background:none;color:#F6EEE3;font:600 20px Inter,sans-serif;cursor:pointer}
@@ -335,7 +334,6 @@ export function mount(el) {
               <div class="cg-grams"><span>about</span> ${esc(grams(g))}<small>${esc(`${amount(Math.round(oz * 4) / 4)} oz`)}</small></div>
             </div>
           </div>
-          <div class="cg-note" style="position:absolute;left:0;right:0;bottom:0">A guide: a cup of flour, sugar or oats weighs a little more or less with how it is scooped. Spoon it in and level it off.</div>
         </div>
         <div>
           <div class="cv-eyebrow">The same ${cups === 1 ? 'cup' : 'amount'} is</div>
@@ -346,8 +344,8 @@ export function mount(el) {
             <div class="marks">${[1, 2, 3, 4, 5, 6, 7, 8].map((k) => `<i>${k}</i>`).join('')}</div>
           </div>
           <div style="font-size:19px;font-weight:600;margin-top:10px;line-height:1.35">${esc(`${amount(cups)} ${plural(cups, 'cup', 'cups')} = ${amount(sticks)} ${plural(sticks, 'stick', 'sticks')}`)}</div>
-          <div class="cg-note" style="margin-top:6px">One stick is 8 tbsp, ½ cup, 4 oz or 113 g. The marks are tablespoons.</div>
-          <div class="cg-note" style="margin-top:14px">A “cup” here is the American one: 8 fl oz (237 ml). A metric cup is 250 ml.</div>
+          <div class="cg-note" style="margin-top:6px">1 stick = 8 tbsp = 113 g</div>
+          <div class="cg-note" style="margin-top:14px">US cup · a metric cup is 250 ml</div>
         </div>
       </div>`;
     return { html, level, needle };
@@ -365,8 +363,8 @@ export function mount(el) {
     const row = OVEN.filter((r) => (s.unit === 'C' ? r[1] === s.deg : r[0] === s.deg))[0];
     const big = `${s.deg}°${s.unit}`;
     let other, exact = '';
-    if (s.unit === 'F') { other = `${row ? row[1] : Math.round(c)}°C`; if (row && Math.round(c) !== row[1]) exact = `on most dials (${Math.round(c)} exactly)`; }
-    else { other = `${row ? row[0] : Math.round(f)}°F`; if (row && Math.round(f) !== row[0]) exact = `on most dials (${Math.round(f)} exactly)`; }
+    if (s.unit === 'F') { other = `${row ? row[1] : Math.round(c)}°C`; if (row && Math.round(c) !== row[1]) exact = `${Math.round(c)} exactly`; }
+    else { other = `${row ? row[0] : Math.round(f)}°F`; if (row && Math.round(f) !== row[0]) exact = `${Math.round(f)} exactly`; }
     // Gas mark: the one this heat is, or the two it sits between.
     let gas;
     const near = OVEN.slice().sort((a, b) => Math.abs(a[0] - f) - Math.abs(b[0] - f))[0];
@@ -386,20 +384,20 @@ export function mount(el) {
     s.lb = lb;
     const at = (r.done - 120) / 60 * 100; // the bar runs from 120 °F to 180 °F
     return `
-      <div class="cv-eyebrow">Roast helper · a guide</div>
+      <div class="cv-eyebrow">Roast helper</div>
       <div class="ov-meats">${ROASTS.map((x) => `<button class="ov-chip${x.id === r.id ? ' on' : ''}" data-meat="${x.id}">${esc(x.name)}</button>`).join('')}</div>
       <div class="ov-row">
         <button class="ov-step" data-lb="-1" aria-label="One pound less"${lb <= r.min ? ' disabled style="opacity:.4"' : ''}>−</button>
         <div class="ov-lb">${lb} lb</div>
         <button class="ov-step" data-lb="1" aria-label="One pound more"${lb >= r.max ? ' disabled style="opacity:.4"' : ''}>+</button>
-        <div class="ov-ans">${esc(`${r.what} · oven ${r.oven}°F`)}<b>${esc(roastTime(r, lb))}</b></div>
+        <div class="ov-ans">${esc(r.what)}<b>${esc(roastTime(r, lb))}</b></div>
       </div>
       <div class="ov-bar" aria-hidden="true"><i style="left:${at.toFixed(1)}%"></i></div>
       <div class="ov-done">
         <div style="flex:1;min-width:0">Done at <b>${r.done}°F · ${r.doneC}°C</b> in the thickest part${r.rest ? `, ${esc(r.rest)}` : ''}.</div>
         <button class="x-btn sm frost" data-set-oven="${r.oven}">Set knob to ${r.oven}°F</button>
       </div>
-      <div class="ov-guide">From the USDA roasting charts, for meat straight from the fridge. Ovens differ: trust the thermometer, not the clock.</div>`;
+      <div class="ov-guide">USDA chart, meat from the fridge. Trust the thermometer.</div>`;
   }
   function ovenView() {
     const dialF = [];
@@ -424,7 +422,6 @@ export function mount(el) {
           </svg>
           <div class="ov-hit" data-hit></div>
           <div class="ov-knob" data-knob style="transform:rotate(${angleOf(ovenF()).toFixed(1)}deg)"><div class="ov-grip"></div><div class="ov-tip"></div></div>
-          <div class="ov-turn">turn me</div>
         </div>
         <div class="ov-right">
           <div style="display:flex;align-items:center;gap:14px">
@@ -531,7 +528,7 @@ export function mount(el) {
           ${chips('vAmt', amounts.map((v) => [v, isMl ? metric(v) : amount(v)]), s.vAmt)}
           <div class="cv-label">Of what</div>
           ${chips('vUnit', VOLUME.map((u) => [u[0], u[2]]).concat([['ml', 'ml']]), s.vUnit)}
-          <div class="cv-note">American kitchen measures. A “cup” here is 8 fl oz (237 ml); a metric cup is 250 ml.</div>
+          <div class="cv-note">US cup = 237 ml · metric cup = 250 ml</div>
         </div>
         <div class="cv-card">
           <div class="cv-ask">${esc(asked)}</div>
@@ -560,7 +557,7 @@ export function mount(el) {
           ${chips('wAmt', amounts.map((v) => [v, amount(v)]), s.wAmt)}
           <div class="cv-label">Of what</div>
           ${chips('wUnit', WEIGHT.map((u) => [u[0], u[1]]), s.wUnit)}
-          <div class="cv-note">Butter: one stick is 8 tablespoons, 4 oz, or 113 g. Two sticks make a cup.</div>
+          <div class="cv-note">1 stick of butter = 8 tbsp = 113 g</div>
         </div>
         <div class="cv-card">
           <div class="cv-ask">${esc(`${amount(s.wAmt)} ${unit[1]}`)}</div>
@@ -575,7 +572,6 @@ export function mount(el) {
             <tr><th>Fahrenheit</th><th>Celsius</th><th>Fan oven</th><th>Gas mark</th><th>Recipes call it</th></tr>
             ${OVEN.map(([f, c, gas, word]) => `<tr><td>${f} °F</td><td>${c} °C</td><td>${c - 20} °C</td><td>${gas}</td><td>${word}</td></tr>`).join('')}
           </table>
-          <div class="cv-note">A fan (convection) oven cooks hotter: set it about 20 °C (25 °F) lower than the recipe says.</div>
         </div>`;
     },
     done() {
@@ -585,7 +581,7 @@ export function mount(el) {
             <tr><th>What you’re cooking</th><th>It’s done at</th><th></th><th></th></tr>
             ${DONE.map(([what, which, f, c, rest]) => `<tr><td>${esc(what)}<div style="font-size:18px;font-weight:500;color:#5A544C">${esc(which)}</div></td><td>${f} °F</td><td>${c} °C</td><td>${esc(rest)}</td></tr>`).join('')}
           </table>
-          <div class="cv-note">On a food thermometer, in the thickest part and away from the bone. These are the US food-safety minimums; many cooks take steak and roasts off earlier by choice.</div>
+          <div class="cv-note">US food-safety minimums, in the thickest part, away from the bone.</div>
         </div>`;
     },
     halve() {
@@ -599,7 +595,6 @@ export function mount(el) {
           ${chips('hAmt', VOLUME_AMOUNTS.map((v) => [v, amount(v)]), s.hAmt)}
           <div class="cv-label">Of what</div>
           ${chips('hUnit', [['tsp', 'teaspoons'], ['tbsp', 'tablespoons'], ['cup', 'cups']], unit[0])}
-          <div class="cv-note">For making half a recipe, or twice as much. Answers are in the measures you can actually scoop.</div>
         </div>
         <div class="cv-card">
           <div class="cv-ask">${esc(`${amount(s.hAmt)} ${plural(s.hAmt, unit[1], unit[2])}`)}</div>

@@ -20,7 +20,6 @@ import { tonight, weekRecipeIds, buildShoppingList, extraText, getPlan, markFor,
 import { isTablet, getPhotos, onPhotosChanged, thumbnail } from '../services/tablet-photos.js';
 import { getApps } from '../services/apps.js';
 import { feature } from '../services/features.js';
-import { wipeScreen } from '../services/wipe.js';
 import * as timerSvc from '../services/timers.js';
 import { wxIcon, foodArt, spot } from '../art.js';
 import { topBar, avatar, esc } from './ui.js';
@@ -244,6 +243,22 @@ function appsSub() {
   return apps.length > 2 ? `${names} & ${apps.length - 2} more` : names;
 }
 
+// The apps that only need a door: a big picture of what they are and one line.
+const ICON = {
+  plan: '<rect x="3.5" y="4" width="17" height="16" rx="3"/><path d="M3.5 9h17M9 9v11M15 9v11"/>',
+  camera: '<path d="M4 8h3l2-2.5h6L17 8h3v11H4z"/><circle cx="12" cy="13" r="3.5"/>',
+  convert: '<path d="M4 8h13l-3-3M20 16H7l3 3"/>',
+  apps: '<rect x="4" y="4" width="6.5" height="6.5" rx="1.8"/><rect x="13.5" y="4" width="6.5" height="6.5" rx="1.8"/><rect x="4" y="13.5" width="6.5" height="6.5" rx="1.8"/><rect x="13.5" y="13.5" width="6.5" height="6.5" rx="1.8"/>',
+  settings: '<circle cx="12" cy="12" r="3"/><path d="M12 2.5v3M12 18.5v3M2.5 12h3M18.5 12h3M5.3 5.3l2.1 2.1M16.6 16.6l2.1 2.1M5.3 18.7l2.1-2.1M16.6 7.4l2.1-2.1"/>',
+};
+const doorCard = (name, icon, line) => `${head(name)}
+    <div class="lc-door"><svg width="150" height="150" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${ICON[icon]}</svg></div>
+    ${line ? `<div class="lc-door-line">${esc(line)}</div>` : ''}`;
+function planLine() {
+  const n = weekRecipeIds().length;
+  return n ? plural(n, 'meal planned this week', 'meals planned this week') : 'Plan the week’s meals';
+}
+
 const CARDS = [
   { id: 'calendar', href: '#/calendar', bg: '#F4F0FA', ink: '#2A2440', soft: '#6A5E86' },
   { id: 'weather', href: '#/forecast', bg: 'linear-gradient(180deg,#5E6E88 0%,#93A2B6 60%,#B9C4D2 100%)', ink: '#FFFFFF', soft: '#E8EDF3' },
@@ -252,6 +267,11 @@ const CARDS = [
   { id: 'recipes', href: '#/recipes', bg: 'linear-gradient(180deg,#E2703A,#A8401E)', ink: '#FFFFFF', soft: '#FFE2C8' },
   { id: 'messages', href: '#/messages', bg: '#FCEBB0', ink: '#3A2E10', soft: '#7A6222' },
   { id: 'photos', href: '#/photos', bg: '#15171E', ink: '#FFFFFF', soft: '#C9CFD6' },
+  { id: 'plan', href: '#/plan', bg: '#2F6B4F', ink: '#FFFFFF', soft: '#CDE8D8', door: () => doorCard('Week plan', 'plan', planLine()) },
+  { id: 'camera', href: '#/camera', bg: '#2C2C30', ink: '#FFFFFF', soft: '#C9C9CF', feature: 'camera', door: () => doorCard('Camera', 'camera', '') },
+  { id: 'convert', href: '#/convert', bg: '#4B4A9E', ink: '#FFFFFF', soft: '#D8D7F5', door: () => doorCard('Conversions', 'convert', 'Cups, grams, oven') },
+  { id: 'apps', href: '#/apps', bg: '#1E1E22', ink: '#FFFFFF', soft: '#C9C9CF', feature: 'apps', door: () => doorCard('Apps', 'apps', appsSub()) },
+  { id: 'settings', href: '#/settings', bg: '#E9E9EE', ink: '#1C1C1E', soft: '#6E6E73', door: () => doorCard('Settings', 'settings', '') },
 ];
 
 export function mount(el) {
@@ -259,38 +279,7 @@ export function mount(el) {
   const unread = loadMessages().filter((m) => !m.seen).length;
   const night = display().night;
 
-  // Every app the kitchen display has, as a big button. Seven to a row, so the last row
-  // always ends early: the bottom right corner stays free for the running-timer chip.
-  // (Camera and the Android apps are switched on or off per screen: js/services/features.js.)
-  const apps = [
-    ['#/home', 'Home', 'home'],
-    ['#/calendar', 'Calendar'],
-    ['#/forecast', 'Weather'],
-    ['#/recipes', 'Recipes'],
-    ['#/plan', 'Week plan'],
-    ['#/shopping', 'Shopping list'],
-    ['#/messages', 'Messages', 'notes'],
-    ['#/timers', 'Timers'],
-    [galleryHref(), 'Gallery', 'gallery'],
-    feature('camera') ? ['#/camera', 'Camera'] : null,
-    feature('apps') ? ['#/apps', 'Apps', 'apps'] : null,
-    ['#/convert', 'Conversions'],
-    ['#/night', 'Night clock', 'night'],
-    ['#/settings', 'Settings'],
-    ['#/whatsnew', 'What’s new'],
-    ['#/welcome', 'Tour', 'tour'],
-    ['', 'Wipe the screen', 'wipe'],
-  ].filter(Boolean);
-
-  const appBtn = ([href, label, kind]) => {
-    if (kind === 'wipe') return `<button type="button" data-wipe class="x-btn sm frost lc-app" aria-label="Wipe the screen: touches off for half a minute">${label}</button>`;
-    const cls = kind === 'home' ? 'x-btn sm white lc-app' : 'x-btn sm frost lc-app';
-    const extra = kind === 'notes' ? `<span data-badge class="x-badge"${unread ? '' : ' style="display:none"'}>${unread}</span>` : '';
-    const hint = kind === 'tour' ? ' aria-label="Show the welcome tour again"'
-      : kind === 'night' ? ` aria-label="Night clock${night ? `, comes on by itself at ${hourText(display().nightFrom)}` : ''}"`
-        : kind === 'apps' ? ` aria-label="Apps: ${esc(appsSub())}"` : '';
-    return `<a href="${href}" class="${cls}"${kind === 'gallery' ? ' data-gallery-btn' : ''}${hint}>${label}${extra}</a>`;
-  };
+  const shown = CARDS.filter((k) => !k.feature || feature(k.feature));
 
   el.innerHTML = `
   <style>
@@ -303,14 +292,15 @@ export function mount(el) {
     .lc-clock .t{font:500 30px/1.1 Outfit,sans-serif;white-space:nowrap}
     .lc-clock .t span+span{font-size:17px;margin-left:6px;color:#D9CDE8}
 
-    /* The row of cards: the browser's own sideways scrolling, one card always in the middle. */
-    .lc-row{flex:none;height:424px;display:flex;align-items:center;overflow-x:auto;overflow-y:hidden;
-      -webkit-overflow-scrolling:touch;scroll-snap-type:x mandatory;scrollbar-width:none}
-    .lc-row::-webkit-scrollbar{display:none}
+    /* The row of cards. It is moved by a finger here (not the browser's own scrolling, which
+       on the tablets flung past several cards at once): one swipe, one card. */
+    .lc-row{flex:1;min-height:0;display:flex;align-items:center;overflow:hidden;touch-action:pan-y}
+    .lc-track{display:flex;align-items:center;will-change:transform}
+    .lc-track.glide{transition:transform .32s cubic-bezier(.2,.8,.2,1)}
     .lc-pad{flex:none;width:${(1280 - CARD_W) / 2}px;height:1px}
-    .lc-card{flex:none;width:${CARD_W}px;height:392px;margin-right:${CARD_GAP}px;border-radius:32px;position:relative;overflow:hidden;
-      box-sizing:border-box;padding:24px 26px;text-decoration:none;scroll-snap-align:center;display:flex;flex-direction:column;
-      box-shadow:0 14px 30px rgba(0,0,0,.38);transform:scale(.9);opacity:.72;transition:transform .25s ease,opacity .25s ease;will-change:transform}
+    .lc-card{flex:none;width:${CARD_W}px;height:500px;margin-right:${CARD_GAP}px;border-radius:32px;position:relative;overflow:hidden;
+      box-sizing:border-box;padding:24px 26px;text-decoration:none;display:flex;flex-direction:column;
+      box-shadow:0 8px 18px rgba(0,0,0,.3);transform:scale(.9);opacity:.72;transition:transform .25s ease,opacity .25s ease}
     .lc-card.on{transform:scale(1);opacity:1}
     .lc-card:last-of-type{margin-right:0}
     .lc-head{display:flex;align-items:baseline;flex:none}
@@ -369,23 +359,21 @@ export function mount(el) {
     .lc-dots span{width:10px;height:10px;border-radius:5px;background:rgba(255,255,255,.35);margin:0 5px}
     .lc-dots span.on{width:34px;background:#FFFFFF}
 
-    .lc-apps{flex:1;min-height:0;padding:8px 40px 22px;display:grid;grid-template-columns:repeat(7,minmax(0,1fr));grid-auto-rows:minmax(58px,1fr);grid-gap:10px;align-content:end}
-    .lc-app{min-width:0;padding:0 6px;max-height:64px;align-self:end;height:100%}
+    .lc-door{flex:1;display:flex;align-items:center;justify-content:center;color:var(--soft);min-height:0}
+    .lc-door-line{flex:none;font:500 20px Inter,sans-serif;color:var(--soft);text-align:center;padding-bottom:6px}
     @media (prefers-reduced-motion: reduce){.lc-drops{animation:none}.lc-card{transition:none}}
   </style>
   <div class="lc-root">
     <div class="lc-top">${topBar({
     title: 'Apps', back: '#/home', backLabel: '← Home', tone: 'dark',
-    right: `<div class="x-serif lc-hint">Swipe through. Tap a card to open it.</div>
-        <div class="lc-clock"><div class="d" data-date>${c.date}</div><div class="t"><span data-time>${c.time}</span><span data-ampm${c.ampm ? '' : ' style="display:none"'}>${c.ampm}</span></div></div>`,
+    right: `<div class="lc-clock"><div class="d" data-date>${c.date}</div><div class="t"><span data-time>${c.time}</span><span data-ampm${c.ampm ? '' : ' style="display:none"'}>${c.ampm}</span></div></div>`,
   })}</div>
-    <div class="lc-row" data-row>
+    <div class="lc-row" data-row><div class="lc-track" data-track>
       <div class="lc-pad"></div>
-      ${CARDS.map((k) => `<a class="lc-card" data-card="${k.id}" href="${k.href}" style="background:${k.bg};color:${k.ink};--soft:${k.soft}"></a>`).join('')}
+      ${shown.map((k) => `<a class="lc-card" data-card="${k.id}" href="${k.href}" style="background:${k.bg};color:${k.ink};--soft:${k.soft}"></a>`).join('')}
       <div class="lc-pad"></div>
-    </div>
-    <div class="lc-dots" data-dots aria-hidden="true">${CARDS.map(() => '<span></span>').join('')}</div>
-    <div class="lc-apps">${apps.map(appBtn).join('')}</div>
+    </div></div>
+    <div class="lc-dots" data-dots>${shown.map(() => '<span></span>').join('')}</div>
   </div>`;
 
   const $ = (s) => el.querySelector(s);
@@ -407,30 +395,73 @@ export function mount(el) {
   };
   // Timers going? Start there. Otherwise the shopping list, with a card either side.
   const startAt = liveTimers().length ? 3 : 2;
-  setMiddle(startAt);
-  row.scrollLeft = startAt * STEP;
-  row.addEventListener('scroll', () => {
-    if (raf) return;
-    raf = requestAnimationFrame(() => { raf = 0; setMiddle(Math.round(row.scrollLeft / STEP)); });
+  const track = $('[data-track]');
+  const place = (x, glide) => {
+    track.classList.toggle('glide', !!glide);
+    track.style.transform = `translate3d(${Math.round(x)}px,0,0)`;
+  };
+  const goTo = (i, glide = true) => { setMiddle(i); place(-middle * STEP, glide); };
+  goTo(startAt, false);
+  // A finger on the row: the cards follow it; let go and they settle one card along (or
+  // back, for a short drag). Up and down is left to the screen.
+  let drag = null;
+  let draggedAt = 0;
+  row.addEventListener('touchstart', (e) => {
+    if (e.touches.length !== 1) { drag = null; return; }
+    drag = { x: e.touches[0].clientX, y: e.touches[0].clientY, at: Date.now(), dx: 0, side: null };
   }, { passive: true });
+  row.addEventListener('touchmove', (e) => {
+    if (!drag) return;
+    const scale = row.getBoundingClientRect().width / row.offsetWidth || 1; // the screen is scaled up 1.5x on the tablet
+    const dx = (e.touches[0].clientX - drag.x) / scale;
+    const dy = (e.touches[0].clientY - drag.y) / scale;
+    if (!drag.side) { if (Math.abs(dx) < 8 && Math.abs(dy) < 8) return; drag.side = Math.abs(dx) > Math.abs(dy) ? 'x' : 'y'; }
+    if (drag.side !== 'x') return;
+    e.preventDefault();
+    // At either end the row gives a little, then stops.
+    const edge = (middle === 0 && dx > 0) || (middle === cards.length - 1 && dx < 0);
+    drag.dx = edge ? dx / 3 : dx;
+    place(-middle * STEP + drag.dx, false);
+  }, { passive: false });
+  const letGo = () => {
+    if (!drag) return;
+    const d = drag;
+    drag = null;
+    if (d.side !== 'x') return;
+    draggedAt = Date.now();
+    const quick = Date.now() - d.at < 250 && Math.abs(d.dx) > 30; // a flick
+    const step = Math.abs(d.dx) > STEP / 4 || quick ? (d.dx < 0 ? 1 : -1) : 0;
+    goTo(middle + step);
+  };
+  row.addEventListener('touchend', letGo, { passive: true });
+  row.addEventListener('touchcancel', letGo, { passive: true });
+  // A swipe is not a tap: the card under the finger doesn't open. A tap on a side card
+  // brings it to the middle first.
+  row.addEventListener('click', (e) => {
+    const c = e.target instanceof Element ? e.target.closest('.lc-card') : null;
+    if (Date.now() - draggedAt < 400) { e.preventDefault(); e.stopPropagation(); return; }
+    const i = cards.indexOf(c);
+    if (c && i !== middle) { e.preventDefault(); goTo(i); }
+  }, true);
+  // The dots: tap one to go there.
+  $('[data-dots]').addEventListener('click', (e) => {
+    const i = dots.indexOf(e.target);
+    if (i >= 0) goTo(i);
+  });
 
   // Wipe the screen: touches off for half a minute so the glass can be cleaned.
-  $('[data-wipe]').addEventListener('click', () => wipeScreen(30));
+  // The cards that are only a door are drawn once.
+  shown.forEach((k) => { if (k.door) fill(k.id, k.door()); });
 
   // ---- Calendar, notes, photos: read straight from this screen's own storage ----
   const showCalendar = () => fill('calendar', calendarCard());
   const showNotes = () => {
     fill('messages', messagesCard());
-    const n = loadMessages().filter((m) => !m.seen).length;
-    const b = $('[data-badge]');
-    b.textContent = n;
-    b.style.display = n ? '' : 'none';
   };
   const showGallery = () => {
     const box = card('photos');
     box.innerHTML = galleryCard();
     box.setAttribute('href', galleryHref());
-    $('[data-gallery-btn]').setAttribute('href', galleryHref());
     // The newest photo, as a small copy (the full picture is far too big for a card).
     const pic = box.querySelector('[data-photo]');
     const src = pic && pic.getAttribute('data-photo');

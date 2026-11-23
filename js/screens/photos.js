@@ -27,6 +27,8 @@ let alive = null; // this visit's marker: chunked building stops when it changes
 
 const DAY = 864e5;
 const CHUNK = 40;        // tiles built per step (the album can hold 500)
+const AHEAD = 3;         // ...and only this many river-widths past what is on screen: the rest
+                         // are built as the river is swiped towards them (500 tiles = 67,000 px)
 const COL = 210, ROW = 240, GAP = 12; // the river's grid: two rows of tiles
 const HERE = '\u0000here'; // the "person" for photos with no name: taken with this screen's camera
 
@@ -85,9 +87,6 @@ export function mount(el, { args = [] } = {}) {
       display:flex;flex-direction:column;padding:26px 0 0;font-family:Inter,system-ui,sans-serif}
     .ga-pad{padding:0 40px}
     .ga-root .x-btn.white{box-shadow:0 2px 8px rgba(34,48,63,.08)}
-    .ga-count{text-align:right;line-height:1.3;flex:none}
-    .ga-count b{display:block;font:600 18px Inter,sans-serif}
-    .ga-count span{font-size:16px;color:#6E7B89}
     /* ---- people ---- */
     .ga-row{display:flex;align-items:flex-start;gap:24px;height:128px;margin-top:14px;flex:none}
     .ga-rings{flex:1;min-width:0;display:flex;gap:14px;overflow-x:auto;overflow-y:hidden;-webkit-overflow-scrolling:touch;padding:5px 4px 0}
@@ -103,12 +102,10 @@ export function mount(el, { args = [] } = {}) {
     .ga-ring.quiet .ga-rname{color:#6E7B89}
     .ga-ring.on .ga-face{box-shadow:0 0 0 4px #22303F}
     .ga-ring.on .ga-rname{font-weight:700;color:#22303F}
-    .ga-side{flex:none;width:452px;display:flex;flex-direction:column;gap:8px;padding-top:5px}
+    .ga-side{flex:none;width:452px;padding-top:21px}
     .ga-seg{display:flex;background:#fff;border-radius:999px;padding:4px;box-shadow:0 2px 8px rgba(34,48,63,.08)}
     .ga-seg button{flex:1;border:0;background:transparent;color:#22303F;font:600 17px Inter,sans-serif;min-height:56px;border-radius:999px;cursor:pointer;white-space:nowrap;padding:0 10px}
     .ga-seg button.on{background:#22303F;color:#fff}
-    .ga-note{font-size:16px;line-height:1.35;color:#4D5B6A;padding:0 8px;overflow:hidden;display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2}
-    .ga-note b{color:#E0663A}
     /* ---- choosing several ---- */
     .ga-pick{display:none;align-items:center;gap:12px;height:128px;margin-top:14px;flex:none}
     .ga-root.picking .ga-pick{display:flex}
@@ -148,7 +145,6 @@ export function mount(el, { args = [] } = {}) {
     .ga-tile.new::after{box-shadow:inset 0 0 0 5px #E0663A;animation:ga-new 2.4s ease-in-out infinite}
     @keyframes ga-new{0%,100%{opacity:1}50%{opacity:.25}}
     .ga-fade{position:absolute;right:0;bottom:0;width:130px;height:560px;background:linear-gradient(90deg,rgba(246,241,233,0),#F6F1E9);pointer-events:none}
-    .ga-older{position:absolute;right:36px;bottom:22px;font:600 16px Inter,sans-serif;color:#6E7B89;pointer-events:none;transition:opacity .4s}
     .ga-newest{position:absolute;left:40px;bottom:18px;display:none;box-shadow:0 4px 14px rgba(34,48,63,.25)}
     .ga-empty{flex:1;display:none;align-items:center;justify-content:center;gap:56px;padding:0 40px 30px}
     .ga-none{flex:1;display:none;flex-direction:column;align-items:center;justify-content:center;gap:16px;text-align:center;padding-bottom:40px}
@@ -189,17 +185,15 @@ export function mount(el, { args = [] } = {}) {
   <div class="ga-root" data-root>
     <div class="ga-pad">
       ${topBar({ title: 'Gallery', tone: 'light', right: `
-        <div class="ga-count" data-count></div>
         <button class="x-btn white" data-pick>Choose</button>
         ${hasCamera ? `<a class="x-btn white" href="#/camera/gallery">${CAMERA} Camera</a>` : ''}
-        <a class="x-btn accent" href="#/addphotos">+ Add photos</a>` })}
+        <a class="x-btn accent" href="#/addphotos/gallery">+ Add photos</a>` })}
       <div class="ga-row">
         <div class="ga-rings" data-rings></div>
         <div class="ga-side">
           <div class="ga-seg" data-seg>
             <button data-f="all">All</button><button data-f="on">On Home</button><button data-f="off">Not on Home</button>
           </div>
-          <div class="ga-note" data-note></div>
         </div>
       </div>
       <div class="ga-pick">
@@ -213,22 +207,16 @@ export function mount(el, { args = [] } = {}) {
     </div>
     <div class="ga-river" data-river></div>
     <div class="ga-fade" data-fade aria-hidden="true"></div>
-    <div class="ga-older" data-older>Swipe for older →</div>
-    <button class="x-btn ink sm ga-newest" data-newest>← Back to the newest</button>
+    <button class="x-btn ink sm ga-newest" data-newest>← Newest</button>
     <div class="ga-none" data-none>
       <div style="font:500 34px Outfit,sans-serif" data-none-title></div>
-      <div style="font-size:19px;color:#4D5B6A;max-width:640px;line-height:1.4" data-none-line></div>
       <button class="x-btn ink" data-none-all>Show every photo</button>
     </div>
     <div class="ga-empty" data-empty>
       <div style="display:flex;flex-direction:column;gap:16px;max-width:560px">
         <div style="width:300px">${framesArt()}</div>
         <div style="font:500 44px Outfit,sans-serif">No photos yet</div>
-        <div style="font-size:20px;line-height:1.4;color:#4D5B6A">Send some from a phone on the same Wi-Fi${hasCamera ? ', or take one right here' : ''}. They show up here, and take turns on Home.</div>
-        <div style="display:flex;gap:14px;margin-top:6px">
-          <a href="#/addphotos" class="x-btn accent">+ Add photos</a>
-          ${hasCamera ? `<a href="#/camera/gallery" class="x-btn white">${CAMERA} Take a photo</a>` : ''}
-        </div>
+        <div style="font-size:20px;line-height:1.4;color:#4D5B6A">Send some from a phone.</div>
       </div>
       ${phoneCode({ tab: 'photos', size: 220, tone: 'light', column: true })}
     </div>
@@ -301,23 +289,13 @@ export function mount(el, { args = [] } = {}) {
   const byPerson = (p) => who === null || keyOf(p.name) === who;
   const byHome = (p) => homeFilter === 'all' || inRotation(p.id) === (homeFilter === 'on');
   const visible = () => album.filter((p) => byPerson(p) && byHome(p));
-  const noun = (list) => {
-    const vids = list.filter((p) => p.video).length;
-    return vids === list.length && vids ? 'video' : vids ? 'photos and videos' : 'photo';
-  };
-  const count = (list) => (noun(list) === 'photos and videos' ? `${list.length} photos and videos` : plural(list.length, noun(list)));
-
-  // ---- The top: how many, and the rings ----
+  // ---- The top: the Home filter (with the counts) and the rings ----
   function renderCount() {
-    const thisWeek = weekStart(Date.now());
-    const fresh7 = album.filter((p) => (p.added || 0) >= thisWeek).length;
     const onHome = album.filter((p) => inRotation(p.id)).length;
-    $('[data-count]').innerHTML = album.length
-      ? `<b>${esc(count(album))}${fresh7 ? ` · ${fresh7} new this week` : ''}</b><span>${onHome === album.length ? 'All of them show on Home' : `${onHome} on Home`}</span>`
-      : '';
     $('[data-pick]').style.display = album.length ? '' : 'none';
     const off = album.length - onHome;
     const seg = $('[data-seg]');
+    seg.querySelector('[data-f="all"]').textContent = `All · ${album.length}`;
     seg.querySelector('[data-f="on"]').textContent = `On Home · ${onHome}`;
     seg.querySelector('[data-f="off"]').textContent = `Not on Home · ${off}`;
     [...seg.children].forEach((b) => b.classList.toggle('on', b.dataset.f === homeFilter));
@@ -366,23 +344,6 @@ export function mount(el, { args = [] } = {}) {
       if (p.video) return;
       thumbnail(p.src, { w: 96, h: 96 }).then((url) => { if (url && face.isConnected) face.style.backgroundImage = `url(${url})`; });
     });
-    renderNote(top);
-  }
-
-  // A kind line beside the rings: who sent the most this week, and (gently) who has gone quiet.
-  function renderNote(top) {
-    const parts = [];
-    if (top && rings.filter((r) => r.week).length > 1) parts.push(`<b>${esc(top.name)}</b> sent the most this week (${top.week}).`);
-    const now = Date.now();
-    const quiet = rings
-      .filter((r) => r.key !== HERE && r.latest && r.latest.added && now - r.latest.added > 30 * DAY)
-      .sort((a, b) => a.latest.added - b.latest.added)[0];
-    if (quiet) {
-      const since = new Date(quiet.latest.added).toLocaleDateString('en-US', { month: 'long' });
-      parts.push(`Nothing new from ${esc(quiet.name)} since ${since}. Maybe ask for one?`);
-    }
-    if (!parts.length && album.length) parts.push('The house marks the photos that take their turn on Home.');
-    $('[data-note]').innerHTML = parts.join(' ');
   }
 
   // ---- The river ----
@@ -450,12 +411,9 @@ export function mount(el, { args = [] } = {}) {
         ? (person ? `Every photo from ${person.name} is on Home` : 'Every photo is on Home')
         : homeFilter === 'on' ? (person ? `None from ${person.name} are on Home` : 'No photos are on Home')
           : 'No photos here';
-      $('[data-none-line]').textContent = homeFilter === 'on' && !person
-        ? 'Home shows its painted scene until some are. Tap a photo and switch “Shows on Home” on, or use Choose for several at once.'
-        : '';
     }
-    $('[data-older]').style.opacity = '0';
     $('[data-newest]').style.display = 'none';
+    newestShown = false;
 
     // Week by week, newest on the left. The newest week leads with one big picture.
     const thisWeek = weekStart(Date.now());
@@ -484,8 +442,8 @@ export function mount(el, { args = [] } = {}) {
       }
     });
     let at = 0;
-    const chunk = () => {
-      if (renderRiver.token !== token || alive !== visit) return;
+    const built = {}; // id -> true
+    const build = () => {
       jobs.slice(at, at + CHUNK).forEach((j) => {
         if (!j.w.grid) {
           const box = document.createElement('div');
@@ -496,20 +454,34 @@ export function mount(el, { args = [] } = {}) {
           river.appendChild(box);
         }
         j.w.grid.appendChild(tile(j.p, j.shape));
+        built[j.p.id] = true;
       });
       at += CHUNK;
-      if (keep && river.scrollLeft < keep) river.scrollLeft = keep;
-      if (at < jobs.length) setTimeout(chunk, 40);
-      else onScroll();
     };
-    chunk();
+    let waiting = 0;
+    // A chunk at a time, while the river doesn't yet reach far enough past what is showing.
+    const fill = () => {
+      waiting = 0;
+      if (renderRiver.token !== token || alive !== visit) return;
+      if (at < jobs.length && river.scrollWidth < Math.max(keep, river.scrollLeft) + river.clientWidth * (AHEAD + 1)) {
+        build();
+        if (keep && river.scrollLeft < keep) river.scrollLeft = keep;
+        waiting = setTimeout(fill, 40);
+      }
+    };
+    fillMore = () => { if (!waiting) fill(); };
+    // (the viewer may have gone further than the river was built: build up to that one)
+    buildTo = (id) => { while (at < jobs.length && !built[id]) build(); };
+    fill();
   }
+  let fillMore = () => {}, buildTo = () => {};
 
+  let newestShown = false;
   function onScroll() {
     const x = river.scrollLeft;
-    const more = river.scrollWidth - river.clientWidth;
-    $('[data-older]').style.opacity = more > 40 && x < 40 && river.style.display !== 'none' ? '1' : '0';
-    $('[data-newest]').style.display = x > 1500 && river.style.display !== 'none' ? '' : 'none';
+    if (x + river.clientWidth * AHEAD > river.scrollWidth - river.clientWidth) fillMore();
+    const show = x > 1500 && river.style.display !== 'none';
+    if (show !== newestShown) { newestShown = show; $('[data-newest]').style.display = show ? '' : 'none'; }
   }
   river.addEventListener('scroll', onScroll, { passive: true });
   $('[data-newest]').addEventListener('click', () => { river.scrollLeft = 0; });
@@ -555,7 +527,7 @@ export function mount(el, { args = [] } = {}) {
     const shown = visible();
     $('[data-picked]').innerHTML = n
       ? `${plural(n, 'photo')} chosen<small>${ids.filter((id) => inRotation(id)).length} of them on Home</small>`
-      : 'Tap the photos you want<small>Then show them on Home, take them off Home, or remove them.</small>';
+      : 'Choose photos';
     const set = (sel, text) => { const b = $(sel); if (b) { b.disabled = !n; if (text) b.textContent = text; } };
     set('[data-pick-on]');
     set('[data-pick-off]');
@@ -587,7 +559,7 @@ export function mount(el, { args = [] } = {}) {
     setRotation(ids, on); // (the screen follows: see onRotationChanged below)
     refreshTiles();
     renderPicked();
-    toast(on ? `${plural(ids.length, 'photo')} will show on Home` : `${plural(ids.length, 'photo')} taken off Home. ${ids.length === 1 ? 'It stays' : 'They stay'} in the Gallery`);
+    toast(on ? `${plural(ids.length, 'photo')} on Home` : `${plural(ids.length, 'photo')} off Home`);
   };
   $('[data-pick-on]').addEventListener('click', () => putOnHome(true));
   $('[data-pick-off]').addEventListener('click', () => putOnHome(false));
@@ -611,14 +583,14 @@ export function mount(el, { args = [] } = {}) {
     const box = document.createElement('div');
     box.className = 'ga-wont';
     box.innerHTML = `<div style="font:500 36px Outfit,sans-serif">${video ? 'This video won’t play' : 'This photo won’t open'}</div>
-      <div style="font-size:20px;color:#E6E9ED;line-height:1.4">It may not have arrived whole. Send it again from the phone${canRemove ? ', or take this one off with Remove at the top' : ''}.</div>`;
+      <div style="font-size:20px;color:#E6E9ED;line-height:1.4">Send it again from the phone.</div>`;
     stage.appendChild(box);
   }
 
   function renderSound() {
     const b = $('[data-vsound]');
     b.style.display = vVideo ? '' : 'none';
-    b.textContent = vVideo && !vVideo.muted ? '🔊 Sound on · tap for quiet' : '🔇 Tap for sound';
+    b.textContent = vVideo && !vVideo.muted ? '🔊 Sound on' : '🔇 Sound off';
   }
   $('[data-vsound]').addEventListener('click', () => {
     const v = vVideo;
@@ -626,7 +598,7 @@ export function mount(el, { args = [] } = {}) {
     v.muted = !v.muted;
     if (!v.muted) {
       const tried = v.play && v.play();
-      if (tried && tried.catch) tried.catch(() => { if (vVideo === v) { v.muted = true; if (v.play) v.play().catch(() => {}); renderSound(); toast('The sound couldn’t start. Try once more'); } });
+      if (tried && tried.catch) tried.catch(() => { if (vVideo === v) { v.muted = true; if (v.play) v.play().catch(() => {}); renderSound(); toast('The sound couldn’t start'); } });
     }
     renderSound();
   });
@@ -720,6 +692,7 @@ export function mount(el, { args = [] } = {}) {
     refreshTiles();
     river.querySelectorAll('.ga-tile.new').forEach((t) => { if (!fresh[t.__id]) t.classList.remove('new'); });
     // Back in the river where that photo is.
+    if (lastSeen) buildTo(lastSeen);
     const cur = river.querySelector('.ga-tile.cur');
     if (cur) {
       const a = cur.getBoundingClientRect(), r = river.getBoundingClientRect();
@@ -730,8 +703,8 @@ export function mount(el, { args = [] } = {}) {
   function step(d) {
     if (vList.length < 2) return;
     let j = vIndex + d;
-    if (j >= vList.length) { j = 0; toast('Back to the newest one'); }
-    else if (j < 0) { j = vList.length - 1; toast('That was the newest. Here’s the oldest one'); }
+    if (j >= vList.length) { j = 0; toast('Back to the newest'); }
+    else if (j < 0) { j = vList.length - 1; toast('The oldest'); }
     showAt(j);
   }
   $('[data-vclose]').addEventListener('click', closeViewer);
@@ -747,9 +720,7 @@ export function mount(el, { args = [] } = {}) {
   $('[data-vhome]').addEventListener('click', () => {
     const p = vList[vIndex];
     if (!p) return;
-    const on = !inRotation(p.id);
-    setRotation(p.id, on);
-    toast(on ? 'It will take its turn on Home' : 'Taken off Home. It stays in the Gallery');
+    setRotation(p.id, !inRotation(p.id)); // (the switch itself shows which: see renderHomeSwitch)
   });
   if (canRemove) $('[data-vremove]').addEventListener('click', () => { const p = vList[vIndex]; if (p && p.id) openAsk([p.id]); });
 
@@ -777,7 +748,7 @@ export function mount(el, { args = [] } = {}) {
     $('[data-ask-title]').textContent = ids.length === 1
       ? (vids ? 'Remove this video?' : 'Remove this photo?')
       : `Remove these ${ids.length} ${vids === ids.length ? 'videos' : vids ? 'photos and videos' : 'photos'}?`;
-    $('[data-ask-line]').textContent = `${ids.length === 1 ? 'It comes' : 'They come'} off this screen for good. To only stop ${ids.length === 1 ? 'it' : 'them'} showing on Home, use “${ids.length === 1 ? 'Shows on Home' : 'Take off Home'}” instead.`;
+    $('[data-ask-line]').textContent = `${ids.length === 1 ? 'It comes' : 'They come'} off this screen for good.`;
     $('[data-really]').textContent = ids.length === 1 ? 'Remove' : `Remove ${ids.length}`;
     askEl.style.display = 'flex';
   }

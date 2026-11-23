@@ -315,10 +315,10 @@ export function advice(f) {
   const sky = describe(f.code).icon;
   const parts = [];
   if ((f.snowInches || 0) >= 0.25 || sky === 'snow') parts.push('Heavy coat and boots today.');
-  else if (cold[0]) parts.push('Bundle up: hats and gloves today.');
+  else if (cold[0]) parts.push('Bundle up: hat and gloves.');
   else if (cold[1]) parts.push('Heavy coat today.');
-  else if (cold[2]) parts.push('Grab a jacket on the way out.');
-  else if (cold[3]) parts.push('Hot one. Bring water and sunscreen.');
+  else if (cold[2]) parts.push('Grab a jacket.');
+  else if (cold[3]) parts.push('Hot: water and sunscreen.');
   else if (num(feels) != null) parts.push('Nice out. No coat needed.'); // (no temperature: no guessing)
 
   const w = windy(f);
@@ -326,9 +326,9 @@ export function advice(f) {
   if (f.slickFrom) parts.push(`Roads may be slick after ${fmtHour(f.slickFrom)}.`);
   else if (f.rainNow || f.rainFrom || f.rainChance >= 50) parts.push('Take an umbrella.');
   else if (f.evening && f.wetFrom) parts.push(String(f.wetFrom).slice(0, 10) !== isoDay() ? 'Umbrella for the morning.' : 'Take an umbrella.');
-  else if (f.evening && f.frostTonight) parts.push('Frost tonight: the car may need scraping.');
-  else if (w.gusty) parts.push('Strong gusts: hold on to your hat.');
-  else if (w.windy) parts.push('Very windy, hold on to your hat.');
+  else if (f.evening && f.frostTonight) parts.push('Frost tonight.');
+  else if (w.gusty) parts.push('Strong gusts.');
+  else if (w.windy) parts.push('Very windy.');
   else if (strongSun && !cold[3]) parts.push('Strong sun: wear sunscreen.');
   else if (sky === 'sun' && f.isDay) parts.push('Sunglasses weather.');
   return parts.join(' ');

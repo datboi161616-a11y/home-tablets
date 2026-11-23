@@ -94,7 +94,6 @@ export function mount(el, { args = [] } = {}) {
     .cam-timer.on{background:#fff;color:#111}
     .cam-time{position:absolute;left:50%;top:28px;transform:translateX(-50%);background:rgba(0,0,0,.5);padding:8px 16px;border-radius:999px;font-size:18px;font-weight:600;display:none}
     .cam-time.soon{background:#C2491F}
-    .cam-hint{position:absolute;left:50%;top:50%;margin-top:130px;transform:translateX(-50%);background:rgba(0,0,0,.6);padding:12px 24px;border-radius:999px;font-size:20px;font-weight:600;display:none;white-space:nowrap}
     .cam-ok{position:absolute;left:50%;top:28px;transform:translateX(-50%);background:#2F6B4F;color:#fff;padding:0 28px;border-radius:999px;font-size:22px;font-weight:700;
       min-height:56px;display:flex;align-items:center;opacity:0;transition:opacity .3s;pointer-events:none;white-space:nowrap}
     .cam-ok.bad{background:#C2491F}
@@ -116,13 +115,12 @@ export function mount(el, { args = [] } = {}) {
     <a class="cam-done x-btn glass" href="${back()}">Done</a>
     <div class="cam-time" data-time>0:00</div>
     <div class="cam-count" data-count></div>
-    <div class="cam-hint" data-count-hint>Tap the round button to stop</div>
     <div class="cam-flash" data-flash></div>
     <div class="cam-ok" data-ok></div>
     <div class="cam-art" data-wait-art>${camArt()}</div>
     <div class="cam-wait" data-wait>Starting camera…</div>
     <div class="cam-idle" data-idle></div>
-    <a class="cam-saved" data-saved href="#/photos/show/newest"><img data-thumb alt=""><span data-saved-text>Saved to the Gallery</span><span class="cam-see" data-see>See it in the Gallery ›</span></a>
+    <a class="cam-saved" data-saved href="#/photos/show/newest"><img data-thumb alt=""><span data-saved-text></span><span class="cam-see" data-see>See it in the Gallery ›</span></a>
     <div class="cam-mode"><button data-m="photo" class="on">Photo</button><button data-m="video">Video</button></div>
     <button class="cam-shutter wait" data-shutter aria-label="Take photo"></button>
     <button class="cam-timer" data-timer></button>
@@ -145,7 +143,10 @@ export function mount(el, { args = [] } = {}) {
    * `stay`: keep it up (used while a video is still being saved).
    */
   function showSaved(text, thumb, ok = true, link, stay) {
-    $('[data-saved-text]').textContent = text;
+    // (Nothing to say when it worked: the big word at the top says so, the link says where.)
+    const words = $('[data-saved-text]');
+    words.textContent = text;
+    words.style.display = text ? '' : 'none';
     const img = $('[data-thumb]');
     img.style.display = thumb ? '' : 'none';
     if (thumb) img.src = thumb;
@@ -174,7 +175,7 @@ export function mount(el, { args = [] } = {}) {
     v.timers.push(okTimer);
   }
   // Nothing more fits in the album: say so plainly and offer the way to make room.
-  const FULL_TEXT = `The Gallery is full (${ALBUM_MAX}). Remove a few to make room.`;
+  const FULL_TEXT = `The Gallery is full (${ALBUM_MAX})`;
   const MAKE_ROOM = { href: '#/photos/choose', label: 'Make room ›' };
 
   function setWaiting(on) {
@@ -229,7 +230,7 @@ export function mount(el, { args = [] } = {}) {
           log('camera picture never arrived');
           stream.getTracks().forEach((t) => t.stop());
           v.stream = null;
-          showProblem('The camera didn’t start. Tap Try again.');
+          showProblem('It didn’t start.');
         }
       }, 200);
       v.timers.push(poll);
@@ -240,9 +241,9 @@ export function mount(el, { args = [] } = {}) {
       // Say which of the usual reasons it is, so the person knows whether trying again can help.
       if (!isTablet()) showProblem('Open this on the kitchen screen to use its camera.', 'No camera here');
       else if (/NotAllowed|Security|PermissionDenied/.test(why)) showProblem('The screen hasn’t been allowed to use its camera. Switch the screen off and on again and choose “Allow” when it asks.', 'The camera isn’t allowed');
-      else if (/NotFound|DevicesNotFound|Overconstrained/.test(why)) showProblem('No camera answered. Tap Try again; if it still doesn’t start, restarting the screen usually helps.', 'Camera not found');
-      else if (/NotReadable|TrackStart|Abort/.test(why)) showProblem('Something else is using the camera, such as a video call. Close it, then tap Try again.', 'The camera is busy');
-      else showProblem('The camera is turned off or already in use. Tap Try again in a moment.');
+      else if (/NotFound|DevicesNotFound|Overconstrained/.test(why)) showProblem('If Try again doesn’t help, restart the screen.', 'Camera not found');
+      else if (/NotReadable|TrackStart|Abort/.test(why)) showProblem('Something else is using it, such as a video call.', 'The camera is busy');
+      else showProblem('It may be in use. Try again in a moment.');
     }
   }
   startCamera();
@@ -274,7 +275,7 @@ export function mount(el, { args = [] } = {}) {
   function capture() {
     if (!v.ready || !video.videoWidth) { log('capture skipped: camera not ready'); return; }
     // Full already: don't flash and click as if it worked.
-    if (albumFull()) { showSaved(FULL_TEXT, null, false, MAKE_ROOM); flashWord('Not saved: the Gallery is full', true); return; }
+    if (albumFull()) { showSaved(FULL_TEXT, null, false, MAKE_ROOM); flashWord('Not saved', true); return; }
     let jpeg = '';
     try {
       const c = document.createElement('canvas');
@@ -287,14 +288,13 @@ export function mount(el, { args = [] } = {}) {
     shutterSound();
     const flash = $('[data-flash]');
     flash.classList.remove('go'); void flash.offsetWidth; flash.classList.add('go');
-    if (ok) { showSaved('Saved to the Gallery', jpeg); flashWord('✓ Photo saved'); }
-    else if (albumFull()) { showSaved(FULL_TEXT, jpeg || null, false, MAKE_ROOM); flashWord('Not saved: the Gallery is full', true); }
-    else { showSaved('Couldn’t save the photo. Please try again.', jpeg || null, false); flashWord('Not saved', true); }
+    if (ok) { showSaved('', jpeg); flashWord('✓ Photo saved'); }
+    else if (albumFull()) { showSaved(FULL_TEXT, jpeg || null, false, MAKE_ROOM); flashWord('Not saved', true); }
+    else { showSaved('Please try again', jpeg || null, false); flashWord('Not saved', true); }
   }
 
   function endCountdown() {
     $('[data-count]').style.display = 'none';
-    $('[data-count-hint]').style.display = 'none';
     v.counting = null;
     v.shooting = false;
   }
@@ -308,7 +308,6 @@ export function mount(el, { args = [] } = {}) {
       if (v.counting !== run) return;
       if (n > 0) {
         countEl.style.display = 'flex'; countEl.textContent = n; shutterSound();
-        $('[data-count-hint]').style.display = 'block';
         later(() => tick(n - 1), 1000);
       } else {
         endCountdown();
@@ -342,7 +341,7 @@ export function mount(el, { args = [] } = {}) {
       .find((t) => window.MediaRecorder && MediaRecorder.isTypeSupported(t));
     if (!type) { showSaved('Video isn’t supported on this screen', null, false); return; }
     // A whole minute of filming that then can't be kept would be a sad surprise: say so first.
-    if (albumFull()) { showSaved(FULL_TEXT, null, false, MAKE_ROOM); flashWord('The Gallery is full', true); return; }
+    if (albumFull()) { showSaved(FULL_TEXT, null, false, MAKE_ROOM); flashWord('Not recording', true); return; }
     v.starting = true;
     // Switch the microphone on just for this clip. If it can't open, record without sound.
     const mic = navigator.mediaDevices.getUserMedia({ audio: true, video: false });
@@ -368,12 +367,12 @@ export function mount(el, { args = [] } = {}) {
         const ok = saveVideo(b64, `Video · ${stamp()}`);
         log('video ' + Math.round(b64.length * 0.75 / 1024) + ' KB saved=' + ok);
         if (!live()) return;
-        if (ok || !isTablet()) { showSaved('Video saved to the Gallery', null, true); flashWord('✓ Video saved'); }
-        else if (albumFull()) { showSaved(FULL_TEXT, null, false, MAKE_ROOM); flashWord('Not saved: the Gallery is full', true); }
-        else { showSaved('Couldn’t save the video. It may be too big: try a shorter one.', null, false); flashWord('Video not saved', true); }
+        if (ok || !isTablet()) { showSaved('', null, true); flashWord('✓ Video saved'); }
+        else if (albumFull()) { showSaved(FULL_TEXT, null, false, MAKE_ROOM); flashWord('Video not saved', true); }
+        else { showSaved('It may be too big: try a shorter one', null, false); flashWord('Video not saved', true); }
       } catch (err) {
         log('video save failed ' + err);
-        if (live()) { showSaved('Couldn’t save the video. Please try again.', null, false); flashWord('Video not saved', true); }
+        if (live()) { showSaved('Please try again', null, false); flashWord('Video not saved', true); }
       }
     };
     rec.start(1000);

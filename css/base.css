@@ -61,3 +61,7 @@ a { color: inherit; text-decoration: none; }
 .is-pressed.is-pressed-dark { filter: brightness(1.7); }
 .is-pressed-small { transform: scale(.92); }
 .is-pressed-big { transform: scale(.955); }
+
+/* Left alone for a while: everything that moves holds still (app.js, "Nothing moves while
+   nobody is looking"). Paused animations cost the tablet nothing. */
+#screen.x-still *, #screen.x-still *::before, #screen.x-still *::after { animation-play-state: paused !important; }

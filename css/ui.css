@@ -52,6 +52,7 @@
 .x-code-qr svg { display: block; }
 .x-code-title { font: 600 20px Inter, system-ui, sans-serif; }
 .x-code-sub { font: 400 16px/1.35 Inter, system-ui, sans-serif; opacity: .78; margin-top: 4px; }
+.x-code-sub:empty { display: none; }
 
 /* ---- A resting screen: its controls fade away when nobody touches it (ui.js restful) ---- */
 .x-chrome { transition: opacity .7s ease; }

@@ -7,7 +7,7 @@ import { getRecipe, loadIndex, ingredientText, fmtMinutes, withStepTimers, lastC
 import { planDays, addToPlan, removeFromPlan, plannedFor, MEALS, defaultMeal, isFavorite, toggleFavorite, servingsFor, scaleFor, setServings, addExtra, removeExtra,
   weekRecipeIds, getListState, splitQty, dayKey } from '../services/meal-plan.js';
 import { addTimer, MAX } from '../services/timers.js';
-import { esc, fillCounts, plateArt, tableColors, kitchenLinks } from './kitchen-ui.js';
+import { esc, plateArt, tableColors } from './kitchen-ui.js';
 import { people } from './ui.js';
 
 // Set by the Week plan's "+ Add" ("2026-11-20|lunch") so the next recipe picked goes
@@ -29,7 +29,6 @@ const STYLES = `
     .dz-plate{position:absolute;left:-96px;top:64px;width:700px;height:700px;will-change:transform;animation:dz-spin 180s linear infinite}
     @keyframes dz-spin{to{transform:rotate(360deg)}}
     .dz-back{position:absolute;left:40px;top:32px}
-    .dz-nav{position:absolute;left:40px;bottom:32px;display:flex;gap:12px}
     .dz-col{position:absolute;left:624px;right:40px;top:32px;bottom:32px;display:flex;flex-direction:column;gap:12px}
     .dz-row{display:flex;align-items:center;gap:10px;flex:none}
     .dz-pill{min-height:56px;padding:0 20px;border-radius:999px;background:rgba(30,12,4,.34);color:#FFF4EA;display:inline-flex;align-items:center;
@@ -39,7 +38,6 @@ const STYLES = `
     .dz-heart.off{background:rgba(30,12,4,.34);color:#FFF4EA}
     .dz-eyebrow{font:600 15px Inter,sans-serif;letter-spacing:2px;text-transform:uppercase;color:#FFD696}
     .dz-title{font:700 54px/1.02 Outfit,sans-serif;margin:-2px 0 0;flex:none;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
-    .dz-blurb{font-size:20px;line-height:1.3;color:#FFE6D6;flex:none;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
     .dz-stats{display:flex;gap:8px;flex:none}
     .dz-stat{flex:1;min-width:0;padding:9px 14px;border-radius:18px;background:rgba(30,12,4,.3)}
     .dz-stat .l{font:600 15px Inter,sans-serif;letter-spacing:1px;color:#FFD6BC;text-transform:uppercase}
@@ -71,7 +69,7 @@ const STYLES = `
     .dz-face.on i{display:block}
     .dz-lovetext{font-size:17px;line-height:1.3;color:#FFE6D6;min-width:0;margin-left:6px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
     .dz-foot{display:flex;gap:10px;flex:none}
-    .dz-go{position:relative;flex:1;min-height:76px;border-radius:22px;background:#FFF4EA;color:#7A2F16;display:flex;align-items:center;justify-content:center;
+    .dz-go{position:relative;flex:1;min-width:0;min-height:76px;border-radius:22px;background:#FFF4EA;color:#7A2F16;display:flex;align-items:center;justify-content:center;
       text-decoration:none;font:700 25px Outfit,sans-serif;border:0;cursor:pointer;padding:0 18px;white-space:nowrap}
     .dz-go::after{content:'';position:absolute;top:0;left:0;right:0;bottom:0;border-radius:22px;border:3px solid #FFD696;animation:dz-pulse 3s ease-out infinite;pointer-events:none}
     @keyframes dz-pulse{0%{transform:scale(1);opacity:.9}70%,100%{transform:scale(1.06,1.22);opacity:0}}
@@ -165,7 +163,6 @@ export function mount(el, { args = [] } = {}) {
     root.innerHTML = `
       <div class="dz-plate">${plateArt(r, 700, { detail: true })}</div>
       <button data-back class="x-btn glass dz-back">← Back</button>
-      <div class="dz-nav"><a href="#/recipes" class="x-btn sm glass">Recipes</a>${kitchenLinks()}</div>
       <div class="dz-col" data-col></div>
       <div data-sheet></div>`;
     const col = root.querySelector('[data-col]');
@@ -189,17 +186,16 @@ export function mount(el, { args = [] } = {}) {
       const planned = allPlanned('');
       const tonightOn = plannedFor(dayKey(new Date()), 'dinner').indexOf(r.id) >= 0;
       const eyebrow = [tonightOn ? 'Tonight’s dinner' : planned.length ? `On the plan · ${planned[0]}${planned.length > 1 ? ` +${planned.length - 1}` : ''}` : '']
-        .concat((r.tags || []).filter((t) => t !== 'kid-friendly').slice(0, tonightOn || planned.length ? 1 : 3)).filter(Boolean).join(' · ');
+        .concat(tonightOn || planned.length ? [] : (r.tags || []).filter((t) => t !== 'kid-friendly').slice(0, 1)).filter(Boolean).join(' · ');
       const titleSize = r.title.length <= 20 ? 58 : r.title.length <= 34 ? 50 : r.title.length <= 48 ? 42 : 36;
       const stats = r.meta ? [['Time', r.meta]] : [total ? ['Total', fmtMinutes(total)] : null, r.prep ? ['Prep', fmtMinutes(r.prep)] : null, r.cook ? ['Cook', fmtMinutes(r.cook)] : null].filter(Boolean);
-      stats.push(['Steps', String(r.steps.length)]);
       const dots = Math.min(MOST_PLATES, Math.max(8, serves, r.serves || 0));
       const on = listed();
       const whole = onPlan();
       const state = r.ingredients.map((ing, n) => (whole || there[n] || on[listKey(ingText(n))] ? 'on' : ''));
       const missing = r.ingredients.filter((ing, n) => !state[n] && !skip(ing)).length;
       const names = loves.length === 1 ? loves[0] : loves.length === 2 ? `${loves[0]} and ${loves[1]}` : loves.length ? `${loves.slice(0, -1).join(', ')} and ${loves[loves.length - 1]}` : '';
-      const loveText = [who.length ? (names ? `${names} ${loves.length === 1 ? 'loves' : 'love'} it` : 'Tap a face to give it a heart') : (fav ? 'In your favorites' : ''),
+      const loveText = [names ? `${names} ${loves.length === 1 ? 'loves' : 'love'} it` : '',
         cooked ? `last cooked ${cookedWhen(cooked)}` : ''].filter(Boolean).join(' · ');
       const faces = who.map((x) => `<button class="dz-face${loves.indexOf(x.name) >= 0 ? ' on' : ''}" data-love="${esc(x.name)}" aria-label="${esc(x.name)}"${loves.indexOf(x.name) >= 0 ? ` style="background:${x.color}"` : ''}>${esc(x.initial)}<i>♥</i></button>`).join('');
       const sc = (col.querySelector('[data-chips]') || {}).scrollTop || 0;
@@ -217,19 +213,18 @@ export function mount(el, { args = [] } = {}) {
           ${who.length <= 3 && loveText ? `<div class="dz-note" style="flex:none;max-width:62%">${esc(loveText)}</div>` : ''}
         </div>
         <div class="dz-title" style="font-size:${titleSize}px">${esc(r.title)}</div>
-        ${r.blurb ? `<div class="dz-blurb x-serif">${esc(r.blurb)}</div>` : ''}
-        <div class="dz-stats">${stats.map(([l, v]) => `<div class="dz-stat"${l === 'Steps' ? ' style="flex:0 0 96px"' : ''}><div class="l">${l}</div><div class="v">${esc(v)}</div></div>`).join('')}</div>
+        <div class="dz-stats">${stats.map(([l, v]) => `<div class="dz-stat"><div class="l">${l}</div><div class="v">${esc(v)}</div></div>`).join('')}</div>
         <div class="dz-serve">
           <button class="dz-pm" data-serves="-1" aria-label="Fewer servings"${serves <= 1 ? ' disabled' : ''}>−</button>
           <div class="dz-plates">
             <div class="dz-dots">${Array.from({ length: dots }, (_, n) => `<button class="dz-dot${n < serves ? ' on' : ''}" data-plates="${n + 1}" aria-label="Serves ${n + 1}"><i></i></button>`).join('')}</div>
-            <div class="dz-serves">Serves ${serves}${serves !== r.serves ? `<button data-sreset class="dz-reset">the recipe makes ${r.serves}</button>` : ''}</div>
+            <div class="dz-serves">Serves ${serves}${serves !== r.serves ? `<button data-sreset class="dz-reset">Reset to ${r.serves}</button>` : ''}</div>
           </div>
           <button class="dz-pm" data-serves="1" aria-label="More servings"${serves >= 24 ? ' disabled' : ''}>+</button>
         </div>
         <div class="dz-inghead">
           <div class="dz-eyebrow">${r.ingredients.length} ingredient${r.ingredients.length === 1 ? '' : 's'}</div>
-          <div class="dz-note">${esc(listNote || (whole ? 'On the week plan: the shopping list has them all' : 'Tap what’s missing to put it on the shopping list'))}</div>
+          <div class="dz-note">${esc(listNote)}</div>
         </div>
         <div class="dz-chips" data-chips>${r.ingredients.length
           ? r.ingredients.map((ing, n) => `<button class="dz-chip${state[n] ? ' on' : ''}" data-ing="${n}"><b>${state[n] ? '✓' : '+'}</b>${esc(ingText(n))}</button>`).join('')
@@ -237,15 +232,14 @@ export function mount(el, { args = [] } = {}) {
         ${who.length > 3 ? `<div class="dz-loves">${faces}<div class="dz-lovetext">${esc(loveText)}</div></div>` : ''}
         <div class="dz-foot">
           ${canAdd ? `<button data-addto="${target.key}" data-addmeal="${p.meal}" class="dz-go">Add to ${esc(target.n >= 7 ? `${target.short} ${target.sub}` : target.label)} ${mealName(p.meal)}</button>
-            <a href="#/recipe/${encodeURIComponent(r.id)}" class="dz-side">${prog ? `Continue · step ${prog.step}` : 'Cook now'}</a>`
-            : `<a href="#/recipe/${encodeURIComponent(r.id)}" class="dz-go">${prog ? `Carry on cooking · step ${prog.step}` : 'Start cooking'}</a>`}
+            <a href="#/recipe/${encodeURIComponent(r.id)}" class="dz-side">${prog ? `Step ${prog.step}` : 'Cook now'}</a>`
+            : `<a href="#/recipe/${encodeURIComponent(r.id)}" class="dz-go">${prog ? `Continue · step ${prog.step}` : 'Start cooking'}</a>`}
           <button data-open="steps" class="dz-side">Steps</button>
           <button data-open="plan" class="dz-side">${planned.length ? '✓ Planned' : 'Plan it'}</button>
-          ${missing && !whole ? `<button data-tolist class="dz-side hot">Add ${missing === r.ingredients.length ? 'all' : missing} to list</button>` : ''}
+          ${missing && !whole ? `<button data-tolist class="dz-side hot">+ ${missing === r.ingredients.length ? 'All' : missing} to list</button>` : ''}
         </div>`;
       const chips = col.querySelector('[data-chips]');
       if (chips) chips.scrollTop = sc;
-      fillCounts(root);
     }
 
     function renderSheet() {
@@ -254,11 +248,11 @@ export function mount(el, { args = [] } = {}) {
       if (sheet === 'steps') {
         sheetBox.innerHTML = `<div class="dz-sheet" data-shut><div class="dz-panel">
           <div class="dz-row"><h2>${r.steps.length} step${r.steps.length === 1 ? '' : 's'}${total ? ` · ${fmtMinutes(total)} in all` : ''}</h2><button data-shut class="dz-btn dark">Close</button></div>
-          ${servingsFor(r) !== r.serves ? `<div class="sub">Amounts written in the steps are for ${r.serves}, as the recipe was written.</div>` : ''}
+          ${servingsFor(r) !== r.serves ? `<div class="sub">Amounts in the steps are for ${r.serves}.</div>` : ''}
           <div class="dz-steps">${r.steps.map((s, n) => `<div class="dz-step"><b>${n + 1}</b><span>${esc(s.text)}${s.timer ? `<br><button class="dz-timer" data-timer="${n}">⏱ Start ${secsText(s.timer)} timer</button>` : ''}</span></div>`).join('')}</div>
           <div class="dz-row">
-            <a href="#/recipe/${encodeURIComponent(r.id)}" class="dz-btn dark" style="flex:1;min-height:64px;font-size:20px">Cook it step by step</a>
-            ${r.mine ? '' : `<a href="#/myrecipe/from/${encodeURIComponent(r.id)}" class="dz-btn" style="min-height:64px">Make my own version</a>`}
+            <a href="#/recipe/${encodeURIComponent(r.id)}" class="dz-btn dark" style="flex:1;min-height:64px;font-size:20px">Start cooking</a>
+            ${r.mine ? '' : `<a href="#/myrecipe/from/${encodeURIComponent(r.id)}" class="dz-btn" style="min-height:64px">Make my version</a>`}
           </div>
         </div></div>`;
         sheetBox.querySelector('.dz-steps').scrollTop = sc;
@@ -271,8 +265,7 @@ export function mount(el, { args = [] } = {}) {
       const otherWeek = plannedOn(planDays(1 - page), meal).length;
       const other = allPlanned(meal);
       sheetBox.innerHTML = `<div class="dz-sheet" data-shut><div class="dz-panel">
-        <div class="dz-row"><h2>Plan it</h2><button data-shut class="dz-btn dark">Done</button></div>
-        <div class="sub">${esc(r.title)}. Pick the meal, then tap the days you want it. Tap a day again to take it off.</div>
+        <div class="dz-row"><h2>Plan “${esc(r.title)}”</h2><button data-shut class="dz-btn dark">Done</button></div>
         <div class="dz-row">${MEALS.map(([m, name]) => `<button class="dz-btn${m === meal ? ' on' : ''}" data-meal="${m}" style="flex:1">${name}</button>`).join('')}</div>
         ${target && plannedFor(target.key, p.meal).indexOf(r.id) < 0 ? `<button data-addto="${target.key}" data-addmeal="${p.meal}" class="dz-btn dark" style="min-height:64px;font-size:20px">Add to ${esc(target.n >= 7 ? `${target.label} ${target.sub}` : target.label)} ${mealName(p.meal)}</button>` : ''}
         <div class="dz-days">
@@ -323,15 +316,15 @@ export function mount(el, { args = [] } = {}) {
       if (ing) {
         const n = +ing.dataset.ing;
         const text = ingText(n);
-        if (onPlan()) listNote = 'It’s on the week plan, so the shopping list has these already.';
+        if (onPlan()) listNote = 'On the week plan: the list has these already.';
         else {
           const had = listed()[listKey(text)];
-          if (had) { removeExtra(had); delete there[n]; listNote = 'Taken off the shopping list.'; }
-          else if (there[n]) listNote = 'The shopping list has it already (something else on the plan needs it).';
+          if (had) { removeExtra(had); delete there[n]; listNote = ''; }
+          else if (there[n]) listNote = 'Already on the list for another planned meal.';
           else {
             const res = addExtra(text);
             if (res === 'there' || (res === 'back' && !listed()[listKey(text)])) there[n] = true;
-            listNote = res === 'added' || res === 'back' ? 'Added to the shopping list.' : res === 'unsaved' ? 'Couldn’t save it: this screen’s storage is full.' : 'The shopping list has it already.';
+            listNote = res === 'added' || res === 'back' ? '' : res === 'unsaved' ? 'Couldn’t save it: this screen’s storage is full.' : 'Already on the shopping list.';
           }
         }
         renderCol();
@@ -341,7 +334,7 @@ export function mount(el, { args = [] } = {}) {
       if (e.target.closest('[data-tolist]')) {
         // A recipe on this week's plan is on the shopping list already, amounts and all.
         if (onPlan()) {
-          listNote = 'It’s on the week plan, so the shopping list has these already.';
+          listNote = 'On the week plan: the list has these already.';
         } else {
           let added = 0;
           let had = 0;
@@ -351,8 +344,8 @@ export function mount(el, { args = [] } = {}) {
             const res = addExtra(ingText(n));
             if (res === 'added' || res === 'back') added++; else if (res === 'there') { had++; there[n] = true; }
           });
-          listNote = added ? `${added} added to the shopping list.${had ? ` ${had} ${had === 1 ? 'was' : 'were'} on it already.` : ''}`
-            : 'They’re all on the shopping list already.';
+          listNote = added ? (had ? `${had} ${had === 1 ? 'was' : 'were'} on the list already.` : '')
+            : 'All on the shopping list already.';
         }
         renderCol();
         return;
@@ -365,7 +358,7 @@ export function mount(el, { args = [] } = {}) {
         // All the kitchen timers busy: say so, instead of claiming one started.
         if (ok === false) {
           tb.classList.add('full');
-          tb.textContent = `All ${MAX} timers are in use. Stop one in Timers first.`;
+          tb.textContent = `All ${MAX} timers are in use.`;
         } else {
           tb.classList.add('on');
           tb.textContent = '✓ Timer started';

@@ -1,7 +1,8 @@
 // Gallery → Add photos (board KP08 of the November 2026 redesign, "Live arrivals"):
 // a big code phones scan to send photos to this screen, with a line sweeping over it, and
 // on the right a drawn phone that the photos visibly fly out of, into an "Arriving now"
-// frame, with the sender's name. It is part of the Gallery: back leads there.
+// frame, with the sender's name. Back leads to the Gallery when its "+ Add photos" opened this
+// (#/addphotos/gallery), otherwise to Home or the Menu, wherever the person came from.
 import { isTablet, getPhotos, uploadUrl, onPhotosChanged, qrSvg, thumbnail, ALBUM_MAX } from '../services/tablet-photos.js';
 import { photos as samplePhotos } from '../services/family-sample.js';
 import { esc, topBar } from './ui.js';
@@ -14,8 +15,46 @@ const FLY_MS = 1000;      // one photo's flight from the phone to the frame
 const FLY_EVERY = 1500;   // ...and the next one sets off this long after
 const FLY_MOST = 6;       // of a big batch, this many are shown flying in
 
-export function mount(el, { homeRoute = 'home' } = {}) {
+// While it waits, two blank prints drift along the dotted arc from the drawn phone to the frame.
+// (A CSS transform on two small boxes of their own, not SVG animation: that repainted the whole
+// 1280x800 drawing every frame, and kept going after the screen's other loops pause.)
+// The keyframes follow the arc's curve, evenly by distance, easing like cubic-bezier(.4,0,.2,1).
+const ARC = [[1120, 458], [1100, 330], [990, 350], [916, 470]];
+function driftKeyframes() {
+  const at = (t, i) => {
+    const u = 1 - t;
+    return u * u * u * ARC[0][i] + 3 * u * u * t * ARC[1][i] + 3 * u * t * t * ARC[2][i] + t * t * t * ARC[3][i];
+  };
+  const pts = [];
+  const len = [0];
+  for (let k = 0; k <= 100; k++) {
+    pts.push([at(k / 100, 0), at(k / 100, 1)]);
+    if (k) len.push(len[k - 1] + Math.hypot(pts[k][0] - pts[k - 1][0], pts[k][1] - pts[k - 1][1]));
+  }
+  const pointAt = (f) => { // f: share of the way along the arc
+    const want = f * len[100];
+    let k = 1;
+    while (k < 100 && len[k] < want) k++;
+    const a = len[k - 1], b = len[k], w = b > a ? (want - a) / (b - a) : 0;
+    return [pts[k - 1][0] + (pts[k][0] - pts[k - 1][0]) * w, pts[k - 1][1] + (pts[k][1] - pts[k - 1][1]) * w];
+  };
+  const bez = (s, p1, p2) => 3 * (1 - s) * (1 - s) * s * p1 + 3 * (1 - s) * s * s * p2 + s * s * s;
+  const ease = (t) => { // cubic-bezier(.4,0,.2,1): find s whose x is t, give its y
+    let lo = 0, hi = 1;
+    for (let i = 0; i < 24; i++) { const m = (lo + hi) / 2; if (bez(m, 0.4, 0.2) < t) lo = m; else hi = m; }
+    return bez((lo + hi) / 2, 0, 1);
+  };
+  const frames = [];
+  for (let k = 0; k <= 20; k++) {
+    const [x, y] = pointAt(ease(k / 20));
+    frames.push(`${k * 5}%{opacity:.8;transform:translate(${x.toFixed(1)}px,${y.toFixed(1)}px)}`);
+  }
+  return `@keyframes ad-drift{${frames.join('')}}`;
+}
+
+export function mount(el, { args = [] } = {}) {
   const canWifi = !!(N() && N().wifiSettings);
+  const back = args[0] === 'gallery' ? { back: '#/photos', backLabel: '← Gallery' } : {};
   el.innerHTML = `
   <style>
     .ad-root{position:absolute;top:0;right:0;bottom:0;left:0;overflow:hidden;color:#fff;font-family:Inter,system-ui,sans-serif;
@@ -27,7 +66,7 @@ export function mount(el, { homeRoute = 'home' } = {}) {
     @keyframes ad-live{0%,100%{opacity:1}50%{opacity:.3}}
     /* ---- the code ---- */
     .ad-card{position:absolute;left:40px;top:108px;width:480px;height:666px;border-radius:36px;background:#fff;color:#1E2240;
-      display:flex;flex-direction:column;align-items:center;padding:24px 24px 0;box-shadow:0 24px 60px rgba(10,10,40,.4)}
+      display:flex;flex-direction:column;align-items:center;justify-content:center;padding:0 24px 24px;box-shadow:0 24px 60px rgba(10,10,40,.4)}
     .ad-eyebrow{font:700 16px Inter,sans-serif;letter-spacing:2.5px;text-transform:uppercase}
     .ad-qr{position:relative;width:${QR_SIZE}px;height:${QR_SIZE}px;margin-top:12px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:18px;text-align:center}
     .ad-qr svg{display:block}
@@ -35,16 +74,14 @@ export function mount(el, { homeRoute = 'home' } = {}) {
       animation:ad-scan 4s ease-in-out infinite;will-change:transform;display:none}
     .ad-qr.ready .ad-scan{display:block}
     @keyframes ad-scan{0%,100%{transform:translateY(0)}50%{transform:translateY(${QR_SIZE - 8}px)}}
-    .ad-tap{font:500 26px Outfit,sans-serif;margin-top:14px}
-    .ad-url-label{font-size:16px;color:#5A5F80;margin-top:8px;text-align:center}
+    .ad-url-label{font-size:16px;color:#5A5F80;margin-top:22px;text-align:center}
     .ad-url{font:600 19px Inter,sans-serif;text-align:center;word-break:break-all;margin-top:4px;line-height:1.3}
     /* ---- the right side ---- */
     .ad-right{position:absolute;left:564px;right:40px;top:108px}
     .ad-head{font:500 42px/1.1 Outfit,sans-serif;white-space:nowrap}
-    .ad-steps{margin-top:16px;display:flex;flex-direction:column;gap:9px;font-size:19px;line-height:1.35}
+    .ad-steps{margin-top:22px;display:flex;flex-direction:column;gap:16px;font-size:21px;line-height:1.35}
     .ad-step{display:flex;gap:14px;align-items:flex-start}
     .ad-num{flex:none;width:36px;height:36px;border-radius:18px;background:rgba(255,255,255,.16);font:700 18px Outfit,sans-serif;display:flex;align-items:center;justify-content:center;margin-top:-4px}
-    .ad-also{font-size:16px;color:#D6CDEB;padding-left:50px}
     .ad-frame{position:absolute;left:564px;top:352px;width:350px;height:284px;border-radius:22px;background:rgba(255,255,255,.13);padding:12px 14px}
     .ad-frame .ad-eyebrow{font-size:15px;color:#FFD08A}
     .ad-land{position:relative;height:202px;margin-top:8px;border-radius:14px;overflow:hidden;background:rgba(20,24,44,.35);display:flex;align-items:center;justify-content:center;text-align:center;
@@ -54,6 +91,11 @@ export function mount(el, { homeRoute = 'home' } = {}) {
     @keyframes ad-in{from{opacity:0;transform:translateY(-26px)}to{opacity:1;transform:translateY(0)}}
     .ad-from{font-size:18px;margin-top:8px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
     .ad-art{position:absolute;left:0;top:0;pointer-events:none}
+    .ad-print{position:absolute;left:-24px;top:-18px;width:48px;height:36px;border-radius:5px;background:#fff;padding:4px;opacity:0;pointer-events:none;
+      animation:ad-drift 5s linear infinite}
+    .ad-print + .ad-print{animation-delay:2.5s}
+    .ad-print span{display:block;height:100%;border-radius:3px}
+    ${driftKeyframes()}
     .ad-flyer{position:absolute;left:986px;top:353px;width:260px;height:192px;border-radius:14px;background:#14182C center/cover no-repeat;box-shadow:0 0 0 4px #fff;
       opacity:0;pointer-events:none;will-change:transform;display:flex;align-items:center;justify-content:center;font-size:60px}
     .ad-flyer.go{opacity:1;transform:translate(-377px,46px) scale(1.1) rotate(-4deg);transition:transform ${FLY_MS}ms cubic-bezier(.4,0,.2,1)}
@@ -68,7 +110,6 @@ export function mount(el, { homeRoute = 'home' } = {}) {
     .ad-status{font-size:16px;line-height:1.35;color:#E4DDF3;margin-top:8px}
     .ad-status b{color:#FFD08A}
     .ad-came{font:600 22px Outfit,sans-serif;color:#9FF2C1}
-    .ad-qr .ad-dim{font-size:19px;line-height:1.4;color:#5A5F80}
     @media (prefers-reduced-motion: reduce){.ad-dot,.ad-scan,.ad-landed.in{animation:none}.ad-flyers{display:none}.ad-flyer.go{transition:none}}
   </style>
   <div class="ad-root">
@@ -82,24 +123,17 @@ export function mount(el, { homeRoute = 'home' } = {}) {
         <rect x="18" y="80" width="40" height="40" rx="6" fill="#9AA9BE"/><rect x="62" y="80" width="40" height="40" rx="6" fill="#D9792E"/>
         <rect x="18" y="144" width="84" height="30" rx="15" fill="#E0663A"/>
       </g>
-      <!-- While it waits: two blank prints drift along the path, to show which way photos go. -->
-      <g class="ad-flyers" data-flyers>
-        <g opacity=".8"><rect x="-24" y="-18" width="48" height="36" rx="5" fill="#FFFFFF"/><rect x="-20" y="-14" width="40" height="28" rx="3" fill="#E9A07A"/>
-          <animateMotion dur="5s" repeatCount="indefinite" calcMode="spline" keyPoints="0;1" keyTimes="0;1" keySplines="0.4 0 0.2 1"><mpath href="#ad-arc"/></animateMotion></g>
-        <g opacity=".8"><rect x="-24" y="-18" width="48" height="36" rx="5" fill="#FFFFFF"/><rect x="-20" y="-14" width="40" height="28" rx="3" fill="#8FC6E4"/>
-          <animateMotion dur="5s" begin="2.5s" repeatCount="indefinite" calcMode="spline" keyPoints="0;1" keyTimes="0;1" keySplines="0.4 0 0.2 1"><mpath href="#ad-arc"/></animateMotion></g>
-      </g>
     </svg>
+    <div class="ad-flyers" data-flyers aria-hidden="true">
+      <div class="ad-print"><span style="background:#E9A07A"></span></div><div class="ad-print"><span style="background:#8FC6E4"></span></div>
+    </div>
 
-    <div class="ad-top">${topBar({ title: 'Add photos', back: '#/photos', backLabel: '← Gallery', tone: 'dark', right: `
-      <div class="ad-live" data-live><span class="ad-dot"></span><span data-live-text></span></div>
-      <a href="#/${homeRoute}" class="x-btn glass">Home</a>` })}</div>
+    <div class="ad-top">${topBar({ title: 'Add photos', ...back, tone: 'dark', right: `
+      <div class="ad-live" data-live><span class="ad-dot"></span><span data-live-text></span></div>` })}</div>
 
     <div class="ad-card">
-      <div class="ad-eyebrow" style="color:#7A4B78">Point your phone’s camera here</div>
       <div class="ad-qr" data-qr-box><div data-qr></div><div class="ad-scan"></div></div>
-      <div class="ad-tap" data-tap>Then tap the link that pops up</div>
-      <div class="ad-url-label" data-url-label style="display:none">No camera on the phone? Type this into its web browser:</div>
+      <div class="ad-url-label" data-url-label style="display:none">Or type into the phone’s browser:</div>
       <div class="ad-url" data-url></div>
     </div>
 
@@ -107,27 +141,26 @@ export function mount(el, { homeRoute = 'home' } = {}) {
       <div class="ad-head">Send photos from your phone</div>
       <div class="ad-steps">
         ${[
-          'Connect your phone to the same Wi-Fi as this screen.',
-          'Point your phone’s camera at the code, then tap the link that pops up.',
-          'A page called “Your kitchen screen” opens. Type your name, tap <b>Choose photos</b> and pick as many as you like.',
+          'Join the same Wi-Fi as this screen',
+          'Scan the code with the camera',
+          'Type your name, tap <b>Choose photos</b>',
         ].map((t, i) => `<div class="ad-step"><div class="ad-num">${i + 1}</div><div>${t}</div></div>`).join('')}
-        <div class="ad-also">The same page can also leave a note, add to the shopping list or send a recipe.</div>
       </div>
     </div>
 
     <div class="ad-frame">
       <div class="ad-eyebrow" data-frame-title>Arriving here</div>
-      <div class="ad-land" data-land><span data-land-text>Photos land here the moment they are sent.</span></div>
+      <div class="ad-land" data-land><span data-land-text></span></div>
       <div class="ad-from" data-from>&nbsp;</div>
     </div>
     <div class="ad-flyer" data-flyer></div>
 
     <div class="ad-foot">
       <div data-latest style="display:none">
-        <div class="ad-eyebrow">Newest in the Gallery · tap one to see it</div>
+        <div class="ad-eyebrow">Newest in the Gallery</div>
         <div class="ad-thumbs" data-thumbs></div>
       </div>
-      <div class="ad-status" data-status>Photos stay on this screen. Nothing is uploaded to the internet.</div>
+      <div class="ad-status" data-status>Photos stay on this screen, never on the internet.</div>
     </div>
   </div>`;
 
@@ -163,7 +196,6 @@ export function mount(el, { homeRoute = 'home' } = {}) {
     const live = $('[data-live]');
     $('[data-url-label]').style.display = url ? '' : 'none';
     $('[data-qr-box]').classList.toggle('ready', url !== '');
-    $('[data-tap]').style.display = url === '' ? 'none' : '';
     $('[data-flyers]').style.display = url === '' ? 'none' : '';
     live.classList.toggle('wait', !url);
     if (url === null) {
@@ -175,18 +207,17 @@ export function mount(el, { homeRoute = 'home' } = {}) {
     } else if (!url) {
       $('[data-qr]').innerHTML = `
         <div style="font:500 28px Outfit,sans-serif;white-space:nowrap">This screen isn’t on the Wi-Fi</div>
-        <div class="ad-dim" style="margin-top:14px">The code appears here by itself as soon as it’s connected.</div>
-        ${canWifi ? '<button data-wifi class="x-btn ink" style="margin-top:22px">Wi-Fi settings</button>' : ''}`;
+        ${canWifi ? '<button data-wifi class="x-btn ink" style="margin-top:8px">Wi-Fi settings</button>' : ''}`;
       $('[data-url]').innerHTML = canWifi ? ''
         : '<span style="font-weight:400;font-size:17px;color:#5A5F80">To connect it: hold the top-left corner for 5 seconds, then Wi-Fi settings.</span>';
       const w = $('[data-wifi]');
       if (w) w.addEventListener('click', () => { try { N().wifiSettings(); } catch (e) { /* older version of the screen */ } });
-      $('[data-live-text]').textContent = 'Waiting for Wi-Fi';
+      $('[data-live-text]').textContent = 'No Wi-Fi';
     } else {
       $('[data-qr]').innerHTML = qrSvg(url, QR_SIZE);
       // The whole address, key and all: without the key the screen answers "this link has expired".
       $('[data-url]').textContent = url;
-      $('[data-live-text]').textContent = 'Ready and listening';
+      $('[data-live-text]').textContent = 'Ready';
     }
   }
 
@@ -261,16 +292,14 @@ export function mount(el, { homeRoute = 'home' } = {}) {
     $('[data-latest]').style.display = $('[data-thumbs]').children.length ? '' : 'none';
     if (!isTablet()) return;
     const words = $('[data-land-text]');
-    if (words) words.textContent = count >= ALBUM_MAX ? 'No room for more until a few are removed.' : 'Photos land here the moment they are sent.';
+    if (words) words.textContent = count >= ALBUM_MAX ? 'No room for more' : '';
     if (count >= ALBUM_MAX - 50) {
       // Uploads stop at the limit; say so before someone's photos quietly don't arrive.
       $('[data-latest]').style.display = 'none';
-      $('[data-status]').innerHTML = `<div style="font-size:18px"><b>The Gallery is ${count >= ALBUM_MAX ? 'full' : 'almost full'} (${count} of ${ALBUM_MAX}).</b> Take a few old ones off to make room.</div>
-        <a href="#/photos/choose" class="x-btn white" style="margin-top:12px">Choose photos to remove</a>`;
-    } else if (shownUrl) {
-      $('[data-status]').textContent = `${count} in the Gallery so far. They stay on this screen; nothing goes on the internet.`;
+      $('[data-status]').innerHTML = `<div style="font-size:18px"><b>The Gallery is ${count >= ALBUM_MAX ? 'full' : 'almost full'} (${count} of ${ALBUM_MAX})</b></div>
+        <a href="#/photos/choose" class="x-btn white" style="margin-top:12px">Make room</a>`;
     } else {
-      $('[data-status]').textContent = `${count} photo${count === 1 ? '' : 's'} in the Gallery. Photos stay on this screen; nothing is uploaded to the internet.`;
+      $('[data-status]').textContent = `${count} in the Gallery. Photos stay on this screen, never on the internet.`;
     }
   }
 
@@ -292,8 +321,8 @@ export function mount(el, { homeRoute = 'home' } = {}) {
         $('[data-latest]').style.display = 'none';
         $('[data-status]').innerHTML = `<div class="ad-came">${esc(arrivedText(arrived))}</div>
           <div style="display:flex;gap:12px;align-items:center;margin-top:10px">
-            <a href="#/photos" class="x-btn white">See ${them} in the Gallery</a>
-            <button data-stay class="x-btn glass">Stay to send more</button>
+            <a href="#/photos" class="x-btn white">See ${them}</a>
+            <button data-stay class="x-btn glass">Send more</button>
             <span style="font-size:17px;white-space:nowrap">Showing ${them} in ${left}…</span>
           </div>`;
         $('[data-stay]').addEventListener('click', () => { stopCountdown(); renderReady(getPhotos().length); });

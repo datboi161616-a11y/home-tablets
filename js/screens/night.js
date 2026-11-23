@@ -8,8 +8,9 @@
 //
 // app.js brings this up by itself at night and turns the backlight right down (2-15 %), so
 // the clock is very large and there are no bright patches to light up a dark room. It
-// stays up for eight hours: at most ten small things move (transform and opacity only),
-// and the text changes once a minute. The bottom corners are kept free for the timer chip
+// stays up for eight hours: only the rain or snow on the glass moves (a few small divs,
+// transform and opacity only, and app.js pauses even those once nobody touches it), and the
+// text changes once a minute. The bottom corners are kept free for the timer chip
 // and the "plug me in" word.
 import { isNightNow, hourText, display, clockTime, clockAmPm } from '../services/display.js';
 import { getLocation } from '../services/location.js';
@@ -135,7 +136,7 @@ function icon(kind) {
 }
 
 // The view out of the window: sky, hills, one house with a lamp left on, a street lamp.
-// Nothing here moves except the street lamp's slow flicker.
+// Nothing here moves.
 const SCENE = `<svg class="nt-scene" viewBox="0 0 1280 800" preserveAspectRatio="xMidYMid slice" aria-hidden="true" focusable="false">
     <defs>
       <linearGradient id="ntSky" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#07080D"/><stop offset="0.7" stop-color="#10131F"/><stop offset="1" stop-color="#0A0B12"/></linearGradient>
@@ -144,7 +145,7 @@ const SCENE = `<svg class="nt-scene" viewBox="0 0 1280 800" preserveAspectRatio=
     <rect x="-40" y="-40" width="1360" height="880" fill="url(#ntSky)"/>
     <path fill="#0B0D16" d="M-40 600 L90 560 L160 580 L240 520 L320 560 L420 540 L520 580 L640 548 L760 570 L880 530 L1000 566 L1120 540 L1320 570 V840 H-40Z"/>
     <rect x="760" y="340" width="440" height="440" fill="url(#ntStreet)"/>
-    <rect x="976" y="420" width="6" height="200" fill="#151827"/><circle class="nt-lamp" cx="979" cy="418" r="7" fill="#B88A52"/>
+    <rect x="976" y="420" width="6" height="200" fill="#151827"/><circle cx="979" cy="418" r="7" fill="#B88A52"/>
     <g fill="#14182A"><rect x="140" y="520" width="120" height="80"/><path d="M130 524 L200 480 L270 524Z"/><rect x="180" y="548" width="20" height="18" fill="#3A2C1A"/></g>
   </svg>`;
 
@@ -156,18 +157,18 @@ function skyLayer(kind) {
     return `${drips.map(([x, h, secs, wait]) => `<div class="nt-drip" style="left:${x}px;height:${h}px;animation-duration:${secs}s;animation-delay:-${wait}s"></div>`).join('')}
       <svg class="nt-beads" viewBox="0 0 1280 800" preserveAspectRatio="xMidYMid slice" aria-hidden="true" focusable="false"><g fill="rgba(170,190,220,.26)">
         <circle cx="80" cy="140" r="5"/><circle cx="260" cy="90" r="4"/><circle cx="470" cy="210" r="6"/><circle cx="700" cy="120" r="4"/><circle cx="930" cy="250" r="5"/><circle cx="1180" cy="110" r="6"/><circle cx="200" cy="420" r="4"/><circle cx="1050" cy="400" r="5"/><circle cx="560" cy="680" r="4"/><circle cx="1220" cy="620" r="5"/></g>
-        <circle class="nt-bead" cx="390" cy="330" r="7" fill="rgba(170,190,220,.32)"/><circle class="nt-bead late" cx="1000" cy="180" r="6" fill="rgba(170,190,220,.32)"/></svg>`;
+        <circle cx="390" cy="330" r="7" fill="rgba(170,190,220,.32)"/><circle cx="1000" cy="180" r="6" fill="rgba(170,190,220,.32)"/></svg>`;
   }
   if (kind === 'snow') {
     const flakes = [[90, 7, 22, 3, 40], [250, 5, 30, 14, -30], [420, 8, 26, 8, 24], [590, 5, 34, 21, -44], [760, 7, 24, 1, 36], [930, 6, 31, 17, -20], [1090, 8, 27, 11, 30], [1210, 5, 36, 25, -36]];
     return flakes.map(([x, r, secs, wait, drift]) => `<div class="nt-flake" style="left:${x}px;width:${r}px;height:${r}px;--drift:${drift}px;animation-duration:${secs}s;animation-delay:-${wait}s"></div>`).join('');
   }
-  // A clear night: a few stars, three of them twinkling slowly. Under cloud only the brightest show.
+  // A clear night: a few stars, three of them a little brighter. Under cloud only the brightest show.
   const stars = [[110, 90, 1.8], [300, 170, 1.4], [450, 60, 1.6], [640, 40, 1.3], [820, 110, 1.8], [1010, 70, 1.4], [1170, 150, 1.7], [210, 300, 1.3], [1100, 290, 1.4], [720, 460, 1.2], [60, 430, 1.3], [1230, 400, 1.3]];
   const some = kind === 'cloud' ? stars.slice(0, 3) : stars;
   return `<svg class="nt-beads" viewBox="0 0 1280 800" preserveAspectRatio="xMidYMid slice" aria-hidden="true" focusable="false">
     <g fill="${kind === 'cloud' ? '#3A3F4E' : '#6E7488'}">${some.map(([x, y, r]) => `<circle cx="${x}" cy="${y}" r="${r}"/>`).join('')}</g>
-    ${kind === 'cloud' ? '' : '<circle class="nt-star" cx="560" cy="150" r="2.2" fill="#8E94A8"/><circle class="nt-star late" cx="900" cy="230" r="2" fill="#8E94A8"/><circle class="nt-star later" cx="180" cy="200" r="2" fill="#8E94A8"/>'}</svg>`;
+    ${kind === 'cloud' ? '' : '<g fill="#8E94A8" opacity=".7"><circle cx="560" cy="150" r="2.2"/><circle cx="900" cy="230" r="2"/><circle cx="180" cy="200" r="2"/></g>'}</svg>`;
 }
 
 export function mount(el) {
@@ -187,26 +188,17 @@ export function mount(el) {
        can step a few pixels now and then (burn-in) without showing an edge. */
     .nt-move{position:absolute;top:-24px;right:-24px;bottom:-24px;left:-24px}
     .nt-scene,.nt-beads{position:absolute;top:0;left:0;width:100%;height:100%}
-    .nt-lamp{animation:nt-lamp 6s ease-in-out infinite}
-    /* Tomorrow's sun, waiting below the hills: brighter when tomorrow is fair. */
-    .nt-dawn{position:absolute;left:0;right:0;bottom:0;height:290px;opacity:.16;will-change:opacity;
+    /* Tomorrow's sun, waiting below the hills: brighter when tomorrow is fair. (Still: a big
+       glow that breathes all night costs the weak graphics chip a repaint every frame.) */
+    .nt-dawn{position:absolute;left:0;right:0;bottom:0;height:290px;opacity:.16;
       background:radial-gradient(760px 250px at 30% 100%,rgba(201,140,70,.5),rgba(201,140,70,0) 70%)}
-    .nt-dawn.fair{animation:nt-dawn 14s ease-in-out infinite}
+    .nt-dawn.fair{opacity:.46}
     .nt-sky{position:absolute;top:0;right:0;bottom:0;left:0}
     .nt-drip{position:absolute;top:0;width:3px;border-radius:2px;background:linear-gradient(180deg,rgba(150,170,200,0),rgba(150,170,200,.46));
       will-change:transform;animation:nt-drip linear infinite}
-    .nt-bead{animation:nt-bead 9s ease-in infinite}
-    .nt-bead.late{animation-duration:13s;animation-delay:-5s}
     .nt-flake{position:absolute;top:-20px;border-radius:50%;background:rgba(190,200,220,.5);will-change:transform;animation:nt-snow linear infinite}
-    .nt-star{animation:nt-star 7s ease-in-out infinite}
-    .nt-star.late{animation-duration:9s;animation-delay:-3s}
-    .nt-star.later{animation-duration:11s;animation-delay:-6s}
     @keyframes nt-drip{0%{transform:translateY(-90px);opacity:0}10%{opacity:.7}100%{transform:translateY(880px);opacity:.5}}
-    @keyframes nt-bead{0%,70%{transform:translateY(0)}100%{transform:translateY(60px)}}
     @keyframes nt-snow{0%{transform:translate3d(0,0,0)}100%{transform:translate3d(var(--drift,30px),900px,0)}}
-    @keyframes nt-dawn{0%,100%{opacity:.34}50%{opacity:.58}}
-    @keyframes nt-lamp{0%,100%{opacity:.75}50%{opacity:1}}
-    @keyframes nt-star{0%,100%{opacity:.25}50%{opacity:1}}
 
     .nt-wrap{position:absolute;top:24px;right:24px;bottom:24px;left:24px;display:flex;flex-direction:column;align-items:center}
     .nt-mid{margin-top:128px;display:flex;flex-direction:column;align-items:center;flex:none}
@@ -227,7 +219,6 @@ export function mount(el) {
     .nt-ring span{font-size:24px;font-weight:600}
     .nt-foot{position:absolute;left:300px;right:300px;bottom:34px;text-align:center;font:500 18px Inter,system-ui,sans-serif;color:${INK_2};white-space:nowrap}
     @media (prefers-reduced-motion: reduce){
-      .nt-lamp,.nt-dawn.fair,.nt-bead,.nt-star{animation:none}
       .nt-drip,.nt-flake{animation:none;display:none}
     }
   </style>
@@ -245,8 +236,8 @@ export function mount(el) {
           <div class="nt-line" data-weather-line>&nbsp;</div>
           <div class="nt-line"><span data-first-time style="flex:none"></span><span class="nt-cut" data-first>&nbsp;</span><span data-first-more style="flex:none;margin-left:14px"></span></div>
         </div>
-        <div class="nt-ring" data-ring><b data-ring-names>Time’s up!</b><span>Tap anywhere to stop it</span></div>
-        <div class="nt-foot"><span data-mode></span><span data-hint></span></div>
+        <div class="nt-ring" data-ring><b data-ring-names>Time’s up!</b><span>Tap to stop</span></div>
+        <div class="nt-foot" data-mode></div>
       </div>
     </div>
   </div>`;
@@ -254,16 +245,15 @@ export function mount(el) {
   const $ = (s) => el.querySelector(s);
   if (!c.ampm) $('[data-ampm]').style.display = 'none';
 
-  // Top row: what this screen is doing, and what a tap does.
+  // The small line at the foot: what this screen is doing.
   function renderTop() {
     const s = display();
     const h = new Date().getHours();
     let mode;
     if (isNight()) mode = `Dimmed until ${hourText(s.nightTo)}`;
     else if (!byHand && h >= 4 && h < 12) mode = 'Good morning'; // the night just ended; Home follows shortly
-    else mode = s.night ? `Night clock · comes on at ${hourText(s.nightFrom)}` : 'Night clock · switched off in Settings';
+    else mode = s.night ? `Comes on at ${hourText(s.nightFrom)}` : 'Switched off in Settings';
     $('[data-mode]').textContent = mode;
-    $('[data-hint]').textContent = ringingNow() ? '' : byHand ? ' · Tap anywhere to go back' : ' · Tap anywhere for Home';
   }
 
   // The window: what is falling outside, and how bright tomorrow's sun waits. Drawn again

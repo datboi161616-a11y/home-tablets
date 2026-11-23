@@ -321,6 +321,9 @@ export function mount(el) {
     .hm-chip .x-eyebrow{font-size:13px;opacity:.75;margin-bottom:3px;display:block}
     .hm-dock{min-height:88px;border-radius:26px;padding:0 30px;font-size:22px}
     @media (prefers-reduced-motion: reduce){.hm-pic.zoom{animation:none}}
+    /* Resting: the snow (or leaves) fades away, so nothing is left moving. */
+    [data-season]{transition:opacity 1.5s ease}
+    .hm.x-resting [data-season]{opacity:0;visibility:hidden;transition:opacity 1.5s ease,visibility 0s 1.5s}
   </style>
   <div class="hm" data-home>
     <div class="hm-layer" data-layer="0"><div class="hm-back"></div><div class="hm-pic"></div></div>
@@ -347,10 +350,6 @@ export function mount(el) {
     </div>
 
     <div class="hm-row x-chrome" data-row>
-      <a href="#/forecast" class="hm-chip" data-weather>
-        <span data-w-icon style="display:flex;flex:none">${wxIcon('cloud', 52)}</span>
-        <span style="min-width:0"><b data-w-main>Weather</b><i data-w-sub>Finding your town…</i></span>
-      </a>
       <a href="#/calendar" class="hm-chip" data-coming></a>
       <a href="#/recipes" class="hm-chip" data-dinner>
         <span style="display:flex;flex:none;opacity:.9">${ICON.dinner}</span>
@@ -566,7 +565,9 @@ export function mount(el) {
   let comingHtml = '';
   const renderComing = () => {
     if (!el.isConnected) return;
-    coming = upcoming(1);
+    // The holiday the line under the clock already counts down to isn't said twice.
+    const counted = theme.countdown ? String(theme.countdown.name).replace(/^the /, '').toLowerCase() : '';
+    coming = upcoming(3).filter((x) => !counted || String(x.name).toLowerCase() !== counted);
     const e = coming[0];
     const html = e
       ? `<span style="display:flex;flex:none">${eventIcon(e.name, 34)}</span><span style="min-width:0"><span class="x-eyebrow">${esc(whenText(e))}</span><b>${esc(e.name)}</b></span>`
@@ -617,20 +618,17 @@ export function mount(el) {
 
   // ---- Weather: one line under the clock and a chip. Fetched again every 15 minutes; ----
   // ---- with the Wi-Fi down, today's last forecast is shown and says from when.       ----
-  let shown = false;
+  // (The weather is said once, in the line under the clock: it used to be there and in a
+  // chip at the bottom as well.)
+  let warning = '';
+  let lastShown = null;
   function showWeather(w, loc, offline) {
+    lastShown = [w, loc, offline];
     const d = describe(w.code);
-    const dark = isNight();
-    $('[data-w-icon]').innerHTML = wxIcon(d.icon, 52, dark);
-    $('[data-wx-line]').innerHTML = `<span style="display:flex">${wxIcon(d.icon, 34, dark)}</span>${w.temp}° · ${esc(d.label)}`;
-    $('[data-w-main]').textContent = `${w.temp}° ${d.label}`;
-    const soon = rainSoon(w);
-    const tom = tomorrowWeather(w);
     // Honest about old numbers: say from when, if the Wi-Fi is down or they are over an hour old.
     const old = offline || Date.now() - w.at > 60 * 60 * 1000;
-    $('[data-w-sub]').textContent = old ? `${offline ? 'No internet · ' : ''}as of ${timeText(new Date(w.at))}`
-      : soon || (tom ? `Tomorrow ${tom.high}° / ${tom.low}°` : `High ${w.high}° · Low ${w.low}°${loc && loc.town ? ` · ${loc.town}` : ''}`);
-    shown = true;
+    const extra = warning ? `⚠ ${warning}` : old ? `as of ${timeText(new Date(w.at))}` : rainSoon(w);
+    $('[data-wx-line]').innerHTML = `<span style="display:flex">${wxIcon(d.icon, 34, isNight())}</span>${w.temp}° · ${esc(d.label)}${extra ? ` · ${esc(extra)}` : ''}`;
   }
   const early = savedWeather();
   if (early) showWeather(early, manualPlace() || knownPlace(), false);
@@ -644,10 +642,9 @@ export function mount(el) {
       loc = await getLocation();
       getAlerts(loc).then((alerts) => {
         if (!el.isConnected) return;
-        const chip = $('[data-weather]');
-        // A weather warning colours the chip and takes its second line; one that ended goes away.
-        chip.style.background = alerts.length ? alertColor(alerts[0]) : '';
-        if (alerts.length) $('[data-w-sub]').textContent = `⚠ ${alerts[0].event} ${untilText(alerts[0].until)}`;
+        // A weather warning joins the line; one that ended goes away.
+        warning = alerts.length ? alerts[0].event : '';
+        if (lastShown) showWeather(lastShown[0], lastShown[1], lastShown[2]);
       }).catch(() => {});
       const w = await getWeather(loc);
       if (!el.isConnected) return;
@@ -657,9 +654,6 @@ export function mount(el) {
       if (!el.isConnected) return;
       const old = savedWeather();
       if (old) { showWeather(old, loc, true); return; }
-      if (shown) return; // keep what's on screen
-      $('[data-w-main]').textContent = 'No weather right now';
-      $('[data-w-sub]').textContent = 'It comes back with the Wi-Fi';
     } finally {
       loading = false;
     }

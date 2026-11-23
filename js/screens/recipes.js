@@ -6,11 +6,12 @@
 //   #/recipes/favorites          hearted recipes
 //   #/recipes/recent             cooked lately (from cooking mode's "Done cooking")
 // Search is in the top bar on the first page. Every card has a heart and "+ Plan".
+// (No links into the Week plan or Shopping list here: those open from the Menu.)
 import { backHref, backLabel } from '../services/nav.js';
 import { loadIndex, searchRecipes, searchIngredients, fmtMinutes, cookedList, cookedWhen, cookingNow, clearLoves } from '../services/recipe-data.js';
 import { getPlan, weekDays, dayIds, favorites, toggleFavorite, tonight, addToPlan, removeFromPlan, plannedFor, planDays, dayKey, defaultMeal, MEALS } from '../services/meal-plan.js';
 import { saveRecipe, UNDO_KEY, onMyRecipesChanged } from '../services/my-recipes.js';
-import { esc, fillCounts, plateArt, tableColors, kitchenLinks } from './kitchen-ui.js';
+import { esc, plateArt, tableColors } from './kitchen-ui.js';
 import { topBar, phoneCode, wirePhoneCodes } from './ui.js';
 import { ADD_DAY_KEY } from './dish.js';
 
@@ -163,7 +164,6 @@ const STYLES = `
     .rb-feat .tx{position:absolute;left:296px;right:26px;top:22px;bottom:20px;display:flex;flex-direction:column;gap:6px}
     .rb-eyebrow{font:600 15px Inter,sans-serif;letter-spacing:2px;text-transform:uppercase;color:#FFD696}
     .rb-feat .t{font:700 38px/1.04 Outfit,sans-serif;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
-    .rb-feat .b{font-size:19px;line-height:1.3;color:#FFE6D6;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
     .rb-feat .row{display:flex;gap:10px;margin-top:auto;align-items:center}
     .rb-feat .x-btn{padding:0 22px}
     .rb-own{flex:none;width:400px;height:264px;border-radius:32px;background:rgba(16,10,8,.5);box-shadow:inset 0 0 0 1.5px rgba(255,255,255,.14);padding:16px;display:flex;flex-direction:column;gap:10px}
@@ -291,7 +291,7 @@ export function mount(el, { args = [] } = {}) {
     const pick = on ? list.filter((r) => passes(r, on)) : list;
     box.innerHTML = `${list.length > 6 ? filterChips(list, on) : ''}${pick.length
       ? `<div class="rb-cards">${cards(pick, card, spot)}</div>`
-      : list.length ? '<div class="rb-wait">None of these match. Tap the light chip to see them all again.</div>' : empty}`;
+      : list.length ? '<div class="rb-wait">None of these match.</div>' : empty}`;
     restOfCards(box.querySelector('.rb-cards'));
     codes();
   };
@@ -344,7 +344,7 @@ export function mount(el, { args = [] } = {}) {
         const on = plannedFor(d.key, sheet.meal).indexOf(r.id) >= 0;
         return `<button class="rb-day${on ? ' on' : ''}" data-pday="${d.key}"><span class="l">${d.label === 'Today' ? 'Today' : d.short}</span><span class="s">${on ? '✓ Planned' : d.sub}</span></button>`;
       }).join('')}</div>
-      <div class="rb-pnote${sheet.warn ? ' warn' : ''}">${esc(sheet.note || 'Tap a day to put it on the week plan. Tap it again to take it off.')}</div>
+      <div class="rb-pnote${sheet.warn ? ' warn' : ''}">${esc(sheet.note || '')}</div>
     </div></div>`;
   }
   root.addEventListener('click', (e) => {
@@ -385,7 +385,6 @@ export function mount(el, { args = [] } = {}) {
       drawSheet();
       planned = plannedLabels();
       redrawCard(id);
-      fillCounts(root);
       return;
     }
     const pm = e.target.closest('[data-pmeal]');
@@ -406,7 +405,7 @@ export function mount(el, { args = [] } = {}) {
   // Picking a recipe for a day of the week plan: say so along the top of the list.
   const pendingBar = () => {
     const p = pendingAdd();
-    return p ? `<div class="rb-bar" data-pendbar><span class="t">Picking a recipe for <b>${esc(p.day.label)} ${mealWord(p.meal)}</b>. Tap “+ ${esc(p.day.label === 'Today' ? 'Today' : p.day.short)}” on a card, or open one first.</span>
+    return p ? `<div class="rb-bar" data-pendbar><span class="t">Picking for <b>${esc(p.day.label)} ${mealWord(p.meal)}</b></span>
       <button data-pendstop class="x-btn sm ink">Never mind</button></div>` : '';
   };
   root.addEventListener('click', (e) => {
@@ -417,7 +416,7 @@ export function mount(el, { args = [] } = {}) {
 
   const load = () => {
   sheet = null;
-  root.innerHTML = `${topBar({ title: 'Recipes', tone: 'dark', right: kitchenLinks() })}<div class="rb-wait rb-body" data-wait>Loading recipes…</div>`;
+  root.innerHTML = `${topBar({ title: 'Recipes', tone: 'dark' })}<div class="rb-wait rb-body" data-wait>Loading recipes…</div>`;
 
   Promise.all([loadIndex(), tonight().catch(() => null)]).then(([ix, tn]) => {
     if (!el.isConnected) return;
@@ -435,14 +434,13 @@ export function mount(el, { args = [] } = {}) {
       const list = (recent ? cookedList().map((x) => x.id) : favs).map((id) => ix.byId[id]).filter(Boolean);
       root.innerHTML = `
         ${topBar({ title: recent ? 'Cooked lately' : 'Favorites', back: '#/recipes', backLabel: '← Recipes', tone: 'dark',
-          right: `<a href="#/recipes/favorites" class="x-btn sm ${recent ? 'glass' : 'white'}">♥ Favorites</a><a href="#/recipes/recent" class="x-btn sm ${recent ? 'white' : 'glass'}">Cooked lately</a>${kitchenLinks()}` })}
+          right: `<a href="#/recipes/favorites" class="x-btn sm ${recent ? 'glass' : 'white'}">♥ Favorites</a><a href="#/recipes/recent" class="x-btn sm ${recent ? 'white' : 'glass'}">Cooked lately</a>` })}
         ${pendingBar()}
         <div class="rb-body" data-list></div>`;
       drawList(root.querySelector('[data-list]'), list, (r) => recipeCard(r, names[r.c]),
-        recent ? '<div class="rb-wait">Recipes you finish in cooking mode (“Done cooking”) show up here, newest first.<a href="#/recipes" class="x-btn white">Browse recipes</a></div>'
-          : '<div class="rb-wait">Tap the ♡ on any recipe to keep it here.<a href="#/recipes" class="x-btn white">Browse recipes</a></div>');
+        recent ? '<div class="rb-wait">Nothing cooked yet.<a href="#/recipes" class="x-btn white">Browse recipes</a></div>'
+          : '<div class="rb-wait">No favorites yet.<a href="#/recipes" class="x-btn white">Browse recipes</a></div>');
       keepScroll(root.querySelector('[data-list]'));
-      fillCounts(root);
       return;
     }
     const byMeal = (m) => ix.cuisines.filter((c) => (c.meal || 'dinner') === m);
@@ -453,8 +451,7 @@ export function mount(el, { args = [] } = {}) {
       root.innerHTML = `
         ${topBar({ title: dinnerView ? 'Dinner' : 'Recipes', tone: 'dark',
           back: dinnerView ? '#/recipes' : backHref(), backLabel: dinnerView ? '← Recipes' : backLabel(),
-          right: `<div class="rb-search"><input data-search class="rb-input" placeholder="Search ${ix.recipes.length} recipes" autocomplete="off" enterkeyhint="search"><button data-clear class="rb-clear" aria-label="Clear search">×</button></div>
-            <a href="#/convert" class="x-btn sm glass">Conversions</a>${kitchenLinks()}` })}
+          right: `<div class="rb-search"><input data-search class="rb-input" placeholder="Search ${ix.recipes.length} recipes" autocomplete="off" enterkeyhint="search"><button data-clear class="rb-clear" aria-label="Clear search">×</button></div>` })}
         <div data-body class="rb-body"></div>`;
       const body = root.querySelector('[data-body]');
       const mineCount = (ix.cuisines.find((c) => c.id === 'mine') || { count: 0 }).count;
@@ -503,7 +500,6 @@ export function mount(el, { args = [] } = {}) {
               <div class="tx">
                 <div class="rb-eyebrow">${nowR ? `You’re cooking · step ${now.step}` : tn && tn.planned ? 'Tonight · on the plan' : 'Today’s idea for dinner'}</div>
                 <div class="t">${esc(feat.t)}</div>
-                ${feat.b ? `<div class="b x-serif">${esc(feat.b)}</div>` : ''}
                 <div class="rb-m">${esc([feat.m ? fmtMinutes(feat.m) : '', names[feat.c] || ''].filter(Boolean).join(' · '))}</div>
                 <div class="row">
                   ${nowR ? `<a href="#/recipe/${encodeURIComponent(feat.id)}" class="x-btn white">Carry on cooking</a><a href="#/dish/${encodeURIComponent(feat.id)}" class="x-btn frost">The recipe</a>`
@@ -514,16 +510,15 @@ export function mount(el, { args = [] } = {}) {
               </div>
             </div>` : ''}
             <div class="rb-own"${feat ? '' : ' style="flex:1"'}>
-              ${phoneCode({ tab: 'recipe', size: 104, title: 'Add your own recipe', sub: 'Scan to send one from your phone, or type it in here.' })}
+              ${phoneCode({ tab: 'recipe', size: 104, title: 'Add your own recipe', sub: ' ' })}
               <div class="row">
                 <a href="#/myrecipe" class="x-btn sm white">+ Type one in</a>
-                ${mineCount ? `<a href="#/recipes/mine" class="x-btn sm frost">My recipes · ${mineCount}</a>` : ''}
               </div>
             </div>
           </div>
-          ${favList.length ? `<div class="rb-h"><div class="l">Your favorites</div>${favList.length > 4 ? `<a href="#/recipes/favorites" class="x-btn sm glass">All ${favList.length}</a>` : ''}</div>
+          ${favList.length ? `<div class="rb-h"><div class="l">Your favorites</div></div>
             <div class="rb-cards">${favList.slice(0, 4).map(card).join('')}</div>` : ''}
-          <div class="rb-h"><div class="l">Ideas for today</div><a href="#/recipes/dinner" class="x-btn sm glass">All dinner cuisines</a></div>
+          <div class="rb-h"><div class="l">Ideas for today</div></div>
           <div class="rb-cards">${ideas.map(card).join('')}</div>`;
         codes();
       };
@@ -588,7 +583,7 @@ export function mount(el, { args = [] } = {}) {
             body.insertBefore(box, body.firstChild);
           }
         } else if (!hits.length) {
-          box.innerHTML = `<div class="rb-wait">Nothing found for “${esc(q)}”.<br>Try one simple word, or one of these:
+          box.innerHTML = `<div class="rb-wait">Nothing found for “${esc(q)}”.
             ${chipRow((words.length > 1 ? words : []).concat(IDEAS.slice(0, 6)).filter((w, n, a) => a.indexOf(w) === n).slice(0, 8))}
             <button data-clear class="x-btn frost">Clear the search</button></div>`;
         } else box.innerHTML = '';
@@ -638,7 +633,7 @@ export function mount(el, { args = [] } = {}) {
       const mine = cuisine.id === 'mine';
       root.innerHTML = `
         ${topBar({ title: type ? `${cuisine.name} · ${type.name}` : cuisine.name, tone: 'dark', back: '#/recipes', backLabel: '← Recipes',
-          right: `${list.length > 3 ? '<button data-pick class="x-btn sm glass">Pick one for me</button>' : ''}${mine ? '<a href="#/myrecipe" class="x-btn sm white">+ Add a recipe</a>' : ''}${kitchenLinks()}` })}
+          right: `${list.length > 3 ? '<button data-pick class="x-btn sm glass">Pick one for me</button>' : ''}${mine && list.length ? '<a href="#/myrecipe" class="x-btn sm white">+ Add a recipe</a>' : ''}` })}
         ${cuisine.types.length ? `<div class="rb-types">
           <a href="#/recipes/${cuisine.id}" class="rb-chip${type ? '' : ' on'}">All <span>${cuisine.count}</span></a>
           ${cuisine.types.map((t) => `<a href="#/recipes/${cuisine.id}/${t.id}" class="rb-chip${type && type.id === t.id ? ' on' : ''}">${esc(t.name)} <span>${t.count}</span></a>`).join('')}
@@ -646,15 +641,14 @@ export function mount(el, { args = [] } = {}) {
         ${mine ? undoBar() : ''}${pendingBar()}
         <div class="rb-body" data-list></div>`;
       drawList(root.querySelector('[data-list]'), list, (r) => recipeCard(r),
-        mine ? `<div class="rb-wait" style="padding-top:20px">Your own recipes live here.
-            <div style="display:flex;gap:16px;align-items:center;flex-wrap:wrap;justify-content:center">${phoneCode({ tab: 'recipe', size: 120 })}<a href="#/myrecipe" class="x-btn white">+ Type one in here</a></div></div>`
+        mine ? `<div class="rb-wait" style="padding-top:20px">No recipes of your own yet.
+            <div style="display:flex;gap:16px;align-items:center;flex-wrap:wrap;justify-content:center">${phoneCode({ tab: 'recipe', size: 120, sub: ' ' })}<a href="#/myrecipe" class="x-btn white">+ Type one in</a></div></div>`
           : '<div class="rb-wait">Nothing here yet.</div>');
       keepScroll(root.querySelector('[data-list]'));
       // The chosen type is brought into view in its row of chips.
       const onChip = root.querySelector('.rb-types .on');
       if (onChip && onChip.offsetLeft > 900) root.querySelector('.rb-types').scrollLeft = onChip.offsetLeft - 400;
     }
-    fillCounts(root);
   }).catch((err) => {
     console.error(err);
     const box = el.isConnected && root.querySelector('[data-wait]');

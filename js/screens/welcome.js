@@ -86,11 +86,8 @@ function showName(el, ctx) {
   el.innerHTML = `<style>${STYLE}</style>
   <div class="wl">
     <div class="wl-in">
-      <div class="x-eyebrow wl-eye">${have ? 'Welcome · one thing to check' : 'Welcome · two quick questions first'}</div>
+      <div class="x-eyebrow wl-eye">Welcome</div>
       <h1 class="wl-q">${have ? 'Is this what the screen should call your household?' : 'What should this screen call your household?'}</h1>
-      <p class="wl-sub">${have
-    ? 'It was typed in when the screen was set up. Change it here if it isn’t right.'
-    : 'Your two names, a surname, a nickname for the place: whatever you call home. It goes on the Home screen, and Settings can change it any time.'}</p>
       <div class="wl-line">
         <input data-name class="wl-input" type="text" maxlength="40" autocomplete="off" autocapitalize="words" spellcheck="false"
           placeholder="Alex &amp; Jordan, or The Parkers" value="${esc(have)}" aria-label="Household name">
@@ -98,7 +95,7 @@ function showName(el, ctx) {
       <div class="wl-row">
         <button data-go class="x-btn lg white">${have ? 'Yes, continue' : 'Continue'}</button>
         <button data-skip class="wl-skip">Skip for now</button>
-        <span data-oops class="wl-sub" style="margin:0;display:none">That couldn’t be saved just now. Try once more, or skip it: Settings can do it later.</span>
+        <span data-oops class="wl-sub" style="margin:0;display:none">Couldn’t save that. Try again, or skip.</span>
       </div>
     </div>
     <div class="wl-dots"><span class="on"></span><span></span><span></span></div>
@@ -131,7 +128,6 @@ function showPeople(el, ctx) {
     <div class="wl-in">
       <div class="x-eyebrow wl-eye">${esc(name)}</div>
       <h1 class="wl-q">And who lives here?</h1>
-      <p class="wl-sub">First names are plenty. The screen puts them on notes and lists, each in its own colour. Tap a name to take it off.</p>
       <div class="wl-chips" data-chips></div>
       <div class="wl-line" style="margin-top:18px">
         <input data-person class="wl-input" type="text" maxlength="24" autocomplete="off" autocapitalize="words" spellcheck="false"
@@ -141,7 +137,7 @@ function showPeople(el, ctx) {
       <div class="wl-row">
         <button data-go class="x-btn lg white">Continue</button>
         <button data-skip class="wl-skip">Skip for now</button>
-        <span data-oops class="wl-sub" style="margin:0;display:none">The names couldn’t be saved just now. Settings can add them later.</span>
+        <span data-oops class="wl-sub" style="margin:0;display:none">Couldn’t save the names. Settings can add them later.</span>
       </div>
     </div>
     <div class="wl-dots"><span class="on"></span><span class="on"></span><span></span></div>
@@ -152,7 +148,7 @@ function showPeople(el, ctx) {
   const draw = () => {
     chips.innerHTML = draftPeople.length
       ? draftPeople.map((p, i) => `<button class="wl-chip" data-off="${i}" aria-label="Take ${esc(p)} off"><i style="background:${CHIP_COLORS[i % CHIP_COLORS.length]}">${esc(p.charAt(0).toUpperCase())}</i>${esc(p)}<b>×</b></button>`).join('')
-      : '<span class="wl-none">Nobody yet. Type a name and tap Add.</span>';
+      : '<span class="wl-none">Nobody yet.</span>';
     box.disabled = draftPeople.length >= MAX_PEOPLE;
   };
   // "Alex, Jordan" typed in one go counts as two.

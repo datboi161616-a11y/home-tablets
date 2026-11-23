@@ -17,13 +17,13 @@ const THEMES = {
   family: {
     bg: '#ECEEF0', ink: '#1D2430', ink2: '#4A5363', tile: '#FFFFFF', radius: '24px',
     font: "Outfit, system-ui, sans-serif", back: '#/launcher', backLabel: '← Menu',
-    title: 'Apps', sub: 'Press the Home button any time to come back here.',
+    title: 'Apps',
     accent: '#C2491F',
   },
   tom: {
     bg: '#05070D', ink: '#D7E6F0', ink2: '#7FA6B8', tile: '#0B1220', radius: '6px',
     font: "Oxanium, 'JetBrains Mono', monospace", back: '#/bridge', backLabel: '◂ DECK',
-    title: 'APPS', sub: 'PRESS HOME ANY TIME TO RETURN TO THE FLIGHT DECK',
+    title: 'APPS',
     accent: '#FFB547',
   },
 };
@@ -170,7 +170,6 @@ export function mount(el) {
         say(up(`New here: ${names.slice(0, 3).join(', ')}${names.length > 3 ? ` and ${names.length - 3} more` : ''}`), 9000);
       } else if (Date.now() - leftAt > 60 * 1000) {
         storeBefore = null;
-        say(up('Welcome back. Anything newly installed shows up here by itself.'), 7000);
       }
     } else if (stale) render();
     stale = false;
@@ -269,23 +268,19 @@ export function mount(el) {
                 : fresh.indexOf(a.pkg) >= 0 && !g.compact ? `<div class="ap-note" style="color:${t.accent};font-weight:700">${tom ? 'NEW' : 'New'}</div>` : ''}
             </div>`).join('')}
         </div>
-        ${!tom && spare >= 240 ? `<div style="flex:1;min-height:0;display:flex;align-items:center;justify-content:center;pointer-events:none">${appsArt(Math.min(380, Math.round((spare - 60) * 1.8)))}</div>` : ''}
-        <div style="margin-top:auto;color:${t.ink2};font-size:${tom ? '15px' : '19px'};${tom ? 'letter-spacing:2px;font-family:JetBrains Mono,monospace' : ''}">${t.sub}</div>`
+        ${!tom && spare >= 240 ? `<div style="flex:1;min-height:0;display:flex;align-items:center;justify-content:center;pointer-events:none">${appsArt(Math.min(380, Math.round((spare - 60) * 1.8)))}</div>` : ''}`
       : `
         <div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;text-align:center">
           ${tom ? '' : `<div style="margin-bottom:8px">${appsArt(340)}</div>`}
           <div style="font-family:${t.font};font-size:36px;font-weight:500">${up('No apps here yet')}</div>
-          <div style="color:${t.ink2};font-size:21px;max-width:760px;line-height:1.45">${canUpdate
-            ? up('Favourites like YouTube, Netflix and Spotify show up here by themselves once they’re installed. To install them, tap “Update apps” and enter the PIN from the card that came with this screen.')
-            : up('Favourites like YouTube, Netflix and Spotify show up here once the person who looks after this screen adds them.')}</div>
+          ${canUpdate ? '' : `<div style="color:${t.ink2};font-size:21px;max-width:760px;line-height:1.45">${up('Whoever looks after this screen can add them.')}</div>`}
           ${canUpdate ? `<button data-update class="pill ap-btn" style="margin-top:10px;${tom ? '' : 'background:#1D2430;color:#fff'}">${tom ? 'UPDATE APPS · PIN' : 'Update apps · PIN'}</button>` : ''}
         </div>`}
       <div class="ap-msg" data-msg role="status"></div>
       <div class="ap-sheet" data-sheet>
         <div class="ap-card">
           <h2>${up('Update or add apps')}</h2>
-          <p>${up('This part is for the owner. The screen asks for the PIN from the card that came with it next, then opens the Play Store for 15 minutes.')}</p>
-          <p>${up('When you’re done, press Home to come back here. Newly installed favourites show up here by themselves.')}</p>
+          <p>${up('Needs the PIN from the card that came with this screen. The Play Store opens for 15 minutes; press Home to come back.')}</p>
           <div class="row">
             <button data-sheet-no style="background:transparent;color:${t.ink};border:${tom ? '1px solid #1E3A4A' : '2px solid #D5D9DE'}">${up('Not now')}</button>
             <button data-sheet-yes style="background:${t.accent};color:${tom ? '#05070D' : '#fff'};border:0">${up('Continue')}</button>

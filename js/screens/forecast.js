@@ -23,7 +23,7 @@ import {
 import { wxIcon, wearArt } from '../art.js';
 import { getAlertsInfo, whenText, kindText, alertColor } from '../services/weather-alerts.js';
 import { saveFamily, canSaveFamily, onFamilyChanged } from '../services/family.js';
-import { moonPhase, sunTimes } from '../services/astro.js';
+import { moonPhase } from '../services/astro.js';
 
 let timer, retry, ticker, onPlace, offFamily, onRelease;
 
@@ -189,15 +189,23 @@ function sceneHtml(spec) {
 
 // The same "random" numbers every time, so a redraw looks the same.
 const rnd = (i, salt) => { const x = Math.sin(i * 127.1 + salt * 311.7) * 43758.5453; return x - Math.floor(x); };
-const rainHtml = () => Array.from({ length: 12 }, (_, i) => {
-  const secs = (0.75 + rnd(i, 1) * 0.35).toFixed(2);
-  return `<i class="wx-drop" style="left:${Math.round(70 + i * 108 + rnd(i, 2) * 70)}px;--y:${Math.round(10 + rnd(i, 9) * 250)}px;animation-duration:${secs}s;animation-delay:-${(rnd(i, 3) * secs).toFixed(2)}s"></i>`;
-}).join('');
-const snowHtml = () => Array.from({ length: 12 }, (_, i) => {
-  const secs = (6 + rnd(i, 4) * 5).toFixed(1);
-  const size = Math.round(6 + rnd(i, 5) * 6);
-  return `<i class="wx-flake" style="left:${Math.round(20 + i * 104 + rnd(i, 6) * 70)}px;--y:${Math.round(10 + rnd(i, 9) * 250)}px;width:${size}px;height:${size}px;--dx:${Math.round((rnd(i, 7) - 0.5) * 120)}px;animation-duration:${secs}s;animation-delay:-${(rnd(i, 8) * secs).toFixed(1)}s"></i>`;
-}).join('');
+// Rain and snow fall as two sheets each (two moving layers, not a dozen): a sheet is two
+// screens tall, its lower half what shows, and its upper half the same drops shifted by one
+// fall, so the loop has no seam.
+const FALL = 480;
+function sheetHtml(cls, n, salt, dx, secs, extra) {
+  const out = [];
+  for (let i = 0; i < n; i++) {
+    const x = Math.round((i + rnd(i, salt)) * ((W + Math.abs(dx)) / n));
+    const y = Math.round(FALL + rnd(i, salt + 1) * FALL);
+    const more = extra ? extra(i) : '';
+    out.push(`<i class="${cls}" style="left:${x}px;top:${y}px;${more}"></i><i class="${cls}" style="left:${x - dx}px;top:${y - FALL}px;${more}"></i>`);
+  }
+  return `<div class="wx-sheetfall" style="--dx:${dx}px;animation-duration:${secs}s">${out.join('')}</div>`;
+}
+const rainHtml = () => sheetHtml('wx-drop', 6, 1, -110, 0.8) + sheetHtml('wx-drop', 6, 4, -110, 1.05);
+const flake = (salt) => (i) => { const z = Math.round(6 + rnd(i, salt) * 6); return `width:${z}px;height:${z}px`; };
+const snowHtml = () => sheetHtml('wx-flake', 6, 5, 40, 9, flake(7)) + sheetHtml('wx-flake', 6, 8, -30, 12.5, flake(9));
 
 // Day, night, or the half hour either side of sunrise and sunset, for a moment of the forecast.
 function sunAt(f, t, isDay) {
@@ -225,25 +233,26 @@ const STYLE = `
   .wx-fog { position:absolute; left:-200px; width:1700px; height:64px; will-change:transform; animation:wx-cloud 55s linear infinite alternate;
     background:linear-gradient(90deg,rgba(255,255,255,0),rgba(255,255,255,.5) 28%,rgba(255,255,255,.34) 68%,rgba(255,255,255,0)); border-radius:32px; }
   .wx-flash { position:absolute; left:0; top:0; width:100%; height:260px; background:linear-gradient(180deg,rgba(255,255,255,.75),rgba(255,255,255,0)); opacity:0; animation:wx-flash 9s linear infinite; }
-  .wx-drop { position:absolute; top:-40px; width:3px; height:26px; border-radius:2px; background:#C9D6E6; opacity:.7; will-change:transform; animation:wx-rain 1s linear infinite; }
-  .wx-flake { position:absolute; top:-20px; border-radius:50%; background:#FFFFFF; opacity:.9; will-change:transform; animation:wx-snow 8s linear infinite; }
+  .wx-sheetfall { position:absolute; left:0; top:-${FALL}px; width:${W + 120}px; height:${FALL * 2}px; will-change:transform; animation:wx-fall 1s linear infinite; }
+  .wx-drop { position:absolute; width:3px; height:26px; border-radius:2px; background:#C9D6E6; opacity:.7; transform:rotate(14deg); }
+  .wx-flake { position:absolute; border-radius:50%; background:#FFFFFF; opacity:.9; }
   .wx-smoke { position:absolute; left:888px; top:76px; width:30px; height:30px; border-radius:50%; background:#E9ECEF; opacity:0; will-change:transform; animation:wx-smoke 7s ease-out infinite; }
   .wx-shade { position:absolute; left:0; top:0; width:100%; height:300px; background:linear-gradient(180deg,rgba(18,24,36,.62),rgba(18,24,36,.28) 60%,rgba(18,24,36,0)); pointer-events:none; }
   .wx-seam { position:absolute; left:-2px; top:0; width:4px; height:${SCENE_H}px; pointer-events:none; will-change:transform; }
   .wx-seam-line { position:absolute; left:0; top:0; width:4px; height:100%; transform-origin:50% 100%; background:linear-gradient(180deg,rgba(255,255,255,0),#FFFFFF 26%,#FFFFFF 86%,rgba(255,255,255,0)); animation:wx-seam 3s ease-in-out infinite; }
   .wx-knob { position:absolute; left:-24px; top:${BAND_TOP - 26}px; width:52px; height:52px; border-radius:50%; background:#FFFFFF; color:#2E3646; display:flex; align-items:center; justify-content:center; font:700 22px Inter,sans-serif; box-shadow:0 4px 14px rgba(0,0,0,.35); }
   .wx-top { position:absolute; left:32px; right:32px; top:24px; }
-  .wx-top .x-title { text-shadow:0 2px 12px rgba(0,0,0,.4); }
+  .wx-top .x-title { text-shadow:0 1px 4px rgba(0,0,0,.4); }
   .wx-alert { max-width:470px; min-width:0; flex:0 1 auto; color:#FFFFFF; justify-content:flex-start; overflow:hidden; }
   .wx-alert span { overflow:hidden; text-overflow:ellipsis; min-width:0; }
-  .wx-hero { position:absolute; left:44px; top:94px; width:620px; text-shadow:0 2px 12px rgba(0,0,0,.4); pointer-events:none; }
+  .wx-hero { position:absolute; left:44px; top:94px; width:620px; text-shadow:0 1px 4px rgba(0,0,0,.45); pointer-events:none; }
   .wx-temp { font:200 116px/1 Outfit,system-ui,sans-serif; letter-spacing:-2px; flex:none; }
   .wx-cond { font:500 34px/1.1 Outfit,system-ui,sans-serif; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
   .wx-wait .wx-temp { font-size:84px; }
   .wx-wait .wx-cond { white-space:normal; font-size:30px; }
   .wx-sub { font-size:19px; line-height:1.35; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
   .wx-out { font-size:20px; font-weight:600; margin-top:2px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
-  .wx-side { position:absolute; right:36px; top:96px; width:330px; text-align:right; text-shadow:0 2px 12px rgba(0,0,0,.45); display:flex; flex-direction:column; align-items:flex-end; }
+  .wx-side { position:absolute; right:36px; top:96px; width:330px; text-align:right; text-shadow:0 1px 4px rgba(0,0,0,.5); display:flex; flex-direction:column; align-items:flex-end; }
   .wx-note { font-size:16px; line-height:1.35; min-height:22px; }
   .wx-big { font:500 40px/1.1 Outfit,system-ui,sans-serif; white-space:nowrap; }
   .wx-band { position:absolute; left:${BAND_L}px; top:${BAND_TOP}px; width:${BAND_W}px; height:${BAND_H}px; border-radius:24px; background:rgba(14,20,28,.56); box-shadow:inset 0 0 0 1px rgba(255,255,255,.15); overflow:hidden; }
@@ -258,7 +267,6 @@ const STYLE = `
   .wx-draw > svg { display:block; animation:wx-draw-b 2.4s ease-out both; }
   .wx-nowdot { position:absolute; width:18px; height:18px; margin:-9px 0 0 -9px; border-radius:50%; background:#FFD58A; animation:wx-now 2s ease-in-out infinite; }
   .wx-mark { position:absolute; top:8px; width:2px; height:${BAND_H - 16}px; opacity:.75; background:repeating-linear-gradient(180deg,#9CC4EE 0,#9CC4EE 6px,rgba(156,196,238,0) 6px,rgba(156,196,238,0) 12px); }
-  .wx-bandmsg { position:absolute; left:0; top:0; width:100%; height:100%; display:flex; align-items:center; justify-content:center; text-align:center; font-size:19px; padding:0 60px; opacity:.9; }
 
   .wx-low { position:absolute; left:32px; right:32px; top:${SCENE_H + 14}px; bottom:16px; display:flex; gap:14px; }
   .wx-sun { position:relative; flex:none; width:420px; border-radius:28px; overflow:hidden; }
@@ -271,8 +279,7 @@ const STYLE = `
   .wx-out-card { flex:none; height:124px; border-radius:24px; background:rgba(255,255,255,.07); padding:12px 20px 12px 14px; display:flex; align-items:center; gap:16px; cursor:pointer; }
   .wx-wear { flex:none; width:96px; height:96px; border-radius:50%; background:#F3E6C8; display:flex; align-items:center; justify-content:center; overflow:hidden; }
   .wx-wear svg { width:90px !important; height:75px !important; }
-  .wx-advice { font:500 21px/1.24 Outfit,system-ui,sans-serif; max-height:80px; overflow:hidden; }
-  .wx-facts { flex:none; width:372px; display:grid; grid-template-columns:1fr 1fr; grid-gap:8px 16px; }
+  .wx-advice { font:500 21px/1.24 Outfit,system-ui,sans-serif; max-height:80px; overflow:hidden; font-size:24px; }
   .wx-fl { font-size:15px; opacity:.72; white-space:nowrap; }
   .wx-fv { font-size:17px; font-weight:600; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
   .wx-fs { font-size:15px; opacity:.72; min-height:19px; }
@@ -282,7 +289,6 @@ const STYLE = `
   .wx-day-hi { font:500 30px/1 Outfit,system-ui,sans-serif; }
   .wx-rng { position:relative; width:84%; height:6px; border-radius:3px; background:rgba(255,255,255,.14); }
   .wx-rng span { position:absolute; top:0; bottom:0; border-radius:3px; background:linear-gradient(90deg,#6FA0E0,#F0A850); }
-  .wx-empty { grid-column:1 / -1; align-self:center; text-align:center; font-size:18px; opacity:.75; padding:0 30px; }
 
   .wx-detail { display:none; position:absolute; top:0; right:0; bottom:0; left:0; background:rgba(8,11,18,.72); z-index:5; align-items:center; justify-content:center; }
   .wx-sheet { background:#1F2634; color:#FFFFFF; border-radius:28px; padding:24px 28px; display:flex; flex-direction:column; gap:16px; max-height:752px; box-shadow:inset 0 0 0 1px rgba(255,255,255,.1); }
@@ -299,8 +305,7 @@ const STYLE = `
   .wx-hr-rain { font-size:15px; font-weight:600; }
 
   @keyframes wx-cloud { from { transform:translate3d(0,0,0); } to { transform:translate3d(-200px,0,0); } }
-  @keyframes wx-rain { from { transform:translate3d(0,0,0) rotate(14deg); } to { transform:translate3d(-124px,540px,0) rotate(14deg); } }
-  @keyframes wx-snow { from { transform:translate3d(0,0,0); } to { transform:translate3d(var(--dx,40px),510px,0); } }
+  @keyframes wx-fall { from { transform:translate3d(0,0,0); } to { transform:translate3d(var(--dx),${FALL}px,0); } }
   @keyframes wx-smoke { 0% { transform:translate3d(0,0,0) scale(.5); opacity:.6; } 100% { transform:translate3d(-40px,-74px,0) scale(1.6); opacity:0; } }
   @keyframes wx-flash { 0%,91%,94%,100% { opacity:0; } 92% { opacity:.8; } 93% { opacity:.15; } 93.5% { opacity:.6; } }
   @keyframes wx-seam { 0%,100% { opacity:.6; } 50% { opacity:1; } }
@@ -311,9 +316,7 @@ const STYLE = `
   @keyframes wx-glow { 0%,100% { transform:scale(1); opacity:.85; } 50% { transform:scale(1.18); opacity:1; } }
   @media (prefers-reduced-motion: reduce) {
     .wx-cloud, .wx-fog, .wx-flash, .wx-seam-line, .wx-bar, .wx-draw, .wx-draw > svg, .wx-nowdot, .wx-glow { animation:none !important; }
-    /* still rain and snow, spread down the picture, so the weather still shows */
-    .wx-drop, .wx-flake { animation:none !important; top:var(--y,120px); }
-    .wx-drop { transform:rotate(14deg); }
+    .wx-sheetfall { animation:none !important; } /* still rain and snow: the lower half shows */
     .wx-smoke { animation:none !important; opacity:.45; transform:translate3d(-5px,-2px,0) scale(.7); }
     .wx-smoke + .wx-smoke { display:none; }
   }
@@ -397,17 +400,16 @@ export function mount(el) {
             <div data-f-extra class="wx-sub"></div>
           </div>
         </div>
-        <div data-f-outlook class="wx-out">Finding where this screen is</div>
+        <div data-f-outlook class="wx-out"></div>
       </div>
 
       <div class="wx-side">
         <div data-f-updated class="wx-note"></div>
         <div data-wx-coming style="margin-top:10px"></div>
-        <div data-wx-hint class="x-serif" style="display:none;font-size:18px;margin-top:6px;white-space:nowrap">Slide along the hours to paint what’s coming</div>
         <button data-wx-back class="x-btn white sm" style="display:none;margin-top:14px;text-shadow:none">Back to now</button>
       </div>
 
-      <div data-wx-band class="wx-band"><div class="wx-bandmsg">The next 12 hours will draw themselves here.</div></div>
+      <div data-wx-band class="wx-band"></div>
       <div data-wx-track class="wx-track"></div>
 
       <div class="wx-top">${topBar({
@@ -428,7 +430,6 @@ export function mount(el) {
             <div class="x-eyebrow" style="color:#FFD58A;margin-bottom:4px">Before you head out</div>
             <div data-f-advice class="wx-advice">&nbsp;</div>
           </div>
-          <div data-wx-facts class="wx-facts"></div>
         </div>
         <div data-f-days class="wx-days"></div>
       </div>
@@ -450,6 +451,7 @@ export function mount(el) {
   let dragging = false;
   let town = '';
   const painted = { now: '', later: '' };
+  let sunShown = '';      // the daylight panel as last drawn
 
   const sceneEl = $('[data-wx-scene]');
   const detail = $('[data-f-detail]');
@@ -559,14 +561,14 @@ export function mount(el) {
   // What is coming, in a few words, top right: "Rain arrives in 1 h 48 min".
   function comingHtml(f) {
     const now = Date.now();
-    const big = (eyebrow, main, sub) => `<div class="x-eyebrow" style="color:#C9D6E6">${eyebrow}</div><div class="wx-big">${main}</div><div style="font-size:18px;line-height:1.35">${sub || ''}</div>`;
+    const big = (eyebrow, main, sub) => `<div class="x-eyebrow" style="color:#C9D6E6">${eyebrow}</div><div class="wx-big">${main}</div>${sub ? `<div style="font-size:18px;line-height:1.35">${sub}</div>` : ''}`;
     const snowing = cols.length && (cols[0].snow || 0) > 0;
     const sky = describe(f.code).icon;
     if (f.rainNow || sky === 'snow' || snowing) {
       const what = sky === 'snow' || snowing ? 'Snow' : 'Rain';
       const dry = cols.slice(1).find((h) => h.rain < 30 && !h.wet && !h.snow);
-      if (dry) return big(`${what} eases in about`, esc(spanText(new Date(dry.time).getTime() - now)), `dry from around ${esc(fmtHour(dry.time))}`);
-      return big(`${what} for now`, 'All 12 hours', 'no dry spell in sight yet');
+      if (dry) return big(`${what} eases in`, esc(spanText(new Date(dry.time).getTime() - now)), '');
+      return big(`${what} for now`, 'All 12 hours', '');
     }
     const i = cols.findIndex((h, k) => k > 0 && h.rain >= 50);
     if (i > 0) {
@@ -576,41 +578,42 @@ export function mount(el) {
       const rest = cols.slice(i);
       const most = rest.reduce((m, x) => ((x.wet || 0) > (m.wet || 0) ? x : m), rest[0]);
       const dry = rest.find((x) => x.rain < 30 && !x.wet && !x.snow);
-      const sub = [(most.wet || 0) > 0 && most !== h ? `heaviest around ${fmtHour(most.time)}` : `likely from ${fmtHour(h.time)}`, dry ? `dry by ${fmtHour(dry.time)}` : ''].filter(Boolean).join(' · ');
+      // (when it starts is marked on the graph)
+      const sub = [(most.wet || 0) > 0 && most !== h ? `heaviest ${fmtHour(most.time)}` : '', dry ? `dry by ${fmtHour(dry.time)}` : ''].filter(Boolean).join(' · ');
       return big(`${what} arrives in`, esc(spanText(new Date(h.time).getTime() - now)), esc(sub));
     }
     const chance = cols.reduce((m, h) => Math.max(m, h.rain || 0), 0);
-    return big('Next 12 hours', 'Dry', chance >= 20 ? `a ${chance}% chance of a shower at most` : 'no rain in sight');
+    return big('Next 12 hours', 'Dry', chance >= 20 ? `${chance}% chance of a shower` : '');
   }
 
   // ------------------------------------------------------------------ the words over the scene
   function hero(f) {
     el.querySelector('.wx-hero').classList.remove('wx-wait');
-    const town = f.__town ? ` · ${f.__town}` : '';
     if (sel > 0 && cols[sel]) {
       const h = cols[sel];
       const sky = describe(h.code);
       const tomorrow = h.time.slice(0, 10) !== isoDay();
-      $('[data-f-eyebrow]').textContent = `At ${fmtHour(h.time)}${tomorrow ? ' tomorrow' : ''}${town}`;
+      $('[data-f-eyebrow]').textContent = `${fmtHour(h.time)}${tomorrow ? ' tomorrow' : ''}`;
       $('[data-f-temp]').textContent = deg(h.temp);
       $('[data-f-label]').textContent = sky.label;
       const snow = (h.snow || 0) > 0;
       const amt = snow ? amountText(h.snow, f.snowUnit || 'in') : amountText(h.wet, f.rainUnit || 'in');
-      $('[data-f-range]').textContent = h.rain >= 10 ? `${h.rain}% chance of ${snow ? 'snow' : 'rain'}${amt ? ` · ${amt}` : ''}` : 'Dry';
-      $('[data-f-extra]').textContent = [h.feels != null ? `Feels like ${h.feels}°` : '', h.wind != null ? `wind ${h.wind} ${f.windUnit || 'mph'}` : ''].filter(Boolean).join(' · ');
-      $('[data-f-outlook]').textContent = `Right now: ${deg(f.temp)} · ${describe(f.code).label}`;
+      // (the chance is on the graph under the line)
+      $('[data-f-range]').textContent = h.feels != null ? `Feels like ${h.feels}°` : '';
+      $('[data-f-extra]').textContent = amt ? `${amt} of ${snow ? 'snow' : 'rain'}` : '';
+      $('[data-f-outlook]').textContent = '';
     } else {
       const now = describe(f.code);
-      $('[data-f-eyebrow]').textContent = `${f.estimated ? 'About now' : 'Now'} · ${clock(Date.now())}${town}`;
+      $('[data-f-eyebrow]').textContent = f.estimated ? 'About now' : 'Now';
       $('[data-f-temp]').textContent = deg(f.temp);
       $('[data-f-label]').textContent = now.label;
       $('[data-f-range]').textContent = f.estimated ? 'Expected about now' : f.feels != null ? `Feels like ${f.feels}°` : '';
       $('[data-f-extra]').textContent = rangeLine(f);
-      $('[data-f-outlook]').textContent = outlook(f);
+      // The rain to come is told top right when the hours are known.
+      $('[data-f-outlook]').textContent = cols.length ? '' : outlook(f);
     }
     $('[data-wx-back]').style.display = sel > 0 ? '' : 'none';
     $('[data-wx-coming]').style.display = sel > 0 ? 'none' : '';
-    $('[data-wx-hint]').style.display = sel > 0 || !cols.length ? 'none' : '';
   }
 
   function select(i, x) {
@@ -712,7 +715,7 @@ export function mount(el) {
             <div class="x-title" style="font-size:32px">Weather</div>
             <button data-close class="x-btn white">Close</button>
           </div>
-          <div style="font-size:19px;line-height:1.45;opacity:.85">There is no forecast on this screen yet. It needs the internet once; after that the last one stays here even when the Wi-Fi drops.</div>
+          <div style="font-size:19px;opacity:.85">No forecast yet.</div>
           ${foot}
         </div>`;
       detail.style.display = 'flex';
@@ -725,16 +728,21 @@ export function mount(el) {
     const snowAmt = amountText(d.snow, f.snowUnit || 'in');
     const unit = f.windUnit || 'mph';
     const n = f.next12 || { chance: 0, wet: 0, snow: 0 };
-    const nowFacts = more ? `
-        <div style="display:grid;grid-template-columns:repeat(6,minmax(0,1fr));grid-gap:12px">
-          ${fact('Right now', `${deg(f.temp)} · ${esc(describe(f.code).label)}`, f.estimated ? 'expected about now' : f.feels != null ? `feels like ${f.feels}°` : '')}
-          ${fact('Wind now', f.windSpeed == null ? '--' : f.windSpeed < 2 ? 'Calm' : `${f.windSpeed} ${unit}`, [windFrom(f.windDir), f.gusts != null && f.windSpeed != null && f.gusts >= f.windSpeed + 10 ? `gusts ${f.gusts}` : ''].filter(Boolean).join(' · '))}
-          ${fact('Humidity', f.humidity != null ? `${f.humidity}%` : '--', f.humidity == null ? '' : f.humidity >= 80 ? 'damp' : f.humidity <= 30 ? 'dry air' : '')}
-          ${n.snow > 0 ? fact('Snow, next 12 hrs', esc(amountText(n.snow, f.snowUnit || 'in') || 'Some'), `${n.chance}% chance`)
-    : fact('Rain, next 12 hrs', n.chance >= 10 ? `${n.chance}% chance` : 'None expected', amountText(n.wet, f.rainUnit || 'in') ? `about ${esc(amountText(n.wet, f.rainUnit || 'in'))}` : '')}
-          ${fact('Tonight’s low', f.tonightLow != null ? deg(f.tonightLow) : deg(f.low), f.frostTonight ? 'frost likely' : '')}
-          ${fact('Before you head out', '', esc(advice(f) || 'Take a look out of the window before you go.'))}
-        </div>` : '';
+    // One grid: today's adds what is true now (its rain is the next 12 hours').
+    const facts = (more ? [
+      fact('Wind now', f.windSpeed == null ? '--' : f.windSpeed < 2 ? 'Calm' : `${f.windSpeed} ${unit}`, [windFrom(f.windDir), f.gusts != null && f.windSpeed != null && f.gusts >= f.windSpeed + 10 ? `gusts ${f.gusts}` : ''].filter(Boolean).join(' · ')),
+      fact('Humidity', f.humidity != null ? `${f.humidity}%` : '--', f.humidity == null ? '' : f.humidity >= 80 ? 'damp' : f.humidity <= 30 ? 'dry air' : ''),
+      n.snow > 0 ? fact('Snow, next 12 hrs', esc(amountText(n.snow, f.snowUnit || 'in') || 'Some'), `${n.chance}% chance`)
+    : fact('Rain, next 12 hrs', n.chance >= 10 ? `${n.chance}% chance` : 'None expected', amountText(n.wet, f.rainUnit || 'in') ? `about ${esc(amountText(n.wet, f.rainUnit || 'in'))}` : ''),
+      fact('Tonight’s low', f.tonightLow != null ? deg(f.tonightLow) : deg(f.low), f.frostTonight ? 'frost likely' : ''),
+    ] : [fact('Rain', `${d.rain || 0}%`, rainAmt ? `about ${esc(rainAmt)}` : '')]).concat([
+      snowAmt ? fact('Snow', esc(snowAmt), '') : '',
+      fact('Wind', d.wind != null ? `up to ${d.wind} ${unit}` : '--', [windFrom(d.dir), d.gusts != null && d.wind != null && d.gusts >= d.wind + 10 ? `gusts ${d.gusts}` : ''].filter(Boolean).join(' · ')),
+      fact('Sun strength', d.uv != null ? esc(uvWord(d.uv)) : '--', d.uv != null ? `UV ${Math.round(d.uv)} at most` : ''),
+      fact('Sunrise', esc(timeOr(d.sunrise)), ''),
+      fact('Sunset', esc(timeOr(d.sunset)), ''),
+    ]).filter(Boolean);
+    const across = facts.length <= 6 ? 6 : Math.ceil(facts.length / 2);
     detail.innerHTML = `
       <div class="wx-sheet" style="width:1180px">
         <div style="display:flex;align-items:center;gap:16px">
@@ -745,19 +753,10 @@ export function mount(el) {
           </div>
           <button data-close class="x-btn white">Close</button>
         </div>
-        ${nowFacts}
-        <div style="display:grid;grid-template-columns:repeat(6,minmax(0,1fr));grid-gap:12px">
-          ${fact('Chance of rain', `${d.rain || 0}%`, rainAmt && !snowAmt ? `about ${esc(rainAmt)}` : '')}
-          ${snowAmt ? fact('Snow', esc(snowAmt), '') : fact('Rain amount', rainAmt ? esc(rainAmt) : 'None', '')}
-          ${fact('Wind', d.wind != null ? `up to ${d.wind} ${unit}` : '--', [windFrom(d.dir), d.gusts != null && d.wind != null && d.gusts >= d.wind + 10 ? `gusts ${d.gusts}` : ''].filter(Boolean).join(' · '))}
-          ${fact('Sun strength', d.uv != null ? esc(uvWord(d.uv)) : '--', d.uv != null ? `UV ${Math.round(d.uv)} at most` : '')}
-          ${fact('Sunrise', esc(timeOr(d.sunrise)), '')}
-          ${fact('Sunset', esc(timeOr(d.sunset)), '')}
-        </div>
+        <div style="display:grid;grid-template-columns:repeat(${across},minmax(0,1fr));grid-gap:12px">${facts.join('')}</div>
         ${hours.length ? `
-          <div style="font-size:16px;opacity:.7;margin-bottom:-8px">Hour by hour${hours.length > 13 ? ' · slide sideways for more' : ''}</div>
           <div data-f-dayhours class="wx-hours"><div class="wx-hours-row">${hoursHtml(hours, f, { markNow: isToday })}</div></div>`
-    : '<div style="font-size:18px;opacity:.75">Hour by hour isn’t known for this day yet.</div>'}
+    : ''}
         ${foot}
       </div>`;
     detail.style.display = 'flex';
@@ -781,7 +780,7 @@ export function mount(el) {
     const a = alerts[0];
     box.style.display = '';
     box.style.background = alertColor(a);
-    box.innerHTML = `<span>⚠ ${esc(a.event)}${whenText(a) ? ` <span style="font-weight:500;opacity:.92">${esc(whenText(a))}</span>` : ''}${alerts.length > 1 ? `<span style="font-weight:500;opacity:.85"> · and ${alerts.length - 1} more</span>` : ''}</span>`;
+    box.innerHTML = `<span>⚠ ${esc(a.event)}${alerts.length > 1 ? `<span style="font-weight:500;opacity:.85"> +${alerts.length - 1}</span>` : ''}</span>`;
   }
 
   // Under the top bar, right: when this forecast is from, honestly, and whether anyone
@@ -794,11 +793,9 @@ export function mount(el) {
     const off = offlineNow || (last && last.stale);
     if (last) {
       if (off) lines.push(`<span style="color:#FFD58A;font-weight:600">No internet right now</span><br>Forecast from ${esc(ageText(last.at))}`);
-      else lines.push(`Updated ${esc(clock(last.at))}`);
     } else if (offlineNow) {
       lines.push('<span style="color:#FFD58A;font-weight:600">No internet right now</span>');
     }
-    if (last && !off && alertInfo && alertInfo.ok && alertInfo.covered && !alerts.length) lines.push('No weather warnings');
     upd.innerHTML = lines.join(' · ');
     btn.style.display = off ? '' : 'none';
     btn.disabled = loading;
@@ -810,37 +807,34 @@ export function mount(el) {
     const box = $('[data-wx-sun]');
     const s = f ? sunInfo(f) : null;
     if (!s) {
+      sunShown = '';
       box.style.background = 'linear-gradient(180deg,#1E1A3E 0%,#4B3A6E 60%,#8A5A72 100%)';
       box.innerHTML = `<div class="wx-sun-in" style="justify-content:center;align-items:center;text-align:center">
-        <div class="x-eyebrow" style="color:#FFE0A6">Daylight</div>
-        <div class="x-serif" style="font-size:24px;line-height:1.3;margin-top:10px">Sunrise, sunset and the daylight left<br>appear with the forecast.</div></div>`;
+        <div class="x-eyebrow" style="color:#FFE0A6">Daylight</div></div>`;
       return;
     }
     box.style.background = s.golden ? 'linear-gradient(180deg,#1E1A3E 0%,#4B3A6E 34%,#C46E6A 66%,#F3A65E 82%)'
       : s.up ? 'linear-gradient(180deg,#234A80 0%,#5A86BC 46%,#E7B585 80%)'
         : 'linear-gradient(180deg,#0E1024 0%,#1E1A3E 48%,#3B2E5A 80%)';
-    // Words
-    let eyebrow, big, sub;
+    // Words: what it is and how long (the times are on the arc under it)
+    let eyebrow, big;
     if (s.up) {
       eyebrow = s.golden ? 'Golden hour' : 'Daylight left';
       big = spanText(s.left);
-      sub = `of daylight left · sunset ${fmtTime(s.sunset)}`;
     } else if (s.untilRise != null) {
-      const before = s.frac < 0;
       eyebrow = 'Sunrise in';
       big = spanText(s.untilRise);
-      sub = before ? `at ${fmtTime(s.sunrise)} today` : `at ${fmtTime(s.next.sunrise)} tomorrow`;
     } else {
       eyebrow = 'After dark';
-      big = 'The sun is down';
-      sub = `it set at ${fmtTime(s.sunset)}`;
+      big = 'Sun’s down';
     }
     // After dark the arc is tomorrow's.
     const tomorrow = !s.up && s.frac > 1 && s.next;
     const rise = tomorrow ? s.next.sunrise : s.sunrise, set = tomorrow ? s.next.sunset : s.sunset;
     // The arc: 380 wide, the horizon at y = 80, the times on the dark land under it.
     const fr = clamp(s.frac, 0, 1);
-    const sx = 190 - 150 * Math.cos(Math.PI * fr), sy = 80 - 66 * Math.sin(Math.PI * fr);
+    const q = Math.round(fr * 120) / 120;
+    const sx = 190 - 150 * Math.cos(Math.PI * q), sy = 80 - 66 * Math.sin(Math.PI * q);
     const arc = `
       <svg width="380" height="112" viewBox="0 0 380 112" aria-hidden="true" style="display:block">
         <defs><linearGradient id="wxArc" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#FFE29A"/><stop offset="1" stop-color="#FF9A5A"/></linearGradient></defs>
@@ -856,40 +850,33 @@ export function mount(el) {
         ${tomorrow ? '<div style="opacity:.8">tomorrow</div>' : ''}
         <div style="color:#FFE0A6">Sunset <b style="font-size:18px;font-weight:600">${esc(timeOr(set))}</b></div>
       </div>`;
-    // The days getting shorter or longer.
+    // The days getting shorter or longer, and the turn of the year.
     const per = s.perDay;
     let change = '';
     if (per != null) {
       const halves = Math.round(Math.abs(per) / 30) / 2;
       const amount = halves === 0.5 ? '½ min' : `${Math.floor(halves)}${halves % 1 ? '½' : ''} min`;
-      change = halves === 0 ? 'the days are holding steady' : `about ${amount} ${per < 0 ? 'less' : 'more'} a day`;
+      change = halves === 0 ? 'holding steady' : `${amount} ${per < 0 ? 'less' : 'more'} a day`;
     }
     const lights = s.week.map((x) => x.light);
     const lmin = Math.min.apply(null, lights), lmax = Math.max.apply(null, lights);
     const bars = s.week.length >= 3 ? `<div style="display:flex;align-items:flex-end;height:34px;gap:4px;flex:none">${s.week.map((x, i) => `<span style="width:7px;border-radius:3px;height:${Math.round(14 + (lmax > lmin ? (x.light - lmin) / (lmax - lmin) : 0.5) * 20)}px;background:${i === 0 ? '#FFFFFF' : '#FFE0A6'};opacity:${i === 0 ? 1 : 0.75}"></span>`).join('')}</div>` : '';
     const sol = s.solstice;
-    const solDate = new Date(sol.at).toLocaleDateString('en-US', { month: 'long', day: 'numeric' });
-    let solLen = '';
-    try {
-      if (typeof f.lat === 'number' && typeof f.lon === 'number') {
-        const st = sunTimes(new Date(sol.at), f.lat, f.lon);
-        if (st.sunrise && st.sunset && st.sunset > st.sunrise) solLen = `, about ${spanText(st.sunset - st.sunrise)}`;
-      }
-    } catch (e) { solLen = ''; }
-    const solLine = sol.days <= 0
-      ? `Today is the ${sol.shortest ? 'shortest' : 'longest'} day of the year${solLen}.`
-      : `${sol.shortest ? 'Shortest' : 'Longest'} day ${esc(solDate)}${solLen}.`;
-    const after = sol.shortest ? 'Then the light starts coming back.' : 'Then the evenings draw in.';
-    box.innerHTML = `<div class="wx-sun-in">
+    const which = sol.shortest ? 'Shortest' : 'Longest';
+    const solLine = sol.days <= 0 ? `${which} day: today`
+      : `${which} day ${new Date(sol.at).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}`;
+    const html = `<div class="wx-sun-in">
         <div class="x-eyebrow" style="color:#FFE0A6">${eyebrow}</div>
-        <div class="wx-sun-big">${esc(big)}</div>
-        <div style="font-size:17px;white-space:nowrap">${esc(sub)}</div>
+        <div data-wx-sunbig class="wx-sun-big"></div>
         <div style="position:relative;width:420px;margin:0 -20px;height:112px;flex:none;overflow:hidden"><div style="position:absolute;left:20px;top:0;width:380px;height:112px">${arc}</div></div>
         <div class="wx-sun-foot" style="margin-top:0;flex:1">
           ${bars}
-          <div style="min-width:0">${s.light != null ? `${esc(spanText(s.light * 1000))} of light today${change ? ` · ${change}` : ''}<br>` : ''}${solLine} <span style="color:#BFD8F6">${after}</span></div>
+          <div style="min-width:0">${s.light != null ? `${esc(spanText(s.light * 1000))} of light${change ? ` · ${change}` : ''}<br>` : ''}<span style="color:#BFD8F6">${esc(solLine)}</span></div>
         </div>
       </div>`;
+    // Every half minute only the number changes: the arc is rebuilt only when it moves.
+    if (html !== sunShown) { box.innerHTML = html; sunShown = html; }
+    box.querySelector('[data-wx-sunbig]').textContent = big;
   }
 
   // ------------------------------------------------------------------ everything
@@ -903,34 +890,17 @@ export function mount(el) {
     shownHour = hourNow;
 
     const band = $('[data-wx-band]');
-    band.innerHTML = cols.length ? bandHtml(f) : '<div class="wx-bandmsg">Hour by hour isn’t in this forecast yet.</div>';
+    band.innerHTML = cols.length ? bandHtml(f) : '';
     $('[data-wx-coming]').innerHTML = cols.length ? comingHtml(f) : '';
     if (!cols.length) paint('now', specAt(f, 0));
     layout();
     hero(f);
 
-    const tip = advice(f) || 'Take a look out of the window before you go.';
-    $('[data-f-advice]').textContent = tip;
+    // (wind, humidity, sun strength and rain are in "More", which this card also opens)
+    const tip = advice(f);
+    $('[data-f-advice]').textContent = tip || ' ';
     $('[data-f-wear]').innerHTML = wearArt(wearFor(tip, f));
-
-    // Wind, humidity, sun strength, rain: the short version (all of it is in "More").
-    const unit = f.windUnit || 'mph';
     const today = isoDay();
-    const tom = new Date(); tom.setDate(tom.getDate() + 1);
-    const next = (f.days || []).find((x) => x.date === isoDay(tom));
-    const afterDark = f.sunset && Date.now() > new Date(f.sunset).getTime() && next;
-    const uv = afterDark ? next.uv : f.uv;
-    const n = f.next12 || { chance: 0, wet: 0, snow: 0 };
-    const cell = (l, v) => `<div style="min-width:0"><div class="wx-fl">${l}</div><div class="wx-fv">${v}</div></div>`;
-    const dirShort = windFrom(f.windDir).replace('from the ', 'from ');
-    $('[data-wx-facts]').innerHTML = [
-      cell('Wind', f.windSpeed == null ? '--' : f.windSpeed < 2 ? (f.gusts >= 15 ? `Calm · gusts ${f.gusts}` : 'Calm')
-        : `${f.windSpeed} ${unit}${f.gusts != null && f.gusts >= f.windSpeed + 10 ? ` · gusts ${f.gusts}` : dirShort ? ` ${esc(dirShort)}` : ''}`),
-      cell('Humidity', f.humidity != null ? `${f.humidity}%${f.humidity >= 80 ? ' · damp' : f.humidity <= 30 ? ' · dry air' : ''}` : '--'),
-      cell(afterDark ? 'Sun tomorrow' : 'Sun strength', uv != null ? `${esc(uvWord(uv))} · UV ${Math.round(uv)}` : '--'),
-      n.snow > 0 ? cell('Snow, next 12 hrs', `${esc(amountText(n.snow, f.snowUnit || 'in') || 'Some')} · ${n.chance}%`)
-        : cell('Rain, next 12 hrs', n.chance >= 10 ? `${n.chance}%${amountText(n.wet, f.rainUnit || 'in') ? ` · ${esc(amountText(n.wet, f.rainUnit || 'in'))}` : ''}` : 'None expected'),
-    ].join('');
 
     sunPanel(f);
 
@@ -949,12 +919,12 @@ export function mount(el) {
       lo: deg(d.lo),
       rain: d.rain,
       bar: d.hi != null && d.lo != null && wkHi > wkLo ? [(d.lo - wkLo) / (wkHi - wkLo), (d.hi - d.lo) / (wkHi - wkLo)] : null,
-    })).join('') || '<div class="wx-empty">The rest of the week will show here once the forecast comes in.</div>';
+    })).join('');
     showUpdated();
   }
 
   // Nothing to show yet (still asking, or no internet and nothing saved).
-  function showWaiting(label, sub, bandMsg) {
+  function showWaiting(label, sub) {
     cols = []; sel = 0; lineX = colX(0);
     painted.now = '';
     paint('now', plainSpec());
@@ -968,12 +938,10 @@ export function mount(el) {
     $('[data-f-outlook]').textContent = sub;
     $('[data-wx-coming]').innerHTML = '';
     $('[data-wx-back]').style.display = 'none';
-    $('[data-wx-hint]').style.display = 'none';
-    $('[data-wx-band]').innerHTML = `<div class="wx-bandmsg">${esc(bandMsg)}</div>`;
-    $('[data-f-advice]').textContent = 'What to wear and what to take will be here with the forecast.';
+    $('[data-wx-band]').innerHTML = '';
+    $('[data-f-advice]').textContent = ' ';
     $('[data-f-wear]').innerHTML = wearArt([]);
-    $('[data-wx-facts]').innerHTML = '';
-    $('[data-f-days]').innerHTML = '<div class="wx-empty">The week ahead will show here once the forecast comes in.</div>';
+    $('[data-f-days]').innerHTML = '';
     sunPanel(null);
   }
 
@@ -1001,7 +969,7 @@ export function mount(el) {
       if (!el.isConnected || me !== gen) return;
       loading = false;
       // Keep showing what's already on screen; only explain when there's nothing.
-      if (!last) showWaiting('Can’t get the weather right now', 'Check the Wi-Fi. Trying again in a minute…', 'No forecast yet. The next 12 hours draw themselves here as soon as this screen is back on the internet.');
+      if (!last) showWaiting('No forecast yet', ''); // ("No internet right now" and "Try again" are top right)
       showUpdated(true);
       retry = setTimeout(load, 60 * 1000);
     } finally {
@@ -1019,7 +987,7 @@ export function mount(el) {
     closeDetail();
     showAlerts({ list: [], covered: null, ok: false });
     title('Weather');
-    showWaiting('Loading weather…', 'Getting the forecast', 'The next 12 hours will draw themselves here.');
+    showWaiting('Loading weather…', '');
     load();
   };
   window.addEventListener('place-changed', onPlace);
@@ -1037,7 +1005,7 @@ export function mount(el) {
     showUpdated();
   }, 30 * 1000);
 
-  showWaiting('Loading weather…', 'Finding where this screen is', 'The next 12 hours will draw themselves here.');
+  showWaiting('Loading weather…', '');
   load();
   timer = setInterval(load, 15 * 60 * 1000);
 }

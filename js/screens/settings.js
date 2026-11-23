@@ -176,32 +176,31 @@ export function mount(el) {
   const SECTION_HTML = {
     family: () => {
       const fam = getFamily();
-      return (canSave && !householdName() ? '<div class="st-ask">This screen doesn’t know what to call your household yet. Your two names, a surname, a nickname for the place: whatever you call home.</div>' : '')
+      return (canSave && !householdName() ? '<div class="st-ask">No household name yet.</div>' : '')
         + row('Household name', `<div class="st-line">
           <input data-name class="st-input" type="text" maxlength="40" autocomplete="off" autocapitalize="words" spellcheck="false"
             placeholder="e.g. Alex &amp; Jordan" value="${esc(fam.familyName || '')}"${canSave ? '' : ' disabled'}>
           <button data-save-name class="st-btn" disabled>Save</button>
-        </div>`, 'What this screen calls your home, on the Home screen and wherever it says hello.')
+        </div>`)
         + row('Who lives here', `<div class="st-chips" data-people></div>
         <div class="st-line">
           <input data-person class="st-input" type="text" maxlength="24" autocomplete="off" autocapitalize="words" spellcheck="false" placeholder="A name" style="max-width:360px"${canSave ? '' : ' disabled'}>
           <button data-add-person class="st-btn" disabled>Add</button>
-        </div>`, 'First names are plenty. The screen puts them on notes and lists, each in its own colour. Tap a name to take it off.')
+        </div>`)
         + (() => {
           // Birthdays and calendars need real typing: they are entered on a phone.
           // The code for that page is shown right here (it opens on the phone's Settings tab).
           let url = null;
           try { url = uploadUrl(); } catch (e) { url = null; }
-          const what = 'Birthdays, anniversaries and Google or iPhone calendars are added from a phone';
           if (!url) {
-            return `<div class="st-hint" style="margin-top:auto">${canSave ? '' : 'For now the name and the people are changed from a phone as well. '}${what}:
+            return `<div class="st-hint" style="margin-top:auto">Birthdays and calendars${canSave ? ' are' : ', the name and the people are'} added from a phone:
               <b>Gallery → Add photos</b>, scan the code, then <b>Settings</b>.</div>`;
           }
           return `<div class="st-line" style="margin-top:auto;gap:24px;align-items:center">
               <div style="flex:none;padding:10px;background:#fff;border-radius:14px;line-height:0">${qrSvg(`${url}#settings`, 150)}</div>
               <div>
                 <div class="st-label">Birthdays and calendars</div>
-                <div class="st-hint" style="margin-top:6px">${what}, because they need real typing. Point a phone’s camera at this code (the phone has to be on your home Wi-Fi); it opens straight on <b>Settings</b>.</div>
+                <div class="st-hint" style="margin-top:6px">Added from a phone.</div>
               </div>
             </div>`;
         })();
@@ -214,26 +213,23 @@ export function mount(el) {
           <div data-bright-val class="st-val"></div>
           <button data-bright-auto class="st-btn quiet">Automatic</button>
         </div>`)
-        + (hasVolume || !N() ? row(DECK ? 'Sound' : 'Sound (timers, videos, apps)', `<div class="st-line">
+        + (hasVolume || !N() ? row('Sound', `<div class="st-line">
           <input data-volume class="st-range" type="range" min="0" max="100" step="5" value="${volume}">
           <div data-volume-val class="st-val"></div>
           <button data-volume-test class="st-btn quiet">Try it</button>
         </div>`) : '')
-        + (DECK ? '' : row('On Home, hide the buttons after', `<div>${seg('homeHideSecs', [['10', '10 seconds'], ['30', '30 seconds'], ['60', '1 minute'], ['0', 'Never']])}</div>`,
-          'Home is your photo frame: left alone, only the photo and the time stay up. A touch brings the buttons back.')
-        + row('Holiday touches', `<div>${seg('holiday', [['1', 'On'], ['0', 'Off']])}</div>`,
-          'Small touches through the year: snow in December, a countdown to Christmas, leaves in autumn.')
-        + row('Go back to Home after', `<div>${seg('restMinutes', [['5', '5 min'], ['10', '10 min'], ['30', '30 min'], ['0', 'Stay put']])}</div>`,
-          'A menu or list that somebody walked away from doesn’t stay up all day. Recipes, timers and anything half-typed are never interrupted.'))
-        + (DECK ? '' : row('When a note arrives from a phone', `<div>${seg('noteChime', [['1', 'A soft chime'], ['0', 'Silent']])}</div>`, 'Two quiet notes, so somebody in the kitchen looks up. Never during the night clock’s hours.'))
-        + row('Cleaning the glass', `<div class="st-line">
-          <div class="st-hint" style="flex:1">Switches touches off for 30 seconds, so a cloth doesn’t press anything. It comes back by itself.</div>
+        + (DECK ? '' : row('On Home, hide the buttons after', `<div>${seg('homeHideSecs', [['10', '10 seconds'], ['30', '30 seconds'], ['60', '1 minute'], ['0', 'Never']])}</div>`)
+        + row('Holiday touches', `<div>${seg('holiday', [['1', 'On'], ['0', 'Off']])}</div>`)
+        + row('Go back to Home after', `<div>${seg('restMinutes', [['5', '5 min'], ['10', '10 min'], ['30', '30 min'], ['0', 'Stay put']])}</div>`))
+        + (DECK ? '' : row('When a note arrives', `<div>${seg('noteChime', [['1', 'A soft chime'], ['0', 'Silent']])}</div>`))
+        + row('Clean the glass', `<div class="st-line">
+          <div class="st-hint" style="flex:1">Touch is off for 30 seconds.</div>
           <button data-wipe-now class="st-btn quiet">Wipe the screen</button>
         </div>`);
     },
     clock: () => row('Clock', `<div class="st-line">${seg('clock24', [['12', '12-hour'], ['24', '24-hour']])}<span class="st-hint" data-clock-now></span></div>`)
       + (canSetZone() ? row('Time zone', `<div class="st-zones" data-zones>${ZONES.map(([id, name]) => `<button data-zone="${id}"${id === zoneNow() ? ' class="on"' : ''}>${name}</button>`).join('')}</div>`,
-        `<span data-zone-hint>${ZONES.some(([id]) => id === zoneNow()) ? '' : `It is on ${esc(zoneNow().replace(/_/g, ' '))} time now. `}The screen can’t work this out by itself. If the clock is an hour or more out, tap where it lives.</span>`) : '')
+        `<span data-zone-hint>${ZONES.some(([id]) => id === zoneNow()) ? '' : `Now on ${esc(zoneNow().replace(/_/g, ' '))} time.`}</span>`) : '')
       + row(DECK ? 'Starfield at night' : 'Night clock', `<div class="st-line" style="flex-wrap:wrap;row-gap:10px">
           ${seg('night', [['1', 'On'], ['0', 'Off']])}
           <div data-hours class="st-line" style="gap:10px">
@@ -242,32 +238,29 @@ export function mount(el) {
             <span class="st-hint">to</span>
             <div class="st-step"><button data-to="-1" aria-label="Earlier">−</button><span data-to-val></span><button data-to="1" aria-label="Later">+</button></div>
           </div>
-        </div>`, DECK ? 'Dims to the starfield once nobody has touched the screen for 5 minutes.' : 'Dims to a soft clock once nobody has touched the screen for 5 minutes.')
-      + row('At night the screen is', `<div class="st-line">${seg('nightDim', [['0.02', 'Darkest'], ['0.05', 'Dim'], ['0.15', 'Soft']])}
-          <a href="#/${NIGHT_SCREEN}" class="st-btn quiet">${DECK ? 'See the starfield' : 'See the night clock'}</a></div>`,
-        'Darkest suits a bedroom; Soft can be read from across a kitchen.')
-      + (DECK ? '' : row('The night clock shows', `<div>${seg('nightStyle', [['full', 'Clock and tomorrow'], ['clock', 'Clock only']])}</div>`,
-        'Clock only leaves out tomorrow’s weather and the first thing on the calendar. A timer that rings still says so.')
-        + row('Weeks start on', `<div>${seg('weekStart', [['0', 'Sunday'], ['1', 'Monday']])}</div>`, 'For the calendar’s weeks and months.')),
+        </div>
+        <div class="st-line"><a href="#/${NIGHT_SCREEN}" class="st-btn quiet">${DECK ? 'Show the starfield' : 'Show the night clock'}</a></div>`)
+      + row('At night the screen is', `<div>${seg('nightDim', [['0.02', 'Darkest'], ['0.05', 'Dim'], ['0.15', 'Soft']])}</div>`)
+      + (DECK ? '' : row('The night clock shows', `<div>${seg('nightStyle', [['full', 'Clock and tomorrow'], ['clock', 'Clock only']])}</div>`)
+        + row('Weeks start on', `<div>${seg('weekStart', [['0', 'Sunday'], ['1', 'Monday']])}</div>`)),
     // (Home is the photo frame now: these are the choices the old photo frame had.)
     photos: () => row('Each picture stays for', `<div>${seg('slideSecs', [['15', '15 sec'], ['30', '30 sec'], ['60', '1 min'], ['300', '5 min'], ['900', '15 min']])}</div>`)
-      + row('Slow zoom', `<div>${seg('photoZoom', [['1', 'On'], ['0', 'Off']])}</div>`, 'Each picture drifts gently while it is up. Off keeps it perfectly still.')
-      + row('Who sent it and when', `<div>${seg('photoCaptions', [['1', 'Show'], ['0', 'Hide']])}</div>`, 'A small line on the picture. The time is always there.')
+      + row('Slow zoom', `<div>${seg('photoZoom', [['1', 'On'], ['0', 'Off']])}</div>`)
+      + row('Who sent it', `<div>${seg('photoCaptions', [['1', 'Show'], ['0', 'Hide']])}</div>`)
       + row('Order', `<div>${seg('photoShuffle', [['0', 'Newest first'], ['1', 'Mixed up']])}</div>`)
-      + `<div class="st-line" style="margin-top:auto"><a href="#/photos" class="st-btn quiet">Open the Gallery</a><a href="#/addphotos" class="st-btn quiet">Add photos</a></div>`,
+      + `<div class="st-line" style="margin-top:auto"><a href="#/photos" class="st-btn quiet">Choose the photos</a></div>`,
     weather: () => row('Temperature', `<div>${seg('units', [['fahrenheit', '°F'], ['celsius', '°C']], !canSave)}</div>`)
-      + row(DECK ? 'Town for the sky, the planes overhead and the weather' : 'Town for the weather', `<div class="st-hint" data-place-now></div>
+      + row('Town', `<div class="st-hint" data-place-now></div>
         <div class="st-line">
           <input data-place class="st-input" type="text" maxlength="60" autocomplete="off" autocapitalize="words" spellcheck="false" placeholder="A town or ZIP code">
           <button data-place-find class="st-btn" disabled>Find</button>
-          <button data-place-auto class="st-btn quiet">Find it by itself</button>
+          <button data-place-auto class="st-btn quiet">Automatic</button>
         </div>
         <div class="st-places" data-place-list></div>`),
-    timers: () => row('Alarm sound', `<div>${seg('alarmSound', [['beeps', 'Beeps'], ['chime', 'Chime'], ['bell', 'Bell']])}</div>`, 'Tap one to hear it. Kitchen timers and cooking timers both use it.')
-      + row('An alarm nobody stops rings for', `<div>${seg('alarmMinutes', [['1', '1 min'], ['2', '2 min'], ['5', '5 min'], ['10', '10 min']])}</div>`)
-      + row('A heads-up one minute before', `<div>${seg('alarmHeadsUp', [['1', 'On'], ['0', 'Off']])}</div>`, 'Two soft notes a minute before a timer of five minutes or more runs out: time to get to the stove.')
-      + row('Gets more insistent', `<div>${seg('alarmInsist', [['1', 'On'], ['0', 'Off']])}</div>`, 'After half a minute of ringing, the sound comes faster, so it is harder to miss from the next room.')
-      + `<div class="st-line" style="margin-top:auto"><a href="#/timers" class="st-btn quiet">Open the timers</a></div>`,
+    timers: () => row('Alarm sound', `<div>${seg('alarmSound', [['beeps', 'Beeps'], ['chime', 'Chime'], ['bell', 'Bell']])}</div>`)
+      + row('Rings for', `<div>${seg('alarmMinutes', [['1', '1 min'], ['2', '2 min'], ['5', '5 min'], ['10', '10 min']])}</div>`)
+      + row('Heads-up a minute before', `<div>${seg('alarmHeadsUp', [['1', 'On'], ['0', 'Off']])}</div>`)
+      + row('Faster after 30 seconds', `<div>${seg('alarmInsist', [['1', 'On'], ['0', 'Off']])}</div>`),
     about: () => `<div class="st-row">
         <div class="st-line">
           <div data-net-dot class="st-dot"></div>
@@ -278,25 +271,25 @@ export function mount(el) {
           ${N() && N().wifiSettings ? '<button data-wifi class="st-btn quiet">Wi-Fi settings</button>' : ''}
         </div>
       </div>`
-      + row('Updates', `<div class="st-line">
-          <div class="st-hint" data-update style="flex:1">The screens update themselves when something new is published.</div>
+      + `<div class="st-line">
+          <div class="st-label" style="flex:1">Updates<div class="st-hint" data-update style="font-weight:400"></div></div>
           <button data-update-check class="st-btn quiet">Check now</button>
-        </div>`)
-      + row('If something looks stuck', `<div class="st-line">
-          <div class="st-hint" style="flex:1">Starting the screens again is safe: ${DECK ? 'nothing is lost' : 'photos, lists and timers are kept'}.</div>
+        </div>`
+      + `<div class="st-line">
+          <div class="st-label" style="flex:1">Something stuck?<div class="st-hint" style="font-weight:400">Nothing is lost.</div></div>
           <button data-restart class="st-btn quiet">Start again</button>
-        </div>`)
-      + row('The settings', `<div class="st-line">
-          <div class="st-hint" style="flex:1">Puts brightness, the clock, the night hours${DECK ? '' : ', the photos on Home, the calendar’s first day, the alarm'} and the town back the way they came. ${DECK ? 'Nothing else is touched.' : 'Photos, lists, notes and the household’s name are not touched.'}</div>
-          <button data-reset class="st-btn quiet">Put them back</button>
-        </div>`)
+        </div>`
+      + `<div class="st-line">
+          <div class="st-label" style="flex:1">Reset settings<div class="st-hint" style="font-weight:400">${DECK ? 'Only the settings.' : 'Photos, lists and notes stay.'}</div></div>
+          <button data-reset class="st-btn quiet">Reset</button>
+        </div>`
       + row('For whoever looks after this screen', `<div class="st-hint" data-health></div>
         <div class="st-line"><div class="st-hint" data-trouble-line style="flex:1"></div><button data-trouble-show class="st-btn quiet">Show</button></div>
         <div class="st-list" data-trouble-list></div>
-        <div class="st-line"><div class="st-hint" style="flex:1">Helping over the phone? One line to read out:</div><button data-readout-show class="st-btn quiet">Show it</button></div>
+        <div class="st-line"><div class="st-hint" style="flex:1">One line to read out</div><button data-readout-show class="st-btn quiet">Show it</button></div>
         <div class="st-readout" data-readout style="display:none"></div>`)
       + `<div class="st-line" style="margin-top:auto">
-          <a href="#/welcome" class="st-btn quiet">Show the tour again</a>
+          <a href="#/welcome" class="st-btn quiet">Show the tour</a>
           <a href="#/whatsnew" class="st-btn quiet">What’s new</a>
           <div class="st-hint" style="margin-left:auto;text-align:right">${DECK ? 'Flight deck' : 'Kitchen screen'} · version ${esc(BUILD)}${N() && N().appVersion ? ` · app ${esc(N().appVersion())}` : ''}</div>
         </div>`,
@@ -419,9 +412,9 @@ export function mount(el) {
           let ok = false;
           try { ok = !!N().setTimeZone(b.dataset.zone); } catch (err) { ok = false; }
           const hint = pane.querySelector('[data-zone-hint]');
-          if (!ok) { if (hint) hint.textContent = 'Couldn’t change it from here. The owner can: hold the top-left corner for 5 seconds, type the PIN from the card that came with this screen, Unlock, then Settings → System → Date & time.'; return; }
+          if (!ok) { if (hint) hint.textContent = 'Couldn’t change it here. Hold the top-left corner for 5 seconds, type the PIN, Unlock, then Settings → System → Date & time.'; return; }
           zones.querySelectorAll('button').forEach((x) => x.classList.toggle('on', x === b));
-          if (hint) hint.textContent = `Now on ${b.textContent} time. One moment while every clock catches up…`;
+          if (hint) hint.textContent = `Now on ${b.textContent} time…`;
           saved();
           // Every time on every screen was worded for the old zone: start the page afresh.
           setTimeout(() => location.reload(), 900);
@@ -447,9 +440,9 @@ export function mount(el) {
       const showNow = () => {
         const chosen = manualPlace();
         const known = knownPlace();
-        nowLine.textContent = chosen ? `Chosen by you: ${chosen.label || chosen.town}.`
-          : known && known.town ? `Found by itself: ${known.town}${known.region ? `, ${known.region}` : ''}. Not right? Type the town below.`
-            : 'The screen works out where it is by itself. Not right? Type the town below.';
+        nowLine.textContent = chosen ? `${chosen.label || chosen.town} (chosen)`
+          : known && known.town ? `${known.town}${known.region ? `, ${known.region}` : ''} (found by itself)`
+            : 'Found by itself';
         auto.style.display = chosen ? '' : 'none';
       };
       showNow();
@@ -493,9 +486,9 @@ export function mount(el) {
         showReadout();
         pane.querySelector('[data-net-dot]').style.background = state === 'online' ? '#2F9E6B' : state === 'connected' ? '#D9A21B' : '#C2491F';
         pane.querySelector('[data-net]').textContent = state === 'online' ? 'Wi-Fi is connected' : state === 'connected' ? 'Wi-Fi is connected, but the internet isn’t answering' : 'Not connected to Wi-Fi';
-        pane.querySelector('[data-net-hint]').textContent = state === 'online' ? 'Weather, calendars and updates are coming through.'
-          : state === 'connected' ? 'Usually the router or the internet line. The screen keeps working from what it saved.'
-            : (N() && N().wifiSettings ? 'Pick a network with “Wi-Fi settings”. It asks for the PIN from the card that came with this screen.' : 'To pick a network: hold the top-left corner for 5 seconds, type the PIN from the card that came with this screen, then Wi-Fi settings.');
+        pane.querySelector('[data-net-hint]').textContent = state === 'online' ? ''
+          : state === 'connected' ? 'Usually the router. Showing what was saved.'
+            : (N() && N().wifiSettings ? 'Needs the PIN from the card that came with this screen.' : 'Hold the top-left corner for 5 seconds, type the PIN from the card, then Wi-Fi settings.');
       };
       // One plain line for whoever helps over the phone: the version, since when it has been
       // running, the Wi-Fi, and how many things went wrong. Nothing personal in it.
@@ -540,10 +533,10 @@ export function mount(el) {
           const latest = (await res.json()).version;
           if (BUILD === 'dev') text = 'This is a preview copy; it doesn’t update itself.';
           else if (latest && latest !== BUILD) {
-            text = 'Something new is ready. It arrives by itself once the screen has been left alone for a few minutes, or right now:';
+            text = 'Something new is ready.';
             check.textContent = 'Update now';
             check.dataset.ready = '1';
-          } else text = 'Up to date. New versions arrive by themselves.';
+          } else text = 'Up to date.';
         } catch (e) {
           text = 'Couldn’t check just now. Is the Wi-Fi connected?';
         }
@@ -561,7 +554,7 @@ export function mount(el) {
         if (Date.now() - sure > 5000) {
           sure = Date.now();
           reset.textContent = 'Really? Tap again';
-          setTimeout(() => { if (reset.isConnected && Date.now() - sure >= 5000) reset.textContent = 'Put them back'; }, 5100);
+          setTimeout(() => { if (reset.isConnected && Date.now() - sure >= 5000) reset.textContent = 'Reset'; }, 5100);
           return;
         }
         sure = 0;

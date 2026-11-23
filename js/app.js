@@ -349,6 +349,34 @@ if ('serviceWorker' in navigator) navigator.serviceWorker.register('./sw.js');
 let lastTouch = Date.now();
 ['pointerdown', 'touchstart', 'keydown'].forEach((t) => addEventListener(t, () => { lastTouch = Date.now(); }, true));
 const idleFor = (ms) => Date.now() - lastTouch > ms;
+
+// ---- Nothing moves while nobody is looking ----
+// Every moving thing (drifting snow, clouds, a bubbling pot, a slow zoom) makes this weak
+// tablet draw the whole screen sixty times a second: measured on a real one, Home used more
+// than a whole processor core while it sat there, and every tap was slower for it. So after
+// 20 seconds untouched everything holds still (css/base.css, .x-still), and comes alive
+// again at the next touch. A ringing timer keeps moving: somebody has to notice it.
+const STILL_AFTER_MS = 20 * 1000;
+function holdStill() {
+  const still = idleFor(STILL_AFTER_MS) && !(timerSvc && timerSvc.ringing && timerSvc.ringing());
+  if (screenEl.classList.contains('x-still') === still) return;
+  screenEl.classList.toggle('x-still', still);
+  svgsHold(still);
+}
+// Moving parts drawn inside a picture (SVG's own animation) don't listen to CSS: those are
+// paused and started again by hand.
+function svgsHold(still) {
+  const svgs = screenEl.getElementsByTagName('svg');
+  for (let i = 0; i < svgs.length; i++) {
+    try { if (still) svgs[i].pauseAnimations(); else svgs[i].unpauseAnimations(); } catch (e) { /* not an outer svg */ }
+  }
+}
+['pointerdown', 'touchstart', 'keydown'].forEach((t) => addEventListener(t, () => {
+  if (!screenEl.classList.contains('x-still')) return;
+  screenEl.classList.remove('x-still');
+  svgsHold(false);
+}, true));
+setInterval(holdStill, 2000);
 const screenName = () => location.hash.replace(/^#\/?/, '').split('/')[0] || homeRoute;
 const isGhost = (() => { try { return !!(window.TabletNative && window.TabletNative.isGhost && window.TabletNative.isGhost()); } catch { return false; } })();
 // Never yank someone out of these.

@@ -4,7 +4,7 @@
 // (tickable) open beside the step; the step itself names the ones it needs.
 // Progress (step, ticks, timers) is saved per recipe id so leaving the screen or
 // switching recipes doesn't lose it; timers keep counting in the background via their end time.
-// "All recipes" goes to the recipe browser; the recipe being cooked is remembered in localStorage.
+// Back goes to the recipe page it was opened from; the recipe being cooked is remembered in localStorage.
 // #/recipe/<id> opens that recipe; plain #/recipe opens the one in progress, else tonight's.
 import { alarmBeep, whenText } from '../services/timers.js';
 import { display } from '../services/display.js';
@@ -23,6 +23,9 @@ const CURRENT_KEY = 'recipe.current';
 // Progress left alone longer than this is from another day's cooking: ask before carrying on.
 const STALE_MS = 6 * 60 * 60 * 1000;
 let tickTimer;
+// Back (and "Done" at the end) return to where cooking mode was opened from: the recipe
+// page, the week plan, Home... (the recipe page when there is nothing to go back to).
+const goBack = (r) => { if (history.length > 1) history.back(); else location.hash = r ? `#/dish/${encodeURIComponent(r.id)}` : '#/recipes'; };
 
 // ---- Saved state ----------------------------------------------------------
 const keyFor = (id) => `recipe.v1.${id}`;
@@ -125,9 +128,8 @@ const RING = 2 * Math.PI * 200; // the ring's length, for drawing how much of th
 const STYLES = `
   <style>
     .rc{height:100%;position:relative;overflow:hidden;background:#110D0B;color:#FFF3E6;font-family:Inter,system-ui,sans-serif}
-    .rc-ember{position:absolute;right:-120px;bottom:-200px;width:900px;height:900px;border-radius:50%;pointer-events:none;will-change:opacity;
-      background:radial-gradient(closest-side,rgba(255,110,40,.32),rgba(255,110,40,0));animation:rc-ember 6s ease-in-out infinite}
-    @keyframes rc-ember{0%,100%{opacity:.55}50%{opacity:.9}}
+    .rc-ember{position:absolute;right:-120px;bottom:-200px;width:900px;height:900px;border-radius:50%;pointer-events:none;opacity:.72;
+      background:radial-gradient(closest-side,rgba(255,110,40,.32),rgba(255,110,40,0))}
     .rc-top{position:absolute;left:40px;right:40px;top:28px}
     .rc-top .x-title{font-size:30px;color:#E8D3BF}
     .rc-segs{display:flex;flex:0 1 300px;min-width:0}
@@ -139,7 +141,7 @@ const STYLES = `
     .rc-left{position:absolute;left:40px;top:112px;width:716px;bottom:150px;display:flex;flex-direction:column;gap:12px}
     .rc-num{font:700 26px Outfit,sans-serif;color:${HOT};letter-spacing:1px;text-transform:uppercase;flex:none}
     .rc-text{flex:1 1 0;min-height:0;overflow:hidden;font:700 84px/1.04 Outfit,sans-serif;letter-spacing:-1px}
-    .rc-uses{flex:none;display:flex;flex-wrap:wrap;align-items:center;max-height:84px;overflow:hidden;margin-bottom:-6px}
+    .rc-uses{flex:none;display:flex;flex-wrap:wrap;align-items:center;max-height:80px;overflow:hidden;margin-bottom:-6px}
     .rc-uses .l{font:600 15px Inter,sans-serif;letter-spacing:2px;text-transform:uppercase;color:#CDB8A4;margin:0 12px 6px 0}
     .rc-use{padding:7px 14px;border-radius:12px;background:rgba(255,138,61,.16);color:#FFE2C8;font:500 18px Inter,sans-serif;margin:0 8px 6px 0;white-space:nowrap;max-width:100%;overflow:hidden;text-overflow:ellipsis}
     .rc-side{flex:none;display:flex;flex-wrap:wrap;gap:10px}
@@ -153,20 +155,16 @@ const STYLES = `
     @keyframes rc-blink{0%{opacity:1}50%{opacity:.55}}
     .rc-stove{position:absolute;left:79px;top:58px;width:282px;height:270px;transform:scale(.74);transform-origin:50% 0}
     .rc-stove>*{position:absolute}
-    .rc-bub{border-radius:50%;background:#FFD9B8;opacity:0;will-change:transform,opacity;animation:rc-bub 4.2s ease-out infinite}
+    .rc-bub{border-radius:50%;background:#FFD9B8;opacity:0}
     @keyframes rc-bub{0%{transform:translateY(0) scale(.6);opacity:0}20%{opacity:.8}100%{transform:translateY(-70px) scale(1);opacity:0}}
     .rc-lid{left:34px;top:40px;transform-origin:50% 92%}
-    .rc-flame{left:66px;top:232px;transform-origin:50% 100%;will-change:transform;animation:rc-flame 2.2s ease-in-out infinite}
-    @keyframes rc-flame{0%,100%{transform:scaleY(.7)}50%{transform:scaleY(.86)}}
+    .rc-flame{left:66px;top:232px;transform-origin:50% 100%;transform:scaleY(.78)}
     @keyframes rc-flame-hot{0%,100%{transform:scaleY(1)}50%{transform:scaleY(1.2)}}
-    @keyframes rc-lid{0%,86%,100%{transform:translateY(0) rotate(0)}90%{transform:translateY(-6px) rotate(-2deg)}94%{transform:translateY(-2px) rotate(1deg)}}
     @keyframes rc-lid-fast{0%,100%{transform:translateY(0) rotate(0)}30%{transform:translateY(-7px) rotate(-3deg)}60%{transform:translateY(-2px) rotate(2deg)}}
-    .rc-pot.run .rc-bub{animation-duration:2.4s}
-    .rc-pot.run .rc-lid{will-change:transform;animation:rc-lid 7s ease-in-out infinite}
+    .rc-pot.run .rc-bub,.rc-pot.done .rc-bub{animation:rc-bub 2.4s ease-out infinite}
     .rc-pot.run .rc-flame,.rc-pot.done .rc-flame{animation:rc-flame-hot 1.2s ease-in-out infinite}
     .rc-pot.done .rc-bub{animation-duration:1.6s}
-    .rc-pot.done .rc-lid{will-change:transform;animation:rc-lid-fast .7s ease-in-out infinite}
-    .rc-pot.paused .rc-bub,.rc-pot.paused .rc-flame{animation-play-state:paused}
+    .rc-pot.done .rc-lid{animation:rc-lid-fast .7s ease-in-out infinite}
     .rc-clockbox{position:absolute;left:60px;right:60px;top:268px;text-align:center}
     .rc-clock{font:700 62px/1 Outfit,sans-serif;font-variant-numeric:tabular-nums}
     .rc-tlabel{font-size:17px;color:#CDB8A4;margin:4px 6px 0;line-height:1.25;max-height:46px;overflow:hidden}
@@ -206,7 +204,7 @@ const STYLES = `
     .rc-over .rc-big{padding:0 36px;min-height:84px;font-size:26px;text-decoration:none}
     .rc-ghost{background:rgba(255,255,255,.1);color:#FFF3E6}
     .rc-plain{height:100%;background:#110D0B;color:#E8D3BF;display:flex;flex-direction:column;gap:24px;align-items:center;justify-content:center;font-size:24px;text-align:center;padding:40px}
-    @media (prefers-reduced-motion: reduce){.rc-ember,.rc-bub,.rc-flame,.rc-pot .rc-lid,.rc-pot .rc-ring{animation:none!important}}
+    @media (prefers-reduced-motion: reduce){.rc-bub,.rc-flame,.rc-pot .rc-lid,.rc-pot .rc-ring{animation:none!important}}
   </style>`;
 
 // The pot: each moving part is its own small picture, so only that part is redrawn.
@@ -317,10 +315,9 @@ async function start(el, args) {
     sideHtml = '';
     ringAt = -1;
     $('[data-cook]').innerHTML = `
-    <div class="rc-top">${topBar({ title: r.title, back: '#/home', backLabel: '← Home', tone: 'dark',
+    <div class="rc-top">${topBar({ title: r.title, back: 'history', backLabel: '← Back', tone: 'dark',
       right: `<div data-segs class="rc-segs">${r.steps.map((_, j) => `<button class="rc-seg" data-goto="${j}" aria-label="Step ${j + 1}"><i></i></button>`).join('')}</div>
-        <button data-ingbtn class="x-btn sm frost"></button>
-        <a href="#/recipes" class="x-btn sm glass">All recipes</a>` })}</div>
+        <button data-ingbtn class="x-btn sm frost"></button>` })}</div>
     <div class="rc-left" data-stepcard>
       <div data-stepnum class="rc-num"></div>
       <div data-steptext class="rc-text"></div>
@@ -345,7 +342,7 @@ async function start(el, args) {
     <div data-meta class="rc-meta">${esc(metaLine(r, servingsFor(r)))}</div>
     <div class="rc-panel" data-panel style="display:none">
       <div class="h"><div data-ingcount></div><button data-ingclose class="x-btn sm frost">Close</button></div>
-      ${servingsFor(r) !== r.serves ? `<div class="rc-scale">Amounts here are for ${servingsFor(r)}. Amounts in the steps are for ${r.serves}, as the recipe was written.</div>` : ''}
+      ${servingsFor(r) !== r.serves ? `<div class="rc-scale">Amounts here are for ${servingsFor(r)}; in the steps, for ${r.serves}.</div>` : ''}
       <div data-ings class="rc-list">
         ${r.ingredients.map((ing, i) => `
           <label class="rc-ing${s.checked[i] ? ' on' : ''}">
@@ -388,7 +385,7 @@ async function start(el, args) {
     el.querySelectorAll('[data-goto]').forEach((d, j) => { d.className = `rc-seg${j === i ? ' on' : j < i ? ' past' : ''}`; });
     // A peek at what's coming, so nobody gets caught out.
     $('[data-peeklabel]').textContent = last ? 'LAST STEP' : 'NEXT';
-    $('[data-nextup]').textContent = last ? 'Enjoy!' : r.steps[i + 1].text;
+    $('[data-nextup]').textContent = last ? '' : r.steps[i + 1].text;
     // Point out the ingredients this step uses: named under the step, and lit up in the list.
     const use = usedIn(r, step.text);
     let first = null;
@@ -445,7 +442,7 @@ async function start(el, args) {
       if ($('[data-tclock]').textContent !== clock) $('[data-tclock]').textContent = clock;
       const name = timerName(step, i);
       const label = st === 'done' ? (s.timers[i].ack ? `${name} · finished` : `${name} · Time’s up!`)
-        : st === 'paused' ? `${name} · paused` : st === 'running' ? `${name} · done at ${whenText(s.timers[i].end)}` : `${name} · tap Start`;
+        : st === 'paused' ? `${name} · paused` : st === 'running' ? `${name} · done at ${whenText(s.timers[i].end)}` : name;
       if ($('[data-tlabel]').textContent !== label) $('[data-tlabel]').textContent = label;
       // The ring fills as the time goes (a minute added makes the whole longer).
       const whole = Math.max(step.timer * 1000, left);
@@ -530,11 +527,10 @@ async function start(el, args) {
     panel.innerHTML = `
       ${plateArt(r, 250, { detail: true })}
       <div class="big">Enjoy your meal!</div>
-      <div class="sub">${esc(r.title)} is done.${still ? ` ${still === 1 ? 'A timer is' : `${still} timers are`} still going: you’ll hear ${still === 1 ? 'it' : 'them'} on any screen.` : ''}</div>
+      ${still ? `<div class="sub">${still === 1 ? 'A timer is' : `${still} timers are`} still going.</div>` : ''}
       <div class="row">
-        <a href="#/recipes" class="rc-big rc-next" style="width:auto">Back to recipes</a>
+        <button data-leave class="rc-big rc-next" style="width:auto;padding:0 56px">Done</button>
         <button data-again class="rc-big rc-ghost">Cook it again</button>
-        <a href="#/home" class="rc-big rc-ghost">Home</a>
       </div>`;
     $('[data-root]').appendChild(panel);
   }
@@ -562,7 +558,8 @@ async function start(el, args) {
     const t = e.target.closest('button');
     if (!t) return;
     const i = s.step;
-    if (t.matches('[data-ingbtn],[data-ingclose]')) {
+    if (t.matches('[data-back],[data-leave]')) goBack(r);
+    else if (t.matches('[data-ingbtn],[data-ingclose]')) {
       panelOpen = t.matches('[data-ingbtn]') ? !panelOpen : false;
       showPanel();
       if (panelOpen) renderStep(); // brings this step's first ingredient into view

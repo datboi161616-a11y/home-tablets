@@ -336,7 +336,9 @@ function chipHidden(on) {
   const ring = ringingNow().length > 0 || cooks.some((c) => c.end <= now);
   const full = now < fullUntil && on !== 'timers';
   const count = chipTimers(now).length + cooks.length;
-  return !full && (!count || (on === 'recipe' && !ring) || (on === 'timers' && !ring && !cooks.length));
+  // (The night clock says "Time's up" in big letters itself: the chip would say it twice.)
+  if (on === 'night') return true;
+  return !full && (!count || (on === 'recipe' && !ring) || (on === 'timers' && !cooks.length));
 }
 /** Will the chip be up on screen `name` (e.g. 'home') right now? For a screen that keeps room for it. */
 export const chipShowsOn = (name) => !chipHidden(name);

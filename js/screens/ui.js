@@ -57,11 +57,11 @@ export function avatar(name, size = 44) {
 // nobody has to go to the Gallery to find the code for the shopping list.
 //   tab: 'photos' | 'note' | 'shopping' | 'recipe' | 'settings'
 const CODE_TEXT = {
-  photos: ['Send photos from your phone', 'Scan with your phone’s camera. Same Wi-Fi as this screen.'],
-  note: ['Leave a note from your phone', 'Scan with your phone’s camera. Same Wi-Fi as this screen.'],
-  shopping: ['The list on your phone', 'Scan to add things, or to tick them off at the store.'],
-  recipe: ['Send a recipe from your phone', 'Scan with your phone’s camera. Same Wi-Fi as this screen.'],
-  settings: ['Set this up from your phone', 'Names, birthdays and calendars are easier to type there.'],
+  photos: ['Send photos from your phone', ''],
+  note: ['Leave a note from your phone', ''],
+  shopping: ['The list on your phone', ''],
+  recipe: ['Send a recipe from your phone', ''],
+  settings: ['Set this up from your phone', ''],
 };
 /**
  * Markup for a code. Call wirePhoneCodes(el) once after it is on the screen.
@@ -71,7 +71,7 @@ export function phoneCode({ tab = 'photos', size = 132, title, sub, tone = 'dark
   const text = CODE_TEXT[tab] || CODE_TEXT.photos;
   return `<div class="x-code${tone === 'light' ? ' light' : ''}${column ? ' column' : ''}" data-phone-code="${esc(tab)}" data-size="${size}">
       <div class="x-code-qr" style="width:${size + 12}px;height:${size + 12}px;font:500 14px Inter,sans-serif;text-align:center"></div>
-      <div style="min-width:0"><div class="x-code-title">${esc(title || text[0])}</div><div class="x-code-sub" data-code-sub>${esc(sub || text[1])}</div></div>
+      <div style="min-width:0"><div class="x-code-title">${esc(title || text[0])}</div><div class="x-code-sub" data-code-sub>${esc(sub == null ? text[1] : sub)}</div></div>
     </div>`;
 }
 /** The address a phone opens for a tab: null when this is not a tablet, '' when it has no Wi-Fi. */

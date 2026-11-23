@@ -1,8 +1,8 @@
 // Kitchen · Shopping list: everything this week's plan needs, plus your own things, by aisle,
 // with the list's own phone code right beside it ("Paper planes to a phone").
 //
-// Tap a row to tick it off (ticked rows sink). "Have it" moves it to Already have. Add your
-// own items by typing ("2 x milk" works) or with one tap on the quick buttons. Undo is offered
+// Tap a row to tick it off (ticked rows sink). "Have it" (rows still to get) moves it to Already
+// have. Add your own items by typing ("2 x milk" works) or with one tap on the quick buttons. Undo is offered
 // for a few seconds after anything comes off the list.
 //
 // The code on the right opens the phone page on its list: the phone keeps a copy, so the
@@ -12,7 +12,7 @@
 import {
   buildShoppingList, onKitchenChanged, setHave, setGot, addExtra, setExtraGot, removeExtra, clearChecked,
   guessAisle, AISLE_NAMES, COMMON_ITEMS, recentExtras, setExtraQty, extraText, splitQty, listSnapshot, restoreList,
-  setListNextWeek, listSeen, setListSeen, weekRecipeIds, getGoing, setGoing, onPhoneChange,
+  setListNextWeek, listSeen, setListSeen, getGoing, setGoing, onPhoneChange,
 } from '../services/meal-plan.js';
 import { esc, topBar, phoneCode, wirePhoneCodes, people, avatar } from './ui.js';
 import { onFamilyChanged } from '../services/family.js';
@@ -54,7 +54,7 @@ const STYLE = `
   <style>
     .sh{position:absolute;left:0;top:0;width:100%;height:100%;overflow:hidden;color:#FFFFFF;font-family:Inter,system-ui,sans-serif;
       background:radial-gradient(ellipse at 70% 20%,#2E5A6B 0%,#183846 45%,#0E222C 100%)}
-    .sh-sky{position:absolute;left:0;top:0;width:100%;height:240px;pointer-events:none;will-change:opacity;animation:sh-twinkle 7s ease-in-out infinite;
+    .sh-sky{position:absolute;left:0;top:0;width:100%;height:240px;pointer-events:none;opacity:.5;
       background:radial-gradient(circle at 12% 30%,#FFF 0,#FFF 1.5px,transparent 2px),radial-gradient(circle at 38% 12%,#FFF 0,#FFF 1px,transparent 2px),
         radial-gradient(circle at 58% 44%,#FFF 0,#FFF 1.5px,transparent 2px),radial-gradient(circle at 88% 20%,#FFF 0,#FFF 1px,transparent 2px),
         radial-gradient(circle at 72% 8%,#FFF 0,#FFF 1px,transparent 2px)}
@@ -104,6 +104,7 @@ const STYLE = `
     .sh-empty{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;text-align:center;min-height:100%;padding:12px 24px}
     .sh-empty .big{font:500 34px Outfit,system-ui,sans-serif}
     .sh-empty .say{font-size:19px;line-height:1.45;color:${MIST};max-width:600px}
+    .sh [data-codebox] .x-code-sub{display:none}
     .sh-bob{will-change:transform;animation:sh-bob 6s ease-in-out infinite}
     .sh-toast{position:absolute;left:50%;bottom:6px;transform:translateX(-50%);z-index:5;display:flex;align-items:center;gap:18px;background:${CREAM};color:${INK};
       border-radius:999px;padding:8px 8px 8px 26px;font-size:18px;box-shadow:0 10px 24px rgba(0,0,0,.4);max-width:720px;min-height:72px}
@@ -115,8 +116,6 @@ const STYLE = `
     .sh-who.many .sh-p{min-height:56px;font-size:18px}
     .sh-p .nm{flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
     .sh-p.on{background:${AMBER};color:${INK};font-weight:600}
-    .sh-said{font-size:17px;line-height:1.4;color:${MIST}}
-    .sh-said b{color:#FFFFFF}
     .sh-air{position:absolute;left:0;top:0;width:100%;height:100%;pointer-events:none;overflow:hidden;z-index:6}
     .sh-plane{position:absolute;left:0;top:0;will-change:transform;opacity:0;animation:sh-across 1.5s linear both}
     .sh-plane i{display:block;will-change:transform;animation:sh-arc 1.5s linear both}
@@ -125,7 +124,6 @@ const STYLE = `
     .sh-row.phoned .sh-tick{animation:sh-pop .7s ease-out .9s both}
     .sh-row.phoned .sh-nm::after{content:"";position:absolute;left:-2px;right:-2px;top:11px;height:3px;border-radius:2px;background:${RUST};transform-origin:left center;animation:sh-strike 1.6s ease-out .9s both}
     .sh-row.landed{animation:sh-land .6s ease-out 1s both}
-    @keyframes sh-twinkle{0%,100%{opacity:.2}50%{opacity:.8}}
     @keyframes sh-bob{0%,100%{transform:translate3d(0,0,0)}50%{transform:translate3d(0,-6px,0)}}
     @keyframes sh-pop{0%{transform:scale(.3)}60%{transform:scale(1.25)}100%{transform:scale(1)}}
     @keyframes sh-strike{0%{transform:scaleX(0);opacity:1}45%{transform:scaleX(1);opacity:1}100%{transform:scaleX(1);opacity:0}}
@@ -135,7 +133,7 @@ const STYLE = `
       50%{transform:translate3d(0,var(--peak),0) rotate(0deg);animation-timing-function:ease-in}
       100%{transform:translate3d(0,var(--dy),0) rotate(var(--r1))}}
     @media (prefers-reduced-motion: reduce){
-      .sh-sky,.sh-bob,.sh-row.pop .sh-tick,.sh-row.phoned .sh-tick,.sh-row.landed{animation:none}
+      .sh-bob,.sh-row.pop .sh-tick,.sh-row.phoned .sh-tick,.sh-row.landed{animation:none}
       .sh-plane,.sh-row.phoned .sh-nm::after{display:none}
     }
   </style>`;
@@ -147,14 +145,12 @@ export function mount(el) {
     <div class="sh-wrap">
       ${topBar({
         title: 'Shopping list',
-        right: `<div class="sh-stat" data-stat></div><span data-clearslot style="flex:none;display:flex"></span>
-          <a href="#/plan" class="x-btn glass sm">Week plan<span data-plancount class="x-badge" style="display:none"></span></a>
-          <a href="#/recipes" class="x-btn glass sm">Recipes</a>`,
+        right: '<div class="sh-stat" data-stat></div><span data-clearslot style="flex:none;display:flex"></span>',
       })}
       <div class="sh-main">
         <div class="sh-left">
           <form data-addform class="sh-add">
-            <input data-addtext class="sh-in" maxlength="60" placeholder="Add something: “2 x milk”, paper towels…" autocomplete="off" aria-label="Add to the shopping list">
+            <input data-addtext class="sh-in" maxlength="60" placeholder="Add something" autocomplete="off" aria-label="Add to the shopping list">
             <button class="x-btn amber" type="submit">Add</button>
           </form>
           <div data-quick class="sh-quick" aria-label="Quick add"></div>
@@ -165,8 +161,7 @@ export function mount(el) {
         <div class="sh-right">
           <div data-codebox>${phoneCode({
             tab: 'shopping', size: 190, column: true,
-            title: 'Scan to take the list with you',
-            sub: 'On the home Wi-Fi, point your phone’s camera here. The list stays on your phone at the store, and ticks made there come back when you’re home.',
+            title: 'Take the list with you',
           })}</div>
           <div data-who style="display:flex;flex-direction:column;gap:12px;min-height:0"></div>
         </div>
@@ -247,21 +242,20 @@ export function mount(el) {
       </div>
       ${extra
         ? `<button class="sh-q" data-less="${esc(x.key)}" aria-label="${x.qty > 1 ? 'One fewer' : 'Take off the list'}">${x.qty > 1 ? '−' : '×'}</button><button class="sh-q" data-more="${esc(x.key)}" aria-label="One more">+</button>`
-        : `<button class="sh-have" data-have="${esc(x.key)}">Have it</button>`}
+        : x.got ? '' : `<button class="sh-have" data-have="${esc(x.key)}">Have it</button>`}
     </div>`;
   };
 
   // Planned items and your own items together, by aisle; finished aisles go to the end.
   function aisles(list) {
-    const from = (f) => (f.length > 1 ? `${f.length} recipes` : f[0]);
     const by = {};
     const put = (aisle, item) => { (by[aisle] || (by[aisle] = [])).push(item); };
     list.sections.forEach((s) => s.items.forEach((x) => put(s.id, {
-      kind: 'item', key: x.key, name: x.name, sub: [x.amount, from(x.from)].filter(Boolean).join(' · '), got: x.got,
+      kind: 'item', key: x.key, name: x.name, sub: x.amount || '', got: x.got,
       isNew: !!(fresh && fresh.indexOf(x.key) >= 0),
     })));
     list.extras.forEach((x) => put(guessAisle(x.text), {
-      kind: 'extra', key: x.id, name: extraText(x), sub: fromPhone[`extra:${x.id}`] ? 'Added from a phone' : 'Added by hand', got: x.got, qty: x.qty || 1,
+      kind: 'extra', key: x.id, name: extraText(x), sub: '', got: x.got, qty: x.qty || 1,
     }));
     const names = {};
     AISLE_NAMES.forEach(([id, name]) => { names[id] = name; });
@@ -291,16 +285,11 @@ export function mount(el) {
     const ppl = people();
     const going = getGoing();
     const on = going ? low(going.name) : '';
-    const said = going
-      ? `<b>${esc(going.name)} is going.</b> ${esc(going.name)}, scan the code and the list goes with you.`
-      : ppl.length ? 'Tap a name so everyone here knows who has the list. Visiting? The same code gives you a copy.'
-        : 'Visiting? The same code gives you a copy.';
     box.innerHTML = `
-      ${ppl.length ? `<div class="sh-sub" style="display:flex;align-items:center;gap:10px"><span class="sh-bob">${plane(34)}</span>Who’s going to the store?</div>
+      ${ppl.length ? `<div class="sh-sub" style="display:flex;align-items:center;gap:10px"><span class="sh-bob">${plane(34)}</span>Who’s going?</div>
       <div class="sh-who x-scroll${ppl.length > 4 ? ' many' : ''}${ppl.length === 1 ? ' one' : ''}">
         ${ppl.map((p) => `<button class="sh-p${low(p.name) === on ? ' on' : ''}" data-going="${esc(p.name)}" aria-pressed="${low(p.name) === on ? 'true' : 'false'}">${avatar(p.name, ppl.length > 4 ? 40 : 44)}<span class="nm">${esc(p.name)}</span>${low(p.name) === on ? '<span aria-hidden="true">✓</span>' : ''}</button>`).join('')}
-      </div>` : ''}
-      <div class="sh-said">${said}</div>`;
+      </div>` : ''}`;
   }
 
   let again = false;
@@ -329,12 +318,8 @@ export function mount(el) {
       const chips = quick(list);
       const now = flash;
 
-      $('[data-stat]').innerHTML = all ? (left ? `<b>${left}</b> to get${anyGot ? ` · ${all - left} got` : ''}` : '<b>Got everything!</b>') : '';
+      $('[data-stat]').innerHTML = all ? (left ? `<b>${left}</b> to get` : '<b>Got everything!</b>') : '';
       $('[data-clearslot]').innerHTML = anyGot ? `<button data-clear class="x-btn sm ${clearArmed ? 'amber' : 'frost'}">${clearArmed ? 'Tap again to clear' : 'Done shopping'}</button>` : '';
-      const pc = $('[data-plancount]');
-      const planned = weekRecipeIds().length;
-      pc.textContent = planned;
-      pc.style.display = planned ? '' : 'none';
       const q = $('[data-quick]');
       q.style.display = chips.length ? '' : 'none';
       q.innerHTML = chips.map((c) => `<button class="sh-chip${c.recent ? ' recent' : ''}" data-quick="${esc(c.t)}">+ ${esc(cap(c.t))}</button>`).join('');
@@ -342,27 +327,26 @@ export function mount(el) {
 
       body.innerHTML = `
         ${list.next || list.nextRecipes ? `<div class="sh-week"><span>${list.next
-          ? `Includes next week’s ${list.nextRecipes} planned meal${list.nextRecipes === 1 ? '' : 's'}.`
-          : `Next week has ${list.nextRecipes} planned meal${list.nextRecipes === 1 ? '' : 's'}.`}</span>
-          <button class="x-btn sm ${list.next ? 'frost' : 'amber'}" data-nextweek="${list.next ? '0' : '1'}">${list.next ? 'This week only' : 'Add them to the list'}</button></div>` : ''}
+          ? `With next week’s ${list.nextRecipes} meal${list.nextRecipes === 1 ? '' : 's'}`
+          : `Next week: ${list.nextRecipes} meal${list.nextRecipes === 1 ? '' : 's'}`}</span>
+          <button class="x-btn sm ${list.next ? 'frost' : 'amber'}" data-nextweek="${list.next ? '0' : '1'}">${list.next ? 'This week only' : 'Add to list'}</button></div>` : ''}
         ${empty ? `
           <div class="sh-empty">
             <div class="sh-bob">${plane(150)}</div>
             <div class="big">The list is empty.</div>
-            <div class="say">Tap a button above to add everyday things, or type your own.<br>Meals on the week plan add their ingredients here by themselves.</div>
-            <div style="display:flex;gap:12px"><a href="#/plan" class="x-btn frost">Week plan</a><a href="#/recipes" class="x-btn amber">Find recipes</a></div>
+            <a href="#/plan" class="x-btn amber">Plan meals</a>
           </div>` : `
         <div class="sh-cols">
           ${aisles(list).map((s) => section(s.id, s.name, s.items, byGot(s.items).map(row).join(''))).join('')}
         </div>
         ${list.have.length ? `
           <div style="margin-top:4px;display:flex;flex-direction:column;gap:12px">
-            <div class="sh-sub">Already have · tap to put back on the list</div>
+            <div class="sh-sub">Already have</div>
             <div style="display:flex;flex-wrap:wrap;gap:10px">
               ${list.have.map((x) => `<button class="sh-chip" data-need="${esc(x.key)}">+ ${esc(cap(x.name))}</button>`).join('')}
             </div>
           </div>` : ''}
-        ${list.missing ? `<div style="font-size:17px;margin-top:14px;color:${MIST}">${list.missing} planned recipe${list.missing > 1 ? 's' : ''} couldn’t load. Check the Wi-Fi.</div>` : ''}`}
+        ${list.missing ? `<div style="font-size:17px;margin-top:14px;color:${MIST}">${list.missing} planned recipe${list.missing > 1 ? 's' : ''} couldn’t load.</div>` : ''}`}
         ${toast ? '<div style="height:96px"></div>' : ''}`;
       body.scrollTop = scrollTop;
       $('[data-toast]').innerHTML = toast ? `<div class="sh-toast"><span>${esc(toast.text)}</span><button class="x-btn ink sm" data-undo>Undo</button></div>` : '';
@@ -427,7 +411,7 @@ export function mount(el) {
       if (what === 'there') say(`${cap(t.dataset.quick)} is already on the list.`);
       else if (what === 'back') say(`${cap(t.dataset.quick)} is back on the list.`);
       else if (what === 'added') say(`Added ${t.dataset.quick.toLowerCase()}.`);
-      else if (what === 'unsaved') say('This screen’s storage is full, so that couldn’t be added.');
+      else if (what === 'unsaved') say('Storage is full: not added.');
       if (what === 'there' || what === 'unsaved') render();
     } else if (t.dataset.nextweek) {
       const on = t.dataset.nextweek === '1';
@@ -442,8 +426,8 @@ export function mount(el) {
       after.sections.forEach((s) => s.items.forEach((x) => { if (!keys[x.key] && !x.got) names.push(x.name); }));
       if (!el.isConnected) return;
       say(names.length
-        ? `Added for next week: ${names.slice(0, 5).join(', ')}${names.length > 5 ? ` and ${names.length - 5} more` : ''}. Amounts already on the list went up where needed.`
-        : 'Next week needs nothing new. Amounts already on the list went up where needed.', 10000);
+        ? `Added for next week: ${names.slice(0, 5).join(', ')}${names.length > 5 ? ` and ${names.length - 5} more` : ''}.`
+        : 'Next week needs nothing new.', 10000);
       render();
     } else if (t.matches('[data-undo]')) {
       const u = toast;
@@ -478,10 +462,10 @@ export function mount(el) {
     const what = addExtra(text);
     const p = splitQty(text);
     const name = cap(p.text);
-    if (what === 'there') say(`${name} is already on the list. Tap + on it for more.`);
+    if (what === 'there') say(`${name} is already on the list.`);
     else if (what === 'more') say(`More ${p.text.toLowerCase()} on the list.`);
     else if (what === 'back') say(`${name} is back on the list.`);
-    else if (what === 'unsaved') say('This screen’s storage is full, so that couldn’t be added.');
+    else if (what === 'unsaved') say('Storage is full: not added.');
     else say('');
     render();
   });
