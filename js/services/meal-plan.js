@@ -16,6 +16,7 @@ const FAV_KEY = 'kitchen.favorites.v1';
 const SERVES_KEY = 'kitchen.servings.v1';
 const RECENT_KEY = 'kitchen.listrecent.v1';
 const SEEN_KEY = 'kitchen.listseen.v1';
+const USE_KEY = 'kitchen.listuse.v1';
 
 const read = (k, d) => { try { return JSON.parse(localStorage.getItem(k) || 'null') || d; } catch (e) { return d; } };
 // A full or broken storage must not stop the screen: keep going and still tell the screens.
@@ -339,7 +340,7 @@ export function guessAisle(text) {
   return 'other';
 }
 
-// Things most households buy: one tap adds them (Shopping list chips).
+// Things most households buy (kept for older callers; the list's keyboard uses grocery-words.js).
 export const COMMON_ITEMS = ['Milk', 'Bread', 'Eggs', 'Bananas', 'Butter', 'Coffee', 'Cheese', 'Apples', 'Yogurt',
   'Chicken', 'Potatoes', 'Onions', 'Tomatoes', 'Orange juice', 'Toilet paper', 'Paper towels', 'Dish soap'];
 
@@ -503,6 +504,23 @@ function rememberExtra(text) {
   const k = norm(text);
   const r = [text].concat(recentExtras().filter((x) => norm(x) !== k)).slice(0, 12);
   try { localStorage.setItem(RECENT_KEY, JSON.stringify(r)); } catch (e) { /* full */ }
+  // How often each thing was added (the 60 most recent), for the keyboard's suggestions.
+  const u = read(USE_KEY, {});
+  const use = isObj(u) ? u : {};
+  const was = isObj(use[k]) ? use[k] : { n: 0 };
+  delete use[k];
+  use[k] = { t: String(text).slice(0, 60), n: Math.min(9999, (Number(was.n) || 0) + 1) };
+  const keys = Object.keys(use);
+  keys.slice(0, Math.max(0, keys.length - 60)).forEach((x) => { delete use[x]; });
+  try { localStorage.setItem(USE_KEY, JSON.stringify(use)); } catch (e) { /* full */ }
+}
+/** Your own items, most often added first (ties: the newest first): [{ text, n }]. */
+export function usedExtras() {
+  const u = read(USE_KEY, {});
+  if (!isObj(u)) return [];
+  const out = [];
+  Object.keys(u).forEach((k, i) => { const x = u[k]; if (isObj(x) && typeof x.t === 'string' && x.t) out.push({ text: x.t, n: Number(x.n) || 1, i }); });
+  return out.sort((a, b) => b.n - a.n || b.i - a.i).map((x) => ({ text: x.text, n: x.n }));
 }
 
 /**
