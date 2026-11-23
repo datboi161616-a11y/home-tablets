@@ -19,7 +19,10 @@ const FIRST = [1, 3, 5, 10, 15, 30];
 // Names a timer can be given with one tap (the owner's own typed names come first).
 const NAMES = ['Pasta', 'Rice', 'Eggs', 'Oven', 'Potatoes', 'Tea'];
 const MAX_CUSTOM = 12 * 60; // a slow cooker's day
-let tickTimer, off, msgTimer, undoTimer;
+// The seconds strip: a ruler 0–59 under a fixed amber mark, this many px per second.
+const SEC_PX = 18;
+const SEC_CHIPS = [0, 15, 30, 45];
+let tickTimer, off, msgTimer, undoTimer, dropDrag;
 
 // The owner's last "Other time", recent other times and typed names, kept on this screen only.
 const PREFS = 'kitchen.timers.prefs.v1';
@@ -28,7 +31,13 @@ const savePrefs = (p) => { try { localStorage.setItem(PREFS, JSON.stringify(p));
 
 // "1 hr 30 min" is too long for a preset button: "1½ hr".
 const presetLabel = (m) => (m === 90 ? '1½ hr' : minutesText(m));
-const setText = (secs) => (secs < 60 ? `${secs} sec` : minutesText(Math.round(secs / 60)));
+// "45 sec", "2 min 30 sec", "1 hr 5 min"
+const setText = (secs) => {
+  const s = secs % 60, m = Math.floor(secs / 60);
+  return m ? `${minutesText(m)}${s ? ` ${s} sec` : ''}` : `${s} sec`;
+};
+// A label made from the time ("2 min 30 sec timer"), not a name someone chose.
+const AUTO_LABEL = /^(\d+ hr ?)?(\d+ min ?)?(\d+ sec)? timer$/;
 // "Rings at 6:40 PM", "Rings tomorrow at 7:05 AM" (the owner's 12/24-hour clock)
 const ringsText = (end) => { const w = whenText(end); return /^\d/.test(w) ? `Rings at ${w}` : `Rings ${w.replace(/ (?=\d)/, ' at ')}`; };
 // Ringing first, then the one finishing soonest, then paused, then finished.
@@ -52,7 +61,11 @@ const levelOf = (t) => `translate3d(0,${Math.round(EMPTY_AT - progress(t) * (EMP
 
 export function mount(el) {
   const prefs = loadPrefs();
-  let custom = Math.min(MAX_CUSTOM, Math.max(1, +prefs.custom || 25));
+  // "Other time" in seconds: whole minutes from the −/+ buttons, 0–59 seconds from the strip.
+  // (Older saves kept minutes: `custom` and `recent`.)
+  const MAX_S = MAX_CUSTOM * 60;
+  let custom = Math.min(MAX_S, Math.max(1, +prefs.customS || (+prefs.custom || 25) * 60));
+  const recentS = () => (Array.isArray(prefs.recentS) ? prefs.recentS : (Array.isArray(prefs.recent) ? prefs.recent.map((m) => m * 60) : []));
   let name = ''; // the name the next timer gets ('' = just "10 min timer")
   let lastStart = { key: '', at: 0 };
   el.innerHTML = `
@@ -179,6 +192,22 @@ export function mount(el) {
     .tm-other .x-btn{background:rgba(255,255,255,.12);color:#FFFFFF;padding:0 18px}
     .tm-other .x-btn.tm-amber{background:#FFC36B;color:#1C1F24;padding:0 34px}
     .tm-val{font:500 38px Outfit,sans-serif;flex:1;text-align:center;white-space:nowrap}
+    .tm-val{font-variant-numeric:tabular-nums}
+    .tm-secs{display:flex;align-items:center;gap:10px}
+    .tm-strip{position:relative;flex:1;height:80px;border-radius:22px;overflow:hidden;background:rgba(0,0,0,.28);cursor:ew-resize;touch-action:pan-y;
+      -webkit-user-select:none;user-select:none}
+    .tm-ruler{position:absolute;left:50%;top:0;height:100%;width:${59 * SEC_PX + 2}px;margin-left:-1px;will-change:transform;
+      background:repeating-linear-gradient(90deg,rgba(255,255,255,.35) 0,rgba(255,255,255,.35) 2px,transparent 2px,transparent ${SEC_PX}px) 0 54px/100% 14px no-repeat}
+    .tm-ruler.snap{transition:transform .22s ease-out}
+    .tm-tick{position:absolute;top:40px;width:2px;height:28px;margin-left:0;background:rgba(255,255,255,.8)}
+    .tm-tick b{position:absolute;left:1px;top:-32px;width:40px;margin-left:-20px;text-align:center;font:600 20px Outfit,sans-serif;color:#D6DBE3}
+    .tm-hand{position:absolute;left:50%;top:8px;bottom:8px;width:4px;margin-left:-2px;border-radius:2px;background:#FFC36B;pointer-events:none}
+    .tm-fade{position:absolute;top:0;bottom:0;width:70px;pointer-events:none}
+    .tm-fade.l{left:0;background:linear-gradient(90deg,#1B1E23,rgba(27,30,35,0))}
+    .tm-fade.r{right:0;background:linear-gradient(270deg,#1B1E23,rgba(27,30,35,0))}
+    .tm-sc{min-height:80px;min-width:84px;border-radius:22px;border:0;background:rgba(255,255,255,.12);color:#FFFFFF;font:500 28px Outfit,sans-serif;cursor:pointer;font-variant-numeric:tabular-nums}
+    .tm-sc.on{background:#FFC36B;color:#1C1F24}
+    .tm-nogo [data-start-custom]{opacity:.45}
     .tm-recent{display:flex;gap:10px;align-items:center;font-size:18px;font-weight:600;color:#AEB6C2}
     .tm-recent .x-btn{background:rgba(255,255,255,.12);color:#FFFFFF}
     .tm-undo{position:absolute;left:50%;bottom:18px;z-index:15;transform:translateX(-50%);display:flex;align-items:center;gap:18px;background:#FFFFFF;color:#1C1F24;border-radius:999px;padding:8px 8px 8px 28px;font-size:20px;font-weight:600;white-space:nowrap;box-shadow:0 6px 20px rgba(0,0,0,.4)}
@@ -215,6 +244,13 @@ export function mount(el) {
           <button class="x-btn" data-custom="60">+1 hr</button>
           <button class="x-btn tm-amber" data-start-custom>Start</button>
         </div>
+        <div class="tm-secs">
+          <div class="tm-strip" data-strip role="slider" aria-label="Seconds" aria-valuemin="0" aria-valuemax="59">
+            <div class="tm-ruler" data-ruler>${[0, 5, 10, 15, 20, 25, 30, 35, 40, 45, 50, 55].map((s) => `<i class="tm-tick" style="left:${s * SEC_PX}px"><b>${s}</b></i>`).join('')}</div>
+            <div class="tm-fade l"></div><div class="tm-fade r"></div><div class="tm-hand"></div>
+          </div>
+          ${SEC_CHIPS.map((s) => `<button class="tm-sc" data-sec="${s}">:${String(s).padStart(2, '0')}</button>`).join('')}
+        </div>
         <div class="tm-recent" data-recent></div>
       </div>
     </div>
@@ -223,8 +259,81 @@ export function mount(el) {
   const $ = (s) => el.querySelector(s);
   const root = $('[data-root]');
   const sheet = $('[data-sheet]');
-  const showCustom = () => { $('[data-custom-val]').textContent = minutesText(custom); };
+  // ---- Other time: "25:00", seconds on the strip ----
+  const valBox = $('[data-custom-val]');
+  const ruler = $('[data-ruler]');
+  const strip = $('[data-strip]');
+  const card = $('.tm-card');
+  const secChips = Array.prototype.slice.call(el.querySelectorAll('[data-sec]'));
+  const placeRuler = (s) => { ruler.style.transform = `translate3d(${-s * SEC_PX}px,0,0)`; };
+  function showCustom(moving) {
+    const text = fmt(custom * 1000);
+    if (valBox.textContent !== text) valBox.textContent = text;
+    const s = custom % 60;
+    strip.setAttribute('aria-valuenow', s);
+    secChips.forEach((b) => b.classList.toggle('on', +b.dataset.sec === s));
+    card.classList.toggle('tm-nogo', custom < 1);
+    if (!moving) placeRuler(s);
+  }
+  // Seconds 0–59 on top of the whole minutes (the 12-hour limit has no seconds past it).
+  const setSecs = (s, moving) => { custom = Math.min(MAX_S, Math.floor(custom / 60) * 60 + Math.max(0, Math.min(59, s))); showCustom(moving); };
   showCustom();
+
+  // Dragging the strip: the ruler follows the finger (a transform, nothing else moves), the
+  // readout counts along, and on release it snaps to a whole second; a quick flick throws
+  // it on and lands on a multiple of 5. A tap on a number brings that number to the mark.
+  let drag = null;
+  let dragEndAt = 0, touchEndAt = 0;
+  const clampS = (v) => Math.max(0, Math.min(59, v));
+  function dragStart(x, y) {
+    const r = strip.getBoundingClientRect();
+    ruler.classList.remove('snap');
+    drag = { x, y, from: custom % 60, pos: custom % 60, axis: null, scale: r.width / strip.offsetWidth || 1, mid: r.left + r.width / 2, trail: [[x, Date.now()]] };
+  }
+  function dragMove(x) {
+    const d = drag;
+    d.pos = clampS(d.from - (x - d.x) / d.scale / SEC_PX);
+    placeRuler(d.pos);
+    setSecs(Math.round(d.pos), true);
+    d.trail.push([x, Date.now()]);
+    if (d.trail.length > 6) d.trail.shift();
+  }
+  function dragEnd(x) {
+    const d = drag;
+    drag = null;
+    if (!d) return;
+    dragEndAt = Date.now();
+    ruler.classList.add('snap');
+    if (!d.axis) { setSecs(Math.round(clampS(d.from + (x - d.mid) / d.scale / SEC_PX))); return; } // a tap
+    if (d.axis !== 'x') { showCustom(); return; }
+    const [x0, t0] = d.trail[0];
+    const v = (Date.now() - t0 > 0 && Date.now() - t0 < 200) ? (x - x0) / d.scale / (Date.now() - t0) : 0; // px per ms
+    setSecs(Math.abs(v) > 0.6 ? Math.round(clampS(d.pos - (v * 180) / SEC_PX) / 5) * 5 : Math.round(d.pos));
+  }
+  strip.addEventListener('touchstart', (e) => { if (e.touches.length === 1) dragStart(e.touches[0].clientX, e.touches[0].clientY); else drag = null; }, { passive: true });
+  strip.addEventListener('touchmove', (e) => {
+    if (!drag) return;
+    const t = e.touches[0];
+    if (!drag.axis && Math.hypot(t.clientX - drag.x, t.clientY - drag.y) > 6) drag.axis = Math.abs(t.clientX - drag.x) >= Math.abs(t.clientY - drag.y) ? 'x' : 'y';
+    if (drag.axis === 'x') { e.preventDefault(); dragMove(t.clientX); }
+  }, { passive: false });
+  strip.addEventListener('touchend', (e) => { touchEndAt = Date.now(); dragEnd(e.changedTouches[0].clientX); });
+  strip.addEventListener('touchcancel', () => { drag = null; showCustom(); });
+  // A mouse, when previewing on a PC.
+  const onMouseMove = (e) => {
+    if (!drag) return;
+    if (!drag.axis && Math.abs(e.clientX - drag.x) > 4) drag.axis = 'x';
+    if (drag.axis) dragMove(e.clientX);
+  };
+  const onMouseUp = (e) => { dropDrag(); dragEnd(e.clientX); };
+  dropDrag = () => { window.removeEventListener('mousemove', onMouseMove); window.removeEventListener('mouseup', onMouseUp); };
+  strip.addEventListener('mousedown', (e) => {
+    if (e.button !== 0 || Date.now() - touchEndAt < 800) return; // (the mouse events a touch also sends)
+    e.preventDefault();
+    dragStart(e.clientX, e.clientY);
+    window.addEventListener('mousemove', onMouseMove);
+    window.addEventListener('mouseup', onMouseUp);
+  });
   const openSheet = () => { sheet.classList.add('open'); };
   const closeSheet = () => {
     sheet.classList.remove('open');
@@ -260,9 +369,9 @@ export function mount(el) {
 
   // ---- Recent other times ----
   function showRecent() {
-    const recent = (Array.isArray(prefs.recent) ? prefs.recent : []).filter((m) => m !== custom).slice(0, 4);
+    const recent = recentS().filter((s) => s !== custom).slice(0, 4);
     $('[data-recent]').innerHTML = recent.length
-      ? `<span style="margin-right:4px">Recent</span>${recent.map((m) => `<button class="x-btn sm" data-recent-start="${m}">${minutesText(m)}</button>`).join('')}`
+      ? `<span style="margin-right:4px">Recent</span>${recent.map((s) => `<button class="x-btn sm" data-recent-start="${s}">${s % 60 ? fmt(s * 1000) : minutesText(s / 60)}</button>`).join('')}`
       : '';
     $('[data-recent]').style.display = recent.length ? 'flex' : 'none';
   }
@@ -286,20 +395,21 @@ export function mount(el) {
     else if (m.classList.contains('warn')) { m.textContent = ''; m.className = 'tm-msg'; }
   }
 
-  function start(mins, fromCustom) {
-    const secs = mins * 60;
+  function start(secs, fromCustom) {
+    if (secs < 1) return;
     // Wet fingers often tap twice: the same time twice within a second is one tap.
     const key = String(secs);
     if (lastStart.key === key && Date.now() - lastStart.at < 1000) return;
     lastStart = { key, at: Date.now() };
     closeSheet();
-    if (!addTimer(secs, name || undefined)) { say(fullText(), true); return; }
-    const what = name || `${minutesText(mins)} timer`;
+    // A time with seconds gets its own label ("2 min 30 sec timer"): the stock one rounds to minutes.
+    const what = name || `${setText(secs)} timer`;
+    if (!addTimer(secs, name || (secs % 60 ? what : undefined))) { say(fullText(), true); return; }
     say(`${what} started. ${ringsText(Date.now() + secs * 1000)}.`);
     // Remember a typed name and an "Other time" for next time.
     if (name && NAMES.indexOf(name) < 0) prefs.names = [name].concat(typedNames().filter((n) => n !== name)).slice(0, 3);
-    if (fromCustom && PRESETS.indexOf(mins) < 0) prefs.recent = [mins].concat((prefs.recent || []).filter((m) => m !== mins)).slice(0, 5);
-    if (fromCustom) prefs.custom = mins;
+    if (fromCustom && (secs % 60 || PRESETS.indexOf(secs / 60) < 0)) prefs.recentS = [secs].concat(recentS().filter((s) => s !== secs)).slice(0, 5);
+    if (fromCustom) prefs.customS = secs;
     savePrefs(prefs);
     name = '';
     nameInput.value = '';
@@ -334,7 +444,7 @@ export function mount(el) {
     const btn = (attr, label, cls) => `<button class="x-btn sm${cls ? ` ${cls}` : ''}" data-${attr}="${t.id}">${label}</button>`;
     return `
       <div class="tm-cell ${st}${ring ? ' ring' : ''}${finished && !ring ? ' over' : ''}">
-        <div class="tm-name">${esc(t.label)}${t.named ? `<small> · ${setText(t.secs)}</small>` : ''}</div>
+        <div class="tm-name">${esc(t.label)}${t.named && !AUTO_LABEL.test(t.label) ? `<small> · ${setText(t.secs)}</small>` : ''}</div>
         <div class="tm-potwrap">
           ${lively && going ? '<div class="tm-steam" style="left:30%"></div><div class="tm-steam" style="left:52%;animation-delay:-2.3s"></div>' : ''}
           <div class="tm-ear l"></div><div class="tm-ear r"></div>
@@ -421,20 +531,22 @@ export function mount(el) {
 
   const moreBox = $('[data-more]');
   el.addEventListener('click', (e) => {
-    if (e.target === sheet) { closeSheet(); return; } // a tap beside the card
+    // A tap beside the card (not the end of a drag on the seconds strip that left the card).
+    if (e.target === sheet) { if (Date.now() - dragEndAt > 400) closeSheet(); return; }
     const b = e.target.closest('button');
     // Any tap closes the "•••" list, except the one that opens it.
     if (!b || !b.matches('[data-more-btn]')) moreBox.classList.remove('open');
     if (!b) return;
     if (b.matches('[data-more-btn]')) { moreBox.classList.toggle('open'); return; }
     const d = b.dataset;
-    if (d.start) start(+d.start, false);
+    if (d.start) start(+d.start * 60, false);
     else if (d.recentStart) start(+d.recentStart, true);
     else if (d.name != null && b.classList.contains('tm-n')) {
       name = name === d.name ? '' : d.name; // tap again to take the name off
       nameInput.value = '';
       showNames();
-    } else if (d.custom) { custom = Math.min(MAX_CUSTOM, Math.max(1, custom + +d.custom)); showCustom(); showRecent(); }
+    } else if (d.custom) { custom = Math.min(MAX_S, Math.max(custom % 60, custom + +d.custom * 60)); showCustom(); showRecent(); }
+    else if (d.sec) { ruler.classList.add('snap'); setSecs(+d.sec); showRecent(); }
     else if (b.matches('[data-start-custom]')) start(custom, true);
     else if (b.matches('[data-new]')) openSheet();
     else if (b.matches('[data-close]')) closeSheet();
@@ -470,5 +582,6 @@ export function mount(el) {
 
 export function unmount() {
   clearInterval(tickTimer); clearTimeout(msgTimer); clearTimeout(undoTimer);
+  if (dropDrag) dropDrag(); dropDrag = null;
   if (off) off(); off = null;
 }
