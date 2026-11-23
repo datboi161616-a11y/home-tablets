@@ -1,9 +1,11 @@
 // Kitchen conversions: the sums people do with floury hands, in three big modes.
-//   Cups & grams  pick an ingredient: a measuring cup pours full and a kitchen scale's
-//                 needle swings to the grams; the same amount in spoons, fl oz, ml, butter.
-//   Oven          a huge oven knob to turn: °F outside, °C inside, gas mark in the readout,
-//                 and a roast helper (meat + weight -> time and done temperature).
-//   More          cups & spoons, weights & butter, halve & double, the oven table, "is it done?".
+//   Cups & grams  one sentence that is also the control: "[1] [cup] of [flour] = about 120 g";
+//                 each bracketed word opens a small picker (any spoon/cup/ml or weight measure).
+//                 A measuring jug pours, a kitchen scale's needle swings; one line of the
+//                 same amount in the other measures; the butter stick when it's butter.
+//   Oven          a huge oven knob to turn: °F outside, °C inside, gas mark in the readout;
+//                 sheets for roasting times, "is it done?" and the oven table.
+//   Halve & double  scaling a recipe's measure.
 // Everything by tapping; nothing to type.
 //
 // US kitchen measures: 1 tbsp = 3 tsp, 1 fl oz = 2 tbsp, 1 cup = 16 tbsp = 8 fl oz,
@@ -139,17 +141,43 @@ function roastTime(r, lb) {
   return / hours?$/.test(ta) && / hours?$/.test(tb) ? `${ta.replace(/ hours?$/, '')} to ${tb}` : `${ta} to ${tb}`;
 }
 
-const MODES = [['cups', 'Cups & grams'], ['oven', 'Oven'], ['more', 'More']];
-const TABS = [['volume', 'Cups & spoons'], ['weight', 'Weights & butter'], ['halve', 'Halve & double'], ['oven', 'Oven table'], ['done', 'Is it done?']];
+
+// ---- what "1 [cup] of flour" can be measured in: spoons and cups, millilitres, or a weight
+//   [id, one, many]
+const MEASURES = [
+  ['cup', 'cup', 'cups'], ['tbsp', 'tbsp', 'tbsp'], ['tsp', 'tsp', 'tsp'], ['floz', 'fl oz', 'fl oz'],
+  ['pint', 'pint', 'pints'], ['quart', 'quart', 'quarts'], ['ml', 'ml', 'ml'],
+  ['oz', 'oz', 'oz'], ['lb', 'lb', 'lb'], ['g', 'g', 'g'], ['kg', 'kg', 'kg'],
+];
+const SHORT = { tsp: ['tsp', 'tsp'], tbsp: ['tbsp', 'tbsp'], floz: ['fl oz', 'fl oz'], cup: ['cup', 'cups'], pint: ['pint', 'pints'], quart: ['quart', 'quarts'] };
+const volumeOf = (id) => VOLUME.filter((u) => u[0] === id)[0];
+const weightOf = (id) => WEIGHT.filter((u) => u[0] === id)[0];
+const amountsFor = (id) => (id === 'ml' ? METRIC_VOLUMES : weightOf(id) ? WEIGHT_AMOUNTS[id] : VOLUME_AMOUNTS);
+const TIDY_CUPS = [0.25, 1 / 3, 0.5, 2 / 3, 0.75, 1, 1.25, 1.5, 2, 2.5, 3, 4];
+/** natural(), in the short words a recipe card uses. */
+const naturalShort = (tsp) => natural(tsp).replace(/tablespoons?/g, 'tbsp').replace(/teaspoons?/g, 'tsp');
+/** Teaspoons as the nearest thing measuring cups and spoons can do: "about ⅔ cup", "about 3 tbsp + ¾ tsp". */
+function scoopSaid(tsp) {
+  const tidy = TIDY_CUPS.filter((c) => Math.abs(c - tsp / 48) / (tsp / 48) < 0.05)[0];
+  if (tidy) return `about ${amount(tidy)} ${plural(tidy, 'cup', 'cups')}`;
+  return `about ${naturalShort(tsp >= 12 ? Math.round(tsp) : Math.max(0.25, Math.round(tsp * 4) / 4))}`;
+}
+
+const MODES = [['cups', 'Cups & grams'], ['oven', 'Oven'], ['halve', 'Halve & double']];
+const SHEETS = { roast: 'Roasting times', done: 'Is it done?', table: 'Oven table' };
 const KEY = 'convert.v1'; // which mode and what was last picked, for next time
 let stopDrag = null;
 
 export function mount(el) {
-  let s = { mode: 'cups', tab: 'volume', vAmt: 1, vUnit: 'cup', wAmt: 8, wUnit: 'oz', hAmt: 0.75, hUnit: 'cup', ing: 'flour', cAmt: 1, unit: 'F', deg: 350, meat: 'turkey', lb: 14 };
+  let s = { mode: 'cups', hAmt: 0.75, hUnit: 'cup', ing: 'flour', cAmt: 1, cUnit: 'cup', unit: 'F', deg: 350, meat: 'turkey', lb: 14 };
   try { s = Object.assign(s, JSON.parse(localStorage.getItem(KEY) || '{}')); } catch (e) { /* the usual start */ }
+  // The old "More" mode: its converters now live in the main modes.
+  if (s.mode === 'more') s.mode = s.tab === 'halve' ? 'halve' : s.tab === 'oven' || s.tab === 'done' ? 'oven' : 'cups';
   const save = () => { try { localStorage.setItem(KEY, JSON.stringify(s)); } catch (e) { /* storage off */ } };
   // Where the cup and the needle were, so they move from there to the new answer.
   let fromLevel = CUP_H, fromNeedle = -135;
+  let pick = null; // the open picker in Cups & grams: 'amt', 'unit' or 'ing'
+  let sheet = null; // the open sheet in Oven: 'roast', 'done' or 'table'
 
   el.innerHTML = `
   <style>
@@ -167,16 +195,23 @@ export function mount(el) {
     .cv-eyebrow{font:600 15px Inter,sans-serif;letter-spacing:3px;text-transform:uppercase;color:#3F7F6E}
     .cv.dark .cv-eyebrow{color:#FFB25B}
 
-    /* ---- cups & grams ---- */
-    .cg{height:100%;display:grid;grid-template-columns:280px minmax(0,1fr) 244px;gap:26px}
-    .cg-list{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px}
-    .cg-i{min-height:58px;border:0;border-radius:16px;background:#FFFFFF;color:#2A2622;font:500 19px Inter,sans-serif;text-align:left;padding:0 14px;cursor:pointer}
-    .cg-i.on{background:#3F7F6E;color:#FFFFFF;font-weight:600}
-    .cg-amts{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:10px}
-    .cg-a{min-height:58px;border:0;border-radius:16px;background:#FFFFFF;color:#2A2622;font:600 26px Inter,sans-serif;cursor:pointer}
-    .cg-a.on{background:#2A2622;color:#FBF6EC}
-    .cg-scene{position:relative;height:100%}
-    .cg-cupwrap{position:absolute;left:8px;top:92px;width:290px;height:${CUP_H + 60}px}
+    /* ---- cups & grams: the question is the control ---- */
+    .cg{height:100%;position:relative}
+    .cg-ask{display:flex;align-items:center;justify-content:center;gap:12px;white-space:nowrap;font-family:Outfit,sans-serif;font-weight:500;line-height:1.1}
+    .cg-w{min-height:72px;border:0;border-radius:18px;background:#FFFFFF;color:#3F7F6E;font:600 1em/1 Outfit,sans-serif;padding:0 18px;cursor:pointer;box-shadow:0 3px 0 #E4DCCB}
+    .cg-w i{font-style:normal;font-size:.5em;margin-left:8px;vertical-align:middle;opacity:.7}
+    .cg-w.open{background:#3F7F6E;color:#FFFFFF;box-shadow:none}
+    .cg-res{color:#C2452D;font-weight:600}
+    .cg-pop{position:absolute;top:88px;z-index:5;background:#FFFFFF;border-radius:28px;padding:20px;box-shadow:0 12px 28px rgba(60,45,20,.22)}
+    .cg-grid{display:grid;gap:10px}
+    .cg-pb{min-height:84px;min-width:100px;border:0;border-radius:18px;background:#F4ECDD;color:#2A2622;font:600 34px Outfit,sans-serif;cursor:pointer;padding:0 14px}
+    .cg-pb.on{background:#2A2622;color:#FBF6EC}
+    .cg-pb.unit{font-size:26px}
+    .cg-pb.ing{display:flex;align-items:center;gap:12px;min-width:190px;text-align:left;font:500 22px Inter,sans-serif}
+    .cg-pb .dot{width:32px;height:32px;border-radius:50%;flex:none;box-shadow:inset 0 0 0 2px rgba(0,0,0,.12)}
+    .cg-pop .cv-eyebrow{margin:4px 0 10px}
+    .cg-stage{position:absolute;left:50%;top:92px;width:626px;height:400px;margin-left:-313px;transform:scale(1.2);transform-origin:50% 0}
+    .cg-cupwrap{position:absolute;left:0;top:22px;width:290px;height:${CUP_H + 60}px}
     .cg-jug{position:absolute;left:0;top:44px;width:226px;height:${CUP_H + 10}px;box-sizing:border-box;border:5px solid #9FB8C2;border-top:0;border-radius:0 0 26px 26px;overflow:hidden;background:rgba(200,225,235,.35)}
     .cg-fill{position:absolute;left:0;top:0;width:100%;height:100%;will-change:transform;transition:transform 1.1s cubic-bezier(.3,.7,.4,1)}
     .cg-stream{position:absolute;left:104px;top:0;width:14px;height:100%;opacity:0;animation:cg-pour 1.3s ease-in-out both}
@@ -185,9 +220,8 @@ export function mount(el) {
     .cg-handle{position:absolute;left:222px;top:84px;width:52px;height:150px;box-sizing:border-box;border:13px solid #9FB8C2;border-left:0;border-radius:0 60px 60px 0}
     .cg-tick{position:absolute;left:5px;display:flex;align-items:center;gap:8px;font:700 17px Inter,sans-serif;color:#C2452D;line-height:1;margin-top:-9px}
     .cg-tick i{display:block;width:34px;height:3px;background:#C2452D}
-    .cg-said{position:absolute;left:0;top:${CUP_H + 162}px;width:300px;text-align:center;font-size:22px;font-weight:600;line-height:1.25}
-    .cg-arrow{position:absolute;left:288px;top:270px}
-    .cg-scale{position:absolute;left:356px;top:70px;width:270px;height:400px}
+    .cg-arrow{position:absolute;left:288px;top:200px}
+    .cg-scale{position:absolute;left:356px;top:0;width:270px;height:400px}
     .cg-pan{position:absolute;left:25px;top:0;width:220px;height:28px;border-radius:12px;background:linear-gradient(180deg,#D9DEE2,#AEB6BC)}
     .cg-neck{position:absolute;left:125px;top:28px;width:20px;height:30px;background:#9AA3AA}
     .cg-bodyy{position:absolute;left:0;top:56px;width:270px;height:344px;border-radius:56px 56px 30px 30px;background:linear-gradient(180deg,#4F8E7C,#3F7F6E 60%,#346B5C);box-shadow:0 16px 30px rgba(40,60,50,.3)}
@@ -196,15 +230,14 @@ export function mount(el) {
     .cg-hub{position:absolute;left:103px;top:103px;width:24px;height:24px;border-radius:50%;background:#2A2622}
     .cg-grams{position:absolute;left:0;right:0;top:258px;text-align:center;color:#FFFFFF;font:700 40px/1 Outfit,sans-serif}
     .cg-grams small{display:block;font:500 18px Inter,sans-serif;opacity:.9;margin-top:6px}
-    .cg-grams span{font:500 20px Inter,sans-serif;opacity:.9}
-    .cg-same{font:500 31px/1.3 Outfit,sans-serif;margin-top:8px}
-    .cg-same b{font-weight:500;color:#C2452D}
+    .cg-same{position:absolute;left:0;right:0;top:590px;text-align:center;font:500 27px/1.2 Outfit,sans-serif;color:#2A2622;white-space:nowrap}
+    .cg-note{position:absolute;left:0;right:0;top:630px;text-align:center;font-size:16px;color:#5A544C}
+    .cg-butter{position:absolute;right:0;top:300px;width:200px}
     .cg-stick{position:relative;height:56px;margin-top:10px;border-radius:8px;overflow:hidden;background:#EFE6D0;box-shadow:0 6px 12px rgba(0,0,0,.12)}
     .cg-stick .fill{position:absolute;left:0;top:0;height:100%;background:linear-gradient(180deg,#FFF3B8,#F6DE78)}
     .cg-stick .marks{position:absolute;left:0;top:0;width:100%;height:100%;display:flex}
     .cg-stick .marks i{flex:1;border-right:2px solid rgba(120,90,20,.45);font:600 15px Inter,sans-serif;font-style:normal;color:rgba(90,65,10,.8);display:flex;align-items:flex-end;justify-content:center;padding-bottom:4px}
     .cg-stick .marks i:last-child{border-right:0}
-    .cg-note{font-size:17px;line-height:1.4;color:#5A544C}
     @keyframes cg-pour{0%{opacity:0}20%,70%{opacity:1}100%{opacity:0}}
 
     /* ---- oven ---- */
@@ -233,27 +266,30 @@ export function mount(el) {
     .ov-chips{display:flex;gap:8px;margin-top:14px}
     .ov-chip{flex:1;min-height:58px;border:0;border-radius:16px;background:rgba(246,238,227,.1);color:#F6EEE3;font:600 21px Inter,sans-serif;cursor:pointer}
     .ov-chip.on{background:#FFB25B;color:#1A242E;font-weight:700}
-    .ov-roast{margin-top:16px;padding:16px 18px;border-radius:22px;background:rgba(10,16,22,.5);box-shadow:inset 0 0 0 1px #3A4654}
+    .ov-more{display:flex;gap:10px;margin-top:40px}
+    .ov-more .x-btn{flex:1;padding:0 10px}
+    .ov-sheet{position:absolute;left:588px;right:0;top:0;bottom:0;z-index:3;box-sizing:border-box;padding:16px 22px 18px;border-radius:22px;background:#1A242E;box-shadow:inset 0 0 0 1px #3A4654;display:flex;flex-direction:column}
+    .ov-sheet-top{display:flex;align-items:center;gap:12px;flex:none;margin-bottom:6px}
     .ov-meats{display:flex;gap:8px;margin-top:10px}
     .ov-meats .ov-chip{font-size:18px;min-height:56px;white-space:nowrap;padding:0 6px}
     .ov-meats .ov-chip.on{background:#F6EEE3}
-    .ov-row{display:flex;align-items:center;gap:12px;margin-top:10px}
+    .ov-row{display:flex;align-items:center;gap:12px;margin-top:18px}
     .ov-row .ov-step{width:58px;min-height:58px;font-size:34px}
     .ov-lb{font:700 38px/1 Outfit,sans-serif;min-width:92px;text-align:center;white-space:nowrap}
     .ov-ans{flex:1;min-width:0;font-size:20px;line-height:1.3}
     .ov-ans b{display:block;font:500 25px/1.2 Outfit,sans-serif}
-    .ov-bar{position:relative;height:16px;border-radius:8px;margin-top:12px;background:linear-gradient(90deg,#6FA8DC,#F2C462 55%,#E0582A)}
+    .ov-bar{position:relative;height:16px;border-radius:8px;margin-top:22px;background:linear-gradient(90deg,#6FA8DC,#F2C462 55%,#E0582A)}
     .ov-bar i{position:absolute;top:-5px;width:5px;height:26px;border-radius:3px;background:#F6EEE3;margin-left:-2px}
-    .ov-done{display:flex;align-items:center;gap:12px;margin-top:8px;font-size:18px;line-height:1.3}
-    .ov-guide{font-size:15px;line-height:1.35;color:#C9D3DD;margin-top:8px}
+    .ov-done{display:flex;align-items:center;gap:12px;margin-top:18px;font-size:19px;line-height:1.3}
+    .ov-guide{font-size:15px;line-height:1.35;color:#C9D3DD;margin-top:auto}
+    .ov-sheet .cv-oven{font-size:20px}
+    .ov-sheet .cv-oven th{color:#C9D3DD}
+    .ov-sheet .cv-oven td{border-top-color:#3A4654}
+    .ov-sheet .cv-oven td:last-child,.ov-sheet .cv-oven .sub{color:#C9D3DD}
     @keyframes ov-heat{0%,100%{opacity:.6}50%{opacity:1}}
 
-    /* ---- more: the plain converters ---- */
-    .mo{height:100%;display:flex;flex-direction:column;gap:16px}
-    .mo-tabs{display:flex;gap:10px;flex:none}
-    .mo-tabs .x-btn{background:#FFFFFF;color:#2A2622;flex:1;padding:0 10px}
-    .mo-tabs .x-btn.on{background:#2A2622;color:#FBF6EC}
-    .mo-body{flex:1;min-height:0;display:grid;grid-template-columns:minmax(0,5fr) minmax(0,6fr);gap:20px}
+    /* ---- halve & double ---- */
+    .mo-body{height:100%;display:grid;grid-template-columns:minmax(0,5fr) minmax(0,6fr);gap:20px}
     .cv-card{background:#FFFFFF;border-radius:28px;padding:24px 30px;display:flex;flex-direction:column;gap:16px;min-width:0;min-height:0;box-sizing:border-box}
     .cv-label{font-size:15px;font-weight:600;letter-spacing:1px;text-transform:uppercase;color:#5A544C}
     .cv-chips{display:flex;flex-wrap:wrap;gap:10px}
@@ -261,13 +297,11 @@ export function mount(el) {
     .cv-chip.on{background:#2A2622;border-color:#2A2622;color:#fff}
     .cv-ask{font-family:Outfit,system-ui,sans-serif;font-size:44px;font-weight:500;line-height:1.1}
     .cv-line{display:flex;align-items:baseline;gap:14px;font-size:30px;font-weight:600;line-height:1.25}
-    .cv-line small{font-size:19px;font-weight:500;color:#5A544C}
-    .cv-eq{color:#C2452D;font-weight:700}
-    .cv-note{font-size:17px;line-height:1.4;color:#5A544C;margin-top:auto}
     .cv-oven{width:100%;border-collapse:collapse;font-size:23px}
     .cv-oven th{font-size:15px;font-weight:600;letter-spacing:1px;text-transform:uppercase;color:#5A544C;text-align:left;padding:0 0 8px}
     .cv-oven td{padding:7px 0;border-top:1px solid #E4DCCB;font-weight:600}
-    .cv-oven td:last-child{font-weight:500;font-size:20px;color:#5A544C}
+    .cv-oven td:last-child{font-weight:500;font-size:18px;color:#5A544C}
+    .cv-oven .sub{font-size:16px;font-weight:500}
     @media (prefers-reduced-motion: reduce){
       .cg-fill,.cg-needle,.ov-knob.ease{transition:none}
       .cg-stream,.ov-heat i{animation:none}
@@ -278,77 +312,140 @@ export function mount(el) {
   const root = el.querySelector('[data-root]');
   const $ = (q) => root.querySelector(q);
   const chips = (name, list, chosen) => `<div class="cv-chips" data-pick="${name}">${list.map((v) => `<button class="cv-chip${v[0] === chosen ? ' on' : ''}" data-v="${esc(String(v[0]))}">${esc(v[1])}</button>`).join('')}</div>`;
-  const line = (text, small) => `<div class="cv-line"><span class="cv-eq">=</span><span>${esc(text)}</span>${small ? `<small>${esc(small)}</small>` : ''}</div>`;
 
   // =====================================================================================
-  // Cups & grams
+  // Cups & grams: "[1] [cup] of [flour] = about 120 g", the jug pours it, the scale weighs it
   // =====================================================================================
+  const near = (a, b) => Math.abs(a - b) < 1e-6;
   function cupsView() {
     const ing = INGREDIENTS.filter((i) => i[0] === s.ing)[0] || INGREDIENTS[0];
-    if (!CUP_AMOUNTS.some((v) => Math.abs(v - s.cAmt) < 1e-6)) s.cAmt = 1;
-    const cups = s.cAmt;
-    const tsp = cups * 48;
-    const g = cups * ing[3];
+    s.ing = ing[0];
+    if (!MEASURES.some((m) => m[0] === s.cUnit)) s.cUnit = 'cup';
+    const unit = MEASURES.filter((m) => m[0] === s.cUnit)[0];
+    const vol = volumeOf(unit[0]), wt = weightOf(unit[0]), isMl = unit[0] === 'ml';
+    const list = amountsFor(unit[0]);
+    if (!list.some((v) => near(v, +s.cAmt))) s.cAmt = isMl ? 250 : wt ? list[2] : 1;
+    const amt = +s.cAmt;
+    let tsp, g;
+    if (wt) { g = amt * wt[2]; tsp = g / ing[3] * 48; } else { tsp = isMl ? amt / ML_PER_TSP : amt * vol[3]; g = tsp / 48 * ing[3]; }
+    const cups = tsp / 48;
     const oz = g / 28.3495;
-    // The scale's dial goes as far as it needs to.
-    const top = g <= 300 ? 300 : g <= 600 ? 600 : 900;
-    const needle = -135 + (g / top) * 270;
-    const level = CUP_H - (cups / CUP_TOP) * CUP_H;
-    const sticks = tsp / 24;
-    const marks = [[2, '2 cups'], [1.5, '1½'], [1, '1 cup'], [0.5, '½']];
-    const dial = [0, 1, 2, 3, 4, 5, 6].map((k) => {
-      const a = (-135 + k * 45) * Math.PI / 180;
+    const answer = wt ? scoopSaid(tsp) : `about ${grams(g)}`;
+
+    // The one line under the pictures: the same amount in the other measures.
+    let same = [];
+    if (vol) {
+      same = ['tbsp', 'tsp', 'floz', 'cup', 'pint', 'quart'].filter((id) => id !== vol[0]).map((id) => [tsp / volumeOf(id)[3], id])
+        .filter(([n]) => n >= 0.124 && n <= 200 && (fraction(n) || n >= 1))
+        .map(([n, id]) => `${fraction(n) ? '' : 'about '}${amount(n)} ${plural(n, SHORT[id][0], SHORT[id][1])}`)
+        .concat([metric(tsp * ML_PER_TSP)]);
+    } else if (isMl) {
+      // From millilitres nothing comes out even: "about", in the measures worth saying, and the easy way to measure it.
+      const about = (n, step, id) => { const r = Math.round(n / step) * step; return `about ${amount(r)} ${plural(r, SHORT[id][0], SHORT[id][1])}`; };
+      const tidy = TIDY_CUPS.filter((c) => Math.abs(c - cups) / cups < 0.06)[0];
+      same = [tidy ? `about ${amount(tidy)} ${plural(tidy, 'cup', 'cups')}` : '',
+        tsp / 6 >= 1 ? about(tsp / 6, 0.5, 'floz') : '',
+        tsp / 3 >= 1 && tsp / 3 <= 8.2 ? about(tsp / 3, 0.5, 'tbsp') : '',
+        tsp <= 6.2 ? about(tsp, 0.25, 'tsp') : '',
+        `measure ${naturalShort(tsp >= 12 ? Math.round(tsp) : Math.round(tsp * 4) / 4)}`].filter(Boolean);
+    } else {
+      if (wt[0] !== 'oz' && oz > 16 && oz <= 80) same.push(`${Math.floor(oz / 16)} lb ${amount(Math.round((oz % 16) * 2) / 2)} oz`);
+      if (wt[0] !== 'lb' && oz >= 4) same.push(`${amount(Math.round((oz / 16) * 8) / 8)} lb`);
+      if (wt[0] !== 'g' && wt[0] !== 'kg') same.push(grams(g));
+      if (wt[0] === 'g' && g >= 500) same.push(`${Math.round(g / 10) / 100} kg`);
+      if (wt[0] === 'kg') same.push(`${Math.round(g)} g`);
+    }
+
+    // The scale's dial goes as far as it needs to; so does the jug.
+    const top = [300, 600, 900, 1500, 3000, 6000].filter((t) => g <= t)[0] || 6000;
+    const needle = Math.min(135, -135 + (g / top) * 270);
+    let cap = CUP_TOP;
+    while (cups > cap && cap < 36) cap *= 2;
+    const level = CUP_H - Math.min(1, cups / cap) * CUP_H;
+    const k = cap / CUP_TOP;
+    const marks = [[2 * k, `${amount(2 * k)} cups`], [1.5 * k, amount(1.5 * k)], [k, k === 1 ? '1 cup' : amount(k)], [0.5 * k, amount(0.5 * k)]];
+    const dial = [0, 1, 2, 3, 4, 5, 6].map((n) => {
+      const a = (-135 + n * 45) * Math.PI / 180;
       const x = (r) => (115 + r * Math.sin(a)).toFixed(1), y = (r) => (115 - r * Math.cos(a)).toFixed(1);
       return `<line x1="${x(100)}" y1="${y(100)}" x2="${x(84)}" y2="${y(84)}" stroke="#2A2622" stroke-width="2"/>`
-        + `<text x="${x(66)}" y="${(+y(66) + 5).toFixed(1)}" font-family="Inter,sans-serif" font-size="15" font-weight="600" fill="#2A2622" text-anchor="middle">${Math.round((top / 6) * k)}</text>`;
+        + `<text x="${x(66)}" y="${(+y(66) + 5).toFixed(1)}" font-family="Inter,sans-serif" font-size="15" font-weight="600" fill="#2A2622" text-anchor="middle">${Math.round((top / 6) * n)}</text>`;
     }).join('');
+    const sticks = tsp / 24;
+    const butter = ing[0] !== 'butter' ? '' : `
+      <div class="cg-butter">
+        <div class="cv-eyebrow">Sticks of butter</div>
+        <div class="cg-stick" aria-hidden="true">
+          <div class="fill" style="width:${Math.min(100, sticks * 100).toFixed(1)}%"></div>
+          <div class="marks">${[1, 2, 3, 4, 5, 6, 7, 8].map((n) => `<i>${n}</i>`).join('')}</div>
+        </div>
+        <div style="font-size:21px;font-weight:600;margin-top:10px">${esc(`${amount(Math.round(sticks * 8) / 8)} ${plural(sticks, 'stick', 'sticks')}`)}</div>
+        <div style="font-size:16px;color:#5A544C;margin-top:4px">1 stick = 8 tbsp = 113 g</div>
+      </div>`;
+    const word = (which, text) => `<button class="cg-w${pick === which ? ' open' : ''}" data-w="${which}">${esc(text)}<i>▾</i></button>`;
+    const sentence = `${amount(amt)} ${unit[2]} of ${ing[2]} = ${answer}`;
+    const size = sentence.length <= 30 ? 48 : sentence.length <= 38 ? 42 : 36;
     const html = `
       <div class="cg">
-        <div>
-          <div class="cv-eyebrow">A cup of what?</div>
-          <div class="cg-list" data-ings>${INGREDIENTS.map((i) => `<button class="cg-i${i[0] === ing[0] ? ' on' : ''}" data-ing="${i[0]}">${esc(i[1])}</button>`).join('')}</div>
-          <div class="cv-eyebrow" style="margin-top:18px">How many cups</div>
-          <div class="cg-amts">${CUP_AMOUNTS.map((v) => `<button class="cg-a${Math.abs(v - cups) < 1e-6 ? ' on' : ''}" data-cups="${v}">${amount(v)}</button>`).join('')}</div>
+        <div class="cg-ask" style="font-size:${size}px">
+          ${word('amt', isMl ? String(amt) : amount(amt))}${word('unit', plural(amt, unit[1], unit[2]))}<span>of</span>${word('ing', ing[2])}<span>=</span><span class="cg-res">${esc(answer)}</span>
         </div>
-        <div class="cg-scene">
-          <div class="x-serif" style="font-size:40px;line-height:1.1;white-space:nowrap">How much is a cup, really?</div>
-          <div class="cg-cupwrap" aria-hidden="true">
+        <div class="cg-stage" aria-hidden="true">
+          <div class="cg-cupwrap">
             <div class="cg-stream above" style="background:${ing[4]}"></div>
             <div class="cg-jug">
               <div class="cg-stream" style="background:${ing[4]}"></div>
               <div class="cg-fill" data-fill style="transform:translate3d(0,${fromLevel.toFixed(1)}px,0);background:linear-gradient(180deg,${ing[4]},${ing[5]})"></div>
-              ${marks.map(([c, t]) => `<div class="cg-tick" style="top:${(CUP_H - (c / CUP_TOP) * CUP_H).toFixed(1)}px"><i></i>${t}</div>`).join('')}
+              ${marks.map(([c, t]) => `<div class="cg-tick" style="top:${(CUP_H - (c / cap) * CUP_H).toFixed(1)}px"><i></i>${t}</div>`).join('')}
             </div>
             <div class="cg-lip"></div><div class="cg-handle"></div>
           </div>
-          <div class="cg-said">${esc(`${amount(cups)} ${plural(cups, 'cup', 'cups')} of ${ing[2]}`)}</div>
-          <svg class="cg-arrow" width="60" height="34" viewBox="0 0 80 40" aria-hidden="true"><path d="M4 20 H66 M50 6 L70 20 L50 34" fill="none" stroke="#3F7F6E" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          <svg class="cg-arrow" width="60" height="34" viewBox="0 0 80 40"><path d="M4 20 H66 M50 6 L70 20 L50 34" fill="none" stroke="#3F7F6E" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/></svg>
           <div class="cg-scale">
             <div class="cg-pan"></div><div class="cg-neck"></div>
             <div class="cg-bodyy">
               <div class="cg-dial">
-                <svg width="230" height="230" viewBox="0 0 230 230" aria-hidden="true">${dial}<text x="115" y="192" font-family="Inter,sans-serif" font-size="15" fill="#7A746C" text-anchor="middle">grams</text></svg>
+                <svg width="230" height="230" viewBox="0 0 230 230">${dial}<text x="115" y="192" font-family="Inter,sans-serif" font-size="15" fill="#7A746C" text-anchor="middle">grams</text></svg>
                 <div class="cg-needle" data-needle style="transform:rotate(${fromNeedle.toFixed(1)}deg)"></div>
                 <div class="cg-hub"></div>
               </div>
-              <div class="cg-grams"><span>about</span> ${esc(grams(g))}<small>${esc(`${amount(Math.round(oz * 4) / 4)} oz`)}</small></div>
+              <div class="cg-grams">${esc(grams(g))}<small>${esc(`${amount(Math.round(oz * 4) / 4)} oz`)}</small></div>
             </div>
           </div>
         </div>
-        <div>
-          <div class="cv-eyebrow">The same ${cups === 1 ? 'cup' : 'amount'} is</div>
-          <div class="cg-same">${esc(`${amount(tsp / 3)} tbsp`)}<br>${esc(`${amount(tsp)} tsp`)}<br>${esc(`${amount(tsp / 6)} fl oz`)}<br><b>${esc(metric(tsp * ML_PER_TSP))}</b></div>
-          <div class="cv-eyebrow" style="margin-top:22px">On a stick of butter</div>
-          <div class="cg-stick">
-            <div class="fill" style="width:${Math.min(100, sticks * 100).toFixed(1)}%"></div>
-            <div class="marks">${[1, 2, 3, 4, 5, 6, 7, 8].map((k) => `<i>${k}</i>`).join('')}</div>
-          </div>
-          <div style="font-size:19px;font-weight:600;margin-top:10px;line-height:1.35">${esc(`${amount(cups)} ${plural(cups, 'cup', 'cups')} = ${amount(sticks)} ${plural(sticks, 'stick', 'sticks')}`)}</div>
-          <div class="cg-note" style="margin-top:6px">1 stick = 8 tbsp = 113 g</div>
-          <div class="cg-note" style="margin-top:14px">US cup · a metric cup is 250 ml</div>
-        </div>
+        ${butter}
+        <div class="cg-same">${esc(same.join('  ·  '))}</div>
+        ${vol || isMl ? '<div class="cg-note">US cup · a metric cup is 250 ml</div>' : ''}
+        <div data-pop></div>
       </div>`;
     return { html, level, needle };
+  }
+
+  /** The small picker under a word of the sentence: big buttons, closes on a choice. */
+  function popHtml(which) {
+    if (which === 'amt') {
+      const isMl = s.cUnit === 'ml';
+      const list = amountsFor(s.cUnit);
+      return `<div class="cg-grid" style="grid-template-columns:repeat(5,auto)">${list.map((v) => `<button class="cg-pb${near(v, +s.cAmt) ? ' on' : ''}" data-pk="amt" data-v="${v}">${esc(isMl ? metric(v) : amount(v))}</button>`).join('')}</div>`;
+    }
+    if (which === 'unit') {
+      const btn = (m) => `<button class="cg-pb unit${m[0] === s.cUnit ? ' on' : ''}" data-pk="unit" data-v="${m[0]}">${esc(m[2])}</button>`;
+      const vols = MEASURES.filter((m) => !weightOf(m[0]));
+      return `<div class="cv-eyebrow">Spoons &amp; cups</div><div class="cg-grid" style="grid-template-columns:repeat(${vols.length},auto)">${vols.map(btn).join('')}</div>`
+        + `<div class="cv-eyebrow" style="margin-top:16px">Weight</div><div class="cg-grid" style="grid-template-columns:repeat(4,auto);justify-content:start">${MEASURES.filter((m) => weightOf(m[0])).map(btn).join('')}</div>`;
+    }
+    return `<div class="cg-grid" style="grid-template-columns:repeat(4,auto)">${INGREDIENTS.map((i) => `<button class="cg-pb ing${i[0] === s.ing ? ' on' : ''}" data-pk="ing" data-v="${i[0]}"><span class="dot" style="background:linear-gradient(180deg,${i[4]},${i[5]})"></span>${esc(i[1])}</button>`).join('')}</div>`;
+  }
+  function showPick(which) {
+    pick = which;
+    root.querySelectorAll('[data-w]').forEach((b) => b.classList.toggle('open', b.dataset.w === pick));
+    const box = $('[data-pop]');
+    if (!box) return;
+    if (!pick) { box.innerHTML = ''; return; }
+    box.innerHTML = `<div class="cg-pop">${popHtml(pick)}</div>`;
+    // Under the word that was tapped, kept on the screen (offsets, so the tablet's zoom doesn't matter).
+    const pop = box.firstElementChild, w = $(`[data-w="${pick}"]`), cg = $('.cg');
+    const left = w.offsetLeft + w.offsetWidth / 2 - pop.offsetWidth / 2;
+    pop.style.left = `${Math.max(0, Math.min(cg.offsetWidth - pop.offsetWidth, left))}px`;
   }
 
   // =====================================================================================
@@ -367,8 +464,8 @@ export function mount(el) {
     else { other = `${row ? row[0] : Math.round(f)}°F`; if (row && Math.round(f) !== row[0]) exact = `${Math.round(f)} exactly`; }
     // Gas mark: the one this heat is, or the two it sits between.
     let gas;
-    const near = OVEN.slice().sort((a, b) => Math.abs(a[0] - f) - Math.abs(b[0] - f))[0];
-    if (row || Math.abs(near[0] - f) <= 6) gas = `Gas mark ${(row || near)[2]} · ${(row || near)[3].toLowerCase()}`;
+    const nearest = OVEN.slice().sort((a, b) => Math.abs(a[0] - f) - Math.abs(b[0] - f))[0];
+    if (row || Math.abs(nearest[0] - f) <= 6) gas = `Gas mark ${(row || nearest)[2]} · ${(row || nearest)[3].toLowerCase()}`;
     else if (f < OVEN[0][0]) gas = 'Below gas mark ½ · very slow';
     else if (f > OVEN[OVEN.length - 1][0]) gas = 'Above gas mark 9 · very hot';
     else {
@@ -384,7 +481,6 @@ export function mount(el) {
     s.lb = lb;
     const at = (r.done - 120) / 60 * 100; // the bar runs from 120 °F to 180 °F
     return `
-      <div class="cv-eyebrow">Roast helper</div>
       <div class="ov-meats">${ROASTS.map((x) => `<button class="ov-chip${x.id === r.id ? ' on' : ''}" data-meat="${x.id}">${esc(x.name)}</button>`).join('')}</div>
       <div class="ov-row">
         <button class="ov-step" data-lb="-1" aria-label="One pound less"${lb <= r.min ? ' disabled style="opacity:.4"' : ''}>−</button>
@@ -397,7 +493,30 @@ export function mount(el) {
         <div style="flex:1;min-width:0">Done at <b>${r.done}°F · ${r.doneC}°C</b> in the thickest part${r.rest ? `, ${esc(r.rest)}` : ''}.</div>
         <button class="x-btn sm frost" data-set-oven="${r.oven}">Set knob to ${r.oven}°F</button>
       </div>
-      <div class="ov-guide">USDA chart, meat from the fridge. Trust the thermometer.</div>`;
+      <div class="ov-guide">USDA chart, meat from the fridge.</div>`;
+  }
+  const SHEET_BODY = {
+    roast: roastHtml,
+    table: () => `
+      <table class="cv-oven">
+        <tr><th>°F</th><th>°C</th><th>Fan</th><th>Gas</th><th>Recipes say</th></tr>
+        ${OVEN.map(([f, c, gas, word]) => `<tr><td>${f} °F</td><td>${c} °C</td><td>${c - 20} °C</td><td>${gas}</td><td>${word}</td></tr>`).join('')}
+      </table>`,
+    done: () => `
+      <table class="cv-oven">
+        ${DONE.map(([what, which, f, c, rest]) => `<tr><td>${esc(what)}<div class="sub">${esc(which)}</div></td><td style="white-space:nowrap;padding-left:12px">${f} °F<div class="sub">${c} °C</div></td><td style="padding-left:12px">${esc(rest)}</td></tr>`).join('')}
+      </table>
+      <div class="ov-guide" style="margin-top:10px">US food-safety minimums, in the thickest part, away from the bone.</div>`,
+  };
+  function showSheet(which) {
+    sheet = which;
+    const box = $('[data-sheet]');
+    if (!box) return;
+    box.innerHTML = !sheet ? '' : `
+      <div class="ov-sheet">
+        <div class="ov-sheet-top"><div class="cv-eyebrow" style="flex:1">${esc(SHEETS[sheet])}</div><button class="x-btn sm frost round" data-close aria-label="Close">✕</button></div>
+        <div class="x-scroll" style="flex:1;display:flex;flex-direction:column" data-sheet-body>${SHEET_BODY[sheet]()}</div>
+      </div>`;
   }
   function ovenView() {
     const dialF = [];
@@ -424,10 +543,7 @@ export function mount(el) {
           <div class="ov-knob" data-knob style="transform:rotate(${angleOf(ovenF()).toFixed(1)}deg)"><div class="ov-grip"></div><div class="ov-tip"></div></div>
         </div>
         <div class="ov-right">
-          <div style="display:flex;align-items:center;gap:14px">
-            <div class="cv-eyebrow" style="flex:1">Oven temperature</div>
-            <div class="ov-seg" data-units><button data-unit="F">°F</button><button data-unit="C">°C</button></div>
-          </div>
+          <div style="text-align:right"><div class="ov-seg" data-units><button data-unit="F">°F</button><button data-unit="C">°C</button></div></div>
           <div style="display:flex;align-items:center;gap:14px;margin-top:2px">
             <div class="ov-big" data-big style="flex:1"></div>
             <button class="ov-step" data-step="-1" aria-label="Cooler">−</button>
@@ -436,8 +552,9 @@ export function mount(el) {
           <div class="ov-other" data-other></div>
           <div class="ov-line" data-gas></div>
           <div class="ov-chips" data-chips></div>
-          <div class="ov-roast" data-roast>${roastHtml()}</div>
+          <div class="ov-more">${Object.keys(SHEETS).map((id) => `<button class="x-btn sm frost" data-sheet-open="${id}">${SHEETS[id]}</button>`).join('')}</div>
         </div>
+        <div data-sheet></div>
       </div>`;
   }
   /** The oven's numbers, the knob and the glow, without rebuilding the screen (it runs while a finger turns the knob). */
@@ -499,97 +616,15 @@ export function mount(el) {
   };
 
   // =====================================================================================
-  // More: the plain converters
+  // Halve & double
   // =====================================================================================
-  const VIEWS = {
-    volume() {
-      const isMl = s.vUnit === 'ml';
-      const unit = VOLUME.filter((u) => u[0] === s.vUnit)[0];
-      const amounts = isMl ? METRIC_VOLUMES : VOLUME_AMOUNTS;
-      if (amounts.indexOf(s.vAmt) < 0) s.vAmt = isMl ? 250 : 1;
-      const tsp = isMl ? s.vAmt / ML_PER_TSP : s.vAmt * unit[3];
-      const asked = isMl ? metric(s.vAmt) : `${amount(s.vAmt)} ${plural(s.vAmt, unit[1], unit[2])}`;
-      // From millilitres nothing comes out even: say "about", in the measures worth saying.
-      const about = (n, step, u) => { const r = Math.round(n / step) * step; return line(`about ${amount(r)} ${plural(r, u[1], u[2])}`); };
-      const tidyCups = [0.25, 1 / 3, 0.5, 2 / 3, 0.75, 1, 1.25, 1.5, 2, 2.5, 3, 4].filter((c) => Math.abs(c - tsp / 48) / (tsp / 48) < 0.06)[0];
-      const others = isMl
-        ? [tidyCups ? line(`about ${amount(tidyCups)} ${plural(tidyCups, 'cup', 'cups')}`) : '',
-          tsp / 6 >= 1 ? about(tsp / 6, 0.5, VOLUME[2]) : '',
-          tsp / 3 >= 1 && tsp / 3 <= 8.2 ? about(tsp / 3, 0.5, VOLUME[1]) : '',
-          tsp <= 6.2 ? about(tsp, 0.25, VOLUME[0]) : '']
-        : VOLUME.filter((u) => u[0] !== s.vUnit).map((u) => [tsp / u[3], u])
-          .filter(([n]) => n >= 0.124 && n <= 200 && (fraction(n) || n >= 1))
-          .map(([n, u]) => line(`${amount(n)} ${plural(n, u[1], u[2])}`, fraction(n) ? '' : 'about'));
-      // The nearest thing a set of measuring spoons and cups can do.
-      const scoop = tsp >= 12 ? Math.round(tsp) : Math.round(tsp * 4) / 4;
-      return `
-        <div class="cv-card">
-          <div class="cv-label">How much</div>
-          ${chips('vAmt', amounts.map((v) => [v, isMl ? metric(v) : amount(v)]), s.vAmt)}
-          <div class="cv-label">Of what</div>
-          ${chips('vUnit', VOLUME.map((u) => [u[0], u[2]]).concat([['ml', 'ml']]), s.vUnit)}
-          <div class="cv-note">US cup = 237 ml · metric cup = 250 ml</div>
-        </div>
-        <div class="cv-card">
-          <div class="cv-ask">${esc(asked)}</div>
-          ${others.join('')}
-          ${isMl ? `<div class="cv-label" style="margin-top:8px">The easy way to measure it</div>${line(natural(scoop))}` : line(metric(tsp * ML_PER_TSP))}
-        </div>`;
-    },
-    weight() {
-      const unit = WEIGHT.filter((u) => u[0] === s.wUnit)[0];
-      const amounts = WEIGHT_AMOUNTS[s.wUnit];
-      if (amounts.indexOf(s.wAmt) < 0) s.wAmt = amounts[2];
-      const g = s.wAmt * unit[2];
-      const oz = g / 28.3495;
-      const sticks = g / 113.4;
-      const lines = [];
-      if (s.wUnit !== 'oz' && oz <= 80) lines.push(line(`${amount(Math.round(oz * 4) / 4)} oz`, oz > 16 ? `${Math.floor(oz / 16)} lb ${amount(Math.round((oz % 16) * 2) / 2)} oz` : ''));
-      if (s.wUnit !== 'lb' && oz >= 4) lines.push(line(`${amount(Math.round((oz / 16) * 8) / 8)} lb`));
-      if (s.wUnit !== 'g' && s.wUnit !== 'kg') lines.push(line(grams(g)));
-      if (s.wUnit === 'g' && g >= 500) lines.push(line(`${Math.round(g / 10) / 100} kg`));
-      if (s.wUnit === 'kg') lines.push(line(`${Math.round(g)} g`));
-      const butter = sticks >= 0.24 && sticks <= 8.1
-        ? line(`${amount(Math.round(sticks * 4) / 4)} ${plural(sticks, 'stick', 'sticks')} of butter`, `${amount(Math.round(sticks * 8))} tbsp`) : '';
-      return `
-        <div class="cv-card">
-          <div class="cv-label">How much</div>
-          ${chips('wAmt', amounts.map((v) => [v, amount(v)]), s.wAmt)}
-          <div class="cv-label">Of what</div>
-          ${chips('wUnit', WEIGHT.map((u) => [u[0], u[1]]), s.wUnit)}
-          <div class="cv-note">1 stick of butter = 8 tbsp = 113 g</div>
-        </div>
-        <div class="cv-card">
-          <div class="cv-ask">${esc(`${amount(s.wAmt)} ${unit[1]}`)}</div>
-          ${lines.join('')}
-          ${butter ? `<div class="cv-label" style="margin-top:8px">If it’s butter</div>${butter}` : ''}
-        </div>`;
-    },
-    oven() {
-      return `
-        <div class="cv-card x-scroll" style="grid-column:1 / -1">
-          <table class="cv-oven">
-            <tr><th>Fahrenheit</th><th>Celsius</th><th>Fan oven</th><th>Gas mark</th><th>Recipes call it</th></tr>
-            ${OVEN.map(([f, c, gas, word]) => `<tr><td>${f} °F</td><td>${c} °C</td><td>${c - 20} °C</td><td>${gas}</td><td>${word}</td></tr>`).join('')}
-          </table>
-        </div>`;
-    },
-    done() {
-      return `
-        <div class="cv-card x-scroll" style="grid-column:1 / -1">
-          <table class="cv-oven">
-            <tr><th>What you’re cooking</th><th>It’s done at</th><th></th><th></th></tr>
-            ${DONE.map(([what, which, f, c, rest]) => `<tr><td>${esc(what)}<div style="font-size:18px;font-weight:500;color:#5A544C">${esc(which)}</div></td><td>${f} °F</td><td>${c} °C</td><td>${esc(rest)}</td></tr>`).join('')}
-          </table>
-          <div class="cv-note">US food-safety minimums, in the thickest part, away from the bone.</div>
-        </div>`;
-    },
-    halve() {
-      const unit = VOLUME.filter((u) => u[0] === s.hUnit)[0] || VOLUME[3];
-      if (VOLUME_AMOUNTS.indexOf(s.hAmt) < 0) s.hAmt = 0.75;
-      const tsp = s.hAmt * unit[3];
-      const row = (label, t) => `<div class="cv-line"><span style="flex:none;width:170px;font-size:22px;color:#5A544C;font-weight:500">${label}</span><span>${esc(natural(t))}</span></div>`;
-      return `
+  function halveView() {
+    const unit = VOLUME.filter((u) => u[0] === s.hUnit)[0] || VOLUME[3];
+    if (VOLUME_AMOUNTS.indexOf(s.hAmt) < 0) s.hAmt = 0.75;
+    const tsp = s.hAmt * unit[3];
+    const row = (label, t) => `<div class="cv-line"><span style="flex:none;width:170px;font-size:22px;color:#5A544C;font-weight:500">${label}</span><span>${esc(natural(t))}</span></div>`;
+    return `
+      <div class="mo-body">
         <div class="cv-card">
           <div class="cv-label">The recipe says</div>
           ${chips('hAmt', VOLUME_AMOUNTS.map((v) => [v, amount(v)]), s.hAmt)}
@@ -603,25 +638,20 @@ export function mount(el) {
           ${row('One and a half', tsp * 1.5)}
           ${row('Double is', tsp * 2)}
           ${row('Three times', tsp * 3)}
-        </div>`;
-    },
-  };
-  const moreView = () => `
-    <div class="mo">
-      <div class="mo-tabs">${TABS.map(([id, name]) => `<button class="x-btn sm${id === s.tab ? ' on' : ''}" data-tab="${id}">${name}</button>`).join('')}</div>
-      <div class="mo-body">${VIEWS[s.tab]()}</div>
-    </div>`;
+        </div>
+      </div>`;
+  }
 
   // =====================================================================================
   function draw() {
     if (!MODES.some((m) => m[0] === s.mode)) s.mode = 'cups';
-    if (!VIEWS[s.tab]) s.tab = 'volume';
     if (s.unit !== 'C') s.unit = 'F';
     s.deg = clampDeg(Math.round((+s.deg || 350) / 5) * 5);
+    pick = null; sheet = null;
     const dark = s.mode === 'oven';
     const modes = `<div class="cv-modes">${MODES.map(([id, name]) => `<button class="x-btn${id === s.mode ? ' on' : ''}" data-mode="${id}">${name}</button>`).join('')}</div>`;
     let body, after = null;
-    if (s.mode === 'cups') { const v = cupsView(); body = v.html; after = v; } else if (s.mode === 'oven') body = ovenView(); else body = moreView();
+    if (s.mode === 'cups') { const v = cupsView(); body = v.html; after = v; } else if (s.mode === 'oven') body = ovenView(); else body = halveView();
     root.innerHTML = `
       <div class="cv ${dark ? 'dark' : 'light'}">
         ${dark ? '' : '<div class="cv-counter" aria-hidden="true"></div>'}
@@ -643,6 +673,8 @@ export function mount(el) {
 
   root.addEventListener('click', (e) => {
     const b = e.target.closest('button');
+    // A tap anywhere outside an open picker closes it.
+    if (pick && !(b && (b.dataset.pk || b.dataset.w)) && !e.target.closest('.cg-pop')) { showPick(null); return; }
     if (!b) return;
     const d = b.dataset;
     if (b.hasAttribute('data-back')) {
@@ -650,10 +682,16 @@ export function mount(el) {
       if (history.length > 1) history.back(); else location.hash = backHref();
       return;
     }
+    if (d.w) { showPick(pick === d.w ? null : d.w); return; }
+    if (d.sheetOpen) { showSheet(d.sheetOpen); return; }
+    if (b.hasAttribute('data-close')) { showSheet(null); return; }
     if (d.mode) { if (d.mode === s.mode) return; s.mode = d.mode; }
-    else if (d.tab) { if (d.tab === s.tab) return; s.tab = d.tab; }
-    else if (d.ing) s.ing = d.ing;
-    else if (d.cups) s.cAmt = Number(d.cups);
+    else if (d.pk === 'amt') s.cAmt = Number(d.v);
+    else if (d.pk === 'unit') {
+      // A new measure keeps the amount when it has it ("2 cups" -> "2 tbsp"), else its usual one.
+      if (d.v === s.cUnit) { showPick(null); return; }
+      s.cUnit = d.v;
+    } else if (d.pk === 'ing') s.ing = d.v;
     else if (b.classList.contains('cv-chip')) {
       const name = b.parentElement.dataset.pick;
       s[name] = /Unit$/.test(name) ? d.v : Number(d.v);
@@ -662,13 +700,14 @@ export function mount(el) {
       if (d.unit) setUnit(d.unit);
       else if (d.step) s.deg = clampDeg(s.deg + 5 * Number(d.step));
       else if (d.deg) s.deg = Number(d.deg);
-      else { s.unit = 'F'; s.deg = Number(d.setOven); }
+      else { s.unit = 'F'; s.deg = Number(d.setOven); showSheet(null); }
       save(); showOven(true);
       return;
     } else if (d.meat || d.lb) {
       if (d.meat) { s.meat = d.meat; s.lb = (ROASTS.filter((x) => x.id === d.meat)[0] || ROASTS[0]).start; }
       else s.lb = (+s.lb || 0) + Number(d.lb);
-      $('[data-roast]').innerHTML = roastHtml();
+      const box = $('[data-sheet-body]');
+      if (box) box.innerHTML = roastHtml();
       save();
       return;
     } else return;
