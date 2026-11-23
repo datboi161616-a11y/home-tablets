@@ -214,9 +214,10 @@ try {
         if (['launcher', 'forecast', 'calendar', 'apps', 'flights', 'sky'].includes(r)) await shot(`${label}-${r}`);
       }
       if (PROFILE !== 'tom') {
-        // A recipe, the way someone would get to it: Recipes -> a cuisine -> a dish -> cook it.
+        // A recipe, the way someone would get to it offline: Recipes (the recipes kept on the
+        // screen, or Favorites) -> a dish -> cook it.
         await go('recipes');
-        const cuisine = await ev(`(() => { const a = [...document.querySelectorAll('a[href^="#/recipes/"]')].find((x) => !/favorites|mine|dinner/.test(x.getAttribute('href'))); return a ? a.getAttribute('href').slice(2) : null; })()`);
+        const cuisine = await ev(`(() => document.querySelector('a[href^="#/dish/"]') ? 'recipes' : 'recipes/favorites')()`);
         if (cuisine) {
           out.screens.push(await go(cuisine, 2000));
           const dish = await ev(`(() => { const a = document.querySelector('a[href^="#/dish/"]'); return a ? a.getAttribute('href').slice(2) : null; })()`);

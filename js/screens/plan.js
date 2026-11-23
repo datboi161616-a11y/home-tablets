@@ -2,7 +2,8 @@
 // Tap a meal for its choices (recipe, cook, people, add another, move, remove). Tap a day's
 // name to mark a meal "Leftovers" / "Eating out", move or swap the day, or clear it.
 // Moving never needs dragging: tap "Move", then tap the day.
-import { loadIndex, fmtMinutes, cuisineColor, searchRecipes } from '../services/recipe-data.js';
+import { loadKnown, fmtMinutes, cuisineColor } from '../services/recipe-data.js';
+import { searchWeb, webIdeas, keepWebRecipe, isWebId } from '../services/web-recipes.js';
 import {
   getPlan, addToPlan, removeFromPlan, onKitchenChanged, MEALS, dayKey,
   planDays, dayIds, MARKS, markFor, setMark, moveMeal, swapDays, snapshotDays, restoreDays, clearDays, copyDays,
@@ -15,6 +16,7 @@ import { spot, C } from '../art.js';
 import { ADD_DAY_KEY } from './dish.js';
 
 let off, dayTimer, undoTimer, armTimer, searchTimer;
+let pickCtl = null; // stops a search of the web in the recipe picker
 
 // Empty plate colour for each meal slot nobody has picked yet.
 const PLATE = { breakfast: C.cream, lunch: C.mint, dinner: C.peach };
@@ -135,12 +137,6 @@ export function mount(el) {
   let ixRef = null;
   let listCount = 0;
 
-  // Where "Browse all recipes" goes for each meal.
-  function browseFor(ix, meal) {
-    const files = ix.cuisines.filter((c) => (c.meal || 'dinner') === meal);
-    return files.length === 1 ? `#/recipes/${files[0].id}` : `#/recipes/${meal}`;
-  }
-  const mealOfCuisine = (ix) => { const o = {}; ix.cuisines.forEach((c) => { o[c.id] = c.meal || 'dinner'; }); return o; };
 
   // Long dinners today: when to start so it's ready by 6 pm (only while there's still time).
   function startBy(minutes) {
@@ -271,12 +267,11 @@ export function mount(el) {
     const r = ix.byId[id];
     return r ? `<button class="wp-tile" data-pickid="${esc(id)}" style="border-left-color:${cuisineColor(r.c)}">${plate(r, 56)}<span class="w"><span class="t">${esc(r.t)}</span><span class="s">${fmtMinutes(r.m)}</span></span></button>` : '';
   };
+  // What the picker offers: recipes from the web and the household's own (not the old library).
   function pickLists(ix, meal, key) {
-    const mc = mealOfCuisine(ix);
-    // (A recipe from the web says its own meal: breakfast, lunch, else dinner.)
-    const webMeal = (r) => (r.ty === 'breakfast' || r.ty === 'lunch' ? r.ty : 'dinner');
-    const fits = (id) => ix.byId[id] && (mc[ix.byId[id].c] === meal || (ix.byId[id].c === 'mine' && (ix.byId[id].ty || 'dinner') === meal)
-      || (ix.byId[id].c === 'web' && webMeal(ix.byId[id]) === meal));
+    // (A recipe says its own meal: breakfast, lunch, else dinner.)
+    const mealOf = (r) => (r.ty === 'breakfast' || r.ty === 'lunch' ? r.ty : 'dinner');
+    const fits = (id) => { const r = ix.byId[id]; return !!r && (r.c === 'web' || r.c === 'mine') && mealOf(r) === meal; };
     const taken = ((getPlan()[key] || {})[meal]) || [];
     const fresh = (id) => taken.indexOf(id) < 0;
     const fav = favorites().filter((id) => fits(id) && fresh(id)).slice(0, 9);
@@ -284,10 +279,11 @@ export function mount(el) {
     const plan = getPlan();
     const lately = [];
     Object.keys(plan).sort().reverse().forEach((k) => (plan[k][meal] || []).forEach((id) => {
-      if (fresh(id) && fav.indexOf(id) < 0 && lately.indexOf(id) < 0 && ix.byId[id]) lately.push(id);
+      if (fresh(id) && fits(id) && fav.indexOf(id) < 0 && lately.indexOf(id) < 0) lately.push(id);
     }));
-    // A few ideas that change by day.
-    const pool = ix.recipes.filter((r) => mc[r.c] === meal && fresh(r.id) && fav.indexOf(r.id) < 0 && lately.indexOf(r.id) < 0);
+    // A few ideas that change by day, from the web recipes this screen has seen.
+    const pool = webIdeas(meal).filter((r) => fresh(r.id) && fav.indexOf(r.id) < 0 && lately.indexOf(r.id) < 0);
+    pool.forEach((r) => { if (!ix.byId[r.id]) ix.byId[r.id] = r; });
     const seed = Number(key.replace(/-/g, '')) % 997;
     const ideas = [];
     for (let i = 0; i < pool.length && ideas.length < 6; i++) {
@@ -304,7 +300,7 @@ export function mount(el) {
     return `
       <div style="display:flex;align-items:center;gap:16px">
         <div style="flex:1;min-width:0"><div class="wp-sh">${esc(mealName(meal))} for ${esc(d ? (d.n < 2 ? d.label : `${d.label} ${d.sub}`) : '')}</div></div>
-        ${week === 0 ? `<a href="${browseFor(ix, meal)}" class="x-btn amber" data-browse>All recipes</a>` : ''}
+        ${week === 0 ? `<a href="#/recipes/${meal}" class="x-btn amber" data-browse>All recipes</a>` : ''}
         <button class="x-btn soft" data-close>Close</button>
       </div>
       <input data-picksearch class="wp-in" maxlength="40" placeholder="Search: chicken, soup, pasta…" autocomplete="off" aria-label="Search the recipes">
@@ -364,19 +360,33 @@ export function mount(el) {
   }
   const setWeek = (w) => { week = w; try { sessionStorage.setItem(WEEK_KEY, String(w)); } catch (e) { /* private */ } };
 
-  // Search in the recipe picker: only the results area changes, so the keyboard stays up.
+  // Search in the recipe picker: the household's own recipes, then the web's. Only the results
+  // area changes, so the keyboard stays up.
   function pickSearch(ix, text) {
     clearTimeout(searchTimer);
-    searchTimer = setTimeout(async () => {
+    if (pickCtl) pickCtl.abort();
+    searchTimer = setTimeout(() => {
       const body = root.querySelector('[data-pickbody]');
       if (!body) return;
-      if (!text.trim()) { render(ix); const i = root.querySelector('[data-picksearch]'); if (i) i.focus(); return; }
-      const hits = await searchRecipes(text, 15).catch(() => []);
-      if (!el.isConnected || !root.querySelector('[data-pickbody]')) return;
-      root.querySelector('[data-pickbody]').innerHTML = hits.length
-        ? `<div class="wp-pick">${hits.map((r) => tile(ix, r.id)).join('')}</div>`
-        : `<div class="wp-hint">No recipe called “${esc(text.trim())}”.</div>`;
-    }, 250);
+      const q = text.trim();
+      if (!q) { render(ix); const i = root.querySelector('[data-picksearch]'); if (i) i.focus(); return; }
+      const words = q.toLowerCase().split(/\s+/);
+      const hits = ix.recipes.filter((r) => r.c === 'mine' && words.every((w) => r.t.toLowerCase().indexOf(w) >= 0)).slice(0, 6);
+      const draw = (done) => {
+        const box = el.isConnected && root.querySelector('[data-pickbody]');
+        if (!box) return;
+        box.innerHTML = hits.length ? `<div class="wp-pick">${hits.slice(0, 18).map((r) => tile(ix, r.id)).join('')}</div>`
+          : `<div class="wp-hint">${done ? `Nothing found for “${esc(q)}”.` : 'Searching…'}</div>`;
+      };
+      draw(false);
+      const ctl = new AbortController();
+      pickCtl = ctl;
+      searchWeb({ q, signal: ctl.signal, onResults: (list) => {
+        if (ctl.signal.aborted) return;
+        list.forEach((r) => { if (!ix.byId[r.id]) ix.byId[r.id] = r; if (!hits.some((h) => h.id === r.id)) hits.push(r); });
+        draw(false);
+      } }).then(() => { if (!ctl.signal.aborted) draw(true); });
+    }, 600);
   }
 
   function onClick(ix, e) {
@@ -425,6 +435,7 @@ export function mount(el) {
         const id = x.dataset.pickid;
         sheet = null;
         say(`Added ${(ix.byId[id] || {}).t || 'it'} to ${dayWords(key)} ${mealName(meal).toLowerCase()}`, { snap: snapshotDays([key]) });
+        if (isWebId(id)) keepWebRecipe(ix.byId[id]); // (kept on the screen: it works offline then)
         addToPlan(key, id, meal);
         return;
       }
@@ -505,7 +516,7 @@ export function mount(el) {
     }
   }
 
-  loadIndex().then((ix) => {
+  loadKnown().then((ix) => {
     if (!el.isConnected) return;
     ixRef = ix;
     render(ix);
@@ -539,4 +550,6 @@ export function unmount() {
   armTimer = null;
   clearTimeout(searchTimer);
   searchTimer = null;
+  if (pickCtl) pickCtl.abort();
+  pickCtl = null;
 }

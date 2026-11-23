@@ -5,10 +5,11 @@
 //   search:  GET <site>/wp-json/wp/v2/wprm_recipe?search=<words>&search_columns=post_title
 //            (titles only: the plain full-text search ranks badly, "butter chicken" found
 //            Beurre Blanc). All sites at once, each with its own time limit; each site's
-//            results are handed over as they arrive. Thin results (fewer than 3) are topped
+//            results are handed over as they arrive. Thin results (fewer than 6) are topped
 //            up with the full-text search.
-//   a kind:  GET <site>/wp-json/wp/v2/wprm_cuisine?search=Indian (once per site, kept),
-//            then wprm_recipe?wprm_cuisine=<term id>  (wprm_course for breakfast/desserts).
+//   browse:  meal › cuisine › main ingredient › dish (browsePlace): wprm_recipe filtered by the
+//            sites' own course and cuisine terms (&wprm_course=<ids>&wprm_cuisine=<ids>) and
+//            by words in the title; a place with few recipes is filled in from broader ones.
 //   recipe:  GET <site>/wp-json/wp/v2/wprm_recipe/<id>, turned into the library's own shape
 //            (tools/RECIPE-FORMAT.md) so the recipe page, cooking mode, the week plan and the
 //            shopping list treat it like any other recipe. Id: "web:<site>:<recipe id>".
@@ -195,16 +196,15 @@ function measureText(amount, unit) {
   if (pick !== us && pick !== metric) { u = pick.word; pick = null; }
   const q = Math.round(qty * 1000) / 1000;
   // "400g / 14oz can": one can, its size kept with the item ("1 (14 oz) can" for parseIngredient).
-  const tin = rest.match(/^(?:x\s+)?(cans?|tins?|jars?)\b\s*/i);
   const count = pick && found.find((f) => f !== us && f !== metric && (!f.word || f.word === 'x'));
+  // ("2 x 400g/14oz cans": the count in front, and what is left of the "/", go.)
+  if (count && count.at < pick.at) rest = rest.replace(/^\s*x?\s*\d+(\.\d+)?\s*(x\s*)?/i, '').replace(/^[\s/,]+/, '').trim();
+  const tin = rest.match(/^(?:x\s+)?(cans?|tins?|jars?)\b\s*/i);
   if (pick && tin) {
     return { text: `${count ? count.q : 1} (${q} ${u}) ${/^j/i.test(tin[1]) ? 'jar' : 'can'}`, rest: rest.slice(tin[0].length).trim() };
   }
   // "1" + "15 oz.": one of something that size ("1 (15 oz)": the size stays with the item).
-  if (count && count.at < pick.at && count.q > 0) {
-    rest = rest.replace(/^\s*x?\s*\d+(\.\d+)?\s*(x\s*)?/i, '').trim();
-    return { text: `${count.q} (${q} ${u})`, rest, sized: true };
-  }
+  if (count && count.at < pick.at && count.q > 0) return { text: `${count.q} (${q} ${u})`, rest, sized: true };
   return { text: `${q} ${u}`.trim(), rest };
 }
 
@@ -465,7 +465,7 @@ export function keepWebRecipe(entry) {
 // Searches made lately are kept a few days, so going back (or searching it again) is instant.
 const SEARCH_KEY = 'web.searches.v1';
 const SEARCH_DAYS = 3;
-const SEARCHES_KEPT = 20;
+const SEARCHES_KEPT = 40;
 function searchCache() { const c = read(SEARCH_KEY, {}); return c && typeof c === 'object' ? c : {}; }
 const cacheKey = (kind, q, page) => `${kind}|${String(q).toLowerCase().trim()}|${page}`;
 /** A search done lately, from the screen's own copy (no network): { list, more } or null. */
@@ -481,109 +481,310 @@ function keepSearch(key, list, more) {
   if (!write(SEARCH_KEY, c)) { try { localStorage.removeItem(SEARCH_KEY); } catch (e) { /* storage off */ } }
 }
 
-function listEntry(site, x, q) {
+
+function listEntry(site, x, fit, meal) {
   const R = (x && x.recipe) || {};
   const t = tidyTitle(R.name);
   if (!t || !x.id) return null;
   const total = Math.round(+R.total_time || 0) || (Math.round(+R.prep_time || 0) + Math.round(+R.cook_time || 0));
-  const k = kindOf(t.toLowerCase(), t.toLowerCase());
-  return { id: `web:${site}:${x.id}`, t, f: titleFit(t, q), c: 'web', ty: k.type, m: total > 0 && total < 2000 ? total : 0, g: total > 0 && total <= 30 ? ['quick'] : [],
+  const k = kindOf(t.toLowerCase(), `${meal || ''} ${t.toLowerCase()}`);
+  return { id: `web:${site}:${x.id}`, t, f: titleFit(t, fit), c: 'web', ty: k.type, m: total > 0 && total < 2000 ? total : 0, g: total > 0 && total <= 30 ? ['quick'] : [],
     b: '', s: 0, img: thumbUrl(R.image_url), alt: altThumb(R.image_url), site: SITES[site].name, table: k.table };
 }
 
-// Term ids ("Indian" is cuisine 544 on one site, 1077 on another), kept for good.
-const TERMS_KEY = 'web.terms.v1';
-async function termId(site, tax, names, signal) {
-  const all = read(TERMS_KEY, {}) || {};
-  const k = `${site}|${tax}|${names.join('/')}`;
-  if (k in all) return all[k];
-  const found = await getJson(`${SITES[site].base}${API}${tax}?search=${encodeURIComponent(names[0])}&per_page=20&_fields=id,name,count`, SEARCH_MS, signal);
-  const low = names.map((n) => n.toLowerCase());
-  const hits = (Array.isArray(found) ? found : []).filter((t) => t && low.indexOf(plainText(t.name).toLowerCase()) >= 0 && t.count > 0);
-  const id = hits.length ? hits.sort((a, b) => b.count - a.count)[0].id : 0;
-  const now = read(TERMS_KEY, {}) || {};
-  now[k] = id;
-  write(TERMS_KEY, now);
-  return id;
+// ---- Browsing: meal › cuisine › main ingredient › dish ------------------------------------
+// The sites sort their recipes into courses and cuisines (WP Recipe Maker's wprm_course and
+// wprm_cuisine). Their term ids, read from the sites in November 2026 (each site numbers its
+// own; only terms with a good number of recipes, merged under one name):
+const COURSE = {
+  breakfast: { rte: [532, 3310], bb: [1065, 12092], nk: [13332, 14213], ll: [1002, 2615, 1778, 2616], ouac: [1440, 2906, 2589] },
+  lunch: { rte: [3738, 12818, 39555, 40104, 7289], bb: [12093, 12240], nk: [13338], ll: [1259], ouac: [3740, 2749] },
+  dinner: { rte: [569, 600, 623, 535], bb: [12094, 1068], nk: [13320, 13339], ll: [1048, 1005, 2218, 1629], ouac: [1443] },
+  dessert: { rte: [538, 809, 962, 1049, 13980, 21185], bb: [1071], nk: [13325, 13330], ll: [1008], ouac: [1446, 1945, 1963, 1564, 2491, 2879] },
+  snacks: { rte: [533, 570, 4126, 539, 2437, 14172, 680], bb: [1066, 1072, 12213], nk: [13329, 13331, 13334], ll: [1003, 1009], ouac: [1441, 1447, 3362] },
+  sides: { rte: [712, 536, 1522, 537, 20462], bb: [1069, 1070], nk: [13313, 13312, 15984], ll: [1006, 1007], ouac: [1444, 1631, 1445] },
+  drinks: { rte: [32461], bb: [1073, 12096], nk: [13337, 13336], ll: [1287, 1619, 1996], ouac: [1448] },
+};
+const CUISINE = {
+  // (RecipeTin Eats files most everyday Western cooking under "Western".)
+  american: { rte: [547, 963, 713, 8916, 3342], bb: [1080, 13928, 12110], nk: [13303], ll: [1017], ouac: [1455, 1884] },
+  italian: { rte: [542, 13090, 12613], bb: [1075], nk: [13302], ll: [1012], ouac: [1450] },
+  mexican: { rte: [548, 856, 12537], bb: [1081, 12280, 12105, 12753], nk: [13326, 13340], ll: [1018, 2379], ouac: [1456, 1867] },
+  asian: { rte: [571, 545, 4471, 4917, 656, 978, 20944, 2438, 4477, 546, 3151, 11929], bb: [12106, 1078, 12273], nk: [13319, 13318], ll: [1016, 4405, 1015, 2051], ouac: [1552, 3982, 1453, 3301] },
+  chinese: { rte: [545, 4471], bb: [1078], nk: [13318], ll: [1015], ouac: [1453] },
+  thai: { rte: [978, 20944, 2438, 3151, 11929], bb: [12273], ll: [4405, 2051], ouac: [3982, 3301] },
+  indian: { rte: [544], bb: [1077], ll: [1014], ouac: [1452] },
+  mediterranean: { rte: [543, 624, 8735], bb: [1076, 12261], nk: [13304, 13683], ll: [1013, 1699, 2733], ouac: [1451, 1965, 2478] },
+  middleeastern: { rte: [1523, 4114, 21155, 12031], bb: [12134], ll: [1444], ouac: [1854, 2981] },
+  french: { rte: [541], bb: [1074], nk: [13333], ll: [1011], ouac: [1449] },
+};
+const MEAT = /\b(beef|steak|chicken|pork|bacon|ham|sausage|turkey|lamb|shrimp|prawns?|salmon|fish|tuna|cod|meat|meatballs?|chorizo|prosciutto|pancetta|duck|crab|anchov\w*)\b/i;
+// The choices: [id, name, words looked for in the titles (any of them), { all: sites whose
+// every recipe fits (Love and Lemons is all vegetarian), not: titles left out }].
+const ANY = { id: 'any', name: 'Any' };
+const DISHES = {
+  beef: [['steak', 'Steak', ['steak']], ['burgers', 'Burgers', ['burger']], ['meatballs', 'Meatballs', ['meatball']], ['stew', 'Stew', ['beef stew', 'stroganoff']],
+    ['stirfry', 'Stir-fry', ['beef stir', 'mongolian beef']], ['roast', 'Roast', ['roast beef', 'pot roast']], ['tacos', 'Tacos', ['beef taco', 'beef enchilada']],
+    ['chili', 'Chili', ['chili']], ['meatloaf', 'Meatloaf', ['meatloaf']]],
+  chicken: [['wings', 'Wings', ['chicken wings']], ['curry', 'Curry', ['chicken curry', 'tikka']], ['soup', 'Soup', ['chicken soup', 'chicken noodle']], ['salad', 'Salad', ['chicken salad']],
+    ['breasts', 'Breasts', ['chicken breast']], ['thighs', 'Thighs', ['chicken thigh']], ['roast', 'Roast', ['roast chicken', 'whole chicken']], ['pasta', 'Pasta', ['chicken pasta']],
+    ['stirfry', 'Stir-fry', ['chicken stir']], ['tacos', 'Tacos', ['chicken taco', 'chicken enchilada']]],
+  pork: [['chops', 'Chops', ['pork chop']], ['ribs', 'Ribs', ['ribs']], ['pulled', 'Pulled pork', ['pulled pork', 'carnitas']], ['tenderloin', 'Tenderloin', ['pork tenderloin']],
+    ['sausage', 'Sausage', ['sausage']], ['bacon', 'Bacon', ['bacon']]],
+  seafood: [['salmon', 'Salmon', ['salmon']], ['shrimp', 'Shrimp', ['shrimp', 'prawn']], ['fish', 'White fish', ['fish', 'cod']], ['tuna', 'Tuna', ['tuna']], ['crab', 'Crab & scallops', ['crab', 'scallops']]],
+  vegetarian: [['tofu', 'Tofu', ['tofu']], ['beans', 'Beans & lentils', ['lentil', 'bean']], ['chickpeas', 'Chickpeas', ['chickpea']], ['mushrooms', 'Mushrooms', ['mushroom']],
+    ['eggplant', 'Eggplant', ['eggplant']], ['curry', 'Curry', ['curry']]],
+  pasta: [['spaghetti', 'Spaghetti', ['spaghetti']], ['lasagna', 'Lasagna', ['lasagna']], ['mac', 'Mac & cheese', ['mac and cheese', 'macaroni']], ['penne', 'Penne', ['penne']],
+    ['baked', 'Baked pasta', ['baked ziti', 'pasta bake']], ['noodles', 'Noodles', ['noodle']]],
+};
+const MAINS = [['beef', 'Beef', ['beef', 'steak'], { not: /\b(cauliflower|cabbage|mushroom|portobello|tuna|salmon|fish|chicken|turkey|pork|tofu|lamb|ham|fries)\b/i }], ['chicken', 'Chicken', ['chicken']], ['pork', 'Pork', ['pork']], ['seafood', 'Seafood', ['shrimp', 'salmon', 'fish']],
+  ['vegetarian', 'Vegetarian', ['vegetarian', 'veggie'], { all: ['ll'], not: MEAT }], ['pasta', 'Pasta', ['pasta', 'spaghetti']], ['soup', 'Soup', ['soup', 'stew']]];
+const KINDS_OF = {
+  breakfast: [['eggs', 'Eggs', ['egg', 'frittata', 'quiche']], ['pancakes', 'Pancakes & waffles', ['pancake', 'waffle']], ['frenchtoast', 'French toast', ['french toast']],
+    ['oats', 'Oats & granola', ['oatmeal', 'oats', 'granola']], ['muffins', 'Muffins & scones', ['muffin', 'scone']], ['casserole', 'Casseroles', ['casserole']],
+    ['burritos', 'Burritos & sandwiches', ['breakfast burrito', 'breakfast sandwich']], ['smoothies', 'Smoothies', ['smoothie']]],
+  lunch: [['sandwiches', 'Sandwiches & wraps', ['sandwich', 'wrap']], ['salads', 'Salads', ['salad']], ['soups', 'Soups', ['soup']], ['bowls', 'Bowls', ['bowl']],
+    ['quesadillas', 'Quesadillas & tacos', ['quesadilla', 'taco']], ['burgers', 'Burgers', ['burger']], ['pizza', 'Pizza & flatbread', ['pizza', 'flatbread']]],
+  dessert: [['cakes', 'Cakes', ['cake']], ['cookies', 'Cookies', ['cookie']], ['pies', 'Pies & tarts', ['pie', 'tart']], ['brownies', 'Brownies & bars', ['brownie', 'bars']],
+    ['cheesecake', 'Cheesecake', ['cheesecake']], ['icecream', 'Ice cream & pudding', ['ice cream', 'pudding']], ['fruit', 'Crisps & cobblers', ['crisp', 'cobbler']],
+    ['cupcakes', 'Cupcakes', ['cupcake']]],
+  snacks: [['dips', 'Dips', ['dip', 'hummus']], ['salsa', 'Salsa & guacamole', ['salsa', 'guacamole']], ['wings', 'Wings', ['wings']], ['bites', 'Bites', ['bites', 'balls']],
+    ['bruschetta', 'Bruschetta & crostini', ['bruschetta', 'crostini']], ['eggs', 'Deviled eggs', ['deviled eggs']]],
+  sides: [['potatoes', 'Potatoes', ['potato']], ['rice', 'Rice', ['rice']], ['salads', 'Salads', ['salad']], ['veg', 'Vegetables', ['roasted', 'green beans', 'broccoli']],
+    ['bread', 'Bread & rolls', ['bread', 'rolls']], ['beans', 'Beans', ['beans']], ['slaw', 'Slaw', ['slaw', 'coleslaw']], ['corn', 'Corn', ['corn']]],
+  drinks: [['cocktails', 'Cocktails', ['cocktail', 'margarita']], ['smoothies', 'Smoothies', ['smoothie']], ['lemonade', 'Lemonade', ['lemonade']],
+    ['coffee', 'Coffee & tea', ['coffee', 'latte', 'tea']], ['cocoa', 'Hot chocolate', ['hot chocolate']]],
+};
+export const WEB_MEALS = [['dinner', 'Dinner'], ['breakfast', 'Breakfast'], ['lunch', 'Lunch'], ['dessert', 'Dessert'], ['snacks', 'Snacks'], ['sides', 'Sides'], ['drinks', 'Drinks']];
+const CUISINES = [['american', 'American'], ['italian', 'Italian'], ['mexican', 'Mexican'], ['asian', 'Asian'], ['chinese', 'Chinese'], ['thai', 'Thai & Vietnamese'],
+  ['indian', 'Indian'], ['mediterranean', 'Greek & Mediterranean'], ['middleeastern', 'Middle Eastern'], ['french', 'French']];
+const choice = ([id, name, w, more]) => Object.assign({ id, name, w }, more || {});
+const findChoice = (list, id) => (list || []).map(choice).find((c) => c.id === id);
+// The library's old kinds of food ("#/recipes/chinese") land on the nearest place here.
+const OLD = { desserts: ['dessert'], weeknight: ['dinner'], southern: ['dinner', 'american'], japanese: ['dinner', 'asian'], korean: ['dinner', 'asian'] };
+
+/**
+ * Where a path of choices stands: ['dinner', 'american', 'beef', 'steak'] ('any' at a level).
+ * { path (tidied), crumbs: [{ name, path }], choices: [{ id, name }] (null: the recipes),
+ *   meal, key }. Words it doesn't know end the path there.
+ */
+export function browsePlace(args) {
+  let a = (args || []).map((x) => String(x || '').toLowerCase()).filter(Boolean);
+  if (OLD[a[0]]) a = OLD[a[0]].concat(a.slice(1));
+  if (CUISINE[a[0]]) a = ['dinner'].concat(a);
+  const meal = WEB_MEALS.find((m) => m[0] === a[0]);
+  if (!meal) return { path: [], crumbs: [], choices: WEB_MEALS.map(([id, name]) => ({ id, name })), meal: '', key: '' };
+  const path = [meal[0]];
+  const crumbs = [{ name: meal[1], path: path.slice() }];
+  const levels = meal[0] === 'dinner'
+    ? [() => CUISINES.map((c) => ({ id: c[0], name: c[1] })), () => MAINS.map(choice), (main) => (DISHES[main] || []).map(choice)]
+    : [() => (KINDS_OF[meal[0]] || []).map(choice)];
+  // (In the row along the top, an Any says what it is any of.)
+  const anyNames = meal[0] === 'dinner' ? ['Any cuisine', 'Any kind', 'Any dish'] : ['All'];
+  let choices = null;
+  for (let n = 0; n < levels.length; n++) {
+    const list = levels[n](path[path.length - 1]);
+    if (!list.length) break; // (nothing to choose here: the recipes)
+    const pick = a[n + 1];
+    const hit = pick === 'any' ? ANY : list.find((c) => c.id === pick);
+    if (!hit) { choices = [ANY].concat(list); break; }
+    path.push(hit.id);
+    crumbs.push({ name: hit === ANY ? anyNames[n] : hit.name, path: path.slice() });
+    if (hit === ANY && n > 0) break; // any main ingredient: no dish to choose
+  }
+  return { path, crumbs, choices, meal: meal[0], key: path.join('/') };
 }
 
-// The kinds of food of the library's first page, as the sites name them.
-const KIND_TERMS = {
-  breakfast: ['wprm_course', ['Breakfast']], lunch: ['wprm_course', ['Lunch']], desserts: ['wprm_course', ['Dessert', 'Desserts']],
-  weeknight: ['wprm_course', ['Dinner', 'Main Course', 'Main', 'Main Dish']], american: ['wprm_cuisine', ['American']],
-  italian: ['wprm_cuisine', ['Italian']], mexican: ['wprm_cuisine', ['Mexican', 'Tex-Mex']], southern: ['wprm_cuisine', ['Southern', 'Cajun']],
-  chinese: ['wprm_cuisine', ['Chinese']], japanese: ['wprm_cuisine', ['Japanese']], thai: ['wprm_cuisine', ['Thai', 'Vietnamese']],
-  indian: ['wprm_cuisine', ['Indian']], mediterranean: ['wprm_cuisine', ['Mediterranean', 'Greek', 'Middle Eastern']], korean: ['wprm_cuisine', ['Korean']],
-};
-/** Whether a kind of food (a cuisine id of the library) has web recipes to show. */
-export const hasWebKind = (kind) => !!KIND_TERMS[kind];
-
-async function siteSearch(site, { q, kind, page }, signal) {
-  const base = `${SITES[site].base}${API}wprm_recipe?per_page=${PER_SITE}&page=${page}&${LIST_FIELDS}`;
-  let filter = '';
-  if (kind) {
-    const [tax, names] = KIND_TERMS[kind];
-    const id = await termId(site, tax, names, signal);
-    if (!id) return { list: [], more: false };
-    filter = `&${tax}=${id}`;
-  }
-  const words = q ? `&search=${encodeURIComponent(q)}` : '';
-  const ask = (cols) => getJson(`${base}${filter}${words}${cols}`, SEARCH_MS, signal)
-    .catch((e) => (/^400$/.test(e.message) ? [] : Promise.reject(e))); // past the last page
-  let raw = await ask(q ? '&search_columns=post_title' : '');
-  raw = Array.isArray(raw) ? raw : [];
-  const more = raw.length >= PER_SITE;
-  // Few titles have the words: the recipes that mention them fill in.
-  if (q && page === 1 && raw.length < 3) {
-    const wide = await ask('').catch(() => []);
-    // (Only those with a searched word in the title: the rest of a full-text search is noise.)
-    (Array.isArray(wide) ? wide : []).forEach((x) => {
-      if (x && x.recipe && !raw.some((y) => y.id === x.id) && titleFit(plainText(x.recipe.name), q) > 0) raw.push(x);
+// What to ask the sites for one place: lists of [{ id, site, tax, w, not, fit }], the closest
+// first, then broader ones for when a place has few recipes (no course, no cuisine, no dish).
+function placeAsks(path) {
+  const [meal, x, y, z] = path;
+  let cuisine = '';
+  let words = null; // { w, all, not }
+  let broad = null;
+  if (meal === 'dinner') {
+    cuisine = x && x !== 'any' ? x : '';
+    const main = findChoice(MAINS, y);
+    const dish = main && findChoice(DISHES[main.id], z);
+    words = dish ? Object.assign({ not: main.not }, dish) : main || null;
+    broad = dish ? main : null;
+  } else words = findChoice(KINDS_OF[meal], x) || null;
+  const build = (tag, course, cuis, wd) => {
+    const out = [];
+    SITE_IDS.forEach((site) => {
+      const c = course ? (COURSE[course] || {})[site] : null;
+      const k = cuis ? (CUISINE[cuis] || {})[site] : null;
+      if ((course && !c) || (cuis && !k)) return;
+      const tax = `${c ? `&wprm_course=${c.join(',')}` : ''}${k ? `&wprm_cuisine=${k.join(',')}` : ''}`;
+      const list = !wd || (wd.all || []).indexOf(site) >= 0 ? [''] : wd.w;
+      list.forEach((w) => out.push({ id: `${tag}${site}:${w}`, site, tax, w, not: wd && wd.not, fit: w, whole: !!w }));
     });
-  }
+    return out;
+  };
+  const steps = [build('', meal, cuisine, words)];
+  if (words) steps.push(build('b1|', '', cuisine, words));
+  if (cuisine) steps.push(build('b2|', words ? '' : meal, '', words));
+  if (broad) steps.push(build('b3|', meal, cuisine, broad));
+  return steps;
+}
+
+const JUNK = /^(easy )?how to\b|\b(marinade|seasoning|spice rub|dry rub)\b/i;
+const PER_PAGE = 30; // about this many a page, shared between the sources asked
+async function askOne(a, page, per, meal, signal) {
+  const words = a.w ? `&search=${encodeURIComponent(a.w)}&search_columns=post_title` : '';
+  let raw = await getJson(`${SITES[a.site].base}${API}wprm_recipe?per_page=${per}&page=${page}&${LIST_FIELDS}${a.tax || ''}${words}`, SEARCH_MS, signal)
+    .catch((e) => (/^400$/.test(e.message) ? [] : Promise.reject(e))); // past the last page
+  raw = Array.isArray(raw) ? raw : [];
+  // Only titles with the words whole ("egg" isn't "eggplant", "scallops" isn't "scalloped"),
+  // and no how-tos or marinades.
+  const list = raw.map((x) => listEntry(a.site, x, a.fit, meal))
+    .filter((e) => e && (!a.whole || e.f === 2) && !JUNK.test(e.t) && !(a.not && a.not.test(e.t)));
+  return { list, more: raw.length >= per };
+}
+
+let lastOk = 0;
+let lastFail = 0;
+/** Whether the recipe sites answered lately (false with no internet). */
+export const webReachable = () => online() && !(lastFail > lastOk && Date.now() - lastFail < 120000);
+/** Ask again next time even if the sites failed a moment ago ("Try again"). */
+export function webRetry() { lastFail = 0; }
+
+// Every source at once; each source's new cards go to onResults as they come.
+async function askAll(asks, page, meal, onResults, signal, seen) {
+  const per = Math.max(3, Math.min(12, Math.round(PER_PAGE / Math.max(1, asks.length))));
+  const more = [];
+  const all = [];
+  let answered = 0;
+  await Promise.all(asks.map((a) => askOne(a, page, per, meal, signal).then((res) => {
+    answered++;
+    lastOk = Date.now();
+    if (res.more) more.push(a.id);
+    const fresh = [];
+    res.list.forEach((e, i) => {
+      const same = e.t.toLowerCase().replace(/[^a-z0-9]+/g, '');
+      if (seen[e.id] || seen[same]) return;
+      seen[e.id] = 1;
+      seen[same] = 1;
+      e.n = (page - 1) * per + i; // its place in its source (the sources take turns)
+      e.x = /^b\d\|/.test(a.id) ? Number(a.id[1]) : 0; // the broader places after the closer one
+      fresh.push(e);
+      all.push(e);
+    });
+    if (fresh.length && !(signal && signal.aborted)) onResults(fresh);
+  }).catch(() => { if (!(signal && signal.aborted)) lastFail = Date.now(); })));
+  return { list: all, more, answered };
+}
+
+const THIN = 14; // fewer than this: broader places fill in
+// A search done lately: drawn at once from the screen's copy (offline: only the recipes kept here).
+function fromCache(kind, q, page, onResults) {
+  const hit = cachedWebSearch(kind, q, page);
+  if (!hit) return null;
+  const list = online() ? hit.list.slice() : hit.list.filter((e) => cachedWebRecipe(e.id));
+  if (list.length) onResults(list);
+  return { list, more: online() && Array.isArray(hit.more) ? hit.more : [] };
+}
+/**
+ * The recipes of a place (browsePlace's path), from every site at once: onResults(list) with
+ * each source's new cards. Resolves { list, more, failed }: `more` = the sources with another
+ * page (pass them as `sources` with the next page); failed = no site answered. Never throws.
+ */
+export async function browseWeb({ path = [], page = 1, sources = null, onResults = () => {}, signal } = {}) {
+  const place = browsePlace(path);
+  if (!place.meal) return { list: [], more: [] };
+  const hit = fromCache('b', place.key, page, onResults);
+  if (hit) return hit;
+  if (!online()) return { list: [], more: [], failed: true };
   const seen = {};
-  const list = raw.map((x) => listEntry(site, x, q)).filter((e) => {
-    if (!e) return false;
-    const key = e.t.toLowerCase().replace(/[^a-z0-9]+/g, '');
-    if (seen[key]) return false;
-    seen[key] = 1;
-    return true;
-  });
-  list.sort((a, b) => b.f - a.f); // every word whole first ("butter chicken" before "buttermilk chicken")
-  list.forEach((e, i) => { e.n = (page - 1) * PER_SITE + i; }); // its place on its site (to take turns)
-  return { list, more };
+  const all = [];
+  const more = [];
+  let answered = 0;
+  const steps = placeAsks(place.path);
+  for (let s = 0; s < steps.length; s++) {
+    if ((signal && signal.aborted) || (page === 1 && s > 0 && all.length >= THIN)) break;
+    const asks = sources ? steps[s].filter((a) => sources.indexOf(a.id) >= 0) : page === 1 ? steps[s] : [];
+    if (!asks.length) continue;
+    const res = await askAll(asks, page, place.meal, onResults, signal, seen);
+    answered += res.answered;
+    res.list.forEach((e) => all.push(e));
+    res.more.forEach((id) => more.push(id));
+  }
+  if (answered && !(signal && signal.aborted)) keepSearch(cacheKey('b', place.key, page), all, more);
+  return { list: all, more, failed: !answered && !(signal && signal.aborted) };
 }
 
 /**
- * Recipes on the web for `q` (words), or for `kind` (a cuisine id of the library, e.g.
- * 'indian', optionally with words: Indian + "chicken"). Every site at once; `onResults(list)`
- * is called with each site's new cards as they arrive. Resolves { list, more } once all
- * have answered or given up (more = the sites with another page: pass them as `sites` with
- * the next `page`); nothing at all offline (never throws).
+ * Recipes on the web whose titles have the words `q`. Every site at once; `onResults(list)`
+ * with each site's new cards as they arrive. Resolves { list, more, failed } once all have
+ * answered or given up (more = the sources with another page: pass them as `sources` with
+ * the next `page`). Few titles have the words: recipes that mention them fill in.
  */
-export async function searchWeb({ q = '', kind = '', page = 1, sites = SITE_IDS, onResults = () => {}, signal } = {}) {
+export async function searchWeb({ q = '', page = 1, sources = null, onResults = () => {}, signal } = {}) {
   q = String(q || '').replace(/\s+/g, ' ').trim().slice(0, 60);
-  if ((!q && !kind) || (kind && !KIND_TERMS[kind])) return { list: [], more: [] };
-  const key = cacheKey(kind || 'q', `${q}`, page);
-  const hit = cachedWebSearch(kind || 'q', q, page);
-  if (hit) {
-    // (No Wi-Fi: only the cards whose recipe is kept here, the others couldn't open.)
-    const list = online() ? hit.list.slice() : hit.list.filter((e) => cachedWebRecipe(e.id));
-    if (list.length) onResults(list);
-    return { list, more: online() && Array.isArray(hit.more) ? hit.more : [] };
+  if (!q) return { list: [], more: [] };
+  const hit = fromCache('q', q, page, onResults);
+  if (hit) return hit;
+  if (!online()) return { list: [], more: [], failed: true };
+  const seen = {};
+  let asks = SITE_IDS.map((site) => ({ id: `${site}:${q}`, site, tax: '', w: q, fit: q }));
+  if (sources) asks = asks.filter((a) => sources.indexOf(a.id) >= 0);
+  const res = await askAll(asks, page, '', onResults, signal, seen);
+  // (The plain full-text search ranks badly: only its recipes with a searched word in the title.)
+  if (page === 1 && res.list.length < 6 && res.answered && !(signal && signal.aborted)) {
+    const wide = SITE_IDS.map((site) => ({ id: `w|${site}`, site, tax: `&search=${encodeURIComponent(q)}`, w: '', fit: q, not: { test: (t) => titleFit(t, q) === 0 } }));
+    const more = await askAll(wide, 1, '', (l) => { l.forEach((e) => { e.x = 1; }); onResults(l); }, signal, seen);
+    more.list.forEach((e) => res.list.push(e));
   }
-  if (!online()) return { list: [], more: [] };
-  const all = [];
-  const ids = {};
-  const more = []; // the sites that have another page
-  let answered = 0;
-  await Promise.all(sites.filter((x) => SITES[x]).map((site) => siteSearch(site, { q, kind, page }, signal).then((res) => {
-    answered++;
-    if (res.more) more.push(site);
-    const fresh = res.list.filter((e) => !ids[e.id]);
-    fresh.forEach((e) => { ids[e.id] = 1; all.push(e); });
-    if (fresh.length && !(signal && signal.aborted)) onResults(fresh);
-  }).catch(() => null)));
-  if (answered && !(signal && signal.aborted)) keepSearch(key, all, more);
-  return { list: all, more };
+  if (res.answered && !(signal && signal.aborted)) keepSearch(cacheKey('q', q, page), res.list, res.more);
+  return { list: res.list, more: res.more, failed: !res.answered && !(signal && signal.aborted) };
+}
+
+// ---- A picture for each choice -------------------------------------------------------------
+// The newest recipe of the place on one site: its photo, kept for a few weeks.
+const PICS_KEY = 'web.pics.v1';
+const PIC_DAYS = 21;
+/** The photo kept for a place (browsePlace's key): its address, '' for none to be had, null if not asked yet. */
+export function placePicture(key) {
+  const p = (read(PICS_KEY, {}) || {})[key];
+  return p && typeof p.img === 'string' && Date.now() - p.at < PIC_DAYS * 86400000 ? p.img : null;
+}
+/** Asks for a place's photo (a small request or two), one not in `avoid` when it can. Resolves its address, '' for none, null when the sites didn't answer. */
+export async function fetchPlacePicture(path, signal, avoid = []) {
+  const place = browsePlace(path);
+  if (!place.meal || !online()) return null;
+  // The closest place first, then broader ones; on RecipeTin Eats when it has it (its photos
+  // are the best), else on any site of the place.
+  const tries = [];
+  placeAsks(place.path).forEach((asks) => {
+    const a = asks.find((x) => x.site === 'rte') || asks[0];
+    if (a && tries.length < 3) tries.push(a);
+  });
+  let img = '';
+  for (const a of tries) {
+    let res;
+    try { res = await askOne(a, 1, 6, place.meal, signal); lastOk = Date.now(); } catch (e) { if (!(signal && signal.aborted)) lastFail = Date.now(); return null; }
+    // (Not a photo another choice on the screen already shows.)
+    const hit = res.list.find((e) => e.img && avoid.indexOf(e.img) < 0) || res.list.find((e) => e.img);
+    if (hit) { img = hit.img; break; }
+  }
+  const all = read(PICS_KEY, {}) || {};
+  all[place.key] = { img, at: Date.now() };
+  write(PICS_KEY, all);
+  return img;
+}
+
+// ---- Ideas ---------------------------------------------------------------------------------
+/**
+ * Web recipes this screen knows for a meal ('breakfast', 'lunch', 'dinner'): the ones kept
+ * here first, then those of recent browsing. No network. Offline: only those kept whole.
+ */
+export function webIdeas(meal = 'dinner') {
+  const out = [];
+  const seen = {};
+  const put = (e) => { if (e && isWebId(e.id) && !seen[e.id] && (online() || cachedWebRecipe(e.id))) { seen[e.id] = 1; out.push(e); } };
+  const fits = (e) => (meal === 'dinner' ? ['breakfast', 'lunch', 'dessert'].indexOf(e.ty) < 0 : e.ty === meal);
+  loadIndexList().filter(fits).forEach(put);
+  const c = searchCache();
+  Object.keys(c).filter((k) => k.indexOf(`b|${meal}`) === 0).forEach((k) => (c[k].list || []).forEach(put));
+  return out;
 }

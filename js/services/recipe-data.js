@@ -3,7 +3,7 @@
 // Files are cached by the service worker, so browsing works offline after the first visit.
 
 import { savedRecipes, toRecipe, parseStep, MEAL_NAMES } from './my-recipes.js';
-import { isWebId, webEntries, loadWebRecipe, cachedWebRecipe } from './web-recipes.js';
+import { isWebId, webEntries, loadWebRecipe, cachedWebRecipe, webIdeas } from './web-recipes.js';
 
 const BASE = './data/recipes/';
 
@@ -38,6 +38,10 @@ export function loadIndex() {
   }
   return indexP.then(withMine);
 }
+
+/** loadIndex(), or with no library file (offline on the very first start) the household's own
+ *  recipes and the web recipes kept here: never fails. */
+export const loadKnown = () => loadIndex().catch(() => withMine({ cuisines: [], recipes: [] }));
 
 function withMine(base) {
   const mine = savedRecipes().map(toRecipe);
@@ -179,98 +183,21 @@ export function metaLine(r, serves) {
 }
 
 // ---- Tonight's idea ------------------------------------------------------------
-// Changes once a day (local date), same all day. Dinners only (no desserts/breakfast).
+// A dinner from the web this screen already knows (kept, or seen while browsing Recipes): no
+// network. Chosen once a day (local date) and kept, so it is the same all day. null when
+// none is known yet.
+const IDEA_KEY = 'recipes.idea.v1';
 export async function dinnerIdea(date = new Date()) {
-  const ix = await loadIndex();
-  const dinner = {};
-  ix.cuisines.forEach((c) => { dinner[c.id] = (c.meal || 'dinner') === 'dinner'; });
-  const list = ix.recipes.filter((r) => dinner[r.c]);
-  if (!list.length) return null;
   const day = Math.floor(Date.UTC(date.getFullYear(), date.getMonth(), date.getDate()) / 86400000);
-  // Step through the list with a stride so neighbouring days aren't the same cuisine.
-  return list[(day * 37) % list.length];
-}
-
-// Lower-case, accents off ("sauté" -> "saute"), punctuation to spaces.
-const plain = (s) => String(s || '').toLowerCase().replace(/[àáâä]/g, 'a').replace(/[èéêë]/g, 'e').replace(/[ìíîï]/g, 'i')
-  .replace(/[òóôö]/g, 'o').replace(/[ùúûü]/g, 'u').replace(/ñ/g, 'n').replace(/ç/g, 'c').replace(/[^a-z0-9]+/g, ' ');
-// "tacos" also finds "taco", "potatoes" finds "potato", "berries" finds "berry",
-// "sandwiches" finds "sandwich". Both what is typed and the recipes are trimmed this way,
-// so "berry" finds "berries" too.
-const stem = (w) => (w.length > 4 && /ies$/.test(w) ? `${w.slice(0, -3)}y`
-  : w.length > 4 && /oes$/.test(w) ? w.slice(0, -2)
-    : w.length > 5 && /(ch|sh|x)es$/.test(w) ? w.slice(0, -2)
-      : w.length > 3 && /[^s]s$/.test(w) ? w.slice(0, -1) : w);
-const stemAll = (s) => ` ${plain(s).split(' ').filter(Boolean).map(stem).join(' ')} `;
-// Other words people use for the same thing (British names too). A typed word finds
-// recipes with any of its other names.
-const SAME = {
-  veggie: ['vegetable', 'vegetarian'], meatless: ['vegetarian'], bbq: ['barbecue'], barbeque: ['barbecue'],
-  crockpot: ['slow cooker'], crock: ['slow cooker'], instapot: ['instant pot'], prawn: ['shrimp'], mince: ['ground'],
-  aubergine: ['eggplant'], courgette: ['zucchini'], coriander: ['cilantro'], garbanzo: ['chickpea'], chickpea: ['garbanzo'],
-  pasta: ['spaghetti', 'penne', 'macaroni', 'lasagna', 'ziti', 'fettuccine', 'linguine', 'rigatoni', 'orzo', 'gnocchi', 'ravioli', 'tortellini'],
-  chilli: ['chili'], doughnut: ['donut'], donut: ['doughnut'], yoghurt: ['yogurt'], omelette: ['omelet'],
-  kebab: ['kabob', 'skewer'], kabob: ['kebab', 'skewer'], soup: ['stew', 'chowder', 'bisque'],
-};
-const alternatives = (w) => [w, stem(w)].concat((SAME[w] || SAME[stem(w)] || []).map(stem));
-// Short words must start a word ("ham" isn't in "graham", "pie" isn't in "crispier");
-// longer ones may sit inside one ("cake" finds "cheesecake").
-const hasWord = (hay, w) => alternatives(w).some((a) => hay.indexOf(a.length <= 3 ? ` ${a}` : a) >= 0);
-// The trimmed words of each library recipe, worked out once (search runs on every pause in typing).
-const hayCache = {};
-const searchWords = (text) => plain(text).split(' ').filter(Boolean);
-
-/** Search over titles, blurbs, tags and cuisine names. Title matches come first.
- *  If no recipe has every word, the closest ones come back (most words matched first)
- *  with `partial` set on the list, so the screen can say so. */
-export async function searchRecipes(text, limit = 200) {
-  const ix = await loadIndex();
-  const words = searchWords(text);
-  if (!words.length) return [];
-  const names = {};
-  ix.cuisines.forEach((c) => { names[c.id] = c.name; });
-  const hits = [];
-  const near = [];
-  ix.recipes.forEach((r, n) => {
-    const ck = `${r.id}|${r.t}|${r.b}`;
-    const cached = hayCache[ck] || (hayCache[ck] = [stemAll(r.t),
-      `${stemAll(r.t)}${stemAll(r.b)}${stemAll((r.g || []).join(' '))}${stemAll(names[r.c])}${stemAll(r.ty)}`]);
-    const title = cached[0];
-    const hay = cached[1];
-    const found = words.filter((w) => hasWord(hay, w)).length;
-    // Every word in the title > some words in the title > found elsewhere; then the library's order.
-    const inTitle = words.filter((w) => hasWord(title, w)).length;
-    // ...and a whole word in the title beats part of one ("cake": Chocolate cake before Pancakes).
-    const whole = inTitle === words.length && words.every((w) => alternatives(w).some((a) => title.indexOf(` ${a} `) >= 0));
-    if (found === words.length) hits.push({ r, rank: (whole ? 0 : inTitle === words.length ? 1 : inTitle ? 2 : 3) * 1e6 + n });
-    else if (found && words.length > 1) near.push({ r, rank: (words.length - found) * 1e7 + (inTitle ? 0 : 1e6) + n });
-  });
-  if (hits.length || !near.length) return hits.sort((a, b) => a.rank - b.rank).slice(0, limit).map((h) => h.r);
-  const out = near.sort((a, b) => a.rank - b.rank).slice(0, limit).map((h) => h.r);
-  out.partial = true;
-  return out;
-}
-
-/**
- * Recipes whose INGREDIENTS have every word ("chicken rice", "spinach feta"), for when
- * the names don't say it. Loads every cuisine's file (already kept on the screen after the
- * first day, see prefetchAll), so it is a moment slower than the name search.
- * `skip` = ids already shown. Resolves [] when nothing could be loaded.
- */
-export async function searchIngredients(text, skip = {}, limit = 60) {
-  const words = searchWords(text).filter((w) => w.length > 2);
-  if (!words.length) return [];
-  const ix = await loadIndex();
-  await Promise.all(ix.cuisines.filter((c) => c.id !== 'mine').map((c) => loadCuisine(c.id).catch(() => null)));
-  const full = ix.recipes.map((e) => (e.c === 'mine' ? null : byId[e.id])).filter(Boolean)
-    .concat(savedRecipes().map(toRecipe));
-  const out = [];
-  full.forEach((r) => {
-    if (out.length >= limit || skip[r.id] || !ix.byId[r.id]) return;
-    const hay = stemAll((r.ingredients || []).map((i) => (typeof i === 'string' ? i : i.item)).join(' '));
-    if (words.every((w) => hasWord(hay, w))) out.push(ix.byId[r.id]);
-  });
-  return out;
+  let kept = null;
+  try { kept = JSON.parse(localStorage.getItem(IDEA_KEY) || 'null'); } catch (e) { kept = null; }
+  if (kept && kept.day === day && kept.e && isWebId(kept.e.id)) return kept.e;
+  const list = webIdeas('dinner');
+  if (!list.length) return null;
+  // (A stride through the list, so neighbouring days aren't the same kind of dish.)
+  const e = list[(day * 37) % list.length];
+  try { localStorage.setItem(IDEA_KEY, JSON.stringify({ day, e })); } catch (er) { /* storage full */ }
+  return e;
 }
 
 // ---- Cooked lately ---------------------------------------------------------------

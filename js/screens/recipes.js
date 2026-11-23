@@ -1,21 +1,20 @@
-// Kitchen · Recipes: every dish is a painted plate on a dark table.
-//   #/recipes                    a ring of plates (the kinds of food), tonight's dish, ideas
-//   #/recipes/dinner             the dinner cuisines
-//   #/recipes/chinese            every Chinese recipe
-//   #/recipes/chinese/noodles    just the noodles
-//   #/recipes/favorites          hearted recipes
-//   #/recipes/recent             cooked lately (from cooking mode's "Done cooking")
+// Kitchen · Recipes: recipes from the web (web-recipes.js), every dish a plate on a dark table,
+// chosen step by step:
+//   #/recipes                              the meals (Dinner, Breakfast, …) + search
+//   #/recipes/dinner                       the cuisines
+//   #/recipes/dinner/american              the main ingredients
+//   #/recipes/dinner/american/beef         the dishes
+//   #/recipes/dinner/american/beef/steak   the recipes ("any" at a level: all of them)
+//   #/recipes/favorites · /recent · /mine   hearted, cooked lately, the household's own
+// Along the top, the choices made so far; tapping one goes back to it. Back goes up one level.
 // Search is in the top bar on the first page, typed on the screen's own keyboard (keyboard.js).
-// Every card has a heart and "+ Plan".
-// From the web (web-recipes.js): under the library's own matches, a search also shows recipes
-// from big recipe sites, with their real photos; a kind of food shows its web recipes too.
-// They open, plan, list and cook like the library's own. With no internet they just aren't there.
+// Every card has a heart and "+ Plan". With no internet: the recipes kept on the screen.
 // (No links into the Week plan or Shopping list here: those open from the Menu.)
 import { backHref, backLabel } from '../services/nav.js';
-import { loadIndex, searchRecipes, searchIngredients, fmtMinutes, cookedList, cookedWhen, cookingNow, clearLoves } from '../services/recipe-data.js';
-import { getPlan, weekDays, dayIds, favorites, toggleFavorite, tonight, addToPlan, removeFromPlan, plannedFor, planDays, dayKey, defaultMeal, MEALS } from '../services/meal-plan.js';
+import { loadKnown, fmtMinutes, cookedList, cookedWhen, cookingNow, clearLoves, cachedRecipe } from '../services/recipe-data.js';
+import { getPlan, weekDays, dayIds, favorites, toggleFavorite, addToPlan, removeFromPlan, plannedFor, planDays, dayKey, defaultMeal, MEALS } from '../services/meal-plan.js';
 import { saveRecipe, UNDO_KEY, onMyRecipesChanged } from '../services/my-recipes.js';
-import { searchWeb, keepWebRecipe, hasWebKind, isWebId } from '../services/web-recipes.js';
+import { searchWeb, browseWeb, browsePlace, placePicture, fetchPlacePicture, webEntries, webReachable, webRetry, keepWebRecipe, isWebId, WEB_MEALS } from '../services/web-recipes.js';
 import { esc, plateArt, tableColors } from './kitchen-ui.js';
 import { openKeyboard, keyboardStyle } from './keyboard.js';
 import { topBar, phoneCode, wirePhoneCodes } from './ui.js';
@@ -23,6 +22,7 @@ import { ADD_DAY_KEY } from './dish.js';
 
 let searchTimer;
 let web = null; // the web recipes of the page on screen (see webStart)
+let picCtl = null; // stops the choices' pictures being asked for
 let stopCodes = null; // stops the "scan with your phone" code being redrawn
 let offMine = null; // stops listening for recipes sent from a phone
 let favs = [];
@@ -31,8 +31,8 @@ let cooking = {}; // id -> step number, for recipes part-way through in cooking 
 let cookedAt = {}; // id -> when last cooked
 const MAX_PER_MEAL = 3; // same limit as the week plan
 
-// ---- Filters a kitchen cares about -------------------------------------------------
-// Only what the recipe data really says: its time, and the tags the library gives it.
+// ---- Filters (the household's own lists: favourites, cooked lately, my recipes) ------------
+// Only what the recipe says: its time, and its tags.
 // (Allergy-style tags like gluten-free are left out on purpose: a wrong one could hurt.)
 const FILTERS = [
   ['m30', '30 min or less', (r) => r.m > 0 && r.m <= 30],
@@ -66,6 +66,27 @@ function rememberSearch(q) {
   try { localStorage.setItem(SEARCHES_KEY, JSON.stringify(list)); } catch (e) { /* storage full */ }
 }
 const IDEAS = ['chicken', 'pasta', 'soup', 'salmon', 'tacos', 'beef', 'curry', 'salad', 'slow cooker', 'cookies'];
+// What the keyboard can suggest: the names of every choice there is to browse.
+let SUGGEST_POOL = null;
+function suggestPool() {
+  if (SUGGEST_POOL) return SUGGEST_POOL;
+  const names = [];
+  const walk = (path, depth) => {
+    const p = browsePlace(path);
+    (p.choices || []).forEach((c) => {
+      if (c.id === 'any') return;
+      names.push(c.name.replace(/ & .*/, ''));
+      if (depth < 3) walk(path.concat(c.id), depth + 1);
+    });
+  };
+  walk([], 0);
+  // (Down the dinner tree once, through one cuisine: the ingredients and dishes are the same for all.)
+  walk(['dinner', 'any'], 2);
+  SUGGEST_POOL = names.concat(IDEAS.map((w) => w.charAt(0).toUpperCase() + w.slice(1)))
+    .filter((t, n, a) => a.indexOf(t) === n)
+    .map((t) => ({ t, k: t.toLowerCase(), w: ` ${t.toLowerCase().replace(/[^a-z0-9]+/g, ' ')}` }));
+  return SUGGEST_POOL;
+}
 
 // Which recipes are being cooked, and when each was last cooked (worked out once per screen).
 function readBadges() {
@@ -159,32 +180,37 @@ const STYLES = `
     ${keyboardStyle({ panel: '#1A110D', key: '#FFF4EA', ink: '#3A1D10', go: '#FFD696', goInk: '#3A1D10', space: '#7A5646',
     sug: 'rgba(255,244,234,.14)', sugInk: '#FFF4EA', fn: 'rgba(255,244,234,.16)', fnInk: '#FFF4EA', line: 'rgba(255,244,234,.3)' })}
     .rb-clear{position:absolute;right:4px;top:4px;width:56px;height:56px;border:0;border-radius:50%;background:transparent;font-size:30px;line-height:1;color:#FFF4EA;cursor:pointer;display:none}
-    /* The ring of plates: one for each kind of food */
+    /* The choices made so far, along the top */
+    .rb-crumbs{display:flex;align-items:baseline;gap:12px;overflow:hidden}
+    .rb-crumbs a{color:#D9C3B0;text-decoration:none;font-size:28px;white-space:nowrap;flex:none;padding:10px 0}
+    .rb-crumbs .sep{color:#8F7563;font-size:26px;flex:none}
+    .rb-crumbs .on{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+    /* The rings: favourites, cooked lately, my recipes */
     .rb-rings{display:flex;overflow-x:auto;-webkit-overflow-scrolling:touch;margin:0 -40px;padding:6px 32px 8px}
     .rb-ring{flex:none;width:112px;text-align:center;text-decoration:none;color:#FFF4EA;position:relative;padding-top:6px}
     .rb-ring .p{position:relative;width:96px;height:96px;margin:0 auto}
-    .rb-ring .p>svg.k-plate{position:absolute;left:10px;top:10px}
     .rb-ring .dash{position:absolute;left:0;top:0}
-    .rb-ring.spin .dash{will-change:transform;animation:rb-turn 14s linear infinite}
-    @keyframes rb-turn{to{transform:rotate(360deg)}}
     .rb-ring .disc{position:absolute;left:10px;top:10px;width:76px;height:76px;border-radius:50%;display:flex;align-items:center;justify-content:center;font:500 32px Outfit,sans-serif;color:#FFFFFF}
     .rb-ring .n{font:600 16px/1.2 Inter,sans-serif;margin-top:6px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
     .rb-ring .c{font-size:15px;color:#D9C3B0}
-    .rb-ring:active .p,.rb-card:active,.rb-tile:active{transform:scale(.97)}
-    /* Tonight */
-    .rb-hero{display:flex;gap:16px;margin-top:10px}
+    /* The choices: big plates with the food's photo */
+    .rb-picks{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:20px 14px;padding:8px 0 12px}
+    .rb-pick{display:flex;flex-direction:column;align-items:center;gap:10px;text-decoration:none;color:#FFF4EA;text-align:center;min-width:0}
+    .rb-pick .p{position:relative;width:184px;height:184px}
+    .rb-pick .p>svg.k-plate{position:absolute;left:14px;top:14px}
+    .rb-pick .dash{position:absolute;left:0;top:0}
+    .rb-pick .n{font:500 26px/1.15 Outfit,sans-serif;max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+    .rb-ring:active .p,.rb-pick:active .p,.rb-card:active{transform:scale(.97)}
+    /* Cooking now / tonight */
+    .rb-hero{display:flex;gap:16px;margin:10px 0 8px}
     .rb-feat{position:relative;flex:1;min-width:0;height:264px;border-radius:32px;overflow:hidden;color:#FFF4EA}
     .rb-feat .plate{position:absolute;left:-70px;top:-38px;width:340px;height:340px;will-change:transform;animation:rb-turn 150s linear infinite}
+    @keyframes rb-turn{to{transform:rotate(360deg)}}
     .rb-feat .tx{position:absolute;left:296px;right:26px;top:22px;bottom:20px;display:flex;flex-direction:column;gap:6px}
     .rb-eyebrow{font:600 15px Inter,sans-serif;letter-spacing:2px;text-transform:uppercase;color:#FFD696}
     .rb-feat .t{font:700 38px/1.04 Outfit,sans-serif;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
     .rb-feat .row{display:flex;gap:10px;margin-top:auto;align-items:center}
     .rb-feat .x-btn{padding:0 22px}
-    .rb-own{flex:none;width:400px;height:264px;border-radius:32px;background:rgba(16,10,8,.5);box-shadow:inset 0 0 0 1.5px rgba(255,255,255,.14);padding:16px;display:flex;flex-direction:column;gap:10px}
-    .rb-own .x-code{background:transparent;padding:4px 6px 4px 4px}
-    .rb-own .x-code-title{font-size:19px}
-    .rb-own .row{display:flex;gap:10px;margin-top:auto}
-    .rb-own .row .x-btn{flex:1;padding:0 12px}
     .rb-h{display:flex;align-items:center;gap:14px;margin:22px 2px 12px;min-height:56px}
     .rb-h .l{font:500 28px Outfit,sans-serif;flex:1;min-width:0}
     /* Recipe cards */
@@ -205,25 +231,16 @@ const STYLES = `
     .rb-act.on{background:#FFF4EA;color:#B5432A}
     .rb-act[data-plan].on{color:#2E6B45}
     .rb-act:active,.rb-chip:active{transform:scale(.95)}
-    /* Chips: the types of a cuisine, the filters, search ideas */
-    .rb-types{display:flex;gap:10px;overflow-x:auto;-webkit-overflow-scrolling:touch;flex:none;margin:0 -40px;padding:0 40px 2px}
+    /* Chips: the filters, search ideas */
     .rb-filters{display:flex;gap:10px;flex-wrap:wrap;margin:0 0 16px}
     .rb-chip{min-height:56px;padding:0 22px;border-radius:999px;border:0;background:rgba(255,244,234,.12);color:#FFF4EA;font:600 18px Inter,sans-serif;cursor:pointer;
       display:inline-flex;align-items:center;gap:8px;text-decoration:none;white-space:nowrap;flex:none}
-    .rb-chip span{color:#D9C3B0;font-weight:500}
     .rb-chip.on{background:#FFF4EA;color:#3A1D10}
-    .rb-chip.on span{color:#7A5646}
     .rb-found{font:600 18px Inter,sans-serif;color:#E8D3BF;margin:2px 2px 14px}
     .rb-bar{display:flex;align-items:center;gap:14px;border-radius:22px;background:#FFD696;color:#3A1D10;padding:8px 10px 8px 24px;font-size:19px;min-height:72px;margin-bottom:14px;flex:none}
     .rb-bar .t{flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
     .rb-suggest{display:flex;flex-direction:column;gap:14px;padding:6px 2px}
     .rb-suggest .h{font:600 15px Inter,sans-serif;color:#FFD696;text-transform:uppercase;letter-spacing:2px}
-    /* The dinner cuisines */
-    .rb-tiles{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px}
-    .rb-tile{position:relative;height:176px;border-radius:26px;overflow:hidden;padding:18px 20px;color:#FFFFFF;text-decoration:none;display:flex;flex-direction:column;justify-content:space-between}
-    .rb-tile svg.k-plate{position:absolute;right:-26px;bottom:-30px}
-    .rb-tile .n{font:500 27px/1.1 Outfit,sans-serif;position:relative}
-    .rb-tile .c{font-size:16px;line-height:1.3;max-width:58%;position:relative}
     /* "Plan it" for a card */
     .rb-sheet{position:absolute;top:0;left:0;right:0;bottom:0;z-index:3;background:rgba(14,8,5,.7);display:flex;align-items:flex-end}
     .rb-panel{width:100%;background:#FFF4EA;color:#3A1D10;border-radius:32px 32px 0 0;padding:26px 40px 32px;display:flex;flex-direction:column;gap:14px}
@@ -238,18 +255,23 @@ const STYLES = `
     .rb-day.on{background:#5A2412;color:#FFF4EA}
     .rb-pnote{font-size:17px;min-height:24px;color:#7A5646}
     .rb-pnote.warn{color:#B3261E;font-weight:600}
-    @media (prefers-reduced-motion: reduce){.rb-ring.spin .dash,.rb-feat .plate{animation:none}}
+    @media (prefers-reduced-motion: reduce){.rb-feat .plate{animation:none}}
   </style>`;
 
-const DASH = (color) => `<svg class="dash" width="96" height="96" viewBox="0 0 96 96" aria-hidden="true"><circle cx="48" cy="48" r="45" fill="none" stroke="${color}" stroke-width="3.5" stroke-dasharray="40 14"/></svg>`;
+const DASH = (color, size = 96) => `<svg class="dash" width="${size}" height="${size}" viewBox="0 0 96 96" aria-hidden="true"><circle cx="48" cy="48" r="45" fill="none" stroke="${color}" stroke-width="${size > 120 ? 2.4 : 3.5}" stroke-dasharray="40 14"/></svg>`;
+const RING_COLORS = ['#E9806A', '#7CC3B2', '#FFD696', '#9DB5E0', '#D9A3C4', '#B8D98A', '#E8B07A', '#A9C7C0'];
+const recipesHref = (path) => `#/recipes${path && path.length ? `/${path.map(encodeURIComponent).join('/')}` : ''}`;
 
 export function mount(el, { args = [] } = {}) {
-  const [cuisineId, typeId] = args;
+  const first = String(args[0] || '');
+  const saved = first === 'favorites' || first === 'recent';
+  const mineView = first === 'mine';
+  const place = saved || mineView ? null : browsePlace(args);
 
   el.innerHTML = `${STYLES}<div class="rb" data-root></div>`;
   const root = el.querySelector('[data-root]');
   const here = location.hash;
-  let ixNow = null; // the library, once loaded
+  let ixNow = null; // the household's recipes + the web recipes kept here, once loaded
   let cardNow = (r) => recipeCard(r); // how this page draws a card (for redrawing one after a tap)
   let sheet = null; // { id, meal, note, warn }: "Plan it" for one card
   let searching = () => false; // somebody is typing or has words in the search box
@@ -260,10 +282,7 @@ export function mount(el, { args = [] } = {}) {
   };
 
   // ---- Long lists: a screenful first, the rest a moment later ----
-  // All 125 cards of a cuisine at once kept a real tablet busy for over half a second
-  // before anything showed. Now the first dozen are drawn, and the rest are added right
-  // after. (Going back to a spot far down the list still builds it whole, so the list
-  // can be put back where it was.)
+  // (A whole list at once kept a real tablet busy for over half a second before anything showed.)
   const FIRST_CARDS = 12;
   let moreToCome = null;
   const cards = (list, card, spot = here) => {
@@ -283,11 +302,22 @@ export function mount(el, { args = [] } = {}) {
     setTimeout(add, 60);
   };
 
-  // ---- From the web: cards with real photos under the library's own ----
-  // webStart() asks the sites (or takes the screen's copy of a recent search, drawn at once,
-  // so coming back puts the list where it was); each site's cards are added as they come.
+  // ---- The household's own and the web recipes kept on the screen (what works offline) ----
+  const keptList = () => {
+    const out = webEntries().filter((e) => cachedRecipe(e.id));
+    return out.concat((ixNow ? ixNow.recipes : []).filter((r) => r.c === 'mine'));
+  };
+  const offlineHtml = () => {
+    const list = keptList();
+    return list.length
+      ? `<div class="rb-found">No internet · saved recipes <button data-retry class="x-btn sm frost" style="margin-left:12px">Try again</button></div><div class="rb-cards">${list.map(cardNow).join('')}</div>`
+      : '<div class="rb-wait">No internet.<button data-retry class="x-btn white">Try again</button></div>';
+  };
+
+  // ---- Recipes from the web: cards with real photos ----
+  // webStart() asks the sites (or takes the screen's copy of a recent one, drawn at once, so
+  // coming back puts the list where it was); each site's cards are added as they come.
   // 24 to start with; scrolling near the end shows more, then asks for the next page.
-  // Nothing comes (no internet, sites down): the section just isn't there.
   web = null;
   const WEB_FIRST = 24;
   const webBox = () => root.querySelector('[data-webhits]');
@@ -297,47 +327,55 @@ export function mount(el, { args = [] } = {}) {
       w.list.push(Object.assign({ pg }, e));
       if (ixNow && !ixNow.byId[e.id]) ixNow.byId[e.id] = e;
     });
-    // A later page goes after what is already there. In a page: titles with every word
-    // searched first, then the sites taking turns (one from each, then the next from each).
-    w.list.sort((a, b) => a.pg - b.pg || (b.f || 0) - (a.f || 0) || (a.n || 0) - (b.n || 0));
+    // A later page goes after what is already there. In a page: the closest place first, the
+    // titles with every word next, then the sites taking turns (one from each, then the next).
+    w.list.sort((a, b) => a.pg - b.pg || (a.x || 0) - (b.x || 0) || (b.f || 0) - (a.f || 0) || (a.n || 0) - (b.n || 0));
   };
-  const webPick = (w) => (w.filter ? w.list.filter(w.filter) : w.list);
   function drawWeb() {
     const box = webBox();
     if (!box || !web) return;
-    const show = webPick(web).slice(0, web.shown);
-    box.innerHTML = show.length ? `<div class="rb-h"><div class="l">From the web</div></div><div class="rb-cards">${show.map(cardNow).join('')}</div>` : '';
+    const show = web.list.slice(0, web.shown);
+    if (show.length) box.innerHTML = `<div class="rb-cards">${show.map(cardNow).join('')}</div>`;
+    else if (!web.done) box.innerHTML = web.quiet ? '' : '<div class="rb-wait">Loading…</div>';
+    else box.innerHTML = web.failed ? offlineHtml() : web.quiet ? '' : '<div class="rb-wait">Nothing here yet.</div>';
   }
-  function webStart(q, kind, filter, then) {
-    const key = `${kind}|${q}`;
-    if (web && web.key === key) { web.filter = filter; drawWeb(); if (then && web.done) then(web); return; }
+  // kind 'b': a place (path of choices); 'q': words searched.
+  function webStart(kind, arg, opts = {}) {
+    const key = `${kind}|${kind === 'b' ? arg.join('/') : arg}`;
+    if (web && web.key === key) { drawWeb(); if (opts.then && web.done) opts.then(web); return; }
     if (web && web.ctl) web.ctl.abort();
-    const w = { key, q, kind, filter, list: [], shown: WEB_FIRST, page: 1, more: [], busy: true, done: false, ctl: new AbortController() };
+    const w = { key, list: [], shown: WEB_FIRST, page: 1, more: [], busy: true, done: false, failed: false, quiet: !!opts.quiet, ctl: new AbortController() };
+    w.ask = (page, sources) => {
+      const o = { page, sources, signal: w.ctl.signal, onResults: (l) => { if (web === w) { addWeb(w, l, page); drawWeb(); } } };
+      return kind === 'b' ? browseWeb(Object.assign({ path: arg }, o)) : searchWeb(Object.assign({ q: arg }, o));
+    };
     web = w;
-    searchWeb({ q, kind, signal: w.ctl.signal, onResults: (l) => { if (web === w) { addWeb(w, l, 1); drawWeb(); } } }).then((res) => {
+    drawWeb();
+    w.ask(1, null).then((res) => {
       if (web !== w) return;
-      w.busy = false; w.done = true; w.more = res.more;
-      if (then) then(w);
+      w.busy = false; w.done = true; w.more = res.more || []; w.failed = !!res.failed;
+      drawWeb();
+      if (opts.then) opts.then(w);
     });
   }
   function webMore() {
     const w = web;
     if (!w || !webBox()) return;
-    if (webPick(w).length > w.shown) { w.shown += 12; drawWeb(); return; }
+    if (w.list.length > w.shown) { w.shown += 12; drawWeb(); return; }
     if (!w.more.length || w.busy || w.list.length >= 240) return;
     w.busy = true;
     w.shown += 12;
     const pg = w.page + 1;
-    // (Only the sites that had a full page last time.)
-    searchWeb({ q: w.q, kind: w.kind, page: pg, sites: w.more, signal: w.ctl.signal, onResults: (l) => { if (web === w) { addWeb(w, l, pg); drawWeb(); } } }).then((res) => {
+    // (Only the sources that had a full page last time.)
+    w.ask(pg, w.more).then((res) => {
       if (web !== w) return;
-      w.busy = false; w.page = pg; w.more = res.more;
+      w.busy = false; w.page = pg; w.more = res.more || [];
     });
   }
   // Near the end of a list: more from the web.
   root.addEventListener('scroll', (e) => {
     const box = e.target;
-    if (!box.classList || !box.classList.contains('rb-body')) return; // (not the row of chips)
+    if (!box.classList || !box.classList.contains('rb-body')) return;
     if (web && box.scrollTop + box.clientHeight > box.scrollHeight - 500) webMore();
   }, true);
 
@@ -352,11 +390,9 @@ export function mount(el, { args = [] } = {}) {
     box.addEventListener('click', save); // tapping a recipe saves the spot right away
   };
 
-  // ---- A list of recipe cards with filter chips above it ----
-  // The chosen filter is remembered for the page (like the scroll spot), so coming back
-  // from a recipe shows the same short list.
+  // ---- A list of the household's recipes with filter chips above it ----
+  // The chosen filter is remembered for the page (like the scroll spot).
   let shown = null; // { box, list, card, empty } of the list on screen, to redraw when a chip is tapped
-  let webFor = null; // { q, kind }: a kind of food's page also shows its web recipes
   const filterOn = () => (memo().filters || {})[here] || '';
   const drawList = (box, list, card, empty, spot) => {
     shown = { box, list, card, empty };
@@ -365,11 +401,9 @@ export function mount(el, { args = [] } = {}) {
     const pick = on ? list.filter((r) => passes(r, on)) : list;
     box.innerHTML = `${list.length > 6 ? filterChips(list, on) : ''}${pick.length
       ? `<div class="rb-cards">${cards(pick, card, spot)}</div>`
-      : list.length ? '<div class="rb-wait">None of these match.</div>' : empty}${webFor ? '<div data-webhits></div>' : ''}`;
+      : list.length ? '<div class="rb-wait">None of these match.</div>' : empty}`;
     restOfCards(box.querySelector('.rb-cards'));
     codes();
-    // (The same filter chip holds for the web cards: what they say of themselves is their time.)
-    if (webFor) webStart(webFor.q, webFor.kind, on ? (r) => passes(r, on) : null);
   };
   root.addEventListener('click', (e) => {
     const chip = e.target.closest('[data-filter]');
@@ -383,11 +417,11 @@ export function mount(el, { args = [] } = {}) {
     shown.box.scrollTop = 0;
   });
 
-  // "Pick one for me": a recipe at random from what's on screen (after the filter).
+  // "Pick one for me": a recipe at random from what's on screen.
   root.addEventListener('click', (e) => {
-    if (!e.target.closest('[data-pick]') || !shown) return;
-    const on = filterOn();
-    const pick = on ? shown.list.filter((r) => passes(r, on)) : shown.list;
+    if (!e.target.closest('[data-pick]')) return;
+    let pick = web ? web.list : [];
+    if (shown) { const on = filterOn(); pick = on ? shown.list.filter((r) => passes(r, on)) : shown.list; }
     if (pick.length) location.hash = `#/dish/${encodeURIComponent(pick[Math.floor(Math.random() * pick.length)].id)}`;
   });
 
@@ -482,7 +516,7 @@ export function mount(el, { args = [] } = {}) {
     drawSheet();
   });
 
-  // Picking a recipe for a day of the week plan: say so along the top of the list.
+  // Picking a recipe for a day of the week plan: say so along the top.
   const pendingBar = () => {
     const p = pendingAdd();
     return p ? `<div class="rb-bar" data-pendbar><span class="t">Picking for <b>${esc(p.day.label)} ${mealWord(p.meal)}</b></span>
@@ -494,303 +528,288 @@ export function mount(el, { args = [] } = {}) {
     load();
   });
 
+  // ---- The choices: a big plate each, with a photo of the food when one is known ----
+  const pickPlate = (key, name, meal) => {
+    const img = placePicture(key);
+    return plateArt({ id: key, t: name, ty: meal, c: 'web', img: img || '' }, 156);
+  };
+  const picksHtml = (pl) => `<div class="rb-picks" data-picks>${pl.choices.map((c, n) => {
+    const path = pl.path.concat(c.id);
+    const key = browsePlace(path).key;
+    return `<a href="${recipesHref(path)}" class="rb-pick" data-pickkey="${esc(key)}">
+      <div class="p">${DASH(RING_COLORS[n % RING_COLORS.length], 184)}${pickPlate(key, c.name, pl.meal || c.id)}</div>
+      <div class="n">${esc(c.name)}</div></a>`;
+  }).join('')}</div>`;
+  // The photos not known yet: three asked at a time; each plate is redrawn as its photo comes.
+  function fetchPictures(pl, whenDone) {
+    if (picCtl) picCtl.abort();
+    picCtl = new AbortController();
+    const ctl = picCtl;
+    const todo = pl.choices.map((c) => pl.path.concat(c.id)).filter((p) => placePicture(browsePlace(p).key) == null);
+    if (!todo.length || navigator.onLine === false) { if (whenDone) whenDone(); return; }
+    let running = 0;
+    const next = () => {
+      if (ctl.signal.aborted || !el.isConnected) return;
+      if (!todo.length) { if (!running && whenDone) whenDone(); return; }
+      const path = todo.shift();
+      running++;
+      const used = pl.choices.map((c) => placePicture(browsePlace(pl.path.concat(c.id)).key)).filter(Boolean);
+      fetchPlacePicture(path, ctl.signal, used).then((img) => {
+        running--;
+        const key = browsePlace(path).key;
+        const box = img && [].find.call(root.querySelectorAll('[data-pickkey]'), (a) => a.dataset.pickkey === key);
+        const old = box && box.querySelector('svg.k-plate');
+        if (old) old.outerHTML = pickPlate(key, box.querySelector('.n').textContent, pl.meal || path[0]);
+        next();
+      });
+    };
+    for (let k = 0; k < 3; k++) next();
+  }
+
+  // The top bar on a page of choices or recipes: the choices made so far, each one a way back.
+  const crumbTop = (pl, right = '') => {
+    const parent = pl.crumbs.length > 1 ? pl.crumbs[pl.crumbs.length - 2] : null;
+    const crumbs = pl.crumbs.map((c, i, a) => (i === a.length - 1 ? `<span class="on">${esc(c.name)}</span>`
+      : `<a href="${recipesHref(c.path)}">${esc(c.name)}</a><span class="sep" aria-hidden="true">›</span>`)).join('');
+    return topBar({ title: '', back: parent ? recipesHref(parent.path) : '#/recipes', backLabel: '← Back', tone: 'dark', right })
+      .replace('<div class="x-title"></div>', `<nav class="x-title rb-crumbs" aria-label="Choices">${crumbs}</nav>`);
+  };
+
   const load = () => {
   sheet = null;
-  webFor = null;
   searching = () => false;
   if (web && web.ctl) web.ctl.abort();
   web = null;
-  root.innerHTML = `${topBar({ title: 'Recipes', tone: 'dark' })}<div class="rb-wait rb-body" data-wait>Loading recipes…</div>`;
+  shown = null;
+  root.innerHTML = `${topBar({ title: 'Recipes', tone: 'dark' })}<div class="rb-wait rb-body" data-wait></div>`;
 
-  Promise.all([loadIndex(), tonight().catch(() => null)]).then(([ix, tn]) => {
+  loadKnown().then((ix) => {
     if (!el.isConnected) return;
     ixNow = ix;
     planned = plannedLabels();
-    const cuisine = ix.cuisines.find((c) => c.id === cuisineId);
-    const dinnerView = cuisineId === 'dinner';
     favs = favorites();
     readBadges();
     const names = {};
     ix.cuisines.forEach((c) => { names[c.id] = c.name; });
-    if (cuisineId === 'favorites' || cuisineId === 'recent') {
+    const card = (r) => recipeCard(r, r.c === 'web' ? '' : names[r.c]);
+    cardNow = card;
+
+    if (saved) {
       // ---- Hearted recipes, or the ones cooked lately (one tap between the two) ----
-      const recent = cuisineId === 'recent';
+      const recent = first === 'recent';
       const list = (recent ? cookedList().map((x) => x.id) : favs).map((id) => ix.byId[id]).filter(Boolean);
       root.innerHTML = `
         ${topBar({ title: recent ? 'Cooked lately' : 'Favorites', back: '#/recipes', backLabel: '← Recipes', tone: 'dark',
           right: `<a href="#/recipes/favorites" class="x-btn sm ${recent ? 'glass' : 'white'}">♥ Favorites</a><a href="#/recipes/recent" class="x-btn sm ${recent ? 'white' : 'glass'}">Cooked lately</a>` })}
         ${pendingBar()}
         <div class="rb-body" data-list></div>`;
-      drawList(root.querySelector('[data-list]'), list, (r) => recipeCard(r, names[r.c]),
+      drawList(root.querySelector('[data-list]'), list, card,
         recent ? '<div class="rb-wait">Nothing cooked yet.<a href="#/recipes" class="x-btn white">Browse recipes</a></div>'
           : '<div class="rb-wait">No favorites yet.<a href="#/recipes" class="x-btn white">Browse recipes</a></div>');
       keepScroll(root.querySelector('[data-list]'));
       return;
     }
-    const byMeal = (m) => ix.cuisines.filter((c) => (c.meal || 'dinner') === m);
-    const firstOf = (c) => ix.recipes.find((r) => r.c === c.id) || { c: c.id, t: c.name };
 
-    if (!cuisine) {
-      // ---- The first page (or the dinner cuisines) + search ----
+    if (mineView) {
+      // ---- The household's own recipes ----
+      const list = ix.recipes.filter((r) => r.c === 'mine');
       root.innerHTML = `
-        ${topBar({ title: dinnerView ? 'Dinner' : 'Recipes', tone: 'dark',
-          back: dinnerView ? '#/recipes' : backHref(), backLabel: dinnerView ? '← Recipes' : backLabel(),
-          right: `<div class="rb-search"><button type="button" data-search class="rb-input" aria-label="Search recipes"><span class="ph">Search recipes</span></button><button data-clear class="rb-clear" aria-label="Clear search">×</button></div>` })}
-        <div data-body class="rb-body"></div>`;
-      const body = root.querySelector('[data-body]');
-      const mineCount = (ix.cuisines.find((c) => c.id === 'mine') || { count: 0 }).count;
-      const card = (r) => recipeCard(r, names[r.c]);
-
-      // The ring of plates: favourites, cooked lately, your own, then every kind of food.
-      const ring = (href, name, count, inner, color, spin) => `
-        <a href="${href}" class="rb-ring${spin ? ' spin' : ''}">
-          <div class="p">${DASH(color)}${inner}</div>
-          <div class="n">${esc(name)}</div>${count ? `<div class="c">${count}</div>` : ''}
-        </a>`;
-      const disc = (bg, glyph) => `<div class="disc" style="background:${bg}">${glyph}</div>`;
-      const showHome = () => {
-        // Part-way through cooking something: that is the big card. Else tonight's dinner, or today's idea.
-        const now = cookingNow();
-        const nowR = now && ix.byId[now.id];
-        const feat = nowR || (tn && tn.entry) || null;
-        const tc = feat ? tableColors(feat.table || feat.c) : null;
-        const featFav = feat && favs.indexOf(feat.id) >= 0;
-        const p = pendingAdd();
-        const today = dayKey(new Date());
-        const canPlanTonight = feat && !nowR && !(tn && tn.planned) && !p && plannedFor(today, 'dinner').length < MAX_PER_MEAL;
-        // A few ideas, new every day, from all over the library.
-        const dayNo = Math.floor(Date.UTC(new Date().getFullYear(), new Date().getMonth(), new Date().getDate()) / 86400000);
-        const pool = ix.recipes.filter((r) => r.c !== 'mine');
-        const ideas = [];
-        for (let k = 0; k < 12 && ideas.length < 6 && pool.length; k++) {
-          const r = pool[(dayNo * 37 + k * 173 + 11) % pool.length];
-          if (ideas.indexOf(r) < 0 && (!feat || r.id !== feat.id)) ideas.push(r);
-        }
-        const favList = favs.map((id) => ix.byId[id]).filter(Boolean);
-        const order = byMeal('breakfast').concat(byMeal('lunch'), byMeal('dinner'), byMeal('dessert'));
-        cardNow = card;
-        shown = null;
-        body.innerHTML = `
-          ${pendingBar()}
-          <div class="rb-rings">
-            ${ring('#/recipes/favorites', 'Favorites', favList.length, disc('#B5432A', '♥'), '#E9806A')}
-            ${ring('#/recipes/recent', 'Cooked lately', cookedList().length, disc('#3E7C6E', '✓'), '#7CC3B2')}
-            ${ring(mineCount ? '#/recipes/mine' : '#/myrecipe', 'My recipes', mineCount, disc('#6A5648', '+'), '#D9C3B0')}
-            ${order.map((c) => ring(`#/recipes/${c.id}`, (c.name === 'Easy weeknight' ? 'Weeknight' : c.name.split(' & ')[0]), c.count, plateArt(firstOf(c), 76), tableColors(c.id)[0], feat && feat.c === c.id)).join('')}
-          </div>
-          <div class="rb-hero">
-            ${feat ? `<div class="rb-feat" style="background:radial-gradient(ellipse 520px 420px at 14% 50%,${tc[0]} 0%,${tc[1]} 55%,${tc[2]} 100%)">
-              <a href="#/dish/${encodeURIComponent(feat.id)}" class="plate" aria-label="${esc(feat.t)}">${plateArt(feat, 340, { detail: true })}</a>
-              <div class="tx">
-                <div class="rb-eyebrow">${nowR ? `You’re cooking · step ${now.step}` : tn && tn.planned ? 'Tonight · on the plan' : 'Today’s idea for dinner'}</div>
-                <div class="t">${esc(feat.t)}</div>
-                <div class="rb-m">${esc([feat.m ? fmtMinutes(feat.m) : '', names[feat.c] || ''].filter(Boolean).join(' · '))}</div>
-                <div class="row">
-                  ${nowR ? `<a href="#/recipe/${encodeURIComponent(feat.id)}" class="x-btn white">Carry on cooking</a><a href="#/dish/${encodeURIComponent(feat.id)}" class="x-btn frost">The recipe</a>`
-                    : `<a href="#/dish/${encodeURIComponent(feat.id)}" class="x-btn white">Open the recipe</a>`}
-                  ${canPlanTonight ? `<button data-plantonight="${esc(feat.id)}" class="x-btn frost">+ Tonight</button>` : ''}
-                  <button data-featheart="${esc(feat.id)}" class="x-btn round ${featFav ? 'white' : 'frost'}" aria-label="Favorite">${featFav ? '♥' : '♡'}</button>
-                </div>
-              </div>
-            </div>` : ''}
-            <div class="rb-own"${feat ? '' : ' style="flex:1"'}>
-              ${phoneCode({ tab: 'recipe', size: 104, title: 'Add your own recipe', sub: ' ' })}
-              <div class="row">
-                <a href="#/myrecipe" class="x-btn sm white">+ Type one in</a>
-              </div>
-            </div>
-          </div>
-          ${favList.length ? `<div class="rb-h"><div class="l">Your favorites</div></div>
-            <div class="rb-cards">${favList.slice(0, 4).map(card).join('')}</div>` : ''}
-          <div class="rb-h"><div class="l">Ideas for today</div></div>
-          <div class="rb-cards">${ideas.map(card).join('')}</div>`;
-        codes();
-      };
-      const showGrid = () => {
-        if (!dinnerView) { showHome(); return; }
-        shown = null;
-        body.innerHTML = `${pendingBar()}<div class="rb-tiles">${byMeal('dinner').map((c) => {
-          const tc = tableColors(c.id);
-          return `<a href="#/recipes/${c.id}" class="rb-tile" style="background:linear-gradient(135deg,${tc[1]},${tc[2]})">
-            <div class="n">${esc(c.name)}</div>
-            ${plateArt(firstOf(c), 150)}
-            <div class="c">${c.count} recipes<br>${esc(c.types.slice(0, 2).map((t) => t.name).join(', '))}</div>
-          </a>`;
-        }).join('')}</div>`;
-      };
-      const box = root.querySelector('[data-search]');
-      const clearBtn = root.querySelector('[data-clear]');
-      // ---- The search box and its keyboard (the screen's own: Android's never comes up) ----
-      let query = ''; // what is typed
-      let kb = null; // the keyboard, while it is up
-      const drawBox = () => {
-        const q = query;
-        box.classList.toggle('on', !!kb);
-        box.innerHTML = q ? `<span class="tx">${esc(q)}</span>${kb ? '<span class="car"></span>' : ''}`
-          : `${kb ? '<span class="car first"></span>' : ''}<span class="ph">Search recipes</span>`;
-        clearBtn.style.display = q.trim() ? 'block' : 'none';
-      };
-      // Above the keys: recipe names and kinds of food that start with (or have a word starting
-      // with) what is typed.
-      const names0 = ix.cuisines.filter((c) => c.id !== 'mine').map((c) => c.name.split(' & ')[0]);
-      const pool = names0.concat(ix.recipes.map((r) => r.t)).filter((t, n, a) => a.indexOf(t) === n);
-      const pool2 = pool.map((t) => ({ t, k: t.toLowerCase(), w: ` ${t.toLowerCase().replace(/[^a-z0-9]+/g, ' ')}` }));
-      const suggestFor = (text) => {
-        const q = text.trim().toLowerCase().replace(/\s+/g, ' ');
-        if (!q) return []; // (the last searches and ideas are already above, as chips)
-        const hits = [];
-        pool2.forEach((x) => {
-          const r = x.k.indexOf(q) === 0 ? 0 : x.w.indexOf(` ${q}`) >= 0 ? 1 : -1;
-          if (r >= 0) hits.push({ x, r });
-        });
-        hits.sort((a, b) => a.r - b.r || a.x.k.length - b.x.k.length);
-        return hits.slice(0, 4).map((h) => h.x.t);
-      };
-      // "Search", a suggestion, or "Close" with words typed: put the keys away and look everywhere.
-      const submit = () => {
-        clearTimeout(searchTimer);
-        rememberSearch(query);
-        if (kb) kb.close(); else runSearch(false);
-      };
-      const openKb = () => {
-        if (kb) return;
-        body.style.paddingBottom = '450px'; // the end of the results can still be scrolled above the keys
-        kb = openKeyboard(root, {
-          go: 'Search', slots: 4, text: query, suggest: suggestFor,
-          onChange: (t) => {
-            const was = query;
-            query = t;
-            drawBox();
-            if (t === was) return;
-            clearTimeout(searchTimer);
-            searchTimer = setTimeout(() => runSearch(false), 250);
-          },
-          onGo: (pick, k) => { if (pick) { k.text = pick; query = pick; } submit(); },
-          onClose: () => { kb = null; body.style.paddingBottom = ''; drawBox(); clearTimeout(searchTimer); runSearch(false); },
-        });
-        drawBox();
-        if (!query.trim()) showSuggestions();
-      };
-      box.addEventListener('click', openKb);
-      // Before typing: the last few searches and some ideas, one tap each.
-      const chipRow = (words) => `<div class="rb-filters" style="margin:0">${words.map((w) => `<button class="rb-chip" data-q="${esc(w)}">${esc(w)}</button>`).join('')}</div>`;
-      const showSuggestions = () => {
-        if (query.trim()) return;
-        const recent = recentSearches();
-        shown = null;
-        body.innerHTML = `<div class="rb-suggest">
-          ${recent.length ? `<div class="h">Searched lately</div>${chipRow(recent)}` : ''}
-          <div class="h">Ideas</div>${chipRow(IDEAS.filter((w) => recent.indexOf(w) < 0))}
-        </div>`;
-      };
-      // Nothing in the library, its ingredients or (once it has answered) the web.
-      let nothingFor = '';
-      const nothing = (q) => {
-        const box2 = body.querySelector('[data-inghits]');
-        if (!box2 || nothingFor !== q || query.trim() !== q) return;
-        if (web && web.key === `|${q}` && (web.list.length || !web.done)) return;
-        const words = q.toLowerCase().split(/\s+/).filter(Boolean);
-        box2.innerHTML = `<div class="rb-wait">Nothing found for “${esc(q)}”.
-          ${chipRow((words.length > 1 ? words : []).concat(IDEAS.slice(0, 6)).filter((w, n, a) => a.indexOf(w) === n).slice(0, 8))}
-          <button data-clear class="x-btn frost">Clear the search</button></div>`;
-      };
-      const runSearch = async (restoring) => {
-        const q = query.trim();
-        clearBtn.style.display = q ? 'block' : 'none';
-        const qs = memo().qs || {}; qs[here] = q; setMemo({ qs });
-        nothingFor = '';
-        if (!q) { if (web && web.ctl) web.ctl.abort(); web = null; if (kb) showSuggestions(); else showGrid(); return; }
-        const hits = await searchRecipes(q, 120);
-        if (!el.isConnected || query.trim() !== q) return;
-        const words = q.toLowerCase().split(/\s+/).filter(Boolean);
-        cardNow = card;
-        shown = null;
-        body.innerHTML = hits.length
-          ? `<div class="rb-found">${hits.partial
-            ? `No recipe has all of “${esc(q)}”. These have some of it:`
-            : `${hits.length >= 120 ? 'Over 100' : hits.length} recipe${hits.length === 1 ? '' : 's'} found for “${esc(q)}”`}</div>
-             <div class="rb-cards">${cards(hits, card, restoring ? `${here}?${q}` : '')}</div><div data-inghits></div><div data-webhits></div>`
-          : `<div data-inghits><div class="rb-wait">Looking in the ingredients too…</div></div><div data-webhits></div>`;
-        restOfCards(body.querySelector('.rb-cards'));
-        // The web, once the words are settled (not on every key): a recent search is drawn at
-        // once from the screen's copy, so the spot in the list can be put back.
-        if (!kb) webStart(q, '', null, () => nothing(q));
-        else if (web && web.key === `|${q}`) drawWeb();
-        if (!restoring) body.scrollTop = 0;
-        else { const at = (memo().scroll || {})[`${here}?${q}`]; if (at) body.scrollTop = at; }
-        // Not much in the names? Look through what the recipes use ("chicken rice", "spinach feta").
-        if (hits.length >= 30 && !hits.partial) return;
-        const skip = {};
-        if (!hits.partial) hits.forEach((r) => { skip[r.id] = true; });
-        let more = [];
-        // (30 at most: built in one go, and more than that is a list nobody reads.)
-        try { more = await searchIngredients(q, skip, 30); } catch (e) { more = []; }
-        const ib = el.isConnected && query.trim() === q && body.querySelector('[data-inghits]');
-        if (!ib) return;
-        if (more.length) {
-          ib.innerHTML = `<div class="rb-found" style="margin-top:${hits.length && !hits.partial ? 22 : 0}px">${more.length >= 30 ? 'Recipes' : `${more.length} recipe${more.length === 1 ? '' : 's'}`} that use ${esc(words.join(' and '))}</div>
-            <div class="rb-cards">${more.map(card).join('')}</div>`;
-          if (hits.partial) {
-            // Real ingredient matches beat "some of it" name matches: put them first.
-            body.insertBefore(ib, body.firstChild);
-          }
-        } else if (!hits.length) {
-          ib.innerHTML = '';
-          nothingFor = q;
-          if (kb || !navigator.onLine || (web && web.key === `|${q}` && web.done)) nothing(q);
-        } else ib.innerHTML = '';
-      };
-      body.addEventListener('click', (e) => {
-        const sug = e.target.closest('[data-q]');
-        if (sug) {
-          query = sug.dataset.q;
-          if (kb) kb.set(query); else drawBox();
-          submit();
-          return;
-        }
-        // Opening a recipe from the results: the words were worth keeping.
-        if (e.target.closest('.rb-open') && query.trim()) rememberSearch(query);
-        // "+ Tonight" on the big card: straight onto today's dinner.
-        const pt = e.target.closest('[data-plantonight]');
-        if (pt) { addToPlan(dayKey(new Date()), pt.dataset.plantonight, 'dinner'); load(); }
-      });
-      const clearAll = () => { query = ''; if (kb) kb.set(''); drawBox(); runSearch(false); openKb(); };
-      root.querySelector('.x-top').addEventListener('click', (e) => { if (e.target.closest('[data-clear]')) clearAll(); });
-      body.addEventListener('click', (e) => { if (e.target.closest('[data-clear]')) clearAll(); });
-      // Back from a recipe you found by searching: the search (and the spot in it) is still there.
-      keepScroll(body, () => (query.trim() ? `${here}?${query.trim()}` : null));
-      const lastQ = (memo().qs || {})[here];
-      if (lastQ) { query = lastQ; drawBox(); runSearch(true); } else { drawBox(); showGrid(); }
-      searching = () => !!kb || !!query.trim();
-    } else {
-      // ---- One cuisine, optionally one type ----
-      const type = cuisine.types.find((t) => t.id === typeId);
-      const list = ix.recipes.filter((r) => r.c === cuisine.id && (!type || r.ty === type.id));
-      const mine = cuisine.id === 'mine';
-      root.innerHTML = `
-        ${topBar({ title: type ? `${cuisine.name} · ${type.name}` : cuisine.name, tone: 'dark', back: '#/recipes', backLabel: '← Recipes',
-          right: `${list.length > 3 ? '<button data-pick class="x-btn sm glass">Pick one for me</button>' : ''}${mine && list.length ? '<a href="#/myrecipe" class="x-btn sm white">+ Add a recipe</a>' : ''}` })}
-        ${cuisine.types.length ? `<div class="rb-types">
-          <a href="#/recipes/${cuisine.id}" class="rb-chip${type ? '' : ' on'}">All <span>${cuisine.count}</span></a>
-          ${cuisine.types.map((t) => `<a href="#/recipes/${cuisine.id}/${t.id}" class="rb-chip${type && type.id === t.id ? ' on' : ''}">${esc(t.name)} <span>${t.count}</span></a>`).join('')}
-        </div>` : ''}
-        ${mine ? undoBar() : ''}${pendingBar()}
+        ${topBar({ title: 'My recipes', tone: 'dark', back: '#/recipes', backLabel: '← Recipes',
+          right: `${list.length > 3 ? '<button data-pick class="x-btn sm glass">Pick one for me</button>' : ''}${list.length ? '<a href="#/myrecipe" class="x-btn sm white">+ Add a recipe</a>' : ''}` })}
+        ${undoBar()}${pendingBar()}
         <div class="rb-body" data-list></div>`;
-      // The same kind of food from the web, under the library's own (a type narrows it: "Noodles").
-      webFor = hasWebKind(cuisine.id) ? { kind: cuisine.id, q: type ? type.name.split(/ & |, | and /)[0] : '' } : null;
-      drawList(root.querySelector('[data-list]'), list, (r) => recipeCard(r),
-        mine ? `<div class="rb-wait" style="padding-top:20px">No recipes of your own yet.
-            <div style="display:flex;gap:16px;align-items:center;flex-wrap:wrap;justify-content:center">${phoneCode({ tab: 'recipe', size: 120, sub: ' ' })}<a href="#/myrecipe" class="x-btn white">+ Type one in</a></div></div>`
-          : '<div class="rb-wait">Nothing here yet.</div>');
+      drawList(root.querySelector('[data-list]'), list, card,
+        `<div class="rb-wait" style="padding-top:20px">No recipes of your own yet.
+          <div style="display:flex;gap:16px;align-items:center;flex-wrap:wrap;justify-content:center">${phoneCode({ tab: 'recipe', size: 120, sub: ' ' })}<a href="#/myrecipe" class="x-btn white">+ Type one in</a></div></div>`);
       keepScroll(root.querySelector('[data-list]'));
-      // The chosen type is brought into view in its row of chips.
-      const onChip = root.querySelector('.rb-types .on');
-      if (onChip && onChip.offsetLeft > 900) root.querySelector('.rb-types').scrollLeft = onChip.offsetLeft - 400;
+      return;
     }
+
+    if (place.meal && place.choices) {
+      // ---- A step of choices: cuisines, main ingredients, dishes, kinds ----
+      root.innerHTML = `${crumbTop(place)}${pendingBar()}<div class="rb-body" data-body>${picksHtml(place)}</div>`;
+      keepScroll(root.querySelector('[data-body]'));
+      fetchPictures(place);
+      return;
+    }
+
+    if (place.meal) {
+      // ---- The recipes of the place chosen ----
+      root.innerHTML = `${crumbTop(place, '<button data-pick class="x-btn sm glass">Pick one for me</button>')}${pendingBar()}
+        <div class="rb-body" data-body><div data-webhits></div></div>`;
+      webStart('b', place.path);
+      keepScroll(root.querySelector('[data-body]'));
+      return;
+    }
+
+    // ---- The first page: the meals + search ----
+    root.innerHTML = `
+      ${topBar({ title: 'Recipes', tone: 'dark', back: backHref(), backLabel: backLabel(),
+        right: `<div class="rb-search"><button type="button" data-search class="rb-input" aria-label="Search recipes"><span class="ph">Search recipes</span></button><button data-clear class="rb-clear" aria-label="Clear search">×</button></div>` })}
+      <div data-body class="rb-body"></div>`;
+    const body = root.querySelector('[data-body]');
+    const mineCount = ix.recipes.filter((r) => r.c === 'mine').length;
+
+    const ring = (href, name, count, glyph, bg, color) => `
+      <a href="${href}" class="rb-ring">
+        <div class="p">${DASH(color)}<div class="disc" style="background:${bg}">${glyph}</div></div>
+        <div class="n">${esc(name)}</div>${count ? `<div class="c">${count}</div>` : ''}
+      </a>`;
+    // Part-way through cooking something, or tonight's dinner on the plan: that is the big card.
+    const hero = () => {
+      const now = cookingNow();
+      const nowR = now && ix.byId[now.id];
+      const tonightId = plannedFor(dayKey(new Date()), 'dinner').find((id) => ix.byId[id]);
+      const feat = nowR || (tonightId && ix.byId[tonightId]) || null;
+      if (!feat) return '';
+      const tc = tableColors(feat.table || feat.c);
+      const featFav = favs.indexOf(feat.id) >= 0;
+      return `<div class="rb-hero"><div class="rb-feat" style="background:radial-gradient(ellipse 520px 420px at 14% 50%,${tc[0]} 0%,${tc[1]} 55%,${tc[2]} 100%)">
+        <a href="#/dish/${encodeURIComponent(feat.id)}" class="plate" aria-label="${esc(feat.t)}">${plateArt(feat, 340, { detail: true })}</a>
+        <div class="tx">
+          <div class="rb-eyebrow">${nowR ? `You’re cooking · step ${now.step}` : 'Tonight'}</div>
+          <div class="t">${esc(feat.t)}</div>
+          <div class="rb-m">${esc([feat.m ? fmtMinutes(feat.m) : '', feat.c === 'web' ? feat.site || '' : names[feat.c] || ''].filter(Boolean).join(' · '))}</div>
+          <div class="row">
+            ${nowR ? `<a href="#/recipe/${encodeURIComponent(feat.id)}" class="x-btn white">Carry on cooking</a><a href="#/dish/${encodeURIComponent(feat.id)}" class="x-btn frost">The recipe</a>`
+              : `<a href="#/dish/${encodeURIComponent(feat.id)}" class="x-btn white">Open the recipe</a>`}
+            <button data-featheart="${esc(feat.id)}" class="x-btn round ${featFav ? 'white' : 'frost'}" aria-label="Favorite">${featFav ? '♥' : '♡'}</button>
+          </div>
+        </div>
+      </div></div>`;
+    };
+    const showHome = () => {
+      cardNow = card;
+      shown = null;
+      const favList = favs.map((id) => ix.byId[id]).filter(Boolean);
+      const top = `${pendingBar()}<div class="rb-rings">
+          ${ring('#/recipes/favorites', 'Favorites', favList.length, '♥', '#B5432A', '#E9806A')}
+          ${ring('#/recipes/recent', 'Cooked lately', cookedList().filter((x) => ix.byId[x.id]).length, '✓', '#3E7C6E', '#7CC3B2')}
+          ${ring(mineCount ? '#/recipes/mine' : '#/myrecipe', 'My recipes', mineCount, '+', '#6A5648', '#D9C3B0')}
+        </div>${hero()}`;
+      // No internet: what is kept on the screen instead of the meals (they'd lead nowhere).
+      if (!webReachable()) { body.innerHTML = `${top}<div style="height:24px"></div>${offlineHtml()}`; return; }
+      const meals = { path: [], meal: '', choices: WEB_MEALS.map(([id, name]) => ({ id, name })) };
+      body.innerHTML = `${top}${picksHtml(meals)}`;
+      fetchPictures(meals, () => { if (!webReachable() && !query.trim() && el.isConnected && body.querySelector('[data-picks]')) showHome(); });
+    };
+    const box = root.querySelector('[data-search]');
+    const clearBtn = root.querySelector('[data-clear]');
+    // ---- The search box and its keyboard (the screen's own: Android's never comes up) ----
+    let query = ''; // what is typed
+    let kb = null; // the keyboard, while it is up
+    const drawBox = () => {
+      const q = query;
+      box.classList.toggle('on', !!kb);
+      box.innerHTML = q ? `<span class="tx">${esc(q)}</span>${kb ? '<span class="car"></span>' : ''}`
+        : `${kb ? '<span class="car first"></span>' : ''}<span class="ph">Search recipes</span>`;
+      clearBtn.style.display = q.trim() ? 'block' : 'none';
+    };
+    // Above the keys: kinds of food and dishes that start with (or have a word starting with) what is typed.
+    const suggestFor = (text) => {
+      const q = text.trim().toLowerCase().replace(/\s+/g, ' ');
+      if (!q) return []; // (the last searches and ideas are already above, as chips)
+      const hits = [];
+      suggestPool().forEach((x) => {
+        const r = x.k.indexOf(q) === 0 ? 0 : x.w.indexOf(` ${q}`) >= 0 ? 1 : -1;
+        if (r >= 0) hits.push({ x, r });
+      });
+      hits.sort((a, b) => a.r - b.r || a.x.k.length - b.x.k.length);
+      return hits.slice(0, 4).map((h) => h.x.t);
+    };
+    // "Search", a suggestion, or "Close" with words typed: put the keys away and look on the web.
+    const submit = () => {
+      clearTimeout(searchTimer);
+      rememberSearch(query);
+      if (kb) kb.close(); else runSearch(false);
+    };
+    const openKb = () => {
+      if (kb) return;
+      body.style.paddingBottom = '450px'; // the end of the results can still be scrolled above the keys
+      kb = openKeyboard(root, {
+        go: 'Search', slots: 4, text: query, suggest: suggestFor,
+        onChange: (t) => {
+          const was = query;
+          query = t;
+          drawBox();
+          if (t === was) return;
+          clearTimeout(searchTimer);
+          searchTimer = setTimeout(() => runSearch(false), 250);
+        },
+        onGo: (pick, k) => { if (pick) { k.text = pick; query = pick; } submit(); },
+        onClose: () => { kb = null; body.style.paddingBottom = ''; drawBox(); clearTimeout(searchTimer); runSearch(false); },
+      });
+      drawBox();
+      if (!query.trim()) showSuggestions();
+    };
+    box.addEventListener('click', openKb);
+    // Before typing: the last few searches and some ideas, one tap each.
+    const chipRow = (words) => `<div class="rb-filters" style="margin:0">${words.map((w) => `<button class="rb-chip" data-q="${esc(w)}">${esc(w)}</button>`).join('')}</div>`;
+    const showSuggestions = () => {
+      if (query.trim()) return;
+      const recent = recentSearches();
+      shown = null;
+      if (web && web.ctl) web.ctl.abort();
+      web = null;
+      body.innerHTML = `<div class="rb-suggest">
+        ${recent.length ? `<div class="h">Searched lately</div>${chipRow(recent)}` : ''}
+        <div class="h">Ideas</div>${chipRow(IDEAS.filter((w) => recent.indexOf(w) < 0))}
+      </div>`;
+    };
+    // Nothing in the household's own recipes or (once it has answered) on the web.
+    const nothing = (q, w) => {
+      if (query.trim() !== q || w.list.length || body.querySelector('[data-minehits] .rb-card')) return;
+      const words = q.toLowerCase().split(/\s+/).filter(Boolean);
+      const hb = webBox();
+      if (!hb) return;
+      hb.innerHTML = w.failed ? offlineHtml() : `<div class="rb-wait">Nothing found for “${esc(q)}”.
+        ${chipRow((words.length > 1 ? words : []).concat(IDEAS.slice(0, 6)).filter((x, n, a) => a.indexOf(x) === n).slice(0, 8))}
+        <button data-clear class="x-btn frost">Clear the search</button></div>`;
+    };
+    const runSearch = (restoring) => {
+      const q = query.trim();
+      clearBtn.style.display = q ? 'block' : 'none';
+      const qs = memo().qs || {}; qs[here] = q; setMemo({ qs });
+      if (!q) { if (web && web.ctl) web.ctl.abort(); web = null; if (kb) showSuggestions(); else showHome(); return; }
+      // The household's own recipes with the words, first; then the web's.
+      const words = q.toLowerCase().split(/\s+/).filter(Boolean);
+      const mine = ix.recipes.filter((r) => r.c === 'mine' && words.every((w) => `${r.t} ${r.b || ''}`.toLowerCase().indexOf(w) >= 0));
+      cardNow = card;
+      shown = null;
+      const keepWeb = web && web.key === `q|${q}`;
+      body.innerHTML = `<div data-minehits>${mine.length ? `<div class="rb-found">My recipes</div><div class="rb-cards" style="margin-bottom:22px">${mine.map(card).join('')}</div>` : ''}</div>
+        <div data-webhits></div>`;
+      // The web, once the words are settled (not on every key): a recent search is drawn at
+      // once from the screen's copy, so the spot in the list can be put back.
+      if (!kb) webStart('q', q, { then: (w) => nothing(q, w) });
+      else if (keepWeb) drawWeb();
+      else { if (web && web.ctl) web.ctl.abort(); web = null; }
+      if (!restoring) body.scrollTop = 0;
+      else { const at = (memo().scroll || {})[`${here}?${q}`]; if (at) body.scrollTop = at; }
+    };
+    body.addEventListener('click', (e) => {
+      const sug = e.target.closest('[data-q]');
+      if (sug) {
+        query = sug.dataset.q;
+        if (kb) kb.set(query); else drawBox();
+        submit();
+        return;
+      }
+      // Opening a recipe from the results: the words were worth keeping.
+      if (e.target.closest('.rb-open') && query.trim()) rememberSearch(query);
+    });
+    const clearAll = () => { query = ''; if (kb) kb.set(''); drawBox(); runSearch(false); openKb(); };
+    root.querySelector('.x-top').addEventListener('click', (e) => { if (e.target.closest('[data-clear]')) clearAll(); });
+    body.addEventListener('click', (e) => { if (e.target.closest('[data-clear]')) clearAll(); });
+    // Back from a recipe you found by searching: the search (and the spot in it) is still there.
+    keepScroll(body, () => (query.trim() ? `${here}?${query.trim()}` : null));
+    const lastQ = (memo().qs || {})[here];
+    if (lastQ) { query = lastQ; drawBox(); runSearch(true); } else { drawBox(); showHome(); }
+    searching = () => !!kb || !!query.trim();
   }).catch((err) => {
     console.error(err);
     const box = el.isConnected && root.querySelector('[data-wait]');
-    if (box) box.innerHTML = 'Recipes need the internet the first time. Check the Wi-Fi.<button data-retry class="x-btn white">Try again</button>';
+    if (box) box.innerHTML = '<button data-retry class="x-btn white">Try again</button>';
   });
   };
   // ---- "Undo" for an own recipe deleted a moment ago (see myrecipe.js) ----
@@ -821,7 +840,7 @@ export function mount(el, { args = [] } = {}) {
     load();
   });
 
-  root.addEventListener('click', (e) => { if (e.target.closest('[data-retry]')) load(); });
+  root.addEventListener('click', (e) => { if (e.target.closest('[data-retry]')) { webRetry(); load(); } });
 
   // A recipe sent from a phone (or deleted there) shows up without leaving the page, unless
   // somebody is in the middle of a search or of planning a card.
@@ -829,7 +848,7 @@ export function mount(el, { args = [] } = {}) {
   offMine = onMyRecipesChanged(() => {
     if (!el.isConnected || sheet) return;
     if (searching()) return;
-    if (!cuisineId || cuisineId === 'mine') load();
+    if (mineView || (place && !place.meal)) load();
   });
   load();
 }
@@ -838,6 +857,7 @@ export function unmount() {
   clearTimeout(searchTimer);
   if (web && web.ctl) web.ctl.abort();
   web = null;
+  if (picCtl) { picCtl.abort(); picCtl = null; }
   if (stopCodes) { stopCodes(); stopCodes = null; }
   if (offMine) { offMine(); offMine = null; }
 }
