@@ -55,7 +55,7 @@
 .x-code-sub:empty { display: none; }
 
 /* ---- A resting screen: its controls fade away when nobody touches it (ui.js restful) ---- */
-.x-chrome { transition: opacity .7s ease; }
+.x-chrome { transition: opacity .25s ease; }
 .x-resting .x-chrome { opacity: 0; pointer-events: none; }
 
 /* ---- Holiday touches: a few things drifting down (ui.js seasonLayer) ---- */

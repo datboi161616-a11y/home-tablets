@@ -10,6 +10,9 @@ import { display, isNightNow, dayBrightness, nightBrightness } from './services/
 import * as notices from './services/notices.js';
 import { noteTrouble, noteRecord } from './services/trouble.js';
 import { wiping } from './services/wipe.js';
+import { soften } from './services/soft-bg.js';
+
+function softBg(host) { try { soften(host); } catch (e) { /* the screen keeps its own background */ } }
 
 // Whatever goes wrong is written in the screen's own diary (Settings → Wi-Fi & about), so
 // whoever looks after it can see what happened and when.
@@ -238,7 +241,14 @@ async function navigate() {
   if (timerSvc && timerSvc.chip) { timerSvc.setRoute(name); screenEl.appendChild(timerSvc.chip); }
   if (notices.bar) { notices.setRoute(name); screenEl.appendChild(notices.bar); }
   current = mod;
-  try { mod.mount(host, { name, args, title: SCREENS[name], homeRoute, failed }); }
+  try {
+    mod.mount(host, { name, args, title: SCREENS[name], homeRoute, failed });
+    // Big soft backgrounds become tiny stretched pictures (services/soft-bg.js): the same
+    // look, a fraction of the drawing. Once now, before anything is drawn, and once more
+    // for what a screen adds a moment later.
+    softBg(host);
+    setTimeout(() => { if (host.isConnected) softBg(host); }, 400);
+  }
   catch (err) {
     console.error(err);
     noteTrouble(`The ${SCREENS[name] || name} screen stopped while opening: ${(err && err.message) || err}`, name);

@@ -295,12 +295,14 @@ export function mount(el) {
     /* The row of cards. It is moved by a finger here (not the browser's own scrolling, which
        on the tablets flung past several cards at once): one swipe, one card. */
     .lc-row{flex:1;min-height:0;display:flex;align-items:center;overflow:hidden;touch-action:pan-y}
-    .lc-track{display:flex;align-items:center;will-change:transform}
+    .lc-track{display:flex;align-items:center}
+    .lc-track.moving{will-change:transform}
+    .lc-card.far{visibility:hidden}
     .lc-track.glide{transition:transform .32s cubic-bezier(.2,.8,.2,1)}
     .lc-pad{flex:none;width:${(1280 - CARD_W) / 2}px;height:1px}
     .lc-card{flex:none;width:${CARD_W}px;height:500px;margin-right:${CARD_GAP}px;border-radius:32px;position:relative;overflow:hidden;
       box-sizing:border-box;padding:24px 26px;text-decoration:none;display:flex;flex-direction:column;
-      box-shadow:0 8px 18px rgba(0,0,0,.3);transform:scale(.9);opacity:.72;transition:transform .25s ease,opacity .25s ease}
+      box-shadow:0 4px 10px rgba(0,0,0,.25);transform:scale(.9);opacity:.72;transition:transform .25s ease,opacity .25s ease}
     .lc-card.on{transform:scale(1);opacity:1}
     .lc-card:last-of-type{margin-right:0}
     .lc-head{display:flex;align-items:baseline;flex:none}
@@ -392,12 +394,20 @@ export function mount(el) {
     middle = i;
     cards[i].classList.add('on');
     dots[i].classList.add('on');
+    // Only the cards on screen (and the next one each side) are drawn: the tablet was
+    // painting all twelve every time the menu opened.
+    cards.forEach((c, k) => c.classList.toggle('far', Math.abs(k - i) > 3));
   };
   // Timers going? Start there. Otherwise the shopping list, with a card either side.
   const startAt = liveTimers().length ? 3 : 2;
   const track = $('[data-track]');
+  let still = 0;
   const place = (x, glide) => {
     track.classList.toggle('glide', !!glide);
+    // A layer of its own only while it moves (a layer four screens wide costs a lot to keep).
+    track.classList.add('moving');
+    clearTimeout(still);
+    still = setTimeout(() => track.classList.remove('moving'), 450);
     track.style.transform = `translate3d(${Math.round(x)}px,0,0)`;
   };
   const goTo = (i, glide = true) => { setMiddle(i); place(-middle * STEP, glide); };

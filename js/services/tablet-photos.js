@@ -160,20 +160,44 @@ export function onPhotosChanged(cb) {
   return () => window.removeEventListener('tablet-photos', cb);
 }
 
-/** QR code as an SVG string (black on white, with a quiet zone). */
+/**
+ * A QR code (black on white, with a quiet zone), as markup for a picture `size` px wide.
+ * It is drawn once into a small picture and shown with sharp pixels: drawn as hundreds of
+ * little squares (as it used to be), the code cost this tablet more to paint than the rest
+ * of the screen together, every time the screen opened.
+ */
+const qrMade = {};
 export function qrSvg(text, size = 360) {
+  const key = `${size}|${text}`;
+  if (qrMade[key]) return qrMade[key];
   const qr = qrcode(0, 'M');
   qr.addData(text);
   qr.make();
   const n = qr.getModuleCount();
   const quiet = 4;
   const total = n + quiet * 2;
-  let d = '';
-  for (let r = 0; r < n; r++) {
-    for (let c = 0; c < n; c++) {
-      if (qr.isDark(r, c)) d += `M${c + quiet} ${r + quiet}h1v1h-1z`;
+  let html = '';
+  try {
+    const k = Math.max(1, Math.ceil(size / total)); // whole pixels per square: sharp when shown smaller
+    const c = document.createElement('canvas');
+    c.width = c.height = total * k;
+    const g = c.getContext('2d');
+    g.fillStyle = '#fff';
+    g.fillRect(0, 0, c.width, c.height);
+    g.fillStyle = '#000';
+    for (let r = 0; r < n; r++) {
+      for (let col = 0; col < n; col++) if (qr.isDark(r, col)) g.fillRect((col + quiet) * k, (r + quiet) * k, k, k);
     }
-  }
-  return `<svg width="${size}" height="${size}" viewBox="0 0 ${total} ${total}" shape-rendering="crispEdges" aria-label="QR code">
+    html = `<img src="${c.toDataURL('image/png')}" width="${size}" height="${size}" alt="QR code" style="display:block;image-rendering:pixelated">`;
+  } catch (e) {
+    let d = '';
+    for (let r = 0; r < n; r++) {
+      for (let col = 0; col < n; col++) if (qr.isDark(r, col)) d += `M${col + quiet} ${r + quiet}h1v1h-1z`;
+    }
+    html = `<svg width="${size}" height="${size}" viewBox="0 0 ${total} ${total}" shape-rendering="crispEdges" aria-label="QR code">
     <rect width="${total}" height="${total}" fill="#fff"/><path d="${d}" fill="#000"/></svg>`;
+  }
+  if (Object.keys(qrMade).length > 20) Object.keys(qrMade).forEach((x) => { delete qrMade[x]; });
+  qrMade[key] = html;
+  return html;
 }
