@@ -565,5 +565,20 @@ setInterval(() => {
   }
 }, 30 * 1000);
 
+// ---- How sharp the screen is drawn ----
+// These tablets paint every pixel with the processor. Drawn at 1280x800 and enlarged by the
+// graphics chip (the app does it, version 1.32 and later), a screen change paints 2.25 times
+// fewer pixels. Settings → Screen & sound → Drawing can choose full sharpness instead.
+function applyDrawing() {
+  try {
+    const n = window.TabletNative;
+    if (!n || !n.setRenderScale || isGhostCopy()) return;
+    const want = display().drawing === 'sharp' ? 1 : 1.5;
+    if (Math.abs((+n.renderScale() || 1) - want) > 0.01) n.setRenderScale(want);
+  } catch (e) { /* an older app: drawn at full size */ }
+}
+applyDrawing();
+addEventListener('display-changed', applyDrawing);
+
 // The owner moved the brightness slider (Settings): apply it now, not at the next screen.
 addEventListener('display-changed', () => setBacklight(screenName()));

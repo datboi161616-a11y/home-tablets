@@ -78,6 +78,11 @@ public class MainActivity extends Activity {
     private WebView web;          // their screen
     private WebView ghost;        // hidden copy you drive remotely (only while controlling)
     private FrameLayout root;
+    // How much smaller than the screen the page is drawn, then enlarged by the graphics chip.
+    // This tablet's browser paints every pixel with the processor (measured: about half a
+    // second per screen change at 1920x1200); drawn at 1280x800 and enlarged 1.5x there are
+    // 2.25 times fewer pixels to paint. 1 = full sharpness. Chosen by the page (Settings).
+    private float renderScale = 1f;
     private View viewingDot;      // small dot in the corner while their screen is mirrored
     // Shared by the whole app (not per screen instance): Android can occasionally create
     // a second copy of this screen (e.g. when Home is pressed), and two photo servers or
@@ -160,6 +165,11 @@ public class MainActivity extends Activity {
         configureWebView(web, false);
         root.addView(web, new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
         setContentView(root);
+        renderScale = Math.max(1f, Math.min(2f, prefs.getFloat("renderScale", 1f)));
+        // The size is only known after layout, and changes if the screen turns.
+        root.addOnLayoutChangeListener((v, l, t, r, b, ol, ot, or, ob) -> {
+            if (r - l != or - ol || b - t != ob - ot) root.post(this::applyRenderScale);
+        });
 
         requestRuntimePermissions();
         Kiosk.applyPolicies(this);
@@ -215,6 +225,20 @@ public class MainActivity extends Activity {
     }
 
     @SuppressLint("SetJavaScriptEnabled")
+    /** Sizes their web view to the screen divided by renderScale and enlarges it back to fill it. */
+    private void applyRenderScale() {
+        if (web == null || root == null) return;
+        int w = root.getWidth(), h = root.getHeight();
+        if (w <= 0 || h <= 0) return;
+        float s = renderScale;
+        FrameLayout.LayoutParams lp = new FrameLayout.LayoutParams(Math.round(w / s), Math.round(h / s), Gravity.TOP | Gravity.START);
+        web.setLayoutParams(lp);
+        web.setPivotX(0f);
+        web.setPivotY(0f);
+        web.setScaleX(s);
+        web.setScaleY(s);
+    }
+
     private void configureWebView(WebView w, boolean isGhost) {
         w.setBackgroundColor(Color.BLACK);
         WebSettings s = w.getSettings();
@@ -313,6 +337,7 @@ public class MainActivity extends Activity {
         configureWebView(web, false);
         root.addView(web, Math.max(at, 0),
                 new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
+        root.post(this::applyRenderScale);
         if (!resumed) web.onPause(); // they are in another app (YouTube...): stay quiet until they come back
         final String url = back != null ? back : siteUrl();
         // Dying again and again means memory is still short: give Android a moment between tries.
@@ -1377,6 +1402,19 @@ public class MainActivity extends Activity {
                 lp.screenBrightness = level < 0 ? WindowManager.LayoutParams.BRIGHTNESS_OVERRIDE_NONE : Math.max(0.01f, Math.min(1f, level));
                 getWindow().setAttributes(lp);
             });
+        }
+
+        /** How much smaller the page is drawn than the screen (1 = full sharpness; see renderScale). */
+        @JavascriptInterface
+        public float renderScale() { return renderScale; }
+
+        /** Draw the page at 1/scale of the screen and enlarge it (1 to 2). Remembered. */
+        @JavascriptInterface
+        public void setRenderScale(float scale) {
+            if (isGhost) return;
+            float s = Math.max(1f, Math.min(2f, scale));
+            prefs.edit().putFloat("renderScale", s).apply();
+            runOnUiThread(() -> { renderScale = s; applyRenderScale(); });
         }
 
         /** Camera screen diagnostics (shows in logcat). */

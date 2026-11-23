@@ -60,6 +60,7 @@ const CHOICES = {
   night: { get: () => (display().night ? '1' : '0'), set: (v) => setDisplay({ night: v === '1' }) },
   nightDim: { get: () => String(display().nightDim), set: (v) => setDisplay({ nightDim: +v }) },
   homeHideSecs: { get: () => String([10, 30, 60, 0].indexOf(+display().homeHideSecs) < 0 ? 10 : +display().homeHideSecs), set: (v) => setDisplay({ homeHideSecs: +v }) },
+  drawing: { get: () => (display().drawing === 'sharp' ? 'sharp' : 'fast'), set: (v) => setDisplay({ drawing: v }) },
   holiday: { get: () => (display().holiday === false ? '0' : '1'), set: (v) => setDisplay({ holiday: v === '1' }) },
   restMinutes: { get: () => String(display().restMinutes), set: (v) => setDisplay({ restMinutes: +v }) },
   slideSecs: { get: () => String(display().slideSecs), set: (v) => setDisplay({ slideSecs: +v }) },
@@ -220,6 +221,7 @@ export function mount(el) {
         </div>`) : '')
         + (DECK ? '' : row('On Home, hide the buttons after', `<div>${seg('homeHideSecs', [['10', '10 seconds'], ['30', '30 seconds'], ['60', '1 minute'], ['0', 'Never']])}</div>`)
         + row('Holiday touches', `<div>${seg('holiday', [['1', 'On'], ['0', 'Off']])}</div>`)
+        + (N() && N().setRenderScale ? row('Drawing', `<div>${seg('drawing', [['fast', 'Faster'], ['sharp', 'Sharper']])}</div>`, 'Faster draws the screen at a lower resolution: quicker to respond, text a little softer.') : '')
         + row('Go back to Home after', `<div>${seg('restMinutes', [['5', '5 min'], ['10', '10 min'], ['30', '30 min'], ['0', 'Stay put']])}</div>`))
         + (DECK ? '' : row('When a note arrives', `<div>${seg('noteChime', [['1', 'A soft chime'], ['0', 'Silent']])}</div>`))
         + row('Clean the glass', `<div class="st-line">

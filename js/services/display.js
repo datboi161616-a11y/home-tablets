@@ -14,6 +14,7 @@ const DEFAULTS = {
   restMinutes: 10,      // back to the resting screen after this long untouched; 0 = stay put
   restScreen: 'home',   // (no longer a choice: Home is the photo frame now)
   homeHideSecs: 10,     // Home: after this long untouched only the photo and the time are left; 0 = never
+  drawing: 'fast',     // 'fast': the screen is drawn at 1280x800 and enlarged (much quicker on these tablets); 'sharp': full resolution
   holiday: true,        // holiday touches through the year (snow in December, a countdown to Christmas...)
   slideSecs: 60,        // photos on Home: how long each picture stays
   photoZoom: true,      // photos on Home: the slow zoom
