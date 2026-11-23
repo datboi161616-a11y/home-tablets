@@ -11,6 +11,7 @@ import { getPhotos, thumbnail, isTablet } from '../services/tablet-photos.js';
 import { photos as samplePhotos } from '../services/family-sample.js';
 import { topBar, esc, people, personColor, phoneCode, wirePhoneCodes, season, seasonLayer } from './ui.js';
 import { backHref, backLabel } from '../services/nav.js';
+import { openKeyboard, keyboardStyle } from './keyboard.js';
 
 let timer, onUpdate, onPhotos, undoTimer, stopCodes;
 let view = 'month'; // 'month' (opens first) or 'week'
@@ -332,6 +333,33 @@ const STYLE = `
     .kc-bar { width:6px; align-self:stretch; border-radius:3px; flex:none; }
     .kc-tile { position:relative; width:168px; height:126px; border-radius:12px; overflow:hidden; background:rgba(255,255,255,.06); flex:none; }
 
+    ${keyboardStyle({ panel: '#1B1622', key: '#F4EEFA', ink: '#221C2B', go: GOLD, goInk: '#15121A' })}
+    .kf-sheet { width:780px; max-height:740px; padding:0; overflow:hidden; }
+    .kf-top { flex:none; display:flex; align-items:center; min-height:76px; padding:0 14px; border-bottom:1px solid rgba(255,255,255,.08); }
+    .kf-head { flex:1; text-align:center; font:600 22px Inter,sans-serif; }
+    .kf-plain { min-height:56px; min-width:110px; padding:0 14px; border:0; background:none; color:#D9CDE8; font:500 20px Inter,sans-serif; cursor:pointer; }
+    .kf-plain.kf-save { color:${GOLD}; font-weight:700; }
+    .kf-body { flex:1; min-height:0; overflow-y:auto; -webkit-overflow-scrolling:touch; padding:18px 22px 22px; display:flex; flex-direction:column; }
+    .kf-body > * + * { margin-top:16px; }
+    .kf-title { width:100%; min-height:72px; border:0; border-radius:18px; background:rgba(255,255,255,.08); color:#fff; text-align:left; padding:0 22px;
+      font:500 26px Inter,sans-serif; cursor:pointer; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; flex:none; }
+    .kf-title.empty { color:#8E84A0; }
+    .kf-title.typing { box-shadow:inset 0 0 0 2px ${GOLD}; }
+    .kf-list { border-radius:18px; background:rgba(255,255,255,.06); overflow:hidden; flex:none; }
+    .kf-item { width:100%; display:flex; align-items:center; min-height:66px; padding:0 18px 0 22px; border:0; background:transparent; color:#fff;
+      font:500 20px Inter,sans-serif; cursor:pointer; text-align:left; position:relative; }
+    .kf-item + .kf-item::before, .kf-more + .kf-item::before { content:""; position:absolute; top:0; left:22px; right:0; height:1px; background:rgba(255,255,255,.08); }
+    .kf-name { flex:1; }
+    .kf-now { color:#D9CDE8; display:inline-flex; align-items:center; max-width:420px; white-space:nowrap; overflow:hidden; }
+    .kf-now .kc-dot { margin-right:8px; }
+    .kf-item.open .kf-now { color:${GOLD}; }
+    .kf-chev { width:10px; height:10px; border-right:2.5px solid #8E84A0; border-bottom:2.5px solid #8E84A0; transform:rotate(-45deg); margin-left:16px; flex:none; }
+    .kf-item.open .kf-chev { transform:rotate(45deg); margin-top:-6px; }
+    .kf-more { padding:4px 18px 18px 22px; }
+    .kf-opts { display:flex; align-items:center; flex-wrap:wrap; }
+    .kf-opts > * { margin:5px 10px 5px 0; }
+    .kf-del { color:#FF8A80; justify-content:center; }
+    .kf-red { color:#FF8A80; }
     .kf-label { font:600 15px Inter,sans-serif; letter-spacing:1.5px; text-transform:uppercase; color:#A89DB5; width:92px; flex:none; }
     .kf-line { display:flex; align-items:center; gap:10px; min-width:0; min-height:56px; }
     .kf-row { display:flex; align-items:center; gap:8px; flex-wrap:wrap; height:56px; overflow:hidden; min-width:0; flex:1; }
@@ -464,18 +492,11 @@ function render(el) {
   const month = view === 'month';
   const days = month ? null : getWeek(weekStart());
   const first = monthStart();
-  const title = month ? first.toLocaleDateString('en-US', { month: 'long', year: 'numeric' }) : `${weekTitle(days)} · ${weekRange(days)}`;
   const atStart = month ? monthOffset <= minMonth() : weekOffset <= MIN_WEEK;
   const atEnd = month ? monthOffset >= MAX_MONTH : weekOffset >= MAX_AHEAD;
   const away = month ? monthOffset !== 0 : weekOffset !== 0;
-  // How many photos this month has (the board's "14 photos so far").
-  let shots = 0;
-  if (month) {
-    const dim = new Date(first.getFullYear(), first.getMonth() + 1, 0).getDate();
-    for (let i = 0; i < dim; i++) shots += photosOn(shiftDay(first, i)).length;
-  }
   const big = month ? first.toLocaleDateString('en-US', { month: 'long' }) : weekTitle(days);
-  const small = month ? `${first.getFullYear()}${shots ? ` · ${shots} photo${shots === 1 ? '' : 's'}${monthOffset === 0 ? ' so far' : ''}` : ''}` : weekRange(days);
+  const small = month ? `${first.getFullYear()}` : weekRange(days);
 
   el.innerHTML = `${STYLE}
   <div class="kc">
@@ -622,15 +643,6 @@ const SUGGEST = [
   { t: 'Haircut', tag: 'appointment', len: 60 },
 ];
 
-function titleChips(current) {
-  const seen = {};
-  const list = [];
-  recentTitles(2).concat(SUGGEST.map((s) => s.t)).forEach((t) => {
-    const k = t.toLowerCase();
-    if (!seen[k] && list.length < 8) { seen[k] = true; list.push(t); }
-  });
-  return list.map((t) => `<button data-f="title" data-title-chip="${esc(t)}" class="kf-chip${current.trim().toLowerCase() === t.toLowerCase() ? ' on' : ''}"><span class="kc-cut">${esc(t)}</span></button>`).join('');
-}
 
 /** Open the sheet: a new event on `date`, or the saved event `id` (as it falls on day `on`). `back` = the day to return to on Cancel. */
 function showForm(el, { date, id, back, on }) {
@@ -678,88 +690,110 @@ function pickMonth(f) {
     </div>`;
 }
 
+// The sheet for adding or changing an event, kept short: the title, then one row per
+// choice showing what it is now ("Repeats · Just once ›"). Tapping a row opens just that
+// row's choices underneath it; the title is typed on the screen's own keyboard.
+let fkb = null; // the keyboard, while the title is being typed
+
+function rowValue(f, key) {
+  if (key === 'date') return esc(f.date.toLocaleDateString('en-US', thisYear(f.date) ? { weekday: 'short', month: 'short', day: 'numeric' } : { month: 'short', day: 'numeric', year: 'numeric' }));
+  if (key === 'time') return f.allDay ? 'All day' : esc(fmtMin(f.mins));
+  if (key === 'len') { const l = LENGTHS.filter((x) => x[0] === f.minutes)[0]; return l ? l[1] : `${f.minutes} min`; }
+  if (key === 'rep') return (REPEATS.filter((x) => x[0] === f.repeat)[0] || REPEATS[0])[1];
+  if (key === 'who') return f.who.length ? esc(f.who.join(', ')) : 'Everyone';
+  if (key === 'tag') return `<span class="kc-dot" style="background:${TAGS[f.tag].color}"></span>${esc(TAGS[f.tag].label)}`;
+  return '';
+}
+
 function drawForm(el) {
   const f = form;
   const was = f.id ? getMyEvent(f.id) || {} : {};
   const repeating = was.repeat && was.repeat !== 'none';
   const onLabel = f.on ? f.on.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' }) : '';
-  const diff = dayDiff(midnightOf(new Date()), f.date);
-  const dayWords = f.date.toLocaleDateString('en-US', thisYear(f.date) ? { weekday: 'long', month: 'long', day: 'numeric' } : { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' });
   const names = people();
   // Somebody an older event was for, who is no longer in Settings, still shows (and can be taken off).
   f.who.forEach((n) => { if (!names.some((p) => p.name === n)) names.push({ name: n, color: personColor(n) }); });
-  // Two names or seven: they all fit on the one line.
-  const shown = names.slice(0, 7);
-  const nameW = Math.min(150, Math.floor((640 - 62 - 8 * shown.length) / Math.max(1, shown.length)));
+  const open = f.open || '';
+  const chip = (act, on, label) => `<button data-f="${act}" class="kf-chip${on ? ' on' : ''}">${label}</button>`;
+  const choices = {
+    date: () => `<div style="display:flex;justify-content:center">${pickMonth(f)}</div>`,
+    time: () => `<div class="kf-opts">
+        ${chip('allday', f.allDay, 'All day')}${chip('timed', !f.allDay, 'At a time')}
+        ${f.allDay ? '' : `<span style="flex:1"></span>
+        <button data-f="t-60" class="kf-step" aria-label="1 hour earlier">−1h</button>
+        <button data-f="t-15" class="kf-step" aria-label="15 minutes earlier">−</button>
+        <div class="kf-val">${fmtMin(f.mins)}</div>
+        <button data-f="t+15" class="kf-step" aria-label="15 minutes later">+</button>
+        <button data-f="t+60" class="kf-step" aria-label="1 hour later">+1h</button>`}</div>`,
+    len: () => `<div class="kf-opts">${LENGTHS.map(([m, t]) => chip(`len:${m}`, f.minutes === m, t)).join('')}</div>`,
+    rep: () => `<div class="kf-opts">${REPEATS.map(([k, t]) => chip(`rep:${k}`, f.repeat === k, t)).join('')}</div>`,
+    who: () => `<div class="kf-opts">${chip('who:', !f.who.length, 'Everyone')}${names.map((p) => chip(`who:${esc(p.name)}`, f.who.indexOf(p.name) >= 0, `<span class="kc-dot" style="background:${p.color}"></span><span class="kc-cut">${esc(p.name)}</span>`)).join('')}</div>`,
+    tag: () => `<div class="kf-opts">${Object.keys(TAGS).map((k) => chip(`tag:${k}`, f.tag === k, `<span class="kc-dot" style="background:${TAGS[k].color}"></span>${esc(TAGS[k].short || TAGS[k].label)}`)).join('')}</div>`,
+  };
+  const rows = [['date', 'Date'], ['time', 'Time']].concat(f.allDay ? [] : [['len', 'Lasts']], [['rep', 'Repeats']], names.length ? [['who', 'Who']] : [], [['tag', 'Kind']]);
   const box = openSheet(el, 'form', `
-    <div data-form class="kc-sheet" style="width:1232px;padding:22px 28px;gap:14px">
-      <div style="display:flex;align-items:center;gap:16px;flex:none">
-        <div style="min-width:0;flex:1">
-          <div class="kc-h kc-cut">${esc(dayWords)}${diff === 0 ? ' <span class="x-serif kc-soft" style="font-size:26px">today</span>' : diff === 1 ? ' <span class="x-serif kc-soft" style="font-size:26px">tomorrow</span>' : ''}</div>
-        </div>
-        <button data-f="cancel" class="x-btn frost">Cancel</button>
+    <div data-form class="kc-sheet kf-sheet">
+      <div class="kf-top">
+        <button data-f="cancel" class="kf-plain">Cancel</button>
+        <div class="kf-head">${f.id ? 'Event' : 'New event'}</div>
+        <button data-f="save" class="kf-plain kf-save">${f.id ? 'Save' : 'Add'}</button>
       </div>
-      <div style="display:flex;gap:32px;min-height:0">
-        ${pickMonth(f)}
-        <div style="flex:1;min-width:0;display:flex;flex-direction:column;gap:8px">
-          <div class="kf-line">
-            <span class="kf-label">What</span>
-            <input data-title class="kf-in" maxlength="80" placeholder="What’s on?" value="${esc(f.title)}" autocomplete="off">
-          </div>
-          <div class="kf-line"><span class="kf-label"></span><div class="kf-row">${titleChips(f.title)}</div></div>
-          <div class="kf-line">
-            <span class="kf-label">When</span>
-            <div class="kf-row">
-              <button data-f="allday" class="kf-chip${f.allDay ? ' on' : ''}">All day</button>
-              <button data-f="timed" class="kf-chip${f.allDay ? '' : ' on'}">At a time</button>
-              ${f.allDay ? '' : `
-              <span style="flex:1"></span>
-              <button data-f="t-60" class="kf-step" aria-label="1 hour earlier">−1h</button>
-              <button data-f="t-15" class="kf-step" aria-label="15 minutes earlier">−</button>
-              <div class="kf-val">${fmtMin(f.mins)}</div>
-              <button data-f="t+15" class="kf-step" aria-label="15 minutes later">+</button>
-              <button data-f="t+60" class="kf-step" aria-label="1 hour later">+1h</button>`}
-            </div>
-          </div>
-          ${f.allDay ? '' : `
-          <div class="kf-line"><span class="kf-label">How long</span><div class="kf-row">${LENGTHS.map(([m, t]) => `<button data-f="len:${m}" class="kf-chip${f.minutes === m ? ' on' : ''}">${t}</button>`).join('')}</div></div>`}
-          <div class="kf-line">
-            <span class="kf-label">Repeats</span>
-            <div class="kf-row">${REPEATS.map(([k, t]) => `<button data-f="rep:${k}" class="kf-chip${f.repeat === k ? ' on' : ''}">${t}</button>`).join('')}</div>
-          </div>
-          ${names.length ? `
-          <div class="kf-line">
-            <span class="kf-label">Who</span>
-            <div class="kf-row"><button data-f="who:" class="kf-chip${f.who.length ? '' : ' on'}"${shown.length > 3 ? ' style="padding:0 14px"' : ''}>${shown.length > 3 ? 'All' : 'Everyone'}</button>${shown.map((p) => `<button data-f="who:${esc(p.name)}" class="kf-chip${f.who.indexOf(p.name) >= 0 ? ' on' : ''}" style="max-width:${nameW}px${shown.length > 3 ? ';padding:0 12px' : ''}"><span class="kc-dot" style="background:${p.color}"></span><span class="kc-cut">${esc(p.name)}</span></button>`).join('')}</div>
-          </div>` : ''}
-          <div class="kf-line">
-            <span class="kf-label">Kind</span>
-            <div class="kf-row tight">${Object.keys(TAGS).map((k) => `<button data-f="tag:${k}" class="kf-chip${f.tag === k ? ' on' : ''}"  style="padding:0 11px;font-size:17px;gap:6px"><span class="kc-dot" style="background:${TAGS[k].color}"></span>${TAGS[k].short || TAGS[k].label}</button>`).join('')}</div>
-          </div>
-          <div style="display:flex;align-items:center;gap:12px;margin-top:auto;padding-top:6px;min-height:64px">
-            ${f.confirm && repeating ? `
-              <span style="font:600 18px Inter,sans-serif;flex:none">Remove which?</span>
-              <button data-f="del:one" class="x-btn sm danger">Just ${esc(onLabel)}</button>
-              <button data-f="del:later" class="x-btn sm danger">This and later</button>
-              <button data-f="del:all" class="x-btn sm danger sure">Every one</button>
-              <button data-f="keep" class="x-btn sm frost" style="margin-left:auto">Keep it</button>` : `
-              <button data-f="save" class="x-btn lg gold">${f.id ? 'Save changes' : 'Save'}</button>
-              <div data-ferr class="kc-warn kc-cut" style="font-size:18px;font-weight:600;flex:1">${esc(f.error)}</div>
-              ${f.id ? `<button data-f="delete" class="x-btn danger${f.confirm ? ' sure' : ''}" style="margin-left:auto">${f.confirm ? 'Tap again to remove' : 'Remove'}</button>` : ''}`}
-          </div>
+      <div class="kf-body">
+        <button data-f="type" class="kf-title${f.title ? '' : ' empty'}" data-title-box>${esc(f.title || 'What’s on?')}</button>
+        ${f.error ? `<div class="kc-warn" style="font-size:18px;font-weight:600;padding:0 6px">${esc(f.error)}</div>` : ''}
+        <div class="kf-list">
+          ${rows.map(([k, label]) => `
+            <button data-f="open:${k}" class="kf-item${open === k ? ' open' : ''}"><span class="kf-name">${label}</span><span class="kf-now">${rowValue(f, k)}</span><span class="kf-chev"></span></button>
+            ${open === k ? `<div class="kf-more">${choices[k]()}</div>` : ''}`).join('')}
         </div>
+        ${f.id ? `<div class="kf-list">${f.confirm && repeating ? `
+            <div class="kf-opts" style="padding:14px 16px">
+              <button data-f="del:one" class="kf-chip">Just ${esc(onLabel)}</button>
+              <button data-f="del:later" class="kf-chip">This and later</button>
+              <button data-f="del:all" class="kf-chip kf-red">Every one</button>
+              <button data-f="keep" class="kf-chip">Keep it</button>
+            </div>` : `<button data-f="delete" class="kf-item kf-del">${f.confirm ? 'Tap again to remove' : 'Remove event'}</button>`}</div>` : ''}
       </div>
     </div>`);
-  const input = box.querySelector('[data-title]');
-  input.addEventListener('keydown', (e) => { if (e.key === 'Enter') { e.preventDefault(); input.blur(); formAction(el, 'save'); } });
-  // Typing a title that matches a choice lights it up (and un-lights the others).
-  input.addEventListener('input', () => {
-    box.querySelectorAll('[data-title-chip]').forEach((c) => { c.classList.toggle('on', c.dataset.titleChip.toLowerCase() === input.value.trim().toLowerCase()); });
+  if (fkb) { const b = box.querySelector('[data-title-box]'); if (b) b.classList.add('typing'); }
+}
+
+// The title, typed on the screen's own keyboard: suggestions above the keys (recent titles,
+// then the usual ones); picking one also sets what usually goes with it.
+function typeTitle(el) {
+  const f = form;
+  if (!f || fkb) return;
+  const host = el.querySelector('[data-detail]');
+  const drawBox = () => {
+    const b = el.querySelector('[data-title-box]');
+    if (!b) return;
+    b.textContent = f.title || 'What’s on?';
+    b.classList.toggle('empty', !f.title);
+  };
+  const pool = () => {
+    const seen = {};
+    return recentTitles(6).concat(SUGGEST.map((x) => x.t)).filter((t) => { const k = t.toLowerCase(); if (seen[k]) return false; seen[k] = true; return true; });
+  };
+  fkb = openKeyboard(host, {
+    go: 'Done', slots: 5, text: f.title,
+    suggest: (t) => { const q = t.trim().toLowerCase(); return pool().filter((x) => !q || x.toLowerCase().indexOf(q) === 0 || x.toLowerCase().indexOf(` ${q}`) >= 0).slice(0, 5); },
+    onChange: (t) => { f.title = t ? t.charAt(0).toUpperCase() + t.slice(1) : t; drawBox(); },
+    onGo: (pick, k) => {
+      if (pick) {
+        f.title = pick;
+        const sug = f.id ? null : SUGGEST.filter((x) => x.t === pick)[0];
+        if (sug) { f.tag = sug.tag; f.allDay = !!sug.allDay; if (sug.at != null) f.mins = sug.at; if (sug.len) f.minutes = sug.len; f.repeat = sug.repeat || 'none'; }
+      }
+      k.close();
+    },
+    onClose: () => { fkb = null; if (form) drawForm(el); },
   });
-  // The keyboard isn't opened by itself: it would cover the choices. Tapping the box opens it.
+  const b = el.querySelector('[data-title-box]');
+  if (b) b.classList.add('typing');
 }
 
 function closeForm(el) {
+  if (fkb) { const k = fkb; fkb = null; k.close(); }
   const back = form && form.back;
   form = null;
   closeSheet(el);
@@ -794,8 +828,9 @@ function offerUndo(el, text, restore) {
 function formAction(el, act, btn) {
   const f = form;
   if (!f) return;
-  const input = el.querySelector('[data-title]');
-  if (input) f.title = input.value;
+  if (act === 'type') { typeTitle(el); return; }
+  if (fkb) { fkb.close(); return; } // a tap outside the keyboard puts it away first
+  if (act.indexOf('open:') === 0) { const k = act.slice(5); f.open = f.open === k ? '' : k; drawForm(el); return; }
   if (act !== 'delete') f.confirm = false;
   f.error = '';
   if (act === 'cancel') {

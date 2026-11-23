@@ -24,6 +24,7 @@ import * as timerSvc from '../services/timers.js';
 import { wxIcon, foodArt, spot } from '../art.js';
 import { topBar, avatar, esc } from './ui.js';
 
+let lastCard = null; // { id, at }: the card in the middle when the menu was last left
 let timer, secTimer, offNotes, offPhotos, offKitchen, offTimers, onWake, onOnline, raf;
 
 const CARD_W = 340;
@@ -392,11 +393,14 @@ export function mount(el) {
     if (i === middle) return;
     if (middle >= 0) { cards[middle].classList.remove('on'); dots[middle].classList.remove('on'); }
     middle = i;
+    lastCard = { id: cards[i].dataset.card, at: Date.now() };
     cards[i].classList.add('on');
     dots[i].classList.add('on');
   };
-  // Timers going? Start there. Otherwise the shopping list, with a card either side.
-  const startAt = liveTimers().length ? 3 : 2;
+  // Back from an app: the card you left from. Otherwise (or after ten minutes) timers if
+  // something is going, else the shopping list, with a card either side.
+  const back = lastCard && Date.now() - lastCard.at < 10 * 60 * 1000 ? cards.findIndex((c) => c.dataset.card === lastCard.id) : -1;
+  const startAt = back >= 0 ? back : liveTimers().length ? 3 : 2;
   const track = $('[data-track]');
   // (The row is a layer of its own for good: drawn once, then only slid. Making it one only
   // while a finger was on it meant drawing every card again at the start of each swipe.)
@@ -591,6 +595,7 @@ export function mount(el) {
 }
 
 export function unmount() {
+  if (lastCard) lastCard.at = Date.now(); // the ten minutes count from leaving the menu
   clearTimeout(timer);
   clearInterval(secTimer);
   if (raf) cancelAnimationFrame(raf);
