@@ -5,17 +5,24 @@
 //   #/recipes/chinese/noodles    just the noodles
 //   #/recipes/favorites          hearted recipes
 //   #/recipes/recent             cooked lately (from cooking mode's "Done cooking")
-// Search is in the top bar on the first page. Every card has a heart and "+ Plan".
+// Search is in the top bar on the first page, typed on the screen's own keyboard (keyboard.js).
+// Every card has a heart and "+ Plan".
+// From the web (web-recipes.js): under the library's own matches, a search also shows recipes
+// from big recipe sites, with their real photos; a kind of food shows its web recipes too.
+// They open, plan, list and cook like the library's own. With no internet they just aren't there.
 // (No links into the Week plan or Shopping list here: those open from the Menu.)
 import { backHref, backLabel } from '../services/nav.js';
 import { loadIndex, searchRecipes, searchIngredients, fmtMinutes, cookedList, cookedWhen, cookingNow, clearLoves } from '../services/recipe-data.js';
 import { getPlan, weekDays, dayIds, favorites, toggleFavorite, tonight, addToPlan, removeFromPlan, plannedFor, planDays, dayKey, defaultMeal, MEALS } from '../services/meal-plan.js';
 import { saveRecipe, UNDO_KEY, onMyRecipesChanged } from '../services/my-recipes.js';
+import { searchWeb, keepWebRecipe, hasWebKind, isWebId } from '../services/web-recipes.js';
 import { esc, plateArt, tableColors } from './kitchen-ui.js';
+import { openKeyboard, keyboardStyle } from './keyboard.js';
 import { topBar, phoneCode, wirePhoneCodes } from './ui.js';
 import { ADD_DAY_KEY } from './dish.js';
 
-let searchTimer, blurTimer;
+let searchTimer;
+let web = null; // the web recipes of the page on screen (see webStart)
 let stopCodes = null; // stops the "scan with your phone" code being redrawn
 let offMine = null; // stops listening for recipes sent from a phone
 let favs = [];
@@ -111,7 +118,9 @@ function recipeCard(r, cuisineName) {
   const tags = (r.g || []).filter((t) => t !== 'kid-friendly').slice(0, cuisineName ? 1 : 2);
   const fav = favs.indexOf(r.id) >= 0;
   const p = pendingAdd();
-  const meta = [r.m ? fmtMinutes(r.m) : '', cuisineName || ''].concat(tags).filter(Boolean).join(' · ');
+  // A web recipe says which site it is from (small, where the cuisine would be).
+  const meta = (r.c === 'web' ? [r.m ? fmtMinutes(r.m) : '', r.site || '']
+    : [r.m ? fmtMinutes(r.m) : '', cuisineName || ''].concat(tags)).filter(Boolean).join(' · ');
   const id = esc(r.id);
   return `
     <div class="rb-card" data-card="${id}">
@@ -141,9 +150,14 @@ const STYLES = `
     .rb-wait{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:18px;text-align:center;color:#E8D3BF;font-size:22px;line-height:1.4;padding:48px 40px}
     .rb-search{position:relative;flex:0 1 300px;min-width:0}
     .rb-input{width:100%;min-height:64px;border-radius:999px;border:2px solid rgba(255,255,255,.3);background:rgba(16,10,8,.5);color:#FFFFFF;padding:0 60px 0 26px;
-      font:500 20px Inter,sans-serif;outline:none}
-    .rb-input::placeholder{color:#D9C3B0}
-    .rb-input:focus{border-color:#FFD696}
+      font:500 20px Inter,sans-serif;outline:none;cursor:pointer;text-align:left;display:flex;align-items:center;white-space:nowrap;overflow:hidden}
+    .rb-input .ph{color:#D9C3B0;overflow:hidden;text-overflow:ellipsis}
+    .rb-input .tx{overflow:hidden;text-overflow:ellipsis}
+    .rb-input.on{border-color:#FFD696}
+    .rb-input .car{display:inline-block;width:3px;height:26px;margin-left:2px;background:#FFD696;border-radius:2px;flex:none}
+    .rb-input .car.first{margin:0 2px 0 0}
+    ${keyboardStyle({ panel: '#1A110D', key: '#FFF4EA', ink: '#3A1D10', go: '#FFD696', goInk: '#3A1D10', space: '#7A5646',
+    sug: 'rgba(255,244,234,.14)', sugInk: '#FFF4EA', fn: 'rgba(255,244,234,.16)', fnInk: '#FFF4EA', line: 'rgba(255,244,234,.3)' })}
     .rb-clear{position:absolute;right:4px;top:4px;width:56px;height:56px;border:0;border-radius:50%;background:transparent;font-size:30px;line-height:1;color:#FFF4EA;cursor:pointer;display:none}
     /* The ring of plates: one for each kind of food */
     .rb-rings{display:flex;overflow-x:auto;-webkit-overflow-scrolling:touch;margin:0 -40px;padding:6px 32px 8px}
@@ -238,6 +252,7 @@ export function mount(el, { args = [] } = {}) {
   let ixNow = null; // the library, once loaded
   let cardNow = (r) => recipeCard(r); // how this page draws a card (for redrawing one after a tap)
   let sheet = null; // { id, meal, note, warn }: "Plan it" for one card
+  let searching = () => false; // somebody is typing or has words in the search box
 
   const codes = () => {
     if (stopCodes) stopCodes();
@@ -268,6 +283,64 @@ export function mount(el, { args = [] } = {}) {
     setTimeout(add, 60);
   };
 
+  // ---- From the web: cards with real photos under the library's own ----
+  // webStart() asks the sites (or takes the screen's copy of a recent search, drawn at once,
+  // so coming back puts the list where it was); each site's cards are added as they come.
+  // 24 to start with; scrolling near the end shows more, then asks for the next page.
+  // Nothing comes (no internet, sites down): the section just isn't there.
+  web = null;
+  const WEB_FIRST = 24;
+  const webBox = () => root.querySelector('[data-webhits]');
+  const addWeb = (w, list, pg) => {
+    list.forEach((e) => {
+      if (w.list.some((x) => x.id === e.id)) return;
+      w.list.push(Object.assign({ pg }, e));
+      if (ixNow && !ixNow.byId[e.id]) ixNow.byId[e.id] = e;
+    });
+    // A later page goes after what is already there. In a page: titles with every word
+    // searched first, then the sites taking turns (one from each, then the next from each).
+    w.list.sort((a, b) => a.pg - b.pg || (b.f || 0) - (a.f || 0) || (a.n || 0) - (b.n || 0));
+  };
+  const webPick = (w) => (w.filter ? w.list.filter(w.filter) : w.list);
+  function drawWeb() {
+    const box = webBox();
+    if (!box || !web) return;
+    const show = webPick(web).slice(0, web.shown);
+    box.innerHTML = show.length ? `<div class="rb-h"><div class="l">From the web</div></div><div class="rb-cards">${show.map(cardNow).join('')}</div>` : '';
+  }
+  function webStart(q, kind, filter, then) {
+    const key = `${kind}|${q}`;
+    if (web && web.key === key) { web.filter = filter; drawWeb(); if (then && web.done) then(web); return; }
+    if (web && web.ctl) web.ctl.abort();
+    const w = { key, q, kind, filter, list: [], shown: WEB_FIRST, page: 1, more: [], busy: true, done: false, ctl: new AbortController() };
+    web = w;
+    searchWeb({ q, kind, signal: w.ctl.signal, onResults: (l) => { if (web === w) { addWeb(w, l, 1); drawWeb(); } } }).then((res) => {
+      if (web !== w) return;
+      w.busy = false; w.done = true; w.more = res.more;
+      if (then) then(w);
+    });
+  }
+  function webMore() {
+    const w = web;
+    if (!w || !webBox()) return;
+    if (webPick(w).length > w.shown) { w.shown += 12; drawWeb(); return; }
+    if (!w.more.length || w.busy || w.list.length >= 240) return;
+    w.busy = true;
+    w.shown += 12;
+    const pg = w.page + 1;
+    // (Only the sites that had a full page last time.)
+    searchWeb({ q: w.q, kind: w.kind, page: pg, sites: w.more, signal: w.ctl.signal, onResults: (l) => { if (web === w) { addWeb(w, l, pg); drawWeb(); } } }).then((res) => {
+      if (web !== w) return;
+      w.busy = false; w.page = pg; w.more = res.more;
+    });
+  }
+  // Near the end of a list: more from the web.
+  root.addEventListener('scroll', (e) => {
+    const box = e.target;
+    if (!box.classList || !box.classList.contains('rb-body')) return; // (not the row of chips)
+    if (web && box.scrollTop + box.clientHeight > box.scrollHeight - 500) webMore();
+  }, true);
+
   // Remember how far down the list was scrolled (per page), and put it back on return.
   // `key()` names the spot (the page, plus the search words when searching); null = don't keep.
   const keepScroll = (box, key = () => here) => {
@@ -283,6 +356,7 @@ export function mount(el, { args = [] } = {}) {
   // The chosen filter is remembered for the page (like the scroll spot), so coming back
   // from a recipe shows the same short list.
   let shown = null; // { box, list, card, empty } of the list on screen, to redraw when a chip is tapped
+  let webFor = null; // { q, kind }: a kind of food's page also shows its web recipes
   const filterOn = () => (memo().filters || {})[here] || '';
   const drawList = (box, list, card, empty, spot) => {
     shown = { box, list, card, empty };
@@ -291,9 +365,11 @@ export function mount(el, { args = [] } = {}) {
     const pick = on ? list.filter((r) => passes(r, on)) : list;
     box.innerHTML = `${list.length > 6 ? filterChips(list, on) : ''}${pick.length
       ? `<div class="rb-cards">${cards(pick, card, spot)}</div>`
-      : list.length ? '<div class="rb-wait">None of these match.</div>' : empty}`;
+      : list.length ? '<div class="rb-wait">None of these match.</div>' : empty}${webFor ? '<div data-webhits></div>' : ''}`;
     restOfCards(box.querySelector('.rb-cards'));
     codes();
+    // (The same filter chip holds for the web cards: what they say of themselves is their time.)
+    if (webFor) webStart(webFor.q, webFor.kind, on ? (r) => passes(r, on) : null);
   };
   root.addEventListener('click', (e) => {
     const chip = e.target.closest('[data-filter]');
@@ -329,8 +405,10 @@ export function mount(el, { args = [] } = {}) {
   };
   const mealFor = (r) => {
     const c = ixNow.cuisines.find((x) => x.id === r.c) || {};
-    return defaultMeal(r.c === 'mine' ? r.ty : c.meal);
+    return defaultMeal(r.c === 'mine' || r.c === 'web' ? r.ty : c.meal);
   };
+  // A web recipe hearted or planned is kept on the screen for good (it works offline then).
+  const keep = (id) => { if (isWebId(id) && ixNow && ixNow.byId[id]) keepWebRecipe(ixNow.byId[id]); };
   function drawSheet() {
     let box = root.querySelector('[data-sheet]');
     if (!sheet) { if (box) box.remove(); return; }
@@ -353,6 +431,7 @@ export function mount(el, { args = [] } = {}) {
       const id = heart.dataset.heart || heart.dataset.featheart;
       // Out of the favourites: nobody's heart stays on it (see the recipe's own page).
       if (!toggleFavorite(id)) clearLoves(id);
+      else keep(id);
       favs = favorites();
       redrawCard(id);
       return;
@@ -369,6 +448,7 @@ export function mount(el, { args = [] } = {}) {
           return;
         }
         addToPlan(p.key, r.id, p.meal);
+        keep(r.id);
         try { sessionStorage.removeItem(ADD_DAY_KEY); } catch (er) { /* storage off */ }
         location.hash = '#/plan';
         return;
@@ -398,7 +478,7 @@ export function mount(el, { args = [] } = {}) {
     else if (plannedFor(k, sheet.meal).length >= MAX_PER_MEAL) {
       sheet.warn = true;
       sheet.note = `${d ? d.label : 'That day'} already has ${MAX_PER_MEAL} ${mealWord(sheet.meal)} recipes. Take one off in Week plan first.`;
-    } else addToPlan(k, sheet.id, sheet.meal);
+    } else { addToPlan(k, sheet.id, sheet.meal); keep(sheet.id); }
     drawSheet();
   });
 
@@ -416,6 +496,10 @@ export function mount(el, { args = [] } = {}) {
 
   const load = () => {
   sheet = null;
+  webFor = null;
+  searching = () => false;
+  if (web && web.ctl) web.ctl.abort();
+  web = null;
   root.innerHTML = `${topBar({ title: 'Recipes', tone: 'dark' })}<div class="rb-wait rb-body" data-wait>Loading recipes…</div>`;
 
   Promise.all([loadIndex(), tonight().catch(() => null)]).then(([ix, tn]) => {
@@ -451,7 +535,7 @@ export function mount(el, { args = [] } = {}) {
       root.innerHTML = `
         ${topBar({ title: dinnerView ? 'Dinner' : 'Recipes', tone: 'dark',
           back: dinnerView ? '#/recipes' : backHref(), backLabel: dinnerView ? '← Recipes' : backLabel(),
-          right: `<div class="rb-search"><input data-search class="rb-input" placeholder="Search ${ix.recipes.length} recipes" autocomplete="off" enterkeyhint="search"><button data-clear class="rb-clear" aria-label="Clear search">×</button></div>` })}
+          right: `<div class="rb-search"><button type="button" data-search class="rb-input" aria-label="Search recipes"><span class="ph">Search recipes</span></button><button data-clear class="rb-clear" aria-label="Clear search">×</button></div>` })}
         <div data-body class="rb-body"></div>`;
       const body = root.querySelector('[data-body]');
       const mineCount = (ix.cuisines.find((c) => c.id === 'mine') || { count: 0 }).count;
@@ -469,7 +553,7 @@ export function mount(el, { args = [] } = {}) {
         const now = cookingNow();
         const nowR = now && ix.byId[now.id];
         const feat = nowR || (tn && tn.entry) || null;
-        const tc = feat ? tableColors(feat.c) : null;
+        const tc = feat ? tableColors(feat.table || feat.c) : null;
         const featFav = feat && favs.indexOf(feat.id) >= 0;
         const p = pendingAdd();
         const today = dayKey(new Date());
@@ -534,12 +618,64 @@ export function mount(el, { args = [] } = {}) {
           </a>`;
         }).join('')}</div>`;
       };
-      const input = root.querySelector('[data-search]');
+      const box = root.querySelector('[data-search]');
       const clearBtn = root.querySelector('[data-clear]');
+      // ---- The search box and its keyboard (the screen's own: Android's never comes up) ----
+      let query = ''; // what is typed
+      let kb = null; // the keyboard, while it is up
+      const drawBox = () => {
+        const q = query;
+        box.classList.toggle('on', !!kb);
+        box.innerHTML = q ? `<span class="tx">${esc(q)}</span>${kb ? '<span class="car"></span>' : ''}`
+          : `${kb ? '<span class="car first"></span>' : ''}<span class="ph">Search recipes</span>`;
+        clearBtn.style.display = q.trim() ? 'block' : 'none';
+      };
+      // Above the keys: recipe names and kinds of food that start with (or have a word starting
+      // with) what is typed.
+      const names0 = ix.cuisines.filter((c) => c.id !== 'mine').map((c) => c.name.split(' & ')[0]);
+      const pool = names0.concat(ix.recipes.map((r) => r.t)).filter((t, n, a) => a.indexOf(t) === n);
+      const pool2 = pool.map((t) => ({ t, k: t.toLowerCase(), w: ` ${t.toLowerCase().replace(/[^a-z0-9]+/g, ' ')}` }));
+      const suggestFor = (text) => {
+        const q = text.trim().toLowerCase().replace(/\s+/g, ' ');
+        if (!q) return []; // (the last searches and ideas are already above, as chips)
+        const hits = [];
+        pool2.forEach((x) => {
+          const r = x.k.indexOf(q) === 0 ? 0 : x.w.indexOf(` ${q}`) >= 0 ? 1 : -1;
+          if (r >= 0) hits.push({ x, r });
+        });
+        hits.sort((a, b) => a.r - b.r || a.x.k.length - b.x.k.length);
+        return hits.slice(0, 4).map((h) => h.x.t);
+      };
+      // "Search", a suggestion, or "Close" with words typed: put the keys away and look everywhere.
+      const submit = () => {
+        clearTimeout(searchTimer);
+        rememberSearch(query);
+        if (kb) kb.close(); else runSearch(false);
+      };
+      const openKb = () => {
+        if (kb) return;
+        body.style.paddingBottom = '450px'; // the end of the results can still be scrolled above the keys
+        kb = openKeyboard(root, {
+          go: 'Search', slots: 4, text: query, suggest: suggestFor,
+          onChange: (t) => {
+            const was = query;
+            query = t;
+            drawBox();
+            if (t === was) return;
+            clearTimeout(searchTimer);
+            searchTimer = setTimeout(() => runSearch(false), 250);
+          },
+          onGo: (pick, k) => { if (pick) { k.text = pick; query = pick; } submit(); },
+          onClose: () => { kb = null; body.style.paddingBottom = ''; drawBox(); clearTimeout(searchTimer); runSearch(false); },
+        });
+        drawBox();
+        if (!query.trim()) showSuggestions();
+      };
+      box.addEventListener('click', openKb);
       // Before typing: the last few searches and some ideas, one tap each.
       const chipRow = (words) => `<div class="rb-filters" style="margin:0">${words.map((w) => `<button class="rb-chip" data-q="${esc(w)}">${esc(w)}</button>`).join('')}</div>`;
       const showSuggestions = () => {
-        if (input.value.trim()) return;
+        if (query.trim()) return;
         const recent = recentSearches();
         shown = null;
         body.innerHTML = `<div class="rb-suggest">
@@ -547,13 +683,25 @@ export function mount(el, { args = [] } = {}) {
           <div class="h">Ideas</div>${chipRow(IDEAS.filter((w) => recent.indexOf(w) < 0))}
         </div>`;
       };
+      // Nothing in the library, its ingredients or (once it has answered) the web.
+      let nothingFor = '';
+      const nothing = (q) => {
+        const box2 = body.querySelector('[data-inghits]');
+        if (!box2 || nothingFor !== q || query.trim() !== q) return;
+        if (web && web.key === `|${q}` && (web.list.length || !web.done)) return;
+        const words = q.toLowerCase().split(/\s+/).filter(Boolean);
+        box2.innerHTML = `<div class="rb-wait">Nothing found for “${esc(q)}”.
+          ${chipRow((words.length > 1 ? words : []).concat(IDEAS.slice(0, 6)).filter((w, n, a) => a.indexOf(w) === n).slice(0, 8))}
+          <button data-clear class="x-btn frost">Clear the search</button></div>`;
+      };
       const runSearch = async (restoring) => {
-        const q = input.value.trim();
+        const q = query.trim();
         clearBtn.style.display = q ? 'block' : 'none';
         const qs = memo().qs || {}; qs[here] = q; setMemo({ qs });
-        if (!q) { if (document.activeElement === input) showSuggestions(); else showGrid(); return; }
+        nothingFor = '';
+        if (!q) { if (web && web.ctl) web.ctl.abort(); web = null; if (kb) showSuggestions(); else showGrid(); return; }
         const hits = await searchRecipes(q, 120);
-        if (!el.isConnected || input.value.trim() !== q) return;
+        if (!el.isConnected || query.trim() !== q) return;
         const words = q.toLowerCase().split(/\s+/).filter(Boolean);
         cardNow = card;
         shown = null;
@@ -561,9 +709,13 @@ export function mount(el, { args = [] } = {}) {
           ? `<div class="rb-found">${hits.partial
             ? `No recipe has all of “${esc(q)}”. These have some of it:`
             : `${hits.length >= 120 ? 'Over 100' : hits.length} recipe${hits.length === 1 ? '' : 's'} found for “${esc(q)}”`}</div>
-             <div class="rb-cards">${cards(hits, card, restoring ? `${here}?${q}` : '')}</div><div data-inghits></div>`
-          : `<div data-inghits><div class="rb-wait">Looking in the ingredients too…</div></div>`;
+             <div class="rb-cards">${cards(hits, card, restoring ? `${here}?${q}` : '')}</div><div data-inghits></div><div data-webhits></div>`
+          : `<div data-inghits><div class="rb-wait">Looking in the ingredients too…</div></div><div data-webhits></div>`;
         restOfCards(body.querySelector('.rb-cards'));
+        // The web, once the words are settled (not on every key): a recent search is drawn at
+        // once from the screen's copy, so the spot in the list can be put back.
+        if (!kb) webStart(q, '', null, () => nothing(q));
+        else if (web && web.key === `|${q}`) drawWeb();
         if (!restoring) body.scrollTop = 0;
         else { const at = (memo().scroll || {})[`${here}?${q}`]; if (at) body.scrollTop = at; }
         // Not much in the names? Look through what the recipes use ("chicken rice", "spinach feta").
@@ -573,59 +725,43 @@ export function mount(el, { args = [] } = {}) {
         let more = [];
         // (30 at most: built in one go, and more than that is a list nobody reads.)
         try { more = await searchIngredients(q, skip, 30); } catch (e) { more = []; }
-        const box = el.isConnected && input.value.trim() === q && body.querySelector('[data-inghits]');
-        if (!box) return;
+        const ib = el.isConnected && query.trim() === q && body.querySelector('[data-inghits]');
+        if (!ib) return;
         if (more.length) {
-          box.innerHTML = `<div class="rb-found" style="margin-top:${hits.length && !hits.partial ? 22 : 0}px">${more.length >= 30 ? 'Recipes' : `${more.length} recipe${more.length === 1 ? '' : 's'}`} that use ${esc(words.join(' and '))}</div>
+          ib.innerHTML = `<div class="rb-found" style="margin-top:${hits.length && !hits.partial ? 22 : 0}px">${more.length >= 30 ? 'Recipes' : `${more.length} recipe${more.length === 1 ? '' : 's'}`} that use ${esc(words.join(' and '))}</div>
             <div class="rb-cards">${more.map(card).join('')}</div>`;
           if (hits.partial) {
             // Real ingredient matches beat "some of it" name matches: put them first.
-            body.insertBefore(box, body.firstChild);
+            body.insertBefore(ib, body.firstChild);
           }
         } else if (!hits.length) {
-          box.innerHTML = `<div class="rb-wait">Nothing found for “${esc(q)}”.
-            ${chipRow((words.length > 1 ? words : []).concat(IDEAS.slice(0, 6)).filter((w, n, a) => a.indexOf(w) === n).slice(0, 8))}
-            <button data-clear class="x-btn frost">Clear the search</button></div>`;
-        } else box.innerHTML = '';
+          ib.innerHTML = '';
+          nothingFor = q;
+          if (kb || !navigator.onLine || (web && web.key === `|${q}` && web.done)) nothing(q);
+        } else ib.innerHTML = '';
       };
-      input.addEventListener('input', () => {
-        clearTimeout(searchTimer);
-        searchTimer = setTimeout(() => runSearch(false), 250);
-      });
-      // "Search" on the keyboard: put the keyboard away so the results can be seen.
-      input.addEventListener('keydown', (e) => {
-        if (e.key !== 'Enter') return;
-        rememberSearch(input.value);
-        input.blur();
-      });
-      input.addEventListener('focus', () => { clearTimeout(blurTimer); showSuggestions(); });
-      // Wait a moment on blur, so a tap on a suggestion still lands before the first page comes back.
-      input.addEventListener('blur', () => {
-        clearTimeout(blurTimer);
-        blurTimer = setTimeout(() => { if (el.isConnected && !input.value.trim() && document.activeElement !== input) showGrid(); }, 300);
-      });
       body.addEventListener('click', (e) => {
         const sug = e.target.closest('[data-q]');
         if (sug) {
-          clearTimeout(blurTimer);
-          input.value = sug.dataset.q;
-          rememberSearch(sug.dataset.q);
-          input.blur();
-          runSearch(false);
+          query = sug.dataset.q;
+          if (kb) kb.set(query); else drawBox();
+          submit();
           return;
         }
         // Opening a recipe from the results: the words were worth keeping.
-        if (e.target.closest('.rb-open') && input.value.trim()) rememberSearch(input.value);
+        if (e.target.closest('.rb-open') && query.trim()) rememberSearch(query);
         // "+ Tonight" on the big card: straight onto today's dinner.
         const pt = e.target.closest('[data-plantonight]');
         if (pt) { addToPlan(dayKey(new Date()), pt.dataset.plantonight, 'dinner'); load(); }
       });
-      root.querySelector('.x-top').addEventListener('click', (e) => { if (e.target.closest('[data-clear]')) { input.value = ''; runSearch(false); input.focus(); } });
-      body.addEventListener('click', (e) => { if (e.target.closest('[data-clear]')) { input.value = ''; runSearch(false); input.focus(); } });
+      const clearAll = () => { query = ''; if (kb) kb.set(''); drawBox(); runSearch(false); openKb(); };
+      root.querySelector('.x-top').addEventListener('click', (e) => { if (e.target.closest('[data-clear]')) clearAll(); });
+      body.addEventListener('click', (e) => { if (e.target.closest('[data-clear]')) clearAll(); });
       // Back from a recipe you found by searching: the search (and the spot in it) is still there.
-      keepScroll(body, () => (input.value.trim() ? `${here}?${input.value.trim()}` : null));
+      keepScroll(body, () => (query.trim() ? `${here}?${query.trim()}` : null));
       const lastQ = (memo().qs || {})[here];
-      if (lastQ) { input.value = lastQ; runSearch(true); } else showGrid();
+      if (lastQ) { query = lastQ; drawBox(); runSearch(true); } else { drawBox(); showGrid(); }
+      searching = () => !!kb || !!query.trim();
     } else {
       // ---- One cuisine, optionally one type ----
       const type = cuisine.types.find((t) => t.id === typeId);
@@ -640,6 +776,8 @@ export function mount(el, { args = [] } = {}) {
         </div>` : ''}
         ${mine ? undoBar() : ''}${pendingBar()}
         <div class="rb-body" data-list></div>`;
+      // The same kind of food from the web, under the library's own (a type narrows it: "Noodles").
+      webFor = hasWebKind(cuisine.id) ? { kind: cuisine.id, q: type ? type.name.split(/ & |, | and /)[0] : '' } : null;
       drawList(root.querySelector('[data-list]'), list, (r) => recipeCard(r),
         mine ? `<div class="rb-wait" style="padding-top:20px">No recipes of your own yet.
             <div style="display:flex;gap:16px;align-items:center;flex-wrap:wrap;justify-content:center">${phoneCode({ tab: 'recipe', size: 120, sub: ' ' })}<a href="#/myrecipe" class="x-btn white">+ Type one in</a></div></div>`
@@ -690,8 +828,7 @@ export function mount(el, { args = [] } = {}) {
   if (offMine) offMine();
   offMine = onMyRecipesChanged(() => {
     if (!el.isConnected || sheet) return;
-    const input = root.querySelector('[data-search]');
-    if (input && (input.value.trim() || document.activeElement === input)) return;
+    if (searching()) return;
     if (!cuisineId || cuisineId === 'mine') load();
   });
   load();
@@ -699,7 +836,8 @@ export function mount(el, { args = [] } = {}) {
 
 export function unmount() {
   clearTimeout(searchTimer);
-  clearTimeout(blurTimer);
+  if (web && web.ctl) web.ctl.abort();
+  web = null;
   if (stopCodes) { stopCodes(); stopCodes = null; }
   if (offMine) { offMine(); offMine = null; }
 }

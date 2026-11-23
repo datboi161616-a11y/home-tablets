@@ -1,5 +1,7 @@
 // Kitchen · One recipe (#/dish/<id>): "the plate from above".
-// The dish, painted from above, turns slowly on its table beside the recipe. Servings are
+// The dish, painted from above, turns slowly on its table beside the recipe. A recipe from the
+// web (web-recipes.js) has its real photo in the plate instead, and its site's name as a
+// label (nothing opens outside: this is a kitchen screen). Servings are
 // little plates you tap, every ingredient is a chip that goes on the shopping list with a
 // tap, and each person at home has a heart to give. The steps and the week plan open as
 // sheets from the buttons at the bottom; "Start cooking" goes to cooking mode.
@@ -7,6 +9,7 @@ import { getRecipe, loadIndex, ingredientText, fmtMinutes, withStepTimers, lastC
 import { planDays, addToPlan, removeFromPlan, plannedFor, MEALS, defaultMeal, isFavorite, toggleFavorite, servingsFor, scaleFor, setServings, addExtra, removeExtra,
   weekRecipeIds, getListState, splitQty, dayKey } from '../services/meal-plan.js';
 import { addTimer, MAX } from '../services/timers.js';
+import { keepWebRecipe, entryOf } from '../services/web-recipes.js';
 import { esc, plateArt, tableColors } from './kitchen-ui.js';
 import { people } from './ui.js';
 
@@ -125,7 +128,9 @@ export function mount(el, { args = [] } = {}) {
     const cuisine = ix.cuisines.find((c) => c.id === r.cuisine) || { name: '', types: [] };
     const type = cuisine.types.find((t) => t.id === r.type);
     const p0 = pending();
-    let meal = p0 ? p0.meal : defaultMeal(r.mine ? r.type : cuisine.meal);
+    let meal = p0 ? p0.meal : defaultMeal(r.mine || r.web ? r.type : cuisine.meal);
+    // Hearted or planned: a web recipe is kept on the screen for good.
+    const keep = () => { if (r.web) keepWebRecipe(entryOf(r)); };
     const mealName = (m) => MEALS.find((x) => x[0] === m)[1].toLowerCase();
     let note = null; // { text, warn } shown in the plan sheet after a tap that couldn't be done
     let listNote = ''; // what the last tap did to the shopping list
@@ -158,7 +163,7 @@ export function mount(el, { args = [] } = {}) {
     };
 
     // ---- The scene: the table, the plate (it keeps turning while the rest redraws) ----
-    const tc = tableColors(r.cuisine);
+    const tc = tableColors(r.table || r.cuisine);
     root.style.background = `radial-gradient(ellipse 700px 600px at 26% 56%, ${tc[0]} 0%, ${tc[1]} 55%, ${tc[2]} 100%)`;
     root.innerHTML = `
       <div class="dz-plate">${plateArt(r, 700, { detail: true })}</div>
@@ -201,6 +206,7 @@ export function mount(el, { args = [] } = {}) {
       const sc = (col.querySelector('[data-chips]') || {}).scrollTop || 0;
       col.innerHTML = `
         <div class="dz-row">
+          ${r.web ? `<span class="dz-pill">${esc(r.site)}</span>` : ''}
           ${cuisine.name ? `<a href="#/recipes/${r.cuisine}" class="dz-pill">${esc(cuisine.name)}</a>` : ''}
           ${type ? `<a href="#/recipes/${r.cuisine}/${type.id}" class="dz-pill">${esc(type.name)}</a>` : ''}
           <div style="flex:1"></div>
@@ -294,6 +300,7 @@ export function mount(el, { args = [] } = {}) {
       const add = e.target.closest('[data-addto]');
       if (add) {
         addToPlan(add.dataset.addto, r.id, add.dataset.addmeal);
+        keep();
         sessionStorage.removeItem(ADD_DAY_KEY);
         location.hash = '#/plan';
         return;
@@ -301,6 +308,7 @@ export function mount(el, { args = [] } = {}) {
       if (e.target.closest('[data-fav]')) {
         // Out of the favourites: nobody's heart stays on it.
         if (!toggleFavorite(r.id)) clearLoves(r.id);
+        else keep();
         renderCol();
         return;
       }
@@ -308,7 +316,7 @@ export function mount(el, { args = [] } = {}) {
       if (love) {
         // A heart from anyone makes it a favourite (the Favorites list is everybody's).
         const now = toggleLove(r.id, love.dataset.love);
-        if (now.length && !isFavorite(r.id)) toggleFavorite(r.id);
+        if (now.length && !isFavorite(r.id)) { toggleFavorite(r.id); keep(); }
         renderCol();
         return;
       }
@@ -386,7 +394,7 @@ export function mount(el, { args = [] } = {}) {
       else if (plannedFor(k, meal).length >= MAX_PER_MEAL) {
         // The plan holds up to 3 recipes per meal; say so instead of silently doing nothing.
         note = { warn: true, text: `${d ? dayWord(d) : 'That day'} already has ${MAX_PER_MEAL} ${mealName(meal)} recipes. Take one off in Week plan first.` };
-      } else addToPlan(k, r.id, meal);
+      } else { addToPlan(k, r.id, meal); keep(); }
       const pd = pending();
       if (pd && pd.key === k && pd.meal === meal) sessionStorage.removeItem(ADD_DAY_KEY);
       render();

@@ -273,7 +273,10 @@ export function mount(el) {
   };
   function pickLists(ix, meal, key) {
     const mc = mealOfCuisine(ix);
-    const fits = (id) => ix.byId[id] && (mc[ix.byId[id].c] === meal || (ix.byId[id].c === 'mine' && (ix.byId[id].ty || 'dinner') === meal));
+    // (A recipe from the web says its own meal: breakfast, lunch, else dinner.)
+    const webMeal = (r) => (r.ty === 'breakfast' || r.ty === 'lunch' ? r.ty : 'dinner');
+    const fits = (id) => ix.byId[id] && (mc[ix.byId[id].c] === meal || (ix.byId[id].c === 'mine' && (ix.byId[id].ty || 'dinner') === meal)
+      || (ix.byId[id].c === 'web' && webMeal(ix.byId[id]) === meal));
     const taken = ((getPlan()[key] || {})[meal]) || [];
     const fresh = (id) => taken.indexOf(id) < 0;
     const fav = favorites().filter((id) => fits(id) && fresh(id)).slice(0, 9);

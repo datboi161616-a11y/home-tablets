@@ -332,22 +332,54 @@ const BOWLS = { noodles: 1, soup: 1, salad: 1, oats: 1 };
 // The bowl's own colour, by cuisine.
 const BOWL_COLOR = { japanese: '#27323F', korean: '#2B2B2E', thai: '#2F5D62', indian: '#8A5A2A', mexican: '#B5532F', mediterranean: '#2C6E8A' };
 
+// A recipe from the web (web-recipes.js) has a real photo: it goes inside the same plate, a
+// round crop over the painted dish. The painting stays underneath, so with no internet (or
+// before the photo has come) the plate still shows the dish. Big plates get the small square
+// copy first (usually already loaded by the card) and the bigger photo over it.
+const okPic = (u) => (typeof u === 'string' && /^https:\/\/[a-z0-9.-]+\/[^\s"'<>()\\]+$/i.test(u) ? u : '');
+let clips = 0;
+const badPics = {}; // photos that didn't come this visit (not asked for again)
+function photoLayer(r, size) {
+  let small = okPic(r && (r.thumb || r.img));
+  let alt = okPic(r && (r.thumbAlt || r.alt));
+  if (badPics[small]) { small = badPics[alt] ? '' : alt; alt = ''; }
+  const big = size >= 200 && !badPics[r && r.photo] ? okPic(r && r.photo) : '';
+  const pics = [small, big].filter((u, n, a) => u && a.indexOf(u) === n);
+  if (!pics.length) return '';
+  const id = `kph${++clips}`;
+  return `<clipPath id="${id}"><circle r="77"/></clipPath>`
+    + pics.map((u) => `<image data-kph${u === small && alt ? ` data-alt="${esc(alt)}"` : ''} href="${esc(u)}" x="-77" y="-77" width="154" height="154" preserveAspectRatio="xMidYMid slice" clip-path="url(#${id})"/>`).join('')
+    + '<circle r="77" fill="none" stroke="rgba(60,30,10,.18)" stroke-width="2"/>';
+}
+// A photo that doesn't come (no internet, an old photo without its square copy): try the
+// other copy once, else take it away so the painted dish shows instead of a broken picture.
+if (typeof document !== 'undefined') {
+  document.addEventListener('error', (e) => {
+    const t = e.target;
+    if (!t || !t.hasAttribute || !t.hasAttribute('data-kph')) return;
+    badPics[t.getAttribute('href')] = 1;
+    const alt = t.getAttribute('data-alt');
+    if (alt && navigator.onLine !== false) { t.removeAttribute('data-alt'); t.setAttribute('href', alt); } else if (t.parentNode) t.parentNode.removeChild(t);
+  }, true);
+}
+
 /**
  * <svg> of the dish on its plate, seen from above. `r` is a recipe (or an index entry);
  * `size` in px. Big plates (200 px and up) get the small touches; small ones stay light,
- * because a long list draws a hundred of them.
+ * because a long list draws a hundred of them. A web recipe's photo fills the plate.
  */
 export function plateArt(r, size = 120, { detail = size >= 200, style = '' } = {}) {
+  const photo = photoLayer(r, size);
   const kind = plateKind(r);
   const c = String((r && (r.cuisine || r.c)) || '');
   const words = ` ${c} ${(r && (r.type || r.ty)) || ''} ${(r && (r.title || r.t)) || ''} `.toLowerCase();
   const seed = hashStr(String((r && r.id) || words));
   const turn = seed % 360;
-  const dish = BOWLS[kind]
+  const dish = BOWLS[kind] && !photo
     ? circ(0, 0, 93, BOWL_COLOR[c] || '#F4EDE0') + circ(0, 0, 81, 'rgba(0,0,0,.16)')
     : circ(0, 0, 96, '#F4EDE0') + circ(0, 0, 73, '#FBF8F2', ' stroke="#E3D8C4" stroke-width="2"');
   return `<svg class="k-plate" data-plate="${kind}" width="${size}" height="${size}" viewBox="-104 -104 208 208" aria-hidden="true" focusable="false" style="display:block;flex:none;${style}">`
-    + `${circ(3, 5, 97, 'rgba(0,0,0,.24)')}${dish}<g transform="rotate(${turn})">${PLATES[kind](seed, detail, words)}</g></svg>`;
+    + `${circ(3, 5, 97, 'rgba(0,0,0,.24)')}${dish}<g transform="rotate(${turn})">${PLATES[kind](seed, detail && !photo, words)}</g>${photo}</svg>`;
 }
 
 // The table under the plate, by cuisine: [light, mid, dark]. Rich and dark enough for white words.

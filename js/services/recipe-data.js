@@ -3,6 +3,7 @@
 // Files are cached by the service worker, so browsing works offline after the first visit.
 
 import { savedRecipes, toRecipe, parseStep, MEAL_NAMES } from './my-recipes.js';
+import { isWebId, webEntries, loadWebRecipe, cachedWebRecipe } from './web-recipes.js';
 
 const BASE = './data/recipes/';
 
@@ -26,8 +27,10 @@ async function getJson(name) {
   return res.json();
 }
 
-/** { cuisines: [{id,name,count,types:[{id,name,count}]}], recipes: [{id,t,c,ty,m,g,b,s}] }
- *  The family's own recipes are added as the 'mine' cuisine (always present, maybe empty). */
+/** { cuisines: [{id,name,count,types:[{id,name,count}]}], recipes: [{id,t,c,ty,m,g,b,s}], byId }
+ *  The family's own recipes are added as the 'mine' cuisine (always present, maybe empty).
+ *  Recipes from the web kept on this screen (web-recipes.js) are in byId only (c: 'web',
+ *  img = their photo), so the plan, favourites and Home find them by id like any other. */
 export function loadIndex() {
   if (!indexP) {
     indexP = getJson('index.json');
@@ -47,6 +50,7 @@ function withMine(base) {
     recipes: base.recipes.concat(entries),
     byId: {},
   };
+  webEntries().forEach((r) => { ix.byId[r.id] = r; });
   ix.recipes.forEach((r) => { ix.byId[r.id] = r; });
   return ix;
 }
@@ -67,6 +71,7 @@ export function loadCuisine(id) {
 export async function getRecipe(id) {
   if (!id) return null;
   if (/^my-/.test(id)) { const x = savedRecipes().find((r) => r.id === id); return x ? toRecipe(x) : null; }
+  if (/^web:/.test(id)) return isWebId(id) ? loadWebRecipe(id) : null;
   if (byId[id]) return byId[id];
   const ix = await loadIndex();
   const e = ix.byId[id];
@@ -75,7 +80,7 @@ export async function getRecipe(id) {
   return byId[id] || null;
 }
 /** Already-loaded recipe, or undefined. */
-export const cachedRecipe = (id) => byId[id];
+export const cachedRecipe = (id) => byId[id] || (isWebId(id) ? cachedWebRecipe(id) : undefined);
 
 /**
  * The recipe with a timer on every step whose words give a time ("Rest 10 minutes") but

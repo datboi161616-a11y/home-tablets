@@ -16,6 +16,7 @@ import {
 import { GROCERY_WORDS } from '../services/grocery-words.js';
 import { esc, topBar, phoneCode, wirePhoneCodes } from './ui.js';
 import { C } from '../art.js';
+import { openKeyboard, keyboardStyle } from './keyboard.js';
 
 let off, offPhone, stopCodes, stopTimers;
 
@@ -102,25 +103,7 @@ const STYLE = `
     .sh-toast{position:absolute;left:50%;bottom:6px;transform:translateX(-50%);z-index:5;display:flex;align-items:center;gap:18px;background:${CREAM};color:${INK};
       border-radius:999px;padding:8px 8px 8px 26px;font-size:18px;box-shadow:0 10px 24px rgba(0,0,0,.4);max-width:720px;min-height:72px}
     .sh-toast span{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0}
-    .sh-kb{position:absolute;left:0;bottom:0;width:100%;z-index:7;background:#0E222C;box-shadow:0 -4px 14px rgba(0,0,0,.35);
-      padding:14px 20px 16px;display:flex;flex-direction:column;gap:8px;animation:sh-kbup .18s ease-out both}
-    .sh-sug{display:flex;gap:10px;height:76px;margin-bottom:4px}
-    .sh-s{flex:1 1 0;min-width:0;border-radius:38px;border:0;background:rgba(255,255,255,.14);color:#FFFFFF;font:600 20px/1.15 Inter,system-ui,sans-serif;
-      padding:0 12px;overflow:hidden;cursor:pointer}
-    .sh-s[hidden]{display:block;visibility:hidden}
-    .sh-kclose{flex:none;width:150px;border-radius:999px;border:0;background:transparent;box-shadow:inset 0 0 0 2px rgba(255,255,255,.3);color:#FFFFFF;
-      font:600 21px Inter,system-ui,sans-serif;cursor:pointer}
-    .sh-kr{display:flex;gap:10px;justify-content:center}
-    .sh-k{flex:none;width:114px;height:76px;border-radius:14px;border:0;background:${CREAM};color:${INK};font:500 32px Inter,system-ui,sans-serif;
-      cursor:pointer;display:flex;align-items:center;justify-content:center;padding:0}
-    .sh-kb.up .sh-k.l{text-transform:uppercase}
-    .sh-k.fn{background:rgba(255,255,255,.16);color:#FFFFFF;font-size:24px;font-weight:600}
-    .sh-k.w2{width:238px}
-    .sh-k.sp{flex:1 1 0;width:auto;font-size:22px;color:#5B6B73}
-    .sh-k.go{width:300px;background:${AMBER};color:${INK};font-weight:700;font-size:28px}
-    .sh-kb .num{display:none}
-    .sh-kb.n .num{display:flex}
-    .sh-kb.n .abc{display:none}
+    ${keyboardStyle({ panel: '#0E222C', key: CREAM, ink: INK, go: AMBER, goInk: INK })}
     .sh-air{position:absolute;left:0;top:0;width:100%;height:100%;pointer-events:none;overflow:hidden;z-index:6}
     .sh-plane{position:absolute;left:0;top:0;will-change:transform;opacity:0;animation:sh-across 1.5s linear both}
     .sh-plane i{display:block;will-change:transform;animation:sh-arc 1.5s linear both}
@@ -129,7 +112,6 @@ const STYLE = `
     .sh-row.phoned .sh-tick{animation:sh-pop .7s ease-out .9s both}
     .sh-row.phoned .sh-nm::after{content:"";position:absolute;left:-2px;right:-2px;top:11px;height:3px;border-radius:2px;background:${RUST};transform-origin:left center;animation:sh-strike 1.6s ease-out .9s both}
     .sh-row.landed{animation:sh-land .6s ease-out 1s both}
-    @keyframes sh-kbup{0%{transform:translate3d(0,100%,0)}100%{transform:translate3d(0,0,0)}}
     @keyframes sh-bob{0%,100%{transform:translate3d(0,0,0)}50%{transform:translate3d(0,-6px,0)}}
     @keyframes sh-pop{0%{transform:scale(.3)}60%{transform:scale(1.25)}100%{transform:scale(1)}}
     @keyframes sh-strike{0%{transform:scaleX(0);opacity:1}45%{transform:scaleX(1);opacity:1}100%{transform:scaleX(1);opacity:0}}
@@ -139,7 +121,7 @@ const STYLE = `
       50%{transform:translate3d(0,var(--peak),0) rotate(0deg);animation-timing-function:ease-in}
       100%{transform:translate3d(0,var(--dy),0) rotate(var(--r1))}}
     @media (prefers-reduced-motion: reduce){
-      .sh-kb,.sh-bob,.sh-row.pop .sh-tick,.sh-row.phoned .sh-tick,.sh-row.landed{animation:none}
+      .sh-bob,.sh-row.pop .sh-tick,.sh-row.phoned .sh-tick,.sh-row.landed{animation:none}
       .sh-plane,.sh-row.phoned .sh-nm::after{display:none}
     }
   </style>`;
@@ -268,23 +250,10 @@ export function mount(el) {
   // ---- the screen's own keyboard ------------------------------------------------------
   // Android's keyboard never comes up here (it kept opening and closing). "Add something" is a
   // plain button that slides this panel up over the bottom of the screen; the list stays above.
-  // Built once per opening; each key only changes the box's text and the suggestion buttons.
+  // (keyboard.js: built once per opening; each key only changes the box's text and the suggestions.)
   let lastList = null; // the list as last drawn (for suggestions)
-  let kb = null; // { el, buf, num, pool, onList }
-  const ROWS = ['qwertyuiop', 'asdfghjkl', 'zxcvbnm'];
-  const NUMS = ['1234567890', "-'&,./", '%#()+'];
-  const key = (c, letter) => `<button type="button" class="sh-k${letter ? ' l' : ''}" data-k="${esc(c)}">${esc(c)}</button>`;
-  const BACK = '<button type="button" class="sh-k fn w2" data-kback aria-label="Delete">⌫</button>';
-  const KB_HTML = `
-    <div class="sh-sug">${[0, 1, 2, 3, 4, 5].map(() => '<button type="button" class="sh-s" data-s="" hidden></button>').join('')}
-      <button type="button" class="sh-kclose" data-kclose>✕ Close</button></div>
-    ${ROWS.map((r, i) => `<div class="sh-kr abc">${r.split('').map((c) => key(c, true)).join('')}${i === 2 ? BACK : ''}</div>`).join('')}
-    ${NUMS.map((r, i) => `<div class="sh-kr num">${r.split('').map((c) => key(c)).join('')}${i === 2 ? BACK : ''}</div>`).join('')}
-    <div class="sh-kr">
-      <button type="button" class="sh-k fn w2" data-knum><span class="abc">123</span><span class="num">ABC</span></button>
-      <button type="button" class="sh-k sp" data-k=" ">space</button>
-      <button type="button" class="sh-k go" data-kgo>Add</button>
-    </div>`;
+  let kb = null; // the keyboard, while it is up
+  let words = { pool: [], onList: {} }; // what it can suggest (buildPool)
 
   // What can be suggested: your own things (most added first), then this list's ingredients
   // (the ones left off as "already have" too), then everyday groceries.
@@ -317,13 +286,13 @@ export function mount(el) {
   function suggest(q) {
     const out = [];
     if (!q) {
-      kb.pool.forEach((x) => { if (x.src === 0 && !kb.onList[x.k]) out.push(x.t); });
-      COMMON_ITEMS.forEach((t) => { if (out.length < 6 && !kb.onList[low(t)] && out.indexOf(t) < 0) out.push(t); });
+      words.pool.forEach((x) => { if (x.src === 0 && !words.onList[x.k]) out.push(x.t); });
+      COMMON_ITEMS.forEach((t) => { if (out.length < 6 && !words.onList[low(t)] && out.indexOf(t) < 0) out.push(t); });
       return out.slice(0, 6);
     }
     const hits = [];
-    kb.pool.forEach((x) => {
-      if (kb.onList[x.k]) return;
+    words.pool.forEach((x) => {
+      if (words.onList[x.k]) return;
       const r = x.k.indexOf(q) === 0 ? 0 : x.w.indexOf(` ${q}`) > 0 ? 1 : -1;
       if (r >= 0) hits.push({ x, r });
     });
@@ -335,45 +304,35 @@ export function mount(el) {
     const m = /^(\d{1,2})\s*(?:[x×*](?:\s+|$)|\s+|$)/i.exec(b);
     return m && Number(m[1]) > 0 ? { qty: Number(m[1]), rest: b.slice(m[0].length) } : { qty: 0, rest: b };
   };
-  // Show what's typed (first letter a capital) and fresh suggestions.
-  function kbShow() {
-    if (!kb) return;
-    const text = cap(kb.buf);
+  // Show what's typed (first letter a capital) in the box.
+  const showTyped = (buf) => {
+    const text = cap(buf);
     $('[data-kbopen]').innerHTML = text ? `<span>${esc(text)}</span><span class="car"></span>` : '<span class="car first"></span><span class="ph">Add something</span>';
-    kb.el.classList.toggle('up', !kb.buf.trim());
-    const list = suggest(low(lead(kb.buf).rest));
-    const btns = kb.el.querySelectorAll('[data-s]');
-    for (let i = 0; i < btns.length; i++) {
-      const t = list[i] || '';
-      if (btns[i].getAttribute('data-s') === t) continue;
-      btns[i].setAttribute('data-s', t);
-      btns[i].textContent = t;
-      btns[i].hidden = !t;
-    }
-  }
+  };
   function kbOpen() {
     if (kb) return;
-    const panel = document.createElement('div');
-    panel.className = 'sh-kb up';
-    panel.setAttribute('data-kb', '');
-    panel.innerHTML = KB_HTML;
-    kb = Object.assign({ el: panel, buf: '', num: false }, buildPool(lastList));
-    // A tap on a key must never move the focus anywhere (nothing on this screen takes typing).
-    panel.addEventListener('mousedown', (e) => e.preventDefault());
-    panel.addEventListener('click', onKey);
-    root.appendChild(panel);
+    words = buildPool(lastList);
     $('[data-kbopen]').classList.add('on');
     body.style.paddingBottom = '440px'; // the end of the list can still be scrolled above the keys
-    kbShow();
-  }
-  function kbClose() {
-    if (!kb) return;
-    if (kb.el.parentNode) kb.el.parentNode.removeChild(kb.el);
-    kb = null;
-    body.style.paddingBottom = '';
-    const box = $('[data-kbopen]');
-    box.classList.remove('on');
-    box.innerHTML = '<span class="ph">Add something</span>';
+    kb = openKeyboard(root, {
+      go: 'Add',
+      suggest: (buf) => suggest(low(lead(buf).rest)),
+      onChange: showTyped,
+      // "Add", or a suggestion ("2 x" typed first still counts).
+      onGo: (sug, k) => {
+        const p = lead(k.text);
+        const text = sug ? (p.qty ? `${p.qty} x ${sug}` : sug) : k.text;
+        k.text = '';
+        addText(text);
+      },
+      onClose: () => {
+        kb = null;
+        body.style.paddingBottom = '';
+        const box = $('[data-kbopen]');
+        box.classList.remove('on');
+        box.innerHTML = '<span class="ph">Add something</span>';
+      },
+    });
   }
   // Put it on the list and say what happened.
   function addText(text) {
@@ -381,7 +340,7 @@ export function mount(el) {
     if (!text) return;
     const p = splitQty(text);
     const name = cap(p.text);
-    if (kb) kb.onList[low(p.text)] = 1; // not offered again while the list redraws
+    if (kb) words.onList[low(p.text)] = 1; // not offered again while the list redraws
     const what = addExtra(text);
     if (what === 'there') say(`${name} is already on the list.`);
     else if (what === 'more') say(`More ${p.text.toLowerCase()} on the list.`);
@@ -389,26 +348,6 @@ export function mount(el) {
     else if (what === 'added') say(`Added ${p.text.toLowerCase()}.`);
     else if (what === 'unsaved') say('Storage is full: not added.');
     render();
-  }
-  function onKey(e) {
-    const t = e.target.closest('button');
-    if (!t || !kb) return;
-    const sug = t.getAttribute('data-s');
-    if (t.dataset.k != null) {
-      const c = t.dataset.k;
-      if (c === ' ' && (!kb.buf || / $/.test(kb.buf))) return;
-      if (kb.buf.length < 60) kb.buf += c;
-      if (c === ' ' && kb.num) { kb.num = false; kb.el.classList.remove('n'); } // "2 x milk": back to letters
-    } else if (t.hasAttribute('data-kback')) kb.buf = kb.buf.slice(0, -1);
-    else if (t.hasAttribute('data-knum')) { kb.num = !kb.num; kb.el.classList.toggle('n', kb.num); return; }
-    else if (t.hasAttribute('data-kgo') || sug) {
-      const p = lead(kb.buf);
-      const text = sug ? (p.qty ? `${p.qty} x ${sug}` : sug) : kb.buf;
-      kb.buf = '';
-      if (kb.num) { kb.num = false; kb.el.classList.remove('n'); }
-      addText(text);
-    } else if (t.hasAttribute('data-kclose')) { kbClose(); return; }
-    kbShow();
   }
 
   let again = false;
@@ -455,7 +394,7 @@ export function mount(el) {
         ${toast ? '<div style="height:96px"></div>' : ''}`;
       body.scrollTop = scrollTop;
       $('[data-toast]').innerHTML = toast ? `<div class="sh-toast"><span>${esc(toast.text)}</span><button class="x-btn ink sm" data-undo>Undo</button></div>` : '';
-      if (kb) { Object.assign(kb, buildPool(list)); kbShow(); }
+      if (kb) { words = buildPool(list); kb.refresh(); }
 
       // A plane for each thing a phone just did (the row is scrolled into view first).
       flash = { land: {}, tick: {}, pop: {} };
@@ -517,11 +456,11 @@ export function mount(el) {
       render();
     } else if (t.matches('[data-kbopen]')) kbOpen();
     else if (t.matches('[data-kbadd]')) {
-      if (!kb || !kb.buf.trim()) { kbOpen(); return; }
-      const text = kb.buf;
-      kb.buf = '';
+      if (!kb || !kb.text.trim()) { kbOpen(); return; }
+      const text = kb.text;
+      kb.text = '';
       addText(text);
-      kbShow();
+      kb.refresh();
     }
   });
   // The "Add something" box is a button: tapping it must not take the focus either.

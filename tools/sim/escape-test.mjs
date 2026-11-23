@@ -31,6 +31,8 @@ const H30 = '<img src=x onerror=__pwned=1>';                    // fits 30-lette
 const H18 = '<svg onload=P=1>';                                 // survives an 18-letter cut
 const SEEN = 'onerror="window.__pwned=1"';                      // what must show up as plain text
 const SEEN30 = 'onerror=__pwned=1';
+// The same, entity-encoded the way a WordPress site sends titles (decoded to text by web-recipes.js).
+const WEB_H = '&lt;img src=x onerror=&quot;window.__pwned=1&quot; data-pwn&gt;';
 
 // Before the app's own code: fetch to the outside world answers from ROUTES, or fails as if
 // offline (so nothing real is asked); the site's own files load as usual.
@@ -179,6 +181,32 @@ const CASES = [
       const it = document.querySelector('[data-item]');
       if (it) it.click();
       await sleep(600);`,
+  },
+  {
+    // Recipes from the web (web-recipes.js): a site's titles come entity-encoded, so they
+    // decode into markup-looking text; the picture address tries to break out of href="".
+    name: 'web-recipe-search', route: 'recipes', seen: [SEEN],
+    stub: fetchStub([
+      ['wprm_recipe\\?', [{ id: 7, recipe: { name: `Tacos ${WEB_H}`, image_url: 'https://x.test/a.jpg" onload="window.__pwned=3', total_time: '30' } }]],
+    ]),
+    steps: `const tap = (el) => { el.dispatchEvent(new MouseEvent('mousedown', { bubbles: true, cancelable: true })); el.click(); };
+      tap(document.querySelector('[data-search]'));
+      await sleep(200);
+      'ab'.split('').forEach((c) => tap(document.querySelector('[data-k="' + c + '"]')));
+      tap(document.querySelector('[data-kgo]'));
+      await sleep(1800);`,
+  },
+  {
+    name: 'web-recipe-page', route: 'dish/web:bb:7', seen: [SEEN],
+    stub: fetchStub([
+      ['wprm_recipe/7', { id: 7, link: 'javascript:window.__pwned=4', recipe: {
+        name: WEB_H, image_url: 'https://x.test/a.jpg"><img src=x onerror="window.__pwned=5">', summary: `<p>${H}</p>`, servings: '4', prep_time: '5', cook_time: '10', total_time: '15',
+        tags: { cuisine: [{ name: H }], course: [{ name: H }] },
+        ingredients_flat: [{ type: 'group', name: H }, { type: 'ingredient', amount: '1', unit: H30, name: WEB_H, notes: H }],
+        instructions_flat: [{ type: 'instruction', text: `<p>Bake 10 minutes ${WEB_H}</p><script>window.__pwned=6</script>` }],
+      } }],
+    ]),
+    steps: 'await sleep(1500);',
   },
 ];
 
