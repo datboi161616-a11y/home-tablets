@@ -31,6 +31,25 @@ export function setExtra(id, on) {
   try { localStorage.setItem(KEY, JSON.stringify({ off })); } catch (e) { /* storage off */ }
   window.dispatchEvent(new Event('extras-changed'));
 }
+// Has this household started using it? (Then it gets its own card in the Menu; until then it
+// waits on the one "More apps" card, so a new screen's Menu isn't twenty cards long.)
+const USED = {
+  bills: (d) => d.bills && d.bills.length,
+  chores: (d) => d.chores && d.chores.length,
+  manual: (d) => d.wifi || (d.entries && d.entries.length),
+  trips: (d) => d.trips && d.trips.length,
+  datenight: (d) => (d.plans && d.plans.length) || (d.mine && d.mine.length),
+  question: (d) => d.days && Object.keys(d.days).length,
+  photoweek: (d) => d.picks && Object.keys(d.picks).length,
+  care: (d) => d.items && d.items.length,
+};
+export function extraUsed(id) {
+  try {
+    const d = JSON.parse(localStorage.getItem(`${id}.v1`) || 'null');
+    return !!(d && USED[id] && USED[id](d));
+  } catch (e) { return false; }
+}
+
 /** The extras that are switched on, in menu order. */
 export const extrasOn = () => EXTRAS.filter((x) => extraOn(x.id));
 

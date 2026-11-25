@@ -23,7 +23,7 @@ import { feature } from '../services/features.js';
 import * as timerSvc from '../services/timers.js';
 import { wxIcon, foodArt, spot } from '../art.js';
 import { topBar, avatar, esc } from './ui.js';
-import { extrasOn } from '../services/extras.js';
+import { extrasOn, extraUsed } from '../services/extras.js';
 
 let offExtras = [];
 let lastCard = null; // { id, at }: the card in the middle when the menu was last left
@@ -284,8 +284,11 @@ export function mount(el) {
 
   const shown = CARDS.filter((k) => !k.feature || feature(k.feature));
   // The extra apps the household kept switched on (Settings), just before Settings.
-  const extras = extrasOn();
+  // Each one in use has its own card; the ones not started yet wait together on "More apps".
+  const extras = extrasOn().filter((x) => extraUsed(x.id));
+  const waiting = extrasOn().filter((x) => !extraUsed(x.id));
   shown.splice(shown.length - 1, 0, ...extras.map((x) => ({ id: x.id, href: `#/${x.id}`, bg: x.bg, ink: x.ink, soft: x.soft })));
+  if (waiting.length) shown.splice(shown.length - 1, 0, { id: 'more', href: `#/${waiting[0].id}`, bg: '#2A2238', ink: '#FFFFFF', soft: '#D9CDE8' });
 
   el.innerHTML = `
   <style>
@@ -367,6 +370,8 @@ export function mount(el) {
     .lc-dots span{width:10px;height:10px;border-radius:5px;background:rgba(255,255,255,.35);margin:0 5px}
     .lc-dots span.on{width:34px;background:#FFFFFF}
 
+    .lc-more{flex:1;display:grid;grid-template-columns:1fr 1fr;grid-auto-rows:84px;grid-gap:10px;align-content:center;margin-top:12px}
+    .lc-more-b{min-height:56px;border:0;border-radius:16px;background:rgba(255,255,255,.12);color:#fff;font:600 17px/1.2 Inter,sans-serif;text-align:left;padding:0 12px;cursor:pointer}
     .lc-door{flex:1;display:flex;align-items:center;justify-content:center;color:var(--soft);min-height:0}
     .lc-door-line{flex:none;font:500 20px Inter,sans-serif;color:var(--soft);text-align:center;padding-bottom:6px}
     @media (prefers-reduced-motion: reduce){.lc-drops{animation:none}.lc-card{transition:none}}
@@ -467,6 +472,17 @@ export function mount(el) {
   // Wipe the screen: touches off for half a minute so the glass can be cleaned.
   // The cards that are only a door are drawn once.
   shown.forEach((k) => { if (k.door) fill(k.id, k.door()); });
+
+  // ---- "More apps": the extras not started yet, one big button each ----
+  if (waiting.length) {
+    fill('more', `${head('More apps')}
+      <div class="lc-more">${waiting.map((x) => `<button type="button" class="lc-more-b" data-go="#/${x.id}">${esc(x.name)}</button>`).join('')}</div>`);
+    card('more').addEventListener('click', (e) => {
+      const b = e.target instanceof Element ? e.target.closest('[data-go]') : null;
+      e.preventDefault();
+      if (b) location.hash = b.getAttribute('data-go');
+    });
+  }
 
   // ---- The extra apps: each one's own service says what its card shows ----
   offExtras = [];
