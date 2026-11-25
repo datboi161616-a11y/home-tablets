@@ -12,8 +12,10 @@ import { photos as samplePhotos } from '../services/family-sample.js';
 import { topBar, esc, people, personColor, phoneCode, wirePhoneCodes, season, seasonLayer } from './ui.js';
 import { backHref, backLabel } from '../services/nav.js';
 import { openKeyboard, keyboardStyle } from './keyboard.js';
+import { tripsBetween, getTrip, trips as tripsAhead, tripArt, daysBetween, town, onChanged as onTripsChanged } from '../services/trips-data.js';
+import { extraOn } from '../services/extras.js';
 
-let timer, onUpdate, onPhotos, undoTimer, stopCodes;
+let timer, onUpdate, onPhotos, undoTimer, stopCodes, stopTrips;
 let view = 'month'; // 'month' (opens first) or 'week'
 let weekOffset = 0; // 0 = this week, 1 = next week, -1 = last week… (the arrows)
 let monthOffset = 0; // 0 = this month
@@ -140,6 +142,37 @@ function memory() {
     if (photo) return { photo, date: d, label: tries[i][1] };
   }
   return null;
+}
+
+// ---------- Trips (from the Trips app, while it is switched on) ----------
+
+// A band's colour, from the trip's painting (board TRP06).
+const TRIP_INK = { cabin: ['#B86E86', '#2D2F63'], house: ['#3C5A8C', '#14244A'], ski: ['#3F86D6', '#2A5C9E'], beach: ['#1FB5C4', '#157F8C'] };
+/** The trips touching the days from..to (ISO), each with its painting and a lane (trips on the same days sit one above the other). */
+function tripsIn(from, to) {
+  if (!extraOn('trips')) return [];
+  const list = tripsBetween(from, to).map((t) => { const f = getTrip(t.id); return Object.assign({ art: f ? f.art : 'cabin', lane: 0 }, t); });
+  list.forEach((t, i) => {
+    const used = list.slice(0, i).filter((o) => o.end >= t.start && o.start <= t.end).map((o) => o.lane);
+    while (used.indexOf(t.lane) >= 0) t.lane++;
+  });
+  return list;
+}
+// How many band lanes a day needs (0 when no trip touches it).
+const tripLanes = (list, iso) => list.reduce((m, t) => (t.start <= iso && t.end >= iso ? Math.max(m, t.lane + 1) : m), 0);
+const tripHref = (t) => `#/trips/${encodeURIComponent(t.id)}`;
+const tripInk = (t) => { const c = TRIP_INK[t.art] || TRIP_INK.cabin; return `linear-gradient(90deg,${c[0]},${c[1]})`; };
+/**
+ * The bands for one row of seven days starting `rowStart`, over the days lo..hi (ISO) only:
+ * one band per trip, its name once. place(c0, n, starts, ends) gives the band's position.
+ */
+function tripBands(list, rowStart, lo, hi, place) {
+  return list.map((t) => {
+    const from = t.start > lo ? t.start : lo, to = t.end < hi ? t.end : hi;
+    if (from > to) return '';
+    const a = from === t.start, b = to === t.end;
+    return `<a class="kc-trip${a ? ' a' : ''}${b ? ' b' : ''}" href="${tripHref(t)}" style="${place(t, dayDiff(rowStart, fromIso(from)), daysBetween(from, to) + 1, a, b)};background:${tripInk(t)}"><span class="kc-tart">${tripArt(t.art, 34, 22)}</span><span class="kc-cut">${esc(t.name)}</span></a>`;
+  }).join('');
 }
 
 // ---------- Words ----------
@@ -288,6 +321,10 @@ const STYLE = `
     .kc-chip.more { background:rgba(255,255,255,.2); }
     .kc-cut { min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
     .kc-dot { width:12px; height:12px; border-radius:50%; flex:none; display:inline-block; }
+    .kc-trip { position:absolute; z-index:3; height:28px; box-sizing:border-box; display:flex; align-items:center; padding:0 8px 0 4px; color:#fff; font:600 15px Inter,sans-serif; text-decoration:none; overflow:hidden; }
+    .kc-trip.a { border-top-left-radius:8px; border-bottom-left-radius:8px; }
+    .kc-trip.b { border-top-right-radius:8px; border-bottom-right-radius:8px; }
+    .kc-tart { flex:none; width:34px; height:22px; border-radius:5px; overflow:hidden; margin-right:7px; }
     @keyframes kc-pulse { 0%,100% { opacity:.25; } 50% { opacity:.95; } }
     @keyframes kc-up { from { transform:translateY(36px); opacity:0; } to { transform:none; opacity:1; } }
 
@@ -393,11 +430,16 @@ function monthGrid(today) {
   const gridStart = startOfWeek(first);
   const dim = new Date(first.getFullYear(), first.getMonth() + 1, 0).getDate();
   const rows = Math.ceil((dayDiff(gridStart, first) + dim) / 7);
-  const lines = rows > 5 ? 2 : 3; // how many things fit in a day box
+  const fits = rows > 5 ? 2 : 3; // how many things fit in a day box
+  const firstIso = isoDay(first), lastIso = isoDay(new Date(first.getFullYear(), first.getMonth(), dim));
+  const trips = tripsIn(firstIso, lastIso);
   const cells = [];
   for (let i = 0; i < rows * 7; i++) {
     const d = getDay(shiftDay(gridStart, i));
     const out = d.date.getMonth() !== first.getMonth();
+    // A trip's band runs along the bottom: the day's chips sit above it.
+    const lanes = out ? 0 : tripLanes(trips, isoDay(d.date));
+    const lines = Math.max(1, fits - lanes);
     const shown = d.events.slice(0, d.events.length > lines ? lines - 1 : lines);
     const more = d.events.length - shown.length;
     const photo = bestPhoto(d.date);
@@ -406,7 +448,7 @@ function monthGrid(today) {
         ${photo ? `<div class="kc-phw">${photoBox(photo, 'kc-ph', 200, 160)}<div class="kc-shade"></div></div>` : ''}
         ${d.isToday ? '<div class="kc-ring"></div>' : ''}
         <div class="kc-num">${d.num}${d.isToday ? '<small>Today</small>' : d.num === 1 && out ? `<small>${d.date.toLocaleDateString('en-US', { month: 'short' })}</small>` : ''}</div>
-        <div class="kc-chips">
+        <div class="kc-chips"${lanes ? ` style="bottom:${6 + lanes * 32}px"` : ''}>
           ${shown.map((e) => `<div class="kc-chip" style="background:${colorOfEvent(e)}">${esc(e.title)}</div>`).join('')}
           ${more > 0 ? `<div class="kc-chip more">+${more} more</div>` : ''}
         </div>
@@ -416,23 +458,40 @@ function monthGrid(today) {
   let gaps = '';
   for (let i = 1; i < 7; i++) gaps += `<div class="kc-gap" style="top:0;height:100%;width:6px;left:calc(${i} * (100% + 6px) / 7 - 6px)"></div>`;
   for (let i = 1; i < rows; i++) gaps += `<div class="kc-gap" style="left:0;width:100%;height:6px;top:calc(${i} * (100% + 6px) / ${rows} - 6px)"></div>`;
+  // Each trip as one band across its days in each week row (only over this month's days).
+  let bands = '';
+  for (let r = 0; trips.length && r < rows; r++) {
+    const rowStart = shiftDay(gridStart, r * 7);
+    const lo = isoDay(rowStart) > firstIso ? isoDay(rowStart) : firstIso;
+    const hi = isoDay(shiftDay(rowStart, 6)) < lastIso ? isoDay(shiftDay(rowStart, 6)) : lastIso;
+    bands += tripBands(trips, rowStart, lo, hi, (t, c0, n, a, b) =>
+      `left:calc(${c0} * (100% + 6px) / 7 + ${a ? 5 : 0}px);width:calc(${n} * (100% + 6px) / 7 - ${6 + (a ? 5 : 0) + (b ? 5 : 0)}px);top:calc(${r + 1} * (100% + 6px) / ${rows} - ${40 + t.lane * 32}px)`);
+  }
   const todayDow = monthOffset === 0 ? dayDiff(startOfWeek(today), today) : -1;
   return `
     <div class="kc-dows">${weekdayNames().map((x, i) => `<div class="kc-dow${i === todayDow ? ' now' : ''}">${x}</div>`).join('')}</div>
     <div class="kc-frame">
       ${painting(first.getMonth())}${gaps}
       <div class="kc-grid" style="grid-template-rows:repeat(${rows},minmax(0,1fr))">${cells.join('')}</div>
+      ${bands}
     </div>`;
 }
 
 // ---------- The week ----------
 
 function weekGrid(days, today) {
-  const quiet = days.every((d) => !d.events.length);
+  const lo = isoDay(days[0].date), hi = isoDay(days[6].date);
+  const trips = tripsIn(lo, hi);
+  // The trips run as bands under the dates; every day keeps the same room for them.
+  const lanes = trips.reduce((m, t) => Math.max(m, t.lane + 1), 0);
+  const bands = tripBands(trips, days[0].date, lo, hi, (t, c0, n, a, b) =>
+    `left:calc(${c0} * (100% + 8px) / 7 + ${a ? 5 : 0}px);width:calc(${n} * (100% + 8px) / 7 - ${8 + (a ? 5 : 0) + (b ? 5 : 0)}px);top:${92 + t.lane * 36}px`);
+  const quiet = !trips.length && days.every((d) => !d.events.length);
   // An empty week says what comes next, with a way to go there.
   const next = quiet ? nextAfter(days[6].date) : null;
   return `
     <div class="kc-week">
+      ${bands}
       ${days.map((d, i) => {
         const photo = bestPhoto(d.date);
         return `
@@ -442,6 +501,7 @@ function weekGrid(days, today) {
             <div class="kc-dow${d.isToday ? ' now' : ''}">${d.dow}</div>
             <div class="kc-num">${d.num}${d.isToday ? '<small>Today</small>' : d.num === 1 || i === 0 ? `<small>${d.date.toLocaleDateString('en-US', { month: 'short' })}</small>` : ''}</div>
           </div>
+          ${lanes ? `<div style="flex:none;height:${lanes * 36 - 6}px"></div>` : ''}
           ${d.events.map((e) => `
             <div class="kc-ev${d.isToday && e.over ? ' over' : ''}" style="background:${colorOfEvent(e)}">
               <div class="kc-ev-top">${iconBadge(e)}<div class="kc-ev-time">${esc(e.ofDays ? `${e.time} · ${e.dayOf}/${e.ofDays}` : e.time)}</div></div>
@@ -463,6 +523,24 @@ function weekGrid(days, today) {
 // ---------- Beside the month: a memory and the next big thing ----------
 // (What is coming up is already on the month and the week, so it is not listed again here.)
 
+// The next trip (or the one under way): its painting, "in 9 days · Lake George".
+function nextTrip() {
+  if (!extraOn('trips')) return '';
+  const today = isoDay(new Date());
+  const t = tripsAhead(today)[0];
+  if (!t) return '';
+  const n = daysBetween(today, t.start);
+  const when = n >= 0 ? inDays(n) : `day ${1 - n} of ${daysBetween(t.start, t.end) + 1}`;
+  return `
+      <a class="kc-card" href="${tripHref(t)}" style="padding:0;overflow:hidden;color:#fff;text-decoration:none;display:block">
+        <div style="height:64px">${tripArt(t.art, '100%', 64)}</div>
+        <div style="padding:8px 12px 10px">
+          <div class="kc-cut" style="font:700 20px Outfit,sans-serif">${esc(t.name)}</div>
+          <div class="kc-cut" style="font:500 16px Inter,sans-serif;color:#B7AEC6">${esc([when, town(t.where)].filter(Boolean).join(' · '))}</div>
+        </div>
+      </a>`;
+}
+
 function sidePanel(month, atStart, atEnd, away) {
   const mem = memory();
   const note = linkNote();
@@ -474,6 +552,7 @@ function sidePanel(month, atStart, atEnd, away) {
         <div class="kc-mem">${photoBox(mem.photo, 'kc-ph', 340, 200)}</div>
         ${mem.photo.caption || mem.photo.name ? `<div class="kc-cut" style="font:600 16px Inter,sans-serif;margin-top:8px">${esc(mem.photo.caption || mem.photo.name)}</div>` : ''}
       </div>` : ''}
+      ${nextTrip()}
       <button data-cals class="kc-link">${calendarStatus().calendars ? 'Linked calendars' : 'Link a calendar'}</button>
       <div style="flex:1;min-height:0"></div>
       ${note.error ? `<button data-cals class="kc-warn" style="flex:none;max-height:62px;overflow:hidden;background:none;border:0;text-align:left;padding:0;cursor:pointer">${esc(note.text)}</button>` : ''}
@@ -556,6 +635,8 @@ function showDay(el, d) {
   const shown = pics.slice(0, 6);
   const past = d.date <= midnightOf(new Date());
   const side = pics.length > 0;
+  const iso = isoDay(d.date);
+  const trips = tripsIn(iso, iso);
   openSheet(el, 'day', `
     <div class="kc-sheet" data-day-box="${isoDay(d.date)}" style="width:${side ? 1060 : 760}px;max-height:700px;padding:26px 30px;gap:18px">
       <div style="display:flex;align-items:center;justify-content:space-between;gap:16px;flex:none">
@@ -570,7 +651,13 @@ function showDay(el, d) {
       </div>
       <div style="display:flex;gap:24px;min-height:0;flex:1">
         <div class="x-scroll" style="flex:1;min-width:0;display:flex;flex-direction:column;gap:10px">
-          ${d.events.length ? d.events.map((e) => `
+          ${trips.map((t) => `
+            <a href="${tripHref(t)}" class="kc-item" style="color:#fff;text-decoration:none;align-items:center">
+              <span class="kc-bar" style="background:${tripInk(t)}"></span>
+              <div style="width:128px;height:44px;flex:none;border-radius:8px;overflow:hidden">${tripArt(t.art, 128, 44)}</div>
+              <div class="kc-cut" style="min-width:0;flex:1;font:500 21px Inter,sans-serif">${esc(t.name)}<span class="kc-soft"> · day ${daysBetween(t.start, iso) + 1} of ${daysBetween(t.start, t.end) + 1}</span></div>
+            </a>`).join('')}
+          ${d.events.length || trips.length ? d.events.map((e) => `
             <div${e.id ? ` data-edit="${esc(e.id)}"` : ''} class="kc-item${e.id ? ' mine' : ''}"${d.isToday && e.over ? ' style="opacity:.55"' : ''}>
               <span class="kc-bar" style="background:${colorOfEvent(e)}"></span>
               <div style="width:128px;flex:none;font:600 18px Inter,sans-serif">${esc(e.time)}${e.endTime ? `<div class="kc-soft" style="font-weight:500;font-size:15px">to ${esc(e.endTime)}</div>` : ''}${e.ofDays ? `<div class="kc-soft" style="font-weight:500;font-size:15px">day ${e.dayOf} of ${e.ofDays}</div>` : ''}</div>
@@ -1022,6 +1109,8 @@ export function mount(el) {
   window.addEventListener('calendar-updated', onUpdate);
   onPhotos = () => { album = null; onUpdate(); };
   window.addEventListener('tablet-photos', onPhotos);
+  stopTrips = onTripsChanged(onUpdate);
+  window.addEventListener('extras-changed', onUpdate);
   refreshCalendars(); // no-op unless the saved copy is older than 30 minutes
   // Re-render when the day rolls over so "today" and the month stay current.
   let day = new Date().toDateString();
@@ -1041,4 +1130,6 @@ export function unmount() {
   clearTimeout(undoTimer);
   window.removeEventListener('calendar-updated', onUpdate);
   window.removeEventListener('tablet-photos', onPhotos);
+  window.removeEventListener('extras-changed', onUpdate);
+  if (stopTrips) { stopTrips(); stopTrips = null; }
 }

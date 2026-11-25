@@ -240,6 +240,11 @@ function listHtml() {
 }
 
 export function mount(el, ctx) {
+  // A trip's page goes back where it was opened from: the list, the calendar, Home.
+  el.addEventListener('click', (e) => {
+    if (!(e.target instanceof Element) || !e.target.closest('[data-trip-back]')) return;
+    if (history.length > 1) history.back(); else location.hash = '#/trips';
+  });
   const arg = (ctx.args && ctx.args[0]) || '';
   const tripId = arg && arg !== 'add' && trips().some((t) => t.id === arg) ? arg : ''; // (a trip that is over, or gone: the list)
   let sheet = null;    // the New trip / Edit trip sheet: its draft and which part is up
@@ -264,7 +269,7 @@ export function mount(el, ctx) {
   function drawTop() {
     const t = tripId && getTrip(tripId);
     $('[data-top]').innerHTML = t
-      ? `<a class="x-btn glass" href="#/trips">← Trips</a><div class="tp-title">${esc(t.name)}</div>${editing
+      ? `<button type="button" class="x-btn glass" data-trip-back>← Back</button><div class="tp-title">${esc(t.name)}</div>${editing
         ? '<button type="button" class="x-btn glass" data-remove>Remove trip</button><button type="button" class="x-btn glass" data-details>Details</button><button type="button" class="tp-new" data-edit>Done</button>'
         : '<button type="button" class="x-btn glass" data-edit>Edit</button>'}`
       : `<a class="x-btn glass" href="${backHref()}">${esc(backLabel())}</a><div class="tp-title">Trips</div>${trips().length ? '<button type="button" class="tp-new" data-new><s>+</s> New trip</button>' : ''}`;
