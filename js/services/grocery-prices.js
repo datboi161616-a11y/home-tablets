@@ -30,7 +30,7 @@ const T = [
   ['ground turkey', 4.99, 1, 'lb', 1, 0.5],
   ['turkey breast|turkey', 5.99, 1, 'lb', 1, 0.3],
   ['deli turkey|sliced turkey', 9.99, 1, 'lb', 0.06],
-  ['pork chops?', 3.99, 1, 'lb', 0.45],
+  ['pork chops?|pork steaks?|pork steaks? or chops?|pork cutlets?', 3.99, 1, 'lb', 0.45],
   ['pork tenderloin', 4.49, 1, 'lb', 1.25],
   ['pork shoulder|pork butt|boston butt|pork roast|pork loin', 2.99, 1, 'lb', 3],
   ['ground pork', 3.99, 1, 'lb', 1, 0.5],
@@ -66,7 +66,7 @@ const T = [
   ['eggs?|large eggs?|egg whites?|egg yolks?|whole eggs?', 3.49, 12, 'each', 0.11, 0.53],
   ['milk|whole milk|2% milk|skim milk|low-fat milk', 3.99, 1, 'gal', 0, 0.54],
   ['buttermilk', 2.49, 1, 'qt', 0, 0.54],
-  ['heavy cream|heavy whipping cream|whipping cream|double cream|thickened cream', 4.49, 1, 'pint', 0, 0.5],
+  ['cream|heavy cream|heavy whipping cream|whipping cream|double cream|thickened cream', 4.49, 1, 'pint', 0, 0.5],
   ['half and half|half-and-half|half & half', 2.49, 1, 'pint', 0, 0.53],
   ['almond milk|oat milk|soy milk', 3.49, 0.5, 'gal', 0, 0.53],
   ['butter|unsalted butter|salted butter', 4.49, 1, 'lb', 0.5, 0.5],
@@ -130,7 +130,7 @@ const T = [
   ['lime juice|fresh lime juice', 0.35, 2, 'tbsp-juice', 0, 0.5],
   ['lemon zest|lime zest|orange zest', 0.1, 1, 'tsp-zest', 0, 0.2],
   ['cilantro|fresh cilantro|coriander leaves|parsley|fresh parsley|flat-leaf parsley|italian parsley', 0.99, 1, 'each', 0.12, 0.035],
-  ['basil|fresh basil|basil leaves|mint|fresh mint|mint leaves|dill|fresh dill|chives|fresh chives', 2.49, 0.75, 'oz', 0.002, 0.05],
+  ['basil|fresh basil|basil leaves|mint|fresh mint|mint leaves|dill|fresh dill|chives|fresh chives', 1.99, 1, 'each', 0.15, 0.06],
   ['thyme|fresh thyme|rosemary|fresh rosemary|sage|fresh sage|oregano leaves|fresh oregano|thyme sprigs?|rosemary sprigs?', 2.49, 0.75, 'oz', 0.003, 0.05],
   ['apples?|granny smith apples?|honeycrisp apples?', 1.79, 1, 'lb', 0.4, 0.27],
   ['bananas?|ripe bananas?', 0.62, 1, 'lb', 0.3, 0.5],
@@ -146,7 +146,7 @@ const T = [
   ['grapes', 2.49, 1, 'lb', 0.01, 0.33],
   ['radish(?:es)?|beets?|turnips?|parsnips?', 1.99, 1, 'lb', 0.25, 0.3],
   // ---- Cans, jars, dry goods ----
-  ['black beans|kidney beans|red kidney beans|pinto beans|cannellini beans|white beans|great northern beans|navy beans|chickpeas|garbanzo beans|beans', 0.99, 15, 'oz', 0, 0.55],
+  ['black beans|kidney beans|red kidney beans|pinto beans|cannellini beans|white beans|great northern beans|navy beans|chickpeas|garbanzo beans|butter beans|lima beans|beans', 0.99, 15, 'oz', 0, 0.55],
   ['dried(?: \\w+){0,2} beans|dry(?: \\w+){0,2} beans|dried chickpeas', 1.49, 1, 'lb', 0, 0.42],
   ['lentils|red lentils|green lentils|brown lentils|french lentils|split peas', 1.49, 1, 'lb', 0, 0.42],
   ['refried beans', 1.29, 16, 'oz', 0, 0.55],
@@ -236,7 +236,7 @@ const T = [
 const DEFAULT = 0.75; // one ingredient line nobody listed: a modest guess
 const UNKNOWN_LB = 4.99; // ...unless it is weighed: $ a pound
 // Pounds in one small piece of something, when a recipe counts those.
-const SMALL = { leaf: 0.02, leaves: 0.02, sprig: 0.003, sprigs: 0.003, slice: 0.06, slices: 0.06, wedge: 0.06, wedges: 0.06, handful: 0.06, strip: 0.06, strips: 0.06 };
+const SMALL = { leaf: 0.02, leaves: 0.02, sprig: 0.003, sprigs: 0.003, slice: 0.05, slices: 0.05, piece: 0.06, pieces: 0.06, wedge: 0.06, wedges: 0.06, handful: 0.06, strip: 0.06, strips: 0.06 };
 const MAX_LINE = 30; // a misread amount must not turn one line into $200
 
 // Pounds in one of a table unit (p = the line: its e and c).
@@ -302,6 +302,11 @@ export function findPrice(name) {
   return best;
 }
 
+// The size kept in brackets with an item ("diced tomatoes (14.5 oz)"), in pounds, or 0.
+const sizeLb = (item) => {
+  const m = /\((\d+(?:\.\d+)?)\s*(oz|lb|g)\)/.exec(String(item));
+  return m ? (m[2] === 'lb' ? +m[1] : m[2] === 'g' ? +m[1] / 453.6 : +m[1] / 16) : 0;
+};
 const VOL = { tsp: 1 / 48, tbsp: 1 / 16, cup: 1, pint: 2, quart: 4 };
 const NO_AMOUNT = /^(pinch|dash|drizzle|splash|sprinkle|to taste)$/;
 /**
@@ -315,20 +320,23 @@ export function ingredientCost(ing) {
   const q = Number(ing.q);
   if (NO_AMOUNT.test(u)) return p ? 0.1 : 0;
   // Something nobody listed: by weight at a middling meat-and-vegetables price, else DEFAULT.
-  if (!p) return (u === 'lb' || u === 'oz') && q > 0 ? Math.min(MAX_LINE, round2((u === 'lb' ? q : q / 16) * UNKNOWN_LB)) : DEFAULT;
-  if (!(q > 0)) return Math.min(DEFAULT, p.each || DEFAULT); // "cilantro, for serving"
-  // "6 leaves lettuce", "2 slices bread": a small part of the thing.
-  const bit = SMALL[u] || SMALL[(/^[a-z]+/.exec(clean(ing.item)) || [''])[0]];
+  if (!p) return (u === 'lb' || u === 'oz') && q > 0 ? Math.min(MAX_LINE, round2((u === 'lb' ? q : q / 16) * UNKNOWN_LB)) : q > 0 ? DEFAULT : 0.25;
+  if (!(q > 0)) return round2(Math.min(DEFAULT, p.each || DEFAULT)); // "cilantro, for serving"
+  // "6 small romaine lettuce leaves", "8 slices salami": a small part of the thing (the line's
+  // own slice when the table has one: salami is thinner than bread).
+  const word = (/\b(leaf|leaves|sprigs?|slices?|wedges?|handful|strips?|pieces?)\b/.exec(`${u} ${clean(ing.item)}`) || [''])[0];
+  const bit = SMALL[word] && (/^(slices?|strips?)$/.test(word) && p.e && p.e < 0.1 ? p.e : SMALL[word]);
+  // "5 tightly packed cups kale": the measure was read as part of the name.
+  const inName = !u && /\b(cups?|tablespoons?|tbsp|teaspoons?|tsp)\b/.exec(clean(ing.item));
   let lb = 0;
   if (bit && !/^(lb|oz|can|jar)$/.test(u) && !VOL[u]) lb = q * bit;
+  else if (inName) lb = q * VOL[/^c/.test(inName[1]) ? 'cup' : /^(tablespoon|tbsp)/.test(inName[1]) ? 'tbsp' : 'tsp'] * p.c;
   else if (u === 'lb') lb = q;
   else if (u === 'oz') lb = q / 16;
   else if (VOL[u]) lb = q * VOL[u] * p.c;
-  else if (u === 'can' || u === 'jar') {
-    // "1 (14.5 oz) can": its size is kept with the item.
-    const m = /\((\d+(?:\.\d+)?)\s*(oz|lb|g)\)/.exec(String(ing.item));
-    const size = m ? (m[2] === 'lb' ? +m[1] : m[2] === 'g' ? +m[1] / 453.6 : +m[1] / 16) : 15 / 16;
-    lb = q * size;
+  else if (u === 'can' || u === 'jar' || (!u && sizeLb(ing.item))) {
+    // "1 (14.5 oz) can", "1 (12 lb) brisket": its size is kept with the item.
+    lb = q * (sizeLb(ing.item) || 15 / 16);
   } else if (p.each && /^(|clove|slice|piece|large|medium|small|whole|head|bunch|stalk|rib|sprig|leaf|ear|fillet|link|breast|thigh|strip|sheet|each)$/.test(u)) {
     return Math.min(MAX_LINE, round2(q * p.each));
   } else if (p.e) lb = q * p.e; // a count of things that are sold by weight (3 carrots)

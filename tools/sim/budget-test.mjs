@@ -37,6 +37,12 @@ check('400 g chicken thighs (made into 14 oz) at $3.49/lb', cost('400', 'g', 'bo
 check('something nobody listed: $0.75 a line', cost('2', 'tbsp', 'yuzu kosho'), 0.75);
 check('something nobody listed, weighed: $4.99/lb', cost('1', 'lb', 'rabbit legs'), 4.99);
 check('6 leaves lettuce is not 6 heads', cost('6', '', 'leaves romaine lettuce') < 0.5, true);
+check('6 small romaine lettuce leaves is not 6 heads', cost('6', '', 'small romaine lettuce leaves') < 0.5, true);
+check('8 pieces butter lettuce is not 8 heads', cost('8', 'pieces', 'butter lettuce') < 1.5, true);
+check('4 pork steaks or chops are pork (0.45 lb each at $3.99/lb), not beef steak', cost('4', '', 'pork steaks or chops'), 7.18);
+check('2 x 400 g cans butter beans are beans, not butter', cost('2 x 400g/14oz', 'cans', 'butter beans') < 2.5, true);
+check('"5 tightly packed cups kale": cups, not 5 bunches', cost('5', 'tightly packed cups', 'kale leaves') < 2, true);
+check('1 (3 lb) chicken counted by its size: 3 lb at $1.79', cost('1', '(3 lb)', 'whole chicken'), 5.37);
 
 // ---- staples cost nothing ----
 const staple = (name, unit = 'tsp') => gp.isStaple(webIngredient({ amount: '1', unit, name }));
@@ -105,9 +111,61 @@ week[5].keep = true;
 const again = bp.choose(week, pools, setup, 99).slots;
 check('kept meals stay on shuffle', [again[0].id, again[5].id], [week[0].id, week[5].id]);
 check('shuffle changes the others', again.filter((x, i) => !x.keep && x.id !== week[i].id).length > 4, true);
-// More of these: chicken is chosen more often when asked for.
-const chick = (s) => bp.choose(slots, pools, s, 5).slots.filter((x) => byId[x.id].main === 'chicken').length;
-check('"more chicken" picks more chicken', chick(Object.assign({}, setup, { more: ['chicken'] })) > chick(setup), true);
+// More of these: a nudge, not a takeover. Pasta liked: 2–3 of 7 dinners are pasta, every time.
+const big = { breakfast: pool('breakfast', 120, 0.4, 2.5), dinner: pool('dinner', 200, 1, 6) };
+const bigById = {};
+Object.keys(big).forEach((m) => big[m].forEach((c) => { bigById[c.id] = c; }));
+const roomy = Object.assign({}, setup, { budget: 120 });
+const counts = (s, test, runs = 40) => Array.from({ length: runs }, (x, r) => bp.choose(slots, big, s, 100 + r).slots.filter((y) => y.meal === 'dinner' && test(bigById[y.id])).length);
+const pasta = counts(Object.assign({}, roomy, { more: ['pasta'] }), (c) => c.main === 'pasta');
+check(`"more pasta": 2–3 pasta dinners of 7 in each of 40 weeks (got ${Math.min(...pasta)}–${Math.max(...pasta)})`, pasta.every((k) => k >= 2 && k <= 3), true);
+const none = counts(roomy, (c) => c.main === 'pasta');
+check(`...and without it, pasta only now and then (got ${Math.min(...none)}–${Math.max(...none)})`, Math.max(...none) <= 2, true);
+// Several likes: shared out, each at least once, the rest of the week other things.
+const three = Array.from({ length: 30 }, (x, r) => bp.choose(slots, big, Object.assign({}, roomy, { more: ['pasta', 'chicken', 'beef'] }), 300 + r).slots.filter((y) => y.meal === 'dinner').map((y) => bigById[y.id].main));
+check('three likes: each comes at least once in every week', three.every((w) => ['pasta', 'chicken', 'beef'].every((m) => w.indexOf(m) >= 0)), true);
+check('three likes: still at least 2 other dinners in every week', three.every((w) => w.filter((m) => ['pasta', 'chicken', 'beef'].indexOf(m) < 0).length >= 2), true);
+// A like nothing matches once something is left out: said so, and the week is still made.
+const clash = Object.assign({}, roomy, { more: ['tofu dish'], out: ['mushrooms'] });
+check('a like nothing matches is reported', bp.unmatchedLikes(big, clash), ['tofu dish']);
+check('...and the week is still made', bp.choose(slots, big, clash, 1).slots.every((x) => x.id), true);
+// Shuffle: what was shown lately waits, so five shuffles in a row are mostly new.
+let shown = {};
+let prev = bp.choose(slots, big, roomy, 7, shown).slots;
+const overlaps = [];
+for (let r = 0; r < 5; r++) {
+  prev.forEach((x) => { shown[x.id] = Date.now(); });
+  const next = bp.choose(slots, big, roomy, 1000 + r, shown).slots;
+  overlaps.push(next.filter((x) => prev.some((y) => y.id === x.id)).length);
+  prev = next;
+}
+check(`five shuffles in a row: next to nothing repeats (overlaps ${overlaps.join(', ')} of 14)`, overlaps.every((k) => k <= 1), true);
+shown = {};
+
+// ---- what suits a meal ----
+check('tuna melt is not breakfast', bp.fitsMeal('Classic Tuna Melt', 'breakfast'), false);
+check('waldorf salad is not breakfast', bp.fitsMeal('Waldorf Salad', 'breakfast'), false);
+check('an omelette is breakfast', bp.fitsMeal('Fluffy Egg White Omelette', 'breakfast'), true);
+check('breakfast tacos are breakfast', bp.fitsMeal('Breakfast Tacos', 'breakfast'), true);
+check('pancakes are not dinner', bp.fitsMeal('Fluffy Pancakes', 'dinner'), false);
+check('cake is not dinner', bp.fitsMeal('Cream Cheese Pound Cake', 'dinner'), false);
+check('chicken pot pie is dinner', bp.fitsMeal('Chicken Pot Pie', 'dinner'), true);
+check('a latte is no meal', bp.fitsMeal('Iced Latte (Salty Canadian)', 'breakfast'), false);
+check('tzatziki is no meal', bp.fitsMeal('Tzatziki', 'lunch'), false);
+// ---- leave-out families ----
+const out = (ids, text) => !!bp.outTest(ids)(` ${text} `);
+check('dairy: cheddar is out', out(['dairy'], 'sharp cheddar'), true);
+check('dairy: peanut butter is not dairy', out(['dairy'], 'peanut butter · honey'), false);
+check('dairy: coconut milk is not dairy', out(['dairy'], 'coconut milk curry'), false);
+check('gluten: soy sauce is out', out(['gluten'], 'soy sauce'), true);
+check('gluten: rice noodles are fine', out(['gluten'], 'rice noodles · lime'), false);
+check('eggs: eggplant is fine', out(['eggs'], 'roasted eggplant'), false);
+check('beans: green beans are fine', out(['beans'], 'green beans almondine'), false);
+check('beans: chickpeas are out', out(['beans'], 'chickpeas'), true);
+check('onions: onion powder is fine', out(['onions'], 'onion powder'), false);
+check('pork: turkey bacon is fine', out(['pork'], 'turkey bacon'), false);
+check('seafood covers shrimp', out(['seafood'], 'garlic shrimp'), true);
+check('your own word: "kale" finds kale', out(['kale'], 'kale salad'), true);
 // A budget too small: the cheapest it can do, and the over-budget swaps are empty then.
 const tight = Object.assign({}, setup, { budget: 10 });
 const cheap = bp.choose(slots, pools, tight, 3).slots;

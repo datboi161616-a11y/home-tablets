@@ -375,11 +375,33 @@ const ALIASES = {
   milk: 'whole milk', 'flour': 'all-purpose flour', 'granulated sugar': 'sugar',
   'canola oil': 'vegetable oil', 'cilantro leaves': 'cilantro', 'fresh cilantro': 'cilantro',
   'limes': 'lime', 'lemons': 'lemon', 'fresh ginger': 'ginger',
+  'garlic clove': 'garlic', 'clove garlic': 'garlic', 'cloves of garlic': 'garlic', 'garlic minced': 'garlic',
+  'celery ribs': 'celery', 'celery stalks': 'celery', 'celery rib': 'celery', 'celery stalk': 'celery', 'ribs celery': 'celery',
+  'feta cheese': 'feta', 'parmesan cheese': 'parmesan', 'cheddar cheese': 'cheddar', 'mozzarella cheese': 'mozzarella', 'ricotta cheese': 'ricotta',
+  'extra-virgin olive oil': 'olive oil', 'extra virgin olive oil': 'olive oil', 'extra light olive oil': 'olive oil', 'light olive oil': 'olive oil',
+  'cooking oil': 'vegetable oil', 'neutral oil': 'vegetable oil', 'sea salt': 'salt', 'fine sea salt': 'salt', 'table salt': 'salt',
+  'cracked black pepper': 'black pepper', 'ground pepper': 'black pepper',
+  carrot: 'carrots', mayo: 'mayonnaise', potato: 'potatoes', tomato: 'tomatoes', 'bell pepper': 'bell peppers', 'apple': 'apples', 'avocados': 'avocado',
 };
+// How a recipe's line was cut or used ("diced", "divided", "drained"): not part of what to buy.
+const PREP_WORDS = '(?:roughly |finely |thinly |coarsely |freshly |lightly )?(?:diced|minced|chopped|sliced|divided|rinsed|drained|rinsed and drained|drained and rinsed|cubed|grated|shredded|peeled|halved|quartered|crumbled|softened|melted|beaten|packed|torn|trimmed|crushed|large dice|medium dice|small dice|at room temperature)';
+const PREP_AFTER = new RegExp(`\\s+(?:${PREP_WORDS}|(?:trimmed|cut|sliced|chopped|peeled) .*)$`);
+// (Not "diced tomatoes", "crushed red pepper", "shredded cheese": that is what the pack says.)
+const PREP_BEFORE = /^(?:roughly |finely |thinly )?(?:halved|crumbled|chopped|minced|sliced|cubed|peeled|torn|softened|melted)\s+(?=\S)/;
+// The same thing from different recipes is one line: "medium yellow onion", "yellow onion" and
+// "red onion, from 1 small onion" are an onion each; the size, "from…"/"such as…", how it is cut
+// and a site's footnote stars don't count ("15 oz. cans kidney beans drained****" is kidney beans).
 const norm = (s) => {
-  const k = String(s).toLowerCase().replace(/\s*\([^)]*\)/g, '').replace(/\s+/g, ' ').trim();
+  let k = String(s).toLowerCase().replace(/\s*\([^)]*\)/g, '').replace(/\*+/g, '').replace(/\s+/g, ' ').trim()
+    .replace(/\s+(from|such as|plus more|for serving|for garnish|optional|to serve)\b.*$/, '')
+    .replace(/^(?:\d+(?:\.\d+)? ?oz\.? )?(?:cans?|tins?|jars?|tubs?|packets?|packages?|bags?|loaf|loaves|boxes?) of /, '')
+    .replace(/^\d+(?:\.\d+)? ?oz\.? (?:cans?|tins?|jars?|packages?) /, '');
+  for (let n = 0; n < 3; n++) k = k.replace(PREP_AFTER, '').replace(PREP_BEFORE, '').trim();
+  k = k.replace(/^(small|medium|large|extra.large|big|fresh|freshly)\s+(?=\S)/, '').trim();
   return ALIASES[k] || k;
 };
+// Pantry basics that start as "Already have" (any oil, salt or pepper, whatever its name).
+const isStapleKey = (k) => STAPLES.indexOf(k) >= 0 || /^(?:.* )?(?:salt|olive oil|vegetable oil|canola oil|avocado oil|cooking spray|nonstick spray)$/.test(k);
 // Keep the size on cans and jars ("diced tomatoes (14.5 oz)"); drop other notes in brackets.
 export const itemKey = (i) => (/^(can|jar|pkg)$/.test(i.u) ? i.item.toLowerCase().trim() : norm(i.item));
 
@@ -439,7 +461,7 @@ export async function buildShoppingList() {
 
   const list = Object.keys(items).map((k) => {
     const it = items[k];
-    const have = k in st.have ? !!st.have[k] : STAPLES.indexOf(k) >= 0;
+    const have = k in st.have ? !!st.have[k] : isStapleKey(k);
     return { key: k, name: it.name, aisle: it.aisle, amount: amountText(it.parts), from: it.from, got: !!st.got[k], have };
   }).sort((a, b) => a.name.localeCompare(b.name));
 
@@ -551,7 +573,7 @@ export function addExtra(text) {
   }
   if (plannedKeys().indexOf(key) >= 0) {
     // A planned recipe already needs it: use that line instead of adding a second one.
-    const markedHave = key in s.have ? !!s.have[key] : STAPLES.indexOf(key) >= 0;
+    const markedHave = key in s.have ? !!s.have[key] : isStapleKey(key);
     if (!markedHave && !s.got[key]) return 'there';
     s.have[key] = false;
     delete s.got[key];

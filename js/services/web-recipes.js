@@ -777,37 +777,50 @@ export async function fetchPlacePicture(path, signal, avoid = []) {
 const MEAL_FIELDS = '_fields=id,recipe.name,recipe.image_url,recipe.servings,recipe.cost,recipe.prep_time,recipe.cook_time,recipe.total_time,'
   + 'recipe.ingredients_flat,recipe.tags.cuisine';
 /**
- * One page of a meal's recipes ('breakfast', 'lunch', 'dinner': the sites' own courses) from
- * every site at once, ingredients included: one request per site. Resolves { list, answered }:
- * list = [{ id ("web:…"), site (its name), title, img, alt, minutes, serves, cost (the site's own
- * text, Budget Bytes: "$8.12 recipe / $2.03 serving"), cuisine (names), ingredients (the site's
+ * A page of a meal's recipes ('breakfast', 'lunch', 'dinner': the sites' own courses) from
+ * every site at once, ingredients included: one request per site. `pages` = { site: page }
+ * (a different page on each site; default `page`), `search` = words in the title, `sites` =
+ * only these. Each site's recipes go to onSite(siteId, list, full) as they come (full: that page
+ * was full, so there are more). Resolves { list, answered, full: { site: bool } }: list = [{ id
+ * ("web:…"), site (its name), title, img, alt, minutes, serves, cost (the site's own text, Budget
+ * Bytes: "$8.12 recipe / $2.03 serving"), cuisine (names), ingredients (the site's
  * ingredients_flat, outside text: read it with plainText / webIngredient) }]. Never throws.
  */
-export async function mealRecipes(meal, { per = 24, page = 1, signal } = {}) {
+export async function mealRecipes(meal, { per = 24, page = 1, pages = null, search = '', sites = null, signal, onSite = () => {} } = {}) {
   const course = COURSE[meal];
-  if (!course || !online()) return { list: [], answered: 0 };
+  if (!course || !online()) return { list: [], answered: 0, full: {} };
   const list = [];
+  const full = {};
   let answered = 0;
-  await Promise.all(SITE_IDS.filter((site) => course[site]).map((site) => getJson(
-    `${SITES[site].base}${API}wprm_recipe?per_page=${per}&page=${page}&${MEAL_FIELDS}&wprm_course=${course[site].join(',')}`, RECIPE_MS, signal,
-  ).then((raw) => {
-    answered++;
-    lastOk = Date.now();
-    (Array.isArray(raw) ? raw : []).forEach((x) => {
-      const R = (x && x.recipe) || {};
-      const title = tidyTitle(R.name);
-      if (!title || !x.id || JUNK.test(title)) return;
-      const total = Math.round(+R.total_time || 0) || (Math.round(+R.prep_time || 0) + Math.round(+R.cook_time || 0));
-      list.push({
-        id: `web:${site}:${x.id}`, site: SITES[site].name, title, img: thumbUrl(R.image_url), alt: altThumb(R.image_url),
-        minutes: total > 0 && total < 2000 ? total : 0, serves: Math.min(24, Math.max(1, Math.round(parseFloat(R.servings) || 4))),
-        cost: plainText(R.cost).slice(0, 80), cuisine: ((R.tags || {}).cuisine || []).map((t) => plainText(t && t.name)).join(' ').toLowerCase(),
-        ingredients: Array.isArray(R.ingredients_flat) ? R.ingredients_flat : [],
+  const words = search ? `&search=${encodeURIComponent(search)}&search_columns=post_title` : '';
+  await Promise.all(SITE_IDS.filter((site) => course[site] && (!sites || sites.indexOf(site) >= 0)).map((site) => getJson(
+    `${SITES[site].base}${API}wprm_recipe?per_page=${per}&page=${(pages && pages[site]) || page}&${MEAL_FIELDS}&wprm_course=${course[site].join(',')}${words}`, RECIPE_MS, signal,
+  ).catch((e) => (/^400$/.test(e.message) ? [] : Promise.reject(e))) // past the last page
+    .then((raw) => {
+      answered++;
+      lastOk = Date.now();
+      raw = Array.isArray(raw) ? raw : [];
+      full[site] = raw.length >= per;
+      const mine = [];
+      raw.forEach((x) => {
+        const R = (x && x.recipe) || {};
+        const title = tidyTitle(R.name);
+        if (!title || !x.id || JUNK.test(title)) return;
+        const total = Math.round(+R.total_time || 0) || (Math.round(+R.prep_time || 0) + Math.round(+R.cook_time || 0));
+        mine.push({
+          id: `web:${site}:${x.id}`, site: SITES[site].name, title, img: thumbUrl(R.image_url), alt: altThumb(R.image_url),
+          minutes: total > 0 && total < 2000 ? total : 0, serves: Math.min(24, Math.max(1, Math.round(parseFloat(R.servings) || 4))),
+          cost: plainText(R.cost).slice(0, 80), cuisine: ((R.tags || {}).cuisine || []).map((t) => plainText(t && t.name)).join(' ').toLowerCase(),
+          ingredients: Array.isArray(R.ingredients_flat) ? R.ingredients_flat : [],
+        });
       });
-    });
-  }).catch(() => { if (!(signal && signal.aborted)) lastFail = Date.now(); })));
-  return { list, answered };
+      mine.forEach((r) => list.push(r));
+      if (!(signal && signal.aborted)) onSite(site, mine, full[site]);
+    }).catch(() => { if (!(signal && signal.aborted)) lastFail = Date.now(); })));
+  return { list, answered, full };
 }
+/** The sites that have recipes for a meal (their ids). */
+export const mealSites = (meal) => SITE_IDS.filter((site) => (COURSE[meal] || {})[site]);
 
 // ---- Ideas ---------------------------------------------------------------------------------
 /**

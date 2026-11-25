@@ -422,7 +422,7 @@ export function mount(el) {
       const u = toast;
       toast = null;
       clearTimeout(undoTimer);
-      if (u && u.budget) undoSend(u.budget.wasNext); // a budget week sent here: its shopping list choice too
+      if (u && u.budget) undoSend(u.budget.wasNext, u.budget.before); // a budget week sent here: its shopping list choice too
       if (u && u.snap) restoreDays(u.snap);
       else if (u && u.list != null) setListNextWeek(u.list);
       else render(ix);
@@ -525,7 +525,7 @@ export function mount(el) {
     // Just sent here from "Plan on a budget": say what happened, with Undo.
     let sent = null;
     try { sent = JSON.parse(sessionStorage.getItem('budget.toast') || 'null'); sessionStorage.removeItem('budget.toast'); } catch (e) { sent = null; }
-    if (sent && sent.text) say(String(sent.text), { sub: String(sent.sub || ''), snap: sent.snap, budget: { wasNext: !!sent.wasNext } });
+    if (sent && sent.text) say(String(sent.text), { sub: String(sent.sub || ''), snap: sent.snap, budget: { wasNext: !!sent.wasNext, before: sent.before || null } });
     render(ix);
     root.addEventListener('click', (e) => onClick(ix, e));
     root.addEventListener('input', (e) => { if (e.target.matches('[data-picksearch]')) pickSearch(ix, e.target.value); });
