@@ -23,7 +23,9 @@ import { feature } from '../services/features.js';
 import * as timerSvc from '../services/timers.js';
 import { wxIcon, foodArt, spot } from '../art.js';
 import { topBar, avatar, esc } from './ui.js';
+import { extrasOn } from '../services/extras.js';
 
+let offExtras = [];
 let lastCard = null; // { id, at }: the card in the middle when the menu was last left
 let timer, secTimer, offNotes, offPhotos, offKitchen, offTimers, onWake, onOnline, raf;
 
@@ -281,6 +283,9 @@ export function mount(el) {
   const night = display().night;
 
   const shown = CARDS.filter((k) => !k.feature || feature(k.feature));
+  // The extra apps the household kept switched on (Settings), just before Settings.
+  const extras = extrasOn();
+  shown.splice(shown.length - 1, 0, ...extras.map((x) => ({ id: x.id, href: `#/${x.id}`, bg: x.bg, ink: x.ink, soft: x.soft })));
 
   el.innerHTML = `
   <style>
@@ -463,6 +468,40 @@ export function mount(el) {
   // The cards that are only a door are drawn once.
   shown.forEach((k) => { if (k.door) fill(k.id, k.door()); });
 
+  // ---- The extra apps: each one's own service says what its card shows ----
+  offExtras = [];
+  extras.forEach((x) => {
+    fill(x.id, head(esc(x.name)));
+    x.load().then((m) => {
+      if (!el.isConnected) return;
+      const draw = () => {
+        const box = card(x.id);
+        if (!box) return;
+        const look = (typeof m.menuCardLook === 'function' ? m.menuCardLook() : m.menuCardLook) || {};
+        const data = m.menuCard ? m.menuCard() : {};
+        const bg = look.bg || m.menuCardBg || data.bg;
+        if (bg) box.style.background = bg;
+        if (look.ink || data.ink) box.style.color = look.ink || data.ink;
+        if (look.soft || data.soft) box.style.setProperty('--soft', look.soft || data.soft);
+        if (m.menuCardHtml) { box.innerHTML = x.id === 'question' ? m.menuCardHtml(avatar) : m.menuCardHtml(); return; }
+        const lines = (data.lines || []).slice(0, 4);
+        box.innerHTML = `${head(esc(data.title || x.name), data.badge ? String(data.badge) : '')}
+          <div class="lc-rows" style="margin-top:18px">${lines.map((t, i) => `<div style="font:${i ? '500 20px' : '600 24px'}/1.3 Inter,sans-serif;margin-bottom:10px;${i ? 'color:var(--soft)' : ''}">${esc(t)}</div>`).join('')}</div>
+          ${data.action ? `<div class="lc-go" data-go="${esc(data.action.href)}">${esc(data.action.label)}</div>` : ''}`;
+      };
+      draw();
+      if (m.onChanged) offExtras.push(m.onChanged(() => { if (el.isConnected) draw(); }));
+      // A button on a card that does its job at once ("Biscuit fed") instead of opening the app.
+      card(x.id).addEventListener('click', (e) => {
+        const t = e.target instanceof Element ? e.target : null;
+        const done = t && t.closest('[data-care-done]');
+        if (done && m.markDone) { e.preventDefault(); e.stopPropagation(); m.markDone(done.getAttribute('data-care-done')); return; }
+        const go = t && t.closest('[data-go]');
+        if (go) { e.preventDefault(); e.stopPropagation(); location.hash = go.getAttribute('data-go'); }
+      });
+    }).catch(() => {});
+  });
+
   // ---- Calendar, notes, photos: read straight from this screen's own storage ----
   const showCalendar = () => fill('calendar', calendarCard());
   const showNotes = () => {
@@ -595,6 +634,8 @@ export function mount(el) {
 }
 
 export function unmount() {
+  offExtras.forEach((off) => { try { if (off) off(); } catch (e) { /* already gone */ } });
+  offExtras = [];
   if (lastCard) lastCard.at = Date.now(); // the ten minutes count from leaving the menu
   clearTimeout(timer);
   clearInterval(secTimer);

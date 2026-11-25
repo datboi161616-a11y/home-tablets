@@ -38,7 +38,7 @@ echo "4. Mistakes a linter can see (a name that doesn't exist, something declare
 npx -y eslint@10.15.0 js sw.js tools --quiet || { echo "   ^ fix these"; fail=1; }
 
 echo "5. The tests with known answers..."
-for t in routes ics astro convert budget; do
+for t in routes ics astro convert budget bills chores manual trips datenight question photoweek care; do
   if node "tools/sim/$t-test.mjs" > "$out/$t.txt" 2>&1; then echo "   $t: $(tail -1 "$out/$t.txt")"
   else echo "   $t: FAILED"; grep -E "^FAIL" "$out/$t.txt" | head -10; fail=1; fi
 done

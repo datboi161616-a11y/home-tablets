@@ -20,6 +20,7 @@ import { loadMessages, onMessagesChanged } from '../services/messages-data.js';
 import { getAlerts, untilText, alertColor } from '../services/weather-alerts.js';
 import { tutorialRunning } from '../services/tutorial.js';
 import { restful, season, seasonLayer } from './ui.js';
+import { topHomeLine } from '../services/extras.js';
 
 let timer, photoTimer, refreshTimer, roomTimer, offPhotos, offRotation, onCalendar, offNotes, onWake, onOnline, offChip, rest;
 
@@ -312,6 +313,10 @@ export function mount(el) {
     .hm-hello{font:500 30px Outfit,sans-serif;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;text-shadow:0 2px 14px rgba(0,0,0,.5)}
     .hm-cap{font:400 18px Inter,sans-serif;opacity:.9;margin-top:4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;text-shadow:0 1px 10px rgba(0,0,0,.6)}
     .hm-note{margin-top:12px;min-height:56px;display:inline-flex;align-items:center;gap:10px;padding:0 22px;border-radius:28px;background:var(--accent);color:#fff;font:600 19px Inter,sans-serif;max-width:560px}
+    .hm-extra{margin-top:12px;display:flex;align-items:center;max-width:620px}
+    .hm-extra a{min-height:56px;display:inline-flex;align-items:center;padding:0 22px;border-radius:28px;background:rgba(14,16,24,.6);
+      box-shadow:inset 0 0 0 1.5px rgba(255,255,255,.22);color:#fff;font:600 19px Inter,sans-serif;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+    .hm-extra button{flex:none;width:56px;height:56px;margin-left:10px;border-radius:28px;border:0;background:#fff;color:#1D2430;font:700 24px Inter,sans-serif;cursor:pointer}
     .hm-note span{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
     .hm-row{position:absolute;left:40px;right:40px;bottom:36px;display:flex;align-items:stretch;gap:14px}
     .hm-chip{flex:1 1 0;min-width:0;min-height:88px;border-radius:26px;padding:0 20px;display:flex;align-items:center;gap:14px;
@@ -344,6 +349,7 @@ export function mount(el) {
         <div class="hm-hello" data-hello>${esc(greet.text)}</div>
         <div class="hm-cap" data-cap></div>
         <a href="#/messages" class="hm-note" data-notes style="display:none"></a>
+        <div class="hm-extra" data-extra style="display:none"><a data-extra-go></a><button type="button" data-extra-done aria-label="Done">✓</button></div>
       </div>
       <a href="#/addphotos" class="x-btn accent" data-add style="display:none">Add your photos</a>
       <a href="#/photos" class="x-btn glass">${ICON.gallery}Gallery</a>
@@ -531,6 +537,27 @@ export function mount(el) {
   showNotes();
   offNotes = onMessagesChanged(showNotes);
 
+  // ---- One quiet line from the extra apps (a bill due, a chore tonight, the dog's dinner):
+  // only the most pressing one, with a tick where it can be done from here. ----
+  let extraLine = null;
+  const showExtra = () => topHomeLine().then((line) => {
+    if (!el.isConnected) return;
+    extraLine = line;
+    const box = $('[data-extra]');
+    box.style.display = line ? 'flex' : 'none';
+    if (!line) return;
+    const a = $('[data-extra-go]');
+    a.textContent = line.text;
+    a.setAttribute('href', line.href || '#/launcher');
+    $('[data-extra-done]').style.display = line.done ? '' : 'none';
+  }).catch(() => {});
+  $('[data-extra-done]').addEventListener('click', () => {
+    if (!extraLine || !extraLine.done) return;
+    try { extraLine.done(); } catch (e) { /* its app shows why */ }
+    showExtra();
+  });
+  showExtra();
+
   // ---- Dinner: what's planned tonight (tomorrow's, late in the evening), else today's idea ----
   let dinnerShown = '';
   const showDinner = (info) => {
@@ -596,6 +623,7 @@ export function mount(el) {
     ampm.textContent = n.ampm;
     ampm.style.display = n.ampm ? '' : 'none';
     $('[data-date]').textContent = n.date;
+    showExtra();
     const now = new Date();
     if (now.toDateString() !== day) {
       day = now.toDateString();

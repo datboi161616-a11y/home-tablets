@@ -160,6 +160,8 @@ const FAMILY = {
   home: 'Home', launcher: 'Menu', recipes: 'Recipes', calendar: 'Calendar', forecast: 'Weather',
   messages: 'Messages', shopping: 'Shopping list', timers: 'Timers', plan: 'Week plan', dish: 'Recipe',
   recipe: 'Cooking mode', myrecipe: 'My recipe', night: 'Night clock', settings: 'Settings', convert: 'Conversions', budget: 'Plan on a budget',
+  bills: 'Bills', chores: 'Chores', manual: 'House manual', trips: 'Trips', datenight: 'Date night', question: 'Question of the day',
+  photoweek: 'Photo of the week', care: 'Plants & pets',
 };
 // Tom · Space & Flight
 const TOM = {
@@ -540,7 +542,7 @@ const typing = () => {
   if (at && (at.tagName === 'INPUT' || at.tagName === 'TEXTAREA')) return true;
   return Array.from(screenEl.querySelectorAll('textarea, input[type="text"], input:not([type])')).some((box) => box.value.trim());
 };
-const WANDERED = ['photos', 'launcher', 'calendar', 'forecast', 'messages', 'recipes', 'plan', 'shopping', 'apps', 'addphotos', 'settings', 'whatsnew', 'convert'];
+const WANDERED = ['photos', 'launcher', 'calendar', 'forecast', 'messages', 'recipes', 'plan', 'shopping', 'apps', 'addphotos', 'settings', 'whatsnew', 'convert', 'budget', 'bills', 'chores', 'manual', 'trips', 'datenight', 'question', 'photoweek', 'care'];
 
 setInterval(() => {
   const here = screenName();

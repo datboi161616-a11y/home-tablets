@@ -4,6 +4,7 @@
 // effect as it is tapped; nothing here needs a Save button except typed text.
 // (Birthdays and calendar links stay on the phone page: they need real typing.)
 // Tom's flight deck has the same screen in its own colours, with the sections that apply.
+import { EXTRAS, extraOn, setExtra } from '../services/extras.js';
 import { backHref, backLabel } from '../services/nav.js';
 import { getFamily, saveFamily, canSaveFamily, householdName } from '../services/family.js';
 import { display, setDisplay, hourText, timeText } from '../services/display.js';
@@ -34,6 +35,7 @@ const SECTIONS = DECK ? [
   ['photos', 'Photos on Home'],
   ['weather', 'Weather'],
   ['timers', 'Timers'],
+  ['extras', 'Extra apps'],
   ['about', 'Wi-Fi & about'],
 ];
 const NIGHT_SCREEN = DECK ? 'viewscreen' : 'night';
@@ -61,6 +63,7 @@ const CHOICES = {
   nightDim: { get: () => String(display().nightDim), set: (v) => setDisplay({ nightDim: +v }) },
   homeHideSecs: { get: () => String([10, 30, 60, 0].indexOf(+display().homeHideSecs) < 0 ? 10 : +display().homeHideSecs), set: (v) => setDisplay({ homeHideSecs: +v }) },
   drawing: { get: () => (display().drawing === 'sharp' ? 'sharp' : 'fast'), set: (v) => setDisplay({ drawing: v }) },
+  ...EXTRAS.reduce((all, x) => Object.assign(all, { [`extra:${x.id}`]: { get: () => (extraOn(x.id) ? '1' : '0'), set: (v) => setExtra(x.id, v === '1') } }), {}),
   holiday: { get: () => (display().holiday === false ? '0' : '1'), set: (v) => setDisplay({ holiday: v === '1' }) },
   restMinutes: { get: () => String(display().restMinutes), set: (v) => setDisplay({ restMinutes: +v }) },
   slideSecs: { get: () => String(display().slideSecs), set: (v) => setDisplay({ slideSecs: +v }) },
@@ -259,6 +262,8 @@ export function mount(el) {
           <button data-place-auto class="st-btn quiet">Automatic</button>
         </div>
         <div class="st-places" data-place-list></div>`),
+    // The extra apps: each household keeps the ones it likes on its Menu.
+    extras: () => EXTRAS.map((x) => row(x.name, `<div>${seg(`extra:${x.id}`, [['1', 'On'], ['0', 'Off']])}</div>`)).join(''),
     timers: () => row('Alarm sound', `<div>${seg('alarmSound', [['beeps', 'Beeps'], ['chime', 'Chime'], ['bell', 'Bell']])}</div>`)
       + row('Rings for', `<div>${seg('alarmMinutes', [['1', '1 min'], ['2', '2 min'], ['5', '5 min'], ['10', '10 min']])}</div>`)
       + row('Heads-up a minute before', `<div>${seg('alarmHeadsUp', [['1', 'On'], ['0', 'Off']])}</div>`)
