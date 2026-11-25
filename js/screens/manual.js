@@ -69,7 +69,6 @@ const NAME = {
 };
 const HAS_PHOTOS = { shutoffs: true, appliances: true, other: true };
 const MAX = { where: 60, note: 80, phone: 24, model: 40, code: 20, brand: 30, size: 20, password: 63 };
-const SIGNS = ['!', '@', '_', '$', '*', '?', '=', ';', ':'];
 const WORDS = {
   'shutoffs.name': ['Water', 'Breakers', 'Gas', 'Water heater', 'Sprinklers'],
   'numbers.name': ['Plumber', 'Electrician', 'Vet', 'Doctor', 'Dentist', 'Landlord', 'Neighbour'],
@@ -500,34 +499,24 @@ export function mount(el, { args = [] } = {}) {
     const label = field === 'name' ? spec[0] : spec[1];
     const max = field === 'name' ? spec[2] : MAX[field] || 40;
     const words = WORDS[`${s}.${field}`] || WORDS[field] || [];
-    const signs = kind === 'secret' ? SIGNS : field === 'size' ? ['×'] : [];
-    const slots = kind === 'secret' ? 10 : 7;
-    let caps = kind === 'code';
+    const signs = field === 'size' ? ['×'] : [];
+    const slots = 7;
     let prev = String(draft[field] || '');
     $('[data-typing]').innerHTML = `<div class="hm-typebg"></div><div class="hm-type"><span class="lb">${label}</span><span class="tx"><bdi data-tx></bdi></span><span class="car"></span></div>`;
     const shown = $('[data-tx]');
-    const firstUp = (t) => kind === 'text' && !t.trim();
     openKeyboard(root, {
       go: 'Done', max, slots, text: prev,
+      caps: kind === 'text' ? 'auto' : kind === 'code' ? 'lock' : 'none',
       suggest: (t) => {
         const q = t.trim().toLowerCase();
-        const lead = kind === 'phone' ? [] : [caps ? 'abc' : 'ABC'].concat(signs);
-        return lead.concat(words.filter((w) => w.toLowerCase().indexOf(q) === 0 && w.toLowerCase() !== q).slice(0, slots - lead.length));
+        return signs.concat(words.filter((w) => w.toLowerCase().indexOf(q) === 0 && w.toLowerCase() !== q).slice(0, slots - signs.length));
       },
       onChange: (t) => {
-        const k = root.__kb;
-        let tx = t;
-        if (k && tx.length === prev.length + 1 && tx.slice(0, -1) === prev && /[a-z]$/.test(tx) && (caps || firstUp(prev))) {
-          tx = prev + tx.slice(-1).toUpperCase();
-          k.text = tx;
-        }
-        prev = tx;
-        shown.textContent = tx;
-        if (k) k.el.classList.toggle('up', caps || firstUp(tx));
+        prev = t;
+        shown.textContent = t;
       },
       onGo: (pick, k) => {
-        if (pick === 'ABC' || pick === 'abc') caps = !caps;
-        else if (pick && pick.length === 1) k.text = (k.text + pick).slice(0, max);
+        if (pick && pick.length === 1) k.text = (k.text + pick).slice(0, max);
         else if (pick) k.text = pick.slice(0, max);
         else k.close();
       },
@@ -579,7 +568,7 @@ export function mount(el, { args = [] } = {}) {
           else { if (draft.photos.length >= data.MAX_PHOTOS) draft.photos.pop(); draft.photos.push(id); }
         } else if (t.hasAttribute('data-camera')) {
           pending = { draft, view, since: Date.now() };
-          location.hash = '#/camera';
+          location.hash = '#/camera/manual';
           return;
         }
         drawSheet();

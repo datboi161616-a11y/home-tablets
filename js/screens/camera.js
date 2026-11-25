@@ -67,11 +67,17 @@ function blobToBase64(blob) {
   });
 }
 
+// The apps that open the camera for a photo and want it back: #/camera/<app>[/<more>].
+const RETURNS = { gallery: '#/photos', manual: '#/manual', care: '#/care' };
+
 export function mount(el, { args = [] } = {}) {
-  // Back to where the person came from: the Gallery when its Camera button opened this
-  // (#/camera/gallery), otherwise Home or the Menu (services/nav.js).
-  const fromGallery = args[0] === 'gallery' && profile !== 'tom';
-  const back = () => (fromGallery ? '#/photos' : backHref());
+  // Back to where the person came from: the app whose "Take a photo" opened this
+  // (#/camera/gallery, #/camera/manual, #/camera/care/<id>), otherwise Home or the Menu
+  // (services/nav.js). The House manual and Plants & pets get the person straight back
+  // once the photo is saved, to the sheet they left, with the photo in it.
+  const from = profile !== 'tom' && RETURNS[args[0]] ? args[0] : '';
+  const back = () => (from ? RETURNS[from] + args.slice(1).map((a) => '/' + encodeURIComponent(a)).join('') : backHref());
+  const returnAfterSave = from && from !== 'gallery';
   el.innerHTML = `
   <style>
     .cam-root{position:absolute;top:0;right:0;bottom:0;left:0;background:#000;color:#fff;overflow:hidden;font-family:Inter,system-ui,sans-serif}
@@ -288,7 +294,11 @@ export function mount(el, { args = [] } = {}) {
     shutterSound();
     const flash = $('[data-flash]');
     flash.classList.remove('go'); void flash.offsetWidth; flash.classList.add('go');
-    if (ok) { showSaved('', jpeg); flashWord('✓ Photo saved'); }
+    if (ok) {
+      showSaved('', jpeg, true, returnAfterSave ? null : undefined);
+      flashWord('✓ Photo saved');
+      if (returnAfterSave) later(() => { location.hash = back(); }, 1200);
+    }
     else if (albumFull()) { showSaved(FULL_TEXT, jpeg || null, false, MAKE_ROOM); flashWord('Not saved', true); }
     else { showSaved('Please try again', jpeg || null, false); flashWord('Not saved', true); }
   }

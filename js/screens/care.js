@@ -509,12 +509,12 @@ export function mount(el, { args = [] } = {}) {
     const back = () => { picker = ''; if (form) drawForm(); else { layer.innerHTML = ''; if (stale) { stale = false; draw(); } } };
     if (act === 'cancel') { back(); return; }
     if (act === 'take') {
-      // The camera saves into the album and goes back to Home or the menu; the next time this
-      // app opens, the new photo is this one's picture (see arrived()).
+      // The camera saves into the album and comes straight back to this one's card, where the
+      // new photo becomes its picture (see arrived()).
       let id = forCard ? item.id : '';
       if (!forCard) { picker = ''; const saved = saveForm(); if (!saved) return; id = saved.id; }
       try { sessionStorage.setItem(WAIT, JSON.stringify({ id, at: Date.now() })); } catch (e) { /* the photo can still be picked from the album */ }
-      location.hash = '#/camera';
+      location.hash = `#/camera/care/${encodeURIComponent(id)}`;
       return;
     }
     const p = album()[+act];
