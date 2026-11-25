@@ -5,7 +5,7 @@
 //   Fair share  a glass jar per person filling with marbles (a bigger marble for a bigger
 //               chore) against the dashed fair-share line.
 //   Sheets      a new chore / changing one (name by chip or the screen's own keyboard,
-//               Repeats, First time, Takes turns, Size), and a chore's own little sheet
+//               Repeats, First time, Takes turns (in order, or whoever's behind), Size), and a chore's own little sheet
 //               (someone else did it, skip this time, change, remove).
 // #/chores/add opens straight on the new-chore sheet; #/chores/fair on the jars.
 // With nobody named in Settings chores have no turns: just done or not.
@@ -13,7 +13,7 @@ import { backHref, backLabel } from '../services/nav.js';
 import { timeText } from '../services/display.js';
 import { openKeyboard, keyboardStyle } from './keyboard.js';
 import {
-  load, save, ymd, addDays, addMonths, weekday, daysBetween, firstDue, project, whoAt, todayList, tally,
+  load, save, ymd, addDays, addMonths, weekday, daysBetween, firstDue, forecast, openWho, todayList, tally,
   dayWord, monthWord, shortDate, repeatWords, choreArt, artFor, PRESETS, peopleNames, person, scores,
   addChore, updateChore, removeChore, tick, skip, untick, canAdd,
 } from '../services/chores-data.js';
@@ -111,6 +111,8 @@ const CSS = `
   .ch-fr.plain{border-bottom:0}
   .ch-fr .v{margin-left:auto;font-weight:500;color:#6A7183;white-space:nowrap}
   .ch-fr .c{margin-left:14px;color:#B9AE94;font-size:26px}
+  .ch-fr .ch-two{margin-left:auto}
+  .ch .ch-fr .ch-two .ch-chip{min-height:48px;font-size:17px;padding:0 18px}
   .ch-turns{display:flex;gap:12px;padding:0 16px 14px;border-bottom:2px solid #F0E5CF;flex-wrap:wrap}
   .ch .ch-turn{flex:1 1 0;min-width:0;min-height:76px;border-radius:22px;background:#F2EAD6;border:3px solid transparent;display:flex;align-items:center;gap:14px;padding:0 18px;box-sizing:border-box;font:700 22px Inter,sans-serif}
   .ch-turn .nm{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
@@ -217,11 +219,11 @@ function weekRows(state, now, names) {
   const end = addDays(now, 6);
   const days = {};
   const later = [];
-  state.chores.forEach((c) => {
-    const turns = project(c, now, addDays(now, 400), names).filter((t) => t.date > now);
-    const inWeek = turns.filter((t) => t.date <= end);
-    inWeek.forEach((t) => (days[t.date] || (days[t.date] = [])).push({ c, t }));
-    if (!inWeek.length && turns.length) later.push({ c, t: turns[0] });
+  const seen = {};
+  forecast(state, now, addDays(now, 400), names).forEach((t) => {
+    const c = t.chore;
+    if (t.date <= now || seen[c.id] === 'later') return;
+    if (t.date <= end) { seen[c.id] = 'week'; (days[t.date] || (days[t.date] = [])).push({ c, t }); } else if (!seen[c.id]) { seen[c.id] = 'later'; later.push({ c, t }); }
   });
   const row = (x, when) => {
     const p = x.t.who ? person(x.t.who) : null;
@@ -295,14 +297,11 @@ function fairView(state, now, names) {
   const any = jars.some((j) => j.sizes.length);
   const fairY = 126 + Math.round((tops / Math.max(1, jars.length)) * sc);
   // Whose turns come up next (each person once, soonest first).
-  const coming = [];
-  state.chores.forEach((c) => project(c, now, addDays(now, 13), names).forEach((x) => { if (x.who) coming.push(x); }));
-  coming.sort((a, b) => (a.date < b.date ? -1 : a.date > b.date ? 1 : 0));
   const next = [];
-  coming.forEach((x) => { if (next.indexOf(x.who) < 0 && next.length < 3) next.push(x.who); });
+  forecast(state, now, addDays(now, 13), names).forEach((x) => { if (x.who && next.indexOf(x.who) < 0 && next.length < 3) next.push(x.who); });
   return `<div class="ch-jars">${cols}</div>
     ${any && jars.length > 1 ? `<div class="ch-fair" style="top:${fairY}px"></div><div class="ch-fairw" style="top:${fairY - 26}px">FAIR SHARE</div>` : ''}
-    <div class="ch-next">${next.length ? `<b>Next turns</b>${next.map((n) => { const p = person(n); return `<span class="ch-pill" style="background:${p.color}33">${av(p, 44)}${esc(p.name)}</span>`; }).join('')}` : ''}
+    <div class="ch-next">${next.length ? `<b>Next turns go to</b>${next.map((n) => { const p = person(n); return `<span class="ch-pill" style="background:${p.color}33">${av(p, 44)}${esc(p.name)}</span>`; }).join('')}` : ''}
       <span class="ch-key"><span><i style="width:18px;height:18px"></i>Quick</span><span><i style="width:26px;height:26px"></i>Medium</span><span><i style="width:34px;height:34px"></i>Big</span></span></div>`;
 }
 
@@ -311,18 +310,18 @@ function fairView(state, now, names) {
 // ---------------------------------------------------------------------------------------
 function blank() {
   const now = today();
-  return { id: null, name: '', size: 1, evening: false, kind: 'weekly', days: [weekday(now)], n: 2, unit: 'week', start: now, turns: peopleNames(), month: now.slice(0, 7) };
+  return { id: null, name: '', size: 1, evening: false, kind: 'weekly', days: [weekday(now)], n: 2, unit: 'week', start: now, turns: peopleNames(), pick: peopleNames().length >= 2 ? 'behind' : 'turns', month: now.slice(0, 7) };
 }
 function draftOf(c) {
   const w = c.repeat.kind === 'weekly';
   return {
     id: c.id, name: c.name, size: c.size, evening: c.evening, kind: c.repeat.kind,
     days: w ? c.repeat.days.slice() : [weekday(c.start)], n: w ? 2 : c.repeat.n, unit: w ? 'week' : c.repeat.unit,
-    start: c.start, turns: c.turns.filter((n) => peopleNames().indexOf(n) >= 0), month: (c.start > today() ? c.start : today()).slice(0, 7),
+    start: c.start, turns: c.turns.filter((n) => peopleNames().indexOf(n) >= 0), pick: c.pick === 'behind' ? 'behind' : 'turns', month: (c.start > today() ? c.start : today()).slice(0, 7),
   };
 }
 const repeatOf = (d) => (d.kind === 'weekly' ? { kind: 'weekly', days: d.days.slice() } : { kind: 'every', n: d.n, unit: d.unit });
-const fieldsOf = (d) => ({ name: d.name, size: d.size, evening: d.evening, repeat: repeatOf(d), start: d.start, turns: d.turns });
+const fieldsOf = (d) => ({ name: d.name, size: d.size, evening: d.evening, repeat: repeatOf(d), start: d.start, turns: d.turns, pick: d.pick });
 function firstWords(d) {
   const now = today();
   const f = firstDue({ repeat: repeatOf(d), start: d.start }, now);
@@ -341,11 +340,11 @@ function formMain(d) {
     <div class="ch-form">
       <button class="ch-fr" data-act="page" data-v="repeats"><span>Repeats</span><span class="v">${esc(repeatWords(repeatOf(d)))}${d.evening ? ' · evening' : ''}</span><span class="c">›</span></button>
       <button class="ch-fr" data-act="page" data-v="first"><span>First time</span><span class="v">${firstWords(d)}</span><span class="c">›</span></button>
-      ${names.length ? `<div class="ch-fr plain"><span>Takes turns</span></div>
+      ${names.length ? `<div class="ch-fr plain"><span>Takes turns</span>${names.length >= 2 ? `<div class="ch-two">${[['turns', 'Take turns'], ['behind', 'Whoever’s behind']].map((o) => `<button class="ch-chip${d.pick === o[0] ? ' on' : ''}" data-act="pick" data-v="${o[0]}">${o[1]}</button>`).join('')}</div>` : ''}</div>
       <div class="ch-turns${names.length > 3 ? ' many' : ''}">${names.map((n) => {
     const p = person(n);
     const i = d.turns.indexOf(n);
-    return `<button class="ch-turn" data-act="turn" data-v="${esc(n)}" style="${i >= 0 ? `background:${p.color}40;border-color:${p.color}` : ''}">${av(p, 48)}<span class="nm">${esc(n)}</span><span class="no${i >= 0 ? '' : ' off'}">${i >= 0 ? i + 1 : ''}</span></button>`;
+    return `<button class="ch-turn" data-act="turn" data-v="${esc(n)}" style="${i >= 0 ? `background:${p.color}40;border-color:${p.color}` : ''}">${av(p, 48)}<span class="nm">${esc(n)}</span><span class="no${i >= 0 ? '' : ' off'}">${i < 0 ? '' : d.pick === 'behind' ? TICK(22, '#FFF7E6') : i + 1}</span></button>`;
   }).join('')}</div>` : ''}
       <div class="ch-fr plain"><span>Size</span></div>
       <div class="ch-sizes">${[1, 2, 3].map((s) => `<button class="ch-chip${d.size === s ? ' on' : ''}" data-act="size" data-v="${s}">${SIZES[s]}</button>`).join('')}</div>
@@ -385,7 +384,7 @@ function actSheet(c) {
   const now = today();
   const names = peopleNames();
   const due = c.next <= now;
-  const mine = whoAt(c, c.turn, names);
+  const mine = openWho(load(), c, names);
   const others = names.filter((n) => n !== mine);
   return `<div class="ch-act">
     <div class="ch-ah">${choreArt(c.art, 72)}<div class="t"><b>${esc(c.name)}</b><span>${esc(repeatWords(c.repeat))}</span></div><button class="ch-x" data-act="close" aria-label="Close">✕</button></div>
@@ -518,6 +517,7 @@ function onTap(e) {
       drawSheet();
       break;
     }
+    case 'pick': d.pick = v; drawSheet(); break;
     case 'size': d.size = +v; drawSheet(); break;
     case 'kind': d.kind = v; drawSheet(); break;
     case 'wd': {

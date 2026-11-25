@@ -99,6 +99,46 @@ const fiveTally = ch.tally(five.log, '2026-11');
 check('30 days of dishes among five: six each', Object.keys(fiveTally).map((k) => fiveTally[k].count), [6, 6, 6, 6, 6]);
 check('…and 1 December is Dana’s again', [five.chores[0].next, ch.whoAt(five.chores[0], five.chores[0].turn)], ['2026-12-01', 'Dana']);
 
+// ---- whoever's behind (points = sizes ticked this month, any chore; ties: longest since
+// doing this chore, then the order tapped; decided when the turn before is dealt with)
+let lid = 0;
+const mark = (who, size, day, c = 'o') => ({ id: `m${++lid}`, c, name: 'Other', art: 'tidy', size, who, due: day, at: at(day), kind: 'done' });
+const dishesB = { id: 'w', name: 'Dishes', art: 'dishes', size: 1, evening: true, repeat: every(1, 'day'), start: '2026-11-01', turns: ['Alex', 'Jordan'], next: '2026-11-25', turn: 0, pick: 'behind' };
+const b0 = { v: 1, chores: [dishesB], log: [mark('Alex', 2, '2026-11-10'), mark('Jordan', 1, '2026-11-12')] };
+check('behind: Alex 2 points, Jordan 1 → Jordan', ch.pickBehind(b0.log, dishesB), 'Jordan');
+check('behind with no who stored yet: worked out from the log', ch.openWho(b0, dishesB), 'Jordan');
+const b1 = ch.settle(b0, 'w', { now: at('2026-11-25', 19) });
+check('Jordan does it (2 each): tie → Alex, who has never done the dishes', [b1.log[2].who, b1.chores[0].who, b1.chores[0].next], ['Jordan', 'Alex', '2026-11-26']);
+check('…and Alex shows as next even after Alex ticks other things (no changing while you look)', ch.todayList(Object.assign({}, b1, { log: b1.log.concat([mark('Alex', 3, '2026-11-26')]) }), '2026-11-26')[0].who, 'Alex');
+const b2 = ch.settle(b1, 'w', { now: at('2026-11-26', 19) });
+check('Alex does it (Alex 3, Jordan 2) → Jordan', b2.chores[0].who, 'Jordan');
+const b3 = ch.settle(b1, 'w', { who: 'Jordan', now: at('2026-11-26', 19) });
+check('someone else did it: Jordan gets the marble, so it is Alex again', [b3.log[3].who, b3.chores[0].who], ['Jordan', 'Alex']);
+const b4 = ch.settle(b1, 'w', { kind: 'skip', now: at('2026-11-26', 19) });
+check('skipped: nobody gets a marble, Alex is still behind → Alex', [b4.log[3].who, b4.chores[0].who, b4.chores[0].next], ['', 'Alex', '2026-11-27']);
+check('taken back: the turn is Jordan’s again', [ch.unsettle(b1, b1.log[2].id).chores[0].who, ch.unsettle(b1, b1.log[2].id).chores[0].next], ['Jordan', '2026-11-25']);
+check('a tie nobody has done: the first tapped', ch.pickBehind([], { id: 'z', turns: ['Maya', 'Dana'], next: '2026-11-25' }), 'Maya');
+// The month turns over: the next turn (1 Dec) counts December's points, where nobody has any.
+const rollC = Object.assign({}, dishesB, { next: '2026-11-30' });
+const roll = { v: 1, chores: [rollC], log: [mark('Alex', 5, '2026-11-05'), mark('Jordan', 1, '2026-11-20', 'w'), mark('Alex', 1, '2026-11-28', 'w')] };
+check('30 Nov: Alex 6, Jordan 1 → Jordan', ch.openWho(roll, rollC), 'Jordan');
+const roll1 = ch.settle(roll, 'w', { now: at('2026-11-30', 19) });
+check('1 Dec: nobody has December points → Alex (did the dishes longest ago)', [roll1.chores[0].next, roll1.chores[0].who], ['2026-12-01', 'Alex']);
+// Somebody taken out of Settings.
+const P5 = ['Dana', 'Chris', 'Maya', 'Eli', 'Noor'];
+const gone = Object.assign({}, dishesB, { turns: P5, who: 'Noor' });
+const goneS = { v: 1, chores: [gone], log: [mark('Dana', 3, '2026-11-02'), mark('Chris', 1, '2026-11-20', 'w'), mark('Maya', 2, '2026-11-03'), mark('Eli', 1, '2026-11-15', 'w')] };
+const left = ['Dana', 'Chris', 'Maya', 'Eli'];
+check('Noor’s turn but Noor taken out: Chris and Eli tie at 1, Eli did the dishes longer ago', ch.openWho(goneS, gone, left), 'Eli');
+check('…ticked: the marble is Eli’s, then Chris', [ch.settle(goneS, 'w', { now: at('2026-11-25'), names: left }).log[4].who, ch.settle(goneS, 'w', { now: at('2026-11-25'), names: left }).chores[0].who], ['Eli', 'Chris']);
+check('with Noor still there, it stays Noor', ch.openWho(goneS, gone, P5), 'Noor');
+// Days ahead, two 'behind' chores at once (each later turn as if the ones before are done).
+const binsB = { id: 'bb', name: 'Bins', art: 'bins', size: 3, evening: true, repeat: weekly([3]), start: '2026-11-04', turns: ['Alex', 'Jordan'], next: '2026-11-25', turn: 0, pick: 'behind', who: 'Alex' };
+const fc = ch.forecast({ v: 1, chores: [Object.assign({}, dishesB, { who: 'Jordan' }), binsB], log: [] }, '2026-11-25', '2026-12-02');
+check('forecast: dishes Jordan, bins Alex, then dishes to whoever is behind', fc.map((x) => `${x.date.slice(8)} ${x.chore.id} ${x.who}`),
+  ['25 w Jordan', '25 bb Alex', '26 w Alex', '27 w Jordan', '28 w Jordan', '29 w Jordan', '30 w Alex', '01 w Jordan', '02 w Alex', '02 bb Jordan']);
+check('fixed turns are unchanged by it', ch.forecast({ v: 1, chores: [bins], log: [] }, '2026-11-25', '2026-12-09').map((x) => x.who), ['Jordan', 'Alex', 'Jordan']);
+
 // ---- words and pictures
 check('one weekday', ch.repeatWords(weekly([3])), 'Wednesdays');
 check('two weekdays, in week order', ch.repeatWords(weekly([4, 1])), 'Mon, Thu');
@@ -116,8 +156,19 @@ check('added: trimmed, pictured, due on its first day', [added.name, added.art, 
 check('a chore with no name is not added', ch.addChore({ name: '  ', size: 1, repeat: weekly([3]), start: '2026-11-25', turns: [] }), null);
 ch.updateChore(added.id, { name: 'Bins', size: 3, evening: true, repeat: weekly([5]), start: '2026-11-25', turns: ['Jordan', 'Alex'] }, new Date(at('2026-11-25')));
 check('moved to Fridays: next is Fri 27 Nov', [ch.load().chores[0].name, ch.load().chores[0].size, ch.load().chores[0].next], ['Bins', 3, '2026-11-27']);
+check('a chore saved before the choice keeps its fixed turns', [ch.load().chores[0].pick, ch.openWho(ch.load(), Object.assign({}, ch.load().chores[0], { pick: undefined }))], ['turns', 'Jordan']);
 ch.removeChore(added.id);
 check('removed', ch.load().chores.length, 0);
+const behind = ch.addChore({ name: 'Dishes', size: 1, evening: true, repeat: every(1, 'day'), start: '2026-11-25', turns: ['Jordan', 'Alex'], pick: 'behind' }, new Date(at('2026-11-25')));
+check('added as whoever’s behind: nobody has points → the first tapped', [behind.pick, behind.who], ['behind', 'Jordan']);
+const st = ch.load(); st.chores[0].who = 'Alex'; ch.save(st);
+ch.updateChore(behind.id, { name: 'Wash the dishes', size: 2, evening: true, repeat: every(1, 'day'), start: '2026-11-25', turns: ['Jordan', 'Alex'], pick: 'behind' }, new Date(at('2026-11-25')));
+check('renamed: the next turn does not change', ch.load().chores[0].who, 'Alex');
+ch.updateChore(behind.id, { name: 'Wash the dishes', size: 2, evening: true, repeat: every(1, 'day'), start: '2026-11-25', turns: ['Jordan', 'Alex', 'Sam'], pick: 'behind' }, new Date(at('2026-11-25')));
+check('people changed: picked again', ch.load().chores[0].who, 'Jordan');
+ch.updateChore(behind.id, { name: 'Wash the dishes', size: 2, evening: true, repeat: every(1, 'day'), start: '2026-11-25', turns: ['Jordan', 'Alex'], pick: 'turns' }, new Date(at('2026-11-25')));
+check('back to taking turns in order', [ch.load().chores[0].pick, ch.load().chores[0].who, ch.openWho(ch.load(), ch.load().chores[0])], ['turns', undefined, 'Jordan']);
+ch.removeChore(behind.id);
 
 console.log(bad ? `${bad} of ${n} FAILED` : `all ${n} chores answers right`);
 process.exit(bad ? 1 : 0);

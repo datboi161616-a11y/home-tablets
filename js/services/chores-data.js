@@ -6,13 +6,17 @@
 //                    | { kind: 'every', n, unit: 'day'|'week'|'month' },
 //              start: 'YYYY-MM-DD' (first time), turns: [name] (the order; [] = no turns),
 //              next: 'YYYY-MM-DD' (the day it is next due; before today = late),
-//              turn: n (whose turn that is: turns[turn % turns.length]) }],
+//              turn: n (whose turn that is: turns[turn % turns.length]),
+//              pick: 'behind' (whoever's behind; otherwise turns go in the fixed order),
+//              who: name (pick 'behind' only: whose the open turn is) }],
 //   log: [{ id, c: chore id, name, art, size, who (who gets the marble; '' = nobody),
-//           due, at (ms), kind: 'done'|'skip', prevNext, prevTurn }] }
+//           due, at (ms), kind: 'done'|'skip', prevNext, prevTurn, prevWho }] }
 //
 // A chore has ONE open turn at a time (`next`). Ticking or skipping it moves `next` on to
 // the following day it falls on and passes the turn to the next person; a late chore does
-// not pile up. Days are 'YYYY-MM-DD' words in the screen's own time, so they sort as text.
+// not pile up. "Whoever's behind": when a turn is dealt with, the next one goes to whoever
+// of the chore's people has the fewest points (sizes ticked, as in the jars) in the month it
+// falls in; ties go to whoever did this chore longest ago, then to the order tapped. Days are 'YYYY-MM-DD' words in the screen's own time, so they sort as text.
 import { getFamily } from './family.js';
 
 const KEY = 'chores.v1';
@@ -107,17 +111,68 @@ export function whoAt(chore, turn, names) {
   return t.length ? t[((turn % t.length) + t.length) % t.length] : '';
 }
 
-/** Its turns from the open one up to `until`: [{ date, who, late }]. */
-export function project(chore, today, until, names) {
+// ---------------------------------------------------------------------------------------
+// Whoever's behind
+// ---------------------------------------------------------------------------------------
+const pointsOf = (log, month) => { const t = tally(log, month); const out = {}; Object.keys(t).forEach((n) => { out[n] = t[n].points; }); return out; };
+/** { name: ms } when each person last ticked chore `id`. */
+function lastDone(log, id) {
+  const out = {};
+  log.forEach((e) => { if (e.c === id && e.kind === 'done' && e.who && !(out[e.who] >= e.at)) out[e.who] = e.at; });
+  return out;
+}
+/** Fewest points, then longest since doing this chore (never = longest), then first tapped. */
+function behindOf(people, pts, last) {
+  let best = '';
+  people.forEach((n) => {
+    const a = pts[n] || 0;
+    const b = pts[best] || 0;
+    if (!best || a < b || (a === b && (last[n] || 0) < (last[best] || 0))) best = n;
+  });
+  return best;
+}
+/** Whose a 'behind' chore's open turn should be, from the log (points in the month it falls in). */
+export function pickBehind(log, chore, names) {
+  return behindOf(turnsOf(chore, names), pointsOf(log, String(chore.next).slice(0, 7)), lastDone(log, chore.id));
+}
+/** Whose the open turn is ('' = nobody). Somebody taken out of Settings: picked again without them. */
+export function openWho(state, chore, names) {
+  if (chore.pick !== 'behind') return whoAt(chore, chore.turn, names);
+  return turnsOf(chore, names).indexOf(chore.who) >= 0 ? chore.who : pickBehind(state.log, chore, names);
+}
+
+/**
+ * Every chore's turns from its open one up to `until`, soonest first: [{ chore, date, who, late }].
+ * Later 'behind' turns are worked out as if each turn before them is done on its day.
+ */
+export function forecast(state, today, until, names) {
+  const pts = {};
+  const ptsIn = (m) => pts[m] || (pts[m] = pointsOf(state.log, m));
+  const last = {};
+  const lastOf = (id) => last[id] || (last[id] = lastDone(state.log, id));
+  const runs = state.chores.map((c) => ({ c, d: c.next, t: c.turn, who: openWho(state, c, names), n: 0 }));
   const out = [];
-  let d = chore.next;
-  let t = chore.turn;
-  for (let i = 0; i < 40 && d <= until; i++) {
-    out.push({ date: d, who: whoAt(chore, t, names), late: d < today });
-    d = nextDue(chore, d, today);
-    t++;
+  for (;;) {
+    let r = null;
+    runs.forEach((x) => { if (x.n < 40 && x.d <= until && (!r || x.d < r.d)) r = x; });
+    if (!r) break;
+    const c = r.c;
+    out.push({ chore: c, date: r.d, who: r.who, late: r.d < today });
+    r.n++;
+    if (r.who) {
+      const p = ptsIn(r.d.slice(0, 7));
+      p[r.who] = (p[r.who] || 0) + c.size;
+      lastOf(c.id)[r.who] = toDate(r.d).getTime();
+    }
+    r.d = nextDue(c, r.d, today);
+    r.t++;
+    r.who = c.pick === 'behind' ? behindOf(turnsOf(c, names), ptsIn(r.d.slice(0, 7)), lastOf(c.id)) : whoAt(c, r.t, names);
   }
   return out;
+}
+/** One chore's turns from the open one up to `until`: [{ date, who, late }]. */
+export function project(chore, today, until, names, log = []) {
+  return forecast({ chores: [chore], log }, today, until, names).map((x) => ({ date: x.date, who: x.who, late: x.late }));
 }
 
 // ---------------------------------------------------------------------------------------
@@ -136,14 +191,15 @@ export function settle(state, id, { kind = 'done', who, now = Date.now(), names 
   const c = next.chores.find((x) => x.id === id);
   if (!c) return next;
   const today = ymd(new Date(now));
-  const turnOf = whoAt(c, c.turn, names);
+  const turnOf = openWho(next, c, names);
   next.log.push({
     id: newId(now), c: c.id, name: c.name, art: c.art, size: c.size,
     who: kind === 'skip' ? '' : (who == null ? turnOf : who),
-    due: c.next, at: now, kind, prevNext: c.next, prevTurn: c.turn,
+    due: c.next, at: now, kind, prevNext: c.next, prevTurn: c.turn, prevWho: c.pick === 'behind' ? turnOf : undefined,
   });
   c.next = nextDue(c, c.next, today);
   c.turn += 1;
+  if (c.pick === 'behind') c.who = pickBehind(next.log, c, names);
   return next;
 }
 
@@ -156,7 +212,7 @@ export function unsettle(state, logId) {
   next.log.splice(i, 1);
   const c = next.chores.find((x) => x.id === e.c);
   // (Only when nothing has happened to the chore since.)
-  if (c && !next.log.some((x) => x.c === e.c && x.at > e.at)) { c.next = e.prevNext; c.turn = e.prevTurn; }
+  if (c && !next.log.some((x) => x.c === e.c && x.at > e.at)) { c.next = e.prevNext; c.turn = e.prevTurn; if (e.prevWho) c.who = e.prevWho; }
   return next;
 }
 
@@ -175,7 +231,7 @@ export function tally(log, month) {
 /** Today's cards: the open turns that are due (late ones first), then what was ticked today. */
 export function todayList(state, today, names) {
   const open = state.chores.filter((c) => c.next <= today)
-    .map((c) => ({ chore: c, due: c.next, late: c.next < today, who: whoAt(c, c.turn, names), done: null }));
+    .map((c) => ({ chore: c, due: c.next, late: c.next < today, who: openWho(state, c, names), done: null }));
   open.sort((a, b) => (a.due < b.due ? -1 : a.due > b.due ? 1 : (a.chore.evening ? 1 : 0) - (b.chore.evening ? 1 : 0)));
   const done = state.log.filter((e) => e.kind === 'done' && ymd(new Date(e.at)) === today)
     .map((e) => ({ chore: state.chores.find((c) => c.id === e.c) || null, due: e.due, late: false, who: e.who, done: e }));
@@ -286,6 +342,7 @@ const clean = (f) => ({
     : { kind: 'every', n: Math.max(1, Math.min(99, Math.round(f.repeat.n) || 1)), unit: f.repeat.unit },
   start: f.start,
   turns: (f.turns || []).slice(0, 12),
+  pick: f.pick === 'behind' ? 'behind' : 'turns',
 });
 export const canAdd = () => load().chores.length < MAX_CHORES;
 /** A new chore from the sheet's fields ({ name, size, evening, repeat, start, turns }). */
@@ -297,19 +354,23 @@ export function addChore(fields, now = new Date()) {
   c.art = artFor(c.name);
   c.next = firstDue(c, ymd(now));
   c.turn = 0;
+  if (c.pick === 'behind') c.who = pickBehind(s.log, c);
   s.chores.push(c);
   save(s);
   return c;
 }
-/** Change a chore. A new rhythm or first time starts its days afresh; the turn stays. */
+/** Change a chore. A new rhythm or first time starts its days afresh; the turn stays ('behind': picked again). */
 export function updateChore(id, fields, now = new Date()) {
   const s = load();
   const c = s.chores.find((x) => x.id === id);
   const f = clean(fields);
   if (!c || !f.name) return;
   const moved = JSON.stringify(c.repeat) !== JSON.stringify(f.repeat) || c.start !== f.start;
+  const repick = moved || c.pick !== f.pick || JSON.stringify(c.turns) !== JSON.stringify(f.turns);
   Object.assign(c, f, { art: artFor(f.name) });
   if (moved) c.next = firstDue(c, ymd(now));
+  if (c.pick !== 'behind') delete c.who;
+  else if (repick || !c.who) c.who = pickBehind(s.log, c);
   save(s);
 }
 export function removeChore(id) {
@@ -366,8 +427,8 @@ function cardFacts(now) {
   const list = todayList(state, today, names);
   let soon = [];
   if (!list.length) {
-    state.chores.forEach((c) => { const p = project(c, today, addDays(today, 6), names)[0]; if (p) soon.push({ chore: c, date: p.date, who: p.who }); });
-    soon.sort((a, b) => (a.date < b.date ? -1 : a.date > b.date ? 1 : 0));
+    const seen = {};
+    forecast(state, today, addDays(today, 6), names).forEach((p) => { if (!seen[p.chore.id]) { seen[p.chore.id] = 1; soon.push(p); } });
     soon = soon.slice(0, 3);
   }
   const sc = scores(state, now);
