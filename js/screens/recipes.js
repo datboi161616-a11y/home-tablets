@@ -200,6 +200,10 @@ const STYLES = `
     .rb-pick .p>svg.k-plate{position:absolute;left:14px;top:14px}
     .rb-pick .dash{position:absolute;left:0;top:0}
     .rb-pick .n{font:500 26px/1.15 Outfit,sans-serif;max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+    .rb-pick.budget{position:relative}
+    .rb-pick.budget .n{color:#FFD696;font-weight:600}
+    .rb-pick.budget .p>svg.bud{position:absolute;left:14px;top:14px}
+    .rb-new{position:absolute;left:50%;top:-4px;margin-left:46px;padding:4px 12px;border-radius:999px;background:#FFD696;color:#3A1D10;font:700 14px Inter,sans-serif;letter-spacing:1px}
     .rb-ring:active .p,.rb-pick:active .p,.rb-card:active{transform:scale(.97)}
     /* Cooking now / tonight */
     .rb-hero{display:flex;gap:16px;margin:10px 0 8px}
@@ -540,6 +544,22 @@ export function mount(el, { args = [] } = {}) {
       <div class="p">${DASH(RING_COLORS[n % RING_COLORS.length], 184)}${pickPlate(key, c.name, pl.meal || c.id)}</div>
       <div class="n">${esc(c.name)}</div></a>`;
   }).join('')}</div>`;
+  // "Plan on a budget" (screens/budget.js): a plate of three meals with a price tag, after the meals.
+  const budgetPick = () => {
+    let seen = false;
+    try { seen = !!localStorage.getItem('budget.seen.v1'); } catch (e) { /* storage off */ }
+    const dots = (pts, r, fill) => pts.map(([x, y]) => `<circle cx="${x}" cy="${y}" r="${r}" fill="${fill}"/>`).join('');
+    return `<a href="#/budget" class="rb-pick budget">
+      <div class="p">${DASH(RING_COLORS[7], 184)}<svg class="bud" width="156" height="156" viewBox="0 0 100 100" aria-hidden="true" focusable="false">
+        <circle cx="51.5" cy="52.5" r="47" fill="rgba(0,0,0,.24)"/><circle cx="50" cy="50" r="46" fill="#F4EDE0"/><circle cx="50" cy="50" r="35" fill="#FBF8F2" stroke="#E3D8C4" stroke-width="1"/>
+        <path d="M50 50L50 19A31 31 0 0 1 76.8 65.5Z" fill="#B5532F"/>${dots([[58, 30], [66, 40], [61, 50], [70, 55], [56, 41]], 2.2, '#6E2A14')}
+        <path d="M50 50L76.8 65.5A31 31 0 0 1 23.2 65.5Z" fill="#6E9B4A"/>${dots([[40, 68], [50, 74], [60, 68], [47, 62], [56, 61]], 2.2, '#A8CF7A')}
+        <path d="M50 50L23.2 65.5A31 31 0 0 1 50 19Z" fill="#E9C98A"/>${dots([[33, 36], [41, 30], [30, 48], [40, 44], [44, 55]], 2.6, '#FFE27A')}
+        <g stroke="#F6EEDF" stroke-width="2.6"><line x1="50" y1="50" x2="50" y2="18"/><line x1="50" y1="50" x2="77.7" y2="66"/><line x1="50" y1="50" x2="22.3" y2="66"/></g>
+        <g transform="translate(74 74) rotate(-18)"><rect x="-13" y="-9" width="26" height="18" rx="4" fill="#FFD696" stroke="#3A1D10" stroke-width="1.4"/><circle cx="-8" cy="0" r="1.8" fill="#3A1D10"/><text x="3" y="5" text-anchor="middle" font-family="Outfit, sans-serif" font-weight="700" font-size="13" fill="#3A1D10">$</text></g>
+      </svg></div>
+      <div class="n">Plan on a budget</div>${seen ? '' : '<span class="rb-new">NEW</span>'}</a>`;
+  };
   // The photos not known yet: three asked at a time; each plate is redrawn as its photo comes.
   function fetchPictures(pl, whenDone) {
     if (picCtl) picCtl.abort();
@@ -690,7 +710,7 @@ export function mount(el, { args = [] } = {}) {
       // No internet: what is kept on the screen instead of the meals (they'd lead nowhere).
       if (!webReachable()) { body.innerHTML = `${top}<div style="height:24px"></div>${offlineHtml()}`; return; }
       const meals = { path: [], meal: '', choices: WEB_MEALS.map(([id, name]) => ({ id, name })) };
-      body.innerHTML = `${top}${picksHtml(meals)}`;
+      body.innerHTML = `${top}${picksHtml(meals).replace(/<\/div>$/, `${budgetPick()}</div>`)}`;
       fetchPictures(meals, () => { if (!webReachable() && !query.trim() && el.isConnected && body.querySelector('[data-picks]')) showHome(); });
     };
     const box = root.querySelector('[data-search]');

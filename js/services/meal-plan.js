@@ -381,7 +381,7 @@ const norm = (s) => {
   return ALIASES[k] || k;
 };
 // Keep the size on cans and jars ("diced tomatoes (14.5 oz)"); drop other notes in brackets.
-const itemKey = (i) => (/^(can|jar|pkg)$/.test(i.u) ? i.item.toLowerCase().trim() : norm(i.item));
+export const itemKey = (i) => (/^(can|jar|pkg)$/.test(i.u) ? i.item.toLowerCase().trim() : norm(i.item));
 
 // "1 cup + 2 tbsp", "1½ lb", "3 cloves"
 function amountText(parts) {

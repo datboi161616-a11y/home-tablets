@@ -14,6 +14,7 @@ import * as KUI from './kitchen-ui.js'; // (its painted plates are used when it 
 import { esc, topBar } from './ui.js';
 import { spot, C } from '../art.js';
 import { ADD_DAY_KEY } from './dish.js';
+import { undoSend } from '../services/budget-plan.js';
 
 let off, dayTimer, undoTimer, armTimer, searchTimer;
 let pickCtl = null; // stops a search of the web in the recipe picker
@@ -329,13 +330,14 @@ export function mount(el) {
         title: 'Week plan',
         right: `<div class="wp-weeks"><button data-week="0" class="${week ? '' : 'on'}" aria-pressed="${week ? 'false' : 'true'}">This week</button><button data-week="1" class="${week ? 'on' : ''}" aria-pressed="${week ? 'true' : 'false'}">Next week</button></div>
           <button class="x-btn frost sm" data-weeksheet>Week •••</button>
+          <a href="#/budget/plan" class="x-btn glass sm"><span style="color:${AMBER};font-weight:700">$</span>Plan on a budget</a>
           <a href="#/shopping" class="x-btn glass sm">Shopping list<span data-listcount class="x-badge" style="display:none">${listCount || ''}</span></a>`,
       })}
       <div class="wp-days${week ? ' even' : ''}${moving ? ' moving' : ''}">
         ${days.map((d) => dayColumn(ix, plan, d)).join('')}
       </div>
       ${moving ? `<div class="wp-toast"><span>Move ${esc(what)} to…</span><button class="x-btn white sm" data-cancelmove>Cancel</button></div>`
-        : toast ? `<div class="wp-toast${toast.snap || toast.list != null ? '' : ' plain'}"><span>${esc(toast.text)}</span>${toast.snap || toast.list != null ? '<button class="x-btn white sm" data-undo>Undo</button>' : ''}</div>`
+        : toast ? `<div class="wp-toast${toast.snap || toast.list != null ? '' : ' plain'}"><span>${toast.sub ? `<b>${esc(toast.text)}</b><small style="display:block;font-size:16px;color:${MIST};overflow:hidden;text-overflow:ellipsis">${esc(toast.sub)}</small>` : esc(toast.text)}</span>${toast.snap || toast.list != null ? '<button class="x-btn white sm" data-undo>Undo</button>' : ''}${toast.sub ? '<a href="#/shopping" class="x-btn amber sm">See the list</a>' : ''}</div>`
           : ''}
       ${sheetHtml(ix, plan)}`;
     if (sameDay) root.querySelectorAll('.wp-meals').forEach((m, i) => { m.scrollTop = scrolls[i] || 0; });
@@ -351,7 +353,7 @@ export function mount(el) {
   function say(text, extra = {}) {
     toast = Object.assign({ text }, extra);
     clearTimeout(undoTimer);
-    undoTimer = setTimeout(() => { toast = null; if (el.isConnected && ixRef) render(ixRef); }, extra.snap || extra.list != null ? 8000 : 5000);
+    undoTimer = setTimeout(() => { toast = null; if (el.isConnected && ixRef) render(ixRef); }, extra.budget ? 15000 : extra.snap || extra.list != null ? 8000 : 5000);
   }
   function arm(what) {
     armed = what;
@@ -420,6 +422,7 @@ export function mount(el) {
       const u = toast;
       toast = null;
       clearTimeout(undoTimer);
+      if (u && u.budget) undoSend(u.budget.wasNext); // a budget week sent here: its shopping list choice too
       if (u && u.snap) restoreDays(u.snap);
       else if (u && u.list != null) setListNextWeek(u.list);
       else render(ix);
@@ -519,6 +522,10 @@ export function mount(el) {
   loadKnown().then((ix) => {
     if (!el.isConnected) return;
     ixRef = ix;
+    // Just sent here from "Plan on a budget": say what happened, with Undo.
+    let sent = null;
+    try { sent = JSON.parse(sessionStorage.getItem('budget.toast') || 'null'); sessionStorage.removeItem('budget.toast'); } catch (e) { sent = null; }
+    if (sent && sent.text) say(String(sent.text), { sub: String(sent.sub || ''), snap: sent.snap, budget: { wasNext: !!sent.wasNext } });
     render(ix);
     root.addEventListener('click', (e) => onClick(ix, e));
     root.addEventListener('input', (e) => { if (e.target.matches('[data-picksearch]')) pickSearch(ix, e.target.value); });

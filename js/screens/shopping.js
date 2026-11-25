@@ -17,6 +17,7 @@ import { GROCERY_WORDS } from '../services/grocery-words.js';
 import { esc, topBar, phoneCode, wirePhoneCodes } from './ui.js';
 import { C } from '../art.js';
 import { openKeyboard, keyboardStyle } from './keyboard.js';
+import { budgetOnList } from '../services/budget-plan.js';
 
 let off, offPhone, stopCodes, stopTimers;
 
@@ -94,6 +95,15 @@ const STYLE = `
     .sh-row.got .sh-n{text-decoration:line-through;color:#8A979D}
     .sh-tag{display:inline-block;margin-left:8px;padding:2px 9px;border-radius:999px;background:${RUST};color:#FFFFFF;font-size:13px;font-weight:700;letter-spacing:.5px;vertical-align:3px;text-transform:uppercase;white-space:nowrap}
     .sh-row.got .sh-tag{display:none}
+    .sh-p{font-size:17px;font-weight:600;color:#5B6B73;flex:none}
+    .sh-bud{flex:none;border-radius:24px;background:#0F2A35;box-shadow:inset 0 0 0 2px #9FE0B5;padding:12px 24px;display:flex;align-items:center;gap:24px}
+    .sh-bud .e{font:700 14px Inter,system-ui,sans-serif;letter-spacing:2px;color:#9FE0B5;text-transform:uppercase}
+    .sh-bud .v{display:flex;align-items:baseline;gap:10px;margin-top:2px;white-space:nowrap}
+    .sh-bud .v b{font:700 40px/1.05 Outfit,system-ui,sans-serif}
+    .sh-bud .v span{font:500 20px Outfit,system-ui,sans-serif;color:${MIST}}
+    .sh-bud .bar{height:12px;border-radius:999px;background:rgba(255,255,255,.16);margin-top:8px;overflow:hidden}
+    .sh-bud .bar i{display:block;height:100%;border-radius:999px;background:#9FE0B5}
+    .sh-bud .s{width:200px;flex:none;font:500 16px/1.4 Inter,system-ui,sans-serif;color:#D7E6EB}
     .sh-q{width:56px;height:56px;border-radius:50%;border:0;background:#F1E4CF;color:${INK};font:600 27px Inter,system-ui,sans-serif;cursor:pointer;flex:none;display:flex;align-items:center;justify-content:center}
     .sh-empty{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;text-align:center;min-height:100%;padding:12px 24px}
     .sh-empty .big{font:500 34px Outfit,system-ui,sans-serif}
@@ -141,6 +151,7 @@ export function mount(el) {
             <button type="button" data-kbopen class="sh-in" aria-label="Add to the shopping list"><span class="ph">Add something</span></button>
             <button type="button" data-kbadd class="x-btn amber">Add</button>
           </div>
+          <div data-budget style="display:contents"></div>
           <div data-note></div>
           <div data-body class="x-scroll sh-body"><div class="sh-empty"><div class="say">Building your list…</div></div></div>
           <div data-toast></div>
@@ -220,6 +231,7 @@ export function mount(el) {
         <div class="sh-n"><span class="sh-nm">${esc(x.name)}</span>${tag}</div>
         ${x.sub ? `<div class="sh-a">${esc(x.sub)}</div>` : ''}
       </div>
+      ${x.price ? `<span class="sh-p">$${x.price.toFixed(2)}</span>` : ''}
       ${extra
         ? `<button class="sh-q" data-less="${esc(x.key)}" aria-label="${x.qty > 1 ? 'One fewer' : 'Take off the list'}">${x.qty > 1 ? '−' : '×'}</button><button class="sh-q" data-more="${esc(x.key)}" aria-label="One more">+</button>`
         : ''}
@@ -227,12 +239,12 @@ export function mount(el) {
   };
 
   // Planned items and your own items together, by aisle; finished aisles go to the end.
-  function aisles(list) {
+  function aisles(list, prices = {}) {
     const by = {};
     const put = (aisle, item) => { (by[aisle] || (by[aisle] = [])).push(item); };
     list.sections.forEach((s) => s.items.forEach((x) => put(s.id, {
       kind: 'item', key: x.key, name: x.name, sub: x.amount || '', got: x.got,
-      isNew: !!(fresh && fresh.indexOf(x.key) >= 0),
+      isNew: !!(fresh && fresh.indexOf(x.key) >= 0), price: prices[x.key] || 0,
     })));
     list.extras.forEach((x) => put(guessAisle(x.text), {
       kind: 'extra', key: x.id, name: extraText(x), sub: '', got: x.got, qty: x.qty || 1,
@@ -378,6 +390,13 @@ export function mount(el) {
 
       $('[data-stat]').innerHTML = all ? (left ? `<b>${left}</b> to get` : '<b>Got everything!</b>') : '';
       $('[data-clearslot]').innerHTML = anyGot ? `<button data-clear class="x-btn sm ${clearArmed ? 'amber' : 'frost'}">${clearArmed ? 'Tap again to clear' : 'Done shopping'}</button>` : '';
+      // A budget week sent from "Plan on a budget": what its meals come to, and a price on each thing.
+      const bud = budgetOnList();
+      $('[data-budget]').innerHTML = bud ? `<div class="sh-bud"><div style="flex:1;min-width:0">
+        <div class="e">${esc(bud.label ? `${bud.label} · ` : '')}${bud.meals} meal${bud.meals > 1 ? 's' : ''}</div>
+        <div class="v"><b>about $${Math.round(bud.total)}</b>${bud.budget ? `<span>of your $${Math.round(bud.budget)}</span>` : ''}</div>
+        ${bud.budget ? `<div class="bar"><i style="width:${Math.min(100, (bud.total / bud.budget) * 100).toFixed(1)}%"></i></div>` : ''}</div>
+        <div class="s">Salt, oil and spices aren’t counted.</div></div>` : '';
       $('[data-note]').innerHTML = note ? `<div class="sh-note">${note.phone ? `<span style="flex:none">${plane(34, INK, '#3F545E')}</span>` : ''}<span>${esc(note.text)}</span></div>` : '';
 
       body.innerHTML = `
@@ -388,7 +407,7 @@ export function mount(el) {
             <a href="#/plan" class="x-btn amber">Plan meals</a>
           </div>` : `
         <div class="sh-cols">
-          ${aisles(list).map((s) => section(s.id, s.name, s.items, byGot(s.items).map(row).join(''))).join('')}
+          ${aisles(list, bud ? bud.prices : {}).map((s) => section(s.id, s.name, s.items, byGot(s.items).map(row).join(''))).join('')}
         </div>
         ${list.missing ? `<div style="font-size:17px;margin-top:14px;color:${MIST}">${list.missing} planned recipe${list.missing > 1 ? 's' : ''} couldn’t load.</div>` : ''}`}
         ${toast ? '<div style="height:96px"></div>' : ''}`;
