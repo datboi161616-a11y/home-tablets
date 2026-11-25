@@ -62,16 +62,12 @@ final class Kiosk {
         }
     }
 
-    /**
-     * Which apps may run in kiosk mode: ours, Settings, the apps you allowed,
-     * and the Play Store for a few minutes after you open it from the dashboard.
-     */
+    /** Which apps may run in kiosk mode: ours, Settings, the Play Store and the household's apps. */
     static void allowApps(Context c) {
         if (!isOwner(c)) return;
         DevicePolicyManager dpm = c.getSystemService(DevicePolicyManager.class);
-        long playUntil = c.getSharedPreferences(MainActivity.PREFS, Context.MODE_PRIVATE).getLong("playStoreUntil", 0);
         try {
-            dpm.setLockTaskPackages(admin(c), new Apps(c).lockTaskPackages(System.currentTimeMillis() < playUntil));
+            dpm.setLockTaskPackages(admin(c), new Apps(c).lockTaskPackages());
         } catch (SecurityException e) {
             e.printStackTrace();
         }

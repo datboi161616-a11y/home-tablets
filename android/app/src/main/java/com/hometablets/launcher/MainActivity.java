@@ -571,18 +571,10 @@ public class MainActivity extends Activity {
                 .show();
     }
 
-    private static final long PLAY_STORE_MS = 15 * 60 * 1000L;
 
-    /**
-     * Opens the Play Store for a grown-up, to update apps or add one. Kiosk mode keeps the
-     * Play Store shut, so an app's own "Update" button (YouTube asks for one now and then)
-     * leads nowhere. Here it is let in for 15 minutes, and locked out again after that;
-     * while it is in, those "Update" buttons work too.
-     */
+    /** Opens the Play Store: the household installs and updates their own apps there. */
     private void openPlayStore() {
-        prefs.edit().putLong("playStoreUntil", System.currentTimeMillis() + PLAY_STORE_MS).apply();
         Kiosk.allowApps(this);
-        handler.postDelayed(() -> Kiosk.allowApps(this), PLAY_STORE_MS + 2000); // shut again
         Intent[] ways = {
                 new Intent("com.google.android.finsky.VIEW_MY_DOWNLOADS"),               // "My apps": Update all
                 getPackageManager().getLaunchIntentForPackage("com.android.vending"),   // or just the Play Store
@@ -592,7 +584,6 @@ public class MainActivity extends Activity {
             try {
                 startActivity(store.setPackage("com.android.vending").addFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
                 foregroundApp = "Play Store";
-                Toast.makeText(this, "The Play Store is open for 15 minutes. Press Home when you are done.", Toast.LENGTH_LONG).show();
                 return;
             } catch (Exception ignored) { }
         }
@@ -1176,11 +1167,11 @@ public class MainActivity extends Activity {
         }
 
         /** True in the hidden remote-control copy (the web app keeps it silent). */
-        /** Apps screen, "Update apps": the Play Store for a grown-up (asks for the PIN first). */
+        /** Apps screen, "Play Store": install or update apps (no PIN: they're the household's apps). */
         @JavascriptInterface
         public void updateApps() {
             if (isGhost) return;
-            runOnUiThread(() -> askPin("Update apps (grown-ups)", MainActivity.this::openPlayStore));
+            runOnUiThread(MainActivity.this::openPlayStore);
         }
 
         @JavascriptInterface

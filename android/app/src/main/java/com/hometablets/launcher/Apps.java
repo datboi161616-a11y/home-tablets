@@ -81,13 +81,31 @@ final class Apps {
         return new HashSet<>(prefs.getStringSet(key, new HashSet<>()));
     }
 
-    /** Installed apps that are allowed: your "on" list plus installed suggestions you haven't turned off. */
+    /** Apps the household installed themselves (from the Play Store), not ones that came with the tablet. */
+    private Set<String> userInstalled() {
+        PackageManager pm = ctx.getPackageManager();
+        Set<String> out = new HashSet<>();
+        for (String pkg : installed().keySet()) {
+            try {
+                int flags = pm.getApplicationInfo(pkg, 0).flags;
+                if ((flags & android.content.pm.ApplicationInfo.FLAG_SYSTEM) == 0) out.add(pkg);
+            } catch (PackageManager.NameNotFoundException ignored) { }
+        }
+        return out;
+    }
+
+    /**
+     * Installed apps that are allowed: the well-known ones (YouTube, Netflix...: some come
+     * with the tablet), every app the household installed from the Play Store, and your "on"
+     * list, minus anything you turned off.
+     */
     List<String> allowed() {
         Map<String, String> inst = installed();
         Set<String> on = setting("appsOn"), off = setting("appsOff");
+        Set<String> mine = userInstalled();
         List<String> out = new ArrayList<>();
         for (String pkg : SUGGESTED.keySet()) if (inst.containsKey(pkg) && !off.contains(pkg)) out.add(pkg);
-        for (String pkg : inst.keySet()) if (on.contains(pkg) && !out.contains(pkg)) out.add(pkg);
+        for (String pkg : inst.keySet()) if ((mine.contains(pkg) || on.contains(pkg)) && !off.contains(pkg) && !out.contains(pkg)) out.add(pkg);
         return out;
     }
 
@@ -160,12 +178,15 @@ final class Apps {
         }
     }
 
-    /** Packages kiosk mode lets run: ours, Settings (for grown-ups), and the allowed apps. */
-    String[] lockTaskPackages(boolean includePlayStore) {
+    /**
+     * Packages kiosk mode lets run: ours, Settings, the allowed apps, and the Play Store with
+     * Google's sign-in (the household signs in and installs and updates what they like).
+     */
+    String[] lockTaskPackages() {
         // System UI hosts Android's (silently approved) screen-capture permission step.
-        List<String> pkgs = new ArrayList<>(Arrays.asList(ctx.getPackageName(), "com.android.settings", "com.android.systemui"));
+        List<String> pkgs = new ArrayList<>(Arrays.asList(ctx.getPackageName(), "com.android.settings", "com.android.systemui",
+                "com.android.vending", "com.google.android.gms", "com.google.android.gsf"));
         pkgs.addAll(allowed());
-        if (includePlayStore) pkgs.add("com.android.vending");
         return pkgs.toArray(new String[0]);
     }
 }

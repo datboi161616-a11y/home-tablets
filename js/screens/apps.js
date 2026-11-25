@@ -157,8 +157,7 @@ export function mount(el) {
     if (resetBusy) resetBusy();
     if (storeBefore && Date.now() - storeAt > 20 * 60 * 1000) storeBefore = null; // the Play Store shut long ago
     if (storeBefore) {
-      // Back from the Play Store: show what is there now, and name anything new. (The PIN
-      // box alone takes us out of focus for a moment too; that isn't "back" yet.)
+      // Back from the Play Store: show what is there now, and name anything new.
       const before = storeBefore;
       render();
       const added = (current || []).filter((a) => before.indexOf(a.pkg) < 0);
@@ -194,19 +193,7 @@ export function mount(el) {
     removeEventListener('pointerdown', onPointer, true);
   };
 
-  // ---- "Update apps": say what comes next before Android asks for the PIN ----
-  function askUpdate() {
-    const sheet = el.querySelector('[data-sheet]');
-    if (sheet) sheet.style.display = 'flex';
-    const m = el.querySelector('[data-msg]');
-    if (m) m.style.display = 'none';
-  }
-  function closeSheet() {
-    const sheet = el.querySelector('[data-sheet]');
-    if (sheet) sheet.style.display = 'none';
-  }
   function startUpdate() {
-    closeSheet();
     storeBefore = (current || []).map((a) => a.pkg);
     storeAt = Date.now();
     if (!updateApps()) {
@@ -244,19 +231,13 @@ export function mount(el) {
         ${tom ? 'border-radius:0;letter-spacing:3px;font-family:JetBrains Mono,monospace;font-size:15px' : 'font-family:inherit'}}
       .ap-msg{position:absolute;left:50%;bottom:32px;transform:translateX(-50%);max-width:1000px;display:none;background:${tom ? '#0B1220' : '#1D2430'};color:${tom ? t.accent : '#fff'};
         ${tom ? `border:1px solid ${t.accent};font-family:JetBrains Mono,monospace;letter-spacing:1px;` : ''}padding:16px 28px;border-radius:${tom ? '0' : '28px'};font-size:20px;font-weight:600;text-align:center;z-index:5;line-height:1.35}
-      .ap-sheet{position:absolute;top:0;right:0;bottom:0;left:0;background:rgba(10,14,20,.55);display:none;align-items:center;justify-content:center;z-index:10}
-      .ap-card{background:${tom ? '#0B1220' : '#FFFFFF'};color:${t.ink};${tom ? `border:1px solid ${t.accent};` : ''}border-radius:${tom ? '0' : '28px'};padding:40px 44px;max-width:760px;
         display:flex;flex-direction:column;gap:18px;box-shadow:0 20px 60px rgba(0,0,0,.25)}
-      .ap-card h2{margin:0;font-family:${t.font};font-size:34px;font-weight:600}
-      .ap-card p{margin:0;font-size:21px;line-height:1.45;color:${t.ink2}}
-      .ap-card .row{display:flex;gap:16px;justify-content:flex-end;margin-top:10px}
-      .ap-card button{min-height:60px;padding:0 32px;font-size:21px;font-weight:600;border-radius:${tom ? '0' : '999px'};cursor:pointer;font-family:inherit}
     </style>
     <div class="ap-root">
       <div style="display:flex;align-items:center;gap:24px">
         <a href="${tom ? t.back : backHref()}" class="pill ap-btn" style="${tom ? '' : 'font-weight:600'}">${tom ? t.backLabel : backLabel()}</a>
         <div style="font-family:${t.font};font-size:${tom ? '22px' : '44px'};font-weight:500;${tom ? 'letter-spacing:6px;color:#5CE1E6' : ''}">${t.title}</div>
-        ${canUpdate ? `<button data-update class="pill ap-btn" style="margin-left:auto">${tom ? 'UPDATE APPS · PIN' : 'Update apps · PIN'}</button>` : ''}
+        ${canUpdate ? `<button data-update class="pill ap-btn" style="margin-left:auto">${tom ? 'PLAY STORE' : 'Play Store'}</button>` : ''}
       </div>
       ${apps.length ? `
         <div class="ap-grid">
@@ -274,19 +255,9 @@ export function mount(el) {
           ${tom ? '' : `<div style="margin-bottom:8px">${appsArt(340)}</div>`}
           <div style="font-family:${t.font};font-size:36px;font-weight:500">${up('No apps here yet')}</div>
           ${canUpdate ? '' : `<div style="color:${t.ink2};font-size:21px;max-width:760px;line-height:1.45">${up('Whoever looks after this screen can add them.')}</div>`}
-          ${canUpdate ? `<button data-update class="pill ap-btn" style="margin-top:10px;${tom ? '' : 'background:#1D2430;color:#fff'}">${tom ? 'UPDATE APPS · PIN' : 'Update apps · PIN'}</button>` : ''}
+          ${canUpdate ? `<button data-update class="pill ap-btn" style="margin-top:10px;${tom ? '' : 'background:#1D2430;color:#fff'}">${tom ? 'GET APPS' : 'Get apps from the Play Store'}</button>` : ''}
         </div>`}
       <div class="ap-msg" data-msg role="status"></div>
-      <div class="ap-sheet" data-sheet>
-        <div class="ap-card">
-          <h2>${up('Update or add apps')}</h2>
-          <p>${up('Needs the PIN from the card that came with this screen. The Play Store opens for 15 minutes; press Home to come back.')}</p>
-          <div class="row">
-            <button data-sheet-no style="background:transparent;color:${t.ink};border:${tom ? '1px solid #1E3A4A' : '2px solid #D5D9DE'}">${up('Not now')}</button>
-            <button data-sheet-yes style="background:${t.accent};color:${tom ? '#05070D' : '#fff'};border:0">${up('Continue')}</button>
-          </div>
-        </div>
-      </div>
     </div>`;
 
     // A missing icon picture shouldn't show as a broken image: use the letter tile instead.
@@ -298,12 +269,8 @@ export function mount(el) {
       });
     });
 
-    // An app says it needs an update (YouTube does now and then): the Play Store, behind the owner's PIN.
-    el.querySelectorAll('[data-update]').forEach((b) => b.addEventListener('click', askUpdate));
-    el.querySelector('[data-sheet-no]').addEventListener('click', closeSheet);
-    el.querySelector('[data-sheet-yes]').addEventListener('click', startUpdate);
-    // A tap on the dimmed part around the card closes it too.
-    el.querySelector('[data-sheet]').addEventListener('click', (e) => { if (e.target === e.currentTarget) closeSheet(); });
+    // Play Store: install or update apps (YouTube asks for an update now and then).
+    el.querySelectorAll('[data-update]').forEach((b) => b.addEventListener('click', startUpdate));
 
     el.querySelectorAll('[data-pkg]').forEach((tile) => {
       tile.addEventListener('click', () => {
@@ -338,7 +305,7 @@ export function mount(el) {
             reset();
             say(tom
               ? `${a.label.toUpperCase()} DIDN’T OPEN. TRY ONCE MORE.`
-              : `${a.label} didn’t open. Try once more. If it still won’t, it may need updating: “Update apps” does that, with the PIN.`, 9000);
+              : `${a.label} didn’t open. Try once more. If it still won’t, update it in the Play Store.`, 9000);
           }, OPEN_CHECK_MS);
         } else {
           reset();
