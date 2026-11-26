@@ -17,7 +17,17 @@ const KEEP_STOPPED = 3 * 60 * 1000;
 // A finished timer nobody stopped is cleared away after half a day.
 const KEEP_MISSED = 12 * 60 * 60 * 1000;
 
-const read = () => { try { return JSON.parse(localStorage.getItem(KEY) || '[]') || []; } catch (e) { return []; } };
+// (The chip asks several times every quarter second, all day: what is saved is only turned
+// back into timers when it changed.)
+let readRaw = null;
+let readList = [];
+const read = () => {
+  try {
+    const raw = localStorage.getItem(KEY) || '[]';
+    if (raw !== readRaw) { readList = JSON.parse(raw) || []; readRaw = raw; }
+    return readList;
+  } catch (e) { return []; }
+};
 function write(list) {
   try { localStorage.setItem(KEY, JSON.stringify(list)); } catch (e) { /* storage off: still counts until reload */ }
   window.dispatchEvent(new Event('timers-changed'));

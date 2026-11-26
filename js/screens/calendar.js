@@ -4,6 +4,7 @@
 // to pick the day from. A week view is one button away.
 import { minutesText, timeText } from '../services/display.js';
 import { settings } from '../config.js';
+import { flushCompat } from '../compat.js';
 import { getWeek, getDay, nextAfter, nextBigThing, calendarStatus, refreshCalendars, linkedCalendars, startOfWeek, weekdayNames, KINDS, BACK_WEEKS } from '../services/calendar-data.js';
 import { eventIcon } from '../art.js';
 import { saveMyEvent, removeMyEvent, getMyEvent, myEvents, isoDay, fromIso, restoreMyEvent, skipMyEventOn, endMyEventBefore, recentTitles } from '../services/my-events.js';
@@ -197,9 +198,14 @@ function linkNote() {
 }
 
 // Hide events that don't fit in a day column (week view) and say "+N more" instead.
-function fitDays(el) {
+// `again`: the second look, after the old engine's spacing fix. That only adds room between
+// things, so a day that still fits as it is stays as it is (not every event shown and hidden
+// again one by one, each a new layout).
+function fitDays(el, again) {
+  if (again) flushCompat(); // (the spacing fix's waiting changes first, so a day is measured with them)
   el.querySelectorAll('.kc-wday').forEach((day) => {
     if (!day.clientHeight) return; // not laid out yet
+    if (again && day.scrollHeight <= day.clientHeight + 1) return;
     const evs = [...day.querySelectorAll('.kc-ev')];
     const old = day.querySelector('.kc-more');
     if (old) old.remove();
@@ -607,7 +613,7 @@ function draw(el) {
   if (view !== 'week') return;
   fitDays(el);
   // Again after layout settles (older WebViews add flex-gap margins a frame later).
-  requestAnimationFrame(() => setTimeout(() => { if (el.isConnected) fitDays(el); }, 50));
+  requestAnimationFrame(() => setTimeout(() => { if (el.isConnected) fitDays(el, true); }, 50));
 }
 
 // The days things can be added to: from this week's first day to the last week the arrows reach.

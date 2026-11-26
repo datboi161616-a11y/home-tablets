@@ -587,30 +587,32 @@ export function mount(el) {
   }
 
   // ------------------------------------------------------------------ the words over the scene
+  // (Sliding along the graph calls this for every move of a finger: only words that change are written.)
+  const put = (sel, text) => { const n = $(sel); if (n.textContent !== text) n.textContent = text; };
   function hero(f) {
     el.querySelector('.wx-hero').classList.remove('wx-wait');
     if (sel > 0 && cols[sel]) {
       const h = cols[sel];
       const sky = describe(h.code);
       const tomorrow = h.time.slice(0, 10) !== isoDay();
-      $('[data-f-eyebrow]').textContent = `${fmtHour(h.time)}${tomorrow ? ' tomorrow' : ''}`;
-      $('[data-f-temp]').textContent = deg(h.temp);
-      $('[data-f-label]').textContent = sky.label;
+      put('[data-f-eyebrow]', `${fmtHour(h.time)}${tomorrow ? ' tomorrow' : ''}`);
+      put('[data-f-temp]', deg(h.temp));
+      put('[data-f-label]', sky.label);
       const snow = (h.snow || 0) > 0;
       const amt = snow ? amountText(h.snow, f.snowUnit || 'in') : amountText(h.wet, f.rainUnit || 'in');
       // (the chance is on the graph under the line)
-      $('[data-f-range]').textContent = h.feels != null ? `Feels like ${h.feels}°` : '';
-      $('[data-f-extra]').textContent = amt ? `${amt} of ${snow ? 'snow' : 'rain'}` : '';
-      $('[data-f-outlook]').textContent = '';
+      put('[data-f-range]', h.feels != null ? `Feels like ${h.feels}°` : '');
+      put('[data-f-extra]', amt ? `${amt} of ${snow ? 'snow' : 'rain'}` : '');
+      put('[data-f-outlook]', '');
     } else {
       const now = describe(f.code);
-      $('[data-f-eyebrow]').textContent = f.estimated ? 'About now' : 'Now';
-      $('[data-f-temp]').textContent = deg(f.temp);
-      $('[data-f-label]').textContent = now.label;
-      $('[data-f-range]').textContent = f.estimated ? 'Expected about now' : f.feels != null ? `Feels like ${f.feels}°` : '';
-      $('[data-f-extra]').textContent = rangeLine(f);
+      put('[data-f-eyebrow]', f.estimated ? 'About now' : 'Now');
+      put('[data-f-temp]', deg(f.temp));
+      put('[data-f-label]', now.label);
+      put('[data-f-range]', f.estimated ? 'Expected about now' : f.feels != null ? `Feels like ${f.feels}°` : '');
+      put('[data-f-extra]', rangeLine(f));
       // The rain to come is told top right when the hours are known.
-      $('[data-f-outlook]').textContent = cols.length ? '' : outlook(f);
+      put('[data-f-outlook]', cols.length ? '' : outlook(f));
     }
     $('[data-wx-back]').style.display = sel > 0 ? '' : 'none';
     $('[data-wx-coming]').style.display = sel > 0 ? 'none' : '';

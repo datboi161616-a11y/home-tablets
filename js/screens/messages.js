@@ -135,16 +135,23 @@ function renderBoard() {
   // ---- every note on the board ----
   const listWas = side.querySelector('[data-list]');
   const keepScroll = listWas ? listWas.scrollTop : 0; // re-drawing the list must not jump it back to the top
-  side.innerHTML = `
-    <div data-list class="mb-list">
-      ${all.map((n) => `
-        <div class="mb-card${n.id === featuredId ? ' active' : ''}" data-id="${esc(n.id)}">
+  // The same notes as before (a swipe, a tap on one): only the lit card moves, the list
+  // isn't made again.
+  const cardsHtml = all.map((n) => `
+        <div class="mb-card" data-id="${esc(n.id)}">
           <div class="mb-card-text mb-words"${!n.photo && emojiOnly(n.text) ? ' style="font-size:38px"' : ''}>${n.photo && !n.text ? 'Photo' : esc(n.text)}</div>
           <div class="mb-card-foot">${esc(n.who)} · <span data-when="${n.at}">${when(n.at)}</span></div>
-        </div>`).join('')}
+        </div>`).join('');
+  if (!(listWas && side.__cards === cardsHtml)) {
+    side.innerHTML = `
+    <div data-list class="mb-list">
+      ${cardsHtml}
     </div>`;
+    side.__cards = cardsHtml;
+  }
   const list = side.querySelector('[data-list]');
-  if (keepScroll) list.scrollTop = keepScroll;
+  [].forEach.call(list.children, (c) => { const on = c.getAttribute('data-id') === String(featuredId); if (c.classList.contains('active') !== on) c.classList.toggle('active', on); });
+  if (keepScroll && list.scrollTop !== keepScroll) list.scrollTop = keepScroll;
   const on = list.querySelector('.mb-card.active');
   if (reveal && on && (on.offsetTop < list.scrollTop || on.offsetTop + on.offsetHeight > list.scrollTop + list.clientHeight)) list.scrollTop = Math.max(0, on.offsetTop - 12);
   reveal = false;

@@ -185,7 +185,10 @@ export function mount(el) {
         html.push('<div class="tbd-row"><span></span><span></span><span></span><span></span><span></span></div>');
       }
     }
-    $('[data-board]').innerHTML = html.join('');
+    // (Looked at again every minute: an unchanged board isn't drawn again.)
+    const boardHtml = html.join('');
+    const boardEl = $('[data-board]');
+    if (boardEl.__html !== boardHtml) { boardEl.__html = boardHtml; boardEl.innerHTML = boardHtml; }
     $('[data-pager]').style.visibility = pages > 1 ? 'visible' : 'hidden';
     $('[data-page]').textContent = `PAGE ${page + 1} OF ${pages}`;
     $('[data-prev]').disabled = page <= 0;

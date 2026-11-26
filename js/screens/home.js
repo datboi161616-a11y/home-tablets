@@ -566,9 +566,15 @@ export function mount(el) {
   let extraLine = null;
   let extraDoneAt = 0;
   let undoExtra = null;
+  // (Asked every minute: the same line as already shown is left alone, and the clock isn't
+  // measured again for nothing.)
+  let extraShown = null;
   const showExtra = () => topHomeLine().then((line) => {
     if (!el.isConnected || undoExtra) return;
     extraLine = line;
+    const key = line ? `${line.text}|${line.href || ''}|${line.done ? 1 : 0}` : '';
+    if (key === extraShown) return;
+    extraShown = key;
     const box = $('[data-extra]');
     box.style.display = line ? 'flex' : 'none';
     if (line) {
@@ -679,7 +685,7 @@ export function mount(el) {
     $('[data-time]').textContent = n.time;
     ampm.textContent = n.ampm;
     ampm.style.display = n.ampm ? '' : 'none';
-    $('[data-date]').textContent = n.date;
+    if ($('[data-date]').textContent !== n.date) $('[data-date]').textContent = n.date;
     showExtra();
     const now = new Date();
     if (now.toDateString() !== day) {

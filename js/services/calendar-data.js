@@ -374,11 +374,14 @@ export function refreshCalendars(force = false) {
 
   const links = calendarsOf(fam);
   if (!links.length) {
+    // No links, and none before either: nothing for the screens to draw again.
+    if (old.sig === sig && !old.events.length && !old.error) { writeCache(Object.assign(old, { at: Date.now() })); return Promise.resolve(); }
     writeCache({ at: Date.now(), sig, error: '', events: [] });
     window.dispatchEvent(new Event('calendar-updated'));
     return Promise.resolve();
   }
 
+  let same = false;
   inFlight = fetchCalendarFeeds()
     .then((feeds) => {
       const today = midnight(new Date());
@@ -420,13 +423,19 @@ export function refreshCalendars(force = false) {
       // A failed download is retried sooner than a good one (in about 5 minutes).
       // okAt = when the saved events were last downloaded without trouble.
       const okAt = problems.length ? (sameLinks ? old.okAt || 0 : 0) : Date.now();
-      writeCache({ at: problems.length ? Date.now() - REFRESH_MS + 5 * 60 * 1000 : Date.now(), sig, error, events: kept, okAt,
-        names: names.length ? names : (sameLinks && old.names) || [] });
+      const at = problems.length ? Date.now() - REFRESH_MS + 5 * 60 * 1000 : Date.now();
+      const keptNames = names.length ? names : (sameLinks && old.names) || [];
+      // Nothing new (a link that is down, tried again every 5 minutes, brings back the same
+      // last copy): the screens aren't told, so they don't draw everything again.
+      same = sameLinks && error === (old.error || '') && okAt === (old.okAt || 0)
+        && JSON.stringify(keptNames) === JSON.stringify(old.names || []) && JSON.stringify(kept) === JSON.stringify(old.events);
+      if (same) writeCache(Object.assign(old, { at }));
+      else writeCache({ at, sig, error, events: kept, okAt, names: keptNames });
     })
     .catch((err) => { console.error('calendar refresh', err); })
     .then(() => {
       inFlight = null;
-      window.dispatchEvent(new Event('calendar-updated'));
+      if (!same) window.dispatchEvent(new Event('calendar-updated'));
     });
   return inFlight;
 }

@@ -490,10 +490,18 @@ export function setListSeen(keys) {
 }
 
 /** Number of things still to buy (for badges). */
+// (The Week plan asks on every redraw, a sheet opening included: the list is only made again
+// after something on it changed, or after a minute for recipes that were still loading.)
+let countWas = null;
+let countAt = 0;
+window.addEventListener('kitchen-changed', () => { countWas = null; });
 export async function shoppingCount() {
-  const l = await buildShoppingList();
-  return l.sections.reduce((n, s) => n + s.items.filter((x) => !x.got).length, 0)
-    + l.extras.filter((x) => !x.got).length;
+  if (countWas && Date.now() - countAt < 60 * 1000) return countWas;
+  countAt = Date.now();
+  const asked = countWas = buildShoppingList().then((l) => l.sections.reduce((n, s) => n + s.items.filter((x) => !x.got).length, 0)
+    + l.extras.filter((x) => !x.got).length);
+  asked.catch(() => { if (countWas === asked) countWas = null; });
+  return asked;
 }
 
 export function setHave(key, have) { const s = getListState(); s.have[key] = have; if (have) delete s.got[key]; saveList(s); }
