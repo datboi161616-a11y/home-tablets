@@ -103,38 +103,50 @@ function gapSelectors() {
       found = [];
       try {
         for (const rule of sheet.cssRules) {
-          if (rule.selectorText && GAP.test(rule.cssText)) found.push(rule.selectorText);
+          if (!rule.selectorText || !GAP.test(rule.cssText)) continue;
+          // (Only selectors this engine can use: they are looked for all at once below.)
+          try { document.querySelector(rule.selectorText); found.push(rule.selectorText); } catch (e) { /* not here */ }
         }
       } catch (e) { /* a stylesheet from another site (the fonts): none of our rules in it */ }
       rulesWithGap.set(sheet, found);
     }
     for (const s of found) list.push(s);
   }
-  return list;
+  // One selector for them all, with the elements that have a gap in their own style="".
+  return list.concat('[style*="gap"]').join(',');
 }
 
 // The flex containers to look at: `el` itself, and with `deep` everything inside it.
 // Candidates are the elements with `gap` written in their own style="" and the ones
 // matched by a rule that sets one; nothing else can need the fix.
-function gapCandidates(el, deep, selectors, into) {
-  const INLINE = '[style*="gap"]';
-  const take = (sel) => {
-    try {
-      if (el.matches(sel)) into.add(el);
-      if (deep) el.querySelectorAll(sel).forEach((x) => into.add(x));
-    } catch (e) { /* a selector this engine can't use here */ }
-  };
-  take(INLINE);
-  selectors.forEach(take);
+// (One search with every selector at once: a search per rule cost the tablet ~10 ms a screen.)
+function gapCandidates(el, deep, selector, into) {
+  try {
+    if (el.matches(selector)) into.add(el);
+    if (deep) el.querySelectorAll(selector).forEach((x) => into.add(x));
+  } catch (e) { /* a selector this engine can't use here */ }
+}
+
+// A child's own margin in px. getComputedStyle hands back a margin as laid out, so reading
+// one made the browser lay out the whole screen first (on the tablet: a second full layout
+// for every screen opened). The computed value (CSS Typed OM, there since Chrome 66) needs
+// no layout; only a margin that isn't plain px (auto, a percentage) is read the old way.
+const CSS_NAME = { marginLeft: 'margin-left', marginRight: 'margin-right', marginTop: 'margin-top', marginBottom: 'margin-bottom' };
+function marginPx(k, prop) {
+  try {
+    const v = k.computedStyleMap && k.computedStyleMap().get(CSS_NAME[prop]);
+    if (v && v.unit === 'px') return v.value;
+  } catch (e) { /* not this engine: read it the old way */ }
+  return parseFloat(getComputedStyle(k)[prop]) || 0;
 }
 
 // First everything is read, then everything is written. The first version did both in
 // turn for every child, which made the browser work out the whole page's styles again
 // each time: on a real tablet that was 280 ms of every long recipe list.
 function shimFlexGap(targets) {
-  const selectors = gapSelectors();
+  const selector = gapSelectors();
   const containers = new Set();
-  for (const [el, deep] of targets) if (el.isConnected) gapCandidates(el, deep, selectors, containers);
+  for (const [el, deep] of targets) if (el.isConnected) gapCandidates(el, deep, selector, containers);
 
   const todo = [];
   for (const el of containers) {
@@ -150,13 +162,12 @@ function shimFlexGap(targets) {
     const cross = col ? 'marginRight' : 'marginBottom';
     let i = 0;
     for (const k of el.children) {
+      // Already given its gap (it was counted then): nothing to read again.
+      if (k.dataset.gapShim) { i++; continue; }
       const ks = getComputedStyle(k);
       if (ks.position === 'absolute' || ks.position === 'fixed' || ks.display === 'none') continue;
-      if (!k.dataset.gapShim) {
-        todo.push([k,
-          i > 0 && gap && k.style[main] !== 'auto' ? main : null, (parseFloat(ks[main]) || 0) + gap,
-          wrapGap ? cross : null, (parseFloat(ks[cross]) || 0) + wrapGap]);
-      }
+      const m = i > 0 && gap && k.style[main] !== 'auto' ? main : null;
+      todo.push([k, m, m ? marginPx(k, main) + gap : 0, wrapGap ? cross : null, wrapGap ? marginPx(k, cross) + wrapGap : 0]);
       i++;
     }
   }
@@ -167,12 +178,24 @@ function shimFlexGap(targets) {
   }
 }
 
+let observer = null;
+let onChanges = null;
+/**
+ * Give what was just added its gaps NOW, instead of at the end of the current task. app.js
+ * calls it right after a screen is built, before anything there measures the screen, so the
+ * one layout that measuring causes already has the gaps (and isn't done again for them).
+ */
+export function flushCompat() {
+  if (observer && onChanges) { const muts = observer.takeRecords(); if (muts.length) onChanges(muts); }
+}
+
 export function installCompat(screenEl) {
-  if (flexGapSupported()) return;
+  // (window.__gapShim: a test switch, to measure on a newer browser what the tablets do)
+  if (flexGapSupported() && !window.__gapShim) return;
   document.documentElement.classList.add('no-flex-gap');
   // Straight away, in the same breath as the change itself (not a frame later): the new
   // content is then laid out and drawn once, with its gaps, instead of twice.
-  new MutationObserver((muts) => {
+  onChanges = (muts) => {
     const targets = [];
     for (const m of muts) {
       if (m.type === 'attributes') {
@@ -189,6 +212,8 @@ export function installCompat(screenEl) {
       }
     }
     if (targets.length) shimFlexGap(targets);
-  }).observe(screenEl, { childList: true, subtree: true, attributes: true, attributeFilter: ['style', 'class', 'hidden'] });
+  };
+  observer = new MutationObserver(onChanges);
+  observer.observe(screenEl, { childList: true, subtree: true, attributes: true, attributeFilter: ['style', 'class', 'hidden'] });
   shimFlexGap([[screenEl, true]]);
 }

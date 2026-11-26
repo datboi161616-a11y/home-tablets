@@ -94,6 +94,10 @@ it is stored on the device after that.
   a real tablet plugged in over USB. `node tools/sim/try.mjs <screen> [steps.js]` opens
   one screen, taps what you tell it to, and gives back what the screen says, any
   errors and a picture (`--tom` for the flight deck, `--phone=<page>` for the phone page).
+  Speed without a tablet: `node tools/sim/pc-trace.mjs [--stub=seed.js] [screens]` times
+  every screen's script, layout and drawing (`THROTTLE=6` for the tablet's processor,
+  `GAPSHIM=1` for its old engine's spacing fix, `PROFILE=1` / `LAYOUTS=1` for what caused
+  them); `site-drive.mjs <site> paint-audit.mjs` lists what is costly to paint on each screen.
 - `tools/check.sh`: the checks to run before publishing.
 - `tools/sim/smoke.mjs`: opens every screen in a real browser with no internet behind it
   (the deploy runs it on the built site, in Chrome and in Chromium 81).

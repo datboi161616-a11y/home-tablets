@@ -341,7 +341,7 @@ export function menuCardHtml() {
   const esc = (s) => String(s).replace(/[&<>"']/g, (ch) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[ch]));
   return `<div class="lc-head"><span class="lc-name">Date night</span><span class="lc-side" style="color:#F0BFCB">${esc(c.lines[0])}</span></div>
     ${c.lines[1] ? `<div class="lc-sub" style="color:#F0BFCB">${esc(c.lines[1])}</div>` : ''}
-    <div style="position:absolute;left:50%;top:104px;margin-left:-105px">${jarSvg({ width: 210, slips: ideas().length, key: 'm', lite: true })}</div>
+    <div style="position:absolute;left:50%;top:104px;margin-left:-105px">${jarImg({ width: 210, slips: ideas().length, key: 'm', lite: true })}</div>
     <div class="lc-go" data-go="${esc(c.action.href)}" style="background:#F4A3B4;color:#3A1526;font-weight:700;font-size:19px">${esc(c.action.label)}</div>`;
 }
 /** Tell `cb` whenever the jar or its date nights change. Returns the way to stop. */
@@ -376,7 +376,7 @@ export function jarSvg({ width = 400, slips = 40, lid = true, key = 'j', lite = 
   const top = 450 - Math.floor((n - 1) / 8) * 19.5; // the lights sit among the slips, not in thin air
   const lights = LIGHTS.filter((p) => n && p[1] > top - 30);
   const glow = lights.map((p) => `<circle cx="${p[0]}" cy="${p[1]}" r="22" fill="url(#${key}Glow)"/><circle cx="${p[0]}" cy="${p[1]}" r="5" fill="#FFF1C4"/>`).join('');
-  return `<svg width="${width}" height="${Math.round(width * 1.2)}" viewBox="0 0 400 480" aria-hidden="true" style="display:block;overflow:visible">
+  return `<svg xmlns="http://www.w3.org/2000/svg" width="${width}" height="${Math.round(width * 1.2)}" viewBox="0 0 400 480" aria-hidden="true" style="display:block;overflow:visible">
     <defs>
       <clipPath id="${key}Clip"><path d="${JAR}"/></clipPath>
       <linearGradient id="${key}Glass" x1="0" x2="1"><stop offset="0" stop-color="#FFFFFF" stop-opacity=".22"/><stop offset=".25" stop-color="#FFFFFF" stop-opacity=".06"/><stop offset=".75" stop-color="#FFFFFF" stop-opacity=".03"/><stop offset="1" stop-color="#FFFFFF" stop-opacity=".18"/></linearGradient>
@@ -399,4 +399,21 @@ export function jarSvg({ width = 400, slips = 40, lid = true, key = 'j', lite = 
     <path d="M132 34H268M132 46H268M132 58H268" stroke="rgba(90,50,10,.35)" stroke-width="2"/>
     <rect x="126" y="22" width="148" height="10" rx="5" fill="rgba(255,255,255,.35)"/>` : ''}
   </svg>`;
+}
+
+// The same jar as a picture. Drawn inline it is ~250 shapes the browser lays out and paints
+// again on every visit (on the tablet's slow processor); as an <img> it is drawn once and
+// kept. Everything in it is inside its own 400 x 480 box, so it looks exactly the same.
+const jarPics = new Map();
+/** jarSvg() as an <img> (same options). */
+export function jarImg(opts = {}) {
+  const svg = jarSvg(opts);
+  let url = jarPics.get(svg);
+  if (!url) {
+    url = `data:image/svg+xml;charset=utf-8,${encodeURIComponent(svg)}`;
+    if (jarPics.size > 12) jarPics.clear();
+    jarPics.set(svg, url);
+  }
+  const w = opts.width || 400;
+  return `<img src="${url}" width="${w}" height="${Math.round(w * 1.2)}" alt="" aria-hidden="true" draggable="false" style="display:block">`;
 }

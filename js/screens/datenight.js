@@ -165,7 +165,7 @@ export function mount(el, ctx) {
     const n = jar.ideas().length;
     const f = jar.filter();
     const top = `<div class="dn-top">${topBar({ title: 'Date night', right: n ? '<button type="button" class="x-btn glass" data-all>All ideas</button><button type="button" class="dn-add" data-add>+ Add an idea</button>' : '' })}</div>`;
-    const art = `<div class="dn-glow"></div><button type="button" class="dn-jar" ${n ? 'data-pick' : 'data-add'} aria-label="${n ? 'Pick one' : 'Add an idea'}">${jar.jarSvg({ slips: n })}</button>`;
+    const art = `<div class="dn-glow"></div><button type="button" class="dn-jar" ${n ? 'data-pick' : 'data-add'} aria-label="${n ? 'Pick one' : 'Add an idea'}">${jar.jarImg({ slips: n })}</button>`;
     if (!n) {
       $('[data-view]').innerHTML = `${top}${art}<div class="dn-empty"><div class="x-serif dn-empty-line">The jar is empty.</div><button type="button" class="dn-add" data-add>+ Add an idea</button></div>`;
       return;
@@ -221,7 +221,7 @@ export function mount(el, ctx) {
     shown = idea;
     if (fresh) {
       $('[data-view]').innerHTML = `<div class="dn-top"><button type="button" class="x-btn glass" data-jar>← Jar</button></div>
-        <div class="dn-glow2"></div><div class="dn-open">${jar.jarSvg({ width: 300, slips: jar.ideas().length, lid: false })}</div>
+        <div class="dn-glow2"></div><div class="dn-open">${jar.jarImg({ width: 300, slips: jar.ideas().length, lid: false })}</div>
         <svg class="dn-lid" width="160" height="60" viewBox="0 0 160 60" aria-hidden="true"><ellipse cx="80" cy="48" rx="70" ry="9" fill="rgba(0,0,0,.35)"/><rect x="10" y="12" width="140" height="34" rx="10" fill="#C8904A"/><rect x="10" y="12" width="140" height="10" rx="5" fill="#F2CB7E"/><path d="M16 30H144" stroke="rgba(90,50,10,.35)" stroke-width="2"/></svg>
         <div data-card></div>`;
     }

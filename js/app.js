@@ -1,4 +1,4 @@
-import { installCompat } from './compat.js';
+import { installCompat, flushCompat } from './compat.js';
 import { profile } from './config.js';
 import * as placeholder from './screens/placeholder.js';
 import { welcomeDone } from './services/welcome-state.js';
@@ -12,7 +12,8 @@ import { noteTrouble, noteRecord } from './services/trouble.js';
 import { wiping } from './services/wipe.js';
 import { soften } from './services/soft-bg.js';
 
-function softBg(host) { try { soften(host); } catch (e) { /* the screen keeps its own background */ } }
+// (The gaps first: soften() measures the screen, and that layout should be the only one.)
+function softBg(host) { try { flushCompat(); soften(host); } catch (e) { /* the screen keeps its own background */ } }
 
 // Whatever goes wrong is written in the screen's own diary (Settings → Wi-Fi & about), so
 // whoever looks after it can see what happened and when.
