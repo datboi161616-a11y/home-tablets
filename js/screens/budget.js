@@ -445,8 +445,17 @@ export function mount(el, { args = [] } = {}) {
     // (Each list of chips and each day keeps where it was scrolled.)
     const keep = {};
     root.querySelectorAll('[data-chipbox],.bd-day,.bd-grid').forEach((b, n) => { keep[b.getAttribute('data-chipbox') || `${b.className}${n}`] = b.scrollTop; });
-    root.innerHTML = (view === 'week' && week ? weekHtml() : setupHtml())
-      + (sheet && sheet.type === 'swap' ? swapSheet() : sheet && sheet.type === 'days' ? daysSheet() : sheet && sheet.type === 'list' ? listSheet() : sheet && sheet.type === 'type' ? typeSheet() : '');
+    const pageHtml = view === 'week' && week ? weekHtml() : setupHtml();
+    const sheetHtml = sheet && sheet.type === 'swap' ? swapSheet() : sheet && sheet.type === 'days' ? daysSheet() : sheet && sheet.type === 'list' ? listSheet() : sheet && sheet.type === 'type' ? typeSheet() : '';
+    // Only a sheet opening, closing or changing (the page under it the same): the page with
+    // its plates and photos stays as it is, and only the sheet is taken away and put in again.
+    // (The photos' clips get a new name each time, which is no change.)
+    const pageWas = pageHtml.replace(/kph\d+/g, '');
+    if (root.__page === pageWas && root.__sheet) root.__sheet.forEach((n) => { if (n.parentNode) n.parentNode.removeChild(n); });
+    else { root.innerHTML = pageHtml; root.__page = pageWas; }
+    const before = root.children.length;
+    root.insertAdjacentHTML('beforeend', sheetHtml);
+    root.__sheet = [].slice.call(root.children, before);
     root.querySelectorAll('[data-chipbox],.bd-day,.bd-grid').forEach((b, n) => { const k = keep[b.getAttribute('data-chipbox') || `${b.className}${n}`]; if (k) b.scrollTop = k; });
     if (restoreScroll) { root.querySelectorAll('.bd-day').forEach((d, n) => { d.scrollTop = restoreScroll[n] || 0; }); restoreScroll = null; }
     if (sheet && sheet.type === 'type') openTyping();
