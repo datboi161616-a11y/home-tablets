@@ -11,7 +11,7 @@
 // (sharp stripes, repeating patterns, pictures) it leaves alone, so nothing looks
 // different: it only makes the same thing cheaper.
 
-const MIN_AREA = 1280 * 800 * 0.25; // only boxes at least a quarter of the screen
+const MIN_AREA = 1280 * 800 * 0.1;  // boxes at least a tenth of the screen (the menu's cards are)
 const W = 96;                        // the picture's width; its height follows the box
 const made = {};                     // css text + size -> data URL
 let made_n = 0;
@@ -191,10 +191,11 @@ export function soften(host) {
     const img = cs.backgroundImage;
     if (!img || img === 'none' || img.indexOf('gradient(') < 0 || img.indexOf('url(') >= 0) continue;
     if (/repeating-|conic-/.test(img)) continue;
-    // Only a background that covers the box once, as plain gradients do.
-    if (cs.backgroundRepeat.indexOf('no-repeat') < 0 && cs.backgroundSize !== 'auto' && cs.backgroundSize !== 'auto auto') continue;
-    if (cs.backgroundSize !== 'auto' && cs.backgroundSize !== 'auto auto' && cs.backgroundSize !== '100% 100%') continue;
-    if (cs.backgroundPosition !== '0% 0%') continue;
+    // Only a background that covers the box once, as plain gradients do (every layer of
+    // it: a box with two soft glows has two of each, "auto, auto").
+    const sizes = splitTop(cs.backgroundSize);
+    if (!sizes.every((z) => z === 'auto' || z === 'auto auto' || z === '100% 100%')) continue;
+    if (!splitTop(cs.backgroundPosition).every((z) => z === '0% 0%')) continue;
     const url = pictureFor(img, cs.backgroundColor, w, h);
     if (!url) continue;
     el.style.backgroundImage = `url(${url})`;

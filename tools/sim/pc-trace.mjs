@@ -112,7 +112,7 @@ for (const r of routes) {
     p.nodes.forEach((n) => { byId[n.id] = n; });
     const dt = {}; p.samples.forEach((id, i) => { dt[id] = (dt[id] || 0) + (p.timeDeltas[i] || 0) / 1000; });
     for (const id of Object.keys(dt)) { const f = byId[id].callFrame; const k = `${f.functionName || '(anon)'} ${String(f.url).split('/').pop()}:${f.lineNumber + 1}`; self[k] = (self[k] || 0) + dt[id]; }
-    console.log(Object.entries(self).filter(([k]) => !/^\((idle|program|garbage collector)\)/.test(k)).sort((a, b) => b[1] - a[1]).slice(0, 18).map(([k, v]) => `   ${pad(v.toFixed(1), 6)} ms  ${k}`).join('\n'));
+    console.log(Object.entries(self).filter(([k]) => !/^\((idle|program|garbage collector)\)/.test(k)).sort((a, b) => b[1] - a[1]).slice(0, 12).map(([k, v]) => `   ${pad(v.toFixed(1), 6)} ms  ${k}`).join('\n'));
   }
   const s = await trace(4000);
   const err = await ev('(window.__err || 0)');
