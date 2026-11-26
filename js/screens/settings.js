@@ -16,6 +16,7 @@ import { settings, profile } from '../config.js';
 import { wipeScreen } from '../services/wipe.js';
 import { trouble, troubleCount, clearTrouble, runningSince, storageUsed } from '../services/trouble.js';
 import { batteryNow } from '../services/notices.js';
+import { keyFields } from './keyboard.js';
 
 const N = () => window.TabletNative;
 const esc = (s) => String(s).replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
@@ -53,6 +54,7 @@ const zoneNow = () => { try { return String(N().timeZone()); } catch (e) { retur
 let netTimer = null;
 let sendTimer = null;
 let savedTimer = null;
+let stopKeys = null;
 
 // The either/or choices: what each one is now, and how to change it. A `set` that
 // answers false didn't take (the household's details couldn't be saved).
@@ -101,8 +103,8 @@ export function mount(el) {
     .st-label{font-size:20px;font-weight:600}
     .st-hint{font-size:16px;line-height:1.4;color:var(--ink-2)}
     .st-input{flex:1;min-width:0;font:inherit;font-size:22px;padding:13px 18px;border:2px solid var(--line);border-radius:14px;background:#fff;color:var(--ink);-webkit-user-select:text;user-select:text}
-    .st-input:focus{outline:none;border-color:${a}}
-    .st-input:disabled{background:var(--bg);color:var(--ink-2)}
+    .st-input.kb-on{outline:none;border-color:${a}}
+    .st-input[disabled]{background:var(--bg);color:var(--ink-2)}
     .st-btn{flex:none;min-height:52px;padding:0 24px;border:0;border-radius:999px;font-family:inherit;font-size:18px;font-weight:600;cursor:pointer;background:var(--ink);color:#fff;display:inline-flex;align-items:center;text-decoration:none}
     .st-btn.quiet{background:var(--bg);color:var(--ink)}
     .st-btn:disabled{opacity:.4}
@@ -136,6 +138,7 @@ export function mount(el) {
     .st-more{position:sticky;bottom:-30px;margin:-34px -36px -30px;padding:26px 0 14px;text-align:center;font-size:16px;font-weight:600;color:var(--ink-2);pointer-events:none;flex:none;
       background:linear-gradient(rgba(255,255,255,0),#fff 55%);transition:opacity .2s}
     .deck .st-more{background:linear-gradient(rgba(10,18,32,0),#0A1220 55%)}
+    .kb-typing .st-more{display:none}
     .st-list{display:flex;flex-direction:column;gap:8px;font-size:16px;line-height:1.35;color:var(--ink-2)}
     .st-list b{color:var(--ink);font-weight:600}
     /* A long list of what went wrong scrolls by itself instead of pushing everything down. */
@@ -168,6 +171,9 @@ export function mount(el) {
 
   const $ = (s) => el.querySelector(s);
   const pane = $('[data-pane]');
+  // Typing with the screen's own keys, never Android's keyboard.
+  if (stopKeys) stopKeys();
+  stopKeys = keyFields(el, { room: pane });
 
   function saved() {
     const s = $('[data-saved]');
@@ -182,13 +188,13 @@ export function mount(el) {
       const fam = getFamily();
       return (canSave && !householdName() ? '<div class="st-ask">No household name yet.</div>' : '')
         + row('Household name', `<div class="st-line">
-          <input data-name class="st-input" type="text" maxlength="40" autocomplete="off" autocapitalize="words" spellcheck="false"
-            placeholder="e.g. Alex &amp; Jordan" value="${esc(fam.familyName || '')}"${canSave ? '' : ' disabled'}>
+          <div data-name class="st-input" data-kbf="text" data-max="40" data-caps="words" data-gokey="Save"
+            data-ph="e.g. Alex &amp; Jordan"${canSave ? '' : ' disabled'}>${esc(fam.familyName || '')}</div>
           <button data-save-name class="st-btn" disabled>Save</button>
         </div>`)
         + row('Who lives here', `<div class="st-chips" data-people></div>
         <div class="st-line">
-          <input data-person class="st-input" type="text" maxlength="24" autocomplete="off" autocapitalize="words" spellcheck="false" placeholder="A name" style="max-width:360px"${canSave ? '' : ' disabled'}>
+          <div data-person class="st-input" data-kbf="text" data-max="24" data-caps="words" data-gokey="Add" data-keep data-ph="A name" style="max-width:360px"${canSave ? '' : ' disabled'}></div>
           <button data-add-person class="st-btn" disabled>Add</button>
         </div>`)
         + (() => {
@@ -257,7 +263,7 @@ export function mount(el) {
     weather: () => row('Temperature', `<div>${seg('units', [['fahrenheit', '°F'], ['celsius', '°C']], !canSave)}</div>`)
       + row('Town', `<div class="st-hint" data-place-now></div>
         <div class="st-line">
-          <input data-place class="st-input" type="text" maxlength="60" autocomplete="off" autocapitalize="words" spellcheck="false" placeholder="A town or ZIP code">
+          <div data-place class="st-input" data-kbf="text" data-max="60" data-caps="words" data-gokey="Find" data-ph="A town or ZIP code"></div>
           <button data-place-find class="st-btn" disabled>Find</button>
           <button data-place-auto class="st-btn quiet">Automatic</button>
         </div>
@@ -602,6 +608,7 @@ export function mount(el) {
     clearInterval(netTimer);
     el.querySelectorAll('[data-sec]').forEach((b) => b.classList.toggle('on', b.dataset.sec === id));
     pane.innerHTML = `${SECTION_HTML[id]()}<div class="st-more" data-more>▾ More below</div>`;
+    if (stopKeys) stopKeys.rewire();
     pane.scrollTop = 0;
     paint();
     if (SECTION_START[id]) SECTION_START[id]();
@@ -629,6 +636,7 @@ export function mount(el) {
 }
 
 export function unmount() {
+  if (stopKeys) { stopKeys(); stopKeys = null; }
   clearInterval(netTimer);
   clearTimeout(sendTimer);
   clearTimeout(savedTimer);

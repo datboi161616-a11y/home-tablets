@@ -11,10 +11,12 @@ import {
   onMessagesChanged, emojiOnly, loadDraft, saveDraft, MAXLEN,
 } from '../services/messages-data.js';
 import { esc, topBar, phoneCode, wirePhoneCodes, avatar } from './ui.js';
+import { keyFields } from './keyboard.js';
 
 let timer, root, onClick, featuredId, offNotes, stopCodes;
 let undo = null;          // { id, timer }: a note just deleted, still on its way out
 let toastTimer;
+let stopKeys = null;      // the screen's own keys in the note sheet (never Android's keyboard)
 let lookedAt = new Set(); // notes a person has had in front of them on this visit
 let order = [];           // the ids in the list, top to bottom (for swiping)
 let reveal = false;       // the next drawing scrolls the list to the note on show
@@ -66,7 +68,9 @@ const STYLE = `
     .mb-person.on { box-shadow:inset 0 0 0 4px ${RED}; }
     .mb-person span:last-child { overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
     .mb-field { width:100%; box-sizing:border-box; border:2px solid rgba(45,33,64,.18); border-radius:18px; padding:14px 18px; font:22px/1.35 Inter,sans-serif; color:${INK}; background:#fff; outline:none; user-select:text; -webkit-user-select:text; }
-    .mb-field:focus { border-color:${RED}; }
+    .mb-field.kb-on { border-color:${RED}; }
+    .mb-over.kb-typing { padding-top:12px; }
+    .mb-over.kb-typing .mb-h { display:none; }
     .mb-text { height:140px; resize:none; flex:1; min-width:0; }
     .mb-over .x-code-title { display:none; }
     .mb-toast { position:absolute; left:40px; bottom:32px; width:748px; box-sizing:border-box; display:none; align-items:center; justify-content:space-between; gap:18px; background:${INK}; color:#fff; border-radius:999px; min-height:56px; padding:0 6px 0 28px; font:600 19px Inter,sans-serif; z-index:9; box-shadow:0 8px 20px rgba(45,33,64,.25); }
@@ -246,6 +250,7 @@ function overlay(html, onTap) {
   return box;
 }
 function closeSheet() {
+  if (stopKeys) { stopKeys(); stopKeys = null; }
   if (stopCodes) stopCodes();
   stopCodes = null;
   const box = root && root.querySelector('[data-composer]');
@@ -268,7 +273,7 @@ function openPhone() {
 }
 
 // Write a note: who it's from, and the note. Post and Cancel sit right beside the note box,
-// so when the keyboard lifts the screen (app.js) they stay in view with it.
+// so they stay in view above the screen's own keys.
 function openComposer() {
   const named = !noMembers();
   const names = named ? members() : [];
@@ -284,15 +289,17 @@ function openComposer() {
       <div class="mb-h">New note</div>
       ${named
         ? `<div style="display:flex;gap:12px">${names.map((n) => `<button data-who="${esc(n)}" class="mb-person${n === current ? ' on' : ''}">${avatar(n, names.length > 3 ? 48 : 56)}<span>${esc(n)}</span></button>`).join('')}</div>`
-        : `<input data-c="name" class="mb-field" maxlength="30" placeholder="Your name" value="${esc(current)}" autocomplete="off">`}
+        : `<div data-c="name" class="mb-field" data-kbf="text" data-max="30" data-caps="words" data-gokey="Next" data-ph="Your name">${esc(current)}</div>`}
       <div style="display:flex;gap:14px">
-        <textarea data-c="text" class="mb-field mb-text" maxlength="${MAXLEN}" placeholder="Write a note…"></textarea>
+        <div data-c="text" class="mb-field mb-text" data-kbf="lines" data-max="${MAXLEN}" data-gokey="Post" data-ph="Write a note…"></div>
         <div style="display:flex;flex-direction:column;justify-content:space-between;gap:10px;flex:none;width:160px">
           <button data-c="post" class="x-btn lg mb-red" disabled>Post</button>
           <button data-c="cancel" class="mb-pill white">Cancel</button>
         </div>
       </div>
     </div>`, null);
+  if (stopKeys) stopKeys();
+  stopKeys = keyFields(box, { room: box, look: { go: RED, goInk: '#FFFFFF' } });
 
   const $ = (s) => box.querySelector(s);
   const text = $('[data-c="text"]');
@@ -304,7 +311,12 @@ function openComposer() {
   const sync = () => { postBtn.disabled = !text.value.trim(); };
   sync();
   text.addEventListener('input', () => { keep(); sync(); });
-  if (nameBox) nameBox.addEventListener('input', keep);
+  // The keys' big key: "Post" in the note, "Next" in the name (on to the note).
+  text.addEventListener('keydown', (e) => { if (e.key === 'Enter' && !postBtn.disabled) postBtn.click(); });
+  if (nameBox) {
+    nameBox.addEventListener('input', keep);
+    nameBox.addEventListener('keydown', (e) => { if (e.key === 'Enter') setTimeout(() => text.focus(), 0); });
+  }
 
   box.onclick = (e) => {
     const chip = e.target.closest('[data-who]');

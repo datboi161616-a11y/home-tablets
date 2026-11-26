@@ -9,6 +9,7 @@ import { profile } from '../config.js';
 import { startTutorial } from '../services/tutorial.js';
 import { welcomeDone } from '../services/welcome-state.js';
 import { getFamily, householdName, saveFamily, canSaveFamily } from '../services/family.js';
+import { keyFields } from './keyboard.js';
 
 const esc = (s) => String(s == null ? '' : s).replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 const MAX_PEOPLE = 12;
@@ -18,6 +19,8 @@ const MAX_PEOPLE = 12;
 // question it had reached, not the first one.
 let stage = null;        // null (not started) | 'name' | 'people'
 let draftPeople = null;  // the names on the second question, until they are saved
+let stopKeys = null;     // the screen's own keys (never Android's keyboard)
+const wireKeys = (el) => { if (stopKeys) stopKeys(); stopKeys = keyFields(el, { room: el.querySelector('.wl'), look: { panel: '#141829', go: '#FFFFFF', goInk: '#1D2430' } }); };
 
 /** "Alex & Jordan" -> ['Alex', 'Jordan']; "The Parkers" -> [] (nothing to guess from). */
 function guessPeople(name) {
@@ -49,7 +52,11 @@ const STYLE = `
   .wl-line{display:flex;align-items:center;gap:16px;margin-top:28px}
   .wl-input{flex:1;min-width:0;box-sizing:border-box;height:84px;padding:0 30px;border:0;border-radius:24px;background:#fff;color:#1D2430;
     font:500 34px Outfit,system-ui,sans-serif;-webkit-user-select:text;user-select:text;outline:none;box-shadow:0 0 0 0 rgba(255,255,255,0)}
-  .wl-input:focus{box-shadow:0 0 0 5px rgba(255,255,255,.30)}
+  .wl-input.kb-on{box-shadow:0 0 0 5px rgba(255,255,255,.30)}
+  .wl-input[data-kbf]{display:flex;align-items:center}
+  .wl.kb-typing{padding-top:28px}
+  .wl.kb-typing .wl-q{font-size:36px}
+  .wl.kb-typing .wl-row,.wl.kb-typing .wl-dots{display:none}
   .wl-input::placeholder{color:#9AA3B2;font-weight:300}
   .wl-input::-webkit-input-placeholder{color:#9AA3B2;font-weight:300}
   .wl-row{display:flex;align-items:center;gap:20px;margin-top:26px}
@@ -89,8 +96,8 @@ function showName(el, ctx) {
       <div class="x-eyebrow wl-eye">Welcome</div>
       <h1 class="wl-q">${have ? 'Is this what the screen should call your household?' : 'What should this screen call your household?'}</h1>
       <div class="wl-line">
-        <input data-name class="wl-input" type="text" maxlength="40" autocomplete="off" autocapitalize="words" spellcheck="false"
-          placeholder="Alex &amp; Jordan, or The Parkers" value="${esc(have)}" aria-label="Household name">
+        <div data-name class="wl-input" data-kbf="text" data-max="40" data-caps="words" data-gokey="Continue"
+          data-ph="Alex &amp; Jordan, or The Parkers" aria-label="Household name">${esc(have)}</div>
       </div>
       <div class="wl-row">
         <button data-go class="x-btn lg white">${have ? 'Yes, continue' : 'Continue'}</button>
@@ -100,6 +107,7 @@ function showName(el, ctx) {
     </div>
     <div class="wl-dots"><span class="on"></span><span></span><span></span></div>
   </div>`;
+  wireKeys(el);
   const box = el.querySelector('[data-name]');
   const go = () => {
     const name = box.value.replace(/\s+/g, ' ').trim();
@@ -130,8 +138,8 @@ function showPeople(el, ctx) {
       <h1 class="wl-q">And who lives here?</h1>
       <div class="wl-chips" data-chips></div>
       <div class="wl-line" style="margin-top:18px">
-        <input data-person class="wl-input" type="text" maxlength="24" autocomplete="off" autocapitalize="words" spellcheck="false"
-          placeholder="A name" aria-label="A name" style="max-width:520px">
+        <div data-person class="wl-input" data-kbf="text" data-max="24" data-caps="words" data-gokey="Add" data-keep
+          data-ph="A name" aria-label="A name" style="max-width:520px"></div>
         <button data-add class="x-btn lg frost" disabled>Add</button>
       </div>
       <div class="wl-row">
@@ -142,6 +150,7 @@ function showPeople(el, ctx) {
     </div>
     <div class="wl-dots"><span class="on"></span><span class="on"></span><span></span></div>
   </div>`;
+  wireKeys(el);
   const chips = el.querySelector('[data-chips]');
   const box = el.querySelector('[data-person]');
   const addBtn = el.querySelector('[data-add]');
@@ -186,4 +195,6 @@ function showPeople(el, ctx) {
   el.querySelector('[data-skip]').addEventListener('click', () => { box.blur(); beginTour(ctx); });
 }
 
-export function unmount() {}
+export function unmount() {
+  if (stopKeys) { stopKeys(); stopKeys = null; }
+}

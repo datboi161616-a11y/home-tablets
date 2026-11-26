@@ -11,6 +11,7 @@ import {
   onTimersChanged, minutesText, missed, whenText, agoText, room, MAX, pauseAll, resumeAll, clearFinished, undoable, undoRemove,
 } from '../services/timers.js';
 import { topBar, esc } from './ui.js';
+import { keyFields } from './keyboard.js';
 
 // Minutes. The everyday kitchen times, up to a long roast.
 const PRESETS = [1, 2, 3, 5, 10, 15, 20, 30, 45, 60, 90, 120];
@@ -23,6 +24,7 @@ const MAX_CUSTOM = 12 * 60; // a slow cooker's day
 const SEC_PX = 18;
 const SEC_CHIPS = [0, 15, 30, 45];
 let tickTimer, off, msgTimer, undoTimer, dropDrag;
+let stopKeys = null; // the screen's own keys for a timer's name (never Android's keyboard)
 
 // The owner's last "Other time", recent other times and typed names, kept on this screen only.
 const PREFS = 'kitchen.timers.prefs.v1';
@@ -177,6 +179,7 @@ export function mount(el) {
     /* starting a new one */
     .tm-sheet{position:absolute;left:0;top:0;width:100%;height:100%;z-index:20;background:rgba(8,9,11,.84);display:none;align-items:center;justify-content:center}
     .tm-sheet.open{display:flex}
+    .tm-sheet.kb-typing{align-items:flex-start;padding-top:20px}
     .tm-card{width:1060px;box-sizing:border-box;border-radius:32px;background:#262A31;box-shadow:inset 0 0 0 1.5px rgba(255,255,255,.2);padding:26px 30px 28px;display:flex;flex-direction:column;gap:14px}
     .tm-card .x-eyebrow{color:#FFC36B}
     .tm-names{display:flex;gap:10px;align-items:center}
@@ -184,7 +187,7 @@ export function mount(el) {
     .tm-n.on{background:#FFC36B;color:#1C1F24}
     .tm-type{min-height:60px;width:150px;min-width:0;flex:1;box-sizing:border-box;padding:0 20px;border-radius:999px;border:2px dashed rgba(255,255,255,.4);background:rgba(0,0,0,.25);color:#FFFFFF;font:600 19px Inter,sans-serif}
     .tm-type::placeholder{color:rgba(255,255,255,.6)}
-    .tm-type.on{border:2px solid #FFC36B}
+    .tm-type.on,.tm-type.kb-on{border:2px solid #FFC36B}
     .tm-presets{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:12px}
     .tm-p{min-height:84px;border-radius:22px;border:0;background:rgba(255,255,255,.12);color:#FFFFFF;font:500 30px Outfit,sans-serif;cursor:pointer;padding:0 4px}
     .tm-full .tm-p,.tm-full .tm-first,.tm-full [data-start-custom],.tm-full [data-recent-start]{opacity:.45}
@@ -338,7 +341,7 @@ export function mount(el) {
   const closeSheet = () => {
     sheet.classList.remove('open');
     const inp = $('[data-type-name]');
-    if (inp && document.activeElement === inp) inp.blur();
+    if (inp) inp.blur();
   };
 
   // ---- Names ----
@@ -347,10 +350,10 @@ export function mount(el) {
     const typed = typedNames();
     const list = typed.concat(NAMES.filter((n) => typed.indexOf(n) < 0)).slice(0, 6);
     const input = $('[data-type-name]');
-    const typing = input && document.activeElement === input;
+    const typing = input && input.classList.contains('kb-on');
     const html = list.map((n) => `<button class="tm-n${n === name ? ' on' : ''}" data-name="${esc(n)}">${esc(n)}</button>`).join('');
     // Keep the text box (and the keyboard) when only the chips change.
-    if (!input) $('[data-names]').innerHTML = `${html}<input class="tm-type" data-type-name maxlength="20" placeholder="✎ Type a name…" enterkeyhint="done" autocomplete="off">`;
+    if (!input) $('[data-names]').innerHTML = `${html}<div class="tm-type" data-type-name data-kbf="text" data-max="20" data-ph="✎ Type a name…"></div>`;
     else {
       Array.prototype.slice.call($('[data-names]').querySelectorAll('.tm-n')).forEach((b) => b.remove());
       input.insertAdjacentHTML('beforebegin', html);
@@ -360,6 +363,8 @@ export function mount(el) {
     inp.classList.toggle('on', !!name && list.indexOf(name) < 0);
   }
   showNames();
+  if (stopKeys) stopKeys();
+  stopKeys = keyFields(sheet, { room: sheet, look: { panel: '#16181C', go: '#FFC36B', goInk: '#23323A' } });
   const nameInput = $('[data-type-name]');
   nameInput.addEventListener('input', () => {
     name = nameInput.value.trim().slice(0, 20);
@@ -581,6 +586,7 @@ export function mount(el) {
 }
 
 export function unmount() {
+  if (stopKeys) { stopKeys(); stopKeys = null; }
   clearInterval(tickTimer); clearTimeout(msgTimer); clearTimeout(undoTimer);
   if (dropDrag) dropDrag(); dropDrag = null;
   if (off) off(); off = null;

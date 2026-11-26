@@ -8,9 +8,11 @@ import { savedRecipes, saveRecipe, deleteRecipe, parseStep, MEAL_NAMES, UNDO_KEY
 import { getRecipe, ingredientText, loadIndex } from '../services/recipe-data.js';
 import { esc } from './kitchen-ui.js';
 import { topBar, phoneCode, wirePhoneCodes } from './ui.js';
+import { keyFields } from './keyboard.js';
 
 let armTimer, draftTimer;
 let stopCodes = null; // stops the phone code being redrawn
+let stopKeys = null;
 
 // What was being typed, kept as you go: a restart or an update in the middle of typing
 // out a long recipe does not lose it. One draft per recipe (or 'new'), for a week.
@@ -46,13 +48,13 @@ export function mount(el, { args = [] } = {}) {
     .mr-fields{flex:1 1 0;min-height:0;overflow-y:auto;-webkit-overflow-scrolling:touch;display:flex;flex-direction:column;gap:10px}
     .mr-label{font:600 16px Inter,sans-serif;color:#FFD696;margin-bottom:6px}
     .mr-in{width:100%;min-height:56px;border-radius:16px;border:2px solid transparent;background:#FFF4EA;padding:0 18px;font:500 20px Inter,sans-serif;color:#2A160C;outline:none}
-    .mr-in:focus,.mr-ta:focus{border-color:#FF8A3D}
+    .mr-in.kb-on,.mr-ta.kb-on{border-color:#FF8A3D}
     .mr-ta{width:100%;flex-grow:1;min-height:0;resize:none;border-radius:18px;border:2px solid transparent;background:#FFF4EA;padding:14px 18px;font:500 20px/1.5 Inter,sans-serif;color:#2A160C;outline:none}
     .mr-in::placeholder,.mr-ta::placeholder{color:#9C8777}
     .mr-step{display:flex;align-items:center;gap:8px}
     .mr-pm{width:56px;height:56px;flex:none;border-radius:18px;border:0;background:rgba(255,244,234,.16);font:600 28px Outfit,sans-serif;color:#FFF4EA;cursor:pointer;padding:0}
     .mr-pm:active,.mr-meal:active{transform:scale(.95)}
-    .mr-num{width:92px;flex:none;text-align:center;padding:0 6px}
+    .mr-num{width:92px;flex:none;justify-content:center;padding:0 6px}
     .mr-unit{width:34px;font-size:16px;color:#E3CDBB;flex:none}
     .mr-meals{display:grid;grid-template-columns:1fr 1fr;gap:8px}
     .mr-meal{min-height:56px;border-radius:999px;border:0;background:rgba(255,244,234,.14);font:600 18px Inter,sans-serif;color:#FFF4EA;cursor:pointer}
@@ -62,6 +64,7 @@ export function mount(el, { args = [] } = {}) {
     .mr-in.bad,.mr-ta.bad{border-color:#FF6B5E;background:#FFE4DF}
     .mr-count{font-size:16px;font-weight:600;color:#E3CDBB;margin-left:auto}
     .mr-phone{grid-column:2 / 4}
+    .mr.kb-typing .mr-phone{display:none}
     .mr-phone .x-code{background:rgba(255,244,234,.09);box-shadow:inset 0 0 0 1.5px rgba(255,244,234,.1);border-radius:28px;padding:12px 22px 12px 14px}
   </style>
   <div class="mr">
@@ -69,7 +72,7 @@ export function mount(el, { args = [] } = {}) {
     <div class="mr-grid">
       <div class="mr-card" style="grid-row:1 / 3">
         <div class="mr-fields">
-          <div><div class="mr-label">Name</div><input data-f="title" class="mr-in" maxlength="60" value="${esc(r.title)}" placeholder="Sunday pot roast"></div>
+          <div><div class="mr-label">Name</div><div data-f="title" class="mr-in" data-kbf="text" data-max="60" data-ph="Sunday pot roast">${esc(r.title)}</div></div>
           <div><div class="mr-label">Meal</div>
             <div class="mr-meals">${Object.keys(MEAL_NAMES).map((m) => `<button class="mr-meal${m === meal ? ' on' : ''}" data-meal="${m}">${MEAL_NAMES[m]}</button>`).join('')}</div></div>
           <div style="display:flex;flex-direction:column;gap:8px">
@@ -77,12 +80,12 @@ export function mount(el, { args = [] } = {}) {
               <div class="mr-step">
                 <div class="mr-label" style="margin:0;flex:1">${label}</div>
                 <button class="mr-pm" data-pm="${f}" data-d="-1" aria-label="Less">−</button>
-                <input data-f="${f}" class="mr-in mr-num" type="number" inputmode="numeric" min="${lo}" max="${hi}" value="${v}">
+                <div data-f="${f}" class="mr-in mr-num" data-kbf="number" data-max="${String(hi).length}">${v}</div>
                 <span class="mr-unit">${unit}</span>
                 <button class="mr-pm" data-pm="${f}" data-d="1" aria-label="More">+</button>
               </div>`).join('')}
           </div>
-          <div><div class="mr-label">Description (optional)</div><input data-f="blurb" class="mr-in" maxlength="90" value="${esc(r.blurb || '')}" placeholder="A favorite for a slow Sunday"></div>
+          <div><div class="mr-label">Description (optional)</div><div data-f="blurb" class="mr-in" data-kbf="text" data-max="90" data-ph="A favorite for a slow Sunday">${esc(r.blurb || '')}</div></div>
         </div>
         <div data-msg class="mr-msg">${missing ? 'That recipe was deleted. You can type it in again as a new one.'
           : draft ? 'Your unsaved typing is back.' : ''}</div>
@@ -94,16 +97,19 @@ export function mount(el, { args = [] } = {}) {
       ${existing || copyOf ? '<div class="mr-phone" style="display:none"></div>' : `<div class="mr-phone">${phoneCode({ tab: 'recipe', size: 76, title: 'Or send it from your phone', sub: ' ' })}</div>`}
       <div class="mr-card">
         <div style="display:flex;align-items:baseline"><div class="mr-label" style="margin:0">Ingredients</div><div data-count="ingredients" class="mr-count"></div></div>
-        <textarea data-f="ingredients" class="mr-ta" placeholder="For example:&#10;2 lb chuck roast&#10;1 onion, sliced&#10;3 carrots&#10;2 cups beef broth">${esc((r.ingredients || []).join('\n'))}</textarea>
+        <div data-f="ingredients" class="mr-ta" data-kbf="lines" data-max="3000" data-ph="For example:&#10;2 lb chuck roast&#10;1 onion, sliced&#10;3 carrots&#10;2 cups beef broth">${esc((r.ingredients || []).join('\n'))}</div>
       </div>
       <div class="mr-card">
         <div style="display:flex;align-items:baseline"><div class="mr-label" style="margin:0">Steps</div><div data-count="steps" class="mr-count"></div></div>
-        <textarea data-f="steps" class="mr-ta" placeholder="For example:&#10;Season the roast and brown it on all sides.&#10;Add the onion, carrots and broth.&#10;Cook on low for 8 hours.">${esc((r.steps || []).join('\n'))}</textarea>
+        <div data-f="steps" class="mr-ta" data-kbf="lines" data-max="5000" data-ph="For example:&#10;Season the roast and brown it on all sides.&#10;Add the onion, carrots and broth.&#10;Cook on low for 8 hours.">${esc((r.steps || []).join('\n'))}</div>
       </div>
     </div>
   </div>`;
   if (stopCodes) stopCodes();
   stopCodes = wirePhoneCodes(el);
+  // Typing with the screen's own keys (the boxes are plain boxes: Android's keyboard never comes up).
+  if (stopKeys) stopKeys();
+  stopKeys = keyFields(el, { room: el.querySelector('.mr'), look: { panel: '#2C1B14', go: '#FF8A3D', goInk: '#2A160C' } });
 
   const $ = (s) => el.querySelector(s);
   const val = (f) => $(`[data-f="${f}"]`).value;
@@ -114,7 +120,7 @@ export function mount(el, { args = [] } = {}) {
   let restored = !!draft; // typing brought back from last time counts as not saved yet
   const dirty = () => !saving && (restored || snapshot() !== start);
 
-  // Numbers: −/+ instead of the keyboard (the box can still be typed in). Minutes go up
+  // Numbers: −/+ (the box can still be typed in). Minutes go up
   // in fives, then quarter hours past two hours, so a 4-hour roast is a handful of taps.
   const LIMITS = { serves: [1, 24], prep: [0, 1440], cook: [0, 1440] };
   const clampNum = (f, v) => Math.max(LIMITS[f][0], Math.min(LIMITS[f][1], Math.round(+v || 0)));
@@ -167,7 +173,7 @@ export function mount(el, { args = [] } = {}) {
   counts();
   el.addEventListener('input', (e) => {
     if (e.target.classList.contains('bad')) { e.target.classList.remove('bad'); msg(''); }
-    if (e.target.matches('textarea')) counts();
+    if (e.target.getAttribute('data-kbf') === 'lines') counts();
     if (e.target.dataset.f === 'title') { const sb = $('[data-save]'); delete sb.dataset.sure; sb.textContent = 'Save recipe'; }
     keepDraft();
   });
@@ -273,4 +279,5 @@ export function unmount() {
   clearTimeout(armTimer);
   clearTimeout(draftTimer);
   if (stopCodes) { stopCodes(); stopCodes = null; }
+  if (stopKeys) { stopKeys(); stopKeys = null; }
 }

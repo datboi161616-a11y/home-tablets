@@ -1,7 +1,8 @@
 // The screen's own keyboard (never Android's: it kept popping open and shut). A box on the
 // screen is a plain button; tapping it slides this panel up over the bottom of the screen.
 // Nothing ever takes the focus: there is no <input>, a key only changes the text.
-// Used by the Shopping list ("Add something") and Recipes (search).
+// Used by the Shopping list ("Add something") and Recipes (search), and through keyFields()
+// (below) by every other box that takes typing: the recipe form, setup, Settings, notes.
 //
 //   const kb = openKeyboard(host, {
 //     go: 'Add',                         // the big key's word
@@ -9,7 +10,9 @@
 //     onChange: (text) => …,             // after each key (draw the box's text)
 //     onGo: (pick, kb) => …,             // the big key (pick = '') or a suggestion (pick = its words)
 //     onClose: () => …,                  // ✕ Close, or kb.close()
-//     caps: 'auto',                      // 'auto': a capital first letter · 'none' · 'lock': all capitals
+//     caps: 'auto',                      // 'auto': a capital first letter · 'words': each word · 'none' · 'lock'
+//     enter: false,                      // true: a ↵ key for a new line (a list, one thing a line)
+//     page: '',                          // 'n': start on the 123 page (a number)
 //   });
 //   kb.text / kb.set('') / kb.refresh() / kb.close()
 //
@@ -105,6 +108,7 @@ export function openKeyboard(host, opts = {}) {
     <div class="kb-r">
       <button type="button" class="kb-k fn w2" data-knum><span class="abc">123</span><span class="num sym">ABC</span></button>
       <button type="button" class="kb-k sp" data-k=" ">space</button>
+      ${o.enter ? '<button type="button" class="kb-k fn w15" data-kenter style="font-size:21px">New line</button>' : ''}
       <button type="button" class="kb-k go" data-kgo>${esc(o.go)}</button>
     </div>`;
   // The page: '' letters, 'n' 123, 's' #+=.
@@ -127,7 +131,7 @@ export function openKeyboard(host, opts = {}) {
       if (!kb.open) return;
       // An empty box starts with a capital (again after it is cleared).
       const now = !kb.text.trim();
-      if (caps === 'auto' && now && !empty && !shift) shift = 1;
+      if ((caps === 'auto' || caps === 'words') && now && !empty && !shift) shift = 1;
       empty = now;
       panel.classList.toggle('up', shift > 0);
       shiftKey.classList.toggle('on', shift > 0);
@@ -161,16 +165,22 @@ export function openKeyboard(host, opts = {}) {
     const sug = t.getAttribute('data-s');
     if (t.dataset.k != null) {
       let c = t.dataset.k;
-      if (c === ' ' && (!kb.text || / $/.test(kb.text))) return;
+      if (c === ' ' && (!kb.text || /[ \n]$/.test(kb.text))) return;
       if (shift && /[a-z]/.test(c)) c = c.toUpperCase();
       if (c !== ' ' && shift === 1) shift = 0;
       if (kb.text.length < o.max) kb.text += c;
+      if (c === ' ' && caps === 'words' && !shift) shift = 1; // each word a capital
       if (c === ' ' && num) setNum(''); // "2 x milk": back to letters
     } else if (t.hasAttribute('data-kshift')) {
       const quick = shift === 1 && Date.now() - shiftAt < 500;
       shift = quick ? 2 : shift ? 0 : 1;
       shiftAt = Date.now();
     } else if (t.hasAttribute('data-kback')) kb.text = kb.text.slice(0, -1);
+    else if (t.hasAttribute('data-kenter')) {
+      // A new line (never two empty ones running), which starts with a capital.
+      if (kb.text && !/\n\s*$/.test(kb.text) && kb.text.length < o.max) { kb.text = kb.text.replace(/ +$/, '') + '\n'; if (caps !== 'none' && !shift) shift = 1; }
+      if (num) setNum('');
+    }
     else if (t.hasAttribute('data-knum')) { setNum(num ? '' : 'n'); return; }
     else if (t.hasAttribute('data-ksym')) { setNum(num === 's' ? 'n' : 's'); return; }
     else if (t.hasAttribute('data-kgo') || sug) {
@@ -180,9 +190,117 @@ export function openKeyboard(host, opts = {}) {
     } else if (t.hasAttribute('data-kclose')) { kb.close(); return; }
     kb.refresh();
   });
+  if (o.page) setNum(o.page);
   host.appendChild(panel);
   host.__kb = kb;
   kb.refresh();
   chipMoves(true, panel);
   return kb;
+}
+
+/**
+ * Boxes that type with these keys instead of Android's keyboard, for screens written with
+ * <input>s: give an element (a <div>) `data-kbf` and it behaves enough like an input for the
+ * screen's own code to stay as it was: `.value` (get/set), `.disabled`, `.focus()` opens the
+ * keys, `.blur()` puts them away, and it fires 'input' after each key, 'change' when the keys
+ * go, and a keydown "Enter" for the big key (which then closes the keys, unless data-keep).
+ *   data-kbf="text" | "lines" (a ↵ key; one thing a line) | "number" (digits only)
+ *   data-max (default 60), data-ph (the grey words when empty), data-caps, data-gokey (the big key's word)
+ * The element's own text is its first value. Tapping anywhere else puts the keys away.
+ *   room: given space under it (padding) and the class kb-typing while the keys are up, so
+ *     the box stays in sight (the screen may hide what it can spare then).
+ *   look: the keyboard's colours (keyboardStyle). Returns stop() for unmount().
+ */
+export function keyFields(host, { room = null, look = {} } = {}) {
+  if (!host.querySelector('style[data-kb-style]')) {
+    const st = document.createElement('style');
+    st.setAttribute('data-kb-style', '');
+    st.textContent = `${keyboardStyle(look)}
+    [data-kbf]{cursor:text;white-space:pre-wrap;word-wrap:break-word;overflow:hidden;-webkit-user-select:none;user-select:none}
+    [data-kbf=text],[data-kbf=number]{display:flex;align-items:center;white-space:nowrap}
+    [data-kbf=lines]{overflow-y:auto}
+    [data-kbf]:empty::before{content:attr(data-ph);opacity:.55;font-weight:400}
+    [data-kbf].kb-on::after{content:'';display:inline-block;width:2px;height:1.1em;margin-left:1px;vertical-align:-.15em;background:currentColor;flex:none}
+    [data-kbf][disabled]{opacity:.5;cursor:default}`;
+    host.appendChild(st);
+  }
+  let typing = null; // the box the keys are typing into
+  let roomWas = null;
+  const draw = (f) => {
+    f.textContent = f.__v;
+    if (f.getAttribute('data-kbf') === 'lines') f.scrollTop = f.scrollHeight;
+  };
+  const fire = (f, type) => f.dispatchEvent(new Event(type, { bubbles: true }));
+  const shut = () => { if (host.__kb) host.__kb.close(); };
+  function open(f) {
+    if (f.hasAttribute('disabled')) return;
+    if (typing === f && host.__kb) return;
+    shut();
+    const kind = f.getAttribute('data-kbf');
+    typing = f;
+    f.classList.add('kb-on');
+    openKeyboard(host, {
+      text: f.__v,
+      max: +f.getAttribute('data-max') || (kind === 'lines' ? 2000 : 60),
+      go: f.getAttribute('data-gokey') || 'Done',
+      caps: f.getAttribute('data-caps') || (kind === 'number' ? 'none' : 'auto'),
+      enter: kind === 'lines',
+      page: kind === 'number' ? 'n' : '',
+      onChange: (t) => {
+        const v = kind === 'number' ? t.replace(/\D/g, '') : t;
+        if (v !== t && host.__kb) host.__kb.text = v;
+        if (v === f.__v) return;
+        f.__v = v;
+        draw(f);
+        fire(f, 'input');
+      },
+      onGo: (pick, kb) => {
+        f.dispatchEvent(new KeyboardEvent('keydown', { key: 'Enter', bubbles: true }));
+        if (!f.isConnected || !f.hasAttribute('data-keep') || f.hasAttribute('disabled')) kb.close();
+        else kb.set(f.__v); // (the screen took the words: an empty box again)
+      },
+      onClose: () => {
+        f.classList.remove('kb-on');
+        if (room && roomWas != null) { room.style.paddingBottom = roomWas; roomWas = null; room.classList.remove('kb-typing'); }
+        if (typing === f) typing = null;
+        if (f.isConnected) fire(f, 'change');
+      },
+    });
+    // Keep the box in sight above the keys.
+    const panel = host.__kb && host.__kb.el;
+    if (!panel) return;
+    if (room && roomWas == null) { roomWas = room.style.paddingBottom; room.style.paddingBottom = `${panel.offsetHeight + 12}px`; room.classList.add('kb-typing'); }
+    const over = f.getBoundingClientRect().bottom - panel.getBoundingClientRect().top + 12;
+    if (over > 0) {
+      for (let p = f.parentElement; p && p !== host; p = p.parentElement) {
+        const oy = getComputedStyle(p).overflowY;
+        if ((oy === 'auto' || oy === 'scroll') && p.scrollHeight > p.clientHeight) { p.scrollTop += over; break; }
+      }
+    }
+  }
+  function wire(f) {
+    if (f.__kbf) return;
+    f.__kbf = true;
+    f.__v = f.textContent;
+    Object.defineProperty(f, 'value', { configurable: true, get: () => f.__v, set: (v) => { f.__v = String(v == null ? '' : v); draw(f); if (typing === f && host.__kb) host.__kb.text = f.__v; } });
+    Object.defineProperty(f, 'disabled', { configurable: true, get: () => f.hasAttribute('disabled'), set: (d) => { if (d) { f.setAttribute('disabled', ''); if (typing === f) shut(); } else f.removeAttribute('disabled'); } });
+    f.focus = () => open(f);
+    f.blur = () => { if (typing === f) shut(); };
+    f.setAttribute('role', 'textbox');
+    draw(f);
+  }
+  const wireAll = () => host.querySelectorAll('[data-kbf]').forEach(wire);
+  wireAll();
+  // Boxes drawn later (a sheet) are wired when found: on the first tap, or by rewire().
+  const onTap = (e) => {
+    const t = e.target instanceof Element ? e.target : null;
+    if (!t) return;
+    const f = t.closest('[data-kbf]');
+    if (f && host.contains(f)) { wire(f); open(f); return; }
+    if (host.__kb && !t.closest('[data-kb]')) shut();
+  };
+  host.addEventListener('click', onTap, true);
+  const stop = () => { host.removeEventListener('click', onTap, true); shut(); };
+  stop.rewire = wireAll;
+  return stop;
 }
