@@ -368,7 +368,7 @@ export function mount(el) {
     shownDay = planDays(0)[0].key;
     const scrolls = [].map.call(root.querySelectorAll('.wp-meals'), (m) => m.scrollTop); // keep each day's place
     const what = moving && (moving.kind === 'meal' ? moving.title : `${dayWords(moving.key)}’s meals`);
-    root.innerHTML = `
+    const weekHtml = `
       ${topBar({
         title: 'Week plan',
         right: `<div class="wp-weeks"><button data-week="0" class="${week ? '' : 'on'}" aria-pressed="${week ? 'false' : 'true'}">This week</button><button data-week="1" class="${week ? 'on' : ''}" aria-pressed="${week ? 'true' : 'false'}">Next week</button></div>
@@ -381,9 +381,20 @@ export function mount(el) {
       </div>
       ${moving ? `<div class="wp-toast"><span>Move ${esc(what)} to…</span><button class="x-btn white sm" data-cancelmove>Cancel</button></div>`
         : toast ? `<div class="wp-toast${chipShowsOn('plan') ? ' lift' : ''}${toast.snap || toast.list != null ? '' : ' plain'}"><span>${toast.sub ? `<b>${esc(toast.text)}</b><small style="display:block;font-size:16px;color:${MIST};overflow:hidden;text-overflow:ellipsis">${esc(toast.sub)}</small>` : esc(toast.text)}</span>${toast.snap || toast.list != null ? '<button class="x-btn white sm" data-undo>Undo</button>' : ''}${toast.sub ? '<a href="#/shopping" class="x-btn amber sm">See the list</a>' : ''}</div>`
-          : ''}
-      ${sheetHtml(ix, plan)}`;
-    if (sameDay) root.querySelectorAll('.wp-meals').forEach((m, i) => { m.scrollTop = scrolls[i] || 0; });
+          : ''}`;
+    // Only a sheet opening or closing (the week itself the same): the seven days with their
+    // plates stay as they are, and only the sheet is put in or taken away. (The plates' photo
+    // clips get a new name each time, which is no change.)
+    const weekWas = weekHtml.replace(/kph\d+/g, '');
+    if (sameDay && root.__week === weekWas && root.querySelector('.wp-days')) {
+      const bg = root.querySelector('[data-bg]');
+      if (bg) bg.remove();
+      root.insertAdjacentHTML('beforeend', sheetHtml(ix, plan));
+    } else {
+      root.innerHTML = weekHtml + sheetHtml(ix, plan);
+      if (sameDay) root.querySelectorAll('.wp-meals').forEach((m, i) => { m.scrollTop = scrolls[i] || 0; });
+    }
+    root.__week = weekWas;
     fillCount();
   }
   // The number on the "Shopping list" button: things still to buy.

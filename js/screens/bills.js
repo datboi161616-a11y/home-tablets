@@ -390,7 +390,14 @@ export function mount(el, ctx) {
     const s = sheet;
     const head = `<div class="bl-sh-top"><button data-cancel>${s.cal ? 'Back' : 'Cancel'}</button><div>${s.cal ? 'Due' : s.id ? 'Bill' : 'New bill'}</div>
       <button class="go" data-save${s.name.trim() ? '' : ' disabled'}${s.cal ? ' style="visibility:hidden"' : ''}>${s.id ? 'Save' : 'Add'}</button></div>`;
-    if (s.cal) { sheetEl.innerHTML = `<div class="bl-shade"><div class="bl-sheet">${head}${calendar()}</div></div>`; return; }
+    // Already open: only what is in the sheet changes (a digit, a chip). The dark shade over
+    // the whole screen stays, so the tablet doesn't paint all of it again for every tap.
+    const put = (inner) => {
+      const box = sheetEl.querySelector('.bl-sheet');
+      if (box) box.innerHTML = inner;
+      else sheetEl.innerHTML = `<div class="bl-shade"><div class="bl-sheet">${inner}</div></div>`;
+    };
+    if (s.cal) { put(`${head}${calendar()}`); return; }
     const have = B.load().bills.map((b) => b.name.toLowerCase());
     const roomy = !s.open || s.open === 'home' || (s.open === 'who' && list.length <= 2);
     const chips = !s.id && roomy ? COMMON.filter((n) => have.indexOf(n.toLowerCase()) < 0).slice(0, 5) : [];
@@ -411,12 +418,11 @@ export function mount(el, ctx) {
         <button class="bl-chip${!s.who || !(s.who === 'split' || colorOf(s.who, list)) ? ' on' : ''}" data-who="">Not set</button></div>`) : '',
       row(lastKey, 'Show on Home', (HOMES.find((h) => h[0] === s.home) || HOMES[0])[1], () => `<div class="bl-opts">${HOMES.map((h) => `<button class="bl-chip${h[0] === s.home ? ' on' : ''}" data-home="${h[0]}">${h[1]}</button>`).join('')}</div>`, true),
     ].join('');
-    sheetEl.innerHTML = `<div class="bl-shade"><div class="bl-sheet">${head}
+    put(`${head}
       <div class="bl-namebox"><button class="bl-name${kb ? ' typing' : ''}" data-name>${s.name.trim() ? B.billIcon(B.iconFor(s.name), 52) : ''}<span data-name-text${s.name ? '' : ' class="ph"'}>${esc(s.name || 'Name')}</span></button>
         ${chips.length ? `<div class="bl-chips">${chips.map((c) => `<button class="bl-chip${c === s.name ? ' on' : ''}" data-chip="${esc(c)}">${c === s.name ? TICK(22, '#FBF4E4', 3) : ''}${esc(c)}</button>`).join('')}</div>` : ''}</div>
       <div class="bl-rows">${rows}</div>
-      ${s.id && !s.open ? `<div class="bl-foot"><button data-remove>Remove</button>${s.last ? '<button data-unpay>Not paid</button>' : ''}${s.due ? '<button class="pay" data-paynow>Mark paid</button>' : ''}</div>` : ''}
-    </div></div>`;
+      ${s.id && !s.open ? `<div class="bl-foot"><button data-remove>Remove</button>${s.last ? '<button data-unpay>Not paid</button>' : ''}${s.due ? '<button class="pay" data-paynow>Mark paid</button>' : ''}</div>` : ''}`);
   }
   function typeName() {
     if (kb) return;

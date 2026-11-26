@@ -410,7 +410,7 @@ export function mount(el) {
           ${aisles(list, bud ? bud.prices : {}).map((s) => section(s.id, s.name, s.items, byGot(s.items).map(row).join(''))).join('')}
         </div>
         ${list.missing ? `<div style="font-size:17px;margin-top:14px;color:${MIST}">${list.missing} planned recipe${list.missing > 1 ? 's' : ''} couldn’t load.</div>` : ''}`}
-        ${toast ? '<div style="height:96px"></div>' : ''}`;
+        ${toast ? '<div data-toastroom style="height:96px"></div>' : ''}`;
       body.scrollTop = scrollTop;
       $('[data-toast]').innerHTML = toast ? `<div class="sh-toast"><span>${esc(toast.text)}</span><button class="x-btn ink sm" data-undo>Undo</button></div>` : '';
       if (kb) { words = buildPool(list); kb.refresh(); }
@@ -433,12 +433,19 @@ export function mount(el) {
   function offered(text, snap) {
     toast = { text, snap };
     clearTimeout(toastTimer);
-    toastTimer = setTimeout(() => { toast = null; if (el.isConnected) render(); }, 8000);
+    // (Running out only takes the toast and its room away, not the whole list made again.)
+    toastTimer = setTimeout(() => {
+      toast = null;
+      if (!el.isConnected) return;
+      $('[data-toast]').innerHTML = '';
+      const room = body.querySelector('[data-toastroom]');
+      if (room) room.remove();
+    }, 8000);
   }
   function say(text, ms = 5000, phone = false) {
     note = text ? { text, phone } : '';
     clearTimeout(noteTimer);
-    if (text) noteTimer = setTimeout(() => { note = ''; if (el.isConnected) render(); }, ms);
+    if (text) noteTimer = setTimeout(() => { note = ''; if (el.isConnected) $('[data-note]').innerHTML = ''; }, ms);
   }
 
   root.addEventListener('click', async (e) => {
@@ -471,7 +478,11 @@ export function mount(el) {
         return;
       }
       clearArmed = true; // a stray tap shouldn't wipe the ticks
-      clearTimer = setTimeout(() => { clearArmed = false; if (el.isConnected) render(); }, 4000);
+      clearTimer = setTimeout(() => {
+        clearArmed = false;
+        const b = el.isConnected && $('[data-clear]');
+        if (b) { b.className = 'x-btn sm frost'; b.textContent = 'Done shopping'; }
+      }, 4000);
       render();
     } else if (t.matches('[data-kbopen]')) kbOpen();
     else if (t.matches('[data-kbadd]')) {

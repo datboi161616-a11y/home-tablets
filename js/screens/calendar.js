@@ -578,7 +578,12 @@ function render(el) {
   const big = month ? first.toLocaleDateString('en-US', { month: 'long' }) : weekTitle(days);
   const small = month ? `${first.getFullYear()}` : weekRange(days);
 
-  el.innerHTML = `${STYLE}
+  // The stylesheet is put in once; each arrow, swipe or view change replaces only the screen
+  // after it (a new stylesheet makes the old engine work out every style on the page again).
+  let sheetTag = el.firstElementChild;
+  if (!(sheetTag && sheetTag.__kc)) { el.innerHTML = STYLE; sheetTag = el.firstElementChild; sheetTag.__kc = 1; }
+  while (sheetTag.nextSibling) el.removeChild(sheetTag.nextSibling);
+  sheetTag.insertAdjacentHTML('afterend', `
   <div class="kc">
     ${seasonLayer(season(), { quiet: true })}
     <div class="kc-title">
@@ -591,7 +596,7 @@ function render(el) {
     </div>
     <div data-detail class="kc-over"></div>
     ${undo ? `<div class="kc-undo" data-undo-bar><span>${esc(undo.text)}</span><button data-undo class="x-btn sm ink">Undo</button></div>` : ''}
-  </div>`;
+  </div>`);
 }
 
 function draw(el) {

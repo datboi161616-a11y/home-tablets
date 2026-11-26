@@ -5,6 +5,8 @@
 //   #/photoweek/play[/2026]  "Our 2026": the title card, and the picks played one by one
 // The data and the week arithmetic are in services/photoweek-data.js.
 import { esc, topBar, avatar } from './ui.js';
+import { soften } from '../services/soft-bg.js';
+import { flushCompat } from '../compat.js';
 import { backHref } from '../services/nav.js';
 import { householdName } from '../services/family.js';
 import { thumbnail, onPhotosChanged } from '../services/tablet-photos.js';
@@ -216,6 +218,8 @@ function playView(el, year) {
       ${barHtml(slots)}
       <button class="x-btn glass round pw-x" data-stop aria-label="Close">✕</button>`;
     root.appendChild(show);
+    // (Its full-screen shade lies over every fade: a tiny picture, not a gradient drawn each time.)
+    try { flushCompat(); soften(show); } catch (e) { /* it keeps its own background */ }
     const layers = show.querySelectorAll('.pw-layer');
     const segs = show.querySelectorAll('.pw-segs i');
     const month = show.querySelector('.pw-cap b');

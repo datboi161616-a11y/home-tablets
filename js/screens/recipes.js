@@ -126,12 +126,19 @@ function plannedLabels() {
 }
 
 // Sent here by the Week plan's "+ Add": the day and meal the next recipe picked is for.
+// (Asked by every card: the 14 days' names are worked out once per day and choice, not per card.)
+let pendingWas = null;
+let pendingIs = null;
 function pendingAdd() {
   let raw = '';
   try { raw = String(sessionStorage.getItem(ADD_DAY_KEY) || ''); } catch (e) { raw = ''; }
+  const was = `${raw}@${new Date().toDateString()}`;
+  if (was === pendingWas) return pendingIs;
   const [key, meal] = raw.split('|');
   const day = key && planDays(0).concat(planDays(1)).find((d) => d.key === key);
-  return day ? { key, meal: meal || 'dinner', day } : null;
+  pendingWas = was;
+  pendingIs = day ? { key, meal: meal || 'dinner', day } : null;
+  return pendingIs;
 }
 const mealWord = (m) => (MEALS.find((x) => x[0] === m) || ['', 'Dinner'])[1].toLowerCase();
 
@@ -341,6 +348,16 @@ export function mount(el, { args = [] } = {}) {
     const box = webBox();
     if (!box || !web) return;
     const show = web.list.slice(0, web.shown);
+    // More cards after the same ones (scrolling on, a slower site answering): only the new
+    // ones are added, not every card (up to 240, each with its plate) made again mid-scroll.
+    const had = box.__ids || [];
+    const cards = box.firstElementChild;
+    if (cards && cards.classList.contains('rb-cards') && show.length > had.length && had.every((id, i) => show[i].id === id)) {
+      cards.insertAdjacentHTML('beforeend', show.slice(had.length).map(cardNow).join(''));
+      box.__ids = show.map((r) => r.id);
+      return;
+    }
+    box.__ids = show.length ? show.map((r) => r.id) : [];
     if (show.length) box.innerHTML = `<div class="rb-cards">${show.map(cardNow).join('')}</div>`;
     else if (!web.done) box.innerHTML = web.quiet ? '' : '<div class="rb-wait">Loading…</div>';
     else box.innerHTML = web.failed ? offlineHtml() : web.quiet ? '' : '<div class="rb-wait">Nothing here yet.</div>';

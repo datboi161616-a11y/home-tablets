@@ -434,7 +434,16 @@ export function startTimers() {
       } else if (done.length) {
         html = `<span>✓</span><span>${esc(done[0].named ? done[0].label : 'Timer')} finished at ${esc(whenText(done[0].end))}</span>${more(count - 1)}`;
       } else html = '';
-      if (chip.__html !== html) {
+      // A countdown changes only its digits each second: those alone are written, not the
+      // whole chip made again (on the tablets' old engine that also reruns the spacing fix).
+      const BIG = /(<span style="font-size:28px;font-weight:700">)([^<]*)/;
+      const digits = BIG.exec(html);
+      const sameShape = digits && chip.__html && html.replace(BIG, '$1') === chip.__html.replace(BIG, '$1');
+      const digitsEl = sameShape && chip.querySelector('span[style*="font-size:28px"]');
+      if (chip.__html !== html && digitsEl) {
+        chip.__html = html;
+        digitsEl.textContent = digits[2];
+      } else if (chip.__html !== html) {
         const longer = !chip.__html || html.length !== chip.__html.length;
         chip.__html = html;
         chip.innerHTML = html;

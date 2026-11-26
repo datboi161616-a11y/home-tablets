@@ -464,23 +464,35 @@ async function start(el, args) {
     }
 
     // Chips for timers on other steps (tap to jump there), named for what they time.
-    let chips = r.steps.map((stp, j) => {
-      if (j === i || !stp.timer || !isActive(s, j)) return '';
+    // (Each chip: its button and its words, kept apart so a second's tick changes only the words.)
+    const tags = [];
+    const words = [];
+    r.steps.forEach((stp, j) => {
+      if (j === i || !stp.timer || !isActive(s, j)) return;
       const st = status(s, j);
       const done = st === 'done';
-      return `<button class="rc-chip${done ? ' done' : ''}" data-jump="${j}">${esc(shortTitle(timerName(stp, j)))} · ${done ? 'Time’s up!' : fmt(remaining(r, s, j))}${st === 'paused' ? ' (paused)' : ''}</button>`;
-    }).join('');
+      tags.push(`<button class="rc-chip${done ? ' done' : ''}" data-jump="${j}">`);
+      words.push(`${shortTitle(timerName(stp, j))} · ${done ? 'Time’s up!' : fmt(remaining(r, s, j))}${st === 'paused' ? ' (paused)' : ''}`);
+    });
     // ...and for timers still going in other recipes (tap to switch back).
     others.forEach((o) => {
       activeTimers(o.r, o.s).forEach((j) => {
         const st = status(o.s, j);
         const done = st === 'done';
-        chips += `<button class="rc-chip${done ? ' done' : ''}" data-other="${esc(o.r.id)}" data-ostep="${j}">${esc(shortTitle(o.r.title))} · ${done ? 'Time’s up!' : fmt(remaining(o.r, o.s, j))}${st === 'paused' ? ' (paused)' : ''}</button>`;
+        tags.push(`<button class="rc-chip${done ? ' done' : ''}" data-other="${esc(o.r.id)}" data-ostep="${j}">`);
+        words.push(`${shortTitle(o.r.title)} · ${done ? 'Time’s up!' : fmt(remaining(o.r, o.s, j))}${st === 'paused' ? ' (paused)' : ''}`);
         if (done && Date.now() - o.s.timers[j].end < alarmMaxMs()) ringing = true;
       });
     });
+    const chips = tags.map((t, k) => `${t}${esc(words[k])}</button>`).join('');
+    const shape = tags.join('');
     const side = $('[data-side]');
-    if (sideHtml !== chips) {
+    const shown = side.querySelectorAll('.rc-chip');
+    if (sideHtml !== chips && shape && side.__shape === shape && shown.length === words.length) {
+      sideHtml = chips;
+      words.forEach((w, k) => { if (shown[k].textContent !== w) shown[k].textContent = w; });
+    } else if (sideHtml !== chips) {
+      side.__shape = shape;
       const had = !!sideHtml;
       sideHtml = chips;
       side.innerHTML = chips ? `<span class="rc-uses" style="margin:0"><span class="l" style="margin-bottom:0">Also going</span></span>${chips}` : '';

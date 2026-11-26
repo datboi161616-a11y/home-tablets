@@ -334,18 +334,23 @@ export function mount(el, ctx) {
   }
 
   // ---- typing a new item ----
-  function drawAdd() {
+  // Each key changes only the box: the shade over the whole screen stays (painting all of it
+  // again for every letter is slow on the tablet).
+  function showAdd() {
     const text = kb ? kb.text : '';
     const cat = adding.cat || guessCat(text);
-    return `<div class="tp-scrim"><div class="tp-addbox"><div class="tp-type on${text ? '' : ' ph'}">${esc(text) || 'Add item'}</div>
+    const inner = `<div class="tp-addbox"><div class="tp-type on${text ? '' : ' ph'}">${esc(text) || 'Add item'}</div>
       <div class="tp-cats">${CATS.map((c) => `<button type="button" data-cat="${c}" class="${c === cat ? 'on' : ''}">${c}</button>`).join('')}</div>
-      ${adding.last ? `<div class="tp-last">✓ ${esc(adding.last)}</div>` : ''}</div></div>`;
+      ${adding.last ? `<div class="tp-last">✓ ${esc(adding.last)}</div>` : ''}</div>`;
+    const scrim = $('[data-over] > .tp-scrim:not([data-scrim])');
+    if (scrim) scrim.innerHTML = inner;
+    else $('[data-over]').innerHTML = `<div class="tp-scrim">${inner}</div>`;
   }
   function openAdd() {
     adding = { cat: '', last: '' };
     kb = openKeyboard(root, {
       go: 'Add', max: 40, slots: 0,
-      onChange: () => { if (adding) $('[data-over]').innerHTML = drawAdd(); },
+      onChange: () => { if (adding) showAdd(); },
       onGo: (pick, k) => {
         const item = addItem(tripId, k.text, adding.cat || guessCat(k.text));
         if (!item) return;
@@ -401,7 +406,11 @@ export function mount(el, ctx) {
           <div class="tp-tiles5">${TEMPLATES.map((x) => `<button type="button" class="tp-t${x.id === s.template ? ' on' : ''}" data-tpl="${x.id}">${TILE_ART[x.id]}<b>${x.name}</b><span>${x.items.length} items</span></button>`).join('')}</div>
           <div class="tp-chips">${tpl.items.slice(0, 7).map((i) => `<span>${esc(i.text)}</span>`).join('')}${tpl.items.length > 7 ? `<span>+ ${tpl.items.length - 7} more</span>` : ''}</div></div>`}
       </div>`;
-    $('[data-over]').innerHTML = `<div class="tp-scrim" data-scrim><div class="tp-sheet">${s.pane === 'dates' ? datesHtml() : main()}</div></div>`;
+    // Already open: only the sheet's inside changes (each key, each choice), not the shade.
+    const inner = s.pane === 'dates' ? datesHtml() : main();
+    const box = $('[data-over] > [data-scrim] > .tp-sheet');
+    if (box) box.innerHTML = inner;
+    else $('[data-over]').innerHTML = `<div class="tp-scrim" data-scrim><div class="tp-sheet">${inner}</div></div>`;
   }
   // The places that match what is typed in "Where" (asked for a moment after the last key).
   function lookUp(text) {
@@ -471,7 +480,7 @@ export function mount(el, ctx) {
       return;
     }
     if (adding) {
-      if ((t = hit('[data-cat]'))) { adding.cat = t.getAttribute('data-cat'); $('[data-over]').innerHTML = drawAdd(); }
+      if ((t = hit('[data-cat]'))) { adding.cat = t.getAttribute('data-cat'); showAdd(); }
       else if (!hit('.tp-addbox')) kb.close();
       return;
     }
@@ -499,7 +508,7 @@ export function mount(el, ctx) {
   });
 
   // ---- keeping up ----
-  const redraw = () => { if (!el.isConnected) return; drawTop(); drawBody(); if (adding) $('[data-over]').innerHTML = drawAdd(); };
+  const redraw = () => { if (!el.isConnected) return; drawTop(); drawBody(); if (adding) showAdd(); };
   const room = () => root.classList.toggle('chip', chipShowsOn('trips'));
   const offData = onChanged(redraw);
   const offChip = onChipChanged(room);

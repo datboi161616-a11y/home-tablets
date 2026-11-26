@@ -8,6 +8,8 @@
 //
 // Typing is on the screen's own keyboard (keyboard.js): nothing here ever takes the focus.
 import { topBar, esc, avatar, personColor, initial } from './ui.js';
+import { soften } from '../services/soft-bg.js';
+import { flushCompat } from '../compat.js';
 import { openKeyboard, keyboardStyle } from './keyboard.js';
 import { householdName } from '../services/family.js';
 import { backHref } from '../services/nav.js';
@@ -464,6 +466,9 @@ function mountBook(el) {
       <div class="qd-page l">${left.map(entry).join('')}</div><div class="qd-page r">${right.map(entry).join('')}</div><div class="qd-fold"></div>
       ${bookPage > 0 ? '<button type="button" class="qd-turnpg prev" data-turn="-1" aria-label="Newer">‹</button>' : ''}
       ${bookPage < spreads - 1 ? '<button type="button" class="qd-turnpg next" data-turn="1" aria-label="Older">›</button>' : ''}`;
+    // Drawn again after the screen opened: its big soft backgrounds become tiny pictures again too
+    // (services/soft-bg.js; app.js only does that when a screen opens).
+    try { flushCompat(); soften(body); } catch (e) { /* it keeps its own background */ }
   }
   root.addEventListener('click', (e) => {
     const b = e.target.closest ? e.target.closest('button') : null;

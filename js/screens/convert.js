@@ -13,6 +13,8 @@
 // A stick of butter = 8 tbsp = 4 oz = 113 g.
 import { backHref } from '../services/nav.js';
 import { topBar, esc } from './ui.js';
+import { soften } from '../services/soft-bg.js';
+import { flushCompat } from '../compat.js';
 
 // ---- numbers the way a recipe writes them
 const FRACTIONS = [[0, ''], [1 / 8, '⅛'], [1 / 4, '¼'], [1 / 3, '⅓'], [3 / 8, '⅜'], [1 / 2, '½'], [5 / 8, '⅝'], [2 / 3, '⅔'], [3 / 4, '¾'], [7 / 8, '⅞'], [1, '']];
@@ -658,6 +660,9 @@ export function mount(el) {
         ${topBar({ title: 'Conversions', back: 'history', backLabel: '← Back', tone: dark ? 'dark' : 'light', right: modes })}
         <div class="cv-body">${body}</div>
       </div>`;
+    // Drawn again after the screen opened: its big soft backgrounds become tiny pictures again too
+    // (services/soft-bg.js; app.js only does that when a screen opens).
+    try { flushCompat(); soften(root); } catch (e) { /* it keeps its own background */ }
     if (s.mode === 'oven') showOven(false);
     if (after) {
       // Drawn where they were; a moment later they move to the new answer (the cup pours, the needle swings).

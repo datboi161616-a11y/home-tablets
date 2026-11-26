@@ -508,7 +508,11 @@ export function mount(el, { args = [] } = {}) {
     if (!b) return;
     const r = rings[+b.dataset.ring];
     who = !r || who === r.key ? null : r.key; // a second tap on the same ring is "everyone" again
-    renderRings();
+    // Only which ring is lit changes: the faces stay (not every ring made and its picture asked for again).
+    $('[data-rings]').querySelectorAll('[data-ring]').forEach((x) => {
+      const k = rings[+x.dataset.ring];
+      x.classList.toggle('on', k ? k.key === who : who === null);
+    });
     renderRiver(false);
   });
   $('[data-seg]').addEventListener('click', (e) => {
