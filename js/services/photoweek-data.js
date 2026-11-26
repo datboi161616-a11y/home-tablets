@@ -10,7 +10,7 @@
 // are numbered the way calendars do: a week belongs to the year and month its fourth day
 // falls in, so a year has 52 or 53 of them.
 import { display } from './display.js';
-import { isTablet, getPhotos } from './tablet-photos.js';
+import { isTablet, getPhotos, thumbnail } from './tablet-photos.js';
 import { photos as samplePhotos } from './family-sample.js';
 
 const KEY = 'photoweek.v1';
@@ -208,13 +208,38 @@ export function menuCard(now = Date.now()) {
   const shown = (here && here.photo) || (done.length ? done[done.length - 1].photo : null);
   const card = {
     title: 'Photo of the week',
-    lines: [`Week ${week.week}`, `${done.length} of ${slots.length}`],
+    lines: [`Week ${week.week}`, `${done.length} of ${slots.length} weeks`],
     badge: due ? 1 : 0,
   };
+  const last = showYear(now); // early January: last year's slideshow, as Home offers it
   if (open) card.action = { label: 'Pick one', href: '#/photoweek' };
   else if (done.length) card.action = { label: `Our ${week.year}`, href: '#/photoweek/year' };
+  else if (last && last !== week.year && slotsFor(last, now).some((s) => s.photo)) card.action = { label: `Our ${last}`, href: `#/photoweek/play/${last}` };
   if (shown) card.photo = { src: shown.src || '', art: shown.art || '' };
   return card;
+}
+
+const escHtml = (s) => String(s == null ? '' : s).replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+/**
+ * The menu card's inside (the menu's own .lc-head / .lc-sub / .lc-go classes): the week, the
+ * pick (a small copy, drawn in once it is ready), and the button.
+ */
+export function menuCardHtml(now = Date.now()) {
+  const c = menuCard(now);
+  const p = c.photo;
+  const box = 'position:absolute;left:26px;right:26px;top:96px;bottom:100px;border-radius:18px;overflow:hidden;box-sizing:border-box';
+  const pic = p
+    ? `<div data-pw-card style="${box};background:${escHtml(p.art || '#E4DACB')};background-size:cover;background-position:center"></div>`
+    : `<div style="${box};border:3px dashed #C9B8A4;display:flex;align-items:center;justify-content:center"><svg width="56" height="56" viewBox="0 0 24 24" fill="#E2683C" aria-hidden="true"><path d="M12 2.5l2.9 6 6.6.8-4.9 4.6 1.3 6.5L12 17.2 6.1 20.4l1.3-6.5L2.5 9.3l6.6-.8z"/></svg></div>`;
+  if (p && p.src) {
+    thumbnail(p.src, { w: 288, h: 304 }).then((url) => {
+      const n = document.querySelector('[data-pw-card]');
+      if (url && n) n.style.backgroundImage = `url("${url}")`;
+    });
+  }
+  return `<div class="lc-head"><span class="lc-name">${escHtml(c.title)}</span></div>
+    <div class="lc-sub">${escHtml(c.lines.join(' · '))}</div>${pic}
+    ${c.action ? `<div class="lc-go" data-go="${escHtml(c.action.href)}" style="background:#E2683C;color:#fff;font-weight:700">${escHtml(c.action.label)}</div>` : ''}`;
 }
 
 /** Calls cb() when a pick changes. Returns an unsubscribe function. */

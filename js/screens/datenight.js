@@ -164,7 +164,7 @@ export function mount(el, ctx) {
     view = 'jar';
     const n = jar.ideas().length;
     const f = jar.filter();
-    const top = `<div class="dn-top">${topBar({ title: 'Date night', right: `${n ? '<button type="button" class="x-btn glass" data-all>All ideas</button>' : ''}<button type="button" class="dn-add" data-add>+ Add an idea</button>` })}</div>`;
+    const top = `<div class="dn-top">${topBar({ title: 'Date night', right: n ? '<button type="button" class="x-btn glass" data-all>All ideas</button><button type="button" class="dn-add" data-add>+ Add an idea</button>' : '' })}</div>`;
     const art = `<div class="dn-glow"></div><button type="button" class="dn-jar" ${n ? 'data-pick' : 'data-add'} aria-label="${n ? 'Pick one' : 'Add an idea'}">${jar.jarSvg({ slips: n })}</button>`;
     if (!n) {
       $('[data-view]').innerHTML = `${top}${art}<div class="dn-empty"><div class="x-serif dn-empty-line">The jar is empty.</div><button type="button" class="dn-add" data-add>+ Add an idea</button></div>`;
@@ -330,6 +330,8 @@ export function mount(el, ctx) {
   stopListening = () => window.removeEventListener('calendar-updated', calendarChanged);
 
   const go = (ctx.args || [])[0];
+  // (A pulled slip or the open sheet isn't kept in the address: coming back here shows the jar.)
+  if (go === 'pick' || go === 'add') { try { history.replaceState(null, '', '#/datenight'); } catch (e) { /* stays as it is */ } }
   if (go === 'all') drawAll();
   else if (go === 'pick') { const idea = jar.pick(); if (idea) showIdea(idea, true); else drawJar(); }
   else { drawJar(); if (go === 'add') openSheet(null); }

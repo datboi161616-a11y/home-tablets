@@ -83,6 +83,8 @@ check('warranty: on its last day', line(apps, '2027-03-03'), ['Dishwasher warran
 check('warranty: gone the day after', line(apps, '2027-03-04'), null);
 check('a due filter comes before a warranty', line([furnace, ...apps], '2027-02-10')[0], 'Change Furnace filter');
 check('an empty manual: no line', line([], '2026-11-25'), null);
+check('a name that already says filter is not doubled', line([Object.assign({}, furnace, { name: 'Furnace filter' })], '2027-01-02')[0], 'Change Furnace filter');
+check('smoke alarms are not called a filter', line([Object.assign({}, alarms, { changed: '2025-11-01' })], '2026-11-25')[0], 'Change Smoke alarms');
 
 // ---- the menu card ----
 check('empty: a way to add', m.menuCardFor({ wifi: null, entries: [] }, '2026-11-25'), { title: 'House manual', lines: [], badge: 0, action: { label: '+ Add', href: '#/manual/add' } });

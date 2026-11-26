@@ -263,7 +263,8 @@ export function mount(el) {
         </div>
         <div class="st-places" data-place-list></div>`),
     // The extra apps: each household keeps the ones it likes on its Menu.
-    extras: () => EXTRAS.map((x) => row(x.name, `<div>${seg(`extra:${x.id}`, [['1', 'On'], ['0', 'Off']])}</div>`)).join(''),
+    // (two columns: all eight fit without scrolling)
+    extras: () => `<div style="display:grid;grid-template-columns:1fr 1fr;grid-gap:20px 44px">${EXTRAS.map((x) => `<div class="st-line" style="justify-content:space-between"><div class="st-label">${x.name}</div>${seg(`extra:${x.id}`, [['1', 'On'], ['0', 'Off']])}</div>`).join('')}</div>`,
     timers: () => row('Alarm sound', `<div>${seg('alarmSound', [['beeps', 'Beeps'], ['chime', 'Chime'], ['bell', 'Bell']])}</div>`)
       + row('Rings for', `<div>${seg('alarmMinutes', [['1', '1 min'], ['2', '2 min'], ['5', '5 min'], ['10', '10 min']])}</div>`)
       + row('Heads-up a minute before', `<div>${seg('alarmHeadsUp', [['1', 'On'], ['0', 'Off']])}</div>`)

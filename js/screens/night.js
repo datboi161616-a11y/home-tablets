@@ -67,10 +67,11 @@ function firstUp(day, today) {
       return h * 60 + +m[2] > now.getHours() * 60 + now.getMinutes();
     });
   }
-  if (!items.length) return { title: today ? 'Nothing else planned' : 'Nothing planned', time: '', more: '' };
+  if (!items.length) return { title: today ? 'Nothing else planned' : 'Nothing planned', time: '', more: '', none: true };
   const e = items.filter((x) => x.time !== 'All day')[0] || items[0];
   // The time first and the "+2 more" kept apart: a long name is cut short, never those.
-  return { title: e.title, time: `${e.time} · `, more: items.length > 1 ? `+${items.length - 1} more` : '' };
+  // (no-break spaces: a plain space at the end of the flex item would be dropped; "All day" says nothing)
+  return { title: e.title, time: e.time === 'All day' ? ' ' : `${e.time} · `, more: items.length > 1 ? `+${items.length - 1} more` : '' };
 }
 
 // That day's forecast from a weather result (live or saved): { kind, text } or null.
@@ -277,8 +278,8 @@ export function mount(el) {
     const day = comingDay();
     const today = day.word === 'Today';
     const first = firstUp(day.date, today);
-    $('[data-first-time]').textContent = first.time ? `${day.word}: ${first.time}` : '';
-    $('[data-first]').textContent = first.time ? first.title : `${first.title} ${today ? 'today' : 'tomorrow'}`;
+    $('[data-first-time]').textContent = first.none ? '' : `${day.word}: ${first.time}`;
+    $('[data-first]').textContent = !first.none ? first.title : `${first.title} ${today ? 'today' : 'tomorrow'}`;
     $('[data-first-more]').textContent = first.more;
     const now = nowWords(fresh(lastWeather) ? lastWeather : savedWeather());
     const f = dayForecast(lastWeather, day.date) || dayForecast(savedWeather(), day.date);

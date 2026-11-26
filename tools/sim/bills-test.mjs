@@ -63,6 +63,7 @@ check('1st, 2nd, 3rd, 11th, 22nd', [1, 2, 3, 11, 22].map((d) => B.dueRuleWords(b
 check('Every 2 weeks', B.repeatWords(fort), 'Every 2 weeks');
 check('pictures by name', ['Electric', 'Netflix', 'Rent', 'Phones', 'Water', 'Gas heat', 'Internet', 'Spotify', 'Car insurance', 'Gym'].map(B.iconFor),
   ['electric', 'tv', 'rent', 'phones', 'water', 'gas', 'internet', 'music', 'car', 'bill']);
+check('a credit card is a card, not a car; a car loan is a car', ['Credit card', 'Car loan', 'Cars'].map(B.iconFor), ['card', 'car', 'car']);
 check('Home: Electric bill due Friday', B.homeText('Electric', '2026-11-27', D), 'Electric bill due Friday');
 check('Home: Rent due tomorrow', B.homeText('Rent', '2026-11-26', D), 'Rent due tomorrow');
 check('Home: Phone bill due today', B.homeText('Phones', '2026-11-25', D), 'Phone bill due today');
@@ -123,8 +124,12 @@ check('an older paid line cannot be un-ticked once... Rent can (it is its latest
 check('un-tick', B.unmarkPaid(line.pid), true);
 s = B.load();
 check('Electric is due Nov 27 again', B.nextDue(s.bills.find((b) => b.id === 'b-Electric')), '2026-11-27');
-B.homeLine(D).done();
+const electric = B.homeLine(D).text;
+const undoPay = B.homeLine(D).done();
 check('Home tick pays Electric', B.homeLine(D).text, 'Netflix due Saturday');
+undoPay();
+check('...and its Undo makes it due again', B.homeLine(D).text, electric);
+B.homeLine(D).done();
 B.markPaid('b-Electric', D);
 s = B.load();
 check('only the latest tick of a bill can be undone', s.paid.filter((p) => p.bill === 'b-Electric').map((p) => B.canUnpay(s, p)), [false, true]);

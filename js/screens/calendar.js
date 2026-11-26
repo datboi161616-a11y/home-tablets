@@ -365,7 +365,7 @@ const STYLE = `
     .kc-key { display:flex; align-items:center; gap:9px; font:500 18px Inter,sans-serif; max-width:260px; min-height:28px; }
     .kc-h { font:500 36px/1.1 Outfit,sans-serif; }
     .kc-soft { color:#CFC6D8; }
-    .kc-item { display:flex; gap:14px; align-items:flex-start; padding:14px 12px; border-radius:16px; background:rgba(255,255,255,.06); min-height:64px; box-sizing:border-box; }
+    .kc-item { flex:none; display:flex; gap:14px; align-items:flex-start; padding:14px 12px; border-radius:16px; background:rgba(255,255,255,.06); min-height:64px; box-sizing:border-box; }
     .kc-item.mine { cursor:pointer; }
     .kc-bar { width:6px; align-self:stretch; border-radius:3px; flex:none; }
     .kc-tile { position:relative; width:168px; height:126px; border-radius:12px; overflow:hidden; background:rgba(255,255,255,.06); flex:none; }
@@ -439,18 +439,19 @@ function monthGrid(today) {
     const out = d.date.getMonth() !== first.getMonth();
     // A trip's band runs along the bottom: the day's chips sit above it.
     const lanes = out ? 0 : tripLanes(trips, isoDay(d.date));
-    const lines = Math.max(1, fits - lanes);
-    const shown = d.events.slice(0, d.events.length > lines ? lines - 1 : lines);
+    // (Two trips in a short box leave no room for chips: the number says how many instead.)
+    const lines = Math.max(0, fits - lanes);
+    const shown = lines ? d.events.slice(0, d.events.length > lines ? lines - 1 : lines) : [];
     const more = d.events.length - shown.length;
     const photo = bestPhoto(d.date);
     cells.push(`
       <div class="kc-cell${d.isToday ? ' today' : ''}${out ? ' out' : ''}${!d.isToday && d.date < today ? ' past' : ''}${photo ? ' has-ph' : ''}" data-day="${isoDay(d.date)}">
         ${photo ? `<div class="kc-phw">${photoBox(photo, 'kc-ph', 200, 160)}<div class="kc-shade"></div></div>` : ''}
         ${d.isToday ? '<div class="kc-ring"></div>' : ''}
-        <div class="kc-num">${d.num}${d.isToday ? '<small>Today</small>' : d.num === 1 && out ? `<small>${d.date.toLocaleDateString('en-US', { month: 'short' })}</small>` : ''}</div>
+        <div class="kc-num">${d.num}${d.isToday ? '<small>Today</small>' : d.num === 1 && out ? `<small>${d.date.toLocaleDateString('en-US', { month: 'short' })}</small>` : ''}${!lines && more ? `<small>+${more}</small>` : ''}</div>
         <div class="kc-chips"${lanes ? ` style="bottom:${6 + lanes * 32}px"` : ''}>
           ${shown.map((e) => `<div class="kc-chip" style="background:${colorOfEvent(e)}">${esc(e.title)}</div>`).join('')}
-          ${more > 0 ? `<div class="kc-chip more">+${more} more</div>` : ''}
+          ${lines && more > 0 ? `<div class="kc-chip more">+${more} more</div>` : ''}
         </div>
       </div>`);
   }
@@ -637,6 +638,7 @@ function showDay(el, d) {
   const side = pics.length > 0;
   const iso = isoDay(d.date);
   const trips = tripsIn(iso, iso);
+  const manyCals = linkedCalendars().length > 1; // with one, "From …" would be on every line
   openSheet(el, 'day', `
     <div class="kc-sheet" data-day-box="${isoDay(d.date)}" style="width:${side ? 1060 : 760}px;max-height:700px;padding:26px 30px;gap:18px">
       <div style="display:flex;align-items:center;justify-content:space-between;gap:16px;flex:none">
@@ -660,10 +662,10 @@ function showDay(el, d) {
           ${d.events.length || trips.length ? d.events.map((e) => `
             <div${e.id ? ` data-edit="${esc(e.id)}"` : ''} class="kc-item${e.id ? ' mine' : ''}"${d.isToday && e.over ? ' style="opacity:.55"' : ''}>
               <span class="kc-bar" style="background:${colorOfEvent(e)}"></span>
-              <div style="width:128px;flex:none;font:600 18px Inter,sans-serif">${esc(e.time)}${e.endTime ? `<div class="kc-soft" style="font-weight:500;font-size:15px">to ${esc(e.endTime)}</div>` : ''}${e.ofDays ? `<div class="kc-soft" style="font-weight:500;font-size:15px">day ${e.dayOf} of ${e.ofDays}</div>` : ''}</div>
+              <div style="width:128px;flex:none;font:600 18px Inter,sans-serif">${esc(e.time)}${e.endTime && !(e.start < d.date) ? `<div class="kc-soft" style="font-weight:500;font-size:15px">to ${esc(e.endTime)}</div>` : ''}${e.ofDays ? `<div class="kc-soft" style="font-weight:500;font-size:15px">day ${e.dayOf} of ${e.ofDays}</div>` : ''}</div>
               <div style="min-width:0;flex:1"><div style="font:500 21px/1.25 Inter,sans-serif;overflow-wrap:anywhere;display:flex;align-items:center;gap:8px">${iconFor(e, 24)}<span style="min-width:0">${esc(e.title)}</span></div>
                 ${e.location ? `<div class="kc-soft" style="font-size:16px;margin-top:3px;overflow-wrap:anywhere">${esc(e.location)}</div>` : ''}
-                ${e.calendar ? `<div class="kc-soft" style="font-size:16px;margin-top:3px">From ${esc(e.calendar)}</div>` : ''}
+                ${e.calendar && manyCals ? `<div class="kc-soft" style="font-size:16px;margin-top:3px">From ${esc(e.calendar)}</div>` : ''}
                 ${e.id && (e.who && e.who.length || (e.tag && e.tag !== 'plan' && TAGS[e.tag]) || REPEAT_WORDS[e.repeat]) ? `<div class="kc-soft" style="font-size:16px;margin-top:3px">${esc([e.who && e.who.length ? `For ${e.who.join(' and ')}` : '', e.tag && e.tag !== 'plan' && TAGS[e.tag] ? TAGS[e.tag].label : '', REPEAT_WORDS[e.repeat] || ''].filter(Boolean).join(' · '))}</div>` : ''}</div>
             </div>`).join('') : `
             <div style="display:flex;flex-direction:column;justify-content:center;gap:8px;padding:26px 12px">
@@ -1122,6 +1124,8 @@ export function mount(el) {
 
 export function unmount() {
   form = null;
+  // The title keyboard too (it moves the timer chip aside while open).
+  if (fkb) { const k = fkb; fkb = null; k.close(); }
   sheet = '';
   undo = null;
   album = null;

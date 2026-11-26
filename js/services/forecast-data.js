@@ -319,7 +319,7 @@ export function advice(f) {
   else if (cold[1]) parts.push('Heavy coat today.');
   else if (cold[2]) parts.push('Grab a jacket.');
   else if (cold[3]) parts.push('Hot: water and sunscreen.');
-  else if (num(feels) != null) parts.push('Nice out. No coat needed.'); // (no temperature: no guessing)
+  else if (num(feels) != null && sky !== 'rain' && sky !== 'storm') parts.push('Nice out. No coat needed.'); // (no temperature: no guessing)
 
   const w = windy(f);
   const strongSun = f.isDay && (f.uv || 0) >= 6 && new Date().getHours() < 16 && sky !== 'rain' && sky !== 'storm';

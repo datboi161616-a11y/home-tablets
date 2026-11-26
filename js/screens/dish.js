@@ -8,7 +8,7 @@
 import { getRecipe, loadIndex, ingredientText, fmtMinutes, withStepTimers, lastCooked, cookedWhen, cookingProgress, lovedBy, toggleLove, clearLoves } from '../services/recipe-data.js';
 import { planDays, addToPlan, removeFromPlan, plannedFor, MEALS, defaultMeal, isFavorite, toggleFavorite, servingsFor, scaleFor, setServings, addExtra, removeExtra,
   weekRecipeIds, getListState, splitQty, dayKey } from '../services/meal-plan.js';
-import { addTimer, MAX } from '../services/timers.js';
+import { addTimer, MAX, setRoute } from '../services/timers.js';
 import { keepWebRecipe, entryOf } from '../services/web-recipes.js';
 import { esc, plateArt, tableColors } from './kitchen-ui.js';
 import { people } from './ui.js';
@@ -248,7 +248,10 @@ export function mount(el, { args = [] } = {}) {
       if (chips) chips.scrollTop = sc;
     }
 
+    let sheetWas = '';
     function renderSheet() {
+      // A sheet came or went: a running timer's chip looks again for a corner with no button under it.
+      if (sheet !== sheetWas) { sheetWas = sheet; setRoute('dish'); }
       if (!sheet) { sheetBox.innerHTML = ''; return; }
       const sc = (sheetBox.querySelector('.dz-steps') || {}).scrollTop || 0;
       if (sheet === 'steps') {

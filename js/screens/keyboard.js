@@ -23,18 +23,27 @@ import { esc } from './kitchen-ui.js';
 // A running kitchen timer's chip sits in a bottom corner, right where the big key is: tell
 // it to look again for a free corner whenever the keys come or go. While keys are up every
 // bottom corner has keys in it, so the chip waits at the top, in the middle (where sheets
-// show only their title).
-function chipMoves(up) {
+// show only their title). The chip looks for a corner again by itself (when it appears, and
+// a few seconds after a screen change): while the keys are up it is sent back every time.
+let watch = null;
+function chipMoves(up, panel) {
+  if (watch) { watch.disconnect(); watch = null; }
   setRoute(location.hash.replace(/^#\/?/, '').split('/')[0] || 'home');
   if (!up || !chip) return;
-  clearTimeout(chipT);
-  chipT = setTimeout(() => {
+  const top = () => {
+    // (The screen went away with its keys up: the chip is left to find its corner.)
+    if (!panel.isConnected) { if (watch) { watch.disconnect(); watch = null; } chip.style.marginLeft = ''; return; }
     if (!chip.isConnected) return;
-    Object.assign(chip.style, { top: '16px', bottom: 'auto', left: '50%', right: 'auto' });
-    chip.style.marginLeft = `${-Math.round(chip.offsetWidth / 2)}px`;
-  }, 560); // just after the chip's own look for a corner (500 ms)
+    if (chip.style.top !== '16px' || chip.style.left !== '50%') Object.assign(chip.style, { top: '16px', bottom: 'auto', left: '50%', right: 'auto' });
+    const m = `${-Math.round(chip.offsetWidth / 2)}px`;
+    if (chip.style.marginLeft !== m) chip.style.marginLeft = m;
+  };
+  top();
+  if (typeof MutationObserver === 'function') {
+    watch = new MutationObserver(top);
+    watch.observe(chip, { attributes: true, attributeFilter: ['style'] });
+  }
 }
-let chipT = 0;
 
 const ROWS = ['qwertyuiop', 'asdfghjkl', 'zxcvbnm'];
 const NUMS = ['1234567890', '-/:;()$&@"', ".,?!'"];
@@ -139,8 +148,8 @@ export function openKeyboard(host, opts = {}) {
       kb.open = false;
       if (panel.parentNode) panel.parentNode.removeChild(panel);
       delete host.__kb;
-      if (chip) chip.style.marginLeft = '';
       chipMoves(false);
+      if (chip) chip.style.marginLeft = '';
       o.onClose(kb.text);
     },
   };
@@ -174,6 +183,6 @@ export function openKeyboard(host, opts = {}) {
   host.appendChild(panel);
   host.__kb = kb;
   kb.refresh();
-  chipMoves(true);
+  chipMoves(true, panel);
   return kb;
 }

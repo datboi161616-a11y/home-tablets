@@ -117,6 +117,8 @@ check('Home: "Water Monstera"', c.doWords(items[1], items[1].tasks[0]), 'Water M
 check('menu: "Biscuit’s dinner"', c.cardWords(items[0], items[0].tasks[1]), 'Biscuit’s dinner');
 check('menu: "Water the Monstera"', c.cardWords(items[1], items[1].tasks[0]), 'Water the Monstera');
 check('menu: "Pepper’s vet checkup"', c.cardWords(items[3], items[3].tasks[1]), 'Pepper’s vet checkup');
+check('done: "Biscuit fed"', c.doneWords(items[0], items[0].tasks[1]), 'Biscuit fed');
+check('done: "Pepper’s checkup done"', c.doneWords(items[3], items[3].tasks[1]), 'Pepper’s checkup done');
 
 // ---- common houseplants ----
 check('Monstera: every 7 days', c.plantHint('Monstera'), { name: 'Monstera', every: 7, look: 'monstera' });
@@ -149,8 +151,10 @@ c.setWho('biscuit:f2', 'Alex');
 check('...then somebody says who', c.getCareItem('biscuit').tasks[1].last, { at: +NOW, who: 'Alex' });
 c.putTask('biscuit', was);
 check('Undo: dinner is due again, last given yesterday by Alex', [c.taskState(c.getCareItem('biscuit').tasks[1], NOW).state, c.getCareItem('biscuit').tasks[1].last.who], ['due', 'Alex']);
-c.homeLine(NOW).done('Jordan');
+const undoCare = c.homeLine(NOW).done('Jordan');
 check('Home’s tick does the same (at the moment it is tapped)', c.getCareItem('biscuit').tasks[1].last.who, 'Jordan');
+undoCare();
+check('...and its Undo puts it back', c.getCareItem('biscuit').tasks[1].last.who, 'Alex');
 c.markDone('biscuit:f2', '', NOW);
 c.markDone('monstera:w', '', NOW);
 check('everything done: Home shows nothing', c.homeLine(NOW), null);

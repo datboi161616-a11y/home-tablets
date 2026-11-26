@@ -378,7 +378,7 @@ export function mount(el) {
   </style>
   <div class="lc-root">
     <div class="lc-top">${topBar({
-    title: 'Apps', back: '#/home', backLabel: '← Home', tone: 'dark',
+    title: 'Menu', back: '#/home', backLabel: '← Home', tone: 'dark',
     right: `<div class="lc-clock"><div class="d" data-date>${c.date}</div><div class="t"><span data-time>${c.time}</span><span data-ampm${c.ampm ? '' : ' style="display:none"'}>${c.ampm}</span></div></div>`,
   })}</div>
     <div class="lc-row" data-row><div class="lc-track" data-track>
@@ -409,7 +409,9 @@ export function mount(el) {
   };
   // Back from an app: the card you left from. Otherwise (or after ten minutes) timers if
   // something is going, else the shopping list, with a card either side.
-  const back = lastCard && Date.now() - lastCard.at < 10 * 60 * 1000 ? cards.findIndex((c) => c.dataset.card === lastCard.id) : -1;
+  // (An app opened from "More apps" and started there has its own card now: back to that.)
+  const findCard = (id) => cards.findIndex((c) => c.dataset.card === id);
+  const back = lastCard && Date.now() - lastCard.at < 10 * 60 * 1000 ? (findCard(lastCard.app) >= 0 ? findCard(lastCard.app) : findCard(lastCard.id)) : -1;
   const startAt = back >= 0 ? back : liveTimers().length ? 3 : 2;
   const track = $('[data-track]');
   // (The row is a layer of its own for good: drawn once, then only slid. Making it one only
@@ -461,7 +463,8 @@ export function mount(el) {
     const c = e.target instanceof Element ? e.target.closest('.lc-card') : null;
     if (Date.now() - draggedAt < 400) { e.preventDefault(); e.stopPropagation(); return; }
     const i = cards.indexOf(c);
-    if (c && i !== middle) { e.preventDefault(); goTo(i); }
+    // (Nor does a button on it: "More apps" or "Biscuit fed" on a side card only brings it over.)
+    if (c && i !== middle) { e.preventDefault(); e.stopPropagation(); goTo(i); }
   }, true);
   // The dots: tap one to go there.
   $('[data-dots]').addEventListener('click', (e) => {
@@ -480,7 +483,7 @@ export function mount(el) {
     card('more').addEventListener('click', (e) => {
       const b = e.target instanceof Element ? e.target.closest('[data-go]') : null;
       e.preventDefault();
-      if (b) location.hash = b.getAttribute('data-go');
+      if (b) { lastCard = { id: 'more', app: b.getAttribute('data-go').slice(2), at: Date.now() }; location.hash = b.getAttribute('data-go'); }
     });
   }
 

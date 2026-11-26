@@ -22,7 +22,7 @@ import { tutorialRunning } from '../services/tutorial.js';
 import { restful, season, seasonLayer } from './ui.js';
 import { topHomeLine } from '../services/extras.js';
 
-let timer, photoTimer, refreshTimer, roomTimer, offPhotos, offRotation, onCalendar, offNotes, onWake, onOnline, offChip, rest;
+let timer, photoTimer, refreshTimer, roomTimer, offPhotos, offRotation, onCalendar, offNotes, onWake, onOnline, offChip, rest, undoTimer;
 
 const REFRESH_MS = 15 * 60 * 1000; // weather, what's next and dinner stay fresh all day
 const COMING_MS = 5 * 60 * 1000;   // what's next is looked at again this often (redrawn only if it changed)
@@ -308,6 +308,7 @@ export function mount(el) {
     .hm-time{position:relative;font:200 204px/1 Outfit,sans-serif;letter-spacing:-6px;margin:2px 0 0;white-space:nowrap}
     .hm-ampm{font:500 40px Outfit,sans-serif;letter-spacing:0;margin-left:12px;opacity:.85}
     .hm-count{position:relative;font-size:34px;margin-top:6px}
+    .hm-count.squeezed{display:none}
     .hm-wx{position:relative;font:500 24px Inter,sans-serif;margin-top:10px;display:inline-flex;align-items:center;gap:10px}
     .hm-top{position:absolute;left:40px;right:40px;top:32px;display:flex;align-items:flex-start;gap:16px}
     .hm-hello{font:500 30px Outfit,sans-serif;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;text-shadow:0 2px 14px rgba(0,0,0,.5)}
@@ -316,7 +317,8 @@ export function mount(el) {
     .hm-extra{margin-top:12px;display:flex;align-items:center;max-width:620px}
     .hm-extra a{min-height:56px;display:inline-flex;align-items:center;padding:0 22px;border-radius:28px;background:rgba(14,16,24,.6);
       box-shadow:inset 0 0 0 1.5px rgba(255,255,255,.22);color:#fff;font:600 19px Inter,sans-serif;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-    .hm-extra button{flex:none;width:56px;height:56px;margin-left:10px;border-radius:28px;border:0;background:#fff;color:#1D2430;font:700 24px Inter,sans-serif;cursor:pointer}
+    .hm-extra button{flex:none;min-width:56px;height:56px;margin-left:10px;padding:0;border-radius:28px;border:0;background:#fff;color:#1D2430;font:700 24px Inter,sans-serif;cursor:pointer}
+    .hm-extra button.undo{padding:0 22px;font-size:19px}
     .hm-note span{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
     .hm-row{position:absolute;left:40px;right:40px;bottom:36px;display:flex;align-items:stretch;gap:14px}
     .hm-chip{flex:1 1 0;min-width:0;min-height:88px;border-radius:26px;padding:0 20px;display:flex;align-items:center;gap:14px;
@@ -380,11 +382,15 @@ export function mount(el) {
 
   // The timer chip sits in the bottom-left corner while a timer runs, and so does a word
   // from the screen: the row steps up for whichever is there.
+  let fitClock = () => {}; // (see "Where the clock sits")
   function makeRoom() {
     const bar = noticeBar();
     const notice = !!bar && bar.style.display !== 'none';
     const chip = chipShowsOn('home');
-    $('[data-row]').style.bottom = `${36 + (chip ? 80 : 0) + (notice ? 60 : 0)}px`;
+    const bottom = `${36 + (chip ? 80 : 0) + (notice ? 60 : 0)}px`;
+    if ($('[data-row]').style.bottom === bottom) return; // (looked at every 3 s: only a change is drawn)
+    $('[data-row]').style.bottom = bottom;
+    fitClock();
   }
   makeRoom();
   roomTimer = setInterval(makeRoom, 3000);
@@ -398,18 +404,35 @@ export function mount(el) {
     line.textContent = theme.countdown ? theme.countdown.text : '';
     line.style.display = theme.countdown ? '' : 'none';
     line.style.color = theme.glow || '';
+    fitClock();
   };
   showSeason();
 
   // ---- Where the clock sits ----
   let zoneNow = null;
+  let zoneAt = ZONES[0];
+  // The clock never sits under the greeting and the note / extra lines at the top left:
+  // when they reach down that far, it steps down below them.
+  const clockTop = (z) => {
+    const stack = $('.hm-top > div');
+    return Math.max(z.y - BLOCK_H / 2, stack ? 32 + stack.offsetHeight + 16 : 0);
+  };
+  fitClock = () => {
+    const box = $('[data-clock]'), count = $('[data-count]'), row = $('[data-row]');
+    box.style.top = `${clockTop(zoneAt)}px`;
+    // Crowded (notes, an extra line, the timer chip and a word from the screen all at once):
+    // the countdown under the clock gives way, so the weather line stays clear of the buttons.
+    count.classList.remove('squeezed');
+    if (box.offsetTop + box.offsetHeight > root.offsetHeight - (parseInt(row.style.bottom, 10) || 36) - row.offsetHeight - 8) count.classList.add('squeezed');
+  };
   const placeClock = (zone, light) => {
     const z = zone || ZONES[0];
     const box = $('[data-clock]');
     const put = () => {
+      zoneAt = z;
       box.style.textAlign = z.align;
       box.style.left = `${z.align === 'center' ? z.x - BLOCK_W / 2 : z.align === 'left' ? z.x : z.x - BLOCK_W}px`;
-      box.style.top = `${z.y - BLOCK_H / 2}px`;
+      fitClock();
       // A bright patch of photo needs more shade behind white letters than a dark one.
       const strength = light == null ? 0.34 : Math.max(0.16, Math.min(0.62, (light - 50) / 260));
       $('[data-glow]').style.opacity = strength.toFixed(2);
@@ -533,6 +556,7 @@ export function mount(el) {
     const a = $('[data-notes]');
     a.style.display = n ? '' : 'none';
     a.innerHTML = `<span>${esc(n === 1 ? (unread[0].who ? `New note from ${unread[0].who}` : '1 new note') : `${n} new notes`)}</span>`;
+    fitClock();
   };
   showNotes();
   offNotes = onMessagesChanged(showNotes);
@@ -540,21 +564,54 @@ export function mount(el) {
   // ---- One quiet line from the extra apps (a bill due, a chore tonight, the dog's dinner):
   // only the most pressing one, with a tick where it can be done from here. ----
   let extraLine = null;
+  let extraDoneAt = 0;
+  let undoExtra = null;
   const showExtra = () => topHomeLine().then((line) => {
-    if (!el.isConnected) return;
+    if (!el.isConnected || undoExtra) return;
     extraLine = line;
     const box = $('[data-extra]');
     box.style.display = line ? 'flex' : 'none';
-    if (!line) return;
-    const a = $('[data-extra-go]');
-    a.textContent = line.text;
-    a.setAttribute('href', line.href || '#/launcher');
-    $('[data-extra-done]').style.display = line.done ? '' : 'none';
+    if (line) {
+      const a = $('[data-extra-go]');
+      a.textContent = line.text;
+      a.setAttribute('href', line.href || '#/launcher');
+      $('[data-extra-done]').style.display = line.done ? '' : 'none';
+    }
+    fitClock();
   }).catch(() => {});
   $('[data-extra-done]').addEventListener('click', () => {
-    if (!extraLine || !extraLine.done) return;
-    try { extraLine.done(); } catch (e) { /* its app shows why */ }
-    showExtra();
+    // One tap, one thing done: a second tap (or a double tap) must not tick the next line,
+    // which comes up in the same place.
+    const btn = $('[data-extra-done]');
+    if (undoExtra) { // "Undo": put it back (not the second tap of a double tap)
+      if (Date.now() - extraDoneAt < 700) return;
+      const back = undoExtra;
+      undoExtra = null;
+      clearTimeout(undoTimer);
+      try { back(); } catch (e) { /* gone already */ }
+      btn.className = ''; btn.textContent = '✓';
+      showExtra();
+      return;
+    }
+    if (!extraLine || !extraLine.done || Date.now() - extraDoneAt < 1200) return;
+    extraDoneAt = Date.now();
+    const line = extraLine;
+    extraLine = null;
+    let back = null;
+    try { back = line.done(); } catch (e) { /* its app shows why */ }
+    if (typeof back !== 'function') { showExtra(); return; }
+    // Done: the line stays a moment, crossed through, with Undo.
+    undoExtra = back;
+    $('[data-extra-go]').style.textDecoration = 'line-through';
+    btn.className = 'undo'; btn.textContent = 'Undo';
+    clearTimeout(undoTimer);
+    undoTimer = setTimeout(() => {
+      undoExtra = null;
+      if (!el.isConnected) return;
+      $('[data-extra-go]').style.textDecoration = '';
+      btn.className = ''; btn.textContent = '✓';
+      showExtra();
+    }, 6000);
   });
   showExtra();
 
@@ -699,6 +756,7 @@ export function mount(el) {
 
 export function unmount() {
   clearTimeout(timer);
+  clearTimeout(undoTimer);
   clearInterval(photoTimer);
   clearInterval(refreshTimer);
   clearInterval(roomTimer);

@@ -187,6 +187,7 @@ let dayTimer = 0;
 let shownDay = '';
 let kb = null;
 let popLog = '';
+let lastTick = 0;
 
 const today = () => ymd(new Date());
 
@@ -469,6 +470,11 @@ function onTap(e) {
   const v = t.getAttribute('data-v');
   const id = t.getAttribute('data-id');
   const d = sheet && sheet.type === 'form' ? sheet.d : null;
+  // One tap, one tick: the list redraws at once and the next chore's tick lands in the same place.
+  if (act === 'tick' || act === 'untick') {
+    if (Date.now() - lastTick < 700) return;
+    lastTick = Date.now();
+  }
   switch (act) {
     case 'view': view = v; render(); break;
     case 'add': if (canAdd()) { sheet = { type: 'form', page: 'main', d: blank() }; drawSheet(); } break;

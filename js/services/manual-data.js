@@ -193,11 +193,14 @@ export function nextWarranty(list, today) {
   return left[0] || null;
 }
 
+/** "Furnace filter"; a name that already says what it is stays as it is ("Furnace filter", "Smoke alarms"). */
+const filterName = (name) => (/filter|batter|alarm/i.test(name) ? name : `${name} filter`);
+
 /** homeLine() for a given manual and day (see homeLine). */
 export function homeLineFor(state, today) {
   const due = filterDates(state.entries, today).filter((f) => f.days <= 0)[0];
   if (due) {
-    return { text: `Change ${due.entry.name} filter`, href: '#/manual/filters', tone: due.days < 0 ? 'late' : 'due', id: due.entry.id };
+    return { text: `Change ${filterName(due.entry.name)}`, href: '#/manual/filters', tone: due.days < 0 ? 'late' : 'due', id: due.entry.id };
   }
   const w = nextWarranty(state.entries, today);
   if (w && w.days <= 30) {
@@ -224,11 +227,11 @@ export function menuCardFor(state, today) {
   const lines = [];
   const dates = filterDates(list, today);
   const due = dates.filter((f) => f.days <= 0);
-  if (due.length) lines.push(`Change ${due[0].entry.name} filter`);
+  if (due.length) lines.push(`Change ${filterName(due[0].entry.name)}`);
   const w = nextWarranty(list, today);
   if (w && w.days <= 30) lines.push(`${w.entry.name} warranty · ${dayWords(w.entry.warranty)}`);
   if (state.wifi) lines.push(`Wi-Fi · ${state.wifi.ssid}`);
-  if (!due.length && dates.length) lines.push(`${dates[0].entry.name} filter · ${dayWords(dates[0].next)}`);
+  if (!due.length && dates.length) lines.push(`${filterName(dates[0].entry.name)} · ${dayWords(dates[0].next)}`);
   SECTIONS.forEach((s) => {
     const n = list.filter((e) => e.section === s.id).length;
     if (n && s.id !== 'filters') lines.push(`${s.title} · ${n}`);

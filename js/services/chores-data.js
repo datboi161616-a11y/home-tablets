@@ -274,9 +274,9 @@ const ART = {
   tidy: ['#C98A3C', '#8A5A1E', '<path d="M62 18L46 56" stroke="#F3E3C2" stroke-width="5" stroke-linecap="round"/><path d="M32 60h28l6 24H26z" fill="#F7D98A"/><path d="M35 72v9M43 72v10M51 72v10M59 72v9" stroke="#C9A24A" stroke-width="2.5" stroke-linecap="round"/><rect x="30" y="54" width="32" height="9" rx="3" fill="#B5502E"/><path d="M76 40l2 6 6 2-6 2-2 6-2-6-6-2 6-2z" fill="#FFFFFF" opacity=".85"/>'],
 };
 const ART_WORDS = [
-  ['dishes', /dish|plates|washing.up/], ['bins', /\bbins?\b|trash|garbage|recycl|rubbish|curb|compost/], ['plants', /plant|water|garden|lawn/],
+  ['dishes', /dish|plates|washing.up/], ['bins', /\bbins?\b|trash|garbage|recycl|rubbish|curb|compost/],
   ['fridge', /fridge|freezer/], ['vacuum', /vacuum|hoover|sweep|floor|mop/], ['sheets', /sheet|bed|pillow|duvet/],
-  ['filter', /filter|furnace|smoke alarm|batter/], ['laundry', /laundry|wash|clothes|fold|iron|towel/],
+  ['filter', /filter|furnace|smoke alarm|batter/], ['plants', /plant|water|garden|lawn/], ['laundry', /laundry|wash|clothes|fold|iron|towel/],
 ];
 /** Which tile suits a chore called `name`. */
 export function artFor(name) {
@@ -380,7 +380,10 @@ export function removeChore(id) {
 }
 /** Tick a chore (`who`: somebody other than whoever's turn it was). */
 export function tick(id, who) {
-  save(settle(load(), id, { kind: 'done', who, names: peopleNames() }));
+  const s = settle(load(), id, { kind: 'done', who, names: peopleNames() });
+  save(s);
+  const last = s.log[s.log.length - 1];
+  return last && last.c === id ? last.id : null; // (untick() takes it back)
 }
 export function skip(id) {
   save(settle(load(), id, { kind: 'skip', names: peopleNames() }));
@@ -412,7 +415,7 @@ export function homeLine(now = new Date()) {
   return {
     text: top.who ? `${title} · ${top.who}` : title,
     href: '#/chores',
-    done: () => tick(c.id),
+    done: () => { const logId = tick(c.id); return logId ? () => untick(logId) : null; }, // (returns its Undo)
     tone: top.late ? 'late' : 'due',
     title,
     who: top.who ? person(top.who) : null,
@@ -425,17 +428,22 @@ function cardFacts(now) {
   const today = ymd(now);
   const names = peopleNames();
   const list = todayList(state, today, names);
-  let soon = [];
-  if (!list.length) {
+  // Nothing today: the first turn of each chore this week, else (only monthly ones, say) the next ones at all.
+  const firsts = (days) => {
     const seen = {};
-    forecast(state, today, addDays(today, 6), names).forEach((p) => { if (!seen[p.chore.id]) { seen[p.chore.id] = 1; soon.push(p); } });
-    soon = soon.slice(0, 3);
-  }
+    const out = [];
+    forecast(state, today, addDays(today, days), names).forEach((p) => { if (!seen[p.chore.id]) { seen[p.chore.id] = 1; out.push(p); } });
+    return out.slice(0, 3);
+  };
+  const week = list.length ? [] : firsts(6);
+  const soon = list.length || week.length ? week : firsts(92);
   const sc = scores(state, now);
   const total = sc.reduce((a, p) => a + p.count, 0);
   const foot = !total ? '' : sc.length >= 2 && sc.length <= 3 ? `${sc.map((p) => `${p.name} ${p.count}`).join(' · ')} this month` : `${total} done this month`;
-  return { state, list, soon, foot, pending: list.filter((x) => !x.done).length };
+  return { state, list, soon, foot, pending: list.filter((x) => !x.done).length, today };
 }
+/** A coming turn's day: "Friday" this week, "Dec 10" after it. */
+const whenWord = (date, today) => (daysBetween(today, date) <= 6 ? dayWord(date) : shortDate(date));
 
 /** What the menu's card says. (bg/ink/soft: the card's colours, as on the board.) */
 export function menuCard(now = new Date()) {
@@ -444,7 +452,7 @@ export function menuCard(now = new Date()) {
   if (!f.state.chores.length && !f.list.length) return Object.assign({ title: 'Chores', lines: [], badge: 0, action: { label: '+ Add a chore', href: '#/chores/add' } }, look);
   const lines = f.list.length
     ? f.list.slice(0, 4).map((x) => `${x.done ? x.done.name : x.chore.name}${x.done ? ' · done' : x.who ? ` · ${x.who}` : ''}`)
-    : f.soon.map((x) => `${dayWord(x.date).slice(0, 3)} · ${x.chore.name}`);
+    : f.soon.map((x) => `${daysBetween(f.today, x.date) <= 6 ? dayWord(x.date).slice(0, 3) : shortDate(x.date)} · ${x.chore.name}`);
   return Object.assign({ title: 'Chores', lines, badge: f.pending }, look);
 }
 
@@ -470,8 +478,8 @@ export function menuCardHtml(now = new Date()) {
       return row(x.chore.art, x.chore.name, sub ? [sub, x.late ? '#B5502E' : ''] : null, x.who ? dot(person(x.who), 34) : '');
     }).join('');
   } else {
-    rows = f.soon.map((x) => row(x.chore.art, x.chore.name, [[dayWord(x.date), x.who].filter(Boolean).join(' · ')], x.who ? dot(person(x.who), 34) : '')).join('');
+    rows = f.soon.map((x) => row(x.chore.art, x.chore.name, [[whenWord(x.date, f.today), x.who].filter(Boolean).join(' · ')], x.who ? dot(person(x.who), 34) : '')).join('');
   }
-  const side = f.list.length ? (f.pending ? 'Today' : 'All done') : f.soon.length ? 'This week' : '';
+  const side = f.list.length ? (f.pending ? 'Today' : 'All done') : f.soon.length && daysBetween(f.today, f.soon[0].date) <= 6 ? 'This week' : '';
   return `${head(side)}<div style="margin-top:6px">${rows}</div>${f.foot ? strip(f.foot) : ''}`;
 }

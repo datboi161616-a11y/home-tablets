@@ -342,7 +342,7 @@ export function menuCardHtml() {
   return `<div class="lc-head"><span class="lc-name">Date night</span><span class="lc-side" style="color:#F0BFCB">${esc(c.lines[0])}</span></div>
     ${c.lines[1] ? `<div class="lc-sub" style="color:#F0BFCB">${esc(c.lines[1])}</div>` : ''}
     <div style="position:absolute;left:50%;top:104px;margin-left:-105px">${jarSvg({ width: 210, slips: ideas().length, key: 'm', lite: true })}</div>
-    <div class="lc-go" style="background:#F4A3B4;color:#3A1526;font-weight:700;font-size:19px">${esc(c.action.label)}</div>`;
+    <div class="lc-go" data-go="${esc(c.action.href)}" style="background:#F4A3B4;color:#3A1526;font-weight:700;font-size:19px">${esc(c.action.label)}</div>`;
 }
 /** Tell `cb` whenever the jar or its date nights change. Returns the way to stop. */
 export function onChanged(cb) {

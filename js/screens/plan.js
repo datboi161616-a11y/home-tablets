@@ -15,9 +15,13 @@ import { esc, topBar } from './ui.js';
 import { spot, C } from '../art.js';
 import { ADD_DAY_KEY } from './dish.js';
 import { undoSend } from '../services/budget-plan.js';
+import { chipShowsOn } from '../services/timers.js';
+import { openKeyboard, keyboardStyle } from './keyboard.js';
 
 let off, dayTimer, undoTimer, armTimer, searchTimer;
 let pickCtl = null; // stops a search of the web in the recipe picker
+let pkb = null; // the screen's own keyboard, while a search is typed in the recipe picker
+const PICK_IDEAS = ['Chicken', 'Pasta', 'Soup', 'Salmon', 'Tacos', 'Beef', 'Steak', 'Curry', 'Salad', 'Pancakes', 'Eggs', 'Sandwich', 'Pizza', 'Pork', 'Shrimp'];
 
 // Empty plate colour for each meal slot nobody has picked yet.
 const PLATE = { breakfast: C.cream, lunch: C.mint, dinner: C.peach };
@@ -97,6 +101,7 @@ export function mount(el) {
       background:${INK};color:#FFFFFF;border-radius:999px;padding:8px 8px 8px 28px;font-size:19px;box-shadow:0 10px 24px rgba(0,0,0,.4),inset 0 0 0 2px ${AMBER};max-width:900px;min-height:72px}
     .wp-toast span{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0}
     .wp-toast.plain{padding-right:28px}
+    .wp-toast.lift{bottom:112px}
     .wp-bg{position:absolute;left:0;top:0;right:0;bottom:0;z-index:50;background:rgba(6,16,21,.62);display:flex;align-items:center;justify-content:center}
     .wp-sheet{background:${CREAM};color:${INK};border-radius:30px;padding:28px 32px;width:720px;max-height:744px;display:flex;flex-direction:column;gap:16px;box-shadow:0 20px 40px rgba(0,0,0,.4)}
     .wp-sheet.wide{width:1040px}
@@ -113,13 +118,22 @@ export function mount(el) {
     .wp-mrow .nm{width:112px;font-size:18px;font-weight:600}
     .wp-chip{min-height:56px;padding:0 16px;border-radius:999px;border:2px solid #D9C8AD;background:#FFFFFF;font:600 17px Inter,system-ui,sans-serif;color:${INK};cursor:pointer;display:inline-flex;align-items:center;gap:6px}
     .wp-chip.on{background:${INK};border-color:${INK};color:#FFFFFF}
-    .wp-in{min-height:64px;border-radius:999px;border:2px solid #D9C8AD;background:#FFFFFF;padding:0 26px;font:400 20px Inter,system-ui,sans-serif;color:${INK};outline:none;min-width:0;flex:none}
-    .wp-in:focus{border-color:${INK}}
+    .wp-in{min-height:64px;border-radius:999px;border:2px solid #D9C8AD;background:#FFFFFF;padding:0 26px;font:400 20px Inter,system-ui,sans-serif;color:${INK};outline:none;min-width:0;flex:none;
+      display:flex;align-items:center;text-align:left;white-space:nowrap;overflow:hidden;cursor:pointer}
+    .wp-in.on{border-color:${INK}}
+    .wp-in .ph{color:#8A979D}
+    .wp-in .car{display:inline-block;width:3px;height:28px;margin-left:2px;background:${RUST};border-radius:2px;flex:none}
+    .wp-in .car.first{margin:0 2px 0 0}
+    /* Typing a search: the picker sits between the timer chip's place at the top and the keys */
+    .wp-bg.typing{align-items:flex-start;padding-top:92px}
+    .wp-bg.typing .wp-sheet{max-height:252px;padding:18px 24px;gap:12px}
+    .wp-bg.typing [data-pickhead]{display:none !important}
+    ${keyboardStyle({ panel: '#0E222C', key: CREAM, ink: INK, go: AMBER, goInk: INK })}
     .wp-pick{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
     .wp-tile{min-height:76px;border-radius:16px;border:none;background:#F3E7D3;text-align:left;padding:8px 12px 8px 10px;font-family:Inter,system-ui,sans-serif;color:${INK};cursor:pointer;
       border-left:6px solid ${INK};display:flex;align-items:center;gap:10px}
     .wp-tile .w{display:flex;flex-direction:column;justify-content:center;gap:2px;min-width:0}
-    .wp-tile .t{font-size:17px;font-weight:600;line-height:1.2;overflow:hidden;max-height:41px}
+    .wp-tile .t{font-size:17px;font-weight:600;line-height:1.2;overflow:hidden;max-height:41px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical}
     .wp-tile .s{font-size:15px;color:#5B6B73}
     .wp-ph{font-size:15px;font-weight:700;letter-spacing:.8px;text-transform:uppercase;color:${RUST};margin-top:6px}
     .wp-hint{font-size:19px;text-align:center;color:${MIST};flex:none}
@@ -293,22 +307,50 @@ export function mount(el) {
     }
     return { fav, lately: lately.slice(0, 6), ideas };
   }
+  // Before anything is searched: favourites, planned lately, ideas.
+  function pickBody(ix, meal, key) {
+    const l = pickLists(ix, meal, key);
+    const part = (title, ids) => (ids.length ? `<div class="wp-ph">${title}</div><div class="wp-pick">${ids.map((id) => tile(ix, id)).join('')}</div>` : '');
+    return `${part('Your favourites', l.fav)}${part('Planned lately', l.lately)}${part('Ideas', l.ideas)}
+        ${!l.fav.length && !l.lately.length && !l.ideas.length ? '<div class="wp-hint">No ideas yet.</div>' : ''}`;
+  }
+  // The search box is a button: the screen's own keyboard types in it (never Android's).
+  const searchBoxHtml = (q, typing) => (q ? `<span class="tx">${esc(q)}</span>${typing ? '<span class="car"></span>' : ''}`
+    : `${typing ? '<span class="car first"></span>' : ''}<span class="ph">Search: chicken, soup, pasta…</span>`);
   function pickSheet(ix) {
     const { key, meal } = sheet;
     const d = dayOf(key);
-    const l = pickLists(ix, meal, key);
-    const part = (title, ids) => (ids.length ? `<div class="wp-ph">${title}</div><div class="wp-pick">${ids.map((id) => tile(ix, id)).join('')}</div>` : '');
     return `
-      <div style="display:flex;align-items:center;gap:16px">
+      <div style="display:flex;align-items:center;gap:16px" data-pickhead>
         <div style="flex:1;min-width:0"><div class="wp-sh">${esc(mealName(meal))} for ${esc(d ? (d.n < 2 ? d.label : `${d.label} ${d.sub}`) : '')}</div></div>
         ${week === 0 ? `<a href="#/recipes/${meal}" class="x-btn amber" data-browse>All recipes</a>` : ''}
         <button class="x-btn soft" data-close>Close</button>
       </div>
-      <input data-picksearch class="wp-in" maxlength="40" placeholder="Search: chicken, soup, pasta…" autocomplete="off" aria-label="Search the recipes">
-      <div data-pickbody class="x-scroll" style="display:flex;flex-direction:column;gap:8px;min-height:200px;flex-grow:1">
-        ${part('Your favourites', l.fav)}${part('Planned lately', l.lately)}${part('Ideas', l.ideas)}
-        ${!l.fav.length && !l.lately.length && !l.ideas.length ? '<div class="wp-hint">No ideas yet.</div>' : ''}
+      <button type="button" data-picksearch class="wp-in" aria-label="Search the recipes">${searchBoxHtml(sheet.q || '', false)}</button>
+      <div data-pickbody class="x-scroll" style="display:flex;flex-direction:column;gap:8px;min-height:120px;flex-grow:1">
+        ${sheet.q ? '' : pickBody(ix, meal, key)}
       </div>`;
+  }
+  function pickType(ix) {
+    const bg = root.querySelector('[data-bg]');
+    const box = root.querySelector('[data-picksearch]');
+    if (pkb || !bg || !box || !sheet) return;
+    bg.classList.add('typing');
+    const show = () => { box.classList.toggle('on', !!pkb); box.innerHTML = searchBoxHtml((sheet && sheet.q) || '', !!pkb); };
+    pkb = openKeyboard(bg, {
+      go: 'Search', slots: 3, max: 40, text: sheet.q || '',
+      suggest: (t) => { const q = t.trim().toLowerCase(); return q ? PICK_IDEAS.filter((w) => w.toLowerCase().indexOf(q) === 0).slice(0, 3) : []; },
+      onChange: (t) => {
+        if (!sheet || sheet.type !== 'pick') return;
+        const was = (sheet.q || '').trim();
+        sheet.q = t;
+        show();
+        if (t.trim() !== was) pickSearch(ix, t);
+      },
+      onGo: (pick, k) => { if (pick) k.set(pick); k.close(); },
+      onClose: () => { pkb = null; bg.classList.remove('typing'); if (box.isConnected) show(); },
+    });
+    show();
   }
 
   function sheetHtml(ix, plan) {
@@ -319,6 +361,7 @@ export function mount(el) {
   }
 
   function render(ix) {
+    if (pkb) pkb.close(); // (its sheet is drawn again)
     const plan = getPlan();
     const days = planDays(week);
     const sameDay = shownDay === planDays(0)[0].key;
@@ -337,7 +380,7 @@ export function mount(el) {
         ${days.map((d) => dayColumn(ix, plan, d)).join('')}
       </div>
       ${moving ? `<div class="wp-toast"><span>Move ${esc(what)} to…</span><button class="x-btn white sm" data-cancelmove>Cancel</button></div>`
-        : toast ? `<div class="wp-toast${toast.snap || toast.list != null ? '' : ' plain'}"><span>${toast.sub ? `<b>${esc(toast.text)}</b><small style="display:block;font-size:16px;color:${MIST};overflow:hidden;text-overflow:ellipsis">${esc(toast.sub)}</small>` : esc(toast.text)}</span>${toast.snap || toast.list != null ? '<button class="x-btn white sm" data-undo>Undo</button>' : ''}${toast.sub ? '<a href="#/shopping" class="x-btn amber sm">See the list</a>' : ''}</div>`
+        : toast ? `<div class="wp-toast${chipShowsOn('plan') ? ' lift' : ''}${toast.snap || toast.list != null ? '' : ' plain'}"><span>${toast.sub ? `<b>${esc(toast.text)}</b><small style="display:block;font-size:16px;color:${MIST};overflow:hidden;text-overflow:ellipsis">${esc(toast.sub)}</small>` : esc(toast.text)}</span>${toast.snap || toast.list != null ? '<button class="x-btn white sm" data-undo>Undo</button>' : ''}${toast.sub ? '<a href="#/shopping" class="x-btn amber sm">See the list</a>' : ''}</div>`
           : ''}
       ${sheetHtml(ix, plan)}`;
     if (sameDay) root.querySelectorAll('.wp-meals').forEach((m, i) => { m.scrollTop = scrolls[i] || 0; });
@@ -353,7 +396,7 @@ export function mount(el) {
   function say(text, extra = {}) {
     toast = Object.assign({ text }, extra);
     clearTimeout(undoTimer);
-    undoTimer = setTimeout(() => { toast = null; if (el.isConnected && ixRef) render(ixRef); }, extra.budget ? 15000 : extra.snap || extra.list != null ? 8000 : 5000);
+    undoTimer = setTimeout(() => { toast = null; if (el.isConnected && ixRef && !pkb) render(ixRef); }, extra.budget ? 15000 : extra.snap || extra.list != null ? 8000 : 5000);
   }
   function arm(what) {
     armed = what;
@@ -371,14 +414,14 @@ export function mount(el) {
       const body = root.querySelector('[data-pickbody]');
       if (!body) return;
       const q = text.trim();
-      if (!q) { render(ix); const i = root.querySelector('[data-picksearch]'); if (i) i.focus(); return; }
+      if (!q) { if (sheet && sheet.type === 'pick') body.innerHTML = pickBody(ix, sheet.meal, sheet.key); return; }
       const words = q.toLowerCase().split(/\s+/);
       const hits = ix.recipes.filter((r) => r.c === 'mine' && words.every((w) => r.t.toLowerCase().indexOf(w) >= 0)).slice(0, 6);
-      const draw = (done) => {
+      const draw = (done, failed) => {
         const box = el.isConnected && root.querySelector('[data-pickbody]');
         if (!box) return;
         box.innerHTML = hits.length ? `<div class="wp-pick">${hits.slice(0, 18).map((r) => tile(ix, r.id)).join('')}</div>`
-          : `<div class="wp-hint">${done ? `Nothing found for “${esc(q)}”.` : 'Searching…'}</div>`;
+          : `<div class="wp-hint">${!done ? 'Searching…' : failed ? 'The recipe sites can’t be reached right now.' : `Nothing found for “${esc(q)}”.`}</div>`;
       };
       draw(false);
       const ctl = new AbortController();
@@ -387,7 +430,7 @@ export function mount(el) {
         if (ctl.signal.aborted) return;
         list.forEach((r) => { if (!ix.byId[r.id]) ix.byId[r.id] = r; if (!hits.some((h) => h.id === r.id)) hits.push(r); });
         draw(false);
-      } }).then(() => { if (!ctl.signal.aborted) draw(true); });
+      } }).then((res) => { if (!ctl.signal.aborted) draw(true, res && res.failed); });
     }, 600);
   }
 
@@ -442,6 +485,7 @@ export function mount(el) {
         addToPlan(key, id, meal);
         return;
       }
+      if (t('[data-picksearch]')) { pickType(ix); return; }
       if (t('[data-browse]')) { sessionStorage.setItem(ADD_DAY_KEY, `${sheet.key}|${sheet.meal}`); sheet = null; return; } // the link opens the recipes
       if ((x = t('[data-serves]'))) {
         const plan = getPlan();
@@ -528,7 +572,6 @@ export function mount(el) {
     if (sent && sent.text) say(String(sent.text), { sub: String(sent.sub || ''), snap: sent.snap, budget: { wasNext: !!sent.wasNext, before: sent.before || null } });
     render(ix);
     root.addEventListener('click', (e) => onClick(ix, e));
-    root.addEventListener('input', (e) => { if (e.target.matches('[data-picksearch]')) pickSearch(ix, e.target.value); });
     root.addEventListener('submit', (e) => e.preventDefault());
     off = onKitchenChanged(() => {
       if (!el.isConnected) return;
@@ -559,4 +602,6 @@ export function unmount() {
   searchTimer = null;
   if (pickCtl) pickCtl.abort();
   pickCtl = null;
+  if (pkb) pkb.close();
+  pkb = null;
 }

@@ -157,6 +157,7 @@ export function mount(el) {
       : board.airport ? `${board.airport.city} (${board.airport.iata})` : 'NO AIRPORT NEARBY';
     $('[data-title]').textContent = `${label} · ${where}`;
     $('[data-heads]').innerHTML = quiet() ? '' : `<span>TIME</span><span>FLIGHT</span><span>${dep ? 'DESTINATION' : 'FROM'}</span><span>${board?.live ? 'PLANE' : 'GATE'}</span><span>STATUS</span>`;
+    el.querySelectorAll('[data-mode]').forEach((b) => b.classList.toggle('on', b.dataset.mode === mode));
     drawAirportLine();
     if (quiet()) { drawQuiet(); return; }
 
@@ -185,7 +186,6 @@ export function mount(el) {
       }
     }
     $('[data-board]').innerHTML = html.join('');
-    el.querySelectorAll('[data-mode]').forEach((b) => b.classList.toggle('on', b.dataset.mode === mode));
     $('[data-pager]').style.visibility = pages > 1 ? 'visible' : 'hidden';
     $('[data-page]').textContent = `PAGE ${page + 1} OF ${pages}`;
     $('[data-prev]').disabled = page <= 0;

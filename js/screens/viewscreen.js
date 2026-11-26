@@ -64,7 +64,12 @@ function nextSunEvent(now, lat, lon) {
   const was = up(now);
   for (let m = 2; m <= 26 * 60; m += 2) {
     const t = new Date(now.getTime() + m * 60000);
-    if (up(t) !== was) return { name: was ? 'SUNSET' : 'SUNRISE', t };
+    if (up(t) !== was) {
+      // Narrow the 2-minute step down to the second, so the minute matches Tonight's sky.
+      let a = t.getTime() - 120000, b = t.getTime();
+      while (b - a > 1000) { const mid = (a + b) / 2; if (up(new Date(mid)) === was) a = mid; else b = mid; }
+      return { name: was ? 'SUNSET' : 'SUNRISE', t: new Date(b) };
+    }
   }
   return null; // midnight sun / polar night
 }

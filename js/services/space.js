@@ -9,6 +9,7 @@
 // cached copy (however old), and if there is none, built-in sample data.
 import { issPasses } from './astro.js';
 import { getElements } from './iss.js';
+import { timeText } from './display.js';
 
 // Swap in a free personal key from https://api.nasa.gov for higher limits.
 export const NASA_API_KEY = 'DEMO_KEY';
@@ -196,8 +197,8 @@ export function passDay(date, now = new Date()) {
   return `${date.toLocaleDateString('en-US', { weekday: 'short' }).toUpperCase()} ${time}`;
 }
 
-export const fmtTime = (d) =>
-  d.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' }).toUpperCase();
+// Follows the 12/24-hour choice in Settings, like the deck's own clock.
+export const fmtTime = (d) => timeText(d).toUpperCase();
 
 // ------------------------------------------------------------ Cloud cover
 /**

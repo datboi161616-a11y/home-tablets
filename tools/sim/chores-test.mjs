@@ -146,7 +146,7 @@ check('all seven', ch.repeatWords(weekly([0, 1, 2, 3, 4, 5, 6])), 'Every day');
 check('every 3 months', ch.repeatWords(every(3, 'month')), 'Every 3 months');
 check('every 1 week', ch.repeatWords(every(1, 'week')), 'Every week');
 check('short date', ch.shortDate('2026-11-27'), 'Nov 27');
-check('pictures by name', ['Bins to the curb', 'Wash the dishes', 'Fold the washing', 'Change the furnace filter', 'Mop the floor', 'Walk to the shop'].map(ch.artFor), ['bins', 'dishes', 'laundry', 'filter', 'vacuum', 'tidy']);
+check('pictures by name', ['Bins to the curb', 'Wash the dishes', 'Fold the washing', 'Change the furnace filter', 'Mop the floor', 'Walk to the shop', 'Water filter', 'Water the plants'].map(ch.artFor), ['bins', 'dishes', 'laundry', 'filter', 'vacuum', 'tidy', 'filter', 'plants']);
 
 // ---- kept on the screen
 store['chores.v1'] = '{not json';
@@ -169,6 +169,21 @@ check('people changed: picked again', ch.load().chores[0].who, 'Jordan');
 ch.updateChore(behind.id, { name: 'Wash the dishes', size: 2, evening: true, repeat: every(1, 'day'), start: '2026-11-25', turns: ['Jordan', 'Alex'], pick: 'turns' }, new Date(at('2026-11-25')));
 check('back to taking turns in order', [ch.load().chores[0].pick, ch.load().chores[0].who, ch.openWho(ch.load(), ch.load().chores[0])], ['turns', undefined, 'Jordan']);
 ch.removeChore(behind.id);
+
+// ---- the menu card when nothing falls this week (only a monthly chore): it still names the next one
+const monthly = ch.addChore({ name: 'Furnace filter', size: 2, evening: false, repeat: every(1, 'month'), start: '2026-12-10', turns: ['Alex', 'Jordan'], pick: 'turns' }, new Date(at('2026-11-25')));
+check('menu card: a monthly chore two weeks off is still shown, by its date', ch.menuCard(new Date(at('2026-11-25'))).lines, ['Dec 10 · Furnace filter']);
+check('menu card: a turn this week is shown by its weekday', ch.menuCard(new Date(at('2026-12-06'))).lines, ['Thu · Furnace filter']);
+ch.removeChore(monthly.id);
+
+// ---- Home's tick, and its Undo
+const daily = ch.addChore({ name: 'Dishes', size: 1, evening: false, repeat: every(1, 'day'), start: ch.ymd(new Date()), turns: [], pick: 'turns' }, new Date());
+const shown = ch.homeLine(new Date()).text;
+const undoTick = ch.homeLine(new Date()).done();
+check('Home tick: the line is gone, and an Undo comes back', [ch.homeLine(new Date()), typeof undoTick], [null, 'function']);
+undoTick();
+check('...Undo: the line is back as it was', ch.homeLine(new Date()) && ch.homeLine(new Date()).text, shown);
+ch.removeChore(daily.id);
 
 console.log(bad ? `${bad} of ${n} FAILED` : `all ${n} chores answers right`);
 process.exit(bad ? 1 : 0);

@@ -58,6 +58,7 @@ export function mount(el, ctx = {}) {
     .tbf-blip .ring{position:absolute;left:8px;top:8px;width:36px;height:36px;border:2px solid #FFB547;border-radius:50%;display:none}
     .tbf-blip.on .ring{display:block}
     .tbf-blip .lbl{position:absolute;left:50%;top:44px;transform:translateX(-50%);font-size:13px;white-space:nowrap;pointer-events:none;text-shadow:0 0 3px #070C18,0 0 3px #070C18}
+    .tbf-blip.up .lbl{top:-4px}
     .tbf-btn{min-height:56px;min-width:56px;padding:0 16px;box-sizing:border-box;border:1px solid #1E3A4A;background:#0A1220;color:#5CE1E6;font-size:15px;letter-spacing:2px}
     .tbf-btn[disabled]{color:#2A4656;border-color:#14283A}
     .tbf-row{width:100%;height:56px;display:grid;grid-template-columns:120px minmax(0,1fr) 112px 128px;gap:10px;align-items:center;padding:0 14px;box-sizing:border-box;text-align:left;color:#D7E6F0;background:#0A1220;border:1px solid #1E3A4A}
@@ -225,6 +226,8 @@ export function mount(el, ctx = {}) {
       const heli = kindOf(a) === 'HELICOPTER';
       const tf = `translate(${(x - 28).toFixed(0)}px, ${(y - 28).toFixed(0)}px)`;
       if (b.style.transform !== tf) b.style.transform = tf;
+      // Right by the house its name would sit on the HOME label: put it above the plane instead.
+      b.classList.toggle('up', Math.abs(x - C) < 80 && y > C - 44 && y < C + 34);
       b.style.zIndex = a.hex === selHex ? 2 : 1;
       b.classList.toggle('on', a.hex === selHex);
       const svg = b.querySelector('svg');

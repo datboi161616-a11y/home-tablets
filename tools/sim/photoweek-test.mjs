@@ -104,5 +104,13 @@ check('next week has a photo dated ahead: still waiting', slot('2026-11-30'), [4
 check('picked so far', slots.filter((s) => s.photo).length, 2);
 check('nothing picked, this week has photos: open', pw.yearSlots(2026, 1, {}, album, at(2026, 11, 25)).find((s) => s.key === '2026-11-23').open, true);
 
+// ---- the menu card in early January: last year's slideshow is the way in ----
+const first = pw.album()[0];
+const year = new Date(first.added).getFullYear();
+store['photoweek.v1'] = JSON.stringify({ v: 1, picks: { [pw.weekKey(first.added, 1)]: { id: first.id, at: 1 } } });
+const jan = pw.menuCard(at(year + 1, 1, 5));
+check('Jan 5: nothing picked this year yet, the button plays last year', [jan.lines[1], jan.action], [`0 of ${pw.weeksOfYear(year + 1, 1).length} weeks`, { label: `Our ${year}`, href: `#/photoweek/play/${year}` }]);
+delete store['photoweek.v1'];
+
 console.log(bad ? `\n${bad} of ${n} FAILED` : `${n}/${n} photo weeks right`);
 process.exit(bad ? 1 : 0);

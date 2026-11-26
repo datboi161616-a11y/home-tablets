@@ -105,8 +105,9 @@ export function cardWords(item, task) {
   if (task.type === 'water') return `Water the ${item.name}`;
   return `${item.name}’s ${taskName(task).toLowerCase()}`;
 }
-/** Once it is done: "Biscuit fed", "Monstera watered" */
-export const doneWords = (item, task) => `${item.name} ${task.type === 'feed' ? 'fed' : task.type === 'water' ? 'watered' : 'done'}`;
+/** Once it is done: "Biscuit fed", "Monstera watered", "Biscuit’s flea & tick done" */
+export const doneWords = (item, task) => (task.type === 'feed' ? `${item.name} fed` : task.type === 'water' ? `${item.name} watered`
+  : `${item.name}’s ${task.type === 'vet' ? 'checkup' : 'flea & tick'} done`);
 
 // ---- Common houseplants: how often they want water, and the painted look nearest to them ----
 const PLANTS = [
@@ -261,7 +262,7 @@ export function homeLine(now = new Date()) {
   const e = urgent(now)[0];
   if (!e) return null;
   return { text: doWords(e.item, e.task), label: stateWords(e), tone: e.state, href: '#/care', key: e.key,
-    done: (who = '') => { markDone(e.key, who); }, art: lookArt(itemLook(e.item)) };
+    done: (who = '') => { const was = markDone(e.key, who); return was ? () => putTask(e.item.id, was) : null; }, art: lookArt(itemLook(e.item)) };
 }
 // The card's rows: what is due or late, then the next dates, three in all.
 function cardRows(now) {

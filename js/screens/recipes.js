@@ -313,9 +313,11 @@ export function mount(el, { args = [] } = {}) {
   };
   const offlineHtml = () => {
     const list = keptList();
+    // (Online, but the sites didn't answer: say that, not "No internet".)
+    const why = navigator.onLine === false ? 'No internet' : 'The recipe sites didn’t answer';
     return list.length
-      ? `<div class="rb-found">No internet · saved recipes <button data-retry class="x-btn sm frost" style="margin-left:12px">Try again</button></div><div class="rb-cards">${list.map(cardNow).join('')}</div>`
-      : '<div class="rb-wait">No internet.<button data-retry class="x-btn white">Try again</button></div>';
+      ? `<div class="rb-found">${why} · saved recipes <button data-retry class="x-btn sm frost" style="margin-left:12px">Try again</button></div><div class="rb-cards">${list.map(cardNow).join('')}</div>`
+      : `<div class="rb-wait">${why}.<button data-retry class="x-btn white">Try again</button></div>`;
   };
 
   // ---- Recipes from the web: cards with real photos ----

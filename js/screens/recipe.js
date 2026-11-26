@@ -355,7 +355,7 @@ async function start(el, args) {
       </div>
     </div>
     <div class="rc-bar">
-      <button data-prev class="rc-big rc-prev">← Back</button>
+      <button data-prev class="rc-big rc-prev">← Previous</button>
       <div class="rc-peek"><span data-peeklabel class="l">NEXT</span><span data-nextup class="t"></span><button data-restart class="rc-again" style="display:none">Start over</button></div>
       <button data-next class="rc-big rc-next">Next step →</button>
       <button data-finish class="rc-big rc-next" style="display:none">Done cooking</button>

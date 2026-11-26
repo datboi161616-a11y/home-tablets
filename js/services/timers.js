@@ -271,6 +271,7 @@ export let chip = null;
 let lastBeep = 0;
 let route = '';
 let placeTimer = 0;
+let lateTimer = 0;
 let wasHidden = true;
 
 const esc = (s) => String(s).replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
@@ -457,6 +458,9 @@ export function startTimers() {
 /** app.js tells us which screen is showing. */
 export function setRoute(name) {
   route = name;
-  // The new screen is built just after this: look for buttons under the chip once it's there.
+  // The new screen is built just after this: look for buttons under the chip once it's there,
+  // and once more when what it loads (the weather's days, say) has had time to arrive.
   placeSoon(500);
+  clearTimeout(lateTimer);
+  lateTimer = setTimeout(place, 3000);
 }

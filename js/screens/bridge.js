@@ -24,7 +24,7 @@ import { nextVisiblePass, getCrew, orbitStatus, brightnessWords } from '../servi
 import { getBoard } from '../services/departures.js';
 import { checkAlerts, wasSeen, markSeen, heightWords } from '../services/skyalert.js';
 import { getSpaceImage, fallbackImage, SPACE_IMAGES } from '../services/space.js';
-import { moonPhase, planetEcliptic, sunEcliptic } from '../services/astro.js';
+import { moonPhase, nextMoonPhase, planetEcliptic, sunEcliptic } from '../services/astro.js';
 import { display, clockTime, clockAmPm, timeText } from '../services/display.js';
 import { tutorialRunning } from '../services/tutorial.js';
 import { restful, esc } from './ui.js';
@@ -54,6 +54,7 @@ let rest = null;
 let issTimer = 0; // the Space Station readout's next change (start or end of a pass)
 let visit = 0;    // counts mounts, so a slow start from an earlier visit doesn't add its timers
 let stopScene = () => {};
+let moonMemo = null; // vals(): the Moon, worked out once an hour
 
 const pad = (n) => String(n).padStart(2, '0');
 const read = (k) => { try { return JSON.parse(localStorage.getItem(k) || 'null'); } catch (e) { return null; } };
@@ -83,14 +84,25 @@ function vals() {
   const secs = Math.round(km / C);
   const until = crossing - now.getTime();
   const MONTH = 29.530589;
-  const age = ((now.getTime() - Date.UTC(2000, 0, 6, 18, 14)) / 86400000) % MONTH;
-  const lit = Math.round(((1 - Math.cos((2 * Math.PI * age) / MONTH)) / 2) * 100);
+  // The real Moon (astro.js, the same sums as Tonight's sky), worked out once an hour:
+  // this runs every second.
+  const hour = Math.floor(now.getTime() / 3600000);
+  if (!moonMemo || moonMemo.hour !== hour) {
+    const ph = moonPhase(now);
+    const full = nextMoonPhase('full', now);
+    moonMemo = { hour, age: (ph.elongation / 360) * MONTH, lit: Math.round(ph.fraction * 100), toFull: full ? (full.getTime() - now.getTime()) / 86400000 : null };
+  }
+  const age = moonMemo.age;
+  const lit = moonMemo.lit;
   // Named phases (new/quarter/full) only within about a day of the exact moment;
   // the rest of the month is crescent or gibbous, like a printed calendar says.
   const near = (d) => Math.abs(age - d) < 1.1 || Math.abs(age - d - MONTH) < 1.1 || Math.abs(age - d + MONTH) < 1.1;
   const moonName = near(0) ? 'New Moon' : near(MONTH / 4) ? 'First quarter' : near(MONTH / 2) ? 'Full Moon' : near((3 * MONTH) / 4) ? 'Last quarter'
     : age < MONTH / 4 ? 'Waxing crescent' : age < MONTH / 2 ? 'Waxing gibbous' : age < (3 * MONTH) / 4 ? 'Waning gibbous' : 'Waning crescent';
-  const toFull = Math.round((((MONTH / 2 - age) % MONTH) + MONTH) % MONTH);
+  // Calendar days to the full Moon, the way the sky page's date reads.
+  const fullDay = moonMemo.toFull == null ? null : new Date(now.getTime() + moonMemo.toFull * 86400000);
+  const toFull = fullDay ? Math.round((new Date(fullDay.getFullYear(), fullDay.getMonth(), fullDay.getDate()) - new Date(now.getFullYear(), now.getMonth(), now.getDate())) / 86400000)
+    : Math.round((((MONTH / 2 - age) % MONTH) + MONTH) % MONTH);
   const moonNext = near(MONTH / 2) ? ''
     : toFull <= 1 ? 'full Moon tomorrow' : `full Moon in ${toFull} days`;
   const years = now.getFullYear() - 1977 - (now < new Date(now.getFullYear(), 8, 5) ? 1 : 0);

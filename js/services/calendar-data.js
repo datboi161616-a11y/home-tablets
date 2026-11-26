@@ -207,6 +207,13 @@ function itemsOn(d) {
       sort: e.allDay ? -1 : e.start.getHours() * 60 + e.start.getMinutes(), start: e.start, end: e.end, allDay: e.allDay, location: '',
       repeat: e.repeat || 'none', endTime: e.allDay ? '' : fmtTime(e.end), who: e.who || [], tag: e.tag || 'plan' });
   });
+  // ...and one from the night before that runs past midnight (11 PM for 3 hours).
+  myEventsOn(addDays(dayStart, -1)).forEach((e) => {
+    if (e.allDay || e.end <= dayStart) return;
+    const whole = e.end >= dayEnd;
+    list.push({ id: e.id, title: e.title, time: whole ? 'All day' : `Until ${fmtTime(e.end)}`, kind: 'tablet', sort: whole ? -1 : -0.5,
+      start: e.start, end: e.end, allDay: whole, location: '', repeat: e.repeat || 'none', endTime: '', who: e.who || [], tag: e.tag || 'plan' });
+  });
   datedOn(d, list.map((x) => x.title)).forEach((x) => {
     list.push({ title: x.title, time: x.turns ? `Turns ${x.turns}` : 'All day', kind: x.kind, sort: -1, start: dayStart, end: dayEnd, allDay: true, turns: x.turns || 0 });
   });

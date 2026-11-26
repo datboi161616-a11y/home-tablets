@@ -92,6 +92,8 @@ const STYLE = `
   .bl-who .r b{margin-left:auto;font:700 38px/1 Outfit,sans-serif}
   .bl-who.many .r{flex-wrap:wrap;font-size:19px}
   .bl-who.many .r b{margin-left:0;flex-basis:100%;font-size:30px}
+  .bl-who.many>div{padding:12px 18px}
+  .bl-who.many .bl-seg{margin-top:10px}
   .bl-av{flex:none;width:44px;height:44px;border-radius:50%;color:#FFFFFF;display:flex;align-items:center;justify-content:center;font:700 20px Outfit,sans-serif}
   .bl-seg{display:flex;gap:4px;margin-top:16px}
   .bl-seg i{height:14px;border-radius:3px;min-width:3px}
@@ -255,6 +257,8 @@ export function mount(el, ctx) {
       const step = Math.min(198, row.length > 1 ? 1010 / (row.length - 1) : 198);
       for (let i = 1; i < row.length; i++) row[i].left = Math.max(row[i].left, row[i - 1].left + step);
       for (let i = row.length - 1; i >= 0; i--) row[i].left = Math.min(row[i].left, i === row.length - 1 ? 1050 : row[i + 1].left - step);
+      // A crowded month: the next card covers this one's right edge, so its corner (LATE, FRI, ✓) would show cut.
+      for (let i = 0; i < row.length - 1; i++) row[i].covered = row[i + 1].left - row[i].left < 190;
     });
     const stem = (c, r) => {
       const late = !c.it.paid && c.it.due < day;
@@ -284,7 +288,7 @@ export function mount(el, ctx) {
       const it = c.it;
       const color = who && it.who ? colorOf(it.who, list) : '';
       const w = B.dueWords(it.due, day);
-      const corner = it.paid ? `<div class="ok">${TICK(18, '#FFFFFF', 3.4)}</div>` : w.late ? '<div class="day">LATE</div>' : w.soon ? `<div class="day">${esc(B.weekday(it.due).slice(0, 3).toUpperCase())}</div>` : '';
+      const corner = c.covered ? '' : it.paid ? `<div class="ok">${TICK(18, '#FFFFFF', 3.4)}</div>` : w.late ? '<div class="day">LATE</div>' : w.soon ? `<div class="day">${esc(B.weekday(it.due).slice(0, 3).toUpperCase())}</div>` : '';
       out += `<button class="bl-card${it.paid ? ' paid' : ''}" data-open="${esc(it.bill)}" style="left:${c.left.toFixed(1)}px;top:${r ? 284 : 132}px">
         ${color ? `<div class="stripe" style="background:${color}"></div>` : ''}${corner}
         <div class="h">${B.billIcon(B.iconFor(it.name), 38)}<span>${esc(it.name)}</span></div>
@@ -350,7 +354,7 @@ export function mount(el, ctx) {
     if (id && !bill) return;
     const day = B.today();
     sheet = bill
-      ? { id: bill.id, name: bill.name, amt: bill.amount ? String(bill.amount) : '', varies: bill.varies, repeat: bill.repeat, every: bill.every, day: bill.day,
+      ? { id: bill.id, name: bill.name, amt: bill.amount ? (bill.amount % 1 ? bill.amount.toFixed(2) : String(bill.amount)) : '', varies: bill.varies, repeat: bill.repeat, every: bill.every, day: bill.day,
         date: bill.repeat === 'monthly' ? day : B.nextDue(bill) || bill.start, who: bill.who, home: bill.home, open: '', cal: null, due: B.nextDue(bill), last: (state.paid.filter((p) => p.bill === bill.id && p.due === bill.paidThrough).pop() || {}).pid || '' }
       : { id: '', name: '', amt: '', varies: false, repeat: 'monthly', every: 1, day: 1, date: day, who: '', home: 3, open: '', cal: null, due: null };
     drawSheet();

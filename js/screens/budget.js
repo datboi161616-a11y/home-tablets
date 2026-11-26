@@ -17,6 +17,7 @@ import { esc, plateArt } from './kitchen-ui.js';
 import { openKeyboard, keyboardStyle } from './keyboard.js';
 import { topBar, people } from './ui.js';
 import { soften } from '../services/soft-bg.js';
+import { chip, chipShowsOn, setRoute } from '../services/timers.js';
 
 let ctl = null; // stops the recipe sites being asked
 let kbClose = null;
@@ -27,6 +28,9 @@ const MEAL_NAMES = { breakfast: 'Breakfast', lunch: 'Lunch', dinner: 'Dinner' };
 const SAMPLE = { breakfast: 'pancakes', lunch: 'sandwich', dinner: 'spaghetti' }; // the painted plate on each meal button
 const money = (x) => `$${(Math.round(x * 100) / 100).toFixed(2)}`;
 const whole = (x) => `$${Math.round(x)}`;
+// A running kitchen timer's chip sits in the bottom-left corner here (the big button has the
+// right one): the room it takes, so the words and buttons down there stay clear of it.
+const chipRoom = () => (chipShowsOn('budget') && chip && chip.offsetWidth ? chip.offsetWidth + 8 : 0);
 const dayName = (d, opt = 'long') => d.date.toLocaleDateString('en-US', { weekday: opt });
 const ICON = {
   swap: (c = '#23323A', s = 24) => `<svg width="${s}" height="${s}" viewBox="0 0 24 24" fill="none" stroke="${c}" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 11a8 8 0 0 0-14.5-4.6L4 8"/><path d="M4 3v5h5"/><path d="M4 13a8 8 0 0 0 14.5 4.6L20 16"/><path d="M20 21v-5h-5"/></svg>`,
@@ -107,7 +111,7 @@ const STYLE = `
     .bd-m .pr{margin-left:auto;text-align:right;min-width:0}
     .bd-m .pr b{display:block;font:700 19px Outfit,sans-serif}
     .bd-m .pr span{font:500 13px Inter,sans-serif;color:#5B6B73}
-    .bd-m .t{font:600 16px/1.2 Inter,sans-serif;margin-top:6px;height:39px;overflow:hidden}
+    .bd-m .t{font:600 16px/1.2 Inter,sans-serif;margin-top:6px;height:39px;overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical}
     .bd-m .bs{display:flex;gap:6px;margin-top:8px}
     .bd-m .bs button{flex:1;height:56px;border-radius:12px;background:#FFFFFF;border:2px solid #D9C8AD;display:flex;align-items:center;justify-content:center;cursor:pointer;padding:0}
     .bd-m .bs button.on{background:#23323A;border-color:#23323A}
@@ -120,9 +124,11 @@ const STYLE = `
     .bd-wk.three .bd-m .ml{display:block;font:700 12px Inter,sans-serif;letter-spacing:1px;color:#C2652D;text-transform:uppercase}
     .bd-wk.three .bd-m .pr b{font-size:18px;display:inline}
     .bd-wk.three .bd-m .top{align-items:flex-start}
-    .bd-wk.three .bd-m .t{height:20px;margin-top:4px;white-space:nowrap;text-overflow:ellipsis}
+    .bd-wk.three .bd-m .t{display:block;height:20px;margin-top:4px;white-space:nowrap;text-overflow:ellipsis}
     .bd-wk.three .bd-m .bs{margin-top:6px}
     .bd-low{display:flex;align-items:center;gap:16px;flex:none;min-height:96px}
+    .bd-low.roomy .bd-shuf{margin-left:auto}
+    .bd-low.roomy .bd-send{margin-left:0}
     .bd-shuf{min-height:72px;padding:0 26px;border-radius:999px;border:0;background:rgba(10,26,34,.55);box-shadow:inset 0 0 0 2px rgba(255,255,255,.28);color:#FFFFFF;display:flex;align-items:center;gap:12px;font:600 20px Inter,sans-serif;cursor:pointer;flex:none}
     .bd-send{margin-left:auto;width:560px;min-height:84px;border-radius:24px;border:0;background:#FFB86B;color:#23323A;display:flex;align-items:center;gap:16px;padding:0 26px;text-align:left;cursor:pointer;flex:none}
     .bd-send b{display:block;font:700 28px/1.1 Outfit,sans-serif}
@@ -168,7 +174,7 @@ const STYLE = `
     .bd-pd small{font:500 15px Inter,sans-serif;opacity:.8}
     .bd-grid{display:flex;flex-wrap:wrap;gap:12px;margin-top:18px;max-height:420px;overflow-y:auto;-webkit-overflow-scrolling:touch}
     .bd-grid .bd-chip{min-width:180px;justify-content:center}
-    .bd-type{position:absolute;left:50%;top:24px;transform:translateX(-50%);width:640px;z-index:6;background:#FFF4EA;color:#3A1D10;border-radius:28px;padding:18px 24px 22px}
+    .bd-type{position:absolute;left:50%;top:166px;transform:translateX(-50%);width:640px;z-index:6;background:#FFF4EA;color:#3A1D10;border-radius:28px;padding:18px 24px 22px}
     .bd-type .hd{display:flex;align-items:center;justify-content:space-between;font:600 20px Inter,sans-serif}
     .bd-type .hd button{border:0;background:transparent;color:#7A5646;font:600 18px Inter,sans-serif;min-height:56px;padding:0 8px;cursor:pointer}
     .bd-box{margin-top:10px;min-height:64px;border-radius:999px;border:2px solid #E2C2A6;background:#FFFFFF;padding:0 24px;display:flex;align-items:center;font:500 22px Inter,sans-serif}
@@ -292,7 +298,7 @@ export function mount(el, { args = [] } = {}) {
           </div>
         </div>
         <div class="bd-foot">
-          <div class="bd-sum"><b>${slots} meal${slots === 1 ? '' : 's'}${setup.meals.length ? ` · ${esc(mealsText(setup.meals, ' and '))}` : ''} · serves ${n}</b>
+          <div class="bd-sum"${chipRoom() ? ` style="padding-left:${chipRoom()}px"` : ''}><b>${slots} meal${slots === 1 ? '' : 's'}${setup.meals.length ? ` · ${esc(mealsText(setup.meals, ' and '))}` : ''} · serves ${n}</b>
             <span class="${warn ? 'warn' : ''}">${esc(busy === 'find' ? 'Asking the recipe sites…' : warn || 'Prices are estimates from typical store prices')}</span></div>
           <button class="bd-find" data-find${!slots || busy ? ' disabled' : ''}>${busy === 'find' ? 'Finding meals…<span class="run"></span>' : same && view === 'setup' ? 'Back to the week' : `Find meals for ${whole(setup.budget)}`}</button>
         </div>
@@ -350,7 +356,7 @@ export function mount(el, { args = [] } = {}) {
           </div>`;
         }).join('')}</div>
         ${over ? `<div class="bd-over">
-          <div class="say"><b>${sum > setup.budget * 1.2 ? 'Over budget' : 'A little over'}</b>
+          <div class="say"${chipRoom() ? ` style="margin-left:${chipRoom() - 40}px"` : ''}><b>${sum > setup.budget * 1.2 ? 'Over budget' : 'A little over'}</b>
             <span>${swaps.length ? `${count} bring${swaps.length > 1 ? '' : 's'} it to <strong style="color:#23323A">${money(after)}</strong>.` : 'These are the cheapest choices.'}</span></div>
           <div class="sws">${swaps.map((s) => {
             const d = days.find((x) => x.key === week.slots[s.i].key);
@@ -360,11 +366,11 @@ export function mount(el, { args = [] } = {}) {
             ${swaps.length ? `<button class="go" data-makeswaps>${swaps.length === 1 ? 'Make the swap' : swaps.length === 2 ? 'Make both swaps' : `Make the ${swaps.length} swaps`}</button>` : ''}
             <div class="two"><button data-raise="${Math.ceil(sum / 10) * 10}">Budget $${Math.ceil(sum / 10) * 10}</button><button data-send${busy ? ' disabled' : ''}>${busy === 'send' ? 'Sending…' : 'Send anyway'}</button></div>
           </div>
-        </div>` : `<div class="bd-low">
+        </div>` : `<div class="bd-low${chipRoom() ? ' roomy' : ''}">
           <button class="bd-shuf" data-shuffle>${ICON.shuffle} Shuffle the rest</button>
           <button class="bd-send" data-send${busy ? ' disabled' : ''}>${ICON.send}<div><b>${busy === 'send' ? 'Sending…' : 'Send to my week plan'}</b><span>${n} meal${n > 1 ? 's' : ''} to the right days · ingredients to the shopping list</span></div></button>
         </div>`}
-        ${note ? `<div style="position:absolute;left:40px;right:640px;bottom:2px;font:600 16px Inter,sans-serif;color:#FFC98F;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${esc(note)}</div>` : ''}
+        ${note ? `<div style="position:absolute;left:${40 + chipRoom()}px;right:640px;bottom:2px;font:600 16px Inter,sans-serif;color:#FFC98F;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${esc(note)}</div>` : ''}
       </div>`;
   }
   const label2 = (w) => `no ${nameOf('out', w).toLowerCase()}`;
@@ -394,7 +400,7 @@ export function mount(el, { args = [] } = {}) {
         return `<div class="bd-alt${isNow ? ' now' : ''}" ${isNow ? 'data-shut' : `data-pick="${esc(c.id)}"`} role="button">${plateArt({ id: c.id, t: c.t, ty: c.meal, c: 'web', img: c.img, alt: c.alt }, 112)}
           <div class="w"><div class="t">${esc(c.t)}</div><div class="s">${esc([c.site, c.m ? `${c.m} min` : ''].filter(Boolean).join(' · '))}</div>
           <div class="p">${money(p)} <small>for ${setup.serves} · est.</small></div>
-          <div class="c">${isNow ? '<span class="bd-dl now">Now</span>' : `<span class="bd-dl${diff > 0 ? ' up' : ''}">${diff > 0 ? '+' : '−'}${money(Math.abs(diff))}</span>`}<span>week ${money(sum + diff)}</span></div></div>
+          <div class="c">${isNow ? '<span class="bd-dl now">Now</span>' : `<span class="bd-dl${diff > 0 ? ' up' : ''}">${diff ? `${diff > 0 ? '+' : '−'}${money(Math.abs(diff))}` : 'Same price'}</span>`}<span>week ${money(sum + diff)}</span></div></div>
           <button class="see" data-see="${esc(c.id)}" aria-label="See the recipe for ${esc(c.t)}">Recipe</button></div>`;
       }).join('')}</div>
     </div></div>`;
@@ -424,6 +430,7 @@ export function mount(el, { args = [] } = {}) {
     </div>`;
   }
 
+  let viewChanged = false;
   function render() {
     const cls = `bd ${view === 'week' ? 'wk' : 'set'}`;
     if (root.className !== cls) {
@@ -432,6 +439,7 @@ export function mount(el, { args = [] } = {}) {
       root.className = cls;
       root.style.backgroundImage = '';
       try { soften(el); } catch (e) { /* the CSS gradient shows instead */ }
+      viewChanged = true;
     }
     if (kbClose && !(sheet && sheet.type === 'type')) { kbClose(); }
     // (Each list of chips and each day keeps where it was scrolled.)
@@ -442,6 +450,8 @@ export function mount(el, { args = [] } = {}) {
     root.querySelectorAll('[data-chipbox],.bd-day,.bd-grid').forEach((b, n) => { const k = keep[b.getAttribute('data-chipbox') || `${b.className}${n}`]; if (k) b.scrollTop = k; });
     if (restoreScroll) { root.querySelectorAll('.bd-day').forEach((d, n) => { d.scrollTop = restoreScroll[n] || 0; }); restoreScroll = null; }
     if (sheet && sheet.type === 'type') openTyping();
+    // (The timer chip looks again for a free corner on the other page.)
+    if (viewChanged) { viewChanged = false; setRoute('budget'); }
   }
 
   // Typing a word for "More of these" / "Leave out": the screen's own keyboard.

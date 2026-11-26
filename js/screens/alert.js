@@ -250,6 +250,9 @@ let onPlace = null;
 
 export function unmount() {
   alive = false;
+  // However the screen is left (not only by DECK), a test stops: otherwise it would stand in
+  // for a real alert the next time the deck jumps here.
+  stopTest();
   timers.forEach(clearInterval);
   timers = [];
   if (onPlace) window.removeEventListener('place-changed', onPlace);

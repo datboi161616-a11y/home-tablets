@@ -184,7 +184,7 @@ const ICON_WORDS = [
   ['electric', /electric|power|energy|hydro/], ['water', /water|sewer/], ['gas', /\bgas\b|heat|oil|propane/],
   ['internet', /internet|wi-?fi|broadband|cable|fib(er|re)/], ['phones', /phone|mobile|cell|verizon|t-mobile|at&t/],
   ['tv', /netflix|hulu|disney|hbo|\bmax\b|prime|tv|youtube|stream|paramount|peacock/], ['music', /spotify|music|audible|pandora/],
-  ['rent', /rent|mortgage|hoa|house|home|property|condo/], ['car', /car|auto|vehicle|truck|lease|parking/],
+  ['rent', /rent|mortgage|hoa|house|home|property|condo/], ['car', /\bcars?\b|auto|vehicle|truck|lease|parking/],
   ['card', /card|visa|amex|loan|bank/], ['shield', /insurance|life|health|dental|renters/],
 ];
 export function iconFor(name) {
@@ -353,7 +353,7 @@ export function homeLine(day = today()) {
   return {
     text: homeText(hit.bill.name, hit.due, day),
     href: '#/bills',
-    done: () => { markPaid(id); },
+    done: () => { const l = markPaid(id); return l ? () => unmarkPaid(l.pid) : null; }, // (returns its Undo)
     tone: hit.due < day ? 'late' : 'due',
     icon: billIcon(iconFor(hit.bill.name), 48, true),
   };
