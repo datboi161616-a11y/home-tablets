@@ -232,11 +232,11 @@ export function mount(el) {
           <div class="x-title">New timer</div>
           <button class="x-btn glass" data-close>Close</button>
         </div>
-        <div class="x-eyebrow">Name</div>
+        <div class="x-eyebrow">1 · What’s it for? (you can skip this)</div>
         <div class="tm-names" data-names></div>
-        <div class="x-eyebrow">Time</div>
+        <div class="x-eyebrow">2 · How long? Tapping a time starts it</div>
         <div class="tm-presets">${PRESETS.map((m) => `<button class="tm-p" data-start="${m}">${presetLabel(m)}</button>`).join('')}</div>
-        <div class="x-eyebrow">Other time</div>
+        <div class="x-eyebrow">Or set your own time, then tap Start</div>
         <div class="tm-other">
           <button class="x-btn" data-custom="-60">−1 hr</button>
           <button class="x-btn" data-custom="-5">−5</button>
