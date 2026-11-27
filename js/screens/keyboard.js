@@ -13,6 +13,7 @@
 //     caps: 'auto',                      // 'auto': a capital first letter · 'words': each word · 'none' · 'lock'
 //     enter: false,                      // true: a ↵ key for a new line (a list, one thing a line)
 //     page: '',                          // 'n': start on the 123 page (a number)
+//   pickWord: false,                   // true: a suggestion finishes the word being typed (no onGo)
 //   });
 //   kb.text / kb.set('') / kb.refresh() / kb.close()
 //
@@ -167,6 +168,7 @@ export function openKeyboard(host, opts = {}) {
       let c = t.dataset.k;
       if (c === ' ' && (!kb.text || /[ \n]$/.test(kb.text))) return;
       if (shift && /[a-z]/.test(c)) c = c.toUpperCase();
+      if (o.pickWord && /^[,.;:!?)]$/.test(c) && / $/.test(kb.text)) kb.text = kb.text.slice(0, -1); // (no space before a comma after a picked word)
       if (c !== ' ' && shift === 1) shift = 0;
       if (kb.text.length < o.max) kb.text += c;
       if (c === ' ' && caps === 'words' && !shift) shift = 1; // each word a capital
@@ -183,7 +185,13 @@ export function openKeyboard(host, opts = {}) {
     }
     else if (t.hasAttribute('data-knum')) { setNum(num ? '' : 'n'); return; }
     else if (t.hasAttribute('data-ksym')) { setNum(num === 's' ? 'n' : 's'); return; }
-    else if (t.hasAttribute('data-kgo') || sug) {
+    else if (sug && o.pickWord) {
+      // The word being typed becomes the suggestion, then a space: "2 c" -> "2 cups ".
+      const base = kb.text.replace(/\S*$/, '');
+      kb.text = `${/^°/.test(sug) ? base.replace(/ $/, '') : base}${sug} `.slice(0, o.max); // ("350 " + °F = "350°F ")
+      if (shift === 1) shift = 0;
+      if (num) setNum('');
+    } else if (t.hasAttribute('data-kgo') || sug) {
       if (num) setNum('');
       o.onGo(sug || '', kb);
       if (!kb.open) return;
@@ -210,8 +218,9 @@ export function openKeyboard(host, opts = {}) {
  *   room: given space under it (padding) and the class kb-typing while the keys are up, so
  *     the box stays in sight (the screen may hide what it can spare then).
  *   look: the keyboard's colours (keyboardStyle). Returns stop() for unmount().
+ *   suggest: (box, text) => words above the keys; tapping one finishes the word being typed.
  */
-export function keyFields(host, { room = null, look = {} } = {}) {
+export function keyFields(host, { room = null, look = {}, suggest = null } = {}) {
   if (!host.querySelector('style[data-kb-style]')) {
     const st = document.createElement('style');
     st.setAttribute('data-kb-style', '');
@@ -246,6 +255,8 @@ export function keyFields(host, { room = null, look = {} } = {}) {
       caps: f.getAttribute('data-caps') || (kind === 'number' ? 'none' : 'auto'),
       enter: kind === 'lines',
       page: kind === 'number' ? 'n' : '',
+      suggest: suggest ? (t) => suggest(f, t) : () => [],
+      pickWord: !!suggest,
       onChange: (t) => {
         const v = kind === 'number' ? t.replace(/\D/g, '') : t;
         if (v !== t && host.__kb) host.__kb.text = v;

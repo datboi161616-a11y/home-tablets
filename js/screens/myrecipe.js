@@ -4,11 +4,30 @@
 // One ingredient per line ("2 cups flour"), one step per line ("Bake 25 minutes").
 // Saved on this screen only. Recipes can also be sent from a phone: the page shows the code to scan.
 //   #/myrecipe/from/<id>  a copy of a library recipe, to change as you like
-import { savedRecipes, saveRecipe, deleteRecipe, parseStep, MEAL_NAMES, UNDO_KEY } from '../services/my-recipes.js';
+import { savedRecipes, saveRecipe, deleteRecipe, parseStep, parseIngredient, MEAL_NAMES, UNDO_KEY } from '../services/my-recipes.js';
 import { getRecipe, ingredientText, loadIndex } from '../services/recipe-data.js';
+import { GROCERY_WORDS } from '../services/grocery-words.js';
 import { esc } from './kitchen-ui.js';
 import { topBar, phoneCode, wirePhoneCodes } from './ui.js';
 import { keyFields } from './keyboard.js';
+
+// Words above the keys for Ingredients and Steps, so a recipe is mostly taps on whole words:
+// amounts at the start of a line (no switching to the number keys), units after an amount,
+// then any word that starts with what's typed (the Steps also offer this recipe's ingredients).
+const AMOUNTS = ['1', '2', '3', '4', '½', '¼'];
+const UNITS = ['cup', 'cups', 'tbsp', 'tsp', 'lb', 'oz', 'cloves', 'can', 'cans', 'jar', 'package', 'bunch', 'slices', 'pinch',
+  'teaspoons', 'tablespoons', 'pounds', 'ounces', 'large', 'medium', 'small'];
+const ING_WORDS = ['chopped', 'diced', 'sliced', 'minced', 'melted', 'softened', 'shredded', 'grated', 'peeled', 'fresh', 'frozen',
+  'to taste', 'divided', 'room temperature', 'salt', 'pepper', 'salt and pepper', 'olive oil', 'vegetable oil', 'flour', 'sugar',
+  'brown sugar', 'baking powder', 'baking soda', 'vanilla', 'cinnamon', 'water', 'broth'];
+const STEP_FIRST = ['Preheat the oven to', 'Add', 'Mix', 'Stir', 'Bake for', 'Cook'];
+const STEP_WORDS = ['preheat', 'bake', 'roast', 'broil', 'grill', 'simmer', 'boil', 'cook', 'fry', 'brown', 'steam', 'microwave',
+  'rest', 'chill', 'cool', 'freeze', 'marinate', 'toast', 'heat', 'stir', 'whisk', 'knead', 'blend', 'mix', 'add', 'pour', 'combine',
+  'season', 'serve', 'drain', 'chop', 'slice', 'spread', 'sprinkle', 'place', 'remove', 'cover', 'flip', 'until', 'golden', 'tender',
+  'bubbly', 'done', 'minutes', 'hours', 'oven', 'pan', 'skillet', 'pot', 'bowl', 'baking dish', 'baking sheet', 'medium heat',
+  'high heat', 'low heat', 'the', 'with', 'and', 'into', 'over', 'together', 'then', 'each side', 'degrees', 'salt and pepper'];
+const AFTER_NUM_STEP = ['minutes', 'hours', '°F', 'seconds'];
+const isNum = (w) => /^[\d½¼¾⅓⅔/.]+$/.test(w);
 
 let armTimer, draftTimer;
 let stopCodes = null; // stops the phone code being redrawn
@@ -65,6 +84,9 @@ export function mount(el, { args = [] } = {}) {
     .mr-count{font-size:16px;font-weight:600;color:#E3CDBB;margin-left:auto}
     .mr-phone{grid-column:2 / 4}
     .mr.kb-typing .mr-phone{display:none}
+    .mr[data-typing=ingredients] .x-top,.mr[data-typing=steps] .x-top{display:none}
+    .mr[data-typing=ingredients] .mr-grid,.mr[data-typing=steps] .mr-grid{grid-template-columns:minmax(0,1fr);grid-template-rows:minmax(0,1fr)}
+    .mr[data-typing=ingredients] .mr-card:not([data-card=ingredients]),.mr[data-typing=steps] .mr-card:not([data-card=steps]){display:none}
     .mr-phone .x-code{background:rgba(255,244,234,.09);box-shadow:inset 0 0 0 1.5px rgba(255,244,234,.1);border-radius:28px;padding:12px 22px 12px 14px}
   </style>
   <div class="mr">
@@ -95,11 +117,11 @@ export function mount(el, { args = [] } = {}) {
         </div>
       </div>
       ${existing || copyOf ? '<div class="mr-phone" style="display:none"></div>' : `<div class="mr-phone">${phoneCode({ tab: 'recipe', size: 76, title: 'Or send it from your phone', sub: ' ' })}</div>`}
-      <div class="mr-card">
+      <div class="mr-card" data-card="ingredients">
         <div style="display:flex;align-items:baseline"><div class="mr-label" style="margin:0">Ingredients</div><div data-count="ingredients" class="mr-count"></div></div>
         <div data-f="ingredients" class="mr-ta" data-kbf="lines" data-max="3000" data-ph="For example:&#10;2 lb chuck roast&#10;1 onion, sliced&#10;3 carrots&#10;2 cups beef broth">${esc((r.ingredients || []).join('\n'))}</div>
       </div>
-      <div class="mr-card">
+      <div class="mr-card" data-card="steps">
         <div style="display:flex;align-items:baseline"><div class="mr-label" style="margin:0">Steps</div><div data-count="steps" class="mr-count"></div></div>
         <div data-f="steps" class="mr-ta" data-kbf="lines" data-max="5000" data-ph="For example:&#10;Season the roast and brown it on all sides.&#10;Add the onion, carrots and broth.&#10;Cook on low for 8 hours.">${esc((r.steps || []).join('\n'))}</div>
       </div>
@@ -109,7 +131,45 @@ export function mount(el, { args = [] } = {}) {
   stopCodes = wirePhoneCodes(el);
   // Typing with the screen's own keys (the boxes are plain boxes: Android's keyboard never comes up).
   if (stopKeys) stopKeys();
-  stopKeys = keyFields(el, { room: el.querySelector('.mr'), look: { panel: '#2C1B14', go: '#FF8A3D', goInk: '#2A160C' } });
+  stopKeys = keyFields(el, { room: el.querySelector('.mr'), look: { panel: '#2C1B14', go: '#FF8A3D', goInk: '#2A160C' }, suggest });
+
+  // The ingredients of your other recipes come first ("chuck roast" again for the next roast).
+  const ownItems = [];
+  savedRecipes().forEach((x) => (x.ingredients || []).forEach((l) => {
+    const it = parseIngredient(l).item.toLowerCase();
+    if (it && ownItems.indexOf(it) < 0) ownItems.push(it);
+  }));
+  const groceries = GROCERY_WORDS.map((w) => w.toLowerCase());
+  function suggest(f, text) {
+    const kind = f.dataset.f;
+    if (kind !== 'ingredients' && kind !== 'steps') return [];
+    const words = text.slice(text.lastIndexOf('\n') + 1).split(' ');
+    const part = words.pop().toLowerCase();
+    const before = words.filter(Boolean);
+    const prev = before[before.length - 1] || '';
+    const first = !before.length;
+    if (!part) {
+      if (kind === 'ingredients') return first ? AMOUNTS : isNum(prev) ? [/^(1|½|¼|¾|⅓|⅔)$/.test(prev) ? 'cup' : 'cups', 'tbsp', 'tsp', 'lb', 'oz', '½'] : [];
+      return first ? STEP_FIRST : isNum(prev) ? AFTER_NUM_STEP : [];
+    }
+    if (isNum(part)) return [];
+    const pools = kind === 'ingredients' ? [isNum(prev) ? UNITS : [], ownItems, ING_WORDS, groceries]
+      : [lines('ingredients').map((l) => parseIngredient(l).item.toLowerCase()), STEP_WORDS, groceries];
+    const out = [];
+    const add = (w) => { const t = first ? w.charAt(0).toUpperCase() + w.slice(1) : w; if (w !== part && out.indexOf(t) < 0) out.push(t); };
+    // Words that start with what's typed, then ones with a later word that does ("bre": chicken breasts).
+    pools.forEach((p) => p.forEach((w) => { if (out.length < 6 && w.indexOf(part) === 0) add(w); }));
+    pools.forEach((p) => p.forEach((w) => { if (out.length < 6 && w.indexOf(` ${part}`) > 0) add(w); }));
+    return out;
+  }
+
+  // Typing Ingredients or Steps: that box gets the whole screen above the keys.
+  const room = el.querySelector('.mr');
+  const showTyping = () => {
+    const f = el.querySelector('.mr-ta.kb-on');
+    const now = f ? f.dataset.f : '';
+    if (room.getAttribute('data-typing') !== now) room.setAttribute('data-typing', now); // (each key is a tap too: change nothing then)
+  };
 
   const $ = (s) => el.querySelector(s);
   const val = (f) => $(`[data-f="${f}"]`).value;
@@ -273,6 +333,9 @@ export function mount(el, { args = [] } = {}) {
       location.replace('#/recipes/mine');
     }
   });
+  // (after the keys came or went: a tap on a box, Save pointing at a box, Done, a tap elsewhere)
+  el.addEventListener('click', showTyping);
+  el.addEventListener('change', showTyping);
 }
 
 export function unmount() {
