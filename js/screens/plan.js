@@ -207,7 +207,7 @@ export function mount(el) {
               <div class="wp-mh">${name}</div>
               ${ids.map((id) => mealCard(ix, plan, id, d, meal)).join('')}
               ${mark ? `<button class="wp-mark" data-dayhead="${d.key}">${markIcon(mark)}<span>${esc(markName(mark))}</span></button>`
-                : !ids.length ? `<button class="wp-add empty" data-add="${d.key}|${meal}" aria-label="Add ${esc(name.toLowerCase())}">${spot.plate(PLATE[meal], 40)}</button>` : ''}
+                : !ids.length ? `<button class="wp-add empty" data-add="${d.key}|${meal}" aria-label="Add ${esc(name.toLowerCase())}">${spot.plate(PLATE[meal], 40)}<span>+ Add</span></button>` : ''}
             </div>`;
           }).join('')}
         </div>
@@ -311,8 +311,11 @@ export function mount(el) {
   function pickBody(ix, meal, key) {
     const l = pickLists(ix, meal, key);
     const part = (title, ids) => (ids.length ? `<div class="wp-ph">${title}</div><div class="wp-pick">${ids.map((id) => tile(ix, id)).join('')}</div>` : '');
+    // An empty meal can also be "Leftovers" or "Eating out" right here (not only behind the day's name).
+    const empty = !((getPlan()[key] || {})[meal] || []).length;
+    const marks = empty ? `<div class="wp-ph">Not cooking?</div><div style="display:flex;gap:8px;flex-wrap:wrap">${MARKS.map(([k, label]) => `<button class="wp-chip" data-mark="${k}" data-meal="${meal}">${markIcon(k, 24)}${esc(label)}</button>`).join('')}</div>` : '';
     return `${part('Your favourites', l.fav)}${part('Planned lately', l.lately)}${part('Ideas', l.ideas)}
-        ${!l.fav.length && !l.lately.length && !l.ideas.length ? '<div class="wp-hint">No ideas yet.</div>' : ''}`;
+        ${!l.fav.length && !l.lately.length && !l.ideas.length ? '<div class="wp-hint">No ideas yet.</div>' : ''}${marks}`;
   }
   // The search box is a button: the screen's own keyboard types in it (never Android's).
   const searchBoxHtml = (q, typing) => (q ? `<span class="tx">${esc(q)}</span>${typing ? '<span class="car"></span>' : ''}`
@@ -521,6 +524,7 @@ export function mount(el) {
       if ((x = t('[data-mark]'))) {
         const on = markFor(getPlan(), sheet.key, x.dataset.meal) === x.dataset.mark;
         setMark(sheet.key, x.dataset.meal, on ? null : x.dataset.mark);
+        if (sheet && sheet.type === 'pick') { sheet = null; render(ix); } // (chosen from the recipe picker: done)
         return;
       }
       if (t('[data-moveday]')) { moving = { kind: 'day', key: sheet.key }; sheet = null; render(ix); return; }

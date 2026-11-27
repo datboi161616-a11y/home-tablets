@@ -479,7 +479,7 @@ export function mount(el, { args = [] } = {}) {
         const on = plannedFor(d.key, sheet.meal).indexOf(r.id) >= 0;
         return `<button class="rb-day${on ? ' on' : ''}" data-pday="${d.key}"><span class="l">${d.label === 'Today' ? 'Today' : d.short}</span><span class="s">${on ? '✓ Planned' : d.sub}</span></button>`;
       }).join('')}</div>
-      <div class="rb-pnote${sheet.warn ? ' warn' : ''}">${esc(sheet.note || '')}</div>
+      <div class="rb-pnote${sheet.warn ? ' warn' : ''}">${esc(sheet.note || 'Pick the meal, then tap a day')}</div>
     </div></div>`;
   }
   root.addEventListener('click', (e) => {
@@ -531,11 +531,11 @@ export function mount(el, { args = [] } = {}) {
     const k = pd.dataset.pday;
     const d = planDays(0).find((x) => x.key === k);
     sheet.note = ''; sheet.warn = false;
-    if (plannedFor(k, sheet.meal).indexOf(sheet.id) >= 0) removeFromPlan(k, sheet.id, sheet.meal);
-    else if (plannedFor(k, sheet.meal).length >= MAX_PER_MEAL) {
+    const said = `${d ? (d.label === 'Today' ? 'today’s' : `${d.label}’s`) : 'that day’s'} ${mealWord(sheet.meal)}`;
+    if (plannedFor(k, sheet.meal).indexOf(sheet.id) >= 0) { removeFromPlan(k, sheet.id, sheet.meal); sheet.note = `Taken off ${said}`; } else if (plannedFor(k, sheet.meal).length >= MAX_PER_MEAL) {
       sheet.warn = true;
       sheet.note = `${d ? d.label : 'That day'} already has ${MAX_PER_MEAL} ${mealWord(sheet.meal)} recipes. Take one off in Week plan first.`;
-    } else { addToPlan(k, sheet.id, sheet.meal); keep(sheet.id); }
+    } else { addToPlan(k, sheet.id, sheet.meal); keep(sheet.id); sheet.note = `✓ Added to ${said}`; }
     drawSheet();
   });
 

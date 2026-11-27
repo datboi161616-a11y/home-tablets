@@ -293,11 +293,25 @@ export const upcoming = () => plans().filter((p) => !p.done);
 export const lately = () => plans().filter((p) => p.done).reverse().slice(0, 3);
 export const plannedFor = (ideaId) => upcoming().find((p) => p.ideaId === ideaId) || null;
 
-/** Put this idea on the calendar: the next free evening at 7 PM. Returns the plan; throws my-events' friendly errors. */
-export function planIdea(idea, now = new Date()) {
-  const day = nextFreeEvening(now, eveningBusy);
+/** The next 7 evenings to choose from (from tonight, or tomorrow once it's 5 PM), each with whether it's busy,
+ *  and the one to offer first (the next free evening, as planIdea would pick). */
+export function eveningChoices(now = new Date()) {
+  const first = now.getHours() < 17 ? 0 : 1;
+  const list = [];
+  for (let i = 0; i < 7; i++) {
+    const d = new Date(now.getFullYear(), now.getMonth(), now.getDate() + first + i);
+    list.push({ iso: isoDay(d), busy: eveningBusy(d) });
+  }
+  const best = isoDay(nextFreeEvening(now, eveningBusy));
+  return { list, best: list.some((x) => x.iso === best) ? best : (list.find((x) => !x.busy) || list[0]).iso };
+}
+
+/** Put this idea on the calendar: on `at` ({ date: 'YYYY-MM-DD', time: 'HH:MM' }), or else the next
+ *  free evening at 7 PM. Returns the plan; throws my-events' friendly errors. */
+export function planIdea(idea, now = new Date(), at = null) {
+  const date = at ? at.date : isoDay(nextFreeEvening(now, eveningBusy));
   const two = getFamily().people.map((n) => String(n || '').trim()).filter(Boolean);
-  const ev = saveMyEvent({ title: idea.title, date: isoDay(day), time: '19:00', minutes: idea.mins || 120, tag: 'out', who: two.length === 2 ? two : [] });
+  const ev = saveMyEvent({ title: idea.title, date, time: at ? at.time : '19:00', minutes: idea.mins || 120, tag: 'out', who: two.length === 2 ? two : [] });
   const st = load();
   const plan = { id: `p${ev.id}`, ideaId: idea.id, title: idea.title, date: ev.date, time: ev.time, eventId: ev.id };
   st.plans = st.plans.concat([plan]).slice(-MAX_PLANS);

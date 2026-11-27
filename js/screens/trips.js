@@ -389,7 +389,7 @@ export function mount(el, ctx) {
       cells += `<button type="button" data-day="${iso}" class="${cls}"${iso < now ? ' disabled' : ''}>${d}</button>`;
     }
     const atStart = y === fromIso(now).getFullYear() && m === fromIso(now).getMonth();
-    return `<div class="tp-sh"><button type="button" style="visibility:hidden"></button><h2>${sheet.start ? rangeText(sheet.start, sheet.end, true) : 'Dates'}</h2><button type="button" class="go" data-dates>Done</button></div>
+    return `<div class="tp-sh"><button type="button" style="visibility:hidden"></button><h2>${sheet.picking ? 'Now tap the day you come back' : sheet.start ? rangeText(sheet.start, sheet.end, true) : 'Tap the day you leave'}</h2><button type="button" class="go" data-dates>${sheet.picking ? 'Just one day' : 'Done'}</button></div>
       <div class="tp-mon"><button type="button" data-month="-1"${atStart ? ' disabled' : ''} aria-label="Earlier">‹</button><b>${MONTH_NAMES[m]} ${y}</b><button type="button" data-month="1" aria-label="Later">›</button></div>
       <div class="tp-grid">${cells}</div>`;
   }

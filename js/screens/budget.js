@@ -115,6 +115,10 @@ const STYLE = `
     .bd-m .bs{display:flex;gap:6px;margin-top:8px}
     .bd-m .bs button{flex:1;height:56px;border-radius:12px;background:#FFFFFF;border:2px solid #D9C8AD;display:flex;align-items:center;justify-content:center;cursor:pointer;padding:0}
     .bd-m .bs button.on{background:#23323A;border-color:#23323A}
+    .bd-m .bs button{flex-direction:column;gap:1px;min-width:0}
+    .bd-m .bs button svg{width:22px;height:22px}
+    .bd-m .bs button span{font:600 13px/1 Inter,system-ui,sans-serif;color:#23323A}
+    .bd-m .bs button.on span{color:#FFFFFF}
     .bd-m .tag{position:absolute;right:-4px;top:-12px;padding:3px 10px;border-radius:999px;background:#FFB86B;color:#23323A;font:700 14px Inter,sans-serif}
     .bd-m .ml{display:none}
     /* three meals a day: the meal's name inside the card, one line of title */
@@ -291,7 +295,7 @@ export function mount(el, { args = [] } = {}) {
               const on = setup.meals.indexOf(m) >= 0;
               return `<button class="bd-meal${on ? ' on' : ''}" data-meal="${m}" aria-pressed="${on}">${plateArt({ id: `budget-${m}`, t: SAMPLE[m], ty: m, c: m === 'dinner' ? 'italian' : m }, 56)}<span>${MEAL_NAMES[m]}</span><span class="bd-tick" aria-hidden="true">${on ? '✓' : ''}</span></button>`;
             }).join('')}</div>
-            <div class="bd-l gap">More of these${setup.more.length ? `<small>${setup.more.length} chosen</small>` : ''}</div>
+            <div class="bd-l gap">Foods you like${setup.more.length ? `<small>${setup.more.length} chosen</small>` : ''}</div>
             ${chips('more')}
             <div class="bd-l gap">Leave out${setup.out.length ? `<small>${setup.out.length} chosen</small>` : ''}</div>
             ${chips('out')}
@@ -314,7 +318,7 @@ export function mount(el, { args = [] } = {}) {
     return `<div class="bd-m${x.keep ? ' kept' : ''}${tr ? ' try' : ''}" data-open="${esc(c.id)}">
       <div class="top">${plateArt({ id: c.id, t: c.t, ty: c.meal, c: 'web', img: c.img, alt: c.alt }, setup.meals.length > 2 ? 38 : 44)}<div class="pr"><span class="ml">${MEAL_NAMES[x.meal]}</span><b>${money(priceFor(c, setup.serves))}</b> <span class="e">est.</span></div></div>
       <div class="t">${esc(c.t)}</div>
-      <div class="bs"><button data-swap="${i}" aria-label="Swap ${esc(c.t)}">${ICON.swap()}</button><button class="${x.keep ? 'on' : ''}" data-keep="${i}" aria-pressed="${x.keep}" aria-label="${x.keep ? 'Kept' : 'Keep'} ${esc(c.t)}">${x.keep ? ICON.lock : ICON.open}</button></div>
+      <div class="bs"><button data-swap="${i}" aria-label="Swap ${esc(c.t)}">${ICON.swap()}<span>Swap</span></button><button class="${x.keep ? 'on' : ''}" data-keep="${i}" aria-pressed="${x.keep}" aria-label="${x.keep ? 'Kept' : 'Keep'} ${esc(c.t)}">${x.keep ? ICON.lock : ICON.open}<span>${x.keep ? 'Kept' : 'Keep'}</span></button></div>
       ${tr ? `<div class="tag">try −${money(tr.save)}</div>` : ''}
     </div>`;
   }
@@ -417,7 +421,7 @@ export function mount(el, { args = [] } = {}) {
     const which = sheet.which;
     const on = setup[which];
     return `<div class="bd-bg" data-shut><div class="bd-sheet brown" role="dialog">
-      <div class="hd"><b>${which === 'out' ? 'Leave out' : 'More of these'}</b>
+      <div class="hd"><b>${which === 'out' ? 'Leave out' : 'Foods you like'}</b>
         <button class="x-btn line" data-addword="${which}">+ Add your own</button>
         <button class="x-btn ink" data-shut style="background:#5A2412">Done</button></div>
       <div class="bd-grid">${allChoices(which).map((c) => `<button class="bd-chip${on.indexOf(c[0]) >= 0 ? ' on' : ''}" data-chip="${which}" data-id="${esc(c[0])}">${on.indexOf(c[0]) >= 0 ? '✓ ' : ''}${esc(c[1])}</button>`).join('')}</div>
@@ -425,7 +429,7 @@ export function mount(el, { args = [] } = {}) {
   }
   function typeSheet() {
     return `<div class="bd-bg" data-typebg style="align-items:flex-start"></div><div class="bd-type">
-      <div class="hd"><button data-typecancel>Cancel</button><span>${sheet.which === 'out' ? 'Leave out' : 'More of these'}</span><span style="width:70px"></span></div>
+      <div class="hd"><button data-typecancel>Cancel</button><span>${sheet.which === 'out' ? 'Leave out' : 'Foods you like'}</span><span style="width:70px"></span></div>
       <div class="bd-box"><span>${esc(sheet.text || '')}</span><span class="car"></span></div>
     </div>`;
   }
@@ -463,7 +467,7 @@ export function mount(el, { args = [] } = {}) {
     if (viewChanged) { viewChanged = false; setRoute('budget'); }
   }
 
-  // Typing a word for "More of these" / "Leave out": the screen's own keyboard.
+  // Typing a word for "Foods you like" / "Leave out": the screen's own keyboard.
   function openTyping() {
     const which = sheet.which;
     const pool = allChoices(which).map((c) => c[1].toLowerCase()).concat(GROCERY_WORDS.map((w) => w.toLowerCase()));

@@ -95,6 +95,11 @@ const STYLE = `
   .dn-act.side{flex:1;background:rgba(20,6,12,.45);border:2px solid rgba(255,255,255,.3) !important;color:#FFFFFF;font:600 28px Outfit,sans-serif}
   .dn-act.when{flex:1.45;margin-right:18px;background:rgba(244,163,180,.16);border:2px solid ${PINK};color:#FFF3EC;font:600 28px Outfit,sans-serif}
   .dn-act.side + .dn-act.side{margin-left:18px;flex:.6}
+  .dn-ask{font:600 24px Outfit,sans-serif;color:#6A3424;margin:22px 0 10px}
+  .dn-pks{display:flex;flex-wrap:wrap}
+  .dn-pk{min-width:84px;height:72px;margin:0 8px 8px 0;padding:0 14px;border-radius:16px;background:#F6DCCB;color:#5A2A1A;font:600 20px/1.1 Inter,sans-serif;display:flex;flex-direction:column;align-items:center;justify-content:center}
+  .dn-pk small{font-size:14px;font-weight:500;opacity:.7}
+  .dn-pk.on{background:${PLUM};color:#FFF3EC}
 
   .dn-list{position:absolute;left:40px;right:40px;top:150px;bottom:0;overflow-y:auto;-webkit-overflow-scrolling:touch;padding-bottom:110px;box-sizing:border-box;
     display:flex;flex-wrap:wrap;align-content:flex-start;justify-content:space-between}
@@ -206,6 +211,24 @@ export function mount(el, ctx) {
         ${idea.note ? `<div class="dn-note">${esc(idea.note)}</div>` : ''}</div>
       <div class="dn-chips"><span class="dn-chip">${idea.where === 'in' ? ICON.home('#5A2A1A') : ICON.pin('#5A2A1A')}${WHERE[idea.where]}</span><span class="dn-chip">${COST[idea.cost]}</span>${hours ? `<span class="dn-chip">About ${hours}</span>` : ''}</div></div>`;
   }
+  // "Put it on the calendar": which evening (busy ones marked), then what time, then put it on.
+  let choosing = null; // { date, time } while choosing
+  const WEEKDAY = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+  function chooseHtml(idea) {
+    const { list } = jar.eveningChoices();
+    const today = new Date().getHours() < 17 ? list[0].iso : ''; // (before 5 PM the first is tonight)
+    const dayChip = (x) => {
+      const d = new Date(`${x.iso}T12:00:00`);
+      return `<button type="button" class="dn-pk${x.iso === choosing.date ? ' on' : ''}" data-day="${x.iso}">${x.iso === today ? 'Tonight' : WEEKDAY[d.getDay()]}<small>${x.busy ? 'busy' : d.getDate()}</small></button>`;
+    };
+    return `<div class="dn-slip"><div class="dn-slip-in" style="top:36px">
+        <div class="dn-title long" style="font-size:36px;margin-top:0">${esc(idea.title)}</div>
+        <div class="dn-ask">Which evening?</div><div class="dn-pks">${list.map(dayChip).join('')}</div>
+        <div class="dn-ask">What time?</div><div class="dn-pks">${['17:00', '18:00', '19:00', '20:00'].map((t) => `<button type="button" class="dn-pk${t === choosing.time ? ' on' : ''}" data-time="${t}">${esc(jar.timeWords(t))}</button>`).join('')}</div>
+      </div></div>
+      <div class="dn-acts"><button type="button" class="dn-act main" data-plan-go>${ICON.cal(PLUM)}Put it on ${esc(jar.longDayWords(choosing.date))} · ${esc(jar.timeWords(choosing.time))}</button>
+        <button type="button" class="dn-act side" data-plan-cancel>Cancel</button></div>`;
+  }
   function actsHtml(idea) {
     const plan = jar.plannedFor(idea.id);
     if (plan) {
@@ -300,7 +323,18 @@ export function mount(el, ctx) {
     } else if ('pick' in d) pickOne();
     else if ('again' in d) { const idea = jar.pick(); if (idea) showIdea(idea, true); }
     else if ('plan' in d) {
-      try { justPlanned = jar.planIdea(shown).id; } catch (err) { showToast(null); $('[data-toast]').innerHTML = `<div class="dn-toast" style="padding-right:26px"><span style="margin:0">${esc(err.message)}</span></div>`; toastTimer = later(() => showToast(null), 5000); return; }
+      choosing = { date: jar.eveningChoices().best, time: '19:00' };
+      $('[data-card]').innerHTML = chooseHtml(shown);
+    } else if ('day' in d || 'time' in d) {
+      if ('day' in d) choosing.date = d.day; else choosing.time = d.time;
+      $('[data-card]').innerHTML = chooseHtml(shown);
+    } else if ('planCancel' in d) {
+      choosing = null;
+      $('[data-card]').innerHTML = cardHtml(shown, false) + actsHtml(shown);
+    } else if ('planGo' in d) {
+      const at = choosing;
+      choosing = null;
+      try { justPlanned = jar.planIdea(shown, new Date(), at).id; } catch (err) { showToast(null); $('[data-toast]').innerHTML = `<div class="dn-toast" style="padding-right:26px"><span style="margin:0">${esc(err.message)}</span></div>`; toastTimer = later(() => showToast(null), 5000); return; }
       $('[data-card]').innerHTML = cardHtml(shown, false) + actsHtml(shown);
     } else if ('unplan' in d) {
       jar.unplan(justPlanned);

@@ -349,15 +349,18 @@ export function mount(el) {
       };
       saveName.addEventListener('click', doSaveName);
       name.addEventListener('keydown', (e) => { if (e.key === 'Enter') doSaveName(); });
+      name.addEventListener('change', doSaveName); // (the keys put away: what's typed is kept, not lost on Back)
 
       // Who lives here: each change is saved as it is made.
       const chips = pane.querySelector('[data-people]');
       const person = pane.querySelector('[data-person]');
       const addPerson = pane.querySelector('[data-add-person]');
       let list = (getFamily().people || []).map((p) => String(p).trim()).filter(Boolean);
+      let asking = -1; // the person whose chip asks "Remove …?" (a second tap removes them)
+      let askTimer;
       const drawPeople = () => {
         chips.innerHTML = list.length
-          ? list.map((p, i) => `<button class="st-chip" data-off="${i}" aria-label="Take ${esc(p)} off"${canSave ? '' : ' disabled'}><i style="background:${PERSON_COLORS[i % PERSON_COLORS.length]}">${esc(p.charAt(0).toUpperCase())}</i>${esc(p)}${canSave ? '<b>×</b>' : ''}</button>`).join('')
+          ? list.map((p, i) => `<button class="st-chip" data-off="${i}" aria-label="Take ${esc(p)} off"${canSave ? '' : ' disabled'}${asking === i ? ' style="box-shadow:inset 0 0 0 2px #FF6B5E"' : ''}><i style="background:${PERSON_COLORS[i % PERSON_COLORS.length]}">${esc(p.charAt(0).toUpperCase())}</i>${asking === i ? `Remove ${esc(p)}?` : esc(p)}${canSave ? '<b>×</b>' : ''}</button>`).join('')
           : '<span class="st-hint">Nobody yet.</span>';
         person.disabled = !canSave || list.length >= MAX_PEOPLE;
       };
@@ -379,10 +382,21 @@ export function mount(el) {
       drawPeople();
       person.addEventListener('input', () => { addPerson.disabled = !canSave || !person.value.trim(); });
       person.addEventListener('keydown', (e) => { if (e.key === 'Enter') doAdd(); });
+      person.addEventListener('change', () => { if (person.value.trim()) doAdd(); }); // (typed, then the keys put away: still added)
       addPerson.addEventListener('click', doAdd);
       chips.addEventListener('click', (e) => {
         const b = e.target.closest('[data-off]');
-        if (b && canSave) keepPeople(list.filter((_, i) => i !== +b.dataset.off));
+        if (!b || !canSave) return;
+        const i = +b.dataset.off;
+        clearTimeout(askTimer);
+        if (asking !== i) {
+          asking = i;
+          drawPeople();
+          askTimer = setTimeout(() => { if (el.isConnected) { asking = -1; drawPeople(); } }, 4000);
+          return;
+        }
+        asking = -1;
+        keepPeople(list.filter((_, j) => j !== i));
       });
     },
     screen() {

@@ -299,8 +299,10 @@ function sealedHtml(t, sel) {
         <span class="ring">${avatar(name, 72)}${did ? `<span class="tk">${TICK(NAVY, 17)}</span>` : ''}</span><span class="nm">${esc(name)}</span></button>`;
     }).join('')}</div>`;
     const opt = (o, i) => `<button type="button" class="qd-opt ${i ? 'b' : 'a'}" data-opt="${i}"><span class="pic">${paint(o[1])}</span><span class="lab">${esc(o[0])}</span></button>`;
-    return `${faces}<div class="qd-ask pick${shared ? ' alone' : ''}"><div class="qd-kick">${shared ? esc(kick) : `No. ${t.n}`}</div><div class="qd-q${t.text.length > 34 ? ' long' : ''}">${esc(t.text)}</div></div>
-      <div class="qd-opts${shared ? ' alone' : ''}">${opt(t.a, 0)}${opt(t.b, 1)}</div>`;
+    // Two or more still to choose: who's choosing comes first, so nobody answers for someone else.
+    const who = !shared && !sel;
+    return `${faces}<div class="qd-ask pick${shared ? ' alone' : ''}"><div class="qd-kick">${shared ? esc(kick) : who ? 'Who’s choosing? Tap your face first' : `No. ${t.n}`}</div><div class="qd-q${t.text.length > 34 ? ' long' : ''}">${esc(t.text)}</div></div>
+      <div class="qd-opts${shared ? ' alone' : ''}"${who ? ' style="opacity:.45"' : ''}>${opt(t.a, 0)}${opt(t.b, 1)}</div>`;
   }
   const many = t.names.length > 2;
   const env = many ? (t.names.length > 3 ? 120 : 150) : 210;
@@ -316,7 +318,9 @@ function sealedHtml(t, sel) {
 
 function mountToday(el) {
   let t = qd.today();
-  let sel = t.waiting[0] || '';
+  // (picture questions: nobody is picked while two or more still have to choose)
+  const firstSel = (x) => (x.names[0] && x.waiting.length > 1 ? '' : x.waiting[0] || '');
+  let sel = firstSel(t);
   let fresh = false;
   let undo = null; // { name, until }
   let writing = null; // { name, day } while the keyboard is up
@@ -327,7 +331,7 @@ function mountToday(el) {
   function draw() {
     t = qd.today();
     shown = sig(t);
-    if (t.waiting.indexOf(sel) < 0) sel = t.waiting[0] || '';
+    if (t.waiting.indexOf(sel) < 0) sel = firstSel(t);
     const title = t.evening || new Date().getHours() < qd.MORNING ? 'Tonight’s question' : 'Question of the day';
     if (t.state === 'revealed') {
       body.innerHTML = `${top({ title, right: bookBtn })}${openedHtml(t, { fresh, done: true })}`;
@@ -370,7 +374,7 @@ function mountToday(el) {
         box.innerHTML = `${esc(cap(text))}<span class="qd-car"></span>`;
       },
       onGo: (pick, k) => {
-        if (!k.text.trim()) return;
+        if (!k.text.trim()) { box.innerHTML = '<span style="opacity:.55">Type a few words first</span><span class="qd-car"></span>'; return; }
         sealed = true;
         const words = cap(k.text.trim());
         k.close();
@@ -404,6 +408,7 @@ function mountToday(el) {
     if (b.hasAttribute('data-answer')) { write(t.names[+b.getAttribute('data-answer')]); return; }
     if (b.hasAttribute('data-pick')) { sel = t.names[+b.getAttribute('data-pick')]; draw(); return; }
     if (b.hasAttribute('data-opt')) {
+      if (!sel) return; // (the pictures wait for a face)
       const o = +b.getAttribute('data-opt') ? t.b : t.a;
       seal(sel, o[0], t.day);
     }

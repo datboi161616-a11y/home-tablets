@@ -12,7 +12,7 @@ import { householdName } from '../services/family.js';
 import { thumbnail, onPhotosChanged } from '../services/tablet-photos.js';
 import { chipShowsOn } from '../services/timers.js';
 import {
-  picks, setPick, clearPick, thisWeek, dueWeek, slotsFor, weekPhotos, weekInfo, weekRange, keyStart, showYear,
+  picks, setPick, thisWeek, dueWeek, slotsFor, weekPhotos, weekInfo, weekRange, keyStart, showYear,
 } from '../services/photoweek-data.js';
 
 const STAR = (size, fill) => `<svg width="${size}" height="${size}" viewBox="0 0 24 24" fill="${fill}" aria-hidden="true"><path d="M12 2.5l2.9 6 6.6.8-4.9 4.6 1.3 6.5L12 17.2 6.1 20.4l1.3-6.5L2.5 9.3l6.6-.8z"/></svg>`;
@@ -132,7 +132,7 @@ function pickView(el, key, fromYear) {
   el.innerHTML = `<style>${CSS}</style><div class="pw-root"><div class="pw-top">${top}</div>${body}</div>`;
   // The dates go under the title (the title is the only text in its box).
   const title = el.querySelector('.x-title');
-  title.innerHTML = `${title.innerHTML}<div class="pw-range">${esc(weekRange(start))}</div>`;
+  title.innerHTML = `${title.innerHTML}<div class="pw-range">${esc(weekRange(start))}${list.length ? ' · Tap the one you like best' : ''}</div>`;
 
   const tiles = Array.prototype.slice.call(el.querySelectorAll('.pw-tile'));
   tiles.forEach((t, i) => paint(t.querySelector('.pw-img'), list[i], 389, 300));
@@ -148,7 +148,7 @@ function pickView(el, key, fromYear) {
     const tile = e.target.closest('.pw-tile');
     if (!tile) return;
     const id = tile.getAttribute('data-id');
-    if (tile.classList.contains('on')) clearPick(key); else setPick(key, id);
+    if (!tile.classList.contains('on')) setPick(key, id); // (another tap on the chosen one keeps it: tap a different one to change)
     mark();
   });
 }
