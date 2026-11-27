@@ -150,6 +150,17 @@ const STYLE = `
   .bl-cal-grid button.today b{box-shadow:inset 0 0 0 2px #B5502E}
   .bl-cal-grid button.on b{background:#16302A;color:#FBF4E4;box-shadow:none}
 
+  /* ---- a new bill, one question at a time ---- */
+  .bl-wz{flex:1;min-height:0;display:flex;flex-direction:column}
+  .bl-q{font:600 30px Outfit,sans-serif;padding:20px 28px 10px;flex:none}
+  .bl-wz .bl-ed{border-bottom:0}
+  .bl-wz .bl-cal{padding-top:0}
+  .bl-wz .bl-cal-grid button,.bl-wz .bl-cal-grid i{height:64px}
+  .bl-wz .bl-cal-grid button b{width:58px;height:58px}
+  .bl-wz .bl-foot{margin-top:auto}
+  .bl-wz .bl-foot .bk{flex:none;padding:0 30px;color:#3B3A30}
+  .bl-warn{padding:10px 28px 0;font:600 19px Inter,sans-serif;color:#B5502E}
+
   /* ---- undo ---- */
   .bl-undo{position:absolute;left:40px;bottom:24px;z-index:6;min-height:64px;padding:0 8px 0 26px;border-radius:999px;background:#FBF4E4;color:#2B2A22;display:flex;align-items:center;gap:14px;font:600 20px Inter,sans-serif;box-shadow:0 4px 12px rgba(0,0,0,.35)}
   .bl-undo button{min-height:52px;padding:0 24px;border-radius:999px;background:#16302A;color:#FBF4E4;font:700 19px Inter,sans-serif}
@@ -356,7 +367,8 @@ export function mount(el, ctx) {
     sheet = bill
       ? { id: bill.id, name: bill.name, amt: bill.amount ? (bill.amount % 1 ? bill.amount.toFixed(2) : String(bill.amount)) : '', varies: bill.varies, repeat: bill.repeat, every: bill.every, day: bill.day,
         date: bill.repeat === 'monthly' ? day : B.nextDue(bill) || bill.start, who: bill.who, home: bill.home, open: '', cal: null, due: B.nextDue(bill), last: (state.paid.filter((p) => p.bill === bill.id && p.due === bill.paidThrough).pop() || {}).pid || '' }
-      : { id: '', name: '', amt: '', varies: false, repeat: 'monthly', every: 1, day: 1, date: day, who: '', home: 3, open: '', cal: null, due: null };
+      : { id: '', name: '', amt: '', varies: false, repeat: 'monthly', every: 1, day: 1, date: day, who: '', home: 3, open: '', cal: null, due: null,
+        wiz: true, step: 'name', reviewed: false, error: '' };
     drawSheet();
   }
   function closeSheet() {
@@ -384,6 +396,84 @@ export function mount(el, ctx) {
     return `<div class="bl-cal"><div class="bl-cal-top"><button data-cal="-1" aria-label="Earlier">‹</button><b>${B.monthName(m)} ${y}</b><button data-cal="1" aria-label="Later">›</button></div>
       <div class="bl-cal-grid">${cells}</div></div>`;
   }
+  // A new bill is asked for one question at a time (what, how much, how often, when, who pays,
+  // the Home reminder), then shown to check over before it's added. Changing a saved bill uses
+  // the rows in drawSheet instead.
+  const wzSteps = () => ['name', 'amount', 'repeat', 'due'].concat(folks().length >= 2 ? ['who'] : [], ['home', 'check']);
+  function wzAdvance() {
+    const s = sheet;
+    const steps = wzSteps();
+    s.step = s.reviewed ? 'check' : steps[Math.min(steps.length - 1, steps.indexOf(s.step) + 1)];
+    if (s.step === 'check') s.reviewed = true;
+    s.cal = null;
+    s.error = '';
+  }
+  function wizard(list) {
+    const s = sheet;
+    const head = '<div class="bl-sh-top"><button data-cancel>Cancel</button><div>New bill</div><span style="display:block;min-width:110px"></span></div>';
+    const back = s.step !== 'name' && !s.reviewed ? '<button class="bk" data-w-back>← Back</button>' : '';
+    const nav = (go) => `<div class="bl-foot">${back}${go || ''}</div>`;
+    const next = '<button class="pay" data-w-next>Next →</button>';
+    const warn = s.error ? `<div class="bl-warn">${esc(s.error)}</div>` : '';
+    const repeat = REPEATS.find((r) => r[0] === s.repeat && (r[0] !== 'weeks' || r[1] === s.every)) || REPEATS[0];
+    const amount = s.amt ? `${s.varies ? 'about ' : ''}$${esc(s.amt)}` : s.varies ? 'It changes' : 'Not set';
+    const whoValue = s.who === 'split' ? `<span class="bl-mini" style="background:${colorOf('split', list)}"></span>Split`
+      : s.who && colorOf(s.who, list) ? `<span class="bl-mini" style="background:${colorOf(s.who, list)}">${esc(s.who.charAt(0).toUpperCase())}</span>${esc(s.who)}` : 'Not set';
+    const homeValue = (HOMES.find((h) => h[0] === s.home) || HOMES[0])[1];
+    const box = (inner) => `<div class="bl-ed">${inner}</div>`;
+    let body = '';
+    if (s.step === 'name') {
+      const have = B.load().bills.map((b) => b.name.toLowerCase());
+      const chips = COMMON.filter((n) => have.indexOf(n.toLowerCase()) < 0).slice(0, 5);
+      body = `<div class="bl-q">What is it?</div>
+        <div class="bl-namebox" style="margin-top:0"><button class="bl-name${kb ? ' typing' : ''}" data-name>${s.name.trim() ? B.billIcon(B.iconFor(s.name), 52) : ''}<span data-name-text${s.name ? '' : ' class="ph"'}>${esc(s.name || 'Something else? Type it here')}</span></button>
+          ${chips.length ? `<div class="bl-chips">${chips.map((c) => `<button class="bl-chip${c === s.name ? ' on' : ''}" data-chip="${esc(c)}">${c === s.name ? TICK(22, '#FBF4E4', 3) : ''}${esc(c)}</button>`).join('')}</div>` : ''}</div>
+        ${warn}${nav(next)}`;
+    } else if (s.step === 'amount') {
+      body = `<div class="bl-q">How much is it?</div>
+        ${box(`<div class="bl-name" style="margin-bottom:12px"><span${s.amt ? '' : ' class="ph"'}>${s.amt ? amount : s.varies ? 'It changes' : '$'}</span></div>
+          <div class="bl-pad"><div class="bl-keys">${'1234567890.'.split('').map((k) => `<button class="bl-key" data-num="${k}">${k}</button>`).join('')}<button class="bl-key" data-num="back" aria-label="Delete">⌫</button></div>
+          <button class="bl-vary${s.varies ? ' on' : ''}" data-varies>It changes</button></div>`)}
+        ${nav(next)}`;
+    } else if (s.step === 'repeat') {
+      body = `<div class="bl-q">How often does it come?</div>
+        ${box(`<div class="bl-opts three">${REPEATS.map((r, i) => `<button class="bl-chip${r === repeat ? ' on' : ''}" data-repeat="${i}">${r[2]}</button>`).join('')}</div>`)}
+        ${nav(next)}`;
+    } else if (s.step === 'due') {
+      if (s.repeat === 'monthly') {
+        body = `<div class="bl-q">Which day of the month is it due?</div>
+          ${box(`<div class="bl-days">${Array.from({ length: 31 }, (_, i) => `<button data-day="${i + 1}"${s.day === i + 1 ? ' class="on"' : ''}>${i + 1}</button>`).join('')}</div>`)}
+          ${nav(next)}`;
+      } else {
+        if (!s.cal) { const at = B.parse(s.date); s.cal = [at.getFullYear(), at.getMonth()]; }
+        body = `<div class="bl-q">When is the next one due?</div>${calendar()}${nav(next)}`;
+      }
+    } else if (s.step === 'who') {
+      body = `<div class="bl-q">Who pays it?</div>
+        ${box(`<div class="bl-opts">${list.map((p) => `<button class="bl-chip${s.who === p.name ? ' on' : ''}" data-who="${esc(p.name)}"><span class="bl-mini" style="width:36px;height:36px;font-size:17px;background:${p.color}">${esc(p.initial)}</span>${esc(p.name)}</button>`).join('')}
+          <button class="bl-chip${s.who === 'split' ? ' on' : ''}" data-who="split"><span class="bl-mini" style="width:36px;height:36px;background:${colorOf('split', list)}"></span>Split</button>
+          <button class="bl-chip${!s.who || !(s.who === 'split' || colorOf(s.who, list)) ? ' on' : ''}" data-who="">Not set</button></div>`)}
+        ${nav(next)}`;
+    } else if (s.step === 'home') {
+      body = `<div class="bl-q">When should the Home screen remind you?</div>
+        ${box(`<div class="bl-opts">${HOMES.map((h) => `<button class="bl-chip${h[0] === s.home ? ' on' : ''}" data-home="${h[0]}">${h[1]}</button>`).join('')}</div>`)}
+        ${nav(next)}`;
+    } else {
+      const line = (label, value, step, last) => `<div class="bl-row${last ? ' last' : ''}"><span>${label}</span><span class="v">${value}</span>
+          <button class="bl-chip" data-w-go="${step}" style="margin-left:14px;min-height:48px">Change</button></div>`;
+      body = `<div class="bl-q">Does this look right?</div>
+        <div class="bl-rows" style="margin-top:0">
+          ${line('What', esc(s.name), 'name')}
+          ${line('How much', amount, 'amount')}
+          ${line('How often', repeat[2], 'repeat')}
+          ${line('Due', esc(B.dueRuleWords(draftBill())), 'due')}
+          ${wzSteps().indexOf('who') >= 0 ? line('Who pays', whoValue, 'who') : ''}
+          ${line('Home reminder', homeValue, 'home', true)}
+        </div>
+        ${nav('<button class="pay" data-save>Add bill</button>')}`;
+    }
+    return `${head}<div class="bl-wz">${body}</div>`;
+  }
   function drawSheet() {
     if (!sheet) return;
     const list = folks();
@@ -397,6 +487,7 @@ export function mount(el, ctx) {
       if (box) box.innerHTML = inner;
       else sheetEl.innerHTML = `<div class="bl-shade"><div class="bl-sheet">${inner}</div></div>`;
     };
+    if (s.wiz) { put(wizard(list)); return; }
     if (s.cal) { put(`${head}${calendar()}`); return; }
     const have = B.load().bills.map((b) => b.name.toLowerCase());
     const roomy = !s.open || s.open === 'home' || (s.open === 'who' && list.length <= 2);
@@ -435,12 +526,21 @@ export function mount(el, ctx) {
         if (!sheet) return;
         sheet.name = t;
         const box = sheetEl.querySelector('[data-name-text]');
-        if (box) { box.textContent = t || 'Name'; box.className = t ? '' : 'ph'; }
+        if (box) { box.textContent = t || (sheet.wiz ? 'Something else? Type it here' : 'Name'); box.className = t ? '' : 'ph'; }
         const go = sheetEl.querySelector('[data-save]');
         if (go) go.disabled = !t.trim();
       },
-      onGo: (pick, k) => { if (pick) k.set(pick); k.close(); },
-      onClose: (t) => { kb = null; if (sheet) { const name = String(t || '').trim(); sheet.name = name.charAt(0).toUpperCase() + name.slice(1); drawSheet(); } },
+      onGo: (pick, k) => { if (pick) k.set(pick); if (sheet) sheet.goOn = true; k.close(); },
+      onClose: (t) => {
+        kb = null;
+        if (!sheet) return;
+        const name = String(t || '').trim();
+        sheet.name = name.charAt(0).toUpperCase() + name.slice(1);
+        // A new bill: "Done" with a name moves on to the next question.
+        if (sheet.wiz && sheet.goOn && sheet.step === 'name' && sheet.name) wzAdvance();
+        sheet.goOn = false;
+        drawSheet();
+      },
     });
     drawSheet();
   }
@@ -461,11 +561,20 @@ export function mount(el, ctx) {
     if (d.undoGo != null) { clearTimeout(undoTimer); const run = undo; undo = null; undoEl.innerHTML = ''; if (run) run(); return; }
     if (sheet) {
       const s = sheet;
-      if (d.cancel != null) { if (s.cal) { s.cal = null; drawSheet(); } else closeSheet(); return; }
+      if (d.cancel != null) { if (s.cal && !s.wiz) { s.cal = null; drawSheet(); } else closeSheet(); return; }
       if (d.save != null) { saveSheet(); return; }
       if (d.name != null) { typeName(); return; }
       if (kb) kb.close();
       if (!sheet) return;
+      if (s.wiz && d.wNext != null) {
+        if (s.step === 'name' && !s.name.trim()) s.error = 'Tap one, or type what it is';
+        else wzAdvance();
+        drawSheet();
+        return;
+      }
+      if (s.wiz && d.wBack != null) { const steps = wzSteps(); s.step = steps[Math.max(0, steps.indexOf(s.step) - 1)]; s.cal = null; s.error = ''; drawSheet(); return; }
+      if (s.wiz && d.wGo) { s.step = d.wGo; s.cal = null; s.error = ''; drawSheet(); return; }
+      const monthly = s.repeat === 'monthly';
       if (d.chip != null) s.name = d.chip;
       else if (d.row) s.open = s.open === d.row ? '' : d.row;
       else if (d.num) {
@@ -489,6 +598,11 @@ export function mount(el, ctx) {
       } else if (d.paynow != null) { const id = s.id; closeSheet(); pay(id); return; }
       else if (d.unpay != null) { const pid = s.last; closeSheet(); B.unmarkPaid(pid); return; }
       else return;
+      // A new bill: one-tap answers move on by themselves. Changing how often from the check page,
+      // between monthly and the rest, asks the due date again (it's picked a different way).
+      if (s.wiz && (d.chip != null || d.day || d.date || d.repeat || d.who != null || d.home != null)) {
+        if (d.repeat && s.reviewed && monthly !== (s.repeat === 'monthly')) { s.step = 'due'; s.cal = null; } else wzAdvance();
+      }
       drawSheet();
       return;
     }
