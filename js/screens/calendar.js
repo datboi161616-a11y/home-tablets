@@ -417,6 +417,9 @@ const STYLE = `
     .kf-cal { display:grid; grid-template-columns:repeat(7,56px); grid-auto-rows:56px; }
     .kf-d { position:relative; border:0; background:transparent; color:#fff; font:500 21px Outfit,sans-serif; cursor:pointer; border-radius:28px; padding:0; }
     .kf-d.out { color:#7F7590; }
+    .kf-q { font:500 32px/1.15 Outfit,sans-serif; color:#fff; }
+    .kf-nav { display:flex; align-items:center; gap:12px; margin-top:auto !important; padding-top:12px; }
+    .kf-go { min-height:64px; padding:0 30px; border-radius:32px; border:0; background:${GOLD}; color:#15121A; font:700 21px Inter,sans-serif; cursor:pointer; margin-left:auto; }
     .kf-d[disabled] { color:#5A5166; cursor:default; }
     .kf-d.now { box-shadow:inset 0 0 0 2px ${GOLD}; color:${GOLD}; }
     .kf-d.on { background:${GOLD}; color:#15121A; font-weight:700; }
@@ -758,7 +761,8 @@ function showForm(el, { date, id, back, on }) {
   form = saved
     ? { id: saved.id, title: saved.title, date: day, cal, allDay: saved.allDay, mins, minutes: saved.minutes, repeat: saved.repeat || 'none',
       who: Array.isArray(saved.who) ? saved.who.slice() : [], tag: TAGS[saved.tag] ? saved.tag : 'plan', back, on: on || back || day, confirm: false, error: '' }
-    : { id: '', title: '', date: day, cal, allDay: false, mins, minutes: 60, repeat: 'none', who: [], tag: 'plan', back, confirm: false, error: '' };
+    : { id: '', title: '', date: day, cal, allDay: false, mins, minutes: 60, repeat: 'none', who: [], tag: 'plan', back, confirm: false, error: '',
+      wiz: true, step: 'what', reviewed: false };
   drawForm(el);
 }
 
@@ -805,8 +809,73 @@ function rowValue(f, key) {
   return '';
 }
 
+// A new event is asked for one question at a time (what, which day, what time, how long,
+// does it repeat, who), then shown to check over before it's added. Changing a saved event
+// uses the rows below instead.
+const WZ_TIMES = [8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20].map((h) => h * 60);
+const wzSteps = (f) => ['what', 'day', 'time'].concat(f.allDay ? [] : ['len'], ['rep'], people().length ? ['who'] : [], ['check']);
+function wzAdvance(f) {
+  const steps = wzSteps(f);
+  f.step = f.reviewed ? 'check' : steps[Math.min(steps.length - 1, steps.indexOf(f.step) + 1)];
+  if (f.step === 'check') f.reviewed = true;
+}
+function drawWizard(el) {
+  const f = form;
+  const chip = (act, on, label) => `<button data-f="${act}" class="kf-chip${on ? ' on' : ''}">${label}</button>`;
+  const back = f.step !== 'what' && !f.reviewed ? '<button data-f="w:back" class="kf-plain" style="min-width:0">← Back</button>' : '';
+  const nav = (go) => `<div class="kf-nav">${back}${go || ''}</div>`;
+  const next = '<button data-f="w:next" class="kf-go">Next →</button>';
+  const warn = f.error ? `<div class="kc-warn" style="font-size:18px;font-weight:600;padding:0 6px">${esc(f.error)}</div>` : '';
+  let body = '';
+  if (f.step === 'what') {
+    const seen = {};
+    const pool = recentTitles(6).concat(SUGGEST.map((x) => x.t)).filter((t) => { const k = t.toLowerCase(); if (seen[k]) return false; seen[k] = true; return true; }).slice(0, 12);
+    const own = f.title && pool.indexOf(f.title) < 0;
+    body = `<div class="kf-q">What’s on?</div>
+      <div class="kf-opts">${pool.map((t) => `<button data-f="title" data-title-chip="${esc(t)}" class="kf-chip${f.title === t ? ' on' : ''}">${esc(t)}</button>`).join('')}</div>
+      <button data-f="type" class="kf-title${own ? '' : ' empty'}" data-title-box>${esc(own ? f.title : 'Something else? Type it here')}</button>
+      ${warn}${nav(f.title ? next : '')}`;
+  } else if (f.step === 'day') {
+    body = `<div class="kf-q">Which day?</div><div style="display:flex;justify-content:center">${pickMonth(f)}</div>${nav(next)}`;
+  } else if (f.step === 'time') {
+    body = `<div class="kf-q">What time?</div>
+      <div class="kf-opts">${chip('allday', f.allDay, 'All day')}${WZ_TIMES.map((m) => chip(`at:${m}`, !f.allDay && f.mins === m, fmtMin(m))).join('')}</div>
+      ${f.allDay ? '' : `<div class="kf-opts"><span style="font:500 18px Inter,sans-serif;color:#A89DB5">Or exactly:</span>
+        <button data-f="t-15" class="kf-step" aria-label="15 minutes earlier">−</button><div class="kf-val">${fmtMin(f.mins)}</div>
+        <button data-f="t+15" class="kf-step" aria-label="15 minutes later">+</button></div>`}
+      ${nav(next)}`;
+  } else if (f.step === 'len') {
+    body = `<div class="kf-q">How long will it take?</div><div class="kf-opts">${LENGTHS.map(([m, t]) => chip(`len:${m}`, f.minutes === m, t)).join('')}</div>${nav(next)}`;
+  } else if (f.step === 'rep') {
+    body = `<div class="kf-q">Does it happen again?</div><div class="kf-opts">${REPEATS.map(([k, t]) => chip(`rep:${k}`, f.repeat === k, t)).join('')}</div>${nav(next)}`;
+  } else if (f.step === 'who') {
+    body = `<div class="kf-q">Who’s it for?</div>
+      <div class="kf-opts">${chip('who:', !f.who.length, 'Everyone')}${people().map((p) => chip(`who:${esc(p.name)}`, f.who.indexOf(p.name) >= 0, `<span class="kc-dot" style="background:${p.color}"></span><span class="kc-cut">${esc(p.name)}</span>`)).join('')}</div>
+      ${nav(next)}`;
+  } else {
+    const line = (label, value, step) => `<div class="kf-item" style="cursor:default"><span class="kf-name">${label}</span><span class="kf-now">${value}</span>
+        <button data-f="w:go:${step}" class="kf-chip" style="margin-left:14px;min-height:48px">Change</button></div>`;
+    body = `<div class="kf-q">Does this look right?</div>
+      <div class="kf-list">
+        ${line('What', esc(f.title), 'what')}
+        ${line('Day', rowValue(f, 'date'), 'day')}
+        ${line('Time', f.allDay ? 'All day' : `${esc(fmtMin(f.mins))} · ${rowValue(f, 'len')}`, 'time')}
+        ${line('Repeats', rowValue(f, 'rep'), 'rep')}
+        ${people().length ? line('Who', rowValue(f, 'who'), 'who') : ''}
+      </div>
+      ${warn}${nav('<button data-f="save" class="kf-go">Add to calendar</button>')}`;
+  }
+  const box = openSheet(el, 'form', `
+    <div data-form class="kc-sheet kf-sheet">
+      <div class="kf-top"><button data-f="cancel" class="kf-plain">Cancel</button><div class="kf-head">New event</div><span class="kf-plain"></span></div>
+      <div class="kf-body" style="min-height:560px">${body}</div>
+    </div>`);
+  if (fkb) { const b = box.querySelector('[data-title-box]'); if (b) b.classList.add('typing'); }
+}
+
 function drawForm(el) {
   const f = form;
+  if (f.wiz) { drawWizard(el); return; }
   const was = f.id ? getMyEvent(f.id) || {} : {};
   const repeating = was.repeat && was.repeat !== 'none';
   const onLabel = f.on ? f.on.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' }) : '';
@@ -884,6 +953,7 @@ function typeTitle(el) {
         const sug = f.id ? null : SUGGEST.filter((x) => x.t === pick)[0];
         if (sug) { f.tag = sug.tag; f.allDay = !!sug.allDay; if (sug.at != null) f.mins = sug.at; if (sug.len) f.minutes = sug.len; f.repeat = sug.repeat || 'none'; }
       }
+      if (f.wiz && f.step === 'what' && f.title.trim()) { f.error = ''; wzAdvance(f); }
       k.close();
     },
     onClose: () => { fkb = null; if (form) drawForm(el); },
@@ -931,6 +1001,15 @@ function formAction(el, act, btn) {
   if (act === 'type') { typeTitle(el); return; }
   if (fkb) { fkb.close(); return; } // a tap outside the keyboard puts it away first
   if (act.indexOf('open:') === 0) { const k = act.slice(5); f.open = f.open === k ? '' : k; drawForm(el); return; }
+  if (act === 'w:next') {
+    if (f.step === 'what' && !f.title.trim()) { f.error = 'Tap one, or type what it is'; drawForm(el); return; }
+    f.error = '';
+    wzAdvance(f);
+    drawForm(el);
+    return;
+  }
+  if (act === 'w:back') { const steps = wzSteps(f); f.step = steps[Math.max(0, steps.indexOf(f.step) - 1)]; f.error = ''; drawForm(el); return; }
+  if (act.indexOf('w:go:') === 0) { f.step = act.slice(5); f.error = ''; drawForm(el); return; }
   if (act !== 'delete') f.confirm = false;
   f.error = '';
   if (act === 'cancel') {
@@ -981,6 +1060,7 @@ function formAction(el, act, btn) {
       if (s.len) f.minutes = s.len;
       f.repeat = s.repeat || 'none';
     }
+    if (f.wiz) wzAdvance(f); // (a one-tap answer: on to the next question)
     drawForm(el);
     return;
   }
@@ -991,6 +1071,7 @@ function formAction(el, act, btn) {
     if (canAddOn(to) || canAddOn(new Date(to.getFullYear(), to.getMonth() + 1, 0))) f.cal = to;
   }
   else if (act === 'allday') f.allDay = true;
+  else if (act.indexOf('at:') === 0) { f.allDay = false; f.mins = +act.slice(3); }
   else if (act === 'timed') f.allDay = false;
   else if (act.indexOf('len:') === 0) f.minutes = +act.slice(4);
   else if (act.indexOf('rep:') === 0) f.repeat = act.slice(4);
@@ -1002,6 +1083,8 @@ function formAction(el, act, btn) {
     else f.who = f.who.concat([n]);
   }
   else if (act[0] === 't') f.mins = (f.mins + +act.slice(1) + 1440) % 1440;
+  // One-tap answers move on by themselves (a day, a time, how long, how often).
+  if (f.wiz && /^(pick:|at:|allday$|len:|rep:)/.test(act)) wzAdvance(f);
   drawForm(el);
 }
 
