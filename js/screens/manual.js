@@ -79,6 +79,18 @@ const WORDS = {
   brand: ['Benjamin Moore', 'Sherwin-Williams', 'Behr', 'Valspar', 'Farrow & Ball', 'Dulux'],
   size: ['16×25×1', '20×20×1', '16×20×1', '20×25×1', 'AA', 'AAA', '9V'],
 };
+// A new entry is asked one question at a time, in this order (a section not listed: as in ROWS).
+const WZ_ORDER = { filters: ['size', 'every', 'changed', 'note'] };
+const ASK = {
+  section: 'What would you like to add?',
+  'shutoffs.name': 'What does it shut off?', 'numbers.name': 'Who is it?', 'appliances.name': 'Which appliance?',
+  'paint.name': 'What is the colour called?', 'filters.name': 'Which filter?', 'other.name': 'What is it called?', 'wifi.name': 'What is the network called?',
+  where: 'Where is it?', 'paint.where': 'Which room is it in?', note: 'Anything else to remember?', phone: 'What is the number?',
+  model: 'Model number (on the sticker)', warranty: 'When does the warranty end?', color: 'Which colour is closest?',
+  code: 'The colour’s code (on the can)', finish: 'What finish is it?', brand: 'Which brand?', size: 'What size is it? (on its edge)',
+  every: 'How often should it be changed?', changed: 'When was it last changed?', password: 'What is the password?',
+  photos: 'Add a photo?', check: 'Does this look right?',
+};
 
 const CSS = `
   .hm{position:absolute;top:0;right:0;bottom:0;left:0;overflow:hidden;font-family:Inter,system-ui,sans-serif;color:#fff;
@@ -195,6 +207,24 @@ const CSS = `
   .hm-pick button.on::after{content:'✓';position:absolute;right:8px;top:8px;width:34px;height:34px;border-radius:17px;background:${AMBER};color:#2A1D05;font:700 20px/34px Inter,sans-serif;text-align:center}
   .hm-cam{margin-top:18px;min-height:64px;padding:0 30px;border-radius:999px;background:${INK};color:#fff;font:600 21px Inter,sans-serif}
   .hm-rt p{margin:0 0 6px;font:500 24px Outfit,sans-serif;color:${MUTED}}
+  .hm-sheet .hd .svw{display:flex;flex-direction:column;align-items:center;gap:2px}
+  .hm-sheet .hd .svw .sv{min-height:46px}
+  .hm-sheet .hd .svw i{font:600 15px Inter,sans-serif;font-style:normal;color:#B3261E;white-space:nowrap}
+  .hm-q{font:500 30px/1.2 Outfit,sans-serif;padding:0 4px}
+  .hm-hint{margin-top:-6px;font:500 19px Inter,sans-serif;color:${SOFT};padding:0 4px}
+  .hm-chips{display:flex;flex-wrap:wrap;gap:10px}
+  .hm-chips .hm-opt{min-height:56px;background:#F1EEE7;font-size:20px}
+  .hm-rows.ck{overflow-y:auto;flex:0 1 auto;min-height:0}
+  .hm-rows.ck .hm-row{min-height:54px}
+  .hm-row .chg{margin-left:14px;flex:none;font:600 18px Inter,sans-serif;color:#B27A10}
+  .hm-pw{border-radius:20px;background:#F1EEE7;padding:14px 22px;font:700 40px/1.2 Outfit,sans-serif;letter-spacing:1px;word-break:break-all;white-space:pre-wrap}
+  .hm-pw.sm{font-size:28px}
+  .hm-nav{margin-top:auto;display:flex;align-items:center;gap:12px}
+  .hm-nav button{min-height:64px;padding:0 28px;border-radius:999px;background:#F1EEE7;color:${INK};font:600 21px Inter,sans-serif}
+  .hm-nav .go{margin-left:auto;background:${AMBER};color:#2A1D05}
+  .hm-nav .go.big{flex:1;margin-left:0;min-height:76px;font-size:24px}
+  .hm-nav .go[disabled]{opacity:.4}
+  .hm-why{font:600 18px Inter,sans-serif;color:#B3261E}
 
   .hm-typebg{position:absolute;top:0;right:0;bottom:0;left:0;background:rgba(4,12,24,.5);z-index:6}
   .hm-type{position:absolute;left:70px;width:1140px;bottom:462px;box-sizing:border-box;min-height:84px;border-radius:22px;background:#fff;color:${INK};z-index:6;
@@ -375,15 +405,87 @@ export function mount(el, { args = [] } = {}) {
     readAlbum();
     draft = Object.assign({ kind: 'entry', isNew: !entry, section, name: '', note: '', where: '', phone: '', model: '', warranty: '', color: '#DCD3C6', code: '', finish: '', brand: '', size: '', every: 0, changed: '' },
       entry || {}, { photos: entry ? live(entry) : [], sel: 0 });
+    // (a new one: asked step by step; the section is asked first unless "+ Add" came from inside one)
+    if (!entry) Object.assign(draft, { wiz: true, fixed: !!section, step: section ? 'name' : 'section', reviewed: false });
     draft.pane = restPane();
     drawSheet();
   }
-  function openWifi() {
+  function openWifi(fromAdd) {
     const w = data.manual().wifi;
     draft = { kind: 'wifi', isNew: !w, name: w ? w.ssid : '', password: w ? w.password : '', pane: 'qr' };
+    if (!w) Object.assign(draft, { wiz: true, fromAdd: !!fromAdd, step: 'name', reviewed: false });
     drawSheet();
   }
   const canSave = () => !!(draft.name.trim() || (draft.section === 'paint' && draft.where.trim()));
+  // What's missing while Save can't be tapped.
+  const whyNot = () => (draft.kind === 'wifi' ? 'Give the network a name first' : draft.section === 'paint' ? 'Give it a name or a room first' : 'Give it a name first');
+  // A date the + and − start from when none is set yet (only saved once it's chosen).
+  const defaultDay = (p) => { const d = new Date(); return data.isoDay(p === 'warranty' ? new Date(d.getFullYear() + 1, d.getMonth(), d.getDate()) : d); };
+  const dateOf = (p) => draft[p] || defaultDay(p);
+
+  // ---------------------------------------------------------------- a new one, step by step
+  const rowsOf = (s) => (WZ_ORDER[s] || (ROWS[s] || []).map((r) => r[0])).map((f) => ROWS[s].find((r) => r[0] === f));
+  function wzSteps() {
+    if (draft.kind === 'wifi') return ['name', 'password'].concat(draft.password ? ['pwcheck'] : [], ['check']);
+    if (!draft.section) return ['section'];
+    return (draft.fixed ? [] : ['section']).concat(['name'], rowsOf(draft.section).map((r) => r[0]), HAS_PHOTOS[draft.section] ? ['photos'] : [], ['check']);
+  }
+  function wzAdvance() {
+    const steps = wzSteps();
+    if (draft.step === 'password' && draft.password) draft.step = 'pwcheck';
+    else if (draft.reviewed) draft.step = 'check';
+    else draft.step = steps[Math.min(steps.length - 1, steps.indexOf(draft.step) + 1)];
+    if (draft.step === 'check') draft.reviewed = true;
+  }
+  function wzPane() {
+    const st = draft.step;
+    if (draft.kind === 'wifi') return 'qr';
+    if (st === 'photos') return draft.pane === 'photo' && draft.photos.length ? 'photo' : 'pick';
+    return ['section', 'finish', 'every', 'color', 'warranty', 'changed'].indexOf(st) >= 0 ? st : 'card';
+  }
+  function wzLeft() {
+    const s = sectionOf();
+    const st = draft.step;
+    const nm = NAME[s] || NAME.other;
+    const ask = `<div class="hm-q">${esc(ASK[`${s}.${st}`] || ASK[st] || '')}</div>`;
+    const first = wzSteps().indexOf(st) === 0 && !draft.fromAdd;
+    const back = first || draft.reviewed ? '' : '<button data-wz="back">← Back</button>';
+    if (st === 'check') {
+      const line = (go, label, v, dot) => `<button class="hm-row" data-wz="go:${go}"><span>${label}</span>${dot ? `<span class="dot" style="background:${dot}"></span>` : ''}<span class="v hm-cut">${esc(v || '—')}</span><span class="chg">Change</span></button>`;
+      let rows = '';
+      if (draft.kind === 'wifi') rows = line('name', 'Network', draft.name) + line('password', 'Password', draft.password);
+      else {
+        rows = (draft.fixed ? '' : line('section', 'Section', data.sectionTitle(s))) + line('name', nm[0], draft.name)
+          + rowsOf(s).map((r) => line(r[0], r[1], r[2] === 'color' ? '' : rowValue(r[0], r[2]), r[2] === 'color' && draft.color)).join('')
+          + (HAS_PHOTOS[s] ? line('photos', 'Photos', draft.photos.length ? `${draft.photos.length} photo${draft.photos.length > 1 ? 's' : ''}` : '') : '');
+      }
+      const ok = canSave();
+      return `${ask}<div class="hm-rows ck">${rows}</div>${ok ? '' : `<div class="hm-why">${whyNot()}</div>`}
+        <div class="hm-nav"><button class="go big" data-save${ok ? '' : ' disabled'}>Save</button></div>`;
+    }
+    if (st === 'pwcheck') {
+      return `<div class="hm-q">Is this exactly right?</div><div class="hm-hint">Capital letters matter</div>
+        <div class="hm-pl" style="margin-top:0">Network</div><div class="hm-pw sm">${esc(draft.name)}</div>
+        <div class="hm-pl" style="margin-top:0">Password</div><div class="hm-pw">${esc(draft.password)}</div>
+        <div class="hm-nav"><button data-wz="fix">Fix it</button><button class="go" data-wz="next">Yes</button></div>`;
+    }
+    if (st === 'section') return `${ask}<div class="hm-nav">${back}</div>`;
+    const spec = st === 'name' ? ['name', nm[0], nm[1]] : rowsOf(s).find((r) => r[0] === st);
+    const kind = spec ? spec[2] : '';
+    const has = st === 'photos' ? draft.photos.length : st === 'every' ? draft.every > 0 : kind === 'color' || kind === 'date' ? true : !!draft[st];
+    const needed = st === 'name' && s !== 'paint';
+    const go = has ? '<button class="go" data-wz="next">Next →</button>' : needed ? '' : '<button class="go" data-wz="next">Skip</button>';
+    let mid = '';
+    if (kind === 'text' || kind === 'code' || kind === 'phone' || kind === 'secret') {
+      const words = WORDS[`${s}.${st}`] || WORDS[st] || [];
+      mid = `<button class="hm-nm hm-cut${draft[st] ? '' : ' none'}" data-type="${st}">${esc(draft[st] || 'Tap here to type')}</button>`
+        + (words.length ? `<div class="hm-chips">${words.map((w) => `<button class="hm-opt" data-wzpick="${st}" data-v="${esc(w)}">${esc(w)}</button>`).join('')}</div>` : '');
+      if (s === 'wifi' && st === 'name') mid = '<div class="hm-hint">Exactly as a phone shows it</div>' + mid;
+    } else if (st === 'photos') {
+      mid = `<div class="hm-strip">${draft.photos.map((id, i) => `<button class="hm-ph th${draft.pane === 'photo' && draft.sel === i ? ' on' : ''}" data-show="${i}" data-ph="${esc(id)}" data-w="236" data-h="130" aria-label="Photo"></button>`).join('')}</div>`;
+    }
+    return `${ask}${mid}<div class="hm-nav">${back}${go}</div>`;
+  }
 
   function rowValue(field, kind) {
     const v = draft[field];
@@ -401,10 +503,11 @@ export function mount(el, { args = [] } = {}) {
     if (p === 'every') return `<div class="hm-opts">${data.EVERY.map((n) => `<button class="hm-opt${draft.every === n ? ' on' : ''}" data-set="every" data-v="${n}">${data.everyWords(n)}</button>`).join('')}</div>`;
     if (p === 'color') return `<div class="hm-pal">${PALETTE.map((c) => `<button style="background:${c}"${draft.color === c ? ' class="on"' : ''} data-set="color" data-v="${c}" aria-label="${c}"></button>`).join('')}</div>`;
     if (p === 'warranty' || p === 'changed') {
-      const d = data.fromIso(draft[p]);
+      const d = data.fromIso(dateOf(p));
       const col = (part, words) => `<div><button data-step="${part}" data-by="1">+</button><b>${words}</b><button data-step="${part}" data-by="-1">−</button></div>`;
-      return `<div class="hm-date">${col('m', data.dayWords(draft[p]).split(' ')[0])}${col('d', d.getDate())}${col('y', d.getFullYear())}</div>
-        <div class="hm-dq">${p === 'changed' ? '<button data-set="changed" data-v="today">Today</button>' : ''}<button data-set="${p}" data-v="">No date</button></div>`;
+      const none = !draft.wiz ? 'No date' : p === 'warranty' ? 'No warranty / Don’t know' : 'Don’t know';
+      return `<div class="hm-date">${col('m', data.dayWords(dateOf(p)).split(' ')[0])}${col('d', d.getDate())}${col('y', d.getFullYear())}</div>
+        <div class="hm-dq">${p === 'changed' ? '<button data-set="changed" data-v="today">Today</button>' : ''}<button data-set="${p}" data-v="">${none}</button></div>`;
     }
     if (p === 'photo') {
       const id = draft.photos[draft.sel] || draft.photos[0];
@@ -425,11 +528,17 @@ export function mount(el, { args = [] } = {}) {
     const nm = NAME[s] || NAME.other;
     const rows = (s && ROWS[s]) || [];
     const sectionRow = draft.kind === 'entry' ? `<button class="hm-row${draft.pane === 'section' ? ' on' : ''}" data-pane="section"><span>Section</span><span class="v hm-cut">${esc(data.sectionTitle(s))}</span><span class="ch">›</span></button>` : '';
+    if (draft.wiz) {
+      return `<div class="hm-dim"></div><div class="hm-sheet" role="dialog">
+      <div class="hd"><button class="t" data-shut>Cancel</button><div class="ti">${draft.kind === 'wifi' ? 'Guest Wi-Fi' : 'New entry'}</div><span class="sp"></span></div>
+      <div class="bd"><div class="lf">${wzLeft()}</div>
+        <div class="hm-rt${draft.pane === 'photo' ? ' black' : ''}">${paneHtml()}</div></div></div>`;
+    }
     const strip = HAS_PHOTOS[s] ? `<div class="hm-pl">Photos</div><div class="hm-strip">${draft.photos.map((id, i) => `<button class="hm-ph th${draft.pane === 'photo' && draft.sel === i ? ' on' : ''}" data-show="${i}" data-ph="${esc(id)}" data-w="236" data-h="130" aria-label="Photo"></button>`).join('')}${draft.photos.length < data.MAX_PHOTOS ? `<button class="pl${draft.pane === 'pick' ? ' on' : ''}" data-pane="pick" aria-label="Add a photo">+</button>` : ''}</div>` : '';
     return `<div class="hm-dim"></div><div class="hm-sheet" role="dialog">
       <div class="hd"><button class="t" data-shut>Cancel</button>${draft.isNew ? '' : '<button class="t red" data-remove>Remove</button>'}
         <div class="ti">${draft.kind === 'wifi' ? 'Guest Wi-Fi' : draft.isNew ? 'New entry' : esc(data.sectionTitle(s))}</div>${draft.isNew ? '' : '<span class="sp"></span>'}
-        <button class="sv" data-save${canSave() ? '' : ' disabled'}>Save</button></div>
+        ${canSave() ? '<button class="sv" data-save>Save</button>' : `<div class="svw"><button class="sv" data-save disabled>Save</button><i>${whyNot()}</i></div>`}</div>
       <div class="bd"><div class="lf">
         <button class="hm-nm hm-cut${draft.name ? '' : ' none'}" data-type="name">${esc(draft.name || nm[0])}</button>
         <div class="hm-rows">${sectionRow}${rows.map((r) => {
@@ -441,6 +550,7 @@ export function mount(el, { args = [] } = {}) {
         <div class="hm-rt${draft.pane === 'photo' ? ' black' : ''}">${paneHtml()}</div></div></div>`;
   }
   function drawSheet() {
+    if (draft && draft.wiz) draft.pane = wzPane();
     sheetEl.innerHTML = draft ? sheetHtml() : '';
     if (draft) fillPhotos(sheetEl);
   }
@@ -455,7 +565,7 @@ export function mount(el, { args = [] } = {}) {
       if (draft.kind === 'wifi') data.saveWifi({ ssid: draft.name, password: draft.password });
       else {
         const e = Object.assign({}, draft);
-        ['kind', 'isNew', 'pane', 'sel'].forEach((k) => { delete e[k]; });
+        ['kind', 'isNew', 'pane', 'sel', 'wiz', 'fixed', 'step', 'reviewed'].forEach((k) => { delete e[k]; });
         data.saveEntry(e);
       }
     } catch (err) { say(err.message); return; }
@@ -475,7 +585,7 @@ export function mount(el, { args = [] } = {}) {
   }
   // A date row's + and −: month, day or year, never past the end of a month.
   function step(part, by) {
-    const d = data.fromIso(draft[draft.pane]);
+    const d = data.fromIso(dateOf(draft.pane));
     let y = d.getFullYear() + (part === 'y' ? by : 0);
     let mo = d.getMonth() + (part === 'm' ? by : 0);
     if (part === 'm') { mo = (mo + 12) % 12; }
@@ -488,8 +598,8 @@ export function mount(el, { args = [] } = {}) {
   }
 
   // ---------------------------------------------------------------- typing
-  // The keyboard's keys are small letters; the row above them offers capitals ("ABC"), the
-  // signs it has no key for, and likely words. Words begin with a capital by themselves;
+  // The keyboard has its own ⇧ for capitals; the row above the keys offers signs and likely
+  // words. Words begin with a capital by themselves;
   // codes are typed in capitals; a network name and password are kept exactly as typed.
   function typeInto(field) {
     if (root.__kb) return;
@@ -502,6 +612,7 @@ export function mount(el, { args = [] } = {}) {
     const signs = field === 'size' ? ['×'] : [];
     const slots = 7;
     let prev = String(draft[field] || '');
+    let went = false; // (the big Done key, not ✕ Close: in a new entry, on to the next question)
     $('[data-typing]').innerHTML = `<div class="hm-typebg"></div><div class="hm-type"><span class="lb">${label}</span><span class="tx"><bdi data-tx></bdi></span><span class="car"></span></div>`;
     const shown = $('[data-tx]');
     openKeyboard(root, {
@@ -518,12 +629,13 @@ export function mount(el, { args = [] } = {}) {
       onGo: (pick, k) => {
         if (pick && pick.length === 1) k.text = (k.text + pick).slice(0, max);
         else if (pick) k.text = pick.slice(0, max);
-        else k.close();
+        else { went = true; k.close(); }
       },
       onClose: () => {
         $('[data-typing]').innerHTML = '';
         if (!draft) return;
         draft[field] = kind === 'secret' ? prev : prev.replace(/\s+/g, ' ').trim();
+        if (draft.wiz && went && draft.step === field && draft[field]) wzAdvance();
         drawSheet();
       },
     });
@@ -533,7 +645,7 @@ export function mount(el, { args = [] } = {}) {
 
   // ---------------------------------------------------------------- taps
   root.addEventListener('click', (ev) => {
-    const t = ev.target.closest('[data-back],[data-undo],[data-changed],[data-wifiedit],[data-big],[data-add],[data-open],[data-edit],[data-shut],[data-save],[data-remove],[data-type],[data-pane],[data-set],[data-step],[data-show],[data-unphoto],[data-pick],[data-camera]');
+    const t = ev.target.closest('[data-back],[data-undo],[data-changed],[data-wifiedit],[data-big],[data-add],[data-open],[data-edit],[data-shut],[data-save],[data-remove],[data-type],[data-pane],[data-set],[data-step],[data-show],[data-unphoto],[data-pick],[data-camera],[data-wz],[data-wzpick]');
     if (!t || t.closest('[data-kb]')) return;
     const a = (n) => t.getAttribute(n);
     if (t.hasAttribute('data-undo')) { const u = toast && toast.undo; say(''); if (u) { u(); drawView(); } return; }
@@ -544,7 +656,30 @@ export function mount(el, { args = [] } = {}) {
       else if (t.hasAttribute('data-save')) save();
       else if (t.hasAttribute('data-remove')) remove();
       else if (t.hasAttribute('data-type')) typeInto(a('data-type'));
-      else {
+      else if (t.hasAttribute('data-wz')) {
+        const w = a('data-wz');
+        if (w === 'next') {
+          if (draft.step === 'warranty' || draft.step === 'changed') draft[draft.step] = dateOf(draft.step); // (the date shown is the answer)
+          wzAdvance();
+        } else if (w === 'back') {
+          if (draft.kind === 'wifi' && draft.step === 'name') { openEntry(''); return; } // (back to the sections)
+          const steps = wzSteps();
+          draft.step = steps[Math.max(0, steps.indexOf(draft.step) - 1)];
+        } else if (w === 'fix') {
+          draft.step = 'password';
+          drawSheet();
+          typeInto('password');
+          return;
+        } else {
+          draft.step = w.slice(3);
+          if (draft.step === 'section') draft.reviewed = false; // (another section asks other questions)
+        }
+        drawSheet();
+      } else if (t.hasAttribute('data-wzpick')) {
+        draft[a('data-wzpick')] = a('data-v');
+        wzAdvance();
+        drawSheet();
+      } else {
         if (t.hasAttribute('data-pane')) {
           const p = a('data-pane');
           draft.pane = draft.pane === p && p !== 'pick' && draft.section ? restPane() : p;
@@ -555,9 +690,10 @@ export function mount(el, { args = [] } = {}) {
         } else if (t.hasAttribute('data-set')) {
           const f = a('data-set');
           const v = a('data-v');
-          if (f === 'section' && v === 'wifi') { openWifi(); return; }
+          if (f === 'section' && v === 'wifi') { openWifi(draft.wiz); return; }
           draft[f] = f === 'every' ? Number(v) : v === 'today' ? today() : v;
           draft.pane = restPane();
+          if (draft.wiz) wzAdvance(); // (a one-tap answer: on to the next question)
         } else if (t.hasAttribute('data-step')) step(a('data-step'), Number(a('data-by')));
         else if (t.hasAttribute('data-show')) { draft.sel = Number(a('data-show')); draft.pane = 'photo'; }
         else if (t.hasAttribute('data-unphoto')) { draft.photos = draft.photos.filter((id) => id !== a('data-unphoto')); draft.sel = 0; draft.pane = restPane(); }

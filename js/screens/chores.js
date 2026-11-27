@@ -4,7 +4,8 @@
 //               for a couple.
 //   Fair share  a glass jar per person filling with marbles (a bigger marble for a bigger
 //               chore) against the dashed fair-share line.
-//   Sheets      a new chore / changing one (name by chip or the screen's own keyboard,
+//   Sheets      a new chore, asked one question at a time and checked over before it's added;
+//               changing one (name by chip or the screen's own keyboard,
 //               Repeats, First time, Takes turns (in order, or whoever's behind), Size), and a chore's own little sheet
 //               (someone else did it, skip this time, change, remove).
 // #/chores/add opens straight on the new-chore sheet; #/chores/fair on the jars.
@@ -144,6 +145,20 @@ const CSS = `
   .ch .ch-grid button[disabled]{color:#CFC3A8}
   .ch .ch-grid button.on{background:#1E2D55;color:#FFF7E6;border-radius:22px}
   .ch-grid em{width:14.28%;height:68px}
+  .ch-q{font:600 32px Outfit,sans-serif;margin:2px 0 18px}
+  .ch-qs{font:500 19px Inter,sans-serif;color:#6A7183;margin:-8px 0 18px}
+  .ch-opts{display:flex;flex-direction:column;gap:12px}
+  .ch .ch-opt{display:block;width:100%;min-height:84px;padding:14px 24px;border-radius:22px;background:#F2EAD6;color:#23324A;box-sizing:border-box}
+  .ch-opt b{display:block;font:700 23px Inter,sans-serif}
+  .ch-opt span{display:block;font:500 18px Inter,sans-serif;color:#6A7183;margin-top:4px}
+  .ch .ch-opt.on{background:#1E2D55;color:#FFF7E6}
+  .ch-opt.on span{color:#C9D2E8}
+  .ch-nav{display:flex;align-items:center;gap:12px;margin-top:24px;min-height:64px}
+  .ch .ch-nav .ch-chip{margin-left:auto;min-height:64px;padding:0 32px;font-size:21px}
+  .ch .ch-nav .ch-chip.go{min-height:72px;padding:0 56px;background:#3F9A63;color:#FFFFFF;font-weight:700}
+  .ch .ch-lk{min-height:56px;padding:0 12px;font:600 20px Inter,sans-serif;color:#6A7183}
+  .ch-ck .ch-fr .v{overflow:hidden;text-overflow:ellipsis;max-width:400px}
+  .ch .ch-ck .ch-fr .ch-chip{margin-left:14px;min-height:48px;font-size:17px;padding:0 18px}
 
   .ch-act{position:absolute;left:320px;top:150px;width:640px;border-radius:32px;background:#FFF7E6;color:#23324A;box-shadow:0 8px 20px rgba(0,0,0,.45);padding:22px 24px 24px;box-sizing:border-box;animation:ch-in .18s ease-out both}
   .ch-ah{display:flex;align-items:center;gap:18px}
@@ -311,7 +326,8 @@ function fairView(state, now, names) {
 // ---------------------------------------------------------------------------------------
 function blank() {
   const now = today();
-  return { id: null, name: '', size: 1, evening: false, kind: 'weekly', days: [weekday(now)], n: 2, unit: 'week', start: now, turns: peopleNames(), pick: peopleNames().length >= 2 ? 'behind' : 'turns', month: now.slice(0, 7) };
+  return { id: null, name: '', size: 1, evening: false, kind: 'weekly', days: [weekday(now)], n: 2, unit: 'week', start: now, turns: peopleNames(), pick: peopleNames().length >= 2 ? 'behind' : 'turns', month: now.slice(0, 7),
+    wiz: true, step: 'what', reviewed: false, other: false, mode: peopleNames().length >= 2 ? 'behind' : 'turns' };
 }
 function draftOf(c) {
   const w = c.repeat.kind === 'weekly';
@@ -329,7 +345,7 @@ function firstWords(d) {
   const n = daysBetween(now, f);
   return n === 0 ? 'Today' : n === 1 ? 'Tomorrow' : `${DAY3[weekday(f)]}, ${shortDate(f)}`;
 }
-const nameInside = (d) => `${choreArt(artFor(d.name), 52)}<span${d.name ? '' : ' class="ph"'}>${esc(d.name || 'Name')}</span>`;
+const nameInside = (d) => `${choreArt(artFor(d.name), 52)}<span${d.name ? '' : ' class="ph"'}>${esc(d.name || (d.wiz ? 'Tap to type it, or pick one below' : 'Name'))}</span>`;
 
 function formMain(d) {
   const names = peopleNames();
@@ -364,7 +380,7 @@ function formRepeats(d) {
       <div class="ch-two"><button class="ch-chip${d.evening ? '' : ' on'}" data-act="eve" data-v="0">Any time</button><button class="ch-chip${d.evening ? ' on' : ''}" data-act="eve" data-v="1">Evening</button></div>
     </div>`;
 }
-function formFirst(d) {
+function calendar(d) {
   const now = today();
   const first = `${d.month}-01`;
   const lead = weekday(first);
@@ -375,11 +391,104 @@ function formFirst(d) {
     const day = addDays(first, n - 1);
     cells += `<button data-act="start" data-v="${day}"${day < now ? ' disabled' : ''}${day === d.start ? ' class="on"' : ''}>${n}</button>`;
   }
+  return `<div class="ch-cal"><button data-act="month" data-v="-1" aria-label="Earlier"${d.month <= now.slice(0, 7) ? ' disabled' : ''}>‹</button><b>${monthWord(first)} ${first.slice(0, 4)}</b><button data-act="month" data-v="1" aria-label="Later">›</button></div>
+      <div class="ch-grid">${DAY3.map((w) => `<span>${w}</span>`).join('')}${cells}</div>`;
+}
+function formFirst(d) {
   return `<div class="ch-sh"><button data-act="page" data-v="main">‹ Back</button><div>First time</div><button style="visibility:hidden"></button></div>
     <div class="ch-pg">
-      <div class="ch-cal"><button data-act="month" data-v="-1" aria-label="Earlier"${d.month <= now.slice(0, 7) ? ' disabled' : ''}>‹</button><b>${monthWord(first)} ${first.slice(0, 4)}</b><button data-act="month" data-v="1" aria-label="Later">›</button></div>
-      <div class="ch-grid">${DAY3.map((w) => `<span>${w}</span>`).join('')}${cells}</div>
+      ${calendar(d)}
     </div>`;
+}
+
+// A new chore is asked one question at a time (what, how often, which day first, who does
+// it, how big), then shown to check over before it's added. Changing a chore keeps the rows above.
+const OFTEN = [['day', 'Every day'], ['week', 'Every week'], ['2week', 'Every 2 weeks'], ['month', 'Every month'], ['other', 'Other…']];
+const SIZE_LINES = ['', 'About 5 minutes', 'About half an hour', 'An hour or more'];
+const wzSteps = (d) => ['what', 'often', 'first'].concat(peopleNames().length >= 2 ? ['who'].concat(d.mode === 'one' ? ['one'] : d.mode === 'turns' ? ['order'] : []) : [], ['size', 'check']);
+function wzAdvance(d) {
+  const steps = wzSteps(d);
+  const next = steps[Math.min(steps.length - 1, steps.indexOf(d.step) + 1)];
+  // Once it's been checked over, an answer goes straight back to the check (a new "who" may ask whom first).
+  d.step = d.reviewed && next !== 'one' && next !== 'order' ? 'check' : next;
+  if (d.step === 'check') d.reviewed = true;
+}
+function oftenKey(d) {
+  if (d.other) return 'other';
+  if (d.kind === 'weekly') return d.days.length === 1 ? 'week' : 'other';
+  if (d.n === 1 && d.unit === 'day') return 'day';
+  if (d.n === 2 && d.unit === 'week') return '2week';
+  if (d.n === 1 && d.unit === 'month') return 'month';
+  return 'other';
+}
+function whoWords(d) {
+  if (d.pick === 'behind') return 'Whoever has done less';
+  if (d.turns.length === 1) return `${d.turns[0]}, every time`;
+  return `Take turns: ${d.turns.join(', then ')}`;
+}
+function formWizard(d) {
+  const names = peopleNames();
+  const opt = (act, v, on, title, line) => `<button class="ch-opt${on ? ' on' : ''}" data-act="${act}" data-v="${esc(v)}"><b>${title}</b>${line ? `<span>${line}</span>` : ''}</button>`;
+  const backOk = d.step !== 'what' && (!d.reviewed || d.step === 'one' || d.step === 'order' || d.step === 'check');
+  const nav = (more) => `<div class="ch-nav">${backOk ? '<button class="ch-lk" data-act="w:back">← Back</button>' : ''}${more || ''}</div>`;
+  const next = (ok) => (ok ? '<button class="ch-chip on" data-act="w:next">Next →</button>' : '');
+  const people = (act, mark) => `<div class="ch-turns${names.length > 3 ? ' many' : ''}" style="padding:0;border-bottom:0">${names.map((n) => {
+    const p = person(n);
+    const m = mark(n);
+    return `<button class="ch-turn" data-act="${act}" data-v="${esc(n)}" style="${m ? `background:${p.color}40;border-color:${p.color}` : ''}">${av(p, 48)}<span class="nm">${esc(n)}</span><span class="no${m ? '' : ' off'}">${m}</span></button>`;
+  }).join('')}</div>`;
+  let body = '';
+  if (d.step === 'what') {
+    const used = load().chores.map((c) => c.name.toLowerCase());
+    const chips = PRESETS.filter((p) => p === d.name || used.indexOf(p.toLowerCase()) < 0);
+    body = `<div class="ch-q">What chore?</div>
+      <button class="ch-nm" data-act="type">${nameInside(d)}</button>
+      <div class="ch-chips" style="flex-wrap:wrap">${chips.map((p) => `<button class="ch-chip${p === d.name ? ' on' : ''}" data-act="preset" data-v="${esc(p)}">${p === d.name ? TICK(22, '#FFF7E6') : ''}${esc(p)}</button>`).join('')}</div>
+      ${nav(next(d.name.trim()))}`;
+  } else if (d.step === 'often') {
+    const k = oftenKey(d);
+    const units = [['day', 'Days'], ['week', 'Weeks'], ['month', 'Months']];
+    body = `<div class="ch-q">How often?</div>
+      <div class="ch-chips" style="flex-wrap:wrap;margin-top:0">${OFTEN.map((o) => `<button class="ch-chip${k === o[0] ? ' on' : ''}" data-act="w:often" data-v="${o[0]}" style="min-height:64px;font-size:21px">${o[1]}</button>`).join('')}</div>
+      ${k === 'other' ? `<div class="ch-step"><span style="font:600 21px Inter,sans-serif">Every</span><button class="pm" data-act="n" data-v="-1" aria-label="Fewer">−</button><b>${d.n}</b><button class="pm" data-act="n" data-v="1" aria-label="More">+</button>
+        ${units.map((u) => `<button class="ch-chip${d.unit === u[0] ? ' on' : ''}" data-act="unit" data-v="${u[0]}">${u[1]}</button>`).join('')}</div>` : ''}
+      <h4>Time</h4>
+      <div class="ch-two"><button class="ch-chip${d.evening ? '' : ' on'}" data-act="eve" data-v="0">Any time</button><button class="ch-chip${d.evening ? ' on' : ''}" data-act="eve" data-v="1">Evening</button></div>
+      ${nav(next(true))}`;
+  } else if (d.step === 'first') {
+    body = `<div class="ch-q">Which day first?</div>${calendar(d)}${nav(next(true))}`;
+  } else if (d.step === 'who') {
+    const a = esc(names[0]);
+    const b = esc(names[1]);
+    body = `<div class="ch-q">Who does it?</div>
+      <div class="ch-opts">
+        ${opt('w:who', 'one', d.mode === 'one', 'Always the same person', `${a} does it every time`)}
+        ${opt('w:who', 'turns', d.mode === 'turns', 'Take turns', names.length === 2 ? `${a}, then ${b}, then ${a} again…` : `${a}, then ${b}, then ${esc(names[2])}…`)}
+        ${opt('w:who', 'behind', d.mode === 'behind', 'Whoever has done less', 'It goes to whoever has done less this month (bigger jobs count more)')}
+      </div>${nav(next(true))}`;
+  } else if (d.step === 'one') {
+    body = `<div class="ch-q">Who does it?</div>${people('w:one', (n) => (d.turns.length === 1 && d.turns[0] === n ? TICK(22, '#FFF7E6') : ''))}${nav(next(d.turns.length === 1))}`;
+  } else if (d.step === 'order') {
+    body = `<div class="ch-q">${d.turns.length ? 'Who’s next?' : 'Who goes first?'}</div>
+      ${people('w:order', (n) => (d.turns.indexOf(n) >= 0 ? d.turns.indexOf(n) + 1 : ''))}
+      ${nav(`${d.turns.length ? '<button class="ch-lk" data-act="w:restart">Start over</button>' : ''}${next(d.turns.length >= 2)}`)}`;
+  } else if (d.step === 'size') {
+    body = `<div class="ch-q">How big a job?</div><div class="ch-qs">A bigger job gets a bigger marble on Fair share.</div>
+      <div class="ch-opts">${[1, 2, 3].map((s) => opt('size', s, d.size === s, s === 3 ? 'Big job' : SIZES[s], SIZE_LINES[s])).join('')}</div>${nav(next(true))}`;
+  } else {
+    const line = (label, value, step) => `<div class="ch-fr"><span>${label}</span><span class="v">${value}</span><button class="ch-chip" data-act="w:go" data-v="${step}">Change</button></div>`;
+    body = `<div class="ch-q">Does this look right?</div>
+      <div class="ch-ck">
+        ${line('Chore', esc(d.name), 'what')}
+        ${line('How often', `${esc(repeatWords(repeatOf(d)))}${d.evening ? ' · evening' : ''}`, 'often')}
+        ${line('First time', firstWords(d), 'first')}
+        ${names.length >= 2 ? line('Who', esc(whoWords(d)), 'who') : ''}
+        ${line('Size', SIZES[d.size], 'size')}
+      </div>
+      ${nav('<button class="ch-chip go" data-act="save">Add chore</button>')}`;
+  }
+  return `<div class="ch-sh"><button data-act="close">Cancel</button><div>New chore</div><button style="visibility:hidden"></button></div>
+    <div class="ch-pg">${body}</div>`;
 }
 function actSheet(c) {
   const now = today();
@@ -400,8 +509,13 @@ function sheetHtml() {
     if (!c) { sheet = null; return ''; }
     return `<div class="ch-shade" data-act="shade">${actSheet(c)}</div>`;
   }
+  if (sheet.type === 'full') {
+    return `<div class="ch-shade" data-act="shade"><div class="ch-act">
+      <div class="ch-ah"><div class="t"><b>The chore list is full</b><span>Remove a chore you no longer need to make room.</span></div><button class="ch-x" data-act="close" aria-label="Close">✕</button></div>
+      <div class="ch-ab"><button class="ch-chip" data-act="close">OK</button></div></div></div>`;
+  }
   const d = sheet.d;
-  return `<div class="ch-shade"><div class="ch-sheet">${sheet.page === 'repeats' ? formRepeats(d) : sheet.page === 'first' ? formFirst(d) : formMain(d)}</div></div>`;
+  return `<div class="ch-shade"><div class="ch-sheet">${sheet.page === 'repeats' ? formRepeats(d) : sheet.page === 'first' ? formFirst(d) : d.wiz ? formWizard(d) : formMain(d)}</div></div>`;
 }
 
 // ---------------------------------------------------------------------------------------
@@ -458,7 +572,11 @@ function typeName() {
       const go = root.querySelector('.ch-sh .go');
       if (go) go.disabled = !t.trim();
     },
-    onGo: (pick, k) => { if (pick) k.set(pick); k.close(); },
+    onGo: (pick, k) => {
+      if (pick) k.set(pick);
+      if (d.wiz && d.step === 'what' && d.name.trim()) wzAdvance(d);
+      k.close();
+    },
     onClose: () => { kb = null; d.name = d.name.trim(); if (sheet && sheet.type === 'form' && sheet.page === 'main') drawSheet(); },
   });
 }
@@ -477,7 +595,7 @@ function onTap(e) {
   }
   switch (act) {
     case 'view': view = v; render(); break;
-    case 'add': if (canAdd()) { sheet = { type: 'form', page: 'main', d: blank() }; drawSheet(); } break;
+    case 'add': sheet = canAdd() ? { type: 'form', page: 'main', d: blank() } : { type: 'full' }; drawSheet(); break;
     case 'tick': {
       tick(id);
       const log = load().log;
@@ -512,10 +630,45 @@ function onTap(e) {
     // ---- the new chore / change sheet
     case 'type': if (kb) kb.close(); else typeName(); break;
     case 'preset':
-      d.name = d.name === v ? '' : v;
+      d.name = d.name === v && !d.wiz ? '' : v;
       if (d.name && !d.id) d.evening = /bins|dishes/i.test(v);
+      if (d.wiz) wzAdvance(d); // (a one-tap answer: on to the next question)
       drawSheet();
       break;
+    // ---- the new chore, one question at a time
+    case 'w:next':
+      if (d.step === 'what' && !d.name.trim()) break;
+      wzAdvance(d);
+      drawSheet();
+      break;
+    case 'w:back': { const steps = wzSteps(d); d.step = steps[Math.max(0, steps.indexOf(d.step) - 1)]; drawSheet(); break; }
+    case 'w:go': d.step = v; drawSheet(); break;
+    case 'w:often':
+      d.other = v === 'other';
+      if (v === 'week') { d.kind = 'weekly'; d.days = [weekday(d.start)]; } else d.kind = 'every';
+      if (v === 'day') { d.n = 1; d.unit = 'day'; }
+      if (v === '2week') { d.n = 2; d.unit = 'week'; }
+      if (v === 'month') { d.n = 1; d.unit = 'month'; }
+      if (!d.other) wzAdvance(d);
+      drawSheet();
+      break;
+    case 'w:who':
+      d.mode = v;
+      d.pick = v === 'behind' ? 'behind' : 'turns';
+      d.turns = v === 'behind' ? peopleNames() : v === 'one' && d.turns.length === 1 ? d.turns : [];
+      wzAdvance(d);
+      drawSheet();
+      break;
+    case 'w:one': d.turns = [v]; wzAdvance(d); drawSheet(); break;
+    case 'w:order': {
+      if (d.turns.indexOf(v) < 0) d.turns.push(v);
+      const left = peopleNames().filter((n) => d.turns.indexOf(n) < 0);
+      if (left.length === 1) d.turns.push(left[0]); // (the last one left goes last)
+      if (left.length <= 1) wzAdvance(d);
+      drawSheet();
+      break;
+    }
+    case 'w:restart': d.turns = []; drawSheet(); break;
     case 'page': sheet.page = v; drawSheet(); break;
     case 'turn': {
       const i = d.turns.indexOf(v);
@@ -524,7 +677,7 @@ function onTap(e) {
       break;
     }
     case 'pick': d.pick = v; drawSheet(); break;
-    case 'size': d.size = +v; drawSheet(); break;
+    case 'size': d.size = +v; if (d.wiz) wzAdvance(d); drawSheet(); break;
     case 'kind': d.kind = v; drawSheet(); break;
     case 'wd': {
       const i = d.days.indexOf(+v);
@@ -536,7 +689,13 @@ function onTap(e) {
     case 'unit': d.unit = v; drawSheet(); break;
     case 'eve': d.evening = v === '1'; drawSheet(); break;
     case 'month': d.month = addMonths(`${d.month}-01`, +v).slice(0, 7); drawSheet(); break;
-    case 'start': d.start = v; sheet.page = 'main'; drawSheet(); break;
+    case 'start':
+      d.start = v;
+      if (d.wiz && d.kind === 'weekly' && d.days.length === 1) { d.days = [weekday(v)]; } // ("every week" falls on the day picked)
+      if (d.wiz) wzAdvance(d);
+      sheet.page = 'main';
+      drawSheet();
+      break;
     case 'save':
       if (kb) kb.close();
       if (!d.name.trim()) break;
@@ -553,7 +712,7 @@ export function mount(el, ctx) {
   hostEl = el;
   const args = (ctx && ctx.args) || [];
   view = args[0] === 'fair' && peopleNames().length ? 'fair' : 'week';
-  sheet = args[0] === 'add' && canAdd() ? { type: 'form', page: 'main', d: blank() } : null;
+  sheet = args[0] !== 'add' ? null : canAdd() ? { type: 'form', page: 'main', d: blank() } : { type: 'full' };
   undo = null;
   el.innerHTML = `<style>${CSS}${keyboardStyle({ panel: '#0B1226', go: '#FFD66B', goInk: '#2A2410' })}</style><div class="ch"><div data-main></div><div data-sheet></div></div>`;
   root = el.querySelector('.ch');

@@ -4,7 +4,7 @@
 // is kept on this screen (services/care-data.js); all typing is on the screen's own keyboard.
 import { topBar, esc, avatar, people } from './ui.js';
 import { openKeyboard, keyboardStyle } from './keyboard.js';
-import { minutesText, timeText } from '../services/display.js';
+import { minutesText, timeText, hourText } from '../services/display.js';
 import { getPhotos, thumbnail } from '../services/tablet-photos.js';
 import { chipShowsOn, onChipChanged } from '../services/timers.js';
 import {
@@ -159,6 +159,24 @@ const STYLE = `<style>
   .cr-take{margin:auto 16px 8px;min-height:72px;border-radius:20px;background:${GREEN};color:#fff;display:flex;align-items:center;justify-content:center;font:700 22px Outfit,sans-serif;flex:none}
   .cr-take svg{margin-right:12px}
   .cr-none{text-align:center;font:italic 500 28px Fraunces,Georgia,serif;margin-top:150px}
+  .cr-wz{display:flex;flex-direction:column;min-height:664px}
+  .cr-q{font:600 30px/1.2 Outfit,sans-serif;margin:26px 24px 8px}
+  .cr-wz .cr-more{padding-top:10px}
+  .cr-big{display:flex;margin:16px 16px 0}
+  .cr-big button{flex:1;height:260px;border-radius:24px;background:#F1E8D8;color:#1E3A26;display:flex;flex-direction:column;align-items:center;justify-content:center;font:600 30px Outfit,sans-serif}
+  .cr-big button + button{margin-left:16px}
+  .cr-big button.on{background:#DCEBD3;box-shadow:inset 0 0 0 4px ${GREEN}}
+  .cr-big button > div{width:150px;height:150px;margin-bottom:10px}
+  .cr-lk{display:flex;flex-direction:column;align-items:center;width:104px;margin-right:24.8px;flex:none}
+  .cr-lk:last-child{margin-right:0}
+  .cr-lk .cr-look{margin-right:0}
+  .cr-lk span{font:600 17px Inter,sans-serif;color:#5A6E5E;margin-top:8px;text-align:center;white-space:nowrap}
+  .cr-nav{display:flex;align-items:center;margin:auto 16px 0;padding-top:14px}
+  .cr-go{min-height:72px;padding:0 34px;border-radius:20px;background:${GREEN};color:#fff;font:700 22px Outfit,sans-serif;margin-left:auto;max-width:520px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .cr-nav .skip{margin-left:auto}
+  .cr-nav .skip + .cr-go{margin-left:12px}
+  .cr-warn{margin:14px 24px 0;font:600 19px Inter,sans-serif;color:#B4472E}
+  .cr-item .cr-chip{margin-left:14px;min-height:48px}
 
   .cr-undo{position:absolute;left:50%;top:28px;height:64px;transform:translateX(-50%);border-radius:32px;background:#FFF8EC;color:#1E3A26;display:flex;align-items:center;padding:0 6px 0 26px;
     font:600 19px Inter,sans-serif;white-space:nowrap;box-shadow:0 4px 10px rgba(0,0,0,.3);z-index:6}
@@ -204,6 +222,29 @@ function newForm(kind, now) {
   return { id: '', was: null, kind, name: '', look: LOOKS[kind][0], photo: null, sub: '', notes: '', every: 7, next: isoDay(now),
     feeds: plant ? [] : [{ id: 'f1', mins: 420 }, { id: 'f2', mins: 1050 }], flea: '', vet: '', open: '', typing: '', touched: false };
 }
+// A new one is asked for one question at a time, then shown to check over before it is added.
+// Changing a saved one uses the rows in drawForm instead.
+function wizForm(now, kind = 'plant') {
+  return Object.assign(newForm(kind, now), { wiz: true, step: 'kind', reviewed: false, got: {}, ago: 0, feeds: [], dom: 1, error: '' });
+}
+const wzSteps = (f) => (f.kind === 'plant' ? ['kind', 'name', 'look', 'every', 'last', 'spot', 'check']
+  : ['kind', 'name', 'look', 'meals'].concat(f.feeds.map((x, i) => `meal${i}`), ['flea'], f.flea ? ['fleaday'] : [], ['vet', 'check']));
+function wzAdvance(f) {
+  const steps = wzSteps(f);
+  const later = steps.slice(steps.indexOf(f.step) + 1);
+  // Once it has been checked over, an answer goes straight back there (unless a meal still needs its time).
+  f.step = f.reviewed ? later.filter((s) => /^meal\d/.test(s) && f.feeds[+s.slice(4)].mins == null)[0] || 'check' : later[0] || 'check';
+  if (f.step === 'check') f.reviewed = true;
+  f.error = '';
+}
+// When it next wants water, from when it was last watered ("Not sure": today).
+function wzNext(f, now) {
+  const today = isoDay(now);
+  if (f.kind !== 'plant' || !f.got.last) return;
+  const d = f.ago < 0 ? today : addDays(today, f.every - f.ago);
+  f.next = d < today ? today : d;
+}
+const monthWords = (iso, now) => fromIso(iso).toLocaleDateString('en-US', fromIso(iso).getFullYear() === now.getFullYear() ? { month: 'long' } : { month: 'short', year: 'numeric' });
 function formOf(item, now) {
   const f = newForm(item.kind, now);
   const one = (type) => item.tasks.filter((t) => t.type === type)[0];
@@ -381,8 +422,122 @@ export function mount(el, { args = [] } = {}) {
       f.open === k ? more[k]() : ''}`).join('')
       + [['sub', subLabel(), f.sub], ['notes', 'Notes', f.notes]].map(([k, label, value]) => `<button data-f="type:${k}" class="cr-item"><span>${label}</span><span class="cr-now">${esc(value)}</span><span class="cr-chev">›</span></button>`).join('');
   }
+  const FLEA_DAYS = [1, 5, 10, 15, 20, 25];
+  function drawWizard() {
+    const f = form;
+    const now = new Date();
+    wzNext(f, now);
+    const chip = (act, on, label, cls = '') => `<button data-f="${act}" class="cr-chip${on ? ' on' : ''}${cls}">${label}</button>`;
+    const opts = (list) => `<div class="cr-more">${list.join('')}</div>`;
+    const back = f.step !== 'kind' && !f.reviewed ? '<button data-f="w:back" class="cr-plain">← Back</button>' : '';
+    const nav = (go) => `<div class="cr-nav">${back}${go || ''}</div>`;
+    const next = '<button data-f="w:next" class="cr-go">Next →</button>';
+    const warn = (t) => (t ? `<div class="cr-warn">${esc(t)}</div>` : '');
+    const noRoom = careItems().length >= MAX_ITEMS ? `There’s room for ${MAX_ITEMS} plants and pets, and that’s full. Remove one to add another.` : '';
+    const s = f.step;
+    const meal = /^meal(\d)$/.exec(s);
+    let body;
+    if (s === 'kind') {
+      const big = (k, look, label) => `<button data-f="kind:${k}" class="${f.got.kind && f.kind === k ? 'on' : ''}"><div>${lookArt(look)}</div>${label}</button>`;
+      body = `<div class="cr-q">Is it a plant or a pet?</div><div class="cr-big">${big('plant', 'monstera', 'A plant')}${big('pet', 'dog', 'A pet')}</div>
+        ${warn(noRoom)}${nav(f.got.kind ? next : '')}`;
+    } else if (s === 'name') {
+      body = `<div class="cr-q">What’s its name?</div>
+        <button data-f="type:name" data-box class="cr-in${f.name ? '' : ' empty'}${f.typing === 'name' ? ' typing' : ''}">${esc(f.name || FIELD.name[0])}</button>
+        ${nav(f.name.trim() ? next : '')}`;
+    } else if (s === 'look') {
+      const lk = (inner, label) => `<div class="cr-lk">${inner}<span>${label}</span></div>`;
+      body = `<div class="cr-q">Which picture?</div>
+        <div class="cr-looks">${LOOKS[f.kind].map((l) => lk(`<button data-f="look:${l}" class="cr-look${!f.photo && f.look === l ? ' on' : ''}" aria-label="${LOOK_NAME[l]}"><div>${lookArt(l)}</div></button>`, LOOK_NAME[l])).join('')}
+          ${f.photo || album().length ? lk(`<button data-f="photo" class="cr-look${f.photo ? ' on' : ''}" aria-label="Photo"${f.photo ? ` data-photo="${esc(f.photo.src)}" data-w="104" data-h="104"` : ''}>${f.photo ? '' : camera(40, '#1E3A26')}</button>`, 'A photo') : ''}</div>
+        ${nav(next)}`;
+    } else if (s === 'every') {
+      const list = [3, 5, 7, 10, 14];
+      if (list.indexOf(f.every) < 0) list.push(f.every);
+      body = `<div class="cr-q">How often does it need water?</div>${opts(list.sort((x, y) => x - y).map((n) => chip(`ev:${n}`, f.every === n, `Every ${days(n)}`)))}${nav(next)}`;
+    } else if (s === 'last') {
+      body = `<div class="cr-q">When did you last water it?</div>
+        ${opts([[0, 'Today'], [1, 'Yesterday'], [3, 'A few days ago'], [-1, 'Not sure']].map(([n, t]) => chip(`ago:${n}`, f.got.last && f.ago === n, t)))}${nav(f.got.last ? next : '')}`;
+    } else if (s === 'spot') {
+      const own = f.sub && SPOTS.indexOf(f.sub) < 0;
+      body = `<div class="cr-q">Where does it live?</div>
+        ${f.typing ? '' : opts(SPOTS.map((x, i) => chip(`spot:${i}`, f.sub === x, x)))}
+        <button data-f="type:sub" data-box class="cr-in${own ? '' : ' empty'}${f.typing === 'sub' ? ' typing' : ''}">${esc(own ? f.sub : 'Somewhere else? Type it')}</button>
+        ${nav(`<button data-f="w:skip" class="cr-plain skip">Skip</button>${f.sub ? next : ''}`)}`;
+    } else if (s === 'meals') {
+      body = `<div class="cr-q">How many meals a day?</div>
+        ${opts([0, 1, 2, 3].slice(0, MAX_FEEDS + 1).map((n) => chip(`meals:${n}`, f.got.meals && f.feeds.length === n, n || 'None', ' wide')))}${nav(f.got.meals ? next : '')}`;
+    } else if (meal) {
+      const i = +meal[1];
+      const x = f.feeds[i];
+      const prev = i ? f.feeds[i - 1].mins : null;
+      let hours = [6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20];
+      if (prev != null && hours.some((h) => h * 60 > prev)) hours = hours.filter((h) => h * 60 > prev);
+      body = `<div class="cr-q">${f.feeds.length === 1 ? 'What time is its meal?' : `What time is the ${['first', 'second', 'third'][i]} meal?`}</div>
+        ${opts(hours.map((h) => chip(`meal:${i}:${h * 60}`, x.mins === h * 60, hourText(h))))}${nav(x.mins != null ? next : '')}`;
+    } else if (s === 'flea') {
+      body = `<div class="cr-q">Flea & tick treatment every month?</div>
+        ${opts([chip('flea:yes', f.got.flea && !!f.flea, 'Yes', ' wide'), chip('flea:no', f.got.flea && !f.flea, 'No', ' wide')])}${nav(f.got.flea ? next : '')}`;
+    } else if (s === 'fleaday') {
+      body = `<div class="cr-q">Which day of the month for flea &amp; tick?</div>${opts(FLEA_DAYS.map((d) => chip(`dom:${d}`, f.dom === d, `The ${ordinal(d)}`)))}${nav(next)}`;
+    } else if (s === 'vet') {
+      const months = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12].map((i) => isoDay(new Date(now.getFullYear(), now.getMonth() + i, 1)));
+      body = `<div class="cr-q">When is its next vet visit?</div>
+        ${opts(months.map((d) => chip(`vet:${d}`, f.got.vet && f.vet === d, esc(monthWords(d, now)))).concat(chip('vet:none', f.got.vet && !f.vet, 'Not booked')))}${nav(f.got.vet ? next : '')}`;
+    } else {
+      const line = (label, value, step) => `<div class="cr-item" style="cursor:default"><span>${label}</span><span class="cr-now">${esc(value)}</span><button data-f="w:go:${step}" class="cr-chip">Change</button></div>`;
+      const lines = [line('What', f.kind === 'plant' ? 'A plant' : 'A pet', 'kind'), line('Name', f.name, 'name'), line('Picture', f.photo ? 'A photo' : LOOK_NAME[f.look], 'look')].concat(f.kind === 'plant'
+        ? [line('Water', `Every ${days(f.every)}`, 'every'), line('Next water', dateWords(f.next, now), 'last'), line('Lives', f.sub || 'Not said', 'spot')]
+        : [line('Meals', f.feeds.length ? f.feeds.map((x) => x.mins).sort((a, b) => a - b).map(minutesText).join(' · ') : 'None', 'meals'),
+          line('Flea & tick', f.flea ? `Every month on the ${ordinal(f.dom)}` : 'No', 'flea'), line('Vet', f.vet ? monthWords(f.vet, now) : 'Not booked', 'vet')]);
+      body = `<div class="cr-q">Does this look right?</div><div class="cr-list">${lines.join('')}</div>
+        ${warn(noRoom || f.error)}${nav(`<button data-f="save" class="cr-go">Add ${esc(f.name)}</button>`)}`;
+    }
+    layer.innerHTML = `<div class="cr-dim"><div class="cr-sheet${sheetIn ? ' in' : ''}">
+      <div class="cr-head"><button data-f="cancel" class="cr-plain">Cancel</button><div>${f.got.kind ? (f.kind === 'plant' ? 'New plant' : 'New pet') : 'New plant or pet'}</div><span class="cr-plain"></span></div>
+      <div class="cr-body"><div class="cr-wz">${body}</div></div></div></div>`;
+    sheetIn = false;
+    fillPhotos(layer);
+  }
+  // Shows the step; arriving at the name with nothing typed opens the keyboard straight away.
+  function wzShow() {
+    drawForm();
+    if (form && form.wiz && form.step === 'name' && !form.name.trim()) typeField('name');
+  }
+  // The new one's answers: a one-tap answer moves on to the next question by itself.
+  function wizAction(f, a, b, c, now) {
+    const today = isoDay(now);
+    if (a === 'w') {
+      if (b === 'next') wzAdvance(f);
+      else if (b === 'back') { const steps = wzSteps(f); f.step = steps[Math.max(0, steps.indexOf(f.step) - 1)]; }
+      else if (b === 'go') f.step = c;
+      else if (b === 'skip') { f.sub = ''; wzAdvance(f); }
+      wzShow();
+      return true;
+    }
+    if (a === 'kind') {
+      // Another kind starts its answers afresh (keeping the name), and asks the rest again.
+      if (f.kind !== b) { const n = wizForm(now, b); n.name = f.name; hint(n); form = n; }
+      form.got.kind = true;
+      wzAdvance(form);
+    } else if (a === 'look') { f.look = b; f.photo = null; f.touched = true; wzAdvance(f); }
+    else if (a === 'ev') { f.every = +b; f.touched = true; wzAdvance(f); }
+    else if (a === 'ago') { f.ago = +b; f.got.last = true; wzAdvance(f); }
+    else if (a === 'spot') { f.sub = SPOTS[+b] || ''; wzAdvance(f); }
+    else if (a === 'meals') { f.feeds = []; for (let i = 0; i < +b; i++) f.feeds.push({ id: `f${i + 1}`, mins: null }); f.got.meals = true; wzAdvance(f); }
+    else if (a === 'meal') { f.feeds[+b].mins = +c; wzAdvance(f); }
+    else if (a === 'flea') {
+      f.got.flea = true;
+      if (b === 'yes') { f.flea = nextMonthly(today, f.dom); f.step = 'fleaday'; } else { f.flea = ''; wzAdvance(f); }
+    } else if (a === 'dom') { f.dom = +b; f.flea = nextMonthly(today, f.dom); wzAdvance(f); }
+    else if (a === 'vet') { f.vet = b === 'none' ? '' : b; f.got.vet = true; wzAdvance(f); }
+    else return false;
+    wzShow();
+    return true;
+  }
   function drawForm() {
     const f = form;
+    if (f.wiz) { drawWizard(); return; }
     const now = new Date();
     const old = layer.querySelector('.cr-body');
     const top = old ? old.scrollTop : 0;
@@ -443,16 +598,21 @@ export function mount(el, { args = [] } = {}) {
         const b = layer.querySelector('[data-box]');
         if (b) { b.textContent = f[k] || (k === 'sub' ? subLabel() : FIELD[k][0]); b.classList.toggle('empty', !f[k]); }
       },
-      onGo: (pick, board) => { if (pick) { f[k] = pick; if (k === 'name') hint(f); } board.close(); },
+      onGo: (pick, board) => {
+        if (pick) { f[k] = pick; if (k === 'name') hint(f); }
+        if (f.wiz && f[k].trim() && f.step === (k === 'name' ? 'name' : 'spot')) { f[k] = f[k].trim(); wzAdvance(f); }
+        board.close();
+      },
       onClose: () => { kb = null; if (form) { form.typing = ''; form[k] = form[k].trim(); drawForm(); } },
     });
   }
   function saveForm() {
     const f = form;
     if (!f.name.trim()) { typeField('name'); return null; }
-    if (!f.id && careItems().length >= MAX_ITEMS) return null;
+    if (!f.id && careItems().length >= MAX_ITEMS) return null; // (the new one's last page says so)
+    if (f.wiz) wzNext(f, new Date());
     const saved = saveCareItem(itemOf(f));
-    if (!saved) return null;
+    if (!saved) { f.error = 'Couldn’t add it. Try again.'; return null; }
     if (view === 'card') item = saved;
     return saved;
   }
@@ -464,7 +624,7 @@ export function mount(el, { args = [] } = {}) {
     if (a === 'type') { if (kb) kb.close(); else typeField(b); return; }
     if (kb) { kb.close(); return; } // a tap outside the keyboard puts it away first
     if (a === 'cancel') { closeForm(); return; }
-    if (a === 'save') { if (saveForm()) { closeForm(); draw(); arm(); } return; }
+    if (a === 'save') { if (saveForm()) { closeForm(); draw(); arm(); } else if (form && form.wiz) drawForm(); return; }
     if (a === 'remove') {
       const gone = removeCareItem(f.id);
       closeForm();
@@ -475,6 +635,7 @@ export function mount(el, { args = [] } = {}) {
       return;
     }
     if (a === 'photo') { picker = 'form'; drawPicker(); return; }
+    if (f.wiz && wizAction(f, a, b, c, now)) return;
     if (a === 'kind') { if (f.kind !== b) { const n = newForm(b, now); n.name = f.name; form = n; hint(n); } }
     else if (a === 'look') { f.look = b; f.photo = null; f.touched = true; }
     else if (a === 'open') {
@@ -501,7 +662,7 @@ export function mount(el, { args = [] } = {}) {
     layer.innerHTML = `<div class="cr-dim"><div class="cr-sheet">
       <div class="cr-head"><button data-pick="cancel" class="cr-plain">Cancel</button><div>Photo</div><span class="cr-plain"></span></div>
       ${list.length ? `<div class="cr-grid">${list.map((p, i) => `<button class="cr-thumb" data-pick="${i}" data-photo="${esc(p.src)}" data-w="170" data-h="128" aria-label="Photo ${i + 1}"></button>`).join('')}</div>` : '<div class="cr-none">No photos yet</div>'}
-      <button class="cr-take" data-pick="take">${camera(28, '#fff')}Take a photo</button></div></div>`;
+      ${form && form.wiz ? '' : `<button class="cr-take" data-pick="take">${camera(28, '#fff')}Take a photo</button>`}</div></div>`;
     fillPhotos(layer);
   }
   function pickAction(act) {
@@ -520,7 +681,7 @@ export function mount(el, { args = [] } = {}) {
     const p = album()[+act];
     if (p) {
       const photo = { id: p.id, src: p.src };
-      if (forCard) { item = saveCareItem(Object.assign({}, item, { photo })) || item; draw(); } else { form.photo = photo; form.touched = true; }
+      if (forCard) { item = saveCareItem(Object.assign({}, item, { photo })) || item; draw(); } else { form.photo = photo; form.touched = true; if (form.wiz) wzAdvance(form); }
     }
     back();
   }
@@ -589,7 +750,7 @@ export function mount(el, { args = [] } = {}) {
     if (hit.dataset.done) { done(hit.dataset.done); return; }
     if (hit.dataset.open) { location.hash = `#/care/${encodeURIComponent(hit.dataset.open)}`; return; }
     const act = hit.dataset.act || '';
-    if (act === 'add') openForm(newForm('plant', new Date()));
+    if (act === 'add') openForm(wizForm(new Date()));
     else if (act === 'edit') openForm(formOf(item, new Date()));
     else if (act.indexOf('edit:') === 0) openForm(formOf(item, new Date()), { open: act.slice(5) });
     else if (act === 'notes') openForm(formOf(item, new Date()), { type: 'notes' });
@@ -606,7 +767,7 @@ export function mount(el, { args = [] } = {}) {
   if (item) { view = 'card'; if (shown !== args[0]) here(`#/care/${encodeURIComponent(item.id)}`); }
   draw();
   arm();
-  if (args[0] === 'add') { here('#/care'); openForm(newForm('plant', new Date())); }
+  if (args[0] === 'add') { here('#/care'); openForm(wizForm(new Date())); }
 
   cleanup = () => {
     clearTimeout(freshTimer); clearTimeout(undoTimer); clearTimeout(clock);
